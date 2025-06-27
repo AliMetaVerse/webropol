@@ -1,17 +1,29 @@
-// Standard Card Component
-class WebropolCard extends HTMLElement {
-  connectedCallback() {
-    const variant = this.getAttribute('variant') || 'standard';
-    const gradient = this.getAttribute('gradient') || '';
-    const hoverable = this.hasAttribute('hoverable');
-    const elevated = this.hasAttribute('elevated');
+/**
+ * Webropol Card Legacy Components
+ * Complete card system with all sub-components from the original /components/cards.js
+ * This provides backward compatibility while leveraging the BaseComponent architecture
+ */
+
+import { BaseComponent } from '../../utils/base-component.js';
+
+// Main Card Component (Enhanced)
+export class WebropolCardLegacy extends BaseComponent {
+  static get observedAttributes() {
+    return ['variant', 'gradient', 'hoverable', 'elevated'];
+  }
+
+  render() {
+    const variant = this.getAttr('variant', 'standard');
+    const gradient = this.getAttr('gradient');
+    const hoverable = this.getBoolAttr('hoverable');
+    const elevated = this.getBoolAttr('elevated');
     
     // Base card classes
-    const baseClasses = `
-      rounded-2xl border transition-all duration-200 
-      ${hoverable ? 'hover:shadow-xl hover:-translate-y-1 cursor-pointer' : ''}
-      ${elevated ? 'shadow-medium' : 'shadow-card'}
-    `;
+    const baseClasses = this.classNames(
+      'rounded-2xl border transition-all duration-200',
+      hoverable ? 'hover:shadow-xl hover:-translate-y-1 cursor-pointer' : '',
+      elevated ? 'shadow-medium' : 'shadow-card'
+    );
 
     // Variant classes
     const variantClasses = {
@@ -28,27 +40,29 @@ class WebropolCard extends HTMLElement {
         <slot></slot>
       </div>
     `;
+  }
 
-    // Add click handler for hoverable cards
-    if (hoverable) {
-      this.addEventListener('click', (e) => {
-        this.dispatchEvent(new CustomEvent('card-click', {
-          bubbles: true,
-          detail: { originalEvent: e }
-        }));
+  bindEvents() {
+    if (this.getBoolAttr('hoverable')) {
+      this.addListener(this, 'click', (e) => {
+        this.emit('card-click', { originalEvent: e });
       });
     }
   }
 }
 
 // Card Header Component
-class WebropolCardHeader extends HTMLElement {
-  connectedCallback() {
-    const icon = this.getAttribute('icon');
-    const title = this.getAttribute('title');
-    const subtitle = this.getAttribute('subtitle');
-    const badge = this.getAttribute('badge');
-    const badgeVariant = this.getAttribute('badge-variant') || 'default';
+export class WebropolCardHeader extends BaseComponent {
+  static get observedAttributes() {
+    return ['icon', 'title', 'subtitle', 'badge', 'badge-variant'];
+  }
+
+  render() {
+    const icon = this.getAttr('icon');
+    const title = this.getAttr('title');
+    const subtitle = this.getAttr('subtitle');
+    const badge = this.getAttr('badge');
+    const badgeVariant = this.getAttr('badge-variant', 'default');
     
     const badgeClasses = {
       default: 'bg-webropol-gray-700 text-white',
@@ -77,9 +91,13 @@ class WebropolCardHeader extends HTMLElement {
 }
 
 // Card Content Component
-class WebropolCardContent extends HTMLElement {
-  connectedCallback() {
-    const padding = this.getAttribute('padding') || 'normal';
+export class WebropolCardContent extends BaseComponent {
+  static get observedAttributes() {
+    return ['padding'];
+  }
+
+  render() {
+    const padding = this.getAttr('padding', 'normal');
     
     const paddingClasses = {
       none: '',
@@ -97,11 +115,15 @@ class WebropolCardContent extends HTMLElement {
 }
 
 // Card List Component
-class WebropolCardList extends HTMLElement {
-  connectedCallback() {
-    const title = this.getAttribute('title');
-    const collapsible = this.hasAttribute('collapsible');
-    const defaultOpen = this.hasAttribute('default-open') || !collapsible;
+export class WebropolCardList extends BaseComponent {
+  static get observedAttributes() {
+    return ['title', 'collapsible', 'default-open'];
+  }
+
+  render() {
+    const title = this.getAttr('title');
+    const collapsible = this.getBoolAttr('collapsible');
+    const defaultOpen = this.getBoolAttr('default-open') || !collapsible;
     
     this.innerHTML = `
       <div class="p-6" ${collapsible ? `x-data="{ open: ${defaultOpen} }"` : ''}>
@@ -124,15 +146,19 @@ class WebropolCardList extends HTMLElement {
 }
 
 // Card List Item Component
-class WebropolCardListItem extends HTMLElement {
-  connectedCallback() {
-    const icon = this.getAttribute('icon');
-    const title = this.getAttribute('title');
-    const subtitle = this.getAttribute('subtitle');
-    const action = this.getAttribute('action');
-    const actionIcon = this.getAttribute('action-icon');
-    const status = this.getAttribute('status');
-    const clickable = this.hasAttribute('clickable');
+export class WebropolCardListItem extends BaseComponent {
+  static get observedAttributes() {
+    return ['icon', 'title', 'subtitle', 'action', 'action-icon', 'status', 'clickable'];
+  }
+
+  render() {
+    const icon = this.getAttr('icon');
+    const title = this.getAttr('title');
+    const subtitle = this.getAttr('subtitle');
+    const action = this.getAttr('action');
+    const actionIcon = this.getAttr('action-icon');
+    const status = this.getAttr('status');
+    const clickable = this.getBoolAttr('clickable');
     
     const statusClasses = {
       active: 'bg-green-100 text-green-700',
@@ -160,23 +186,26 @@ class WebropolCardListItem extends HTMLElement {
         </div>
       </div>
     `;
+  }
 
-    if (clickable) {
-      this.addEventListener('click', (e) => {
-        this.dispatchEvent(new CustomEvent('list-item-click', {
-          bubbles: true,
-          detail: { originalEvent: e }
-        }));
+  bindEvents() {
+    if (this.getBoolAttr('clickable')) {
+      this.addListener(this, 'click', (e) => {
+        this.emit('list-item-click', { originalEvent: e });
       });
     }
   }
 }
 
 // Card Actions/Footer Component
-class WebropolCardActions extends HTMLElement {
-  connectedCallback() {
-    const alignment = this.getAttribute('alignment') || 'right';
-    const padding = this.getAttribute('padding') || 'normal';
+export class WebropolCardActions extends BaseComponent {
+  static get observedAttributes() {
+    return ['alignment', 'padding'];
+  }
+
+  render() {
+    const alignment = this.getAttr('alignment', 'right');
+    const padding = this.getAttr('padding', 'normal');
     
     const alignmentClasses = {
       left: 'justify-start',
@@ -201,17 +230,21 @@ class WebropolCardActions extends HTMLElement {
 }
 
 // Gradient Card Component (Homepage style)
-class WebropolGradientCard extends HTMLElement {
-  connectedCallback() {
-    const icon = this.getAttribute('icon');
-    const title = this.getAttribute('title');
-    const subtitle = this.getAttribute('subtitle');
-    const buttonText = this.getAttribute('button-text');
-    const buttonHref = this.getAttribute('button-href');
-    const linkText = this.getAttribute('link-text');
-    const linkHref = this.getAttribute('link-href');
-    const badge = this.getAttribute('badge');
-    const gradient = this.getAttribute('gradient') || 'from-webropol-blue-100 to-webropol-teal-100/80';
+export class WebropolGradientCard extends BaseComponent {
+  static get observedAttributes() {
+    return ['icon', 'title', 'subtitle', 'button-text', 'button-href', 'link-text', 'link-href', 'badge', 'gradient'];
+  }
+
+  render() {
+    const icon = this.getAttr('icon');
+    const title = this.getAttr('title');
+    const subtitle = this.getAttr('subtitle');
+    const buttonText = this.getAttr('button-text');
+    const buttonHref = this.getAttr('button-href');
+    const linkText = this.getAttr('link-text');
+    const linkHref = this.getAttr('link-href');
+    const badge = this.getAttr('badge');
+    const gradient = this.getAttr('gradient', 'from-webropol-blue-100 to-webropol-teal-100/80');
     
     this.innerHTML = `
       <div class="relative rounded-2xl bg-gradient-to-br ${gradient} p-6 flex flex-col items-center shadow-card border border-webropol-teal-100 transition-shadow duration-200 hover:shadow-2xl">
@@ -237,107 +270,8 @@ class WebropolGradientCard extends HTMLElement {
   }
 }
 
-// Add global design tokens for Webropol components
-if (!document.getElementById('webropol-design-tokens')) {
-  const style = document.createElement('style');
-  style.id = 'webropol-design-tokens';
-  style.innerHTML = `
-    :root {
-      --wr-radius-card: 1rem;
-      --wr-radius-button: 9999px;
-      --wr-shadow-card: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
-      --wr-shadow-medium: 0 4px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-      --wr-shadow-soft: 0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04);
-      --wr-color-primary: #06b6d4;
-      --wr-color-primary-dark: #0891b2;
-      --wr-color-secondary: #64748b;
-      --wr-color-bg: #fff;
-      --wr-color-bg-gradient: linear-gradient(135deg, #f0fdff 0%, #ccf7fe 100%);
-      --wr-color-border: #e2e8f0;
-      --wr-color-shadow: rgba(0,0,0,0.07);
-      --wr-color-success: #22c55e;
-      --wr-color-danger: #ef4444;
-      --wr-color-warning: #f59e42;
-      --wr-color-info: #3b82f6;
-      --wr-font-family: 'Inter', system-ui, sans-serif;
-      --wr-spacing: 1.5rem;
-      --wr-spacing-sm: 1rem;
-      --wr-spacing-lg: 2rem;
-    }
-    .wr-card {
-      border-radius: var(--wr-radius-card);
-      box-shadow: var(--wr-shadow-card);
-      background: var(--wr-color-bg);
-      font-family: var(--wr-font-family);
-      border: 1px solid var(--wr-color-border);
-      padding: var(--wr-spacing);
-    }
-    .wr-card-gradient {
-      background: var(--wr-color-bg-gradient);
-    }
-    .wr-card-header {
-      font-weight: 600;
-      font-size: 1.125rem;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    .wr-card-badge {
-      border-radius: var(--wr-radius-button);
-      font-size: 0.75rem;
-      padding: 0.25rem 0.75rem;
-      font-weight: 500;
-      background: var(--wr-color-primary);
-      color: #fff;
-    }
-    .wr-card-content {
-      font-size: 1rem;
-      color: #475569;
-      margin-top: 0.5rem;
-    }
-    .wr-card-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-      justify-content: flex-end;
-    }
-    .wr-list-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--wr-color-border);
-    }
-    .wr-list-item:last-child {
-      border-bottom: none;
-    }
-    .wr-list-item-icon {
-      color: var(--wr-color-primary);
-      font-size: 1.25rem;
-    }
-    .wr-list-item-title {
-      font-weight: 500;
-      color: #0f172a;
-    }
-    .wr-list-item-subtitle {
-      font-size: 0.875rem;
-      color: #64748b;
-    }
-    .wr-list-item-status {
-      border-radius: var(--wr-radius-button);
-      font-size: 0.75rem;
-      padding: 0.25rem 0.75rem;
-      font-weight: 500;
-      background: var(--wr-color-success);
-      color: #fff;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// Register all components
-customElements.define('webropol-card', WebropolCard);
+// Register all legacy card components (keeping original names for backward compatibility)
+customElements.define('webropol-card-legacy', WebropolCardLegacy);
 customElements.define('webropol-card-header', WebropolCardHeader);
 customElements.define('webropol-card-content', WebropolCardContent);
 customElements.define('webropol-card-list', WebropolCardList);

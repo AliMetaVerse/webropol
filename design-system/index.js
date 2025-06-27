@@ -3,29 +3,12 @@
  * Imports and initializes all components and utilities
  */
 
+// Import and register all components from the consolidated structure
+import './components/index.js';
+
 // Import utilities
-import { BaseComponent } from './utils/base-component.js';
-import { ThemeUtils } from './utils/theme-utils.js';
 import { AccessibilityUtils } from './utils/accessibility.js';
-
-// Import design tokens
-import { designTokens, componentTokens } from './styles/tokens.js';
-
-// Import components
-import { WebropolButton } from './components/buttons/Button.js';
-import { WebropolCard } from './components/cards/Card.js';
-import { WebropolActionCard } from './components/cards/ActionCard.js';
-import { WebropolListCard } from './components/cards/ListCard.js';
-import { WebropolVideoCard } from './components/cards/VideoCard.js';
-import { WebropolConfigurableCard } from './components/cards/ConfigurableCard.js';
-import { WebropolModal } from './components/modals/Modal.js';
-import { WebropolBadge } from './components/feedback/Badge.js';
-import { WebropolTooltip } from './components/feedback/Tooltip.js';
-import { WebropolLoading } from './components/feedback/Loading.js';
-import { WebropolTabs } from './components/navigation/Tabs.js';
-import { WebropolSidebar } from './components/navigation/Sidebar.js';
-import { WebropolHeader } from './components/navigation/Header.js';
-import { WebropolInput } from './components/forms/Input.js';
+import { ThemeUtils } from './utils/theme-utils.js';
 
 /**
  * Main Design System Class

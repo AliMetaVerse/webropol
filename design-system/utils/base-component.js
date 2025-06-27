@@ -163,10 +163,11 @@ export class BaseComponent extends HTMLElement {
   getVariantClasses(componentType, variant = 'primary') {
     const variants = {
       button: {
-        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white hover:from-webropol-teal-600 hover:to-webropol-blue-700 shadow-medium hover:shadow-lg',
-        secondary: 'bg-white text-webropol-teal-700 border-2 border-webropol-teal-500 hover:bg-webropol-teal-50 shadow-card hover:shadow-medium',
-        tertiary: 'bg-transparent text-webropol-teal-700 hover:bg-webropol-teal-50',
-        danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-medium hover:shadow-lg'
+        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white border-2 border-transparent hover:from-webropol-teal-600 hover:to-webropol-blue-700 focus:ring-webropol-teal-200 active:from-webropol-teal-700 active:to-webropol-blue-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        secondary: 'bg-white text-webropol-teal-700 border-2 border-webropol-teal-500 hover:bg-webropol-teal-50 hover:border-webropol-teal-600 focus:ring-webropol-teal-200 active:bg-webropol-teal-100 active:border-webropol-teal-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
+        tertiary: 'bg-transparent text-webropol-teal-700 border-2 border-transparent hover:bg-webropol-teal-50 hover:text-webropol-teal-800 focus:ring-webropol-teal-200 active:bg-webropol-teal-100 disabled:text-webropol-gray-400 disabled:hover:bg-transparent',
+        danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white border-2 border-transparent hover:from-red-600 hover:to-red-700 focus:ring-red-200 active:from-red-700 active:to-red-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white border-2 border-transparent hover:from-green-600 hover:to-green-700 focus:ring-green-200 active:from-green-700 active:to-green-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400'
       },
       card: {
         default: 'bg-white border border-webropol-gray-200 shadow-card',
@@ -192,10 +193,10 @@ export class BaseComponent extends HTMLElement {
   getSizeClasses(componentType, size = 'md') {
     const sizes = {
       button: {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-6 py-2.5 text-sm',
-        lg: 'px-8 py-3 text-base',
-        xl: 'px-10 py-4 text-lg'
+        sm: 'px-3 py-1.5 text-sm font-medium',
+        md: 'px-6 py-2.5 text-sm font-semibold',
+        lg: 'px-8 py-3 text-base font-semibold',
+        xl: 'px-10 py-4 text-lg font-semibold'
       },
       badge: {
         sm: 'px-2 py-1 text-xs',

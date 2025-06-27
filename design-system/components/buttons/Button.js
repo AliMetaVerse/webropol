@@ -7,7 +7,7 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolButton extends BaseComponent {
   static get observedAttributes() {
-    return ['variant', 'size', 'disabled', 'loading', 'icon', 'icon-position', 'full-width'];
+    return ['variant', 'size', 'disabled', 'loading', 'icon', 'icon-position', 'full-width', 'href', 'target', 'type'];
   }
 
   init() {
@@ -35,13 +35,13 @@ export class WebropolButton extends BaseComponent {
     // Get text content
     const text = this.textContent.trim();
     
-    // Base classes
+    // Base classes with enhanced styling from components version
     const baseClasses = this.classNames(
-      'inline-flex items-center justify-center font-semibold rounded-xl',
-      'transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-opacity-50',
-      'transform hover:scale-[1.02] active:scale-[0.98]',
+      'inline-flex items-center justify-center font-semibold rounded-full font-sans',
+      'transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-offset-2',
+      'transform hover:scale-105 active:scale-95',
       fullWidth ? 'w-full' : '',
-      disabled || loading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
+      disabled || loading ? 'cursor-not-allowed opacity-60 transform-none hover:scale-100' : 'cursor-pointer',
       this.getVariantClasses('button', variant),
       this.getSizeClasses('button', size)
     );

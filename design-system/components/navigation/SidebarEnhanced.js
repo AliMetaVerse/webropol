@@ -1,7 +1,22 @@
-class WebropolSidebar extends HTMLElement {
-  connectedCallback() {
-    const active = this.getAttribute('active') || 'home';
-    const base = this.getAttribute('base') || '';
+/**
+ * Webropol Sidebar Enhanced Component
+ * Navigation sidebar with dynamic menu items and branding
+ */
+
+import { BaseComponent } from '../../utils/base-component.js';
+
+export class WebropolSidebarEnhanced extends BaseComponent {
+  static get observedAttributes() {
+    return ['active', 'base', 'brand-title', 'brand-subtitle', 'brand-icon'];
+  }
+
+  render() {
+    const active = this.getAttr('active', 'home');
+    const base = this.getAttr('base', '');
+    const brandTitle = this.getAttr('brand-title', 'Webropol');
+    const brandSubtitle = this.getAttr('brand-subtitle', 'Survey Platform');
+    const brandIcon = this.getAttr('brand-icon', 'fas fa-chart-bar');
+    
     // Helper to prefix base to links - ensure proper path concatenation
     const link = (path) => {
       if (!base) return path;
@@ -10,15 +25,16 @@ class WebropolSidebar extends HTMLElement {
       const normalizedPath = path.startsWith('/') ? path.substring(1) : path;
       return normalizedBase + normalizedPath;
     };
+
     this.innerHTML = `
       <aside class="h-screen w-72 bg-white/80 backdrop-blur-xl border-r border-webropol-gray-200/50 flex flex-col flex-shrink-0 shadow-soft">
         <div class="h-20 flex items-center px-8 border-b border-webropol-gray-200/50">
           <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center">
-            <i class="fas fa-chart-bar text-white text-lg"></i>
+            <i class="${brandIcon} text-white text-lg"></i>
           </div>
           <div class="ml-3">
-            <h1 class="font-bold text-webropol-gray-900 text-lg">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1">Survey Platform</p>
+            <h1 class="font-bold text-webropol-gray-900 text-lg">${brandTitle}</h1>
+            <p class="text-xs text-webropol-gray-500 -mt-1">${brandSubtitle}</p>
           </div>
         </div>
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
@@ -52,7 +68,7 @@ class WebropolSidebar extends HTMLElement {
               <span class="font-medium">Admin Tools</span>
             </a>
             <a href="${link('training-videos/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-video w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+              <i class="fas fa-play-circle w-5 mr-4 group-hover:scale-110 transition-transform"></i>
               <span class="font-medium">Training Videos</span>
             </a>
             <a href="${link('shop/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
@@ -60,43 +76,28 @@ class WebropolSidebar extends HTMLElement {
               <span class="font-medium">Shop</span>
             </a>
           </div>
+          <!-- Slot for custom menu items -->
+          <slot name="menu-items"></slot>
         </nav>
-        <div class="mt-auto px-4 pb-6">
-          <a href="#" class="flex items-center px-4 py-3 rounded-xl font-semibold text-webropol-teal-700 hover:bg-webropol-teal-50 transition-all duration-200">
-            <i class="fas fa-envelope w-5 mr-4"></i>
-            <span>Contact Us</span>
-          </a>
+        <div class="p-4 border-t border-webropol-gray-200/50">
+          <slot name="footer"></slot>
         </div>
       </aside>
     `;
   }
-}
-customElements.define('webropol-sidebar', WebropolSidebar);
 
-class WebropolHeader extends HTMLElement {
-  connectedCallback() {
-    const username = this.getAttribute('username') || 'Ali Al-Zuhairi';
-    this.innerHTML = `
-      <header class="h-20 min-h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft">
-        <div class="flex items-center space-x-4"></div>
-        <div class="flex items-center space-x-6">
-          <div class="flex items-center space-x-3">
-            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all">
-              <i class="fas fa-bell"></i>
-            </button>
-            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all">
-              <i class="fas fa-question-circle"></i>
-            </button>
-            <div class="relative">
-              <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors">
-                <span class="mr-2 font-medium">${username}</span>
-                <i class="fas fa-chevron-down text-xs"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-    `;
+  bindEvents() {
+    // Add click handlers for navigation items
+    const navLinks = this.querySelectorAll('nav a[href]');
+    navLinks.forEach(link => {
+      this.addListener(link, 'click', (e) => {
+        const href = link.getAttribute('href');
+        const text = link.textContent.trim();
+        this.emit('navigation-click', { href, text, originalEvent: e });
+      });
+    });
   }
 }
-customElements.define('webropol-header', WebropolHeader);
+
+// Register the component
+customElements.define('webropol-sidebar-enhanced', WebropolSidebarEnhanced);

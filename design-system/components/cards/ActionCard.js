@@ -151,4 +151,3 @@ export class WebropolActionCard extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-action-card', WebropolActionCard);
-customElements.define('webropol-action-card', WebropolActionCard);

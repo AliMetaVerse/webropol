@@ -7,22 +7,24 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolHeader extends BaseComponent {
   static get observedAttributes() {
-    return ['username', 'title', 'show-notifications', 'show-help'];
+    return ['username', 'title', 'show-notifications', 'show-help', 'show-user-menu'];
   }
 
   render() {
     const username = this.getAttr('username', 'Ali Al-Zuhairi');
     const title = this.getAttr('title');
-    const showNotifications = this.getAttribute('show-notifications') !== null;
-    const showHelp = this.getAttribute('show-help') !== null;
+    const showNotifications = this.getBoolAttr('show-notifications');
+    const showHelp = this.getBoolAttr('show-help');
+    const showUserMenu = this.getBoolAttr('show-user-menu');
 
     this.innerHTML = `
-      <header class="h-20 min-h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft">
+      <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft">
         <div class="flex items-center space-x-4">
           ${title ? `
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
           ` : ''}
           <slot name="title"></slot>
+          <slot name="left"></slot>
         </div>
         
         <div class="flex items-center space-x-6">
@@ -40,35 +42,38 @@ export class WebropolHeader extends BaseComponent {
               </button>
             ` : ''}
             
-            <div class="relative">
-              <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group">
-                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-full flex items-center justify-center mr-3">
-                  <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
+            ${showUserMenu !== false ? `
+              <div class="relative">
+                <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
+                  </div>
+                  <span class="mr-2 font-medium">${username}</span>
+                  <i class="fas fa-chevron-down text-xs group-hover:rotate-180 transition-transform"></i>
+                </button>
+                
+                <!-- Dropdown menu (hidden by default) -->
+                <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown">
+                  <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                    <i class="fas fa-user-circle w-4 mr-3"></i>
+                    Profile
+                  </a>
+                  <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                    <i class="fas fa-cog w-4 mr-3"></i>
+                    Settings
+                  </a>
+                  <hr class="my-2 border-webropol-gray-200">
+                  <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                    <i class="fas fa-sign-out-alt w-4 mr-3"></i>
+                    Sign Out
+                  </a>
                 </div>
-                <span class="mr-2 font-medium">${username}</span>
-                <i class="fas fa-chevron-down text-xs group-hover:rotate-180 transition-transform"></i>
-              </button>
-              
-              <!-- Dropdown menu (hidden by default) -->
-              <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown">
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
-                  <i class="fas fa-user-circle w-4 mr-3"></i>
-                  Profile
-                </a>
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
-                  <i class="fas fa-cog w-4 mr-3"></i>
-                  Settings
-                </a>
-                <hr class="my-2 border-webropol-gray-200">
-                <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                  <i class="fas fa-sign-out-alt w-4 mr-3"></i>
-                  Sign Out
-                </a>
               </div>
-            </div>
+            ` : ''}
             
             <slot name="actions"></slot>
           </div>
+          <slot name="right"></slot>
         </div>
       </header>
     `;
