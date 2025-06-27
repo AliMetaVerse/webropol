@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question & Survey Library - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+                        'webropol-blue': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .hover-lift {
+            transition: all 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+    <script src="../components/sidebar.js" type="module"></script>
+    <script src="../components/header.js" type="module"></script>
+    <script src="../components/breadcrumbs.js" type="module"></script>
+    <script src="../components/floating-button.js" type="module"></script>
+</head>
+
+<body class="bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30" style="background-color: #ebf4f7;"
+    x-data="libraryApp()" @click="showContextMenu = null">
+
+    <div class="flex h-screen">
+        <webropol-sidebar active="mywebropol" base="../"></webropol-sidebar>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <webropol-header username="Ali Al-Zuhairi"></webropol-header>
+            <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4">
+                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"MyWebropol","url":"index.html"}]'></webropol-breadcrumbs>
+            </div>
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-12 pb-16" role="main">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Enhanced Header Section -->
+                    <div class="mb-8">
+                        <div class="text-center lg:text-left mb-6">
+                            <h1 class="text-3xl lg:text-4xl font-bold text-webropol-gray-900 mb-3 tracking-tight">
+                                MyWebropol
+                            </h1>
+                            <p class="text-lg text-webropol-gray-600 max-w-2xl lg:mx-0 mx-auto leading-relaxed">
+                                Your central hub for creating, managing, and accessing all your survey tools and resources
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div class="space-y-6">
+                            <!-- Templates and Libraries Section -->
+                            <section class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300" aria-labelledby="templates-heading">
+                                <div class="mb-6">
+                                    <h2 id="templates-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
+                                        Templates and Libraries
+                                    </h2>
+                                    <p class="text-webropol-gray-600 text-sm leading-relaxed">
+                                        Access pre-built templates and question libraries to accelerate your survey creation
+                                    </p>
+                                </div>
+                                <nav class="space-y-3" aria-label="Templates and Libraries">
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Email Templates">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-envelope text-webropol-teal-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Email Templates</span>
+                                                <span class="text-webropol-gray-500 text-xs">Pre-designed email layouts</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Email Templates">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Layout Templates">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-blue-100 to-webropol-teal-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-layer-group text-webropol-blue-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Layout Templates</span>
+                                                <span class="text-webropol-gray-500 text-xs">Survey design layouts</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Layout Templates">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                    <a href="library.html" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Question and Survey Library">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-book-open text-webropol-teal-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Question & Survey Library</span>
+                                                <span class="text-webropol-gray-500 text-xs">Ready-to-use question sets</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Question and Survey Library">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </section>
+
+                            <!-- Other Tools Section -->
+                            <section class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300" aria-labelledby="tools-heading">
+                                <div class="mb-6">
+                                    <h2 id="tools-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
+                                        Other Tools
+                                    </h2>
+                                    <p class="text-webropol-gray-600 text-sm leading-relaxed">
+                                        Additional utilities and management tools for your surveys
+                                    </p>
+                                </div>
+                                <nav class="space-y-3" aria-label="Other Tools">
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Login and Landing Pages">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-blue-100 to-webropol-teal-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-sign-in-alt text-webropol-blue-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Login and Landing Pages</span>
+                                                <span class="text-webropol-gray-500 text-xs">Customize user experience</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Login and Landing Pages">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="View and Manage SMS Credits">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-sms text-webropol-teal-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">View and Manage SMS Credits</span>
+                                                <span class="text-webropol-gray-500 text-xs">SMS messaging services</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about SMS Credits">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </section>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-6">
+                            <!-- Help Centre and Agreements Section -->
+                            <section class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300" aria-labelledby="help-heading">
+                                <div class="mb-6">
+                                    <h2 id="help-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
+                                        Help Centre and Agreements
+                                    </h2>
+                                    <p class="text-webropol-gray-600 text-sm leading-relaxed">
+                                        Get support and access important documentation
+                                    </p>
+                                </div>
+                                <nav class="space-y-3" aria-label="Help Centre and Agreements">
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Help Centre">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-blue-100 to-webropol-teal-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-question-circle text-webropol-blue-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Help Centre</span>
+                                                <span class="text-webropol-gray-500 text-xs">Support and documentation</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Help Centre">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Agreements">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-file-contract text-webropol-teal-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Agreements</span>
+                                                <span class="text-webropol-gray-500 text-xs">Terms and legal documents</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Agreements">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </section>
+
+                            <!-- Data Security Section -->
+                            <section class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300" aria-labelledby="security-heading">
+                                <div class="mb-6">
+                                    <h2 id="security-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
+                                        Data Security
+                                    </h2>
+                                    <p class="text-webropol-gray-600 text-sm leading-relaxed">
+                                        Learn about our security measures and compliance standards
+                                    </p>
+                                </div>
+                                <nav class="space-y-3" aria-label="Data Security">
+                                    <a href="#" 
+                                       class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-teal-50 border border-transparent hover:border-webropol-teal-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-300"
+                                       role="button"
+                                       aria-label="Access Data Security White Paper">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-webropol-blue-100 to-webropol-teal-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                                                <i class="fas fa-file-shield text-webropol-blue-600 text-lg" aria-hidden="true"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Data Security White Paper</span>
+                                                <span class="text-webropol-gray-500 text-xs">Security documentation</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-teal-100 flex items-center justify-center transition-colors group/info"
+                                                    aria-label="More information about Data Security White Paper">
+                                                <i class="fas fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-teal-600 transition-colors text-sm" aria-hidden="true"></i>
+                                            </button>
+                                            <i class="fas fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-teal-600 group-hover:translate-x-1 transition-all duration-300 text-sm" aria-hidden="true"></i>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Floating Create Button Component -->
+    <webropol-floating-button></webropol-floating-button>
+
+    <!-- Create Folder Modal -->
+    <div x-show="showCreateFolder" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showCreateFolder = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <div class="p-6 border-b border-webropol-gray-200">
+                <h3 class="text-xl font-bold text-webropol-gray-900">Create New Folder</h3>
+                <p class="text-webropol-gray-600 mt-1">Organize your questions and surveys</p>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder Name</label>
+                        <input x-model="newFolderName" type="text" placeholder="Enter folder name..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description
+                            (Optional)</label>
+                        <textarea x-model="newFolderDescription" rows="3"
+                            placeholder="Describe what this folder contains..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showCreateFolder = false"
+                    class="px-4 py-2 text-webropol-gray-700 font-medium rounded-lg hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+                <button @click="createFolder()"
+                    class="px-6 py-2 bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 hover:from-webropol-teal-600 hover:to-webropol-blue-700 text-white font-semibold rounded-lg transition-all">
+                    Create Folder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move to Folder Modal -->
+    <div x-show="showMoveToFolder !== null" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showMoveToFolder = null"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <div class="p-6 border-b border-webropol-gray-200">
+                <h3 class="text-xl font-bold text-webropol-gray-900">Move to Folder</h3>
+                <p class="text-webropol-gray-600 mt-1">Select a folder for this item</p>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-3">
+                    <template x-for="folder in folders" :key="folder.id">
+                        <button @click="moveToFolder(showMoveToFolder, folder.id)"
+                            class="w-full flex items-center p-3 rounded-xl hover:bg-webropol-teal-50 transition-all text-left">
+                            <div class="w-8 h-8 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-folder text-webropol-teal-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-webropol-gray-900" x-text="folder.name"></div>
+                                <div class="text-sm text-webropol-gray-500"
+                                    x-text="folder.description || 'No description'"></div>
+                            </div>
+                        </button>
+                    </template>
+
+                    <div x-show="folders.length === 0" class="text-center py-8 text-webropol-gray-500">
+                        <i class="fas fa-folder-open text-2xl mb-2"></i>
+                        <p>No folders available. Create one first.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end">
+                <button @click="showMoveToFolder = null"
+                    class="px-4 py-2 text-webropol-gray-700 font-medium rounded-lg hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Preview Modal -->
+    <div x-show="showPreviewModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showPreviewModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div
+                class="flex items-center justify-between p-8 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+                <div class="flex items-center">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-eye text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-webropol-gray-900">Survey Preview</h2>
+                        <p class="text-webropol-gray-600">360 Performance Evaluation</p>
+                    </div>
+                </div>
+                <button @click="showPreviewModal = false"
+                    class="w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-3xl mx-auto space-y-8">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold text-webropol-gray-900 mb-2">360</h3>
+                        <p class="text-webropol-gray-600">Please complete this performance evaluation survey</p>
+                    </div>
+
+                    <!-- Question 1: Gender -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-teal-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-4">1. Gender</h4>
+                        <div class="space-y-3">
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-webropol-teal-50 transition-colors cursor-pointer">
+                                <input type="radio" name="gender"
+                                    class="form-radio h-5 w-5 text-webropol-teal-600 mr-4">
+                                <span class="text-webropol-gray-700 font-medium">Male</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-webropol-teal-50 transition-colors cursor-pointer">
+                                <input type="radio" name="gender"
+                                    class="form-radio h-5 w-5 text-webropol-teal-600 mr-4">
+                                <span class="text-webropol-gray-700 font-medium">Female</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Rate -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-teal-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">2. Rate</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-webropol-gray-200">
+                                        <th class="text-left py-3 px-4 font-medium text-webropol-gray-700"></th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            1</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            2</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            3</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            4</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            5</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-webropol-gray-100">
+                                    <tr class="hover:bg-webropol-teal-50/50 transition-colors">
+                                        <td class="py-4 px-4 font-medium text-webropol-gray-900">A</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-webropol-teal-50/50 transition-colors">
+                                        <td class="py-4 px-4 font-medium text-webropol-gray-900">B</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Recommend -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-teal-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">3. Recommend</h4>
+                        <div class="flex flex-col space-y-4">
+                            <div class="flex items-center justify-between text-sm text-webropol-gray-600 font-medium">
+                                <span>Not at all likely</span>
+                                <span>Extremely likely</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">0</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">1</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">2</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">3</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">4</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">5</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">6</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">7</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">8</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">9</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-teal-500 hover:bg-webropol-teal-50 transition-all font-semibold text-webropol-gray-700">10</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Leadership -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-teal-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">4. Leadership and charisma</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-webropol-gray-200">
+                                        <th
+                                            class="text-left py-3 px-4 font-medium text-webropol-gray-700 min-w-[200px]">
+                                        </th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            1</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            2</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            3</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            4</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            5</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-webropol-gray-100">
+                                    <tr class="hover:bg-webropol-teal-50/50 transition-colors">
+                                        <td class="py-4 px-4 text-webropol-gray-900">Possesses dignity and authority
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-webropol-teal-50/50 transition-colors">
+                                        <td class="py-4 px-4 text-webropol-gray-900">Sets clear goals</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-teal-600">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-8 border-t border-webropol-gray-200 bg-webropol-gray-50/50 flex items-center justify-end space-x-4">
+                <button @click="showPreviewModal = false"
+                    class="px-6 py-3 text-webropol-gray-700 font-medium rounded-xl hover:bg-webropol-gray-100 transition-all">
+                    Close Preview
+                </button>
+                <button
+                    class="hidden px-6 py-3 bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 hover:from-webropol-teal-600 hover:to-webropol-blue-700 text-white font-semibold rounded-xl shadow-medium transition-all">
+                    Use This Survey
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create New Modal -->
+    <div x-show="showCreateModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showCreateModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div
+                class="p-8 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+                <h3 class="text-2xl font-bold text-webropol-gray-900 mb-2">Create New Survey or Question Library</h3>
+                <p class="text-webropol-gray-600">Choose what you want to create. This will take to create new page of
+                    each survey</p>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Surveys -->
+                    <button @click="createItem('surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-poll-h text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Create custom surveys</span>
+                    </button>
+
+                    <!-- Events -->
+                    <button @click="createItem('events')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-calendar-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Events</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Event management</span>
+                    </button>
+
+                    <!-- EXW Surveys -->
+                    <button @click="createItem('exw-surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-chart-line text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">EXW Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Employee experience</span>
+                    </button>
+
+                    <!-- Case Management -->
+                    <button @click="createItem('case-management')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-briefcase text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Case Management</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Manage cases</span>
+                    </button>
+
+                    <!-- eTests -->
+                    <button @click="createItem('etests')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-clipboard-check text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">eTests</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Online testing</span>
+                    </button>
+
+                    <!-- Assessments -->
+                    <button @click="createItem('assessments')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-tasks text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Assessments</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Performance review</span>
+                    </button>
+
+                    <!-- Touch Tablets -->
+                    <button @click="createItem('touch-tablets')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-tablet-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Touch Tablets</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Tablet surveys</span>
+                    </button>
+
+                    <!-- Direct Mobile Surveys -->
+                    <button @click="createItem('mobile-surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-mobile-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Direct Mobile Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Mobile optimized</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-8 border-t border-webropol-gray-200 bg-webropol-gray-50/50 flex items-center justify-end">
+                <button @click="showCreateModal = false"
+                    class="px-6 py-3 text-webropol-gray-700 font-medium rounded-xl hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function libraryApp() {
+            return {
+                currentView: 'questions',
+                selectedLanguage: 'en',
+                searchTerm: '',
+                showPreviewModal: false,
+                showCreateFolder: false,
+                showCreateModal: false,
+                showMoveToFolder: null,
+                showAddToFolder: null,
+                newFolderName: '',
+                newFolderDescription: '',
+                expandedFolders: [],
+                showOnlyTitles: false,
+                
+                // Selection state
+                selectedQuestions: [],
+                selectedSurveys: [],
+                selectAllQuestions: false,
+                selectAllSurveys: false,
+                showContextMenu: null,
+
+                // Sample data
+                folders: [
+                    { id: 1, name: 'Customer Feedback', description: 'Questions and surveys for customer satisfaction' },
+                    { id: 2, name: 'Employee Evaluation', description: '360 degree feedback surveys' },
+                    { id: 3, name: 'Market Research', description: 'Market analysis questions' }
+                ],
+
+                questions: [
+                    { 
+                        id: 1, 
+                        name: 'Valintakysymys', 
+                        type: 'selection', 
+                        language: 'fi', 
+                        folderId: null,
+                        questionType: 'Selection',
+                        options: ['Vaihtoehto 1', 'Vaihtoehto 2', 'Vaihtoehto 3', 'Vaihtoehto 4']
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Avoin kysymys', 
+                        type: 'text', 
+                        language: 'fi', 
+                        folderId: 1,
+                        questionType: 'Text Question',
+                        options: []
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Selection Question', 
+                        type: 'selection', 
+                        language: 'en', 
+                        folderId: null,
+                        questionType: 'Selection',
+                        options: ['Option A', 'Option B', 'Option C', 'Option D']
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Rating Question', 
+                        type: 'rating', 
+                        language: 'en', 
+                        folderId: 2,
+                        questionType: 'Rating',
+                        options: ['1 - Poor', '2 - Fair', '3 - Good', '4 - Very Good', '5 - Excellent']
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Multiple Choice', 
+                        type: 'multiple', 
+                        language: 'en', 
+                        folderId: 1,
+                        questionType: 'Multiple Choice',
+                        options: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4', 'Choice 5']
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Tekstikysymys', 
+                        type: 'text', 
+                        language: 'fi', 
+                        folderId: 3,
+                        questionType: 'Text Question',
+                        options: []
+                    }
+                ],
+
+                surveys: [
+                    { id: 1, name: '360', type: 'survey', language: 'en', folderId: 2 },
+                    { id: 2, name: 'Revalidation Sample', type: 'survey', language: 'en', folderId: null },
+                    { id: 3, name: 'Asiakastyytyväisyys', type: 'survey', language: 'fi', folderId: 1 },
+                    { id: 4, name: 'Employee Satisfaction', type: 'survey', language: 'en', folderId: 2 }
+                ],
+
+                setView(view) {
+                    this.currentView = view;
+                },
+
+                toggleFolder(folderId) {
+                    if (this.expandedFolders.includes(folderId)) {
+                        this.expandedFolders = this.expandedFolders.filter(id => id !== folderId);
+                    } else {
+                        this.expandedFolders.push(folderId);
+                    }
+                },
+
+                createFolder() {
+                    if (!this.newFolderName.trim()) return;
+
+                    const newFolder = {
+                        id: Date.now(),
+                        name: this.newFolderName.trim(),
+                        description: this.newFolderDescription.trim()
+                    };
+
+                    this.folders.push(newFolder);
+                    this.newFolderName = '';
+                    this.newFolderDescription = '';
+                    this.showCreateFolder = false;
+                },
+
+                moveToFolder(itemId, folderId) {
+                    const allItems = [...this.questions, ...this.surveys];
+                    const item = allItems.find(item => item.id === itemId);
+                    if (item) {
+                        item.folderId = folderId;
+                    }
+                    this.showMoveToFolder = null;
+                },
+
+                removeFromFolder(itemId, folderId) {
+                    const allItems = [...this.questions, ...this.surveys];
+                    const item = allItems.find(item => item.id === itemId);
+                    if (item && item.folderId === folderId) {
+                        item.folderId = null;
+                    }
+                },
+
+                getFilteredFolders() {
+                    return this.folders.filter(folder => {
+                        const folderItems = this.getFolderItems(folder.id);
+                        return folderItems.length > 0;
+                    });
+                },
+
+                getFolderItems(folderId) {
+                    const currentItems = this.currentView === 'questions' ? this.questions : this.surveys;
+                    return currentItems.filter(item => {
+                        const matchesFolder = item.folderId === folderId;
+                        const matchesLanguage = item.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesFolder && matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFolderItemCount(folderId) {
+                    return this.getFolderItems(folderId).length;
+                },
+
+                getUngroupedItems() {
+                    const currentItems = this.currentView === 'questions' ? this.questions : this.surveys;
+                    return currentItems.filter(item => {
+                        const isUngrouped = item.folderId === null;
+                        const matchesLanguage = item.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return isUngrouped && matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFilteredQuestions() {
+                    return this.questions.filter(question => {
+                        const matchesLanguage = question.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || question.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFilteredSurveys() {
+                    return this.surveys.filter(survey => {
+                        const matchesLanguage = survey.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || survey.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesLanguage && matchesSearch;
+                    });
+                },
+
+                createItem(type) {
+                    // Close the modal first
+                    this.showCreateModal = false;
+
+                    // Handle the creation logic based on type
+                    this.handleItemCreation(type);
+                },
+
+                editFolder(folderId) {
+                    // Implement folder editing functionality
+                    console.log('Edit folder:', folderId);
+                },
+
+                // Checkbox selection methods
+                toggleQuestionSelection(questionId) {
+                    if (this.selectedQuestions.includes(questionId)) {
+                        this.selectedQuestions = this.selectedQuestions.filter(id => id !== questionId);
+                    } else {
+                        this.selectedQuestions.push(questionId);
+                    }
+                    this.updateSelectAllQuestions();
+                },
+
+                toggleSurveySelection(surveyId) {
+                    if (this.selectedSurveys.includes(surveyId)) {
+                        this.selectedSurveys = this.selectedSurveys.filter(id => id !== surveyId);
+                    } else {
+                        this.selectedSurveys.push(surveyId);
+                    }
+                    this.updateSelectAllSurveys();
+                },
+
+                toggleSelectAllQuestions() {
+                    if (this.selectAllQuestions) {
+                        this.selectedQuestions = this.getFilteredQuestions().map(q => q.id);
+                    } else {
+                        this.selectedQuestions = [];
+                    }
+                },
+
+                toggleSelectAllSurveys() {
+                    if (this.selectAllSurveys) {
+                        this.selectedSurveys = this.getFilteredSurveys().map(s => s.id);
+                    } else {
+                        this.selectedSurveys = [];
+                    }
+                },
+
+                updateSelectAllQuestions() {
+                    const filteredQuestions = this.getFilteredQuestions();
+                    this.selectAllQuestions = filteredQuestions.length > 0 && 
+                        filteredQuestions.every(q => this.selectedQuestions.includes(q.id));
+                },
+
+                updateSelectAllSurveys() {
+                    const filteredSurveys = this.getFilteredSurveys();
+                    this.selectAllSurveys = filteredSurveys.length > 0 && 
+                        filteredSurveys.every(s => this.selectedSurveys.includes(s.id));
+                },
+
+                // Action methods
+                deleteSelectedItems() {
+                    if (this.currentView === 'questions') {
+                        this.questions = this.questions.filter(q => !this.selectedQuestions.includes(q.id));
+                        this.selectedQuestions = [];
+                        this.selectAllQuestions = false;
+                    } else {
+                        this.surveys = this.surveys.filter(s => !this.selectedSurveys.includes(s.id));
+                        this.selectedSurveys = [];
+                        this.selectAllSurveys = false;
+                    }
+                },
+
+                freezeSelectedItems() {
+                    // Implement freeze functionality
+                    const selectedIds = this.currentView === 'questions' ? this.selectedQuestions : this.selectedSurveys;
+                    console.log('Freezing items:', selectedIds);
+                    // Clear selection after action
+                    if (this.currentView === 'questions') {
+                        this.selectedQuestions = [];
+                        this.selectAllQuestions = false;
+                    } else {
+                        this.selectedSurveys = [];
+                        this.selectAllSurveys = false;
+                    }
+                },
+
+                // Context menu methods
+                toggleContextMenu(itemId, itemType) {
+                    if (this.showContextMenu === itemId) {
+                        this.showContextMenu = null;
+                    } else {
+                        this.showContextMenu = itemId;
+                    }
+                },
+
+                deleteItem(itemId, itemType) {
+                    if (itemType === 'question') {
+                        this.questions = this.questions.filter(q => q.id !== itemId);
+                    } else if (itemType === 'survey') {
+                        this.surveys = this.surveys.filter(s => s.id !== itemId);
+                    }
+                    this.showContextMenu = null;
+                },
+
+                freezeItem(itemId, itemType) {
+                    console.log('Freezing item:', itemId, itemType);
+                    this.showContextMenu = null;
+                },
+
+                hasSelectedItems() {
+                    return this.currentView === 'questions' 
+                        ? this.selectedQuestions.length > 0 
+                        : this.selectedSurveys.length > 0;
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
