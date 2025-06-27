@@ -1,28 +1,48 @@
 # Webropol Design System
 
-A modular, scalable design system built with HTML, CSS (Tailwind), and JavaScript for the Webropol platform.
+A comprehensive, modular design system built with HTML, CSS, and JavaScript. Provides consistent, accessible, and scalable UI components for the Webropol platform.
 
-## 🏗️ Structure
+## ✨ Redesigned Card Components
+
+The card components have been completely redesigned with:
+- **Glass Morphism Effects**: Modern backdrop blur and transparency
+- **Enhanced Action Cards**: Event-style design with gradient headers
+- **Navigation List Cards**: Smooth hover effects and better accessibility
+- **Video Cards with Backgrounds**: Real background image support (20+ images)
+
+## 🚀 Quick Start (HTML/CSS/JS)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="design-system/styles/animations.css">
+</head>
+<body>
+    <!-- Use your cards -->
+    <webropol-card title="My Survey" icon="chart-bar" badge="New">
+        <p>Survey content here</p>
+    </webropol-card>
+
+    <!-- Load components -->
+    <script type="module" src="design-system/webropol-cards.js"></script>
+</body>
+</html>
+```
+
+## 📁 Simple Structure
 
 ```
 design-system/
-├── components/          # Reusable UI components
-│   ├── buttons/
-│   ├── cards/
-│   ├── modals/
-│   ├── forms/
-│   ├── navigation/
-│   ├── feedback/
-│   └── layout/
-├── utils/              # Utility functions and helpers
-│   ├── base-component.js
-│   ├── theme-utils.js
-│   └── accessibility.js
-├── styles/             # Global styles and tokens
-│   ├── tokens.js
-│   ├── animations.css
-│   └── utilities.css
-└── index.js           # Main entry point
+├── webropol-cards.js          # Simple loader for all components
+├── simple-example.html        # Working example
+├── demo.html                  # Full demo with all designs
+├── components/cards/          # Updated card components
+├── utils/                     # Base utilities
+├── styles/                    # CSS animations
+└── HTML-CSS-JS-GUIDE.md      # Integration guide
 ```
 
 ## 🎨 Design Tokens

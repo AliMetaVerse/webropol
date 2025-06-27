@@ -1,13 +1,13 @@
 /**
  * Webropol Card Component
- * Flexible container component for content organization
+ * Flexible container component for content organization with glass morphism design
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolCard extends BaseComponent {
   static get observedAttributes() {
-    return ['variant', 'size', 'title', 'subtitle', 'image', 'clickable', 'badge'];
+    return ['variant', 'size', 'title', 'subtitle', 'image', 'clickable', 'badge', 'icon', 'status'];
   }
 
   constructor() {
@@ -31,16 +31,18 @@ export class WebropolCard extends BaseComponent {
     const image = this.getAttr('image');
     const clickable = this.getBoolAttr('clickable');
     const badge = this.getAttr('badge');
+    const icon = this.getAttr('icon');
+    const status = this.getAttr('status');
     
     // Only render if we haven't already
     if (!this.querySelector('.card-wrapper')) {
       // Store original content nodes (not innerHTML to preserve web components)
       const originalNodes = Array.from(this.childNodes);
       
-      // Base classes
+      // Base classes with glass morphism
       const baseClasses = this.classNames(
-        'card-wrapper rounded-2xl transition-all duration-200',
-        clickable ? 'cursor-pointer hover:transform hover:scale-[1.02] hover:shadow-lg' : '',
+        'card-wrapper bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 transition-all duration-300',
+        clickable ? 'cursor-pointer hover:shadow-2xl hover:transform hover:scale-[1.02]' : 'hover:shadow-2xl',
         this.getVariantClasses('card', variant),
         this.getSizeClasses('card', size)
       );
@@ -52,52 +54,67 @@ export class WebropolCard extends BaseComponent {
         wrapper.setAttribute('role', 'button');
         wrapper.setAttribute('tabindex', '0');
       }
-      
-      // Image section
-      if (image) {
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'relative';
-        imageContainer.innerHTML = `
-          <img src="${image}" alt="${title || ''}" class="w-full h-48 object-cover rounded-t-2xl">
-          ${badge ? `<span class="absolute top-4 right-4 bg-webropol-gray-700 text-white text-xs px-3 py-1 rounded-full">${badge}</span>` : ''}
-        `;
-        wrapper.appendChild(imageContainer);
-      } else if (badge) {
-        const badgeContainer = document.createElement('div');
-        badgeContainer.className = 'relative';
-        badgeContainer.innerHTML = `<span class="absolute top-4 right-4 bg-webropol-gray-700 text-white text-xs px-3 py-1 rounded-full">${badge}</span>`;
-        wrapper.appendChild(badgeContainer);
-      }
-      
-      // Content section
-      const contentSection = document.createElement('div');
-      contentSection.className = 'space-y-4';
-      
-      // Header section
-      if (title || subtitle) {
+
+      // Header section with icon and badge
+      if (icon || badge || title || subtitle) {
         const headerSection = document.createElement('div');
-        headerSection.className = 'space-y-2';
-        
+        headerSection.className = 'mb-4';
+
+        // Icon and badge row
+        if (icon || badge) {
+          const iconBadgeRow = document.createElement('div');
+          iconBadgeRow.className = 'flex items-center justify-between mb-4';
+
+          if (icon) {
+            const iconContainer = document.createElement('div');
+            iconContainer.className = 'w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-2xl flex items-center justify-center';
+            iconContainer.innerHTML = `<i class="fas fa-${icon} text-white text-lg"></i>`;
+            iconBadgeRow.appendChild(iconContainer);
+          }
+
+          if (badge) {
+            const badgeElement = document.createElement('span');
+            const badgeClasses = this.getBadgeClasses(status || 'default');
+            badgeElement.className = `${badgeClasses} text-xs px-3 py-1 rounded-full font-medium`;
+            badgeElement.textContent = badge;
+            iconBadgeRow.appendChild(badgeElement);
+          }
+
+          headerSection.appendChild(iconBadgeRow);
+        }
+
+        // Title and subtitle
         if (title) {
           const titleElement = document.createElement('h3');
-          titleElement.className = 'text-lg font-semibold text-webropol-gray-900';
+          titleElement.className = 'text-xl font-bold text-webropol-gray-900 mb-2';
           titleElement.textContent = title;
           headerSection.appendChild(titleElement);
         }
-        
+
         if (subtitle) {
           const subtitleElement = document.createElement('p');
-          subtitleElement.className = 'text-sm text-webropol-gray-600';
+          subtitleElement.className = 'text-webropol-gray-600 text-sm mb-4';
           subtitleElement.textContent = subtitle;
           headerSection.appendChild(subtitleElement);
         }
-        
-        contentSection.appendChild(headerSection);
+
+        wrapper.appendChild(headerSection);
+      }
+      
+      // Image section (if provided)
+      if (image) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'relative mb-4';
+        imageContainer.innerHTML = `
+          <img src="${image}" alt="${title || ''}" class="w-full h-48 object-cover rounded-xl">
+          ${badge && !icon ? `<span class="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">${badge}</span>` : ''}
+        `;
+        wrapper.appendChild(imageContainer);
       }
       
       // Main content container
       const mainContent = document.createElement('div');
-      mainContent.className = 'card-content';
+      mainContent.className = 'card-content space-y-4';
       
       // Move original nodes (preserving web components)
       originalNodes.forEach(node => {
@@ -106,13 +123,24 @@ export class WebropolCard extends BaseComponent {
         }
       });
       
-      contentSection.appendChild(mainContent);
-      wrapper.appendChild(contentSection);
+      wrapper.appendChild(mainContent);
       
       // Clear and append wrapper
       this.innerHTML = '';
       this.appendChild(wrapper);
     }
+  }
+
+  getBadgeClasses(status) {
+    const statusClasses = {
+      'live': 'bg-emerald-100 text-emerald-700',
+      'active': 'bg-blue-100 text-blue-700',
+      'pro': 'bg-yellow-100 text-yellow-700',
+      'recent': 'bg-webropol-teal-100 text-webropol-teal-700',
+      'draft': 'bg-gray-100 text-gray-700',
+      'default': 'bg-webropol-gray-100 text-webropol-gray-700'
+    };
+    return statusClasses[status] || statusClasses.default;
   }
 
   bindEvents() {
