@@ -24,6 +24,78 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/animations.css">
+    <style>
+        /* Ensure proper CSS custom properties are loaded */
+        :root {
+            --webropol-teal-50: #f0fdff;
+            --webropol-teal-100: #ccf7fe;
+            --webropol-teal-500: #06b6d4;
+            --webropol-teal-600: #0891b2;
+            --webropol-blue-50: #eff6ff;
+            --webropol-gray-600: #475569;
+            --webropol-gray-700: #334155;
+            --webropol-gray-900: #0f172a;
+        }
+        
+        /* Fix for cards grid layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        /* Fallback for web components that haven't loaded */
+        webropol-card:not(:defined) {
+            display: block;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+        
+        webropol-action-card:not(:defined) {
+            display: block;
+            padding: 1.5rem;
+            background: linear-gradient(to bottom right, #dbeafe, #ccf7fe);
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        webropol-button:not(:defined) {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #06b6d4;
+            color: white;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* Prevent nesting issues - Hide and warn about nested components */
+        webropol-card webropol-card,
+        webropol-action-card webropol-action-card,
+        webropol-list-card webropol-list-card,
+        webropol-video-card webropol-video-card,
+        webropol-configurable-card webropol-configurable-card {
+            display: none !important;
+            border: 3px solid red !important;
+        }
+        
+        /* Debug mode - show nested component errors */
+        webropol-card webropol-card::before,
+        webropol-action-card webropol-action-card::before {
+            content: "⚠️ NESTED COMPONENT DETECTED!" !important;
+            color: red !important;
+            font-weight: bold !important;
+            display: block !important;
+            background: yellow !important;
+            padding: 10px !important;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30 min-h-screen">
     
@@ -43,6 +115,85 @@
                 Toggle Dark Mode
             </webropol-button>
         </div>
+
+        <!-- Layout Components Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Layout Components</h2>
+            
+            <!-- Header Component -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Header</h3>
+                <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                    <webropol-header 
+                        username="Ali Al-Zuhairi" 
+                        title="Dashboard" 
+                        show-notifications 
+                        show-help>
+                        <div slot="actions">
+                            <webropol-button variant="primary" size="sm" icon="plus">
+                                New Survey
+                            </webropol-button>
+                        </div>
+                    </webropol-header>
+                </div>
+                <p class="text-sm text-webropol-gray-600 mt-2">
+                    The header component includes user information, notifications, and contextual actions.
+                </p>
+            </div>
+
+            <!-- Sidebar Component -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Sidebar Navigation</h3>
+                <div class="bg-webropol-gray-50 rounded-2xl p-4 shadow-card">
+                    <div class="h-96 overflow-hidden rounded-xl">
+                        <webropol-sidebar active="surveys" base=""></webropol-sidebar>
+                    </div>
+                </div>
+                <p class="text-sm text-webropol-gray-600 mt-2">
+                    The sidebar provides main navigation with active state management and responsive design.
+                </p>
+            </div>
+
+            <!-- Layout Preview -->
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Complete Layout Preview</h3>
+                <div class="bg-webropol-gray-100 rounded-2xl p-4 shadow-card">
+                    <div class="h-96 bg-white rounded-xl overflow-hidden shadow-inner">
+                        <div class="flex h-full">
+                            <div class="w-72 flex-shrink-0">
+                                <webropol-sidebar active="dashboards" base=""></webropol-sidebar>
+                            </div>
+                            <div class="flex-1 flex flex-col">
+                                <webropol-header 
+                                    username="Demo User" 
+                                    title="Analytics Dashboard"
+                                    show-notifications>
+                                </webropol-header>
+                                <div class="flex-1 p-8 bg-webropol-gray-50">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <webropol-action-card 
+                                            icon="chart-bar" 
+                                            title="Survey Analytics" 
+                                            subtitle="View detailed insights">
+                                            <webropol-button variant="primary" size="sm">View Reports</webropol-button>
+                                        </webropol-action-card>
+                                        <webropol-action-card 
+                                            icon="users" 
+                                            title="Response Rate" 
+                                            subtitle="Track engagement">
+                                            <webropol-button variant="secondary" size="sm">View Details</webropol-button>
+                                        </webropol-action-card>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-webropol-gray-600 mt-2">
+                    Complete layout showing sidebar and header integration with content area.
+                </p>
+            </div>
+        </section>
 
         <!-- Buttons Section -->
         <section class="mb-16">
@@ -85,22 +236,404 @@
             </div>
         </section>
 
-        <!-- Cards Section -->
+        <!-- Basic Cards Section -->
         <section class="mb-16">
-            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Cards</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <webropol-card variant="default" title="Basic Card" subtitle="Simple card with title and subtitle">
-                    <p class="text-webropol-gray-600">This is a basic card component with default styling.</p>
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Basic Cards</h2>
+            <div class="cards-grid">
+                <webropol-card variant="default" title="Survey Overview" subtitle="Get insights from your data">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-webropol-gray-600">Total Responses</span>
+                            <span class="font-semibold text-webropol-gray-900">2,847</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-webropol-gray-600">Completion Rate</span>
+                            <span class="font-semibold text-green-600">89.2%</span>
+                        </div>
+                        <div class="w-full bg-webropol-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 h-2 rounded-full" style="width: 89%"></div>
+                        </div>
+                    </div>
                 </webropol-card>
 
-                <webropol-card variant="elevated" title="Elevated Card" badge="New" clickable>
-                    <p class="text-webropol-gray-600">This card has elevation and is clickable.</p>
-                    <webropol-button variant="secondary" size="sm">Learn More</webropol-button>
+                <webropol-card variant="elevated" title="Team Collaboration" badge="Active" clickable>
+                    <div class="space-y-3">
+                        <p class="text-webropol-gray-600">Work together on surveys and analyze results as a team.</p>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs font-semibold">A</span>
+                                </div>
+                                <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs font-semibold">S</span>
+                                </div>
+                                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs font-semibold">M</span>
+                                </div>
+                            </div>
+                            <span class="text-sm text-webropol-gray-500">+5 more</span>
+                        </div>
+                        <webropol-button variant="secondary" size="sm">View Team</webropol-button>
+                    </div>
                 </webropol-card>
 
-                <webropol-card variant="gradient" title="Gradient Card" subtitle="With gradient background">
-                    <p class="text-webropol-gray-600">This card uses a gradient background style.</p>
+                <webropol-card variant="gradient" title="Premium Features" subtitle="Unlock advanced capabilities">
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="text-sm text-webropol-gray-700">Custom branding</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="text-sm text-webropol-gray-700">Advanced analytics</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="text-sm text-webropol-gray-700">API integration</span>
+                        </div>
+                        <webropol-button variant="primary" size="sm">Upgrade Now</webropol-button>
+                    </div>
                 </webropol-card>
+
+                <webropol-card variant="default" title="Recent Activity" subtitle="Stay updated with latest changes">
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-webropol-gray-900">Survey published</p>
+                                <p class="text-xs text-webropol-gray-500">2 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-webropol-gray-900">New responses received</p>
+                                <p class="text-xs text-webropol-gray-500">15 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm font-medium text-webropol-gray-900">Report generated</p>
+                                <p class="text-xs text-webropol-gray-500">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </webropol-card>
+            </div>
+        </section>
+
+        <!-- Action Cards Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Action Cards</h2>
+            <div class="cards-grid">
+                <webropol-action-card 
+                    icon="poll-h" 
+                    title="Create Survey" 
+                    subtitle="Start building your survey">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Design professional surveys with our intuitive drag-and-drop builder. Choose from templates or start from scratch.</p>
+                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
+                            <span class="flex items-center">
+                                <i class="fas fa-clock mr-1"></i>
+                                5 min setup
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-users mr-1"></i>
+                                Unlimited responses
+                            </span>
+                        </div>
+                    </div>
+                    <webropol-button variant="primary" size="sm" icon="plus">Get Started</webropol-button>
+                </webropol-action-card>
+
+                <webropol-action-card 
+                    icon="chart-line" 
+                    title="Analytics Dashboard" 
+                    subtitle="Analyze your survey data"
+                    variant="orange">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Get powerful insights with real-time analytics, custom reports, and data visualization tools.</p>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div class="font-semibold text-webropol-gray-900">89%</div>
+                                <div class="text-webropol-gray-600">Completion</div>
+                            </div>
+                            <div class="bg-white/50 rounded-lg p-2 text-center">
+                                <div class="font-semibold text-webropol-gray-900">4.8★</div>
+                                <div class="text-webropol-gray-600">Satisfaction</div>
+                            </div>
+                        </div>
+                    </div>
+                    <webropol-button variant="secondary" size="sm" icon="chart-bar">View Reports</webropol-button>
+                </webropol-action-card>
+
+                <webropol-action-card 
+                    icon="calendar-alt" 
+                    title="Event Management" 
+                    subtitle="Plan and track events"
+                    variant="pink">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Create events, manage registrations, and gather feedback with integrated survey tools.</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-webropol-gray-600">Next Event:</span>
+                                <span class="font-medium text-webropol-gray-900">Q1 Webinar</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-webropol-gray-600">Registered:</span>
+                                <span class="font-medium text-green-600">142 attendees</span>
+                            </div>
+                        </div>
+                    </div>
+                    <webropol-button variant="outline" size="sm" icon="calendar-plus">Schedule Event</webropol-button>
+                </webropol-action-card>
+
+                <webropol-action-card 
+                    icon="share-alt" 
+                    title="Share & Collaborate" 
+                    subtitle="Work together seamlessly">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Share surveys with your team, collaborate in real-time, and manage permissions.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-link text-green-600 text-xs"></i>
+                                </div>
+                                <span class="text-sm text-webropol-gray-700">Public link</span>
+                            </div>
+                            <span class="text-xs text-green-600">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-envelope text-blue-600 text-xs"></i>
+                                </div>
+                                <span class="text-sm text-webropol-gray-700">Email invite</span>
+                            </div>
+                            <span class="text-xs text-webropol-gray-500">Ready</span>
+                        </div>
+                    </div>
+                    <webropol-button variant="tertiary" size="sm" icon="share">Share Now</webropol-button>
+                </webropol-action-card>
+
+                <webropol-action-card 
+                    icon="cog" 
+                    title="Settings & Config" 
+                    subtitle="Customize your workspace">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Configure survey settings, manage integrations, and customize your account preferences.</p>
+                        <div class="grid grid-cols-3 gap-1 text-xs">
+                            <div class="text-center p-2 bg-white/30 rounded">
+                                <i class="fas fa-paint-brush text-webropol-teal-600 mb-1"></i>
+                                <div>Themes</div>
+                            </div>
+                            <div class="text-center p-2 bg-white/30 rounded">
+                                <i class="fas fa-bell text-webropol-blue-600 mb-1"></i>
+                                <div>Notifications</div>
+                            </div>
+                            <div class="text-center p-2 bg-white/30 rounded">
+                                <i class="fas fa-shield-alt text-green-600 mb-1"></i>
+                                <div>Security</div>
+                            </div>
+                        </div>
+                    </div>
+                    <webropol-button variant="secondary" size="sm" icon="cog">Configure</webropol-button>
+                </webropol-action-card>
+
+                <webropol-action-card 
+                    icon="download" 
+                    title="Export & Reports" 
+                    subtitle="Download your data"
+                    variant="custom" 
+                    gradient-from="purple-100" 
+                    gradient-to="blue-100">
+                    <div class="space-y-3">
+                        <p class="text-sm text-webropol-gray-600">Export survey data in multiple formats. Generate professional reports and presentations.</p>
+                        <div class="flex flex-wrap gap-1">
+                            <span class="px-2 py-1 bg-white/50 rounded text-xs font-medium">CSV</span>
+                            <span class="px-2 py-1 bg-white/50 rounded text-xs font-medium">Excel</span>
+                            <span class="px-2 py-1 bg-white/50 rounded text-xs font-medium">PDF</span>
+                            <span class="px-2 py-1 bg-white/50 rounded text-xs font-medium">PowerPoint</span>
+                        </div>
+                        <div class="text-xs text-webropol-gray-500">
+                            Last export: 2 days ago
+                        </div>
+                    </div>
+                    <webropol-button variant="primary" size="sm" icon="download">Export Data</webropol-button>
+                </webropol-action-card>
+            </div>
+        </section>
+
+        <!-- List Cards Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">List Cards</h2>
+            <div class="cards-grid">
+                <webropol-list-card 
+                    title="Recent Surveys" 
+                    items='[
+                        {"title": "Customer Satisfaction Q4", "meta": "Created 2 days ago", "status": "active", "badge": "142 responses"},
+                        {"title": "Employee Feedback", "meta": "Created 1 week ago", "status": "completed", "badge": "89 responses"},
+                        {"title": "Product Research", "meta": "Created 2 weeks ago", "status": "draft", "badge": "Draft"}
+                    ]'>
+                </webropol-list-card>
+
+                <webropol-list-card 
+                    title="Upcoming Events" 
+                    icon="calendar-alt"
+                    items='[
+                        {"title": "Webinar: Advanced Survey Techniques", "meta": "Dec 15, 2024 - 2:00 PM", "status": "pending", "badge": "45 registered"},
+                        {"title": "Q1 Planning Session", "meta": "Jan 8, 2025 - 10:00 AM", "status": "active", "badge": "Internal"},
+                        {"title": "Customer Workshop", "meta": "Jan 22, 2025 - 1:00 PM", "status": "draft", "badge": "Planning"}
+                    ]'>
+                </webropol-list-card>
+
+                <webropol-list-card 
+                    title="Team Activity" 
+                    icon="users"
+                    compact
+                    items='[
+                        {"title": "Ali created a new survey", "meta": "2 hours ago", "status": "completed"},
+                        {"title": "Sarah shared a dashboard", "meta": "4 hours ago", "status": "completed"},
+                        {"title": "Mike updated event settings", "meta": "1 day ago", "status": "completed"}
+                    ]'>
+                </webropol-list-card>
+            </div>
+        </section>
+
+        <!-- Video Cards Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Video Cards</h2>
+            <div class="cards-grid">
+                <webropol-video-card 
+                    title="Getting Started with Webropol" 
+                    duration="5:24"
+                    thumbnail="https://via.placeholder.com/300x180/4F46E5/FFFFFF?text=Video+Thumbnail"
+                    views="1,234">
+                    <p class="text-sm text-webropol-gray-600">Learn the basics of creating your first survey with our step-by-step guide.</p>
+                </webropol-video-card>
+
+                <webropol-video-card 
+                    title="Advanced Analytics Features" 
+                    duration="8:15"
+                    thumbnail="https://via.placeholder.com/300x180/059669/FFFFFF?text=Analytics+Demo"
+                    views="856"
+                    badge="New">
+                    <p class="text-sm text-webropol-gray-600">Discover powerful analytics tools to get deeper insights from your data.</p>
+                </webropol-video-card>
+
+                <webropol-video-card 
+                    title="Event Management Tutorial" 
+                    duration="6:42"
+                    thumbnail="https://via.placeholder.com/300x180/DC2626/FFFFFF?text=Events+Guide"
+                    views="567">
+                    <p class="text-sm text-webropol-gray-600">Master event creation and management with integrated survey workflows.</p>
+                </webropol-video-card>
+            </div>
+        </section>
+
+        <!-- Configurable Cards Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Configurable Cards</h2>
+            <div class="cards-grid">
+                <webropol-configurable-card 
+                    title="Project Settings" 
+                    subtitle="Configure your project preferences"
+                    icon="cog"
+                    status="active"
+                    badge="Pro"
+                    expandable
+                    actions="true">
+                    <div slot="details">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">API Access:</span>
+                                <span class="text-sm font-medium text-green-600">Enabled</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Data Export:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">CSV, Excel, JSON</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Team Members:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">8 / 15</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Storage Used:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">2.4 GB / 10 GB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div slot="actions">
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-teal-600 bg-webropol-teal-50 rounded-lg hover:bg-webropol-teal-100 transition-colors">
+                            Configure
+                        </button>
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-gray-600 bg-webropol-gray-50 rounded-lg hover:bg-webropol-gray-100 transition-colors">
+                            Export Data
+                        </button>
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-blue-600 bg-webropol-blue-50 rounded-lg hover:bg-webropol-blue-100 transition-colors">
+                            Manage Team
+                        </button>
+                    </div>
+                </webropol-configurable-card>
+
+                <webropol-configurable-card 
+                    title="Survey Template" 
+                    subtitle="Customer Satisfaction Survey v2.1"
+                    icon="file-alt"
+                    status="draft"
+                    expandable>
+                    <div slot="details">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Questions:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">12</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Estimated Time:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">3-5 minutes</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Language:</span>
+                                <span class="text-sm font-medium text-webropol-gray-900">English</span>
+                            </div>
+                        </div>
+                    </div>
+                </webropol-configurable-card>
+
+                <webropol-configurable-card 
+                    title="Integration Status" 
+                    subtitle="Third-party connections"
+                    icon="plug"
+                    status="pending"
+                    badge="2 Issues"
+                    expandable
+                    actions="true">
+                    <div slot="details">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Salesforce:</span>
+                                <span class="text-sm font-medium text-green-600">Connected</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">HubSpot:</span>
+                                <span class="text-sm font-medium text-yellow-600">Syncing</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-webropol-gray-600">Slack:</span>
+                                <span class="text-sm font-medium text-red-600">Error</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div slot="actions">
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-blue-600 bg-webropol-blue-50 rounded-lg hover:bg-webropol-blue-100 transition-colors">
+                            Reconnect
+                        </button>
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-gray-600 bg-webropol-gray-50 rounded-lg hover:bg-webropol-gray-100 transition-colors">
+                            Test All
+                        </button>
+                    </div>
+                </webropol-configurable-card>
             </div>
         </section>
 
@@ -247,8 +780,47 @@
 
     <script type="module" src="index.js"></script>
     <script>
-        // Demo interactions
+        // Demo interactions and fallback handling
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, checking for design system...');
+            
+            // Check if design system loaded properly
+            setTimeout(() => {
+                const webComponents = document.querySelectorAll('webropol-card, webropol-button');
+                let undefinedComponents = 0;
+                
+                webComponents.forEach(component => {
+                    if (!customElements.get(component.tagName.toLowerCase())) {
+                        undefinedComponents++;
+                    }
+                });
+                
+                if (undefinedComponents > 0) {
+                    console.warn(`${undefinedComponents} web components are not defined. This usually means:`);
+                    console.warn('1. The design system JavaScript files are not loading (check browser console for errors)');
+                    console.warn('2. You\'re opening the HTML file directly (file://) instead of through a web server');
+                    console.warn('3. Browser security restrictions are blocking ES6 module imports');
+                    console.warn('');
+                    console.warn('To fix this:');
+                    console.warn('- Serve the files through a local web server (e.g., python -m http.server)');
+                    console.warn('- Or use VS Code Live Server extension');
+                    
+                    // Add visual indicator
+                    const header = document.querySelector('h1');
+                    if (header) {
+                        const warning = document.createElement('div');
+                        warning.className = 'bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg mt-4 text-sm';
+                        warning.innerHTML = `
+                            <strong>⚠️ Design System Not Loaded</strong><br>
+                            Components are showing fallback styling. Please serve this page through a web server to see the full design system in action.
+                        `;
+                        header.parentNode.insertBefore(warning, header.nextSibling);
+                    }
+                } else {
+                    console.log('✅ Design system loaded successfully!');
+                }
+            }, 1000);
+
             // Theme toggle
             const themeToggle = document.getElementById('theme-toggle');
             if (themeToggle) {

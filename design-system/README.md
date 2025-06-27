@@ -47,14 +47,25 @@ design-system/
 - **Card** - Content containers with consistent styling
 - **Modal** - Overlay dialogs and popups
 - **Tooltip** - Contextual information display
+### Core Components
+- **Button** - Primary actions and interactions
+- **Card** - Content containers with various layouts
+- **Modal** - Overlays and dialogs
 - **Badge** - Status indicators and labels
 - **Tabs** - Content organization and navigation
 - **Form Controls** - Input fields, selects, checkboxes
 - **Loading** - Progress indicators and spinners
+- **Tooltip** - Contextual help and information
+
+### Card Components
+- **ActionCard** - Cards with icons, actions, and call-to-action buttons
+- **ListCard** - Cards displaying lists of items with metadata and status
+- **VideoCard** - Cards for video content with thumbnails and play buttons
+- **ConfigurableCard** - Expandable cards with detailed information and actions
 
 ### Navigation Components
-- **Sidebar** - Primary navigation
-- **Header** - Top navigation bar
+- **Sidebar** - Primary navigation with menu items and branding
+- **Header** - Top navigation bar with user controls and actions
 - **Breadcrumbs** - Navigation trail
 - **Pagination** - Content navigation
 
@@ -72,13 +83,58 @@ design-system/
 
 ### 2. Use components
 ```html
+<!-- Basic Button -->
 <webropol-button variant="primary" size="md">
   Click me
 </webropol-button>
 
+<!-- Basic Card -->
 <webropol-card title="Card Title" variant="elevated">
   Card content goes here
 </webropol-card>
+
+<!-- Action Card -->
+<webropol-action-card 
+  icon="poll-h" 
+  title="Create Survey" 
+  subtitle="Build your survey">
+  <p>Description text</p>
+  <webropol-button variant="primary" size="sm">Get Started</webropol-button>
+</webropol-action-card>
+
+<!-- List Card -->
+<webropol-list-card 
+  title="Recent Items" 
+  icon="list"
+  items='[
+    {"title": "Item 1", "meta": "2 days ago", "status": "active"},
+    {"title": "Item 2", "meta": "1 week ago", "status": "completed"}
+  ]'>
+</webropol-list-card>
+
+<!-- Video Card -->
+<webropol-video-card 
+  title="Tutorial Video" 
+  duration="5:24"
+  thumbnail="path/to/thumbnail.jpg"
+  views="1,234">
+  <p>Video description</p>
+</webropol-video-card>
+
+<!-- Configurable Card -->
+<webropol-configurable-card 
+  title="Settings" 
+  icon="cog"
+  status="active"
+  expandable>
+  <div slot="details">
+    <!-- Detailed content -->
+  </div>
+</webropol-configurable-card>
+
+<!-- Layout Components -->
+<webropol-header username="John Doe" show-notifications></webropol-header>
+<webropol-sidebar active="home"></webropol-sidebar>
 ```
 
 ### 3. Customize with attributes
