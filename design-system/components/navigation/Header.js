@@ -18,7 +18,7 @@ export class WebropolHeader extends BaseComponent {
     const showUserMenu = this.getBoolAttr('show-user-menu');
 
     this.innerHTML = `
-      <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft">
+      <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
         <div class="flex items-center space-x-4">
           ${title ? `
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
@@ -53,7 +53,7 @@ export class WebropolHeader extends BaseComponent {
                 </button>
                 
                 <!-- Dropdown menu (hidden by default) -->
-                <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown">
+                <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown z-[9999]">
                   <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
                     <i class="fas fa-user-circle w-4 mr-3"></i>
                     Profile
