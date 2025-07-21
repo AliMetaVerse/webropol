@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Image Modal - MyWebropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-blue': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* Custom radio button styling */
+    .radio-modern {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e2e8f0;
+      border-radius: 50%;
+      position: relative;
+      background: white;
+      transition: all 0.2s ease;
+    }
+    
+    .radio-modern:checked {
+      border-color: #0891b2;
+      background: #0891b2;
+    }
+    
+    .radio-modern:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+    
+    /* Custom button styles */
+    .btn-modern {
+      transition: all 0.2s ease;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-modern:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Input modern styling */
+    .input-modern {
+      transition: all 0.2s ease;
+      border: 1.5px solid #e2e8f0;
+      background: #fafafa;
+    }
+    
+    .input-modern:focus {
+      background: white;
+      border-color: #0891b2;
+      box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+    }
+    
+    /* Toggle button styling */
+    .toggle-btn {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .toggle-btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .toggle-btn:hover:before {
+      left: 100%;
+    }
+    
+    /* Card styling */
+    .card-modern {
+      background: white;
+      border: 1px solid #f1f5f9;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+    
+    .card-modern:hover {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+</head>
+<body class="bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30" x-data="modalData()">
+  <!-- Modal Demo Container -->
+  <div class="min-h-screen flex items-center justify-center p-8">
+    <!-- Demo Buttons -->
+    <div class="space-y-6 text-center">
+      <div class="mb-12">
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-webropol-teal-600 to-webropol-blue-600 bg-clip-text text-transparent mb-3">
+          Add Image Modal
+        </h1>
+        <p class="text-webropol-gray-600 text-lg">Modern, clean interface design</p>
+      </div>
+      <div class="flex space-x-4 justify-center">
+        <button @click="showModal('initial')" class="btn-modern bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white px-8 py-3 rounded-xl hover:from-webropol-teal-600 hover:to-webropol-teal-700 shadow-lg">
+          <i class="fas fa-play mr-2"></i>Initial State
+        </button>
+        <button @click="showModal('gallery')" class="btn-modern bg-gradient-to-r from-webropol-blue-500 to-webropol-blue-600 text-white px-8 py-3 rounded-xl hover:from-webropol-blue-600 hover:to-webropol-blue-700 shadow-lg">
+          <i class="fas fa-images mr-2"></i>Gallery State
+        </button>
+        <button @click="showModal('url')" class="btn-modern bg-gradient-to-r from-webropol-green-500 to-webropol-green-600 text-white px-8 py-3 rounded-xl hover:from-webropol-green-600 hover:to-webropol-green-700 shadow-lg">
+          <i class="fas fa-link mr-2"></i>URL State
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div x-show="isOpen" 
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+       @click="closeModal">
+    
+    <!-- Modal Content -->
+    <div x-show="isOpen"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         @click.stop
+         class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border border-gray-100">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-8 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+            <i class="fas fa-image text-white text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Add Image</h2>
+            <p class="text-gray-500 text-sm">Configure your image settings</p>
+          </div>
+        </div>
+        <button @click="closeModal" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-colors group">
+          <i class="fas fa-times text-gray-500 group-hover:text-gray-700"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-8">
+        <div class="flex space-x-10">
+          <!-- Left Panel -->
+          <div class="flex-1">
+            <!-- Radio Options -->
+            <div class="space-y-5 mb-8">
+              <label class="flex items-center space-x-4 cursor-pointer group p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                <input type="radio" 
+                       name="imageOption" 
+                       value="none" 
+                       x-model="selectedOption"
+                       class="radio-modern">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-ban text-gray-500 text-sm"></i>
+                  </div>
+                  <span class="text-gray-700 font-medium">No Image</span>
+                </div>
+              </label>
+              
+              <label class="flex items-center space-x-4 cursor-pointer group p-4 rounded-xl hover:bg-blue-50 transition-colors">
+                <input type="radio" 
+                       name="imageOption" 
+                       value="gallery" 
+                       x-model="selectedOption"
+                       class="radio-modern">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-images text-blue-600 text-sm"></i>
+                  </div>
+                  <span class="text-gray-700 font-medium">Image from Gallery</span>
+                </div>
+              </label>
+              
+              <label class="flex items-center space-x-4 cursor-pointer group p-4 rounded-xl hover:bg-green-50 transition-colors">
+                <input type="radio" 
+                       name="imageOption" 
+                       value="url" 
+                       x-model="selectedOption"
+                       class="radio-modern">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                    <i class="fas fa-link text-green-600 text-sm"></i>
+                  </div>
+                  <span class="text-gray-700 font-medium">Image from URL</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Gallery Options -->
+            <div x-show="selectedOption === 'gallery'" x-transition class="space-y-8">
+              <!-- Browse Gallery Button -->
+              <div>
+                <button class="btn-modern bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white px-8 py-4 rounded-xl hover:from-webropol-teal-600 hover:to-webropol-teal-700 font-medium shadow-lg">
+                  <i class="fas fa-folder-open mr-3"></i>Browse Gallery
+                </button>
+              </div>
+
+              <!-- Image Alt Text -->
+              <div class="space-y-3">
+                <label class="block text-sm font-semibold text-gray-700">
+                  Image alt text <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       x-model="altText"
+                       placeholder="Describe your image for accessibility"
+                       class="input-modern w-full px-4 py-3 rounded-xl focus:outline-none">
+              </div>
+
+              <!-- Alignment Options -->
+              <div class="space-y-4">
+                <label class="block text-sm font-semibold text-gray-700">
+                  Image alignment with question position
+                </label>
+                <div class="space-y-4">
+                  <!-- Position Buttons -->
+                  <div class="flex space-x-3">
+                    <button @click="alignment.position = 'above'"
+                            :class="alignment.position === 'above' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-arrow-up mr-2"></i>Above question title
+                    </button>
+                    <button @click="alignment.position = 'below'"
+                            :class="alignment.position === 'below' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-arrow-down mr-2"></i>Below question title
+                    </button>
+                  </div>
+                  
+                  <!-- Alignment Buttons -->
+                  <div class="flex space-x-3">
+                    <button @click="alignment.horizontal = 'left'"
+                            :class="alignment.horizontal === 'left' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-left mr-2"></i>Left
+                    </button>
+                    <button @click="alignment.horizontal = 'center'"
+                            :class="alignment.horizontal === 'center' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-center mr-2"></i>Center
+                    </button>
+                    <button @click="alignment.horizontal = 'right'"
+                            :class="alignment.horizontal === 'right' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-right mr-2"></i>Right
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dimensions -->
+              <div class="space-y-4">
+                <label class="block text-sm font-semibold text-gray-700">Dimensions</label>
+                <div class="grid grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label class="block text-xs font-medium text-gray-600 uppercase tracking-wide">Width</label>
+                    <div class="relative">
+                      <input type="number" 
+                             x-model="dimensions.width"
+                             placeholder="123"
+                             class="input-modern w-full px-4 py-3 pr-12 rounded-xl focus:outline-none">
+                      <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-webropol-teal-600 transition-colors">
+                        <i class="fas fa-link"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="block text-xs font-medium text-gray-600 uppercase tracking-wide">Height</label>
+                    <div class="relative">
+                      <input type="number" 
+                             x-model="dimensions.height"
+                             placeholder="123"
+                             class="input-modern w-full px-4 py-3 pr-12 rounded-xl focus:outline-none">
+                      <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-webropol-teal-600 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- URL Options -->
+            <div x-show="selectedOption === 'url'" x-transition class="space-y-8">
+              <!-- URL Input -->
+              <div class="space-y-3">
+                <label class="block text-sm font-semibold text-gray-700">
+                  Enter URL <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <i class="fas fa-link"></i>
+                  </div>
+                  <input type="url" 
+                         x-model="imageUrl"
+                         placeholder="https://example.com/image.jpg"
+                         class="input-modern w-full pl-12 pr-4 py-3 rounded-xl focus:outline-none">
+                </div>
+              </div>
+
+              <!-- Image Alt Text -->
+              <div class="space-y-3">
+                <label class="block text-sm font-semibold text-gray-700">
+                  Image alt text <span class="text-red-500">*</span>
+                </label>
+                <input type="text" 
+                       x-model="altText"
+                       placeholder="Describe your image for accessibility"
+                       class="input-modern w-full px-4 py-3 rounded-xl focus:outline-none">
+              </div>
+
+              <!-- Alignment Options -->
+              <div class="space-y-4">
+                <label class="block text-sm font-semibold text-gray-700">
+                  Image alignment with question position
+                </label>
+                <div class="space-y-4">
+                  <!-- Position Buttons -->
+                  <div class="flex space-x-3">
+                    <button @click="alignment.position = 'above'"
+                            :class="alignment.position === 'above' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-arrow-up mr-2"></i>Above question title
+                    </button>
+                    <button @click="alignment.position = 'below'"
+                            :class="alignment.position === 'below' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-arrow-down mr-2"></i>Below question title
+                    </button>
+                  </div>
+                  
+                  <!-- Alignment Buttons -->
+                  <div class="flex space-x-3">
+                    <button @click="alignment.horizontal = 'left'"
+                            :class="alignment.horizontal === 'left' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-left mr-2"></i>Left
+                    </button>
+                    <button @click="alignment.horizontal = 'center'"
+                            :class="alignment.horizontal === 'center' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-center mr-2"></i>Center
+                    </button>
+                    <button @click="alignment.horizontal = 'right'"
+                            :class="alignment.horizontal === 'right' ? 'bg-webropol-teal-600 text-white shadow-lg' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'"
+                            class="toggle-btn px-6 py-3 rounded-xl transition-all font-medium">
+                      <i class="fas fa-align-right mr-2"></i>Right
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel - Image Preview -->
+          <div x-show="selectedOption !== 'none'" class="w-96">
+            <div class="card-modern rounded-2xl p-6">
+              <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-500 rounded-lg flex items-center justify-center">
+                  <i class="fas fa-eye text-white text-sm"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">Image Preview</h3>
+              </div>
+              
+              <div class="relative">
+                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl border-2 border-dashed border-gray-300 aspect-video flex items-center justify-center overflow-hidden"
+                     :style="`background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); width: ${Math.min(dimensions.width, 350)}px; height: ${Math.min(dimensions.height, 200)}px;`">
+                  <!-- Gradient preview with overlay -->
+                  <div class="absolute inset-0 bg-black bg-opacity-10 rounded-2xl"></div>
+                  <div class="relative z-10 text-white text-center">
+                    <i class="fas fa-image text-3xl mb-2 opacity-80"></i>
+                    <p class="text-sm font-medium opacity-80">Preview</p>
+                  </div>
+                </div>
+                
+                <!-- Dimension indicators -->
+                <div class="absolute -bottom-2 -right-2 bg-white rounded-lg px-3 py-1 text-xs font-medium text-gray-600 shadow-lg border">
+                  <span x-text="dimensions.width"></span> × <span x-text="dimensions.height"></span>
+                </div>
+              </div>
+              
+              <!-- Preview info -->
+              <div class="mt-4 p-4 bg-gray-50 rounded-xl">
+                <div class="text-xs font-medium text-gray-600 space-y-1">
+                  <div class="flex justify-between">
+                    <span>Position:</span>
+                    <span class="text-gray-800 capitalize" x-text="alignment.position"></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Alignment:</span>
+                    <span class="text-gray-800 capitalize" x-text="alignment.horizontal"></span>
+                  </div>
+                  <div class="flex justify-between" x-show="altText">
+                    <span>Alt text:</span>
+                    <span class="text-gray-800 truncate max-w-24" x-text="altText"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-between items-center p-8 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50">
+        <div class="text-sm text-gray-500">
+          <i class="fas fa-info-circle mr-2"></i>
+          Configure your image settings and preview changes
+        </div>
+        <div class="flex space-x-4">
+          <button @click="closeModal" 
+                  class="btn-modern px-8 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all font-medium">
+            <i class="fas fa-times mr-2"></i>Cancel
+          </button>
+          <button @click="applyImage" 
+                  class="btn-modern px-8 py-3 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white rounded-xl hover:from-webropol-teal-600 hover:to-webropol-teal-700 shadow-lg font-medium">
+            <i class="fas fa-check mr-2"></i>Apply Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function modalData() {
+      return {
+        isOpen: false,
+        selectedOption: 'none',
+        altText: '',
+        imageUrl: '',
+        alignment: {
+          position: 'above',
+          horizontal: 'center'
+        },
+        dimensions: {
+          width: 123,
+          height: 123
+        },
+        
+        showModal(type) {
+          this.isOpen = true;
+          if (type === 'gallery') {
+            this.selectedOption = 'gallery';
+          } else if (type === 'url') {
+            this.selectedOption = 'url';
+          } else {
+            this.selectedOption = 'none';
+          }
+        },
+        
+        closeModal() {
+          this.isOpen = false;
+        },
+        
+        applyImage() {
+          // Handle apply logic here
+          console.log('Applying image with settings:', {
+            option: this.selectedOption,
+            altText: this.altText,
+            imageUrl: this.imageUrl,
+            alignment: this.alignment,
+            dimensions: this.dimensions
+          });
+          this.closeModal();
+        }
+      }
+    }
+  </script>
+</body>
+</html>
