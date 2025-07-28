@@ -134,6 +134,31 @@
             background-color: rgba(59, 130, 246, 0.1) !important;
         }
 
+        /* Dark mode focus indicator */
+        .dark .focus-mode-indicator {
+            background: rgba(6, 182, 212, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        /* Dark mode breadcrumbs */
+        .dark #breadcrumbs-fix-wrapper {
+            background-color: rgba(30, 41, 59, 0.7) !important;
+        }
+
+        /* Keyboard hint styling */
+        kbd {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .dark kbd {
+            background-color: rgba(75, 85, 99, 0.8) !important;
+            color: #f1f5f9 !important;
+        }
+
         /* Accessibility improvements */
         .focus-visible\:ring-offset-4:focus-visible {
             --tw-ring-offset-width: 4px;
@@ -167,6 +192,86 @@
             transition: all 0.2s ease-in;
         }
 
+        /* Enhanced interface transition animations */
+        .interface-transition-enter {
+            opacity: 0;
+            transform: translateY(32px) scale(0.98);
+        }
+
+        .interface-transition-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .interface-transition-leave {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .interface-transition-leave-active {
+            opacity: 0;
+            transform: translateY(-24px) scale(0.98);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        /* Smooth sidebar transitions */
+        .sidebar-transition {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: left center;
+        }
+
+        .sidebar-hidden {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        /* Main content area transition */
+        .main-content-transition {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Focus indicator smooth animation */
+        .focus-indicator-enter {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.9);
+        }
+
+        .focus-indicator-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition-delay: 0.2s;
+        }
+
+        /* Staggered animation for AI prompt elements */
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+
+        /* Loading state for smooth transitions */
+        .transition-loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Enhanced button transitions */
+        .tab-button {
+            transform-origin: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .tab-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Smooth scale animation */
+        .scale-98 {
+            transform: scale(0.98);
+        }
+
         /* Reduced motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
             .tab-content-enter-active,
@@ -190,6 +295,32 @@
                 color: #000 !important;
             }
         }
+
+        /* AI Prompt mode full-width layout */
+        .ai-prompt-mode {
+            width: 100vw;
+            max-width: none;
+        }
+
+        /* Smooth sidebar transitions */
+        webropol-sidebar {
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Focus mode indicator */
+        .focus-mode-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(6, 182, 212, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
     </style>
     <script src="design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="design-system/components/navigation/Header.js" type="module"></script>
@@ -201,26 +332,71 @@
     x-data="libraryApp()" @click="showContextMenu = null">
 
     <div class="flex h-screen">
-        <webropol-sidebar active="home" base=""></webropol-sidebar>
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <webropol-sidebar x-show="interfaceMode === 'classic'" 
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform -translate-x-full scale-95"
+                         x-transition:enter-end="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform -translate-x-full scale-95"
+                         class="sidebar-transition"
+                         active="home" base=""></webropol-sidebar>
+        <div class="flex-1 flex flex-col overflow-hidden main-content-transition" 
+             :class="interfaceMode === 'prompt' ? 'w-full' : ''">
             <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
-            <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4">
-                <webropol-breadcrumbs trail='[{"label":"Home","url":"index.html"}]'></webropol-breadcrumbs>
+            <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4"
+                 :class="interfaceMode === 'prompt' ? 'px-8 sm:px-8' : ''">
+                <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
+                    '[{\"label\":\"Home\",\"url\":\"index.html\"},{\"label\":\"Magic\",\"url\":\"#\"}]' : 
+                    '[{\"label\":\"Home\",\"url\":\"index.html\"}]'"></webropol-breadcrumbs>
             </div>
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto px-6 py-12 lg:px-12 bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30 min-h-screen pb-24" role="main">
-                <div class="max-w-7xl mx-auto">
+            <main class="flex-1 overflow-y-auto px-6 py-12 lg:px-12 bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30 min-h-screen pb-24" 
+                  :class="interfaceMode === 'prompt' ? 'px-8 lg:px-16 xl:px-24' : ''"
+                  role="main">
+                <div class="max-w-7xl mx-auto" :class="interfaceMode === 'prompt' ? 'max-w-6xl' : ''">
+                    
+                    <!-- Focus Mode Indicator -->
+                    <div x-show="interfaceMode === 'prompt'" 
+                         x-transition:enter="transition ease-out duration-600"
+                         x-transition:enter-start="opacity-0 transform -translate-y-6 scale-90"
+                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform -translate-y-6 scale-90"
+                         class="focus-mode-indicator"
+                         style="transition-delay: 0.3s;">
+                        <i class="fas fa-focus mr-2"></i>
+                        Focus Mode - Magic Interface
+                    </div>
                     <!-- Interface Mode Tabs -->
                     <div class="mb-8">
                         <div class="flex items-center justify-between mb-6">
                             <h2 class="text-2xl font-bold text-webropol-gray-900">What do you want to do next?</h2>
-                            <!-- Dark/Light Mode Toggle -->
-                            <button @click="toggleTheme()" 
-                                class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/70 border border-webropol-gray-200 hover:bg-white hover:shadow-md transition-all duration-200"
-                                :class="darkMode ? 'text-yellow-500' : 'text-webropol-gray-600'"
-                                title="Toggle theme">
-                                <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-lg"></i>
-                            </button>
+                            <div class="flex items-center space-x-3">
+                                <!-- Back to Interface Button (only in AI Prompt mode) -->
+                                <button x-show="interfaceMode === 'prompt'" 
+                                        @click="switchInterface('classic')"
+                                        x-transition:enter="transition ease-out duration-400"
+                                        x-transition:enter-start="opacity-0 transform scale-90 -translate-x-4"
+                                        x-transition:enter-end="opacity-100 transform scale-100 translate-x-0"
+                                        x-transition:leave="transition ease-in duration-200"
+                                        x-transition:leave-start="opacity-100 transform scale-100 translate-x-0"
+                                        x-transition:leave-end="opacity-0 transform scale-90 -translate-x-4"
+                                        class="flex items-center px-4 py-2 text-sm font-medium text-webropol-gray-700 bg-white/70 border border-webropol-gray-200 rounded-xl hover:bg-white hover:shadow-md transition-all duration-200"
+                                        title="Back to Classic Interface">
+                                    <i class="fas fa-arrow-left mr-2"></i>
+                                    Back to Classic
+                                </button>
+                                
+                                <!-- Dark/Light Mode Toggle -->
+                                <button @click="toggleTheme()" 
+                                    class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/70 border border-webropol-gray-200 hover:bg-white hover:shadow-md transition-all duration-200"
+                                    :class="darkMode ? 'text-yellow-500' : 'text-webropol-gray-600'"
+                                    title="Toggle theme">
+                                    <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-lg"></i>
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Tab Navigation -->
@@ -228,29 +404,31 @@
                             <div class="inline-flex bg-white/70 backdrop-blur p-1.5 rounded-2xl shadow-soft border border-webropol-gray-200 gap-1">
                                 <button
                                     :class="interfaceMode === 'classic' ? 'bg-webropol-teal-600 text-white shadow-lg transform scale-[1.02]' : 'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                                    class="px-8 py-4 rounded-xl font-semibold min-w-[140px] text-center text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-300 ease-out mx-1 flex items-center justify-center"
-                                    @click="interfaceMode = 'classic'"
+                                    class="px-8 py-4 rounded-xl font-semibold min-w-[140px] text-center text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-300 ease-out mx-1 flex items-center justify-center tab-button"
+                                    :class="isTransitioning ? 'pointer-events-none' : ''"
+                                    @click="switchInterface('classic')"
                                     role="tab"
                                     :aria-selected="interfaceMode === 'classic'"
                                     tabindex="0"
-                                    @keydown.enter="interfaceMode = 'classic'"
-                                    @keydown.space.prevent="interfaceMode = 'classic'"
+                                    @keydown.enter="switchInterface('classic')"
+                                    @keydown.space.prevent="switchInterface('classic')"
                                 >
-                                    <i class="fas fa-th-large mr-2"></i>
-                                    Interface
+                                    <i class="fas fa-th-large mr-2 transition-transform duration-200" :class="interfaceMode === 'classic' ? 'scale-110' : ''"></i>
+                                    Classic
                                 </button>
                                 <button
                                     :class="interfaceMode === 'prompt' ? 'bg-webropol-teal-600 text-white shadow-lg transform scale-[1.02]' : 'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                                    class="px-8 py-4 rounded-xl font-semibold min-w-[140px] text-center text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-300 ease-out mx-1 flex items-center justify-center"
-                                    @click="interfaceMode = 'prompt'"
+                                    class="px-8 py-4 rounded-xl font-semibold min-w-[140px] text-center text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-300 ease-out mx-1 flex items-center justify-center tab-button"
+                                    :class="isTransitioning ? 'pointer-events-none' : ''"
+                                    @click="switchInterface('prompt')"
                                     role="tab"
                                     :aria-selected="interfaceMode === 'prompt'"
                                     tabindex="0"
-                                    @keydown.enter="interfaceMode = 'prompt'"
-                                    @keydown.space.prevent="interfaceMode = 'prompt'"
+                                    @keydown.enter="switchInterface('prompt')"
+                                    @keydown.space.prevent="switchInterface('prompt')"
                                 >
-                                    <i class="fas fa-robot mr-2"></i>
-                                    AI Prompt
+                                    <i class="fas fa-magic mr-2 transition-transform duration-200" :class="interfaceMode === 'prompt' ? 'scale-110' : ''"></i>
+                                    Magic
                                 </button>
                             </div>
                         </div>
@@ -258,12 +436,12 @@
 
                     <!-- Classic Interface Content -->
                     <div x-show="interfaceMode === 'classic'" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 transform translate-y-4"
-                         x-transition:enter-end="opacity-100 transform translate-y-0"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100 transform translate-y-0"
-                         x-transition:leave-end="opacity-0 transform translate-y-4"
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
+                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
                          role="tabpanel"
                          aria-labelledby="classic-tab">
                         <h3 class="text-xl font-semibold mb-6 text-webropol-gray-900">Choose what you want to create</h3>
@@ -303,42 +481,61 @@
 
                     <!-- AI Prompt Interface Content -->
                     <div x-show="interfaceMode === 'prompt'" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 transform translate-y-4"
-                         x-transition:enter-end="opacity-100 transform translate-y-0"
-                         x-transition:leave="transition ease-in duration-200"
-                         x-transition:leave-start="opacity-100 transform translate-y-0"
-                         x-transition:leave-end="opacity-0 transform translate-y-4"
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
+                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
                          role="tabpanel"
                          aria-labelledby="prompt-tab">
                         
                         <div class="space-y-8">
                             <!-- AI Prompt Header -->
-                            <div class="text-center">
+                            <div class="text-center"
+                                 x-show="interfaceMode === 'prompt'"
+                                 x-transition:enter="transition ease-out duration-400 delay-100"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0">
                                 <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-2xl mb-4">
                                     <i class="fas fa-robot text-white text-2xl"></i>
                                 </div>
                                 <h3 class="text-2xl font-bold text-webropol-gray-900 mb-2">AI-Powered Survey Creation</h3>
                                 <p class="text-webropol-gray-600 max-w-2xl mx-auto">Describe what you want to create in natural language, and our AI will help you build the perfect survey or event.</p>
+                                
+                                <!-- Keyboard Shortcuts Hint -->
+                                <div class="mt-4 text-xs text-webropol-gray-500">
+                                    <i class="fas fa-keyboard mr-1"></i>
+                                    Press <kbd class="px-2 py-1 bg-webropol-gray-100 rounded text-webropol-gray-700 font-mono">Esc</kbd> to return to Classic Interface | 
+                                    <kbd class="px-2 py-1 bg-webropol-gray-100 rounded text-webropol-gray-700 font-mono">Ctrl+Shift+I</kbd> to toggle interfaces
+                                </div>
                             </div>
 
                             <!-- Survey Type Selection -->
-                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
+                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6"
+                                 x-show="interfaceMode === 'prompt'"
+                                 x-transition:enter="transition ease-out duration-400 delay-200"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0">
                                 <label class="block text-sm font-semibold text-webropol-gray-900 mb-3">What type of survey are you creating?</label>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
                                     <template x-for="type in surveyTypes" :key="type.id">
                                         <button @click="selectedSurveyType = type.id"
                                             :class="selectedSurveyType === type.id ? 'bg-webropol-teal-600 text-white border-webropol-teal-600' : 'bg-white text-webropol-gray-700 border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50'"
-                                            class="flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 group">
-                                            <i :class="type.icon" class="text-xl mb-2" :class="selectedSurveyType === type.id ? 'text-white' : 'text-webropol-teal-600'"></i>
-                                            <span class="text-sm font-medium text-center" x-text="type.name"></span>
+                                            class="flex flex-col items-center p-3 rounded-lg border-2 transition-all duration-200 group">
+                                            <i :class="type.icon" class="text-base mb-1" :class="selectedSurveyType === type.id ? 'text-white' : 'text-webropol-teal-600'"></i>
+                                            <span class="text-xs font-medium text-center leading-tight" x-text="type.name"></span>
                                         </button>
                                     </template>
                                 </div>
                             </div>
 
                             <!-- Main Prompt Area -->
-                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
+                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6"
+                                 x-show="interfaceMode === 'prompt'"
+                                 x-transition:enter="transition ease-out duration-400 delay-300"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0">
                                 <label for="ai-prompt" class="block text-sm font-semibold text-webropol-gray-900 mb-3">
                                     Describe your survey or event
                                     <button @click="showPromptHelp = !showPromptHelp" 
@@ -382,7 +579,11 @@
                             </div>
 
                             <!-- Quick Prompt Templates -->
-                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
+                            <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6"
+                                 x-show="interfaceMode === 'prompt'"
+                                 x-transition:enter="transition ease-out duration-400 delay-[400ms]"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0">
                                 <h4 class="font-semibold text-webropol-gray-900 mb-4">Quick Start Templates</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <template x-for="template in promptTemplates" :key="template.id">
@@ -401,7 +602,11 @@
                             </div>
 
                             <!-- Recent Prompts -->
-                            <div x-show="recentPrompts.length > 0" class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
+                            <div x-show="recentPrompts.length > 0 && interfaceMode === 'prompt'" 
+                                 x-transition:enter="transition ease-out duration-400 delay-500"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
                                 <div class="flex items-center justify-between mb-4">
                                     <h4 class="font-semibold text-webropol-gray-900">Recent Prompts</h4>
                                     <button @click="clearRecentPrompts()" 
@@ -421,7 +626,11 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="flex items-center justify-center space-x-4">
+                            <div class="flex items-center justify-center space-x-4"
+                                 x-show="interfaceMode === 'prompt'"
+                                 x-transition:enter="transition ease-out duration-400 delay-[600ms]"
+                                 x-transition:enter-start="opacity-0 transform translate-y-4"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0">
                                 <button @click="generateSurvey()" 
                                     :disabled="!aiPrompt.trim() || isGenerating"
                                     :class="(!aiPrompt.trim() || isGenerating) ? 'opacity-50 cursor-not-allowed' : 'hover:from-webropol-teal-600 hover:to-webropol-blue-700 hover:shadow-lg'"
@@ -495,7 +704,13 @@
     </div>
 
     <!-- Floating Create Button Component -->
-    <webropol-floating-button></webropol-floating-button>
+    <webropol-floating-button x-show="interfaceMode === 'classic'" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-90"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-90"></webropol-floating-button>
 
     <!-- Create Folder Modal -->
     <div x-show="showCreateFolder" x-cloak
@@ -995,8 +1210,9 @@
         function libraryApp() {
             return {
                 // Interface mode state
-                interfaceMode: 'classic', // 'classic' or 'prompt'
-                darkMode: false,
+                interfaceMode: localStorage.getItem('webropol_interface_mode') || 'classic', // 'classic' or 'prompt'
+                darkMode: JSON.parse(localStorage.getItem('webropol_dark_mode') || 'false'),
+                isTransitioning: false,
                 
                 // AI Prompt Interface state
                 aiPrompt: '',
@@ -1009,11 +1225,11 @@
                 surveyTypes: [
                     { id: 'survey', name: 'Survey', icon: 'fas fa-poll-h' },
                     { id: 'event', name: 'Event', icon: 'fas fa-calendar-alt' },
-                    { id: 'feedback', name: 'Feedback', icon: 'fas fa-comment-dots' },
-                    { id: 'assessment', name: 'Assessment', icon: 'fas fa-clipboard-check' },
-                    { id: 'quiz', name: 'Quiz', icon: 'fas fa-question-circle' },
-                    { id: 'poll', name: 'Poll', icon: 'fas fa-chart-bar' },
-                    { id: 'form', name: 'Form', icon: 'fas fa-wpforms' },
+                    { id: 'feedback', name: '360', icon: 'fas fa-comment-dots' },
+                    { id: 'assessment', name: 'eTest', icon: 'fas fa-clipboard-check' },
+                    { id: 'quiz', name: 'SMS Survey', icon: 'fas fa-question-circle' },
+                    { id: 'poll', name: 'EXW', icon: 'fas fa-chart-bar' },
+                    { id: 'form', name: 'WOTT', icon: 'fas fa-tablet' },
                     { id: 'research', name: 'Research', icon: 'fas fa-search' }
                 ],
                 
@@ -1086,14 +1302,53 @@
                 showContextMenu: null,
 
                 // AI Prompt Interface Methods
+                switchInterface(mode) {
+                    if (this.isTransitioning || this.interfaceMode === mode) return;
+                    
+                    this.isTransitioning = true;
+                    
+                    // Add a slight delay to allow for smooth animations
+                    setTimeout(() => {
+                        this.interfaceMode = mode;
+                        
+                        // Save interface mode to localStorage
+                        localStorage.setItem('webropol_interface_mode', mode);
+                        
+                        // Reset transition state after animation completes
+                        setTimeout(() => {
+                            this.isTransitioning = false;
+                        }, 500);
+                    }, 50);
+                },
+
                 toggleTheme() {
                     this.darkMode = !this.darkMode;
+                    
+                    // Save theme preference to localStorage
+                    localStorage.setItem('webropol_dark_mode', JSON.stringify(this.darkMode));
+                    
                     // Apply theme changes to document
                     if (this.darkMode) {
                         document.documentElement.classList.add('dark');
                     } else {
                         document.documentElement.classList.remove('dark');
                     }
+                },
+
+                // Keyboard shortcuts
+                init() {
+                    // Add keyboard listener for interface switching
+                    document.addEventListener('keydown', (e) => {
+                        // Ctrl/Cmd + Shift + I to toggle interface mode
+                        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+                            e.preventDefault();
+                            this.switchInterface(this.interfaceMode === 'classic' ? 'prompt' : 'classic');
+                        }
+                        // Escape key to go back to classic interface from AI prompt
+                        if (e.key === 'Escape' && this.interfaceMode === 'prompt') {
+                            this.switchInterface('classic');
+                        }
+                    });
                 },
                 
                 updateCharCount() {
