@@ -93,15 +93,6 @@ export class WebropolFloatingButton extends BaseComponent {
                 </div>
               </button>
 
-              <!-- Admin Tools -->
-              <button data-type="admin-tools"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-tools text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Admin Tools</span>
-                  <span class="text-xs text-webropol-gray-500">System administration</span>
-                </div>
-              </button>
             </div>
           </div>
         </div>
