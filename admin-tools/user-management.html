@@ -18,6 +18,10 @@
             'webropol-blue': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
             'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
             'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' },
+            'webropol-purple': { 50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7c3aed', 800: '#6b21a8', 900: '#581c87' },
+            'webropol-orange': { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' },
+            'webropol-indigo': { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+            'webropol-emerald': { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b' },
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
@@ -78,6 +82,19 @@
       background-repeat: no-repeat;
       background-size: 1.5em 1.5em;
       padding-right: 2.5rem;
+    }
+
+    /* Card layout improvements */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card-item {
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
     }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
@@ -156,382 +173,480 @@
               </div>
             </div>
 
-            <!-- Edit User Form -->
-            <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80">
-              <div class="p-6 border-b border-webropol-gray-200">
-                <h2 class="text-xl font-bold text-webropol-gray-900">Edit User</h2>
-              </div>
-
-              <div class="p-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  
-                  <!-- Left Column - User Info -->
-                  <div>
-                    <h3 class="text-lg font-semibold text-webropol-gray-900 mb-6">USER INFO</h3>
-                    <div class="space-y-6">
-                      
-                      <!-- First Name -->
-                      <div>
-                        <label for="firstName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          First name <span class="text-webropol-red-500">*</span>
-                        </label>
-                        <input type="text" id="firstName" x-model="user.firstName"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Last Name -->
-                      <div>
-                        <label for="lastName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Last name <span class="text-webropol-red-500">*</span>
-                        </label>
-                        <input type="text" id="lastName" x-model="user.lastName"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Company -->
-                      <div>
-                        <label for="company" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Company
-                        </label>
-                        <input type="text" id="company" x-model="user.company"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- User Environment -->
-                      <div>
-                        <label for="userEnvironment" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          User environment
-                        </label>
-                        <input type="text" id="userEnvironment" x-model="user.userEnvironment"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Allow to switch between user environment -->
-                      <div>
-                        <label for="allowSwitchEnvironment" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Allow to switch between user environment
-                        </label>
-                        <div class="flex items-center space-x-3">
-                          <select id="allowSwitchEnvironment" x-model="user.allowSwitchEnvironment"
-                            class="flex-1 px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                            <option value="">-- Select user environment --</option>
-                            <option value="group900">Group 900</option>
-                            <option value="group901">Group 901</option>
-                            <option value="group902">Group 902</option>
-                          </select>
-                          <button class="px-4 py-2 bg-webropol-green-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-green-700 focus:outline-none focus:ring-2 focus:ring-webropol-green-500 focus:ring-offset-2 transition-colors">
-                            Request
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- Department -->
-                      <div>
-                        <label for="department" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Department
-                        </label>
-                        <input type="text" id="department" x-model="user.department"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Home Folder -->
-                      <div>
-                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Home folder <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Information about home folder"></i>
-                        </label>
-                        <div class="flex items-center space-x-3">
-                          <span class="text-sm text-webropol-gray-600 bg-webropol-gray-50 px-3 py-2 rounded-lg border border-webropol-gray-200 flex-1">
-                            No home folder set for this user yet
-                          </span>
-                          <button class="px-4 py-2 bg-webropol-red-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-red-700 focus:outline-none focus:ring-2 focus:ring-webropol-red-500 focus:ring-offset-2 transition-colors">
-                            Change
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- User Language -->
-                      <div>
-                        <label for="userLanguage" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          User language
-                        </label>
-                        <select id="userLanguage" x-model="user.userLanguage"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                          <option value="english">English</option>
-                          <option value="finnish">Finnish</option>
-                          <option value="swedish">Swedish</option>
-                        </select>
-                      </div>
-
-                      <!-- Time Zone -->
-                      <div>
-                        <label for="timeZone" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Time zone
-                        </label>
-                        <select id="timeZone" x-model="user.timeZone"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                          <option value="GMT+2:00">(GMT+2:00) Europe/Helsinki</option>
-                          <option value="GMT+1:00">(GMT+1:00) Europe/Stockholm</option>
-                          <option value="GMT+0:00">(GMT+0:00) Europe/London</option>
-                        </select>
-                      </div>
-
-                      <!-- User Name -->
-                      <div>
-                        <label for="userName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          User name <span class="text-webropol-red-500">*</span>
-                        </label>
-                        <input type="text" id="userName" x-model="user.userName"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- User Class -->
-                      <div>
-                        <label for="userClass" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          User class <span class="text-webropol-red-500">*</span> <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Information about user class"></i>
-                        </label>
-                        <select id="userClass" x-model="user.userClass"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                          <option value="Admin">Admin</option>
-                          <option value="User">User</option>
-                          <option value="Viewer">Viewer</option>
-                        </select>
-                      </div>
-
-                      <!-- Permissions Checkboxes -->
-                      <div class="space-y-3">
-                        <div class="flex items-center">
-                          <input type="checkbox" id="allowCreateSurveys" x-model="user.permissions.allowCreateSurveys"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="allowCreateSurveys" class="ml-2 block text-sm text-webropol-gray-700">
-                            Allow to create surveys
-                          </label>
-                        </div>
-                        
-                        <div class="flex items-start">
-                          <input type="checkbox" id="disallowUser" x-model="user.permissions.disallowUser"
-                            class="mt-0.5 h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="disallowUser" class="ml-2 block text-sm text-webropol-gray-700">
-                            Disallow user from creating new questions on survey. Allow only adding question and survey templates from Library to survey.
-                          </label>
-                        </div>
-
-                        <div class="flex items-center">
-                          <input type="checkbox" id="allowShareEmail" x-model="user.permissions.allowShareEmail"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="allowShareEmail" class="ml-2 block text-sm text-webropol-gray-700">
-                            Allow to share email and layout templates
-                          </label>
-                        </div>
-
-                        <div class="flex items-center">
-                          <input type="checkbox" id="allowSaveQuestions" x-model="user.permissions.allowSaveQuestions"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="allowSaveQuestions" class="ml-2 block text-sm text-webropol-gray-700">
-                            Allow user to save questions/surveys to library
-                          </label>
-                        </div>
-
-                        <div class="flex items-center">
-                          <input type="checkbox" id="disallowPublishing" x-model="user.permissions.disallowPublishing"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="disallowPublishing" class="ml-2 block text-sm text-webropol-gray-700">
-                            Disallow user from publishing a survey until Admin's approval
-                          </label>
-                        </div>
-
-                        <div class="flex items-center">
-                          <input type="checkbox" id="allowAnalyzeResponses" x-model="user.permissions.allowAnalyzeResponses"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="allowAnalyzeResponses" class="ml-2 block text-sm text-webropol-gray-700">
-                            Allow user to analyze responses in AI Text Analysis
-                          </label>
-                        </div>
-                      </div>
-                    </div>
+            <!-- SSO Upsell Banner -->
+            <div class="mb-6 bg-gradient-to-r from-webropol-teal-600 to-webropol-blue-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                  <div class="bg-white/20 p-2 sm:p-3 rounded-full flex-shrink-0">
+                    <i class="fas fa-shield-alt text-lg sm:text-2xl"></i>
                   </div>
-
-                  <!-- Right Column - Contact Info & Settings -->
                   <div>
-                    <h3 class="text-lg font-semibold text-webropol-gray-900 mb-6">CONTACT INFO</h3>
-                    <div class="space-y-6">
-                      
-                      <!-- Email -->
-                      <div>
-                        <label for="email" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Email <span class="text-webropol-red-500">*</span>
-                        </label>
-                        <input type="email" id="email" x-model="user.email"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Mobile Phone -->
-                      <div>
-                        <label for="mobilePhone" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Mobile phone <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Mobile phone information"></i>
-                        </label>
-                        <input type="tel" id="mobilePhone" x-model="user.mobilePhone"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Address -->
-                      <div>
-                        <label for="address" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Address
-                        </label>
-                        <input type="text" id="address" x-model="user.address"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Post Code -->
-                      <div>
-                        <label for="postCode" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Post code
-                        </label>
-                        <input type="text" id="postCode" x-model="user.postCode"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- City -->
-                      <div>
-                        <label for="city" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          City
-                        </label>
-                        <input type="text" id="city" x-model="user.city"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
-                      </div>
-
-                      <!-- Country -->
-                      <div>
-                        <label for="country" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Country
-                        </label>
-                        <select id="country" x-model="user.country"
-                          class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                          <option value="Finland">Finland</option>
-                          <option value="Sweden">Sweden</option>
-                          <option value="Norway">Norway</option>
-                          <option value="Denmark">Denmark</option>
-                        </select>
-                      </div>
-
-                      <!-- Sender's Email -->
-                      <div>
-                        <label for="senderEmail" class="block text-sm font-medium text-webropol-gray-700 mb-2">
-                          Sender's email <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Sender's email information"></i>
-                        </label>
-                        <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
-                          Add new sender email
-                        </button>
-                      </div>
-
-                      <!-- User Statistics -->
-                      <div class="bg-webropol-gray-50 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3">User statistics</h4>
-                        <div class="space-y-2 text-sm">
-                          <div class="flex justify-between">
-                            <span class="text-webropol-gray-600">User created:</span>
-                            <span class="text-webropol-gray-900">07.03.2024</span>
-                          </div>
-                          <div class="flex justify-between">
-                            <span class="text-webropol-gray-600">Last login:</span>
-                            <span class="text-webropol-gray-900">22.10.2024</span>
-                          </div>
-                          <div class="flex justify-between">
-                            <span class="text-webropol-gray-600">Number of surveys created:</span>
-                            <span class="text-webropol-gray-900">3</span>
-                          </div>
-                        </div>
-                        <button class="mt-3 text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
-                          Open user activity history log
-                        </button>
-                      </div>
-
-                      <!-- Access Permission -->
-                      <div class="bg-webropol-blue-50 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3 flex items-center">
-                          Access permission <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Access permission information"></i>
-                        </h4>
-                        <div class="flex items-center mb-3">
-                          <input type="checkbox" id="grantWebropol" x-model="user.grantWebropolAccess"
-                            class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
-                          <label for="grantWebropol" class="ml-2 block text-sm text-webropol-gray-700">
-                            I grant Webropol support permission to access my user account
-                          </label>
-                        </div>
-                        <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
-                          Access permission log
-                        </button>
-                      </div>
-
-                      <!-- Disable/Activate User Account -->
-                      <div class="bg-webropol-red-50 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3 flex items-center">
-                          Disable / activate user account <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Account status information"></i>
-                        </h4>
-                        <div class="space-y-2">
-                          <p class="text-sm text-webropol-gray-600">User account is active</p>
-                          <button class="text-sm text-webropol-red-600 hover:text-webropol-red-700 font-medium">
-                            Disable user account
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-1">Upgrade to SSO Authentication</h3>
+                    <p class="text-white/90 text-xs sm:text-sm leading-relaxed">Enhance security and simplify user management with Single Sign-On integration</p>
                   </div>
                 </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                  <button class="bg-white text-webropol-teal-600 px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm whitespace-nowrap">
+                    Learn More
+                  </button>
+                  <button class="bg-webropol-teal-500 border border-white/30 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-webropol-teal-400 transition-colors text-sm whitespace-nowrap">
+                    Upgrade Now
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                <!-- Password Section -->
-                <div class="mt-8 pt-6 border-t border-webropol-gray-200">
-                  <h3 class="text-lg font-semibold text-webropol-gray-900 mb-6">Password</h3>
-                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                      <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
-                        Reset password
+            <!-- Card-Based Form Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              
+              <!-- Basic Information Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-teal-100 p-2 rounded-lg">
+                      <i class="fas fa-user text-webropol-teal-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Basic Information</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- First Name -->
+                  <div>
+                    <label for="firstName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      First name <span class="text-webropol-red-500">*</span>
+                    </label>
+                    <input type="text" id="firstName" x-model="user.firstName"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Last Name -->
+                  <div>
+                    <label for="lastName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Last name <span class="text-webropol-red-500">*</span>
+                    </label>
+                    <input type="text" id="lastName" x-model="user.lastName"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- User Name -->
+                  <div>
+                    <label for="userName" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      User name <span class="text-webropol-red-500">*</span>
+                    </label>
+                    <input type="text" id="userName" x-model="user.userName"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Email -->
+                  <div>
+                    <label for="email" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Email <span class="text-webropol-red-500">*</span>
+                    </label>
+                    <input type="email" id="email" x-model="user.email"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Organization & Environment Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-blue-100 p-2 rounded-lg">
+                      <i class="fas fa-building text-webropol-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Organization & Environment</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- Company -->
+                  <div>
+                    <label for="company" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Company
+                    </label>
+                    <input type="text" id="company" x-model="user.company"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Department -->
+                  <div>
+                    <label for="department" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Department
+                    </label>
+                    <input type="text" id="department" x-model="user.department"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- User Environment -->
+                  <div>
+                    <label for="userEnvironment" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      User environment
+                    </label>
+                    <input type="text" id="userEnvironment" x-model="user.userEnvironment"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Allow to switch between user environment -->
+                  <div>
+                    <label for="allowSwitchEnvironment" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Allow to switch between user environment
+                    </label>
+                    <div class="flex items-center space-x-3">
+                      <select id="allowSwitchEnvironment" x-model="user.allowSwitchEnvironment"
+                        class="flex-1 px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                        <option value="">-- Select user environment --</option>
+                        <option value="group900">Group 900</option>
+                        <option value="group901">Group 901</option>
+                        <option value="group902">Group 902</option>
+                      </select>
+                      <button class="px-4 py-2 bg-webropol-green-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-green-700 focus:outline-none focus:ring-2 focus:ring-webropol-green-500 focus:ring-offset-2 transition-colors">
+                        Request
                       </button>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- IP Restriction & User Roles/Groups Section -->
-                <div class="mt-8 pt-6 border-t border-webropol-gray-200">
-                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Preferences Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-green-100 p-2 rounded-lg">
+                      <i class="fas fa-cog text-webropol-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Preferences</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- User Language -->
+                  <div>
+                    <label for="userLanguage" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      User language
+                    </label>
+                    <select id="userLanguage" x-model="user.userLanguage"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                      <option value="english">English</option>
+                      <option value="finnish">Finnish</option>
+                      <option value="swedish">Swedish</option>
+                    </select>
+                  </div>
+
+                  <!-- Time Zone -->
+                  <div>
+                    <label for="timeZone" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Time zone
+                    </label>
+                    <select id="timeZone" x-model="user.timeZone"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                      <option value="GMT+2:00">(GMT+2:00) Europe/Helsinki</option>
+                      <option value="GMT+1:00">(GMT+1:00) Europe/Stockholm</option>
+                      <option value="GMT+0:00">(GMT+0:00) Europe/London</option>
+                    </select>
+                  </div>
+
+                  <!-- Home Folder -->
+                  <div>
+                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Home folder <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Information about home folder"></i>
+                    </label>
+                    <div class="flex items-center space-x-3">
+                      <span class="text-sm text-webropol-gray-600 bg-webropol-gray-50 px-3 py-2 rounded-lg border border-webropol-gray-200 flex-1">
+                        No home folder set for this user yet
+                      </span>
+                      <button class="px-4 py-2 bg-webropol-red-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-red-700 focus:outline-none focus:ring-2 focus:ring-webropol-red-500 focus:ring-offset-2 transition-colors">
+                        Change
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-purple-100 p-2 rounded-lg">
+                      <i class="fas fa-address-card text-webropol-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Contact Information</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- Mobile Phone -->
+                  <div>
+                    <label for="mobilePhone" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Mobile phone <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Mobile phone information"></i>
+                    </label>
+                    <input type="tel" id="mobilePhone" x-model="user.mobilePhone"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Address -->
+                  <div>
+                    <label for="address" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Address
+                    </label>
+                    <input type="text" id="address" x-model="user.address"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Post Code -->
+                  <div>
+                    <label for="postCode" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Post code
+                    </label>
+                    <input type="text" id="postCode" x-model="user.postCode"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- City -->
+                  <div>
+                    <label for="city" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      City
+                    </label>
+                    <input type="text" id="city" x-model="user.city"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                  </div>
+
+                  <!-- Country -->
+                  <div>
+                    <label for="country" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Country
+                    </label>
+                    <select id="country" x-model="user.country"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                      <option value="Finland">Finland</option>
+                      <option value="Sweden">Sweden</option>
+                      <option value="Norway">Norway</option>
+                      <option value="Denmark">Denmark</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- User Class & Permissions Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-orange-100 p-2 rounded-lg">
+                      <i class="fas fa-shield-alt text-webropol-orange-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">User Class & Permissions</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- User Class -->
+                  <div>
+                    <label for="userClass" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      User class <span class="text-webropol-red-500">*</span> <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Information about user class"></i>
+                    </label>
+                    <select id="userClass" x-model="user.userClass"
+                      class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                      <option value="Admin">Admin</option>
+                      <option value="User">User</option>
+                      <option value="Viewer">Viewer</option>
+                    </select>
+                  </div>
+
+                  <!-- Permissions Checkboxes -->
+                  <div class="space-y-3">
+                    <div class="flex items-center">
+                      <input type="checkbox" id="allowCreateSurveys" x-model="user.permissions.allowCreateSurveys"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="allowCreateSurveys" class="ml-2 block text-sm text-webropol-gray-700">
+                        Allow to create surveys
+                      </label>
+                    </div>
                     
-                    <!-- IP Restriction -->
-                    <div>
-                      <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4 flex items-center">
-                        IP restriction <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="IP restriction information"></i>
-                      </h3>
-                      <select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                        <option value="">-- Select IP restriction --</option>
-                        <option value="office">Office Network</option>
-                        <option value="vpn">VPN Only</option>
-                        <option value="specific">Specific IPs</option>
-                      </select>
+                    <div class="flex items-start">
+                      <input type="checkbox" id="disallowUser" x-model="user.permissions.disallowUser"
+                        class="mt-0.5 h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="disallowUser" class="ml-2 block text-sm text-webropol-gray-700">
+                        Disallow user from creating new questions on survey
+                      </label>
                     </div>
 
-                    <!-- User Roles -->
-                    <div>
-                      <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4 flex items-center">
-                        User roles <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="User roles information"></i>
-                      </h3>
-                      <div class="flex items-center space-x-3">
-                        <select class="flex-1 px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
-                          <option value="">-- Select user role --</option>
-                          <option value="admin">Administrator</option>
-                          <option value="manager">Manager</option>
-                          <option value="analyst">Analyst</option>
-                        </select>
-                        <button class="px-4 py-2 bg-webropol-teal-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-teal-700 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
-                          Add
-                        </button>
+                    <div class="flex items-center">
+                      <input type="checkbox" id="allowShareEmail" x-model="user.permissions.allowShareEmail"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="allowShareEmail" class="ml-2 block text-sm text-webropol-gray-700">
+                        Allow to share email and layout templates
+                      </label>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input type="checkbox" id="allowSaveQuestions" x-model="user.permissions.allowSaveQuestions"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="allowSaveQuestions" class="ml-2 block text-sm text-webropol-gray-700">
+                        Allow user to save questions/surveys to library
+                      </label>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input type="checkbox" id="disallowPublishing" x-model="user.permissions.disallowPublishing"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="disallowPublishing" class="ml-2 block text-sm text-webropol-gray-700">
+                        Disallow user from publishing until Admin's approval
+                      </label>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input type="checkbox" id="allowAnalyzeResponses" x-model="user.permissions.allowAnalyzeResponses"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="allowAnalyzeResponses" class="ml-2 block text-sm text-webropol-gray-700">
+                        Allow user to analyze responses in AI Text Analysis
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Settings Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-indigo-100 p-2 rounded-lg">
+                      <i class="fas fa-user-cog text-webropol-indigo-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Account Settings</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- Sender's Email -->
+                  <div>
+                    <label for="senderEmail" class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      Sender's email <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Sender's email information"></i>
+                    </label>
+                    <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                      Add new sender email
+                    </button>
+                  </div>
+
+                  <!-- Access Permission -->
+                  <div class="bg-webropol-blue-50 rounded-lg p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3 flex items-center">
+                      Access permission <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Access permission information"></i>
+                    </h4>
+                    <div class="flex items-center mb-3">
+                      <input type="checkbox" id="grantWebropol" x-model="user.grantWebropolAccess"
+                        class="h-4 w-4 text-webropol-teal-600 focus:ring-webropol-teal-500 border-webropol-gray-300 rounded">
+                      <label for="grantWebropol" class="ml-2 block text-sm text-webropol-gray-700">
+                        I grant Webropol support permission to access my user account
+                      </label>
+                    </div>
+                    <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                      Access permission log
+                    </button>
+                  </div>
+
+                  <!-- Account Status -->
+                  <div class="bg-webropol-red-50 rounded-lg p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3 flex items-center">
+                      Account Status <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="Account status information"></i>
+                    </h4>
+                    <div class="space-y-2">
+                      <p class="text-sm text-webropol-gray-600">User account is active</p>
+                      <button class="text-sm text-webropol-red-600 hover:text-webropol-red-700 font-medium">
+                        Disable user account
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Password Reset -->
+                  <div>
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-2">Password</h4>
+                    <button class="text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                      Reset password
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Second Row - Wide Cards -->
+            <div class="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+              <!-- User Statistics & Activity Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-emerald-100 p-2 rounded-lg">
+                      <i class="fas fa-chart-line text-webropol-emerald-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">User Statistics & Activity</h3>
+                  </div>
+                </div>
+                <div class="p-6">
+                  <div class="bg-webropol-gray-50 rounded-lg p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-3">User statistics</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-webropol-gray-600">User created:</span>
+                        <span class="text-webropol-gray-900">07.03.2024</span>
                       </div>
+                      <div class="flex justify-between">
+                        <span class="text-webropol-gray-600">Last login:</span>
+                        <span class="text-webropol-gray-900">22.10.2024</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-webropol-gray-600">Number of surveys created:</span>
+                        <span class="text-webropol-gray-900">3</span>
+                      </div>
+                    </div>
+                    <button class="mt-3 text-sm text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                      Open user activity history log
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security & Access Control Card -->
+              <div class="bg-white/90 backdrop-blur-lg rounded-2xl shadow-lg border border-webropol-gray-100/80 hover-lift card-item">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center space-x-3">
+                    <div class="bg-webropol-red-100 p-2 rounded-lg">
+                      <i class="fas fa-lock text-webropol-red-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-webropol-gray-900">Security & Access Control</h3>
+                  </div>
+                </div>
+                <div class="p-6 space-y-4">
+                  <!-- IP Restriction -->
+                  <div>
+                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      IP restriction <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="IP restriction information"></i>
+                    </label>
+                    <select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                      <option value="">-- Select IP restriction --</option>
+                      <option value="office">Office Network</option>
+                      <option value="vpn">VPN Only</option>
+                      <option value="specific">Specific IPs</option>
+                    </select>
+                  </div>
+
+                  <!-- User Roles -->
+                  <div>
+                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                      User roles <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="User roles information"></i>
+                    </label>
+                    <div class="flex items-center space-x-3">
+                      <select class="flex-1 px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
+                        <option value="">-- Select user role --</option>
+                        <option value="admin">Administrator</option>
+                        <option value="manager">Manager</option>
+                        <option value="analyst">Analyst</option>
+                      </select>
+                      <button class="px-4 py-2 bg-webropol-teal-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-teal-700 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
+                        Add
+                      </button>
                     </div>
                   </div>
 
                   <!-- User Groups -->
-                  <div class="mt-6">
-                    <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4 flex items-center">
+                  <div>
+                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
                       User groups <i class="fas fa-info-circle text-webropol-gray-400 ml-1" title="User groups information"></i>
-                    </h3>
+                    </label>
                     <div class="flex items-center space-x-3">
                       <select class="flex-1 px-3 py-2 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent custom-select">
                         <option value="">-- Select user group --</option>
@@ -545,17 +660,17 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- Action Buttons -->
-                <div class="mt-8 pt-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
-                  <button class="px-6 py-2 border border-webropol-gray-300 text-webropol-gray-700 text-sm font-medium rounded-lg hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
-                    Cancel
-                  </button>
-                  <button class="px-6 py-2 bg-webropol-teal-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-teal-700 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
-                    Save Changes
-                  </button>
-                </div>
               </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex items-center justify-end space-x-3">
+              <button class="px-6 py-2 border border-webropol-gray-300 text-webropol-gray-700 text-sm font-medium rounded-lg hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
+                Cancel
+              </button>
+              <button class="px-6 py-2 bg-webropol-teal-600 text-white text-sm font-medium rounded-lg hover:bg-webropol-teal-700 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2 transition-colors">
+                Save Changes
+              </button>
             </div>
           </div>
 
