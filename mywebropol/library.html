@@ -103,16 +103,6 @@
                                 class="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-card border border-webropol-gray-200/50 hover-lift">
                                 <!-- Pill Tab Navigation -->
                                 <div class="flex items-center space-x-1 mb-6 p-1 bg-webropol-gray-100 rounded-xl">
-                                    <button @click="setView('questions')"
-                                        :class="currentView === 'questions' ? 'bg-white text-webropol-teal-700 shadow-soft' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
-                                        class="flex-1 flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200">
-                                        <i class="fas fa-question-circle mr-2"></i>
-                                        <span>Questions</span>
-                                        <span
-                                            class="ml-2 text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-0.5 font-medium"
-                                            :class="currentView === 'questions' ? 'bg-webropol-teal-100 text-webropol-teal-700' : ''"
-                                            x-text="getFilteredQuestions().length"></span>
-                                    </button>
                                     <button @click="setView('surveys')"
                                         :class="currentView === 'surveys' ? 'bg-white text-webropol-teal-700 shadow-soft' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
                                         class="flex-1 flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200">
@@ -122,6 +112,16 @@
                                             class="ml-2 text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-0.5 font-medium"
                                             :class="currentView === 'surveys' ? 'bg-webropol-teal-100 text-webropol-teal-700' : ''"
                                             x-text="getFilteredSurveys().length"></span>
+                                    </button>
+                                    <button @click="setView('questions')"
+                                        :class="currentView === 'questions' ? 'bg-white text-webropol-teal-700 shadow-soft' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                        class="flex-1 flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200">
+                                        <i class="fas fa-question-circle mr-2"></i>
+                                        <span>Questions</span>
+                                        <span
+                                            class="ml-2 text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-0.5 font-medium"
+                                            :class="currentView === 'questions' ? 'bg-webropol-teal-100 text-webropol-teal-700' : ''"
+                                            x-text="getFilteredQuestions().length"></span>
                                     </button>
                                 </div> <!-- Language Selection -->
                                 <div class="relative mb-4">
@@ -157,7 +157,9 @@
                                                     <div class="flex items-center">
                                                         <div class="w-8 h-8 flex items-center justify-center rounded-lg mr-3"
                                                             :class="expandedFolders.includes(folder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
-                                                            <i class="fas fa-folder text-webropol-teal-600"></i>
+                                                            <i :class="folder.name === 'Organisation Library' ? 'fas fa-building text-webropol-teal-600' : 
+                                                                      folder.name === 'My Templates' ? 'fas fa-file-alt text-webropol-teal-600' : 
+                                                                      'fas fa-folder text-webropol-teal-600'"></i>
                                                         </div>
                                                         <span class="font-medium" x-text="folder.name"></span>
                                                     </div>
@@ -257,7 +259,8 @@
                                 </div>
                             </div>
                         </div> <!-- Content Area -->
-                        <div class="col-span-9"> <!-- Questions View -->
+                        <div class="col-span-9"> <!-- Content Area -->
+                            <!-- Questions View -->
                             <div x-show="currentView === 'questions'" x-cloak>
                                 <div
                                     class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-card border border-webropol-gray-200/50 overflow-hidden hover-lift">
@@ -1133,7 +1136,7 @@
     <script>
         function libraryApp() {
             return {
-                currentView: 'questions',
+                currentView: 'surveys',
                 selectedLanguage: 'en',
                 searchTerm: '',
                 showPreviewModal: false,
