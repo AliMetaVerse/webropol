@@ -1252,134 +1252,218 @@
             </div>
 
             <!-- Modal Content -->
-            <div class="flex flex-col h-full max-h-[75vh]">
-                <!-- Survey Info Section -->
-                <div class="p-8 border-b border-webropol-gray-200 bg-gradient-to-br from-webropol-gray-50 to-webropol-blue-50/30">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                        <!-- Options -->
-                        <div>
-                            <label class="block text-base font-semibold text-webropol-gray-800 mb-4">Allow users to:</label>
-                            <div class="space-y-4">
-                                <label class="flex items-center group cursor-pointer">
-                                    <div class="relative">
-                                        <input type="checkbox" x-model="allowQuestions" 
-                                            class="sr-only peer">
-                                        <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
-                                            <i class="fal fa-check text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity duration-200"></i>
-                                        </div>
-                                    </div>
-                                    <span class="ml-4 text-base font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">add question(s) to survey</span>
-                                </label>
-                                <label class="flex items-center group cursor-pointer">
-                                    <div class="relative">
-                                        <input type="checkbox" x-model="allowPages" 
-                                            class="sr-only peer">
-                                        <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
-                                            <i class="fal fa-check text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity duration-200"></i>
-                                        </div>
-                                    </div>
-                                    <span class="ml-4 text-base font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">add page(s) to survey</span>
-                                </label>
+            <div class="flex flex-col h-full max-h-[80vh]">
+                
+                <!-- Survey Information Bar -->
+                <div class="px-8 py-6 bg-white border-b border-webropol-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fal fa-poll-h text-webropol-teal-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-webropol-gray-900" x-text="freezeItemName || 'Report Check'"></h4>
+                                <p class="text-sm text-webropol-gray-500">Survey to be frozen</p>
                             </div>
                         </div>
+                        
+                        <!-- Settings Toggle -->
+                        <button @click="showSettings = !showSettings" 
+                            class="flex items-center px-4 py-2 text-sm font-medium text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-webropol-gray-50 rounded-lg transition-all">
+                            <i class="fal fa-cog mr-2"></i>
+                            Settings
+                            <i class="fal fa-chevron-down ml-2 transition-transform duration-200" :class="showSettings ? 'rotate-180' : ''"></i>
+                        </button>
                     </div>
-
-                    <!-- Search and Options -->
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mt-8 space-y-6 lg:space-y-0">
-                        <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8">
-                            <label class="flex items-center group cursor-pointer">
-                                <div class="relative">
-                                    <input type="checkbox" x-model="selectAllQuestions" 
-                                        class="sr-only peer">
-                                    <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
-                                        <i class="fal fa-check text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity duration-200"></i>
-                                    </div>
+                    
+                    <!-- Expandable Settings -->
+                    <div x-show="showSettings" x-collapse class="mt-6 pt-6 border-t border-webropol-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- User Permissions -->
+                            <div>
+                                <h5 class="text-sm font-semibold text-webropol-gray-700 mb-3">User Permissions</h5>
+                                <div class="space-y-3">
+                                    <label class="flex items-center group cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" x-model="allowQuestions" class="sr-only peer">
+                                            <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                <i class="fal fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </div>
+                                        <span class="ml-3 text-sm text-webropol-gray-700">Allow adding questions</span>
+                                    </label>
+                                    <label class="flex items-center group cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" x-model="allowPages" class="sr-only peer">
+                                            <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                <i class="fal fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </div>
+                                        <span class="ml-3 text-sm text-webropol-gray-700">Allow adding pages</span>
+                                    </label>
                                 </div>
-                                <span class="ml-4 text-base font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">Select all questions</span>
-                            </label>
-                            <label class="flex items-center group cursor-pointer">
-                                <div class="relative">
-                                    <input type="checkbox" x-model="showOnlyTitles" 
-                                        class="sr-only peer">
-                                    <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
-                                        <i class="fal fa-check text-white text-sm opacity-0 peer-checked:opacity-100 transition-opacity duration-200"></i>
-                                    </div>
+                            </div>
+                            
+                            <!-- Display Options -->
+                            <div>
+                                <h5 class="text-sm font-semibold text-webropol-gray-700 mb-3">Display Options</h5>
+                                <div class="space-y-3">
+                                    <label class="flex items-center group cursor-pointer">
+                                        <div class="relative">
+                                            <input type="checkbox" x-model="showOnlyTitles" class="sr-only peer">
+                                            <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                <i class="fal fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </div>
+                                        <span class="ml-3 text-sm text-webropol-gray-700">Show titles only</span>
+                                    </label>
                                 </div>
-                                <span class="ml-4 text-base font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">Show only questions titles</span>
-                            </label>
-                        </div>
-                        <div class="relative">
-                            <i class="fal fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 text-lg"></i>
-                            <input type="text" placeholder="Search questions ..."
-                                class="pl-12 pr-20 py-4 w-full lg:w-96 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-webropol-teal-200 focus:border-webropol-teal-500 bg-white text-base shadow-sm transition-all">
-                            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-webropol-teal-500 hover:bg-webropol-teal-600 text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors shadow-sm">
-                                <i class="fal fa-search mr-1"></i>
-                                Search
-                            </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Questions List -->
-                <div class="flex-1 overflow-y-auto p-8">
-                    <!-- Page Section -->
-                    <div class="mb-8">
-                        <div class="flex items-center justify-between p-6 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30 rounded-2xl border border-webropol-gray-200 shadow-sm">
-                            <div class="flex items-center">
-                                <div class="relative mr-6">
-                                    <input type="checkbox" checked 
-                                        class="sr-only peer">
-                                    <div class="w-7 h-7 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center hover:border-webropol-teal-400">
-                                        <i class="fal fa-check text-white text-base opacity-100 transition-opacity duration-200"></i>
+                <!-- Question Selection Header -->
+                <div class="px-8 py-4 bg-webropol-gray-50 border-b border-webropol-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <label class="flex items-center group cursor-pointer mr-6">
+                                <div class="relative">
+                                    <input type="checkbox" x-model="selectAllQuestions" class="sr-only peer">
+                                    <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                        <i class="fal fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
                                     </div>
                                 </div>
-                                <div class="flex items-center">
-                                    <div>
-                                        <h4 class="text-lg font-bold text-webropol-gray-900">Page</h4>
-                                        <p class="text-base text-webropol-gray-600 mt-1">Survey page with questions</p>
+                                <span class="ml-3 text-sm font-medium text-webropol-gray-700">Select all</span>
+                            </label>
+                            <span class="text-sm text-webropol-gray-500">Choose questions to include in frozen survey</span>
+                        </div>
+                        
+                        <!-- Search -->
+                        <div class="relative">
+                            <i class="fal fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400"></i>
+                            <input type="text" x-model="searchTerm" placeholder="Search questions..."
+                                class="pl-10 pr-4 py-2 w-64 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 bg-white text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions Content -->
+                <div class="flex-1 overflow-y-auto">
+                    
+                    <!-- Page Container -->
+                    <div class="p-6">
+                        <div class="bg-white rounded-xl border border-webropol-gray-200 shadow-sm">
+                            
+                            <!-- Page Header -->
+                            <div class="p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/20">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <label class="flex items-center group cursor-pointer mr-4" @click.stop>
+                                            <div class="relative">
+                                                <input type="checkbox" checked class="sr-only peer">
+                                                <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                    <i class="fal fa-check text-white text-xs opacity-100 transition-opacity"></i>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-webropol-teal-500 rounded-lg flex items-center justify-center mr-3">
+                                                <i class="fal fa-file-alt text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-base font-semibold text-webropol-gray-900">Page 1</h4>
+                                                <p class="text-xs text-webropol-gray-500">2 questions</p>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
+                                    <button @click="expandedPages.includes('page-1') ? expandedPages = expandedPages.filter(id => id !== 'page-1') : expandedPages.push('page-1')"
+                                        class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-white/50 rounded-lg transition-all">
+                                        <i class="fal fa-chevron-down transition-transform duration-200"
+                                           :class="expandedPages.includes('page-1') ? 'rotate-180' : ''"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <button class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-white rounded-lg transition-all">
-                                <i class="fal fa-chevron-up text-lg"></i>
-                            </button>
-                        </div>
 
-                        <!-- Question Item -->
-                        <div class="mt-6 ml-8 border border-webropol-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
-                            <div class="p-8">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex items-start flex-1">
-                                        <div class="relative mr-6 mt-1">
-                                            <input type="checkbox" checked 
-                                                class="sr-only peer">
-                                            <div class="w-7 h-7 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 peer-focus:ring-4 peer-focus:ring-webropol-teal-200 transition-all duration-200 flex items-center justify-center hover:border-webropol-teal-400">
-                                                <i class="fal fa-check text-white text-base opacity-100 transition-opacity duration-200"></i>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center mb-6">
-                                                <span class="bg-webropol-teal-100 text-webropol-teal-700 font-bold text-lg px-3 py-1 rounded-lg mr-4">1</span>
-                                                <h3 class="text-xl font-bold text-webropol-gray-900">Are you satisfied with our services?</h3>
-                                            </div>
-                                            
-                                            <!-- Question Options -->
-                                            <div x-show="!showOnlyTitles" class="space-y-4 pl-4">
-                                                <div class="flex items-center group">
-                                                    <div class="w-5 h-5 border-2 border-webropol-gray-300 rounded-full mr-4 group-hover:border-webropol-teal-400 transition-colors"></div>
-                                                    <span class="text-base text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">Yes</span>
+                            <!-- Questions List -->
+                            <div x-show="expandedPages.includes('page-1')" x-collapse>
+                                
+                                <!-- Question 1 -->
+                                <div class="border-b border-webropol-gray-100 last:border-b-0">
+                                    <div class="p-6 hover:bg-webropol-gray-50/50 transition-colors">
+                                        <div class="flex items-start">
+                                            <label class="flex items-center group cursor-pointer mr-4 mt-1" @click.stop>
+                                                <div class="relative">
+                                                    <input type="checkbox" checked class="sr-only peer">
+                                                    <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                        <i class="fal fa-check text-white text-xs opacity-100 transition-opacity"></i>
+                                                    </div>
                                                 </div>
-                                                <div class="flex items-center group">
-                                                    <div class="w-5 h-5 border-2 border-webropol-gray-300 rounded-full mr-4 group-hover:border-webropol-teal-400 transition-colors"></div>
-                                                    <span class="text-base text-webropol-gray-700 group-hover:text-webropol-gray-900 transition-colors">No</span>
+                                            </label>
+                                            
+                                            <div class="flex-1">
+                                                <div class="flex items-center mb-3">
+                                                    <span class="w-6 h-6 bg-webropol-teal-100 text-webropol-teal-700 text-xs font-bold rounded-full flex items-center justify-center mr-3">1</span>
+                                                    <h5 class="text-sm font-semibold text-webropol-gray-900">Are you satisfied with our services?</h5>
+                                                </div>
+                                                
+                                                <div x-show="!showOnlyTitles" class="ml-9 space-y-2">
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>Yes</span>
+                                                    </div>
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>No</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-50 rounded-lg transition-all ml-6">
-                                        <i class="fal fa-chevron-up text-lg"></i>
-                                    </button>
+                                </div>
+
+                                <!-- Question 2 -->
+                                <div class="border-b border-webropol-gray-100 last:border-b-0">
+                                    <div class="p-6 hover:bg-webropol-gray-50/50 transition-colors">
+                                        <div class="flex items-start">
+                                            <label class="flex items-center group cursor-pointer mr-4 mt-1" @click.stop>
+                                                <div class="relative">
+                                                    <input type="checkbox" class="sr-only peer">
+                                                    <div class="w-5 h-5 bg-white border-2 border-webropol-gray-300 rounded-md peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                        <i class="fal fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                            
+                                            <div class="flex-1">
+                                                <div class="flex items-center mb-3">
+                                                    <span class="w-6 h-6 bg-webropol-teal-100 text-webropol-teal-700 text-xs font-bold rounded-full flex items-center justify-center mr-3">2</span>
+                                                    <h5 class="text-sm font-semibold text-webropol-gray-900">How would you rate our service quality?</h5>
+                                                </div>
+                                                
+                                                <div x-show="!showOnlyTitles" class="ml-9 space-y-2">
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>Excellent</span>
+                                                    </div>
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>Good</span>
+                                                    </div>
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>Fair</span>
+                                                    </div>
+                                                    <div class="flex items-center text-xs text-webropol-gray-600">
+                                                        <div class="w-3 h-3 border border-webropol-gray-300 rounded-full mr-2"></div>
+                                                        <span>Poor</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1434,6 +1518,10 @@
                 allowPages: false,
                 selectAllQuestions: false,
                 showOnlyTitles: false,
+                showSettings: false,
+                expandedPages: ['page-1'], // Track which pages are expanded
+                expandedQuestions: [], // Track which questions are expanded
+                searchTerm: '',
                 
                 // Selection state
                 selectedQuestions: [],
@@ -1452,7 +1540,7 @@
                 questions: [
                     { 
                         id: 1, 
-                        name: 'Valintakysymys', 
+                        name: 'Feedback Survey', 
                         type: 'selection', 
                         language: 'fi', 
                         folderId: null,
