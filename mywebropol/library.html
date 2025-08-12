@@ -189,7 +189,7 @@
                                                                 x-transition:leave="transition ease-in duration-75"
                                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-10">
+                                                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
                                                                 <div class="py-1">
                                                                     <button @click="addSubFolder(folder.id)"
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
@@ -229,7 +229,7 @@
                                                                     x-transition:leave="transition ease-in duration-75"
                                                                     x-transition:leave-start="transform opacity-100 scale-100"
                                                                     x-transition:leave-end="transform opacity-0 scale-95"
-                                                                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-10">
+                                                                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
                                                                     <div class="py-1">
                                                                         <button @click="addSubFolder(item.id)"
                                                                             class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
@@ -422,7 +422,7 @@
                                                                 x-transition:leave="transition ease-in duration-75"
                                                                 x-transition:leave-start="transform opacity-100 scale-100"
                                                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-10">
+                                                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
                                                                 <div class="py-1">
                                                                     <button @click="deleteItem(question.id, 'question')"
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
@@ -454,7 +454,7 @@
                             </div><!-- Surveys View -->
                             <div x-show="currentView === 'surveys'" x-cloak>
                                 <div
-                                    class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-card border border-webropol-gray-200/50 overflow-hidden hover-lift">
+                                    class="relative bg-white/70 backdrop-blur-sm rounded-2xl shadow-card border border-webropol-gray-200/50 hover-lift">
                                     <!-- Header -->
                                     <div
                                         class="px-8 py-6 border-b border-webropol-gray-200/50 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
@@ -571,7 +571,9 @@
                                                                         x-transition:leave="transition ease-in duration-75"
                                                                         x-transition:leave-start="transform opacity-100 scale-100"
                                                                         x-transition:leave-end="transform opacity-0 scale-95"
-                                                                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-10">
+                                                                        style="position: fixed; z-index: 9999;"
+                                                                        class="right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-webropol-gray-200"
+                                                                        @click.away="showContextMenu = null">
                                                                         <div class="py-1">
                                                                             <button @click="showSurveyInfo(survey.id)"
                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
@@ -844,7 +846,7 @@
                 class="flex items-center justify-between p-8 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
                 <div class="flex items-center">
                     <div
-                        class="w-12 h-12 bg-gradient-to-br from-webropol-blue-200 to-webropol-blue-200 rounded-full flex items-center justify-center mr-4">
+                        class="w-12 h-12 bg-gradient-to-br from-webropol-teal-200 to-webropol-teal-200 rounded-full flex items-center justify-center mr-4">
                         <i class="fas fa-eye text-lg"></i>
                     </div>
                     <div>
@@ -1236,13 +1238,11 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-100 rounded-full flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mr-4">
                         <i class="fal fa-snowflake text-blue-600 text-lg"></i>
                     </div>
                     <div class="block">
-                        <h3 class="text-xl font-bold text-webropol-gray-900">Freeze Survey Question(s) / Page(s)</h3>
-                        <div class="flex"><h6 class="mr-2">Survey Name: </h6> <h6 class="text-bold" x-text="freezeItemName || 'Report Check'"></h6>
-                        </div>
+                        <h3 class="text-xl font-bold text-webropol-gray-900">Freeze Survey Question(s) or Page(s)</h3>
                     </div>
                 </div>
                 <button @click="showFreezeModal = false"
@@ -1258,9 +1258,6 @@
                 <div class="px-8 py-6 bg-white border-b border-webropol-gray-200">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-100 to-webropol-blue-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fal fa-poll-h text-webropol-teal-600 text-lg"></i>
-                            </div>
                             <div>
                                 <h4 class="text-lg font-semibold text-webropol-gray-900" x-text="freezeItemName || 'Report Check'"></h4>
                                 <p class="text-sm text-webropol-gray-500">Survey to be frozen</p>
@@ -1329,7 +1326,7 @@
                         <div class="flex items-center">
                             <label class="flex items-center group cursor-pointer mr-6">
                                 <div class="relative">
-                                    <input type="checkbox" x-model="selectAllQuestions" checked class="sr-only peer">
+                                    <input type="checkbox" x-model="selectAllQuestions" @change="toggleSelectAllFrozenQuestions()" class="sr-only peer">
                                     <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
                                         <i class="fal fa-check text-white text-sm opacity-100 transition-opacity"></i>
                                     </div>
@@ -1358,17 +1355,15 @@
                             <!-- Page Header -->
                             <div class="p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/20">
                                 <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <label class="flex items-center group cursor-pointer mr-4" @click.stop>
-                                            <div class="relative">
-                                                <input type="checkbox" checked class="sr-only peer">
-                                                <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
-                                                    <i class="fal fa-check text-white text-sm opacity-100 transition-opacity"></i>
-                                                </div>
-                                            </div>
-                                        </label>
-                                        
                                         <div class="flex items-center">
+                                            <label class="flex items-center group cursor-pointer mr-4" @click.stop>
+                                                <div class="relative">
+                                                    <input type="checkbox" :checked="isQuestionSelected(1)" @change="toggleFrozenQuestionSelection(1)" class="sr-only peer">
+                                                    <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
+                                                        <i class="fal fa-check text-white text-sm opacity-100 transition-opacity"></i>
+                                                    </div>
+                                                </div>
+                                            </label>                                        <div class="flex items-center">
                                             <div class="w-8 h-8 bg-webropol-teal-500 rounded-lg flex items-center justify-center mr-3">
                                                 <i class="fal fa-file-alt text-white"></i>
                                             </div>
@@ -1396,7 +1391,7 @@
                                         <div class="flex items-start">
                                             <label class="flex items-center group cursor-pointer mr-4 mt-1" @click.stop>
                                                 <div class="relative">
-                                                    <input type="checkbox" checked class="sr-only peer">
+                                                    <input type="checkbox" :checked="isQuestionSelected(1)" @change="toggleFrozenQuestionSelection(1)" class="sr-only peer">
                                                     <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
                                                         <i class="fal fa-check text-white text-sm opacity-100 transition-opacity"></i>
                                                     </div>
@@ -1430,7 +1425,7 @@
                                         <div class="flex items-start">
                                             <label class="flex items-center group cursor-pointer mr-4 mt-1" @click.stop>
                                                 <div class="relative">
-                                                    <input type="checkbox" checked class="sr-only peer">
+                                                    <input type="checkbox" :checked="isQuestionSelected(2)" @change="toggleFrozenQuestionSelection(2)" class="sr-only peer">
                                                     <div class="w-6 h-6 bg-white border-2 border-webropol-gray-300 rounded-lg peer-checked:bg-webropol-teal-500 peer-checked:border-webropol-teal-500 transition-all duration-200 flex items-center justify-center group-hover:border-webropol-teal-400">
                                                         <i class="fal fa-check text-white text-sm opacity-100 transition-opacity"></i>
                                                     </div>
@@ -1522,6 +1517,7 @@
                 expandedPages: ['page-1'], // Track which pages are expanded
                 expandedQuestions: [], // Track which questions are expanded
                 searchTerm: '',
+                selectedFrozenQuestions: [1, 2], // Track selected questions in freeze modal
                 
                 // Selection state
                 selectedQuestions: [],
@@ -1884,6 +1880,11 @@
                     this.freezeItemName = item ? item.name : 'Unknown Item';
                     this.freezeItemType = itemType;
                     this.selectedFreezeFolder = null;
+                    
+                    // Initialize freeze modal state
+                    this.selectedFrozenQuestions = [1, 2]; // Start with all questions selected
+                    this.selectAllQuestions = true;
+                    
                     this.showFreezeModal = true;
                     this.showContextMenu = null;
                 },
@@ -1897,6 +1898,7 @@
                     console.log('Allow pages:', this.allowPages);
                     console.log('Select all questions:', this.selectAllQuestions);
                     console.log('Show only titles:', this.showOnlyTitles);
+                    console.log('Selected frozen questions:', this.selectedFrozenQuestions);
                     
                     // Close the modal and reset state
                     this.showFreezeModal = false;
@@ -1906,6 +1908,38 @@
                     this.selectedFreezeFolder = null;
                     this.allowQuestions = true;
                     this.allowPages = false;
+                },
+
+                // Freeze modal question selection methods
+                toggleSelectAllFrozenQuestions() {
+                    if (this.selectAllQuestions) {
+                        // Select all questions (in this case, questions 1 and 2)
+                        this.selectedFrozenQuestions = [1, 2];
+                    } else {
+                        // Deselect all questions
+                        this.selectedFrozenQuestions = [];
+                    }
+                },
+
+                toggleFrozenQuestionSelection(questionId) {
+                    if (this.selectedFrozenQuestions.includes(questionId)) {
+                        this.selectedFrozenQuestions = this.selectedFrozenQuestions.filter(id => id !== questionId);
+                    } else {
+                        this.selectedFrozenQuestions.push(questionId);
+                    }
+                    // Update the select all checkbox state
+                    this.updateSelectAllFrozenQuestions();
+                },
+
+                updateSelectAllFrozenQuestions() {
+                    // Check if all available questions are selected
+                    const allQuestionIds = [1, 2]; // Available questions in the freeze modal
+                    this.selectAllQuestions = allQuestionIds.length > 0 && 
+                        allQuestionIds.every(id => this.selectedFrozenQuestions.includes(id));
+                },
+
+                isQuestionSelected(questionId) {
+                    return this.selectedFrozenQuestions.includes(questionId);
                 },
 
                 hasSelectedItems() {
