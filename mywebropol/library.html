@@ -89,10 +89,51 @@
                 <div class="max-w-8xl mx-auto">
                     <!-- Page Header -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
-                        <div>
-                            <h1 class="text-2xl md:text-3xl font-bold text-webropol-gray-900 mb-2">Question & Survey Library</h1>
-                            <p class="text-webropol-gray-600">Manage and organize your survey questions and templates
-                            </p>
+                        <div class="flex items-center">
+                            <div>
+                                <h1 class="text-2xl md:text-3xl font-bold text-webropol-gray-900 mb-2">Question & Survey Library</h1>
+                                <p class="text-webropol-gray-600">Manage and organize your survey questions and templates
+                                </p>
+                            </div>
+                            
+                            <!-- Kebab Menu -->
+                            <div class="relative ml-4" @click.away="showLibraryMenu = false">
+                                <button @click="showLibraryMenu = !showLibraryMenu"
+                                        class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:hover:bg-webropol-teal-300 rounded-lg transition-all">
+                                    <i class="fal fa-ellipsis-v text-base"></i>
+                                </button>
+                                
+                                <!-- Dropdown Menu -->
+                                <div x-show="showLibraryMenu" 
+                                     @click.stop
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-webropol-gray-200 z-50">
+                                    <div class="py-2">
+                                        <div class="px-4 py-2 text-xs font-medium text-webropol-gray-500 uppercase tracking-wider border-b border-webropol-gray-100">
+                                            Tab Layout
+                                        </div>
+                                        <button @click="setTabsOrientation('horizontal'); showLibraryMenu = false"
+                                                :class="tabsOrientation === 'horizontal' ? 'bg-webropol-teal-50 text-webropol-teal-700' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                                                class="flex items-center w-full px-4 py-3 text-sm transition-colors">
+                                            <i class="fa-light fa-rectangle mr-3 text-base w-4"></i>
+                                            <span class="flex-1 text-left">Horizontal Layout</span>
+                                            <i x-show="tabsOrientation === 'horizontal'" class="fal fa-check text-webropol-teal-600 text-sm"></i>
+                                        </button>
+                                        <button @click="setTabsOrientation('vertical'); showLibraryMenu = false"
+                                                :class="tabsOrientation === 'vertical' ? 'bg-webropol-teal-50 text-webropol-teal-700' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                                                class="flex items-center w-full px-4 py-3 text-sm transition-colors">
+                                            <i class="fa-light fa-rectangle-vertical mr-3 text-base-base w-4"></i>
+                                            <span class="flex-1 text-left">Vertical Layout</span>
+                                            <i x-show="tabsOrientation === 'vertical'" class="fal fa-check text-webropol-teal-600 text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div> 
                     </div>
 
@@ -102,52 +143,41 @@
                             <div
                                 class="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-card border border-webropol-gray-200/50 hover-lift">
                                 <!-- Enhanced Tab Navigation -->
-                                <div class="flex items-center justify-between mb-6">
-                                    <!-- Orientation Toggle Icon -->
-                                    <button @click="toggleTabsOrientation()" 
-                                            class="mr-3 w-8 h-8 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200"
-                                            :title="tabsOrientation === 'horizontal' ? 'Switch to vertical layout' : 'Switch to horizontal layout'">
-                                        <i :class="tabsOrientation === 'horizontal' ? 'fa-light fa-rectangle-vertical' : 'fa-light fa-rectangle-wide'" 
-                                           class="text-sm"></i>
-                                    </button>
-                                    
-                                    <!-- Tabs Container -->
-                                    <div :class="tabsOrientation === 'horizontal' ? 
-                                        'flex items-center space-x-2 p-1.5 bg-webropol-gray-100 rounded-xl border border-webropol-gray-200 shadow-sm flex-1' : 
-                                        'flex flex-col space-y-2 p-1.5 bg-webropol-gray-100 rounded-xl border border-webropol-gray-200 shadow-sm flex-1'">
-                                        <button @click="setView('surveys')"
+                                <div :class="tabsOrientation === 'horizontal' ? 
+                                    'flex items-center space-x-2 mb-6 p-1.5 bg-webropol-gray-100 rounded-xl border border-webropol-gray-200 shadow-sm' : 
+                                    'flex flex-col space-y-2 mb-6 p-1.5 bg-webropol-gray-100 rounded-xl border border-webropol-gray-200 shadow-sm'">
+                                    <button @click="setView('surveys')"
+                                        :class="currentView === 'surveys' ? 
+                                            'bg-webropol-teal-600 text-white shadow-lg shadow-webropol-teal-200/50 border-webropol-teal-600' : 
+                                            'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white/70 border-transparent focus:bg-white focus:text-webropol-teal-700 focus:border-webropol-teal-300'"
+                                        :class="tabsOrientation === 'horizontal' ? 'flex-1' : 'w-full'"
+                                        class="flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ease-out border-2 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]">
+                                        <i class="fal fa-poll-h mr-1 sm:mr-2"></i>
+                                        <span class="hidden sm:inline">Surveys</span>
+                                        <span class="sm:hidden">Survey</span>
+                                        <span
+                                            class="ml-1 sm:ml-2 text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center"
                                             :class="currentView === 'surveys' ? 
-                                                'bg-webropol-teal-600 text-white shadow-lg shadow-webropol-teal-200/50 border-webropol-teal-600' : 
-                                                'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white/70 border-transparent focus:bg-white focus:text-webropol-teal-700 focus:border-webropol-teal-300'"
-                                            :class="tabsOrientation === 'horizontal' ? 'flex-1' : 'w-full'"
-                                            class="flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ease-out border-2 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]">
-                                            <i class="fal fa-poll-h mr-1 sm:mr-2"></i>
-                                            <span class="hidden sm:inline">Surveys</span>
-                                            <span class="sm:hidden">Survey</span>
-                                            <span
-                                                class="ml-1 sm:ml-2 text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center"
-                                                :class="currentView === 'surveys' ? 
-                                                    'bg-white/20 text-white backdrop-blur-sm' : 
-                                                    'bg-webropol-gray-200 text-webropol-gray-700'"
-                                                x-text="getFilteredSurveys().length"></span>
-                                        </button>
-                                        <button @click="setView('questions')"
+                                                'bg-white/20 text-white backdrop-blur-sm' : 
+                                                'bg-webropol-gray-200 text-webropol-gray-700'"
+                                            x-text="getFilteredSurveys().length"></span>
+                                    </button>
+                                    <button @click="setView('questions')"
+                                        :class="currentView === 'questions' ? 
+                                            'bg-webropol-teal-600 text-white shadow-lg shadow-webropol-teal-200/50 border-webropol-teal-600' : 
+                                            'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white/70 border-transparent focus:bg-white focus:text-webropol-teal-700 focus:border-webropol-teal-300'"
+                                        :class="tabsOrientation === 'horizontal' ? 'flex-1' : 'w-full'"
+                                        class="flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ease-out border-2 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]">
+                                        <i class="fal fa-question-circle mr-1 sm:mr-2"></i>
+                                        <span class="hidden sm:inline">Questions</span>
+                                        <span class="sm:hidden">Question</span>
+                                        <span
+                                            class="ml-1 sm:ml-2 text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center"
                                             :class="currentView === 'questions' ? 
-                                                'bg-webropol-teal-600 text-white shadow-lg shadow-webropol-teal-200/50 border-webropol-teal-600' : 
-                                                'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white/70 border-transparent focus:bg-white focus:text-webropol-teal-700 focus:border-webropol-teal-300'"
-                                            :class="tabsOrientation === 'horizontal' ? 'flex-1' : 'w-full'"
-                                            class="flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 ease-out border-2 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transform hover:scale-[1.02] active:scale-[0.98]">
-                                            <i class="fal fa-question-circle mr-1 sm:mr-2"></i>
-                                            <span class="hidden sm:inline">Questions</span>
-                                            <span class="sm:hidden">Question</span>
-                                            <span
-                                                class="ml-1 sm:ml-2 text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center"
-                                                :class="currentView === 'questions' ? 
-                                                    'bg-white/20 text-white backdrop-blur-sm' : 
-                                                    'bg-webropol-gray-200 text-webropol-gray-700'"
-                                                x-text="getFilteredQuestions().length"></span>
-                                        </button>
-                                    </div>
+                                                'bg-white/20 text-white backdrop-blur-sm' : 
+                                                'bg-webropol-gray-200 text-webropol-gray-700'"
+                                            x-text="getFilteredQuestions().length"></span>
+                                    </button>
                                 </div> <!-- Language Selection -->
                                 <div class="relative mb-4">
                                     <select x-model="selectedLanguage"
@@ -2442,6 +2472,9 @@
                 expandedFolders: [],
                 showOnlyTitles: false,
                 
+                // Library menu state
+                showLibraryMenu: false,
+                
                 // Tab orientation state
                 tabsOrientation: localStorage.getItem('webropol-tabs-orientation') || 'horizontal', // 'horizontal' or 'vertical'
                 
@@ -2777,8 +2810,8 @@
                     this.currentView = view;
                 },
 
-                toggleTabsOrientation() {
-                    this.tabsOrientation = this.tabsOrientation === 'horizontal' ? 'vertical' : 'horizontal';
+                setTabsOrientation(orientation) {
+                    this.tabsOrientation = orientation;
                     localStorage.setItem('webropol-tabs-orientation', this.tabsOrientation);
                 },
 
