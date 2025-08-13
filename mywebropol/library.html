@@ -197,6 +197,11 @@
                                                                         <i class="fal fa-folder-plus mr-3 text-black"></i>
                                                                         Add Sub Folder
                                                                     </button>
+                                                                    <button @click="openMoveModal(folder.id, folder.name)"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                        <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                        Move
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -246,6 +251,11 @@
                                                                                     class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                                     <i class="fal fa-folder-plus mr-3 text-black"></i>
                                                                                     Add Sub Folder
+                                                                                </button>
+                                                                                <button @click="openMoveModal(subfolder.id, subfolder.name)"
+                                                                                    class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                    <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                                    Move
                                                                                 </button>
                                                                                 <button @click="openRenameModal(subfolder.id, subfolder.name)"
                                                                                     class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
@@ -307,6 +317,11 @@
                                                                                                 <i class="fal fa-folder-plus mr-3 text-black"></i>
                                                                                                 Add Sub Folder
                                                                                             </button>
+                                                                                            <button @click="openMoveModal(subsubfolder.id, subsubfolder.name)"
+                                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                                <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                                                Move
+                                                                                            </button>
                                                                                             <button @click="openRenameModal(subsubfolder.id, subsubfolder.name)"
                                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                                                 <i class="fal fa-edit mr-3 text-black"></i>
@@ -357,6 +372,11 @@
                                                                                                     x-transition:leave-end="transform opacity-0 scale-95"
                                                                                                     class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
                                                                                                     <div class="py-1">
+                                                                                                        <button @click="openMoveModal(finalfolder.id, finalfolder.name)"
+                                                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                                            <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                                                            Move
+                                                                                                        </button>
                                                                                                         <button @click="openRenameModal(finalfolder.id, finalfolder.name)"
                                                                                                             class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                                                             <i class="fal fa-edit mr-3 text-black"></i>
@@ -869,7 +889,10 @@
                     <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-100 rounded-full flex items-center justify-center mr-4">
                         <i class="fal fa-folder-open text-orange-600 text-lg"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-webropol-gray-900">Move folder</h3>
+                    <div>
+                        <h3 class="text-xl font-bold text-webropol-gray-900">Move Folder</h3>
+                        <p class="text-sm text-webropol-gray-600">Select a new location for this folder</p>
+                    </div>
                 </div>
                 <button @click="showMoveModal = false"
                     class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all">
@@ -880,16 +903,16 @@
             <!-- Modal Content -->
             <div class="p-6">
                 <!-- Current Folder Info -->
-                <div class="mb-2">
+                <div class="mb-4">
                     <div class="bg-webropol-gray-50 rounded-xl p-4 border border-webropol-gray-200">
                         <div class="flex items-center mb-2">
                             <span class="text-sm font-medium text-webropol-gray-600">Folder you're moving:</span>
+                        </div>
                         <div class="flex items-center ml-4">
                             <div class="w-6 h-6 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fal fa-users text-webropol-teal-600 text-sm"></i>
+                                <i class="fal fa-folder text-webropol-teal-600"></i>
                             </div>
-                            <span class="font-medium text-webropol-gray-900" x-text="moveItemName || 'Team surveys'"></span>
-                        </div>
+                            <span class="font-medium text-webropol-gray-900" x-text="moveItemName"></span>
                         </div>
                     </div>
                 </div>
@@ -899,9 +922,9 @@
                     <div class="bg-webropol-gray-50 rounded-xl p-4 border border-webropol-gray-200">
                         <div class="flex items-center mb-2">
                             <span class="text-sm font-medium text-webropol-gray-600">New location:</span>
+                        </div>
                         <div class="flex items-center text-webropol-gray-500 ml-4">
                             <span x-text="selectedMoveLocation || 'Not selected yet'"></span>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -909,64 +932,81 @@
                 <!-- Location Selection -->
                 <div class="mb-6">
                     <h4 class="text-lg font-semibold text-webropol-gray-900 mb-4">Select a new location</h4>
-                    <div class="space-y-2">
-                        <!-- My questions - Main Folder -->
-                        <div class="border border-webropol-gray-200 rounded-xl overflow-hidden">
-                            <button @click="selectMoveLocation('My questions')"
-                                class="w-full flex items-center p-3 hover:bg-webropol-teal-50 transition-all text-left group"
-                                :class="selectedMoveLocation === 'My questions' ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
-                                <div class="w-8 h-8 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
-                                    <i class="fal fa-folder text-webropol-teal-600"></i>
+                    <div class="space-y-2 max-h-64 overflow-y-auto">
+                        <!-- Root Folders -->
+                        <template x-for="folder in folders" :key="folder.id">
+                            <div class="border border-webropol-gray-200 rounded-xl overflow-hidden"
+                                x-show="folder.id !== moveItemId">
+                                <!-- Root Folder -->
+                                <button @click.stop="selectMoveLocation(folder.name, folder.id)"
+                                    class="w-full flex items-center p-3 hover:bg-webropol-teal-50 transition-all text-left group"
+                                    :class="selectedMoveLocationId === folder.id ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
+                                    <div class="w-8 h-8 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
+                                        <i class="fal fa-building text-webropol-teal-600" x-show="folder.name === 'Organisation Library'"></i>
+                                        <i class="fal fa-file-alt text-webropol-teal-600" x-show="folder.name === 'My Templates'"></i>
+                                    </div>
+                                    <span class="font-medium text-webropol-gray-900" x-text="folder.name"></span>
+                                </button>
+                                
+                                <!-- Level 1 Subfolders -->
+                                <div class="bg-webropol-gray-50 border-t border-webropol-gray-200">
+                                    <template x-for="subfolder in folder.children" :key="subfolder.id">
+                                        <div x-show="subfolder.id !== moveItemId">
+                                            <button @click.stop="selectMoveLocation(subfolder.name, subfolder.id)"
+                                                class="w-full flex items-center p-3 pl-8 hover:bg-webropol-teal-50 transition-all text-left group"
+                                                :class="selectedMoveLocationId === subfolder.id ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
+                                                <div class="w-4 h-6 flex items-center justify-start mr-1">
+                                                    <div class="w-3 h-px bg-webropol-gray-300"></div>
+                                                </div>
+                                                <div class="w-6 h-6 bg-webropol-teal-100 rounded-md flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
+                                                    <i class="fal fa-folder text-webropol-teal-600"></i>
+                                                </div>
+                                                <span class="text-sm font-medium text-webropol-gray-800" x-text="subfolder.name"></span>
+                                            </button>
+                                            
+                                            <!-- Level 2 Subfolders -->
+                                            <template x-for="subsubfolder in subfolder.children" :key="subsubfolder.id">
+                                                <div x-show="subsubfolder.id !== moveItemId">
+                                                    <button @click.stop="selectMoveLocation(subsubfolder.name, subsubfolder.id)"
+                                                        class="w-full flex items-center p-3 pl-12 hover:bg-webropol-teal-50 transition-all text-left group border-t border-webropol-gray-200"
+                                                        :class="selectedMoveLocationId === subsubfolder.id ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
+                                                        <div class="w-4 h-6 flex items-center justify-start mr-1">
+                                                            <div class="w-3 h-px bg-webropol-gray-300"></div>
+                                                        </div>
+                                                        <div class="w-6 h-6 bg-webropol-teal-100 rounded-md flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
+                                                            <i class="fal fa-folder text-webropol-teal-600"></i>
+                                                        </div>
+                                                        <span class="text-sm font-medium text-webropol-gray-800" x-text="subsubfolder.name"></span>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
-                                <span class="font-medium text-webropol-gray-900">My questions</span>
-                            </button>
-                            
-                            <!-- Subfolders under My questions -->
-                            <div class="bg-webropol-gray-50 border-t border-webropol-gray-200">
-                                <!-- eTest questions - Subfolder -->
-                                <button @click="selectMoveLocation('eTest questions')"
-                                    class="w-full flex items-center p-3 pl-8 hover:bg-webropol-teal-50 transition-all text-left group"
-                                    :class="selectedMoveLocation === 'eTest questions' ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
-                                    <!-- Tree connector line -->
-                                    <div class="w-4 h-6 flex items-center justify-start mr-1">
-                                        <div class="w-3 h-px bg-webropol-gray-300"></div>
-                                    </div>
-                                    <div class="w-6 h-6 bg-webropol-teal-100 rounded-md flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
-                                        <i class="fal fa-folder text-webropol-teal-600 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm font-medium text-webropol-gray-800">eTest questions</span>
-                                </button>
-
-                                <!-- survey questions - Subfolder -->
-                                <button @click="selectMoveLocation('survey questions')"
-                                    class="w-full flex items-center p-3 pl-8 hover:bg-webropol-teal-50 transition-all text-left group border-t border-webropol-gray-200"
-                                    :class="selectedMoveLocation === 'survey questions' ? 'bg-webropol-teal-50 ring-2 ring-webropol-teal-200' : ''">
-                                    <!-- Tree connector line -->
-                                    <div class="w-4 h-6 flex items-center justify-start mr-1">
-                                        <div class="w-3 h-px bg-webropol-gray-300"></div>
-                                    </div>
-                                    <div class="w-6 h-6 bg-webropol-teal-100 rounded-md flex items-center justify-center mr-3 group-hover:bg-webropol-teal-200 transition-colors">
-                                        <i class="fal fa-folder text-webropol-teal-600 text-sm"></i>
-                                    </div>
-                                    <span class="text-sm font-medium text-webropol-gray-800">survey questions</span>
-                                </button>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
-                <button @click="showMoveModal = false"
-                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-teal-200 transition-all border border-webropol-teal-700">
-                    Cancel
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-between">
+                <button @click="openCreateNewFolderFromMove()"
+                    class="px-6 py-2.5 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 font-medium rounded-full transition-all border border-webropol-gray-300">
+                    <i class="fal fa-folder-plus mr-2"></i>
+                    Create New Folder
                 </button>
-                <button @click="confirmMove()"
-                    :disabled="!selectedMoveLocation"
-                    class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 disabled:bg-webropol-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-full transition-all">
-                    Move
-                </button>
+                <div class="flex items-center space-x-3">
+                    <button @click="showMoveModal = false"
+                        class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-teal-200 transition-all border border-webropol-teal-700">
+                        Cancel
+                    </button>
+                    <button @click="confirmMove()"
+                        :disabled="!selectedMoveLocation"
+                        class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 disabled:bg-webropol-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-full transition-all">
+                        Move
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1848,6 +1888,7 @@
                 moveItemId: null,
                 moveItemName: '',
                 selectedMoveLocation: null,
+                selectedMoveLocationId: null,
                 
                 // Freeze modal state
                 freezeItemId: null,
@@ -2188,8 +2229,15 @@
                     this.showContextMenu = null;
                 },
 
-                selectMoveLocation(location) {
-                    this.selectedMoveLocation = location;
+                selectMoveLocation(locationName, locationId) {
+                    this.selectedMoveLocation = locationName;
+                    this.selectedMoveLocationId = locationId;
+                },
+
+                openCreateNewFolderFromMove() {
+                    // Close move modal and open create folder modal
+                    this.showMoveModal = false;
+                    this.showCreateFolder = true;
                 },
 
                 confirmMove() {
@@ -2278,6 +2326,15 @@
                         this.showAddSubfolderModal = true;
                         this.showContextMenu = null;
                     }
+                },
+
+                openMoveModal(itemId, itemName) {
+                    this.moveItemId = itemId;
+                    this.moveItemName = itemName;
+                    this.selectedMoveLocation = null;
+                    this.selectedMoveLocationId = null;
+                    this.showMoveModal = true;
+                    this.showContextMenu = null;
                 },
 
                 openRenameModal(itemId, currentName) {
