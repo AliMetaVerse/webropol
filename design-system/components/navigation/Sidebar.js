@@ -1,6 +1,7 @@
 /**
  * Webropol Sidebar Component
  * Navigation sidebar with menu items and branding
+ * Responsive: Shows icons only on screens <= 1280px, expands on hover as overlay
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
@@ -24,64 +25,199 @@ export class WebropolSidebar extends BaseComponent {
     };
 
     this.innerHTML = `
-      <aside class="h-screen w-72 bg-white/80 backdrop-blur-xl border-r border-webropol-gray-200/50 flex flex-col flex-shrink-0 shadow-soft">
-        <div class="h-20 flex items-center px-8 border-b border-webropol-gray-200/50">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center">
+      <aside class="sidebar-container group h-screen bg-white/80 backdrop-blur-xl border-r border-webropol-gray-200/50 flex flex-col flex-shrink-0 shadow-soft
+                     xl:w-72 w-16 
+                     relative
+                     xl:z-auto z-50
+                     transition-all duration-300 ease-in-out
+                     hover:w-72 hover:shadow-2xl hover:absolute hover:h-screen
+                     xl:hover:w-72 xl:hover:shadow-soft xl:hover:relative xl:hover:h-auto">
+        
+        <!-- Header -->
+        <div class="h-20 flex items-center border-b border-webropol-gray-200/50
+                    xl:px-8 px-4
+                    group-hover:px-8
+                    transition-all duration-300">
+          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <i class="fas fa-chart-bar text-white text-lg"></i>
           </div>
-          <div class="ml-3">
-            <h1 class="font-bold text-webropol-gray-900 text-lg">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1">Survey Platform</p>
+          <div class="ml-3 overflow-hidden transition-all duration-300
+                      xl:opacity-100 xl:w-auto
+                      opacity-0 w-0
+                      group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
+            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
+            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
           </div>
         </div>
-        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-          <a href="${link('index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='home' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-home w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-            <span class="font-medium">Home</span>
+        
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1
+                    xl:px-4 px-2
+                    group-hover:px-4
+                    transition-all duration-300">
+          <a href="${link('index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                  xl:px-4 px-3
+                                                  group-hover:px-4
+                                                  py-3
+                                                  ${active==='home' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fas fa-home w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Home</span>
           </a>
-          <a href="${link('surveys/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='surveys' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-poll-h w-5 mr-4"></i>
-            <span>Surveys</span>
+          
+          <a href="${link('surveys/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                          xl:px-4 px-3
+                                                          group-hover:px-4
+                                                          py-3
+                                                          ${active==='surveys' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fas fa-poll-h w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Surveys</span>
           </a>
-          <a href="${link('events/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='events' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-calendar-alt w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-            <span class="font-medium">Events</span>
+          
+          <a href="${link('events/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                        xl:px-4 px-3
+                                                        group-hover:px-4
+                                                        py-3
+                                                        ${active==='events' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fas fa-calendar-alt w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Events</span>
           </a>
-          <a href="${link('sms/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='sms' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-sms w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-            <span class="font-medium">2-Way SMS</span>
+          
+          <a href="${link('sms/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                    xl:px-4 px-3
+                                                    group-hover:px-4
+                                                    py-3
+                                                    ${active==='sms' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fas fa-sms w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">2-Way SMS</span>
           </a>
-          <a href="${link('dashboards/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-chart-line w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-            <span class="font-medium">Dashboards</span>
+          
+          <a href="${link('dashboards/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                            xl:px-4 px-3
+                                                            group-hover:px-4
+                                                            py-3
+                                                            ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fas fa-chart-line w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Dashboards</span>
           </a>
+          
           <div class="pt-4 border-t border-webropol-gray-200/50 mt-4">
-            <a href="${link('mywebropol/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-book-open w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium">MyWebropol</span>
+            <a href="${link('mywebropol/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                              xl:px-4 px-3
+                                                              group-hover:px-4
+                                                              py-3
+                                                              ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+              <i class="fas fa-book-open w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                       xl:mr-4 mr-0
+                       group-hover:mr-4"></i>
+              <span class="font-medium overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto
+                          opacity-0 w-0
+                          group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">MyWebropol</span>
             </a>
-            <a href="${link('admin-tools/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-tools w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium">Admin Tools</span>
+            
+            <a href="${link('admin-tools/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                              xl:px-4 px-3
+                                                              group-hover:px-4
+                                                              py-3
+                                                              ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+              <i class="fas fa-tools w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                       xl:mr-4 mr-0
+                       group-hover:mr-4"></i>
+              <span class="font-medium overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto
+                          opacity-0 w-0
+                          group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Admin Tools</span>
             </a>
-            <a href="${link('training-videos/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-video w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium">Training Videos</span>
+            
+            <a href="${link('training-videos/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                                  xl:px-4 px-3
+                                                                  group-hover:px-4
+                                                                  py-3
+                                                                  ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+              <i class="fas fa-video w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                       xl:mr-4 mr-0
+                       group-hover:mr-4"></i>
+              <span class="font-medium overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto
+                          opacity-0 w-0
+                          group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Training Videos</span>
             </a>
-            <a href="${link('shop/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-shopping-cart w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-              <span class="font-medium">Shop</span>
+            
+            <a href="${link('shop/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                        xl:px-4 px-3
+                                                        group-hover:px-4
+                                                        py-3
+                                                        ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+              <i class="fas fa-shopping-cart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                       xl:mr-4 mr-0
+                       group-hover:mr-4"></i>
+              <span class="font-medium overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto
+                          opacity-0 w-0
+                          group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Shop</span>
             </a>
           </div>
         </nav>
-        <div class="mt-auto px-4 pb-6">
-          <a href="#" class="flex items-center px-4 py-3 rounded-xl font-semibold text-webropol-teal-700 hover:bg-webropol-teal-50 transition-all duration-200">
-            <i class="fas fa-envelope w-5 mr-4"></i>
-            <span>Contact Us</span>
+        
+        <!-- Footer -->
+        <div class="mt-auto transition-all duration-300
+                    xl:px-4 px-2
+                    group-hover:px-4
+                    pb-6">
+          <a href="#" class="nav-item flex items-center rounded-xl font-semibold text-webropol-teal-700 hover:bg-webropol-teal-50 transition-all duration-200
+                             xl:px-4 px-3
+                             group-hover:px-4
+                             py-3">
+            <i class="fas fa-envelope w-5 flex-shrink-0
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Contact Us</span>
           </a>
         </div>
       </aside>
     `;
+
+    // Add event listeners for collapsing sidebar after action on smaller screens
+    this.addEventListener('click', (e) => {
+      const navItem = e.target.closest('.nav-item');
+      if (navItem && window.innerWidth <= 1280) {
+        // Small delay to allow navigation, then collapse
+        setTimeout(() => {
+          this.querySelector('.sidebar-container').classList.remove('hover:w-72');
+          setTimeout(() => {
+            this.querySelector('.sidebar-container').classList.add('hover:w-72');
+          }, 100);
+        }, 150);
+      }
+    });
   }
 }
 
