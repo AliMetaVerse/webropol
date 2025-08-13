@@ -2019,7 +2019,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                             <label class="text-sm font-medium text-webropol-gray-700">Created by:</label>
                             <div class="md:col-span-2">
-                                <input type="text" :value="surveyInfoData?.createdBy || 'Ali Al-Zuhairi (user name: Ali.Al-Zuhairi@webropol.com)'" readonly
+                                <input type="text" :value="surveyInfoData?.createdBy || 'Unknown User'" readonly
                                     class="w-full px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50 text-webropol-gray-700">
                             </div>
                         </div>
@@ -2028,7 +2028,7 @@
                         <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
                             <button @click="keywordsExpanded = !keywordsExpanded" 
                                 class="w-full flex items-center justify-between p-4 bg-webropol-gray-50 hover:bg-webropol-gray-100 transition-colors text-left">
-                                <span class="text-sm font-medium text-webropol-gray-700">Keywords (0)</span>
+                                <span class="text-sm font-medium text-webropol-gray-700" x-text="'Keywords (' + surveyKeywords.length + ')'"></span>
                                 <i class="fal fa-chevron-down transition-transform duration-200" 
                                    :class="keywordsExpanded ? 'rotate-180' : ''"></i>
                             </button>
@@ -2036,9 +2036,32 @@
                             <div x-show="keywordsExpanded" x-collapse>
                                 <div class="p-4 border-t border-webropol-gray-200">
                                     <div class="mb-3">
-                                        <input type="text" placeholder="Add one keyword"
-                                            class="w-full px-3 py-2 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                                        <div class="flex space-x-2">
+                                            <input type="text" x-model="currentKeywordInput" placeholder="Add one keyword"
+                                                @keydown.enter="addKeyword()"
+                                                class="flex-1 px-3 py-2 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                                            <button @click="addKeyword()" 
+                                                :disabled="!currentKeywordInput.trim()"
+                                                class="px-4 py-2 bg-webropol-teal-600 hover:bg-webropol-teal-700 disabled:bg-webropol-gray-300 disabled:cursor-not-allowed text-white text-sm rounded-lg transition-all">
+                                                Add
+                                            </button>
+                                        </div>
                                         <p class="text-xs text-webropol-gray-500 mt-1">Keywords can be used to later search for this survey on Surveys -page.</p>
+                                    </div>
+
+                                    <!-- Keywords Display -->
+                                    <div x-show="surveyKeywords.length > 0" class="mb-4">
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="keyword in surveyKeywords" :key="keyword">
+                                                <div class="inline-flex items-center bg-webropol-teal-100 text-webropol-teal-800 px-3 py-1 rounded-full text-sm">
+                                                    <span x-text="keyword"></span>
+                                                    <button @click="removeKeyword(keyword)" 
+                                                        class="ml-2 text-webropol-teal-600 hover:text-webropol-teal-800 transition-colors">
+                                                        <i class="fal fa-times text-xs"></i>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                     
                                     <!-- Keywords Management Section -->
@@ -2224,6 +2247,8 @@
                 surveyInfoData: null,
                 keywordsExpanded: false,
                 descriptionExpanded: false,
+                currentKeywordInput: '',
+                surveyKeywords: [],
                 
                 // Selection state
                 selectedQuestions: [],
@@ -2474,16 +2499,16 @@
                 ],
 
                 surveys: [
-                    { id: 1, name: '360 Leadership Assessment', type: 'survey', language: 'en', folderId: 211 },
-                    { id: 2, name: 'Product Satisfaction Survey', type: 'survey', language: 'en', folderId: 1111 },
-                    { id: 3, name: 'Customer Service Quality', type: 'survey', language: 'en', folderId: 112 },
-                    { id: 4, name: 'Employee Engagement Survey', type: 'survey', language: 'en', folderId: 12 },
-                    { id: 5, name: 'Technical Support Feedback', type: 'survey', language: 'en', folderId: 1121 },
-                    { id: 6, name: 'Team Dynamics Assessment', type: 'survey', language: 'en', folderId: 122 },
-                    { id: 7, name: 'Market Research Survey', type: 'survey', language: 'en', folderId: 131 },
-                    { id: 8, name: 'Hardware Product Review', type: 'survey', language: 'en', folderId: 1112 },
-                    { id: 9, name: 'Communication Skills Review', type: 'survey', language: 'en', folderId: 212 },
-                    { id: 10, name: 'Annual Performance Survey', type: 'survey', language: 'en', folderId: 121 }
+                    { id: 1, name: '360 Leadership Assessment', type: 'survey', language: 'en', folderId: 211, createdBy: 'Ali Al-Zuhairi (ali.al-zuhairi@webropol.com)', keywords: ['leadership', 'assessment', '360'] },
+                    { id: 2, name: 'Product Satisfaction Survey', type: 'survey', language: 'en', folderId: 1111, createdBy: 'Sarah Johnson (sarah.johnson@webropol.com)', keywords: ['product', 'satisfaction'] },
+                    { id: 3, name: 'Customer Service Quality', type: 'survey', language: 'en', folderId: 112, createdBy: 'Mike Chen (mike.chen@webropol.com)', keywords: ['customer', 'service', 'quality'] },
+                    { id: 4, name: 'Employee Engagement Survey', type: 'survey', language: 'en', folderId: 12, createdBy: 'Emma Davis (emma.davis@webropol.com)', keywords: ['employee', 'engagement'] },
+                    { id: 5, name: 'Technical Support Feedback', type: 'survey', language: 'en', folderId: 1121, createdBy: 'John Smith (john.smith@webropol.com)', keywords: ['technical', 'support', 'feedback'] },
+                    { id: 6, name: 'Team Dynamics Assessment', type: 'survey', language: 'en', folderId: 122, createdBy: 'Lisa Wang (lisa.wang@webropol.com)', keywords: ['team', 'dynamics'] },
+                    { id: 7, name: 'Market Research Survey', type: 'survey', language: 'en', folderId: 131, createdBy: 'David Brown (david.brown@webropol.com)', keywords: ['market', 'research'] },
+                    { id: 8, name: 'Hardware Product Review', type: 'survey', language: 'en', folderId: 1112, createdBy: 'Anna Miller (anna.miller@webropol.com)', keywords: ['hardware', 'product', 'review'] },
+                    { id: 9, name: 'Communication Skills Review', type: 'survey', language: 'en', folderId: 212, createdBy: 'Tom Wilson (tom.wilson@webropol.com)', keywords: ['communication', 'skills'] },
+                    { id: 10, name: 'Annual Performance Survey', type: 'survey', language: 'en', folderId: 121, createdBy: 'Grace Lee (grace.lee@webropol.com)', keywords: ['performance', 'annual'] }
                 ],
 
                 setView(view) {
@@ -2760,8 +2785,32 @@
                     if (survey) {
                         this.surveyInfoId = surveyId;
                         this.surveyInfoData = survey;
+                        this.surveyKeywords = survey.keywords || [];
+                        this.currentKeywordInput = '';
                         this.showSurveyInfoModal = true;
                         this.showContextMenu = null;
+                    }
+                },
+
+                addKeyword() {
+                    const keyword = this.currentKeywordInput.trim();
+                    if (keyword && !this.surveyKeywords.includes(keyword)) {
+                        this.surveyKeywords.push(keyword);
+                        this.currentKeywordInput = '';
+                        
+                        // Update the survey data
+                        if (this.surveyInfoData) {
+                            this.surveyInfoData.keywords = [...this.surveyKeywords];
+                        }
+                    }
+                },
+
+                removeKeyword(keyword) {
+                    this.surveyKeywords = this.surveyKeywords.filter(k => k !== keyword);
+                    
+                    // Update the survey data
+                    if (this.surveyInfoData) {
+                        this.surveyInfoData.keywords = [...this.surveyKeywords];
                     }
                 },
 
