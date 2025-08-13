@@ -1790,6 +1790,68 @@
         </div>
     </div>
 
+    <!-- Create Folder from Move Modal -->
+    <div x-show="showCreateFolderFromMove" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showCreateFolderFromMove = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div
+                class="flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+                <div class="flex items-center">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-full flex items-center justify-center mr-4">
+                        <i class="fal fa-folder-plus text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-webropol-gray-900">Create New Folder</h2>
+                        <p class="text-sm text-webropol-gray-600">Create folder at: <span class="font-medium" x-text="getLocationDisplayName(selectedMoveLocation)"></span></p>
+                    </div>
+                </div>
+                <button @click="showCreateFolderFromMove = false"
+                    class="w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder Name</label>
+                        <input type="text" x-model="newMovefolderName" placeholder="Enter folder name..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent"
+                            @keyup.enter="createFolderAndMove()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description (Optional)</label>
+                        <textarea x-model="newMoveFolderDescription" placeholder="Enter folder description..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showCreateFolderFromMove = false"
+                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-teal-200 transition-all border border-webropol-teal-700">
+                    Cancel
+                </button>
+                <button @click="createFolderAndMove()"
+                    class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all">
+                    Create & Move
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div x-show="showDeleteModal" x-cloak
         class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -1874,6 +1936,7 @@
                 surveySearchTerm: '',
                 showPreviewModal: false,
                 showCreateFolder: false,
+                showCreateFolderFromMove: false,
                 showCreateModal: false,
                 showMoveToFolder: null,
                 showMoveModal: false,
@@ -1881,6 +1944,8 @@
                 showAddToFolder: null,
                 newFolderName: '',
                 newFolderDescription: '',
+                newMovefolderName: '',
+                newMoveFolderDescription: '',
                 expandedFolders: [],
                 showOnlyTitles: false,
                 
@@ -2235,9 +2300,51 @@
                 },
 
                 openCreateNewFolderFromMove() {
-                    // Close move modal and open create folder modal
+                    // Clear any previous data
+                    this.newMovefolderName = '';
+                    this.newMoveFolderDescription = '';
+                    // Open the create folder from move modal
+                    this.showCreateFolderFromMove = true;
+                },
+
+                createFolderAndMove() {
+                    if (!this.newMovefolderName.trim() || !this.selectedMoveLocation || !this.moveItemId) return;
+                    
+                    // Create the new folder name/path
+                    const newFolderLocation = this.selectedMoveLocation === 'Root' 
+                        ? this.newMovefolderName 
+                        : `${this.selectedMoveLocation}/${this.newMovefolderName}`;
+                    
+                    console.log(`Creating folder "${this.newMovefolderName}" at "${this.selectedMoveLocation}"`);
+                    console.log(`Moving item ${this.moveItemId} (${this.moveItemName}) to the new folder: ${newFolderLocation}`);
+                    
+                    // Here you would implement the actual folder creation and move logic
+                    // 1. Create the new folder
+                    // 2. Move the item to the new folder
+                    
+                    // Find and update the item
+                    const allItems = [...this.questions, ...this.surveys];
+                    const item = allItems.find(item => item.id === this.moveItemId);
+                    if (item) {
+                        item.location = newFolderLocation;
+                    }
+                    
+                    // Close both modals and reset state
+                    this.showCreateFolderFromMove = false;
                     this.showMoveModal = false;
-                    this.showCreateFolder = true;
+                    this.moveItemId = null;
+                    this.moveItemName = '';
+                    this.selectedMoveLocation = null;
+                    this.selectedMoveLocationId = null;
+                    this.newMovefolderName = '';
+                    this.newMoveFolderDescription = '';
+                    
+                    // Show success message (you can customize this)
+                    console.log('Folder created and item moved successfully!');
+                },
+
+                getLocationDisplayName(location) {
+                    return location || 'Root';
                 },
 
                 confirmMove() {
