@@ -31,7 +31,7 @@ export class WebropolSidebar extends BaseComponent {
                      xl:z-auto z-50
                      transition-all duration-300 ease-in-out
                      hover:w-72 hover:shadow-2xl hover:absolute hover:h-screen
-                     xl:hover:w-72 xl:hover:shadow-soft xl:hover:relative xl:hover:h-auto">
+                     xl:hover:w-72 xl:hover:shadow-soft xl:hover:relative xl:hover:h-screen">
         
         <!-- Header -->
         <div class="h-20 flex items-center border-b border-webropol-gray-200/50
