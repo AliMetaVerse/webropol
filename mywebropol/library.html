@@ -197,11 +197,6 @@
                                                                         <i class="fal fa-folder-plus mr-3 text-black"></i>
                                                                         Add Sub Folder
                                                                     </button>
-                                                                    <button @click="openMoveModal(folder.id, folder.name)"
-                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                        <i class="fal fa-arrows mr-3 text-black"></i>
-                                                                        Move
-                                                                    </button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1813,7 +1808,7 @@
                     </div>
                     <div>
                         <h2 class="text-xl font-bold text-webropol-gray-900">Create New Folder</h2>
-                        <p class="text-sm text-webropol-gray-600">Create folder at: <span class="font-medium" x-text="getLocationDisplayName(selectedMoveLocation)"></span></p>
+                        <p class="text-sm text-webropol-gray-600">Organize your content better</p>
                     </div>
                 </div>
                 <button @click="showCreateFolderFromMove = false"
@@ -1824,6 +1819,21 @@
 
             <!-- Modal Body -->
             <div class="p-6">
+                <!-- Location Display -->
+                <div class="mb-6 p-4 bg-webropol-gray-50 rounded-xl border border-webropol-gray-200">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fal fa-map-marker-alt text-webropol-teal-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-webropol-gray-700 mb-1">Creating folder at:</p>
+                            <span class="text-sm font-medium" 
+                                  :class="selectedMoveLocation ? 'text-webropol-teal-700' : 'text-orange-600'"
+                                  x-text="getLocationDisplayName(selectedMoveLocation)"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder Name</label>
@@ -1845,7 +1855,8 @@
                     Cancel
                 </button>
                 <button @click="createFolderAndMove()"
-                    class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all">
+                    :disabled="!selectedMoveLocation || !newMovefolderName.trim()"
+                    class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 disabled:bg-webropol-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-full transition-all">
                     Create & Move
                 </button>
             </div>
@@ -2295,8 +2306,31 @@
                 },
 
                 selectMoveLocation(locationName, locationId) {
-                    this.selectedMoveLocation = locationName;
+                    // Build the full path for better display
+                    const fullPath = this.buildFolderPath(locationId);
+                    this.selectedMoveLocation = fullPath || locationName;
                     this.selectedMoveLocationId = locationId;
+                },
+
+                buildFolderPath(folderId) {
+                    const folder = this.findFolderById(folderId);
+                    if (!folder) return null;
+                    
+                    let path = folder.name;
+                    let currentFolder = folder;
+                    
+                    // Build path by traversing up the hierarchy
+                    while (currentFolder.parentId) {
+                        const parentFolder = this.findFolderById(currentFolder.parentId);
+                        if (parentFolder) {
+                            path = parentFolder.name + ' > ' + path;
+                            currentFolder = parentFolder;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    return path;
                 },
 
                 openCreateNewFolderFromMove() {
@@ -2344,7 +2378,10 @@
                 },
 
                 getLocationDisplayName(location) {
-                    return location || 'Root';
+                    if (!location) {
+                        return 'Please select a location first';
+                    }
+                    return location;
                 },
 
                 confirmMove() {
