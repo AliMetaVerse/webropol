@@ -38,7 +38,7 @@ export class WebropolSidebar extends BaseComponent {
                     xl:px-8 px-4
                     group-hover:px-8
                     transition-all duration-300">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <i class="fas fa-chart-bar text-white text-lg"></i>
           </div>
           <div class="ml-3 overflow-hidden transition-all duration-300
@@ -59,7 +59,7 @@ export class WebropolSidebar extends BaseComponent {
                                                   xl:px-4 px-3
                                                   group-hover:px-4
                                                   py-3
-                                                  ${active==='home' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                  ${active==='home' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
             <i class="fas fa-home w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
@@ -73,7 +73,7 @@ export class WebropolSidebar extends BaseComponent {
                                                           xl:px-4 px-3
                                                           group-hover:px-4
                                                           py-3
-                                                          ${active==='surveys' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                          ${active==='surveys' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
             <i class="fas fa-poll-h w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
@@ -87,7 +87,7 @@ export class WebropolSidebar extends BaseComponent {
                                                         xl:px-4 px-3
                                                         group-hover:px-4
                                                         py-3
-                                                        ${active==='events' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                        ${active==='events' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
             <i class="fas fa-calendar-alt w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
@@ -101,7 +101,7 @@ export class WebropolSidebar extends BaseComponent {
                                                     xl:px-4 px-3
                                                     group-hover:px-4
                                                     py-3
-                                                    ${active==='sms' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                    ${active==='sms' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
             <i class="fas fa-sms w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
@@ -115,7 +115,7 @@ export class WebropolSidebar extends BaseComponent {
                                                             xl:px-4 px-3
                                                             group-hover:px-4
                                                             py-3
-                                                            ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                            ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
             <i class="fas fa-chart-line w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
@@ -130,7 +130,7 @@ export class WebropolSidebar extends BaseComponent {
                                                               xl:px-4 px-3
                                                               group-hover:px-4
                                                               py-3
-                                                              ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                              ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
               <i class="fas fa-book-open w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
@@ -144,7 +144,7 @@ export class WebropolSidebar extends BaseComponent {
                                                               xl:px-4 px-3
                                                               group-hover:px-4
                                                               py-3
-                                                              ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                              ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
               <i class="fas fa-tools w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
@@ -158,7 +158,7 @@ export class WebropolSidebar extends BaseComponent {
                                                                   xl:px-4 px-3
                                                                   group-hover:px-4
                                                                   py-3
-                                                                  ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                                  ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
               <i class="fas fa-video w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
@@ -172,7 +172,7 @@ export class WebropolSidebar extends BaseComponent {
                                                         xl:px-4 px-3
                                                         group-hover:px-4
                                                         py-3
-                                                        ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+                                                        ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
               <i class="fas fa-shopping-cart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>

@@ -102,7 +102,7 @@ class BaseComponent extends HTMLElement {
   getVariantClasses(component, variant) {
     const variants = {
       button: {
-        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white hover:from-webropol-teal-600 hover:to-webropol-blue-700 focus:ring-webropol-teal-300 shadow-lg',
+        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white hover:from-webropol-teal-600 hover:to-webropol-blue-700 focus:ring-webropol-teal-300 shadow-lg',
         secondary: 'bg-white text-webropol-gray-700 border-2 border-webropol-gray-300 hover:bg-webropol-gray-50 hover:border-webropol-teal-400 focus:ring-webropol-teal-300 shadow-md',
         tertiary: 'bg-transparent text-webropol-teal-600 hover:bg-webropol-teal-50 focus:ring-webropol-teal-300',
         danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300 shadow-lg'
@@ -504,7 +504,7 @@ class WebropolHeader extends BaseComponent {
             ${showNotifications ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fas fa-bell"></i></button>' : ''}
             ${showHelp ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fas fa-question-circle"></i></button>' : ''}
             <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
                 <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
               </div>
               <span class="text-sm font-medium text-webropol-gray-700">${username}</span>
@@ -556,7 +556,7 @@ class WebropolSidebar extends BaseComponent {
       <nav class="bg-white h-full shadow-lg">
         <div class="p-6">
           <div class="flex items-center space-x-3 mb-8">
-            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-lg flex items-center justify-center">
+            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">W</span>
             </div>
             <span class="text-xl font-bold text-webropol-gray-900">Webropol</span>

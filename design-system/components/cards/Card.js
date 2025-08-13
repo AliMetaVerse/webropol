@@ -67,7 +67,7 @@ export class WebropolCard extends BaseComponent {
 
           if (icon) {
             const iconContainer = document.createElement('div');
-            iconContainer.className = 'w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-blue-600 rounded-2xl flex items-center justify-center';
+            iconContainer.className = 'w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-2xl flex items-center justify-center';
             iconContainer.innerHTML = `<i class="fas fa-${icon} text-white text-lg"></i>`;
             iconBadgeRow.appendChild(iconContainer);
           }

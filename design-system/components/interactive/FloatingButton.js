@@ -98,7 +98,7 @@ export class WebropolFloatingButton extends BaseComponent {
         </div>
 
         <!-- Main Floating Button -->
-        <button class="main-floating-btn ${sizeClasses[size]} bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center group">
+        <button class="main-floating-btn ${sizeClasses[size]} bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center group">
           <i class="fas fa-plus text-xl transition-transform duration-300 group-hover:rotate-180"></i>
         </button>
       </div>
