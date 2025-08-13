@@ -27,13 +27,13 @@ export class WebropolBadge extends BaseComponent {
     );
 
     // Create icon HTML if specified
-    const iconHtml = icon ? `<i class="fas fa-${icon} ${text ? 'mr-1.5' : ''} text-xs"></i>` : '';
+    const iconHtml = icon ? `<i class="fal fa-${icon} ${text ? 'mr-1.5' : ''} text-xs"></i>` : '';
     
     // Create dismiss button if dismissible
     const dismissHtml = dismissible ? `
       <button class="badge-dismiss ml-1.5 -mr-1 p-0.5 hover:bg-black/10 rounded-full transition-colors" 
               aria-label="Remove ${text}">
-        <i class="fas fa-times text-xs"></i>
+        <i class="fal fa-times text-xs"></i>
       </button>
     ` : '';
 

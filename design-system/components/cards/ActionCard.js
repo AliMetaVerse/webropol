@@ -60,10 +60,10 @@ export class WebropolActionCard extends BaseComponent {
       topActions.className = 'absolute top-4 right-4 flex items-center space-x-2';
       topActions.innerHTML = `
         <button class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
-          <i class="fas fa-edit text-sm"></i>
+          <i class="fal fa-edit text-sm"></i>
         </button>
         <button class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
-          <i class="fas fa-ellipsis-v text-sm"></i>
+          <i class="fal fa-ellipsis-v text-sm"></i>
         </button>
       `;
       headerSection.appendChild(topActions);

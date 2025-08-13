@@ -129,28 +129,28 @@ The floating button component provides quick access to create new items. Add it 
             "id": "surveys",
             "label": "Survey",
             "description": "Create custom surveys",
-            "icon": "fas fa-poll-h",
+            "icon": "fal fa-poll-h",
             "url": "../surveys/create.html"
         },
         {
             "id": "sms",
             "label": "SMS Campaign", 
             "description": "SMS messaging",
-            "icon": "fas fa-sms",
+            "icon": "fal fa-sms",
             "url": "../sms/create.html"
         },
         {
             "id": "events",
             "label": "Event",
             "description": "Event management", 
-            "icon": "fas fa-calendar-alt",
+            "icon": "fal fa-calendar-alt",
             "url": "../events/create.html"
         },
         {
             "id": "dashboards",
             "label": "Dashboard",
             "description": "Data visualization",
-            "icon": "fas fa-chart-line", 
+            "icon": "fal fa-chart-line", 
             "url": "../dashboards/create.html"
         }
     ]'>
@@ -174,14 +174,14 @@ Update the `items` array to include only relevant options for your page context.
             "id": "sms-campaign",
             "label": "SMS Campaign",
             "description": "Create new SMS survey",
-            "icon": "fas fa-sms",
+            "icon": "fal fa-sms",
             "url": "../sms/create.html"
         },
         {
             "id": "contact-list",
             "label": "Contact List",
             "description": "Manage recipients",
-            "icon": "fas fa-address-book",
+            "icon": "fal fa-address-book",
             "url": "../sms/contacts.html"
         }
     ]'>
