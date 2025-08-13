@@ -102,7 +102,7 @@ class BaseComponent extends HTMLElement {
   getVariantClasses(component, variant) {
     const variants = {
       button: {
-        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white hover:from-webropol-teal-600 hover:to-webropol-blue-700 focus:ring-webropol-teal-300 shadow-lg',
+        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white hover:from-webropol-teal-600 hover:to-webropol-teal-700 focus:ring-webropol-teal-300 shadow-lg',
         secondary: 'bg-white text-webropol-gray-700 border-2 border-webropol-gray-300 hover:bg-webropol-gray-50 hover:border-webropol-teal-400 focus:ring-webropol-teal-300 shadow-md',
         tertiary: 'bg-transparent text-webropol-teal-600 hover:bg-webropol-teal-50 focus:ring-webropol-teal-300',
         danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300 shadow-lg'
@@ -249,7 +249,7 @@ class WebropolCard extends BaseComponent {
     const variants = {
       default: 'bg-white shadow-lg border border-webropol-gray-100',
       elevated: 'bg-white shadow-xl',
-      gradient: 'bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50 border border-webropol-teal-100',
+      gradient: 'bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100',
       flat: 'bg-webropol-gray-50 border border-webropol-gray-200'
     };
     return variants[variant] || variants.default;
@@ -301,8 +301,8 @@ class WebropolActionCard extends BaseComponent {
     
     // Variant gradient classes
     const variantClasses = {
-      default: 'bg-gradient-to-br from-webropol-blue-500 to-webropol-teal-500',
-      workshop: 'bg-gradient-to-br from-webropol-blue-500 to-webropol-teal-500',
+      default: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
+      workshop: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
       event: 'bg-gradient-to-br from-purple-500 to-pink-500',
       meeting: 'bg-gradient-to-br from-green-500 to-blue-500',
       orange: 'bg-gradient-to-br from-orange-500 to-red-500',

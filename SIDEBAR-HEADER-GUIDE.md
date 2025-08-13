@@ -49,7 +49,7 @@ Include these script imports in your `<head>` section. **Update paths based on y
 Use this basic structure for all pages:
 
 ```html
-<body class="bg-gradient-to-br from-webropol-blue-50 to-webropol-teal-50/30" style="background-color: #ebf4f7;">
+<body class="bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50/30" style="background-color: #ebf4f7;">
     <div class="flex h-screen">
         <webropol-sidebar active="[SECTION]" base="[BASE_PATH]"></webropol-sidebar>
         <div class="flex-1 flex flex-col overflow-hidden">

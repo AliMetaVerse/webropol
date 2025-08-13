@@ -32,8 +32,8 @@ export class WebropolActionCard extends BaseComponent {
     
     // Variant gradient classes
     const variantClasses = {
-      default: 'bg-gradient-to-br from-webropol-blue-500 to-webropol-teal-500',
-      workshop: 'bg-gradient-to-br from-webropol-blue-500 to-webropol-teal-500',
+      default: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
+      workshop: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
       event: 'bg-gradient-to-br from-purple-500 to-pink-500',
       meeting: 'bg-gradient-to-br from-green-500 to-blue-500',
       orange: 'bg-gradient-to-br from-orange-500 to-red-500',

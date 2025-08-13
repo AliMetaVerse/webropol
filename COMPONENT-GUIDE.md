@@ -119,7 +119,7 @@ Special homepage-style cards with gradients and centered content.
   icon="fa-solid fa-poll-h"
   title="Gain insight with surveys"
   button-text="Create survey"
-  gradient="from-webropol-blue-100 to-webropol-teal-100/80">
+  gradient="from-webropol-teal-100 to-webropol-teal-100/80">
 </webropol-gradient-card>
 ```
 

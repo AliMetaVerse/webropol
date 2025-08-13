@@ -49,7 +49,7 @@ design-system/
 
 ### Colors
 - **Primary**: Webropol Teal (`webropol-teal-*`)
-- **Secondary**: Webropol Blue (`webropol-blue-*`)
+- **Secondary**: Webropol Blue (`webropol-teal-*`)
 - **Neutral**: Webropol Gray (`webropol-gray-*`)
 
 ### Typography
