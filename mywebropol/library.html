@@ -155,12 +155,11 @@
                                 </div>
                                 <!-- Folder Management -->
                                 <div class="space-y-3">
-
                                     <!-- Root Level Items -->
                                     <div class="space-y-2">
                                         <template x-for="folder in getFilteredFolders()" :key="folder.id">
                                             <div class="group">
-                                                <!-- Folder Header -->
+                                                <!-- Main Folder Header -->
                                                 <div @click="toggleFolder(folder.id)"
                                                     class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200"
                                                     :class="expandedFolders.includes(folder.id) ? 'bg-gradient-to-r from-webropol-teal-50 to-webropol-blue-50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
@@ -176,7 +175,7 @@
                                                     <div class="flex items-center space-x-2">
                                                         <span
                                                             class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-1 font-medium"
-                                                            x-text="getFolderItemCount(folder.id)"></span>
+                                                            x-text="getTotalFolderItemCount(folder)"></span>
                                                         <div class="relative">
                                                             <button @click.stop="toggleContextMenu('folder-' + folder.id, 'folder')"
                                                                 class="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 rounded transition-all">
@@ -193,7 +192,7 @@
                                                                 x-transition:leave-end="transform opacity-0 scale-95"
                                                                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
                                                                 <div class="py-1">
-                                                                    <button @click="addSubFolder(folder.id)"
+                                                                    <button @click="openAddSubfolderModal(folder.id)"
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                         <i class="fal fa-folder-plus mr-3 text-black"></i>
                                                                         Add Sub Folder
@@ -206,63 +205,184 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Folder Contents -->
-                                                <div x-show="expandedFolders.includes(folder.id)" x-collapse
-                                                    class="ml-11 mt-2 space-y-1">
-                                                    <template x-for="item in getFolderItems(folder.id)" :key="item.id">
-                                                        <div
-                                                            class="flex items-center justify-between p-2 rounded-lg hover:bg-webropol-gray-50 transition-all">
-                                                            <div class="flex items-center">
-                                                                <i class="fal fa-folder text-webropol-teal-600 mr-3 text-sm"></i>
-                                                                <span class="text-sm font-medium"
-                                                                    x-text="item.name"></span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <button @click.stop="toggleContextMenu('item-' + item.id, 'item')"
-                                                                    class="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 rounded transition-all">
-                                                                    <i class="fal fa-ellipsis-v text-xs"></i>
-                                                                </button>
-                                                                <!-- Context Menu for Sub Folder Items -->
-                                                                <div x-show="showContextMenu === 'item-' + item.id" 
-                                                                    @click.stop
-                                                                    x-transition:enter="transition ease-out duration-100"
-                                                                    x-transition:enter-start="transform opacity-0 scale-95"
-                                                                    x-transition:enter-end="transform opacity-100 scale-100"
-                                                                    x-transition:leave="transition ease-in duration-75"
-                                                                    x-transition:leave-start="transform opacity-100 scale-100"
-                                                                    x-transition:leave-end="transform opacity-0 scale-95"
-                                                                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
-                                                                    <div class="py-1">
-                                                                        <button @click="addSubFolder(item.id)"
-                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                            <i class="fal fa-folder-plus mr-3 text-black"></i>
-                                                                            Add Sub Folder
-                                                                        </button>
-                                                                        <button @click="moveItem(item.id)"
-                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                            <i class="fal fa-arrows-alt mr-3 text-black"></i>
-                                                                            Move
-                                                                        </button>
-                                                                        <button @click="renameItem(item.id)"
-                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                            <i class="fal fa-edit mr-3 text-black"></i>
-                                                                            Rename
-                                                                        </button>
-                                                                        <button @click="deleteItem(item.id)"
-                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
-                                                                            <i class="fal fa-trash mr-3 text-black"></i>
-                                                                            Delete
-                                                                        </button>
+                                                <!-- Nested Subfolders -->
+                                                <div x-show="expandedFolders.includes(folder.id)" x-collapse class="ml-4">
+                                                    <template x-for="subfolder in folder.children" :key="subfolder.id">
+                                                        <div class="mt-2">
+                                                            <!-- Level 1 Subfolder -->
+                                                            <div @click="toggleFolder(subfolder.id)"
+                                                                class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                :class="expandedFolders.includes(subfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/70 to-webropol-blue-50/70 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
+                                                                <div class="flex items-center">
+                                                                    <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
+                                                                        :class="expandedFolders.includes(subfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
+                                                                        <i class="fal fa-folder text-webropol-teal-600 text-sm"></i>
                                                                     </div>
+                                                                    <span class="text-sm font-medium" x-text="subfolder.name"></span>
                                                                 </div>
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span
+                                                                        class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-0.5 font-medium"
+                                                                        x-text="getTotalFolderItemCount(subfolder)"></span>
+                                                                    <div class="relative">
+                                                                        <button @click.stop="toggleContextMenu('subfolder-' + subfolder.id, 'subfolder')"
+                                                                            class="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 rounded transition-all">
+                                                                            <i class="fal fa-ellipsis-v text-xs"></i>
+                                                                        </button>
+                                                                        <!-- Context Menu for Subfolder -->
+                                                                        <div x-show="showContextMenu === 'subfolder-' + subfolder.id" 
+                                                                            @click.stop
+                                                                            x-transition:enter="transition ease-out duration-100"
+                                                                            x-transition:enter-start="transform opacity-0 scale-95"
+                                                                            x-transition:enter-end="transform opacity-100 scale-100"
+                                                                            x-transition:leave="transition ease-in duration-75"
+                                                                            x-transition:leave-start="transform opacity-100 scale-100"
+                                                                            x-transition:leave-end="transform opacity-0 scale-95"
+                                                                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
+                                                                            <div class="py-1">
+                                                                                <button @click="openAddSubfolderModal(subfolder.id)"
+                                                                                    :disabled="subfolder.level >= 3"
+                                                                                    :class="subfolder.level >= 3 ? 'opacity-50 cursor-not-allowed' : ''"
+                                                                                    class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                    <i class="fal fa-folder-plus mr-3 text-black"></i>
+                                                                                    Add Sub Folder
+                                                                                </button>
+                                                                                <button @click="openRenameModal(subfolder.id, subfolder.name)"
+                                                                                    class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                    <i class="fal fa-edit mr-3 text-black"></i>
+                                                                                    Rename
+                                                                                </button>
+                                                                                <button @click="openDeleteConfirmationModal(subfolder.id, subfolder.name)"
+                                                                                    class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
+                                                                                    <i class="fal fa-trash mr-3 text-black"></i>
+                                                                                    Delete
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <i class="fal fa-chevron-right text-xs transition-transform"
+                                                                        :class="expandedFolders.includes(subfolder.id) ? 'rotate-90' : ''"></i>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Level 2 Subfolders -->
+                                                            <div x-show="expandedFolders.includes(subfolder.id)" x-collapse class="ml-6">
+                                                                <template x-for="subsubfolder in subfolder.children" :key="subsubfolder.id">
+                                                                    <div class="mt-2">
+                                                                        <!-- Level 2 Subfolder -->
+                                                                        <div @click="toggleFolder(subsubfolder.id)"
+                                                                            class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                            :class="expandedFolders.includes(subsubfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/50 to-webropol-blue-50/50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
+                                                                            <div class="flex items-center">
+                                                                                <div class="w-5 h-5 flex items-center justify-center rounded-md mr-3"
+                                                                                    :class="expandedFolders.includes(subsubfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
+                                                                                    <i class="fal fa-folder text-webropol-teal-600 text-xs"></i>
+                                                                                </div>
+                                                                                <span class="text-xs font-medium" x-text="subsubfolder.name"></span>
+                                                                            </div>
+                                                                            <div class="flex items-center space-x-2">
+                                                                                <span
+                                                                                    class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-1.5 py-0.5 font-medium"
+                                                                                    x-text="getTotalFolderItemCount(subsubfolder)"></span>
+                                                                                <div class="relative">
+                                                                                    <button @click.stop="toggleContextMenu('subsubfolder-' + subsubfolder.id, 'subsubfolder')"
+                                                                                        class="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 rounded transition-all">
+                                                                                        <i class="fal fa-ellipsis-v text-xs"></i>
+                                                                                    </button>
+                                                                                    <!-- Context Menu for Level 2 Subfolder -->
+                                                                                    <div x-show="showContextMenu === 'subsubfolder-' + subsubfolder.id" 
+                                                                                        @click.stop
+                                                                                        x-transition:enter="transition ease-out duration-100"
+                                                                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                                                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                                                                        x-transition:leave="transition ease-in duration-75"
+                                                                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                                                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                                                                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
+                                                                                        <div class="py-1">
+                                                                                            <button @click="openAddSubfolderModal(subsubfolder.id)"
+                                                                                                :disabled="subsubfolder.level >= 3"
+                                                                                                :class="subsubfolder.level >= 3 ? 'opacity-50 cursor-not-allowed' : ''"
+                                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                                <i class="fal fa-folder-plus mr-3 text-black"></i>
+                                                                                                Add Sub Folder
+                                                                                            </button>
+                                                                                            <button @click="openRenameModal(subsubfolder.id, subsubfolder.name)"
+                                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                                <i class="fal fa-edit mr-3 text-black"></i>
+                                                                                                Rename
+                                                                                            </button>
+                                                                                            <button @click="openDeleteConfirmationModal(subsubfolder.id, subsubfolder.name)"
+                                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
+                                                                                                <i class="fal fa-trash mr-3 text-black"></i>
+                                                                                                Delete
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <i class="fal fa-chevron-right text-xs transition-transform"
+                                                                                    :class="expandedFolders.includes(subsubfolder.id) ? 'rotate-90' : ''"></i>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Level 3 Subfolders (Final level) -->
+                                                                        <div x-show="expandedFolders.includes(subsubfolder.id)" x-collapse class="ml-6">
+                                                                            <template x-for="finalfolder in subsubfolder.children" :key="finalfolder.id">
+                                                                                <div class="mt-2">
+                                                                                    <!-- Level 3 Subfolder (No expansion, just display) -->
+                                                                                    <div class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group hover:bg-webropol-gray-50">
+                                                                                        <div class="flex items-center">
+                                                                                            <div class="w-4 h-4 flex items-center justify-center rounded-sm mr-3 bg-webropol-gray-100 group-hover:bg-webropol-teal-50">
+                                                                                                <i class="fal fa-folder text-webropol-teal-600 text-xs"></i>
+                                                                                            </div>
+                                                                                            <span class="text-xs font-medium" x-text="finalfolder.name"></span>
+                                                                                        </div>
+                                                                                        <div class="flex items-center space-x-2">
+                                                                                            <span
+                                                                                                class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-1.5 py-0.5 font-medium"
+                                                                                                x-text="getTotalFolderItemCount(finalfolder)"></span>
+                                                                                            <div class="relative">
+                                                                                                <button @click.stop="toggleContextMenu('finalfolder-' + finalfolder.id, 'finalfolder')"
+                                                                                                    class="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 rounded transition-all">
+                                                                                                    <i class="fal fa-ellipsis-v text-xs"></i>
+                                                                                                </button>
+                                                                                                <!-- Context Menu for Level 3 Subfolder -->
+                                                                                                <div x-show="showContextMenu === 'finalfolder-' + finalfolder.id" 
+                                                                                                    @click.stop
+                                                                                                    x-transition:enter="transition ease-out duration-100"
+                                                                                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                                                                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                                                                                    x-transition:leave="transition ease-in duration-75"
+                                                                                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                                                                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                                                                                    class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 z-30">
+                                                                                                    <div class="py-1">
+                                                                                                        <button @click="openRenameModal(finalfolder.id, finalfolder.name)"
+                                                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                                                            <i class="fal fa-edit mr-3 text-black"></i>
+                                                                                                            Rename
+                                                                                                        </button>
+                                                                                                        <button @click="openDeleteConfirmationModal(finalfolder.id, finalfolder.name)"
+                                                                                                            class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
+                                                                                                            <i class="fal fa-trash mr-3 text-black"></i>
+                                                                                                            Delete
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </template>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
                                                             </div>
                                                         </div>
                                                     </template>
-
                                                 </div>
                                             </div>
                                         </template>
-
                                     </div>
                                 </div>
                             </div>
@@ -1496,12 +1616,222 @@
         </div>
     </div>
 
+    <!-- Add Subfolder Modal -->
+    <div x-show="showAddSubfolderModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showAddSubfolderModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-100 to-webropol-teal-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fal fa-folder-plus text-webropol-teal-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-webropol-gray-900">Add Subfolder</h3>
+                        <p class="text-sm text-webropol-gray-600">Create a new subfolder to organize your content</p>
+                    </div>
+                </div>
+                <button @click="showAddSubfolderModal = false"
+                    class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all">
+                    <i class="fal fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Parent Folder</label>
+                        <div class="p-3 bg-webropol-gray-50 border border-webropol-gray-200 rounded-xl">
+                            <div class="flex items-center">
+                                <i class="fal fa-folder text-webropol-teal-600 mr-3"></i>
+                                <span class="font-medium text-webropol-gray-900" x-text="addSubfolderParentName"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Subfolder Name</label>
+                        <input x-model="newSubfolderName" type="text" placeholder="Enter subfolder name..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description (Optional)</label>
+                        <textarea x-model="newSubfolderDescription" rows="3"
+                            placeholder="Describe what this subfolder contains..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showAddSubfolderModal = false"
+                    class="px-4 py-2 text-webropol-gray-700 font-medium rounded-lg hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+                <button @click="createSubfolder()"
+                    class="px-6 py-2 bg-gradient-to-r from-webropol-teal-500 to-webropol-blue-600 hover:from-webropol-teal-600 hover:to-webropol-blue-700 text-white font-semibold rounded-lg transition-all">
+                    Create Subfolder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Folder Modal -->
+    <div x-show="showRenameModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showRenameModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fal fa-edit text-blue-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-webropol-gray-900">Rename Folder</h3>
+                        <p class="text-sm text-webropol-gray-600">Update the folder name</p>
+                    </div>
+                </div>
+                <button @click="showRenameModal = false"
+                    class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all">
+                    <i class="fal fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Current Name</label>
+                        <div class="p-3 bg-webropol-gray-50 border border-webropol-gray-200 rounded-xl">
+                            <div class="flex items-center">
+                                <i class="fal fa-folder text-webropol-teal-600 mr-3"></i>
+                                <span class="font-medium text-webropol-gray-900" x-text="renameCurrentName"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">New Name</label>
+                        <input x-model="renameNewName" type="text" placeholder="Enter new folder name..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showRenameModal = false"
+                    class="px-4 py-2 text-webropol-gray-700 font-medium rounded-lg hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+                <button @click="confirmRename()"
+                    class="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg transition-all">
+                    Rename
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showDeleteModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-100 to-red-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fal fa-exclamation-triangle text-red-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-webropol-gray-900">Delete Folder</h3>
+                        <p class="text-sm text-webropol-gray-600">This action cannot be undone</p>
+                    </div>
+                </div>
+                <button @click="showDeleteModal = false"
+                    class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all">
+                    <i class="fal fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-xl">
+                        <div class="flex items-start">
+                            <i class="fal fa-exclamation-triangle text-red-500 text-lg mr-3 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-sm font-semibold text-red-800 mb-1">Warning</h4>
+                                <p class="text-sm text-red-700">
+                                    Are you sure you want to delete "<span class="font-medium" x-text="deleteItemName"></span>"?
+                                    This will permanently remove the folder and all its contents including surveys and questions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-webropol-gray-50 border border-webropol-gray-200 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <i class="fal fa-folder text-webropol-teal-600 mr-3"></i>
+                                <span class="font-medium text-webropol-gray-900" x-text="deleteItemName"></span>
+                            </div>
+                            <span class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-1 font-medium"
+                                x-text="deleteItemCount + ' items'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showDeleteModal = false"
+                    class="px-4 py-2 text-webropol-gray-700 font-medium rounded-lg hover:bg-webropol-gray-100 transition-all">
+                    Cancel
+                </button>
+                <button @click="confirmDelete()"
+                    class="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-lg transition-all">
+                    <i class="fal fa-trash mr-2"></i>
+                    Delete Folder
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function libraryApp() {
             return {
                 currentView: 'surveys',
                 selectedLanguage: 'en',
                 searchTerm: '',
+                questionSearchTerm: '',
+                surveySearchTerm: '',
                 showPreviewModal: false,
                 showCreateFolder: false,
                 showCreateModal: false,
@@ -1531,8 +1861,22 @@
                 showSettings: false,
                 expandedPages: ['page-1'], // Track which pages are expanded
                 expandedQuestions: [], // Track which questions are expanded
-                searchTerm: '',
                 selectedFrozenQuestions: [1, 2], // Track selected questions in freeze modal
+                
+                // New modal states
+                showAddSubfolderModal: false,
+                showRenameModal: false,
+                showDeleteModal: false,
+                addSubfolderParentId: null,
+                addSubfolderParentName: '',
+                newSubfolderName: '',
+                newSubfolderDescription: '',
+                renameItemId: null,
+                renameCurrentName: '',
+                renameNewName: '',
+                deleteItemId: null,
+                deleteItemName: '',
+                deleteItemCount: 0,
                 
                 // Selection state
                 selectedQuestions: [],
@@ -1541,75 +1885,258 @@
                 selectAllSurveys: false,
                 showContextMenu: null,
 
-                // Sample data
+                // Sample data with nested subfolder structure
                 folders: [
-                    { id: 1, name: 'Organisation Library', description: 'Questions and surveys for customer satisfaction' },
-                    { id: 2, name: 'My Templates', description: '360 degree feedback surveys' },
-                    { id: 3, name: 'Market Research', description: 'Market analysis questions' }
+                    { 
+                        id: 1, 
+                        name: 'Organisation Library', 
+                        description: 'Central repository for organization-wide surveys and questions',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 11,
+                                name: 'Customer Satisfaction',
+                                description: 'Customer feedback and satisfaction surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 111,
+                                        name: 'Product Feedback',
+                                        description: 'Product-specific customer feedback',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: [
+                                            {
+                                                id: 1111,
+                                                name: 'Software Products',
+                                                description: 'Software product feedback surveys',
+                                                level: 3,
+                                                parentId: 111,
+                                                children: []
+                                            },
+                                            {
+                                                id: 1112,
+                                                name: 'Hardware Products',
+                                                description: 'Hardware product feedback surveys',
+                                                level: 3,
+                                                parentId: 111,
+                                                children: []
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        id: 112,
+                                        name: 'Service Quality',
+                                        description: 'Service quality assessment surveys',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: [
+                                            {
+                                                id: 1121,
+                                                name: 'Technical Support',
+                                                description: 'Technical support quality surveys',
+                                                level: 3,
+                                                parentId: 112,
+                                                children: []
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                id: 12,
+                                name: 'Employee Engagement',
+                                description: 'Employee satisfaction and engagement surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 121,
+                                        name: 'Annual Reviews',
+                                        description: 'Yearly employee performance reviews',
+                                        level: 2,
+                                        parentId: 12,
+                                        children: []
+                                    },
+                                    {
+                                        id: 122,
+                                        name: 'Team Dynamics',
+                                        description: 'Team collaboration and dynamics assessment',
+                                        level: 2,
+                                        parentId: 12,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 13,
+                                name: 'Market Research',
+                                description: 'Market analysis and research surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 131,
+                                        name: 'Competitive Analysis',
+                                        description: 'Competitor research surveys',
+                                        level: 2,
+                                        parentId: 13,
+                                        children: []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        name: 'My Templates', 
+                        description: 'Personal survey templates and questions',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 21,
+                                name: '360 Degree Feedback',
+                                description: '360-degree feedback survey templates',
+                                level: 1,
+                                parentId: 2,
+                                children: [
+                                    {
+                                        id: 211,
+                                        name: 'Leadership Assessment',
+                                        description: 'Leadership skills assessment templates',
+                                        level: 2,
+                                        parentId: 21,
+                                        children: []
+                                    },
+                                    {
+                                        id: 212,
+                                        name: 'Communication Skills',
+                                        description: 'Communication assessment templates',
+                                        level: 2,
+                                        parentId: 21,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 22,
+                                name: 'Custom Surveys',
+                                description: 'Custom survey templates',
+                                level: 1,
+                                parentId: 2,
+                                children: []
+                            }
+                        ]
+                    }
                 ],
 
                 questions: [
                     { 
                         id: 1, 
-                        name: 'Feedback Survey', 
+                        name: 'Overall Satisfaction', 
                         type: 'selection', 
-                        language: 'fi', 
-                        folderId: null,
+                        language: 'en', 
+                        folderId: 1111,
                         questionType: 'Selection',
-                        options: ['Vaihtoehto 1', 'Vaihtoehto 2', 'Vaihtoehto 3', 'Vaihtoehto 4']
+                        options: ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied', 'Very Dissatisfied']
                     },
                     { 
                         id: 2, 
-                        name: 'Avoin kysymys', 
-                        type: 'text', 
-                        language: 'fi', 
-                        folderId: 1,
-                        questionType: 'Text Question',
-                        options: []
-                    },
-                    { 
-                        id: 3, 
-                        name: 'Selection Question', 
-                        type: 'selection', 
-                        language: 'en', 
-                        folderId: null,
-                        questionType: 'Selection',
-                        options: ['Option A', 'Option B', 'Option C', 'Option D']
-                    },
-                    { 
-                        id: 4, 
-                        name: 'Rating Question', 
+                        name: 'Product Quality Assessment', 
                         type: 'rating', 
                         language: 'en', 
-                        folderId: 2,
+                        folderId: 1111,
                         questionType: 'Rating',
                         options: ['1 - Poor', '2 - Fair', '3 - Good', '4 - Very Good', '5 - Excellent']
                     },
                     { 
-                        id: 5, 
-                        name: 'Multiple Choice', 
-                        type: 'multiple', 
+                        id: 3, 
+                        name: 'Feedback Survey', 
+                        type: 'selection', 
+                        language: 'fi', 
+                        folderId: 1112,
+                        questionType: 'Selection',
+                        options: ['Vaihtoehto 1', 'Vaihtoehto 2', 'Vaihtoehto 3', 'Vaihtoehto 4']
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Support Experience', 
+                        type: 'text', 
                         language: 'en', 
-                        folderId: 1,
-                        questionType: 'Multiple Choice',
-                        options: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4', 'Choice 5']
+                        folderId: 1121,
+                        questionType: 'Text Question',
+                        options: []
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Team Collaboration Rating', 
+                        type: 'rating', 
+                        language: 'en', 
+                        folderId: 122,
+                        questionType: 'Rating',
+                        options: ['1 - Poor', '2 - Fair', '3 - Good', '4 - Very Good', '5 - Excellent']
                     },
                     { 
                         id: 6, 
-                        name: 'Tekstikysymys', 
+                        name: 'Leadership Effectiveness', 
+                        type: 'multiple', 
+                        language: 'en', 
+                        folderId: 211,
+                        questionType: 'Multiple Choice',
+                        options: ['Strategic Thinking', 'Team Management', 'Communication', 'Decision Making', 'Delegation']
+                    },
+                    { 
+                        id: 7, 
+                        name: 'Communication Assessment', 
+                        type: 'rating', 
+                        language: 'en', 
+                        folderId: 212,
+                        questionType: 'Rating',
+                        options: ['1 - Poor', '2 - Fair', '3 - Good', '4 - Very Good', '5 - Excellent']
+                    },
+                    { 
+                        id: 8, 
+                        name: 'Market Trends Analysis', 
                         type: 'text', 
-                        language: 'fi', 
-                        folderId: 3,
+                        language: 'en', 
+                        folderId: 131,
+                        questionType: 'Text Question',
+                        options: []
+                    },
+                    { 
+                        id: 9, 
+                        name: 'Annual Performance Review', 
+                        type: 'selection', 
+                        language: 'en', 
+                        folderId: 121,
+                        questionType: 'Selection',
+                        options: ['Exceeds Expectations', 'Meets Expectations', 'Below Expectations', 'Needs Improvement']
+                    },
+                    { 
+                        id: 10, 
+                        name: 'Custom Question Template', 
+                        type: 'text', 
+                        language: 'en', 
+                        folderId: 22,
                         questionType: 'Text Question',
                         options: []
                     }
                 ],
 
                 surveys: [
-                    { id: 1, name: '360', type: 'survey', language: 'en', folderId: 2 },
-                    { id: 2, name: 'Revalidation Sample', type: 'survey', language: 'en', folderId: null },
-                    { id: 3, name: 'Asiakastyytyväisyys', type: 'survey', language: 'fi', folderId: 1 },
-                    { id: 4, name: 'Employee Satisfaction', type: 'survey', language: 'en', folderId: 2 }
+                    { id: 1, name: '360 Leadership Assessment', type: 'survey', language: 'en', folderId: 211 },
+                    { id: 2, name: 'Product Satisfaction Survey', type: 'survey', language: 'en', folderId: 1111 },
+                    { id: 3, name: 'Customer Service Quality', type: 'survey', language: 'en', folderId: 112 },
+                    { id: 4, name: 'Employee Engagement Survey', type: 'survey', language: 'en', folderId: 12 },
+                    { id: 5, name: 'Technical Support Feedback', type: 'survey', language: 'en', folderId: 1121 },
+                    { id: 6, name: 'Team Dynamics Assessment', type: 'survey', language: 'en', folderId: 122 },
+                    { id: 7, name: 'Market Research Survey', type: 'survey', language: 'en', folderId: 131 },
+                    { id: 8, name: 'Hardware Product Review', type: 'survey', language: 'en', folderId: 1112 },
+                    { id: 9, name: 'Communication Skills Review', type: 'survey', language: 'en', folderId: 212 },
+                    { id: 10, name: 'Annual Performance Survey', type: 'survey', language: 'en', folderId: 121 }
                 ],
 
                 setView(view) {
@@ -1697,23 +2224,167 @@
 
                 getFilteredFolders() {
                     return this.folders.filter(folder => {
-                        const folderItems = this.getFolderItems(folder.id);
-                        return folderItems.length > 0;
+                        // Only show root level folders (level 0)
+                        return folder.level === 0;
                     });
                 },
 
-                getFolderItems(folderId) {
+                // Helper function to recursively count items in folder and subfolders
+                getTotalFolderItemCount(folder) {
+                    let count = 0;
+                    
+                    // Count direct items in this folder
                     const currentItems = this.currentView === 'questions' ? this.questions : this.surveys;
-                    return currentItems.filter(item => {
-                        const matchesFolder = item.folderId === folderId;
+                    const directItems = currentItems.filter(item => {
+                        const matchesFolder = item.folderId === folder.id;
                         const matchesLanguage = item.language === this.selectedLanguage;
                         const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
                         return matchesFolder && matchesLanguage && matchesSearch;
                     });
+                    count += directItems.length;
+                    
+                    // Recursively count items in children
+                    if (folder.children && folder.children.length > 0) {
+                        folder.children.forEach(child => {
+                            count += this.getTotalFolderItemCount(child);
+                        });
+                    }
+                    
+                    return count;
                 },
 
-                getFolderItemCount(folderId) {
-                    return this.getFolderItems(folderId).length;
+                // Helper function to find folder by ID (searches recursively)
+                findFolderById(folderId, folders = this.folders) {
+                    for (let folder of folders) {
+                        if (folder.id === folderId) {
+                            return folder;
+                        }
+                        if (folder.children && folder.children.length > 0) {
+                            const found = this.findFolderById(folderId, folder.children);
+                            if (found) return found;
+                        }
+                    }
+                    return null;
+                },
+
+                // Modal opening functions
+                openAddSubfolderModal(parentId) {
+                    const parentFolder = this.findFolderById(parentId);
+                    if (parentFolder) {
+                        this.addSubfolderParentId = parentId;
+                        this.addSubfolderParentName = parentFolder.name;
+                        this.newSubfolderName = '';
+                        this.newSubfolderDescription = '';
+                        this.showAddSubfolderModal = true;
+                        this.showContextMenu = null;
+                    }
+                },
+
+                openRenameModal(itemId, currentName) {
+                    this.renameItemId = itemId;
+                    this.renameCurrentName = currentName;
+                    this.renameNewName = currentName;
+                    this.showRenameModal = true;
+                    this.showContextMenu = null;
+                },
+
+                openDeleteConfirmationModal(itemId, itemName) {
+                    const folder = this.findFolderById(itemId);
+                    this.deleteItemId = itemId;
+                    this.deleteItemName = itemName;
+                    this.deleteItemCount = folder ? this.getTotalFolderItemCount(folder) : 0;
+                    this.showDeleteModal = true;
+                    this.showContextMenu = null;
+                },
+
+                // Modal action functions
+                createSubfolder() {
+                    if (!this.newSubfolderName.trim() || !this.addSubfolderParentId) return;
+                    
+                    const parentFolder = this.findFolderById(this.addSubfolderParentId);
+                    if (parentFolder && parentFolder.level < 3) { // Max 4 levels (0-3)
+                        const newSubfolder = {
+                            id: Date.now(),
+                            name: this.newSubfolderName.trim(),
+                            description: this.newSubfolderDescription.trim(),
+                            level: parentFolder.level + 1,
+                            parentId: this.addSubfolderParentId,
+                            children: []
+                        };
+                        
+                        parentFolder.children.push(newSubfolder);
+                        this.showAddSubfolderModal = false;
+                        
+                        // Reset form
+                        this.newSubfolderName = '';
+                        this.newSubfolderDescription = '';
+                        this.addSubfolderParentId = null;
+                        this.addSubfolderParentName = '';
+                    }
+                },
+
+                confirmRename() {
+                    if (!this.renameNewName.trim() || !this.renameItemId) return;
+                    
+                    const folder = this.findFolderById(this.renameItemId);
+                    if (folder) {
+                        folder.name = this.renameNewName.trim();
+                        this.showRenameModal = false;
+                        
+                        // Reset form
+                        this.renameItemId = null;
+                        this.renameCurrentName = '';
+                        this.renameNewName = '';
+                    }
+                },
+
+                confirmDelete() {
+                    if (!this.deleteItemId) return;
+                    
+                    // Remove from folders structure recursively
+                    this.removeFolderById(this.deleteItemId);
+                    
+                    // Remove all items that belong to this folder or its subfolders
+                    const allDeletedFolderIds = this.getAllSubfolderIds(this.deleteItemId);
+                    this.questions = this.questions.filter(q => !allDeletedFolderIds.includes(q.folderId));
+                    this.surveys = this.surveys.filter(s => !allDeletedFolderIds.includes(s.folderId));
+                    
+                    this.showDeleteModal = false;
+                    
+                    // Reset form
+                    this.deleteItemId = null;
+                    this.deleteItemName = '';
+                    this.deleteItemCount = 0;
+                },
+
+                // Helper function to remove folder from nested structure
+                removeFolderById(folderId, folders = this.folders) {
+                    for (let i = 0; i < folders.length; i++) {
+                        if (folders[i].id === folderId) {
+                            folders.splice(i, 1);
+                            return true;
+                        }
+                        if (folders[i].children && folders[i].children.length > 0) {
+                            if (this.removeFolderById(folderId, folders[i].children)) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                },
+
+                // Helper function to get all subfolder IDs recursively
+                getAllSubfolderIds(folderId) {
+                    const folder = this.findFolderById(folderId);
+                    const ids = [folderId];
+                    
+                    if (folder && folder.children) {
+                        folder.children.forEach(child => {
+                            ids.push(...this.getAllSubfolderIds(child.id));
+                        });
+                    }
+                    
+                    return ids;
                 },
 
                 getUngroupedItems() {
