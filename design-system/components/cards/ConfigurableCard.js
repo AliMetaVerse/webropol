@@ -41,7 +41,7 @@ export class WebropolConfigurableCard extends BaseComponent {
             <div class="flex items-start space-x-4 flex-1">
               ${icon ? `
                 <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <i class="fal fa-${icon} text-white text-lg"></i>
+                  <i class="fas fa-${icon} text-white text-lg"></i>
                 </div>
               ` : ''}
               
@@ -72,7 +72,7 @@ export class WebropolConfigurableCard extends BaseComponent {
             <div class="flex items-center space-x-2 ml-4">
               ${expandable ? `
                 <button class="w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors expand-button">
-                  <i class="fal fa-chevron-down text-sm transition-transform duration-200"></i>
+                  <i class="fas fa-chevron-down text-sm transition-transform duration-200"></i>
                 </button>
               ` : ''}
             </div>

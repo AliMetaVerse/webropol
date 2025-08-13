@@ -68,7 +68,7 @@ export class WebropolTabs extends BaseComponent {
               aria-selected="${activeTab === tab.id}"
               aria-controls="panel-${tab.id}"
               id="tab-${tab.id}">
-              ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
+              ${tab.icon ? `<i class="fas fa-${tab.icon} mr-2"></i>` : ''}
               ${tab.label}
               ${tab.badge ? `<span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">${tab.badge}</span>` : ''}
             </button>
@@ -93,7 +93,7 @@ export class WebropolTabs extends BaseComponent {
             aria-selected="${activeTab === tab.id}"
             aria-controls="panel-${tab.id}"
             id="tab-${tab.id}">
-            ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
+            ${tab.icon ? `<i class="fas fa-${tab.icon} mr-2"></i>` : ''}
             ${tab.label}
             ${tab.badge ? `<span class="ml-2 px-2 py-1 bg-webropol-teal-100 text-webropol-teal-600 rounded-full text-xs">${tab.badge}</span>` : ''}
           </button>

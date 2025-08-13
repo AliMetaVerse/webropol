@@ -317,7 +317,7 @@ class WebropAI {
         return `
             <div class="insight-card">
                 <div class="insight-header">
-                    <i class="fal ${iconClass} ${priorityClass}"></i>
+                    <i class="fas ${iconClass} ${priorityClass}"></i>
                     <h3>${insight.title}</h3>
                 </div>
                 <p>${insight.description}</p>
@@ -541,7 +541,7 @@ function createChatMessage(content, sender) {
     message.className = `message ${sender}-message`;
     
     const icon = document.createElement('i');
-    icon.className = sender === 'ai' ? 'fal fa-robot' : 'fal fa-user';
+    icon.className = sender === 'ai' ? 'fas fa-robot' : 'fas fa-user';
     
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
@@ -698,7 +698,7 @@ function updateSurveyTypeInfo(type) {
             <h4>${info.title}</h4>
             <p>${info.description}</p>
             <div class="ai-tip">
-                <i class="fal fa-lightbulb"></i>
+                <i class="fas fa-lightbulb"></i>
                 <span>${info.aiTips}</span>
             </div>
         `;
@@ -743,10 +743,10 @@ function createQuestionHTML(question, number) {
                 <span>Question ${number}</span>
                 <div class="question-actions">
                     <button class="ai-suggest-btn" onclick="suggestQuestion(${number})">
-                        <i class="fal fa-lightbulb"></i> AI Suggest
+                        <i class="fas fa-lightbulb"></i> AI Suggest
                     </button>
                     <button class="btn-icon" onclick="deleteQuestion(${number})">
-                        <i class="fal fa-trash"></i>
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -808,7 +808,7 @@ function showAIRecommendations(type) {
     const typeRecommendations = recommendations[type] || recommendations['custom'];
     const recommendationsHTML = typeRecommendations.map(rec => 
         `<div class="recommendation-item">
-            <i class="fal fa-check-circle"></i>
+            <i class="fas fa-check-circle"></i>
             <span>${rec}</span>
         </div>`
     ).join('');
@@ -966,22 +966,22 @@ function showLaunchProgress() {
     const progressHTML = `
         <div class="launch-progress-modal">
             <div class="progress-content">
-                <h3><i class="fal fa-rocket"></i> Launching Survey</h3>
+                <h3><i class="fas fa-rocket"></i> Launching Survey</h3>
                 <div class="progress-steps">
                     <div class="step active">
-                        <i class="fal fa-check"></i>
+                        <i class="fas fa-check"></i>
                         <span>Survey validated</span>
                     </div>
                     <div class="step active">
-                        <i class="fal fa-check"></i>
+                        <i class="fas fa-check"></i>
                         <span>Distribution channels configured</span>
                     </div>
                     <div class="step loading">
-                        <i class="fal fa-spinner fa-spin"></i>
+                        <i class="fas fa-spinner fa-spin"></i>
                         <span>Publishing survey...</span>
                     </div>
                     <div class="step">
-                        <i class="fal fa-clock"></i>
+                        <i class="fas fa-clock"></i>
                         <span>Sending invitations</span>
                     </div>
                 </div>
@@ -996,15 +996,15 @@ function showLaunchProgress() {
         const steps = document.querySelectorAll('.step');
         steps[2].classList.remove('loading');
         steps[2].classList.add('active');
-        steps[2].innerHTML = '<i class="fal fa-check"></i><span>Survey published successfully!</span>';
+        steps[2].innerHTML = '<i class="fas fa-check"></i><span>Survey published successfully!</span>';
         
         steps[3].classList.add('loading');
-        steps[3].innerHTML = '<i class="fal fa-spinner fa-spin"></i><span>Sending invitations...</span>';
+        steps[3].innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Sending invitations...</span>';
         
         setTimeout(() => {
             steps[3].classList.remove('loading');
             steps[3].classList.add('active');
-            steps[3].innerHTML = '<i class="fal fa-check"></i><span>Invitations sent!</span>';
+            steps[3].innerHTML = '<i class="fas fa-check"></i><span>Invitations sent!</span>';
             
             setTimeout(() => {
                 document.querySelector('.launch-progress-modal').remove();
@@ -1157,13 +1157,13 @@ function addUserToTable(user) {
         <td>
             <div class="action-buttons">
                 <button class="action-btn edit" onclick="editUser('${user.email}')">
-                    <i class="fal fa-edit"></i>
+                    <i class="fas fa-edit"></i>
                 </button>
                 <button class="action-btn delete" onclick="deleteUser('${user.email}')">
-                    <i class="fal fa-trash"></i>
+                    <i class="fas fa-trash"></i>
                 </button>
                 <button class="action-btn more" onclick="showUserMenu('${user.email}')">
-                    <i class="fal fa-ellipsis-v"></i>
+                    <i class="fas fa-ellipsis-v"></i>
                 </button>
             </div>
         </td>
@@ -1281,7 +1281,7 @@ function generateEventPlan() {
     if (predictionsDiv) {
         predictionsDiv.innerHTML = `
             <div class="event-predictions">
-                <h3><i class="fal fa-brain"></i> AI Event Plan</h3>
+                <h3><i class="fas fa-brain"></i> AI Event Plan</h3>
                 <div class="prediction-item">
                     <strong>Event Type:</strong> ${eventPlan.eventType}
                 </div>

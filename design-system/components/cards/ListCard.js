@@ -52,7 +52,7 @@ export class WebropolListCard extends BaseComponent {
     if (icon) {
       const iconDiv = document.createElement('div');
       iconDiv.className = 'flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200';
-      iconDiv.innerHTML = `<i class="fal fa-${icon} text-white text-sm"></i>`;
+      iconDiv.innerHTML = `<i class="fas fa-${icon} text-white text-sm"></i>`;
       contentDiv.appendChild(iconDiv);
     }
 
@@ -94,7 +94,7 @@ export class WebropolListCard extends BaseComponent {
     // Add arrow indicator
     const arrowDiv = document.createElement('div');
     arrowDiv.className = 'flex-shrink-0 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200';
-    arrowDiv.innerHTML = '<i class="fal fa-chevron-right text-sm"></i>';
+    arrowDiv.innerHTML = '<i class="fas fa-chevron-right text-sm"></i>';
     contentDiv.appendChild(arrowDiv);
 
     wrapper.appendChild(contentDiv);
@@ -147,7 +147,7 @@ export class WebropolListCard extends BaseComponent {
               <div class="flex items-center flex-1 min-w-0 relative z-10">
                 ${item.icon ? `
                   <div class="w-8 h-8 mr-3 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg group-hover:scale-105 transition-transform duration-200">
-                    <i class="fal fa-${item.icon} text-white text-xs"></i>
+                    <i class="fas fa-${item.icon} text-white text-xs"></i>
                   </div>
                 ` : ''}
                 
@@ -165,7 +165,7 @@ export class WebropolListCard extends BaseComponent {
               <div class="flex items-center space-x-3 ml-4 relative z-10">
                 ${item.answers ? `
                   <span class="flex items-center text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200">
-                    <i class="fal fa-paper-plane text-blue-600 mr-1"></i>
+                    <i class="fas fa-paper-plane text-blue-600 mr-1"></i>
                     ${item.answers} answers
                   </span>
                 ` : ''}
@@ -183,7 +183,7 @@ export class WebropolListCard extends BaseComponent {
                 ` : ''}
                 
                 <div class="text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200">
-                  <i class="fal fa-chevron-right text-sm"></i>
+                  <i class="fas fa-chevron-right text-sm"></i>
                 </div>
               </div>
             </div>
@@ -192,7 +192,7 @@ export class WebropolListCard extends BaseComponent {
         
         ${items.length === 0 ? `
           <div class="p-8 text-center text-gray-500">
-            <i class="fal fa-inbox text-2xl mb-2 block opacity-50"></i>
+            <i class="fas fa-inbox text-2xl mb-2 block opacity-50"></i>
             <p>No items to display</p>
           </div>
         ` : ''}

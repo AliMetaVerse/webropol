@@ -32,8 +32,8 @@ Flexible button component with multiple variants and configurations.
 <webropol-button variant="success">Save</webropol-button>
 
 <!-- With icons -->
-<webropol-button variant="primary" icon="fal fa-plus">Add Item</webropol-button>
-<webropol-button variant="secondary" icon="fal fa-download" icon-position="right">Download</webropol-button>
+<webropol-button variant="primary" icon="fas fa-plus">Add Item</webropol-button>
+<webropol-button variant="secondary" icon="fas fa-download" icon-position="right">Download</webropol-button>
 
 <!-- States -->
 <webropol-button variant="primary" loading>Saving...</webropol-button>
@@ -95,7 +95,7 @@ Flexible card system for content organization.
   
   <!-- Card Header -->
   <webropol-card-header 
-    icon="fal fa-chart-bar"
+    icon="fas fa-chart-bar"
     title="Analytics Dashboard" 
     subtitle="Real-time survey insights"
     badge="Pro"
@@ -109,7 +109,7 @@ Flexible card system for content organization.
     <!-- Card List -->
     <webropol-card-list title="Recent Surveys" collapsible default-open>
       <webropol-card-list-item 
-        icon="fal fa-poll" 
+        icon="fas fa-poll" 
         title="Customer Satisfaction Survey" 
         subtitle="Created 2 hours ago"
         status="active"
@@ -117,12 +117,12 @@ Flexible card system for content organization.
       </webropol-card-list-item>
       
       <webropol-card-list-item 
-        icon="fal fa-users" 
+        icon="fas fa-users" 
         title="Employee Feedback" 
         subtitle="Created yesterday"
         status="pending"
         action="View Results"
-        action-icon="fal fa-eye">
+        action-icon="fas fa-eye">
       </webropol-card-list-item>
     </webropol-card-list>
   </webropol-card-content>
@@ -139,7 +139,7 @@ Flexible card system for content organization.
 #### Gradient Cards (Homepage Style)
 ```html
 <webropol-gradient-card 
-  icon="fal fa-poll-h"
+  icon="fas fa-poll-h"
   title="Surveys" 
   subtitle="Create and manage surveys"
   button-text="Get Started"
@@ -207,12 +207,12 @@ Complete navigation system with headers, sidebars, and breadcrumbs.
   active="dashboards"
   brand-title="MyWebropol" 
   brand-subtitle="Analytics Platform"
-  brand-icon="fal fa-analytics">
+  brand-icon="fas fa-analytics">
   
   <!-- Custom menu items -->
   <div slot="menu-items">
     <a href="/custom-reports" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700">
-      <i class="fal fa-file-alt w-5 mr-4"></i>
+      <i class="fas fa-file-alt w-5 mr-4"></i>
       <span>Custom Reports</span>
     </a>
   </div>
