@@ -565,15 +565,25 @@
                                                                 class="right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-webropol-gray-200"
                                                                 @click.away="showContextMenu = null">
                                                                 <div class="py-1">
-                                                                    <button @click="deleteItem(question.id, 'question')"
-                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
-                                                                        <i class="fal fa-trash mr-3 text-black"></i>
-                                                                        Delete Question
+                                                                    <button @click="openRenameModal(question.id, question.name, 'question')"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                        <i class="fal fa-edit mr-3 text-black"></i>
+                                                                        Rename Question
+                                                                    </button>
+                                                                    <button @click="openMoveModal(question.id, question.name, 'question')"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                        <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                        Move Question
                                                                     </button>
                                                                     <button @click="freezeItem(question.id, 'question')"
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-blue-50 transition-colors">
                                                                         <i class="fal fa-snowflake mr-3 text-black"></i>
                                                                         Freeze Question
+                                                                    </button>
+                                                                    <button @click="openDeleteConfirmationModal(question.id, question.name, 'question')"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
+                                                                        <i class="fal fa-trash mr-3 text-black"></i>
+                                                                        Delete Question
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -738,22 +748,22 @@
                                                                                 <i class="fal fa-info-circle mr-3 text-black"></i>
                                                                                 Survey information
                                                                             </button>
-                                                                            <button @click="renameSurvey(survey.id)"
+                                                                            <button @click="openRenameModal(survey.id, survey.name, 'survey')"
                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                                 <i class="fal fa-edit mr-3 text-black"></i>
-                                                                                Rename
+                                                                                Rename Survey
                                                                             </button>
-                                                                            <button @click="moveSurvey(survey.id)"
+                                                                            <button @click="openMoveModal(survey.id, survey.name, 'survey')"
                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                                <i class="fal fa-arrows-alt mr-3 text-black"></i>
-                                                                                Move survey
+                                                                                <i class="fal fa-arrows mr-3 text-black"></i>
+                                                                                Move Survey
                                                                             </button>
                                                                             <button @click="freezeItem(survey.id, 'survey')"
                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-blue-50 transition-colors">
                                                                                 <i class="fal fa-snowflake mr-3 text-black"></i>
                                                                                 Freeze Survey
                                                                             </button>
-                                                                            <button @click="deleteItem(survey.id, 'survey')"
+                                                                            <button @click="openDeleteConfirmationModal(survey.id, survey.name, 'survey')"
                                                                                 class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
                                                                                 <i class="fal fa-trash mr-3 text-black"></i>
                                                                                 Delete Survey
@@ -885,8 +895,8 @@
                         <i class="fal fa-folder-open text-orange-600 text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-webropol-gray-900">Move Folder</h3>
-                        <p class="text-sm text-webropol-gray-600">Select a new location for this folder</p>
+                        <h3 class="text-xl font-bold text-webropol-gray-900" x-text="'Move ' + (moveItemType === 'folder' ? 'Folder' : moveItemType === 'question' ? 'Question' : 'Survey')"></h3>
+                        <p class="text-sm text-webropol-gray-600" x-text="'Select a new location for this ' + moveItemType"></p>
                     </div>
                 </div>
                 <button @click="showMoveModal = false"
@@ -897,15 +907,15 @@
 
             <!-- Modal Content -->
             <div class="p-6">
-                <!-- Current Folder Info -->
+                <!-- Current Item Info -->
                 <div class="mb-4">
                     <div class="bg-webropol-gray-50 rounded-xl p-4 border border-webropol-gray-200">
                         <div class="flex items-center mb-2">
-                            <span class="text-sm font-medium text-webropol-gray-600">Folder you're moving:</span>
+                            <span class="text-sm font-medium text-webropol-gray-600" x-text="(moveItemType === 'folder' ? 'Folder' : moveItemType === 'question' ? 'Question' : 'Survey') + ' you\\'re moving:'"></span>
                         </div>
                         <div class="flex items-center ml-4">
                             <div class="w-6 h-6 bg-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
-                                <i class="fal fa-folder text-webropol-teal-600"></i>
+                                <i class="fal" :class="moveItemType === 'folder' ? 'fa-folder' : moveItemType === 'question' ? 'fa-question-circle' : 'fa-poll-h'" class="text-webropol-teal-600"></i>
                             </div>
                             <span class="font-medium text-webropol-gray-900" x-text="moveItemName"></span>
                         </div>
@@ -1742,8 +1752,8 @@
                         <i class="fal fa-edit text-blue-600 text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-webropol-gray-900">Rename Folder</h3>
-                        <p class="text-sm text-webropol-gray-600">Update the folder name</p>
+                        <h3 class="text-xl font-bold text-webropol-gray-900" x-text="'Rename ' + (renameItemType === 'folder' ? 'Folder' : renameItemType === 'question' ? 'Question' : 'Survey')"></h3>
+                        <p class="text-sm text-webropol-gray-600" x-text="'Update the ' + renameItemType + ' name'"></p>
                     </div>
                 </div>
                 <button @click="showRenameModal = false"
@@ -1766,7 +1776,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-webropol-gray-700 mb-2">New Name</label>
-                        <input x-model="renameNewName" type="text" placeholder="Enter new folder name..."
+                        <input x-model="renameNewName" type="text" :placeholder="'Enter new ' + renameItemType + ' name...'"
                             class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-transparent">
                     </div>
                 </div>
@@ -1904,7 +1914,9 @@
                                 <h4 class="text-sm font-semibold text-red-800 mb-1">Warning</h4>
                                 <p class="text-sm text-red-700">
                                     Are you sure you want to delete "<span class="font-medium" x-text="deleteItemName"></span>"?
-                                    This will permanently remove the folder and all its contents including surveys and questions.
+                                    <span x-show="deleteItemType === 'folder'">This will permanently remove the folder and all its contents including surveys and questions.</span>
+                                    <span x-show="deleteItemType === 'question'">This question will be permanently removed from your library.</span>
+                                    <span x-show="deleteItemType === 'survey'">This survey will be permanently removed from your library.</span>
                                 </p>
                             </div>
                         </div>
@@ -1913,10 +1925,10 @@
                     <div class="p-3 bg-webropol-gray-50 border border-webropol-gray-200 rounded-xl">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <i class="fal fa-folder text-webropol-teal-600 mr-3"></i>
+                                <i class="fal" :class="deleteItemType === 'folder' ? 'fa-folder' : deleteItemType === 'question' ? 'fa-question-circle' : 'fa-poll-h'" class="text-webropol-teal-600 mr-3"></i>
                                 <span class="font-medium text-webropol-gray-900" x-text="deleteItemName"></span>
                             </div>
-                            <span class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-1 font-medium"
+                            <span x-show="deleteItemType === 'folder'" class="text-xs bg-webropol-gray-200 text-webropol-gray-700 rounded-full px-2 py-1 font-medium"
                                 x-text="deleteItemCount + ' items'"></span>
                         </div>
                     </div>
@@ -1964,6 +1976,7 @@
                 // Move modal state
                 moveItemId: null,
                 moveItemName: '',
+                moveItemType: 'folder',
                 selectedMoveLocation: null,
                 selectedMoveLocationId: null,
                 
@@ -1992,9 +2005,11 @@
                 renameItemId: null,
                 renameCurrentName: '',
                 renameNewName: '',
+                renameItemType: 'folder',
                 deleteItemId: null,
                 deleteItemName: '',
                 deleteItemCount: 0,
+                deleteItemType: 'folder',
                 
                 // Selection state
                 selectedQuestions: [],
@@ -2386,25 +2401,43 @@
                 },
 
                 confirmMove() {
-                    if (!this.selectedMoveLocation || !this.moveItemId) return;
+                    if (!this.selectedMoveLocationId || !this.moveItemId) return;
                     
-                    // Here you would implement the actual move logic
-                    console.log(`Moving item ${this.moveItemId} (${this.moveItemName}) to ${this.selectedMoveLocation}`);
-                    
-                    // Find and update the item
-                    const allItems = [...this.questions, ...this.surveys];
-                    const item = allItems.find(item => item.id === this.moveItemId);
-                    if (item) {
-                        // You can update the item's location here
-                        // For example, setting a location property or moving to a specific folder
-                        item.location = this.selectedMoveLocation;
+                    if (this.moveItemType === 'folder') {
+                        // Move folder logic - update the folder's parent
+                        const folder = this.findFolderById(this.moveItemId);
+                        if (folder) {
+                            // Remove from current location
+                            this.removeFolderById(this.moveItemId);
+                            
+                            // Add to new location
+                            const targetFolder = this.findFolderById(this.selectedMoveLocationId);
+                            if (targetFolder) {
+                                if (!targetFolder.subfolders) {
+                                    targetFolder.subfolders = [];
+                                }
+                                targetFolder.subfolders.push(folder);
+                            }
+                        }
+                    } else if (this.moveItemType === 'question') {
+                        const question = this.questions.find(q => q.id === this.moveItemId);
+                        if (question) {
+                            question.folderId = this.selectedMoveLocationId;
+                        }
+                    } else if (this.moveItemType === 'survey') {
+                        const survey = this.surveys.find(s => s.id === this.moveItemId);
+                        if (survey) {
+                            survey.folderId = this.selectedMoveLocationId;
+                        }
                     }
                     
                     // Close the modal and reset state
                     this.showMoveModal = false;
                     this.moveItemId = null;
                     this.moveItemName = '';
+                    this.moveItemType = 'folder';
                     this.selectedMoveLocation = null;
+                    this.selectedMoveLocationId = null;
                 },
 
                 removeFromFolder(itemId, folderId) {
@@ -2473,28 +2506,37 @@
                     }
                 },
 
-                openMoveModal(itemId, itemName) {
+                openMoveModal(itemId, itemName, itemType = 'folder') {
                     this.moveItemId = itemId;
                     this.moveItemName = itemName;
+                    this.moveItemType = itemType;
                     this.selectedMoveLocation = null;
                     this.selectedMoveLocationId = null;
                     this.showMoveModal = true;
                     this.showContextMenu = null;
                 },
 
-                openRenameModal(itemId, currentName) {
+                openRenameModal(itemId, currentName, itemType = 'folder') {
                     this.renameItemId = itemId;
                     this.renameCurrentName = currentName;
                     this.renameNewName = currentName;
+                    this.renameItemType = itemType;
                     this.showRenameModal = true;
                     this.showContextMenu = null;
                 },
 
-                openDeleteConfirmationModal(itemId, itemName) {
-                    const folder = this.findFolderById(itemId);
+                openDeleteConfirmationModal(itemId, itemName, itemType = 'folder') {
                     this.deleteItemId = itemId;
                     this.deleteItemName = itemName;
-                    this.deleteItemCount = folder ? this.getTotalFolderItemCount(folder) : 0;
+                    this.deleteItemType = itemType;
+                    
+                    if (itemType === 'folder') {
+                        const folder = this.findFolderById(itemId);
+                        this.deleteItemCount = folder ? this.getTotalFolderItemCount(folder) : 0;
+                    } else {
+                        this.deleteItemCount = 0; // Questions and surveys don't have child items
+                    }
+                    
                     this.showDeleteModal = true;
                     this.showContextMenu = null;
                 },
@@ -2528,28 +2570,48 @@
                 confirmRename() {
                     if (!this.renameNewName.trim() || !this.renameItemId) return;
                     
-                    const folder = this.findFolderById(this.renameItemId);
-                    if (folder) {
-                        folder.name = this.renameNewName.trim();
-                        this.showRenameModal = false;
-                        
-                        // Reset form
-                        this.renameItemId = null;
-                        this.renameCurrentName = '';
-                        this.renameNewName = '';
+                    if (this.renameItemType === 'folder') {
+                        const folder = this.findFolderById(this.renameItemId);
+                        if (folder) {
+                            folder.name = this.renameNewName.trim();
+                        }
+                    } else if (this.renameItemType === 'question') {
+                        const question = this.questions.find(q => q.id === this.renameItemId);
+                        if (question) {
+                            question.name = this.renameNewName.trim();
+                        }
+                    } else if (this.renameItemType === 'survey') {
+                        const survey = this.surveys.find(s => s.id === this.renameItemId);
+                        if (survey) {
+                            survey.name = this.renameNewName.trim();
+                        }
                     }
+                    
+                    this.showRenameModal = false;
+                    
+                    // Reset form
+                    this.renameItemId = null;
+                    this.renameCurrentName = '';
+                    this.renameNewName = '';
+                    this.renameItemType = 'folder';
                 },
 
                 confirmDelete() {
                     if (!this.deleteItemId) return;
                     
-                    // Remove from folders structure recursively
-                    this.removeFolderById(this.deleteItemId);
-                    
-                    // Remove all items that belong to this folder or its subfolders
-                    const allDeletedFolderIds = this.getAllSubfolderIds(this.deleteItemId);
-                    this.questions = this.questions.filter(q => !allDeletedFolderIds.includes(q.folderId));
-                    this.surveys = this.surveys.filter(s => !allDeletedFolderIds.includes(s.folderId));
+                    if (this.deleteItemType === 'folder') {
+                        // Remove from folders structure recursively
+                        this.removeFolderById(this.deleteItemId);
+                        
+                        // Remove all items that belong to this folder or its subfolders
+                        const allDeletedFolderIds = this.getAllSubfolderIds(this.deleteItemId);
+                        this.questions = this.questions.filter(q => !allDeletedFolderIds.includes(q.folderId));
+                        this.surveys = this.surveys.filter(s => !allDeletedFolderIds.includes(s.folderId));
+                    } else if (this.deleteItemType === 'question') {
+                        this.questions = this.questions.filter(q => q.id !== this.deleteItemId);
+                    } else if (this.deleteItemType === 'survey') {
+                        this.surveys = this.surveys.filter(s => s.id !== this.deleteItemId);
+                    }
                     
                     this.showDeleteModal = false;
                     
@@ -2557,6 +2619,7 @@
                     this.deleteItemId = null;
                     this.deleteItemName = '';
                     this.deleteItemCount = 0;
+                    this.deleteItemType = 'folder';
                 },
 
                 // Helper function to remove folder from nested structure
