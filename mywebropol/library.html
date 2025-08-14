@@ -207,10 +207,12 @@
                                                 <!-- Main Folder Header -->
                                                 <div @click="toggleFolder(folder.id)"
                                                     class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200"
-                                                    :class="expandedFolders.includes(folder.id) ? 'bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
+                                                    :class="selectedFolderId === folder.id ? 'bg-gradient-to-r from-webropol-teal-100 to-webropol-teal-100 text-webropol-teal-800 ring-2 ring-webropol-teal-300' : 
+                                                            expandedFolders.includes(folder.id) ? 'bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
                                                     <div class="flex items-center">
                                                         <div class="w-8 h-8 flex items-center justify-center rounded-lg mr-3"
-                                                            :class="expandedFolders.includes(folder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
+                                                            :class="selectedFolderId === folder.id ? 'bg-webropol-teal-200' : 
+                                                                    expandedFolders.includes(folder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
                                                             <i :class="folder.name === 'Organisation Library' ? 'fal fa-building text-webropol-teal-600' : 
                                                                       folder.name === 'My Templates' ? 'fal fa-file-alt text-webropol-teal-600' : 
                                                                       'fal fa-folder text-webropol-teal-600'"></i>
@@ -257,10 +259,12 @@
                                                             <!-- Level 1 Subfolder -->
                                                             <div @click="toggleFolder(subfolder.id)"
                                                                 class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
-                                                                :class="expandedFolders.includes(subfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/70 to-webropol-teal-50/70 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
+                                                                :class="selectedFolderId === subfolder.id ? 'bg-gradient-to-r from-webropol-teal-100/70 to-webropol-teal-100/70 text-webropol-teal-800 ring-2 ring-webropol-teal-300' : 
+                                                                        expandedFolders.includes(subfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/70 to-webropol-teal-50/70 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
                                                                 <div class="flex items-center">
                                                                     <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
-                                                                        :class="expandedFolders.includes(subfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
+                                                                        :class="selectedFolderId === subfolder.id ? 'bg-webropol-teal-200' : 
+                                                                                expandedFolders.includes(subfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
                                                                         <i class="fal fa-folder text-webropol-teal-600"></i>
                                                                     </div>
                                                                     <span class="text-sm font-medium" x-text="subfolder.name"></span>
@@ -322,10 +326,12 @@
                                                                         <!-- Level 2 Subfolder -->
                                                                         <div @click="toggleFolder(subsubfolder.id)"
                                                                             class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
-                                                                            :class="expandedFolders.includes(subsubfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/50 to-webropol-teal-50/50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
+                                                                            :class="selectedFolderId === subsubfolder.id ? 'bg-gradient-to-r from-webropol-teal-100/50 to-webropol-teal-100/50 text-webropol-teal-800 ring-2 ring-webropol-teal-300' : 
+                                                                                    expandedFolders.includes(subsubfolder.id) ? 'bg-gradient-to-r from-webropol-teal-50/50 to-webropol-teal-50/50 text-webropol-teal-700' : 'hover:bg-webropol-gray-50'">
                                                                             <div class="flex items-center">
                                                                                 <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
-                                                                                    :class="expandedFolders.includes(subsubfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
+                                                                                    :class="selectedFolderId === subsubfolder.id ? 'bg-webropol-teal-200' : 
+                                                                                            expandedFolders.includes(subsubfolder.id) ? 'bg-webropol-teal-100' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
                                                                                     <i class="fal fa-folder text-webropol-teal-600"></i>
                                                                                 </div>
                                                                                 <span class="text-sm font-medium" x-text="subsubfolder.name"></span>
@@ -385,9 +391,12 @@
                                                                             <template x-for="finalfolder in subsubfolder.children" :key="finalfolder.id">
                                                                                 <div class="mt-2">
                                                                                     <!-- Level 3 Subfolder (No expansion, just display) -->
-                                                                                    <div class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group hover:bg-webropol-gray-50">
+                                                                                    <div @click="toggleFolder(finalfolder.id)" 
+                                                                                        class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                                        :class="selectedFolderId === finalfolder.id ? 'bg-gradient-to-r from-webropol-teal-100 to-webropol-teal-100 text-webropol-teal-800 ring-2 ring-webropol-teal-300' : 'hover:bg-webropol-gray-50'">
                                                                                         <div class="flex items-center">
-                                                                                            <div class="w-6 h-6 flex items-center justify-center rounded-sm mr-3 bg-webropol-gray-100 group-hover:bg-webropol-teal-50">
+                                                                                            <div class="w-6 h-6 flex items-center justify-center rounded-sm mr-3" 
+                                                                                                :class="selectedFolderId === finalfolder.id ? 'bg-webropol-teal-200' : 'bg-webropol-gray-100 group-hover:bg-webropol-teal-50'">
                                                                                                 <i class="fal fa-folder text-webropol-teal-600"></i>
                                                                                             </div>
                                                                                             <span class="text-sm font-medium" x-text="finalfolder.name"></span>
@@ -459,6 +468,11 @@
                                             <div>
                                                 <h2 class="text-xl md:text-2xl font-bold text-webropol-gray-900 mb-1">Questions
                                                     Library</h2>
+                                                <!-- Folder Filter Indicator -->
+                                                <div x-show="selectedFolderId !== null" class="flex items-center mt-2">
+                                                    <span class="text-sm text-webropol-gray-600 mr-2">Showing content from:</span>
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-webropol-teal-100 text-webropol-teal-800" x-text="findFolderById(selectedFolderId)?.name || 'Unknown Folder'"></span>
+                                                </div>
                                             </div>
                                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
                                                 <div class="relative">
@@ -653,6 +667,11 @@
                                             <div>
                                                 <h2 class="text-xl md:text-2xl font-bold text-webropol-gray-900 mb-1">Surveys
                                                     Library</h2>
+                                                <!-- Folder Filter Indicator -->
+                                                <div x-show="selectedFolderId !== null" class="flex items-center mt-2">
+                                                    <span class="text-sm text-webropol-gray-600 mr-2">Showing content from:</span>
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-webropol-teal-100 text-webropol-teal-800" x-text="findFolderById(selectedFolderId)?.name || 'Unknown Folder'"></span>
+                                                </div>
                                             </div>
                                             <div class="flex items-center space-x-4">
                                                 <div class="relative">
@@ -2448,6 +2467,7 @@
                 searchTerm: '',
                 questionSearchTerm: '',
                 surveySearchTerm: '',
+                selectedFolderId: null, // Track selected folder for filtering content
                 showPreviewModal: false,
                 showCreateFolder: false,
                 showCreateFolderFromMove: false,
@@ -2865,6 +2885,8 @@
 
                 setView(view) {
                     this.currentView = view;
+                    // Reset folder selection when switching between views
+                    this.selectedFolderId = null;
                 },
 
                 setTabsOrientation(orientation) {
@@ -2873,10 +2895,20 @@
                 },
 
                 toggleFolder(folderId) {
+                    // Handle folder expansion/collapse
                     if (this.expandedFolders.includes(folderId)) {
                         this.expandedFolders = this.expandedFolders.filter(id => id !== folderId);
                     } else {
                         this.expandedFolders.push(folderId);
+                    }
+                    
+                    // Handle folder selection for content filtering
+                    if (this.selectedFolderId === folderId) {
+                        // If clicking the same folder, deselect it to show all content
+                        this.selectedFolderId = null;
+                    } else {
+                        // Select the folder to filter content
+                        this.selectedFolderId = folderId;
                     }
                 },
 
@@ -3312,11 +3344,33 @@
                     });
                 },
 
+                // Helper function to get all child folder IDs recursively (for filtering)
+                getAllChildFolderIds(folderId) {
+                    const folder = this.findFolderById(folderId);
+                    const ids = [folderId];
+                    
+                    if (folder && folder.children) {
+                        folder.children.forEach(child => {
+                            ids.push(...this.getAllChildFolderIds(child.id));
+                        });
+                    }
+                    
+                    return ids;
+                },
+
                 getFilteredQuestions() {
                     return this.questions.filter(question => {
                         const matchesLanguage = question.language === this.selectedLanguage;
                         const matchesSearch = !this.searchTerm || question.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-                        return matchesLanguage && matchesSearch;
+                        
+                        // Filter by selected folder if one is selected
+                        let matchesFolder = true;
+                        if (this.selectedFolderId !== null) {
+                            const allowedFolderIds = this.getAllChildFolderIds(this.selectedFolderId);
+                            matchesFolder = allowedFolderIds.includes(question.folderId);
+                        }
+                        
+                        return matchesLanguage && matchesSearch && matchesFolder;
                     });
                 },
 
@@ -3324,7 +3378,15 @@
                     return this.surveys.filter(survey => {
                         const matchesLanguage = survey.language === this.selectedLanguage;
                         const matchesSearch = !this.searchTerm || survey.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-                        return matchesLanguage && matchesSearch;
+                        
+                        // Filter by selected folder if one is selected
+                        let matchesFolder = true;
+                        if (this.selectedFolderId !== null) {
+                            const allowedFolderIds = this.getAllChildFolderIds(this.selectedFolderId);
+                            matchesFolder = allowedFolderIds.includes(survey.folderId);
+                        }
+                        
+                        return matchesLanguage && matchesSearch && matchesFolder;
                     });
                 },
 
