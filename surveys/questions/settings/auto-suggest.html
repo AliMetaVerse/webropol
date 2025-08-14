@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Suggest Settings - Webropol</title>
+    <link rel="stylesheet" href="../../../design-system/styles/tokens.css">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, var(--neutral-50) 0%, var(--primary-50) 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .demo-header h1 {
+            color: var(--primary-700);
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-header p {
+            color: var(--neutral-600);
+            font-size: var(--font-size-lg);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-lg);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-normal) ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: var(--font-size-sm);
+        }
+
+        .btn-primary {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--neutral-700);
+            border: 1px solid var(--neutral-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-50);
+            border-color: var(--neutral-400);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-normal) ease;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-2xl);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: all var(--transition-normal) ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            gap: 1rem;
+        }
+
+        .modal-title-section {
+            flex: 1;
+        }
+
+        .modal-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-800);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+        }
+
+        .modal-close {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: none;
+            background: var(--neutral-100);
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-500);
+            transition: all var(--transition-fast) ease;
+        }
+
+        .modal-close:hover {
+            background: var(--neutral-200);
+            color: var(--neutral-700);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-800);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: var(--font-weight-medium);
+            color: var(--neutral-700);
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-sm);
+        }
+
+        .form-label .required {
+            color: var(--error-500);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .radio-item:hover {
+            border-color: var(--primary-300);
+            background: var(--primary-50);
+        }
+
+        .radio-item.active {
+            border-color: var(--primary-500);
+            background: var(--primary-50);
+        }
+
+        .radio-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary-600);
+        }
+
+        .radio-content {
+            flex: 1;
+        }
+
+        .radio-title {
+            font-weight: var(--font-weight-medium);
+            color: var(--neutral-800);
+            margin-bottom: 0.25rem;
+        }
+
+        .radio-description {
+            font-size: var(--font-size-xs);
+            color: var(--neutral-600);
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--border-radius-lg);
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-fast) ease;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .form-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--border-radius-lg);
+            font-size: var(--font-size-sm);
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .form-helper {
+            font-size: var(--font-size-xs);
+            color: var(--neutral-500);
+            margin-top: 0.25rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            transition: all var(--transition-fast) ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--primary-300);
+            background: var(--primary-50);
+        }
+
+        .checkbox-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary-600);
+            margin-top: 0.125rem;
+        }
+
+        .checkbox-content {
+            flex: 1;
+        }
+
+        .checkbox-title {
+            font-weight: var(--font-weight-medium);
+            color: var(--neutral-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .placement-options {
+            margin-left: 1.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .placement-radio {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .placement-radio .radio-item {
+            padding: 0.5rem 0.75rem;
+            margin: 0;
+        }
+
+        .file-upload-section {
+            background: var(--neutral-50);
+            border: 2px dashed var(--neutral-300);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--primary-100);
+            color: var(--primary-600);
+            border-radius: var(--border-radius-lg);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .upload-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            margin-bottom: 1rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .visibility-section {
+            background: var(--neutral-50);
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+        }
+
+        .visibility-options {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .visibility-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .visibility-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .visibility-visible .visibility-icon {
+            background: var(--success-100);
+            color: var(--success-600);
+        }
+
+        .visibility-hidden .visibility-icon {
+            background: var(--warning-100);
+            color: var(--warning-600);
+        }
+
+        .visibility-disabled .visibility-icon {
+            background: var(--neutral-200);
+            color: var(--neutral-500);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            background: var(--neutral-50);
+            border-top: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .keywords-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .keywords-label {
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .keywords-count {
+            background: var(--neutral-200);
+            color: var(--neutral-700);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .info-tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .info-tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neutral-800);
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--border-radius-md);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+            z-index: 1001;
+            margin-bottom: 0.25rem;
+        }
+
+        .enhanced-feature {
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%);
+            border: 1px solid var(--primary-200);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--primary-600);
+            color: white;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xs);
+        }
+
+        .feature-title {
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary-800);
+        }
+
+        .feature-description {
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .benefit-tag {
+            background: white;
+            color: var(--primary-700);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+            }
+
+            .visibility-options {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .footer-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>Auto-Suggest Settings</h1>
+            <p>Enhanced question settings with improved auto-suggestion flow</p>
+        </div>
+
+        <div class="demo-controls">
+            <button class="btn btn-primary" onclick="openModal()">
+                <i class="fal fa-cog"></i>
+                Open Question Settings
+            </button>
+            <button class="btn btn-secondary" onclick="openUploadModal()">
+                <i class="fal fa-upload"></i>
+                Upload Auto-Suggest
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <h2 class="modal-title">
+                        <i class="fal fa-cog"></i>
+                        Question settings
+                    </h2>
+                    <p class="modal-subtitle">Configure question behavior and auto-suggestions</p>
+                </div>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close modal">
+                    <i class="fal fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Option Orientation Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-arrows-alt"></i>
+                        Option orientation
+                    </h3>
+                    
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <label class="radio-item active">
+                                <input type="radio" name="orientation" value="vertical" class="radio-input" checked>
+                                <div class="radio-content">
+                                    <div class="radio-title">Vertical</div>
+                                    <div class="radio-description">Options are displayed in a single column</div>
+                                </div>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="orientation" value="horizontal" class="radio-input">
+                                <div class="radio-content">
+                                    <div class="radio-title">Horizontal</div>
+                                    <div class="radio-description">Options are displayed in multiple columns</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column Configuration Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-columns"></i>
+                        Number of options per column
+                    </h3>
+                    
+                    <div class="form-group">
+                        <div class="radio-group">
+                            <label class="radio-item active">
+                                <input type="radio" name="columns" value="all" class="radio-input" checked>
+                                <div class="radio-content">
+                                    <div class="radio-title">All options in same column</div>
+                                    <div class="radio-description">Single column layout for all answer options</div>
+                                </div>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="columns" value="custom" class="radio-input">
+                                <div class="radio-content">
+                                    <div class="radio-title">Custom options per column</div>
+                                    <div class="radio-description">Specify exact number of options per column</div>
+                                </div>
+                                <div class="input-row" style="margin-top: 0.75rem;">
+                                    <input type="number" class="form-input" value="1" min="1" max="10" style="width: 80px;">
+                                    <span class="form-helper">options per column</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Option Placement Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-align-left"></i>
+                        Option placement title
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Title position</label>
+                        <select class="form-select">
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                            <option value="center">Center</option>
+                            <option value="top">Top</option>
+                            <option value="bottom">Bottom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Text Field Configuration -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-text-width"></i>
+                        Text field size
+                    </h3>
+                    
+                    <div class="form-group">
+                        <div class="input-row">
+                            <label class="form-label">Width</label>
+                            <input type="number" class="form-input" value="40" min="1" max="150" style="width: 100px;">
+                            <span class="form-helper">characters (range 1-150)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Description Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-info-circle"></i>
+                        Question description
+                    </h3>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showDescription" class="checkbox-input">
+                            <div class="checkbox-content">
+                                <label for="showDescription" class="checkbox-title">Show question description</label>
+                                <span class="info-tooltip" data-tooltip="Additional information to help users understand the question">
+                                    <i class="fal fa-question-circle text-neutral-400"></i>
+                                </span>
+                                <div class="placement-options" id="placementOptions" style="display: none;">
+                                    <label class="form-label">Placement</label>
+                                    <div class="placement-radio">
+                                        <label class="radio-item">
+                                            <input type="radio" name="description-placement" value="below" class="radio-input" checked>
+                                            <span>Show below question title</span>
+                                        </label>
+                                        <label class="radio-item">
+                                            <input type="radio" name="description-placement" value="above" class="radio-input">
+                                            <span>Show above question title</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auto-Suggest Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-magic"></i>
+                        Auto-suggest configuration
+                    </h3>
+                    
+                    <div class="file-upload-section">
+                        <div class="file-upload-icon">
+                            <i class="fal fa-file-csv"></i>
+                        </div>
+                        <div class="upload-status">
+                            <i class="fal fa-info-circle"></i>
+                            No file uploaded
+                        </div>
+                        <p style="margin-bottom: 1rem; color: var(--neutral-600);">
+                            Upload a CSV file with suggested answer options to enable auto-completion
+                        </p>
+                        <div class="file-actions">
+                            <button class="btn btn-secondary" onclick="downloadTemplate()">
+                                <i class="fal fa-download"></i>
+                                Get template file
+                            </button>
+                            <button class="btn btn-primary" onclick="openUploadModal()">
+                                <i class="fal fa-upload"></i>
+                                Upload file
+                            </button>
+                        </div>
+                        <p class="form-helper" style="margin-top: 1rem;">
+                            Note: File must be in CSV format, comma delimited. Maximum file size: 10MB
+                        </p>
+                    </div>
+
+                    <div class="enhanced-feature">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fal fa-sparkles"></i>
+                            </div>
+                            <div class="feature-title">Smart Auto-Suggestions</div>
+                        </div>
+                        <div class="feature-description">
+                            Enhanced auto-suggestion engine with intelligent matching and user experience improvements
+                        </div>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">Fuzzy matching</span>
+                            <span class="benefit-tag">Typo tolerance</span>
+                            <span class="benefit-tag">Instant preview</span>
+                            <span class="benefit-tag">Multi-language</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visibility Section -->
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-eye"></i>
+                        Visibility
+                    </h3>
+                    
+                    <div class="visibility-section">
+                        <div class="visibility-options">
+                            <label class="visibility-item visibility-visible">
+                                <input type="radio" name="visibility" value="visible" checked>
+                                <div class="visibility-icon">
+                                    <i class="fal fa-eye"></i>
+                                </div>
+                                <span>Visible</span>
+                            </label>
+                            <label class="visibility-item visibility-hidden">
+                                <input type="radio" name="visibility" value="hidden">
+                                <div class="visibility-icon">
+                                    <i class="fal fa-eye-slash"></i>
+                                </div>
+                                <span>Hidden</span>
+                            </label>
+                            <label class="visibility-item visibility-disabled">
+                                <input type="radio" name="visibility" value="disabled">
+                                <div class="visibility-icon">
+                                    <i class="fal fa-ban"></i>
+                                </div>
+                                <span>Disabled</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="keywords-section">
+                    <button class="btn btn-secondary">
+                        <i class="fal fa-save"></i>
+                        Save question to library
+                    </button>
+                    <div class="keywords-label">
+                        <i class="fal fa-tags"></i>
+                        Keywords
+                        <span class="keywords-count">0</span>
+                        <span class="info-tooltip" data-tooltip="Add keywords to help categorize and find this question later">
+                            <i class="fal fa-question-circle"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="footer-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary">
+                        <i class="fal fa-check"></i>
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <h2 class="modal-title">
+                        <i class="fal fa-upload"></i>
+                        Upload answer options for auto-suggest list
+                    </h2>
+                    <p class="modal-subtitle">Upload a CSV file with predefined answer options</p>
+                </div>
+                <button class="modal-close" onclick="closeUploadModal()" aria-label="Close modal">
+                    <i class="fal fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-download"></i>
+                        Download template
+                    </h3>
+                    <p style="margin-bottom: 1rem; color: var(--neutral-600);">
+                        Start with our template to ensure proper formatting
+                    </p>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">
+                        <i class="fal fa-download"></i>
+                        Get template file
+                    </button>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="section-title">
+                        <i class="fal fa-upload"></i>
+                        Upload template
+                    </h3>
+                    <p style="margin-bottom: 1rem; color: var(--neutral-600);">
+                        Note: must be in CSV format, comma delimited
+                    </p>
+                    
+                    <div class="file-upload-section">
+                        <div class="file-upload-icon">
+                            <i class="fal fa-cloud-upload"></i>
+                        </div>
+                        <p style="margin-bottom: 1rem;">
+                            <strong>Choose File</strong> or drag and drop your CSV file here
+                        </p>
+                        <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('csvFile').click()">
+                            <i class="fal fa-folder-open"></i>
+                            Choose File
+                        </button>
+                        <div id="fileName" style="margin-top: 1rem; font-weight: var(--font-weight-medium); color: var(--primary-600);"></div>
+                    </div>
+
+                    <div class="enhanced-feature">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="fal fa-shield-check"></i>
+                            </div>
+                            <div class="feature-title">File Validation</div>
+                        </div>
+                        <div class="feature-description">
+                            Your file will be automatically validated for format, encoding, and content quality
+                        </div>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">Format validation</span>
+                            <span class="benefit-tag">Duplicate detection</span>
+                            <span class="benefit-tag">Character encoding</span>
+                            <span class="benefit-tag">Size optimization</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div style="background: var(--warning-50); border: 1px solid var(--warning-200); border-radius: var(--border-radius-lg); padding: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <i class="fal fa-exclamation-triangle" style="color: var(--warning-600);"></i>
+                            <strong style="color: var(--warning-800);">Remove uploaded auto-suggest list</strong>
+                        </div>
+                        <p style="color: var(--warning-700); margin-bottom: 1rem; font-size: var(--font-size-sm);">
+                            This will remove the current auto-suggest file and disable auto-completion for this question.
+                        </p>
+                        <button class="btn" style="background: var(--warning-100); color: var(--warning-700); border: 1px solid var(--warning-300);" onclick="removeAutoSuggest()">
+                            <i class="fal fa-trash"></i>
+                            Remove uploaded auto-suggest list
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div></div>
+                <div class="footer-actions">
+                    <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                    <button class="btn btn-primary" id="uploadBtn" disabled>
+                        <i class="fal fa-upload"></i>
+                        Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openModal() {
+            document.getElementById('settingsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // File upload functionality
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameDiv = document.getElementById('fileName');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            if (file) {
+                fileNameDiv.innerHTML = `<i class="fal fa-file-csv"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                uploadBtn.disabled = false;
+                
+                // Simulate file validation
+                setTimeout(() => {
+                    fileNameDiv.innerHTML += ` <span style="color: var(--success-600);"><i class="fal fa-check-circle"></i> Validated</span>`;
+                }, 1000);
+            } else {
+                fileNameDiv.innerHTML = '';
+                uploadBtn.disabled = true;
+            }
+        });
+
+        // Radio button interactions
+        document.querySelectorAll('.radio-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    // Remove active class from siblings
+                    const siblings = this.closest('.radio-group').querySelectorAll('.radio-item');
+                    siblings.forEach(sibling => sibling.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    radio.checked = true;
+                }
+            });
+        });
+
+        // Checkbox interactions
+        document.getElementById('showDescription').addEventListener('change', function() {
+            const placementOptions = document.getElementById('placementOptions');
+            placementOptions.style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Template download
+        function downloadTemplate() {
+            // Simulate template download
+            const csvContent = "Answer Option,Category,Description\nOption 1,Category A,Description for option 1\nOption 2,Category B,Description for option 2";
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'autosuggest-template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Remove auto-suggest
+        function removeAutoSuggest() {
+            if (confirm('Are you sure you want to remove the auto-suggest list? This action cannot be undone.')) {
+                // Simulate removal
+                alert('Auto-suggest list removed successfully.');
+                closeUploadModal();
+            }
+        }
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeUploadModal();
+            }
+        });
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                    closeUploadModal();
+                }
+            });
+        });
+
+        // Initialize tooltips
+        document.querySelectorAll('.info-tooltip').forEach(tooltip => {
+            tooltip.addEventListener('mouseenter', function() {
+                // Tooltip functionality can be enhanced here
+            });
+        });
+    </script>
+</body>
+</html>
