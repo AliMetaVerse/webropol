@@ -8,31 +8,33 @@ export const designTokens = {
   colors: {
     // Primary brand (teal)
     primary: {
-      50:  '#f0fdff',
-      100: '#ccf7fe',
-      200: '#99effd',
-      300: '#66e0fa',
-      400: '#22ccf1',
-      500: '#06b6d4', // Main teal
-      600: '#0891b2',
-      700: '#0e7490',
-      800: '#155e75',
-      900: '#164e63'
+      50:  '#eefbfd',
+      100: '#d5f4f8',
+      200: '#b0e8f1',
+      300: '#79d6e7',
+      400: '#3fbcd5',
+      500: '#209fba', // Main teal (updated)
+      600: '#1d809d',
+      700: '#1e6880',
+      800: '#215669',
+      900: '#204859',
+      950: '#102e3c'
     },
 
     // NOTE: 'secondary' (blue) palette removed — components now use `primary` (teal) as secondary fallback.
 
     neutral: {
-      50:  '#f8fafc',
-      100: '#f1f5f9',
-      200: '#e2e8f0',
-      300: '#cbd5e1',
-      400: '#94a3b8',
-      500: '#64748b',
-      600: '#475569',
-      700: '#334155',
-      800: '#1e293b',
-      900: '#0f172a'
+      50:  '#f9fafa',
+      100: '#f3f4f4',
+      200: '#e6e7e8',
+      300: '#d1d5d6',
+      400: '#b5bbbd',
+      500: '#9ba2a4',
+      600: '#787f81',
+      700: '#61686a',
+      800: '#515557',
+      900: '#45484a',
+      950: '#272a2b'
     },
     // Accent palette (from screenshot)
     accent: {
