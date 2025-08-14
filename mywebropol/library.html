@@ -498,11 +498,16 @@
                                                 <span class="text-sm font-medium text-webropol-gray-700" x-text="selectedQuestions.length + ' questions selected'"></span>
                                             </div>
                                             <div class="flex items-center space-x-3">
-                                                <button @click="showBulkDeleteConfirmation()" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors duration-200">
+                                                <button @click="showBulkDeleteConfirmation()" 
+                                                    :class="currentView === 'questions' ? 'rounded-full' : 'rounded-lg'"
+                                                    class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium transition-colors duration-200">
                                                     <i class="fal fa-trash mr-2"></i>
                                                     Delete
                                                 </button>
-                                                <button @click="showBulkFreezeConfirmation()" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200">
+                                                <button @click="showBulkFreezeConfirmation()" 
+                                                    :class="currentView === 'questions' ? 
+                                                        'inline-flex items-center px-4 py-2 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-colors duration-200' : 
+                                                        'inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200'">
                                                     <i class="fal fa-snowflake mr-2"></i>
                                                     Freeze
                                                 </button>
@@ -690,7 +695,9 @@
                                                 <span class="text-sm font-medium text-webropol-gray-700" x-text="selectedSurveys.length + ' surveys selected'"></span>
                                             </div>
                                             <div class="flex items-center space-x-3">
-                                                <button @click="showBulkDeleteConfirmation()" class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors duration-200">
+                                                <button @click="showBulkDeleteConfirmation()" 
+                                                    :class="currentView === 'surveys' ? 'rounded-full' : 'rounded-lg'"
+                                                    class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium transition-colors duration-200">
                                                     <i class="fal fa-trash mr-2"></i>
                                                     Delete
                                                 </button>
@@ -813,8 +820,10 @@
                                                                                 Move Survey
                                                                             </button>
                                                                             <button @click="freezeItem(survey.id, 'survey')"
-                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
-                                                                                <i class="fal fa-snowflake mr-3 text-black"></i>
+                                                                                :class="currentView === 'questions' ? 
+                                                                                    'flex items-center w-full px-4 py-2 text-sm text-white bg-webropol-teal-600 hover:bg-webropol-teal-700 transition-colors rounded-lg' : 
+                                                                                    'flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors'">
+                                                                                <i class="fal fa-snowflake mr-3" :class="currentView === 'questions' ? 'text-white' : 'text-black'"></i>
                                                                                 Freeze Survey
                                                                             </button>
                                                                             <button @click="openDeleteConfirmationModal(survey.id, survey.name, 'survey')"
@@ -1707,7 +1716,9 @@
                         Cancel
                     </button>
                     <button @click="confirmFreeze()"
-                        class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all">
+                        :class="currentView === 'questions' ? 
+                            'px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all' : 
+                            'px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all'">
                         <i class="fal fa-snowflake mr-2"></i>
                         Freeze
                     </button>
@@ -2539,8 +2550,8 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-100 rounded-full flex items-center justify-center mr-4">
-                        <i class="fal fa-snowflake text-blue-600 text-lg"></i>
+                    <div class="w-10 h-10 bg-gradient-to-br from-teal-100 to-teal-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fal fa-snowflake text-teal-600 text-lg"></i>
                     </div>
                     <div>
                         <h3 class="text-xl font-bold text-webropol-gray-900">Freeze Selected Questions</h3>
@@ -2555,12 +2566,12 @@
 
             <!-- Modal Content -->
             <div class="p-6">
-                <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <div class="p-4 bg-teal-50 border border-teal-200 rounded-xl">
                     <div class="flex items-start">
-                        <i class="fal fa-snowflake text-blue-500 text-lg mr-3 mt-0.5"></i>
+                        <i class="fal fa-snowflake text-teal-500 text-lg mr-3 mt-0.5"></i>
                         <div>
-                            <h4 class="text-sm font-semibold text-blue-800 mb-1">Freeze Questions</h4>
-                            <p class="text-sm text-blue-700">
+                            <h4 class="text-sm font-semibold text-teal-800 mb-1">Freeze Questions</h4>
+                            <p class="text-sm text-teal-700">
                                 Are you sure you want to freeze <span class="font-medium" x-text="bulkActionCount"></span> 
                                 <span x-text="bulkActionCount === 1 ? 'question' : 'questions'"></span>?
                                 This will make them read-only and prevent further modifications.
@@ -2577,7 +2588,9 @@
                     Cancel
                 </button>
                 <button @click="confirmBulkFreeze()"
-                    class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-all">
+                    :class="currentView === 'questions' ? 
+                        'px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all' : 
+                        'px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-all'">
                     <i class="fal fa-snowflake mr-2"></i>
                     Freeze Questions
                 </button>
