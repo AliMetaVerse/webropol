@@ -159,7 +159,8 @@ export class ThemeUtils {
     // Generate light theme variations
     theme.light = {
       primary: baseColors.primary || this.getColor('primary.500'),
-      secondary: baseColors.secondary || this.getColor('secondary.500'),
+      // Use primary (teal) as the fallback for secondary to migrate away from the old blue palette
+      secondary: baseColors.secondary || this.getColor('primary.500'),
       background: this.getColor('neutral.50'),
       surface: this.getColor('neutral.100'),
       text: this.getColor('neutral.900'),
@@ -169,7 +170,8 @@ export class ThemeUtils {
     // Generate dark theme variations
     theme.dark = {
       primary: baseColors.primary || this.getColor('primary.400'),
-      secondary: baseColors.secondary || this.getColor('secondary.400'),
+      // Use primary (teal) as the fallback for secondary in dark theme as well
+      secondary: baseColors.secondary || this.getColor('primary.400'),
       background: this.getColor('neutral.900'),
       surface: this.getColor('neutral.800'),
       text: this.getColor('neutral.100'),

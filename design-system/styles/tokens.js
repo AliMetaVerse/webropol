@@ -6,6 +6,7 @@
 export const designTokens = {
   // Colors
   colors: {
+    // Primary brand (teal)
     primary: {
       50:  '#f0fdff',
       100: '#ccf7fe',
@@ -18,18 +19,9 @@ export const designTokens = {
       800: '#155e75',
       900: '#164e63'
     },
-    secondary: {
-      50:  '#eff6ff',
-      100: '#dbeafe',
-      200: '#bfdbfe',
-      300: '#93c5fd',
-      400: '#60a5fa',
-      500: '#3b82f6', // Main blue
-      600: '#2563eb',
-      700: '#1d4ed8',
-      800: '#1e40af',
-      900: '#1e3a8a'
-    },
+
+    // NOTE: 'secondary' (blue) palette removed — components now use `primary` (teal) as secondary fallback.
+
     neutral: {
       50:  '#f8fafc',
       100: '#f1f5f9',
