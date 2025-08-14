@@ -64,7 +64,7 @@ export class WebropolModal extends BaseComponent {
               ${closable ? `
                 <button class="modal-close w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all"
                         aria-label="Close modal">
-                  <i class="fas fa-times text-lg"></i>
+                  <i class="fal fa-times text-lg"></i>
                 </button>
               ` : ''}
             </div>

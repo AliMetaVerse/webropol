@@ -15,7 +15,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     const base = this.getAttr('base', '');
     const brandTitle = this.getAttr('brand-title', 'Webropol');
     const brandSubtitle = this.getAttr('brand-subtitle', 'Survey Platform');
-    const brandIcon = this.getAttr('brand-icon', 'fas fa-chart-bar');
+    const brandIcon = this.getAttr('brand-icon', 'fal fa-chart-bar');
     
     // Helper to prefix base to links - ensure proper path concatenation
     const link = (path) => {
@@ -39,40 +39,40 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         </div>
         <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1">
           <a href="${link('index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='home' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-home w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <i class="fal fa-home w-5 mr-4 group-hover:scale-110 transition-transform"></i>
             <span class="font-medium">Home</span>
           </a>
           <a href="${link('surveys/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='surveys' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-poll-h w-5 mr-4"></i>
+            <i class="fal fa-chart-bar w-5 mr-4"></i>
             <span>Surveys</span>
           </a>
           <a href="${link('events/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='events' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-calendar-alt w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <i class="fal fa-calendar-alt w-5 mr-4 group-hover:scale-110 transition-transform"></i>
             <span class="font-medium">Events</span>
           </a>
           <a href="${link('sms/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='sms' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-sms w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <i class="fal fa-sms w-5 mr-4 group-hover:scale-110 transition-transform"></i>
             <span class="font-medium">2-Way SMS</span>
           </a>
           <a href="${link('dashboards/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fas fa-chart-line w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <i class="fal fa-chart-line w-5 mr-4 group-hover:scale-110 transition-transform"></i>
             <span class="font-medium">Dashboards</span>
           </a>
           <div class="pt-4 border-t border-webropol-gray-200/50 mt-4">
             <a href="${link('mywebropol/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-book-open w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+              <i class="fal fa-book-open w-5 mr-4 group-hover:scale-110 transition-transform"></i>
               <span class="font-medium">MyWebropol</span>
             </a>
             <a href="${link('admin-tools/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-tools w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+              <i class="fal fa-tools w-5 mr-4 group-hover:scale-110 transition-transform"></i>
               <span class="font-medium">Admin Tools</span>
             </a>
             <a href="${link('training-videos/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-play-circle w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+              <i class="fal fa-play-circle w-5 mr-4 group-hover:scale-110 transition-transform"></i>
               <span class="font-medium">Training Videos</span>
             </a>
             <a href="${link('shop/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='shop' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-              <i class="fas fa-shopping-cart w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+              <i class="fal fa-shopping-cart w-5 mr-4 group-hover:scale-110 transition-transform"></i>
               <span class="font-medium">Shop</span>
             </a>
           </div>
@@ -101,3 +101,4 @@ export class WebropolSidebarEnhanced extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-sidebar-enhanced', WebropolSidebarEnhanced);
+

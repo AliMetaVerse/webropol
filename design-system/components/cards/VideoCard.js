@@ -66,7 +66,7 @@ export class WebropolVideoCard extends BaseComponent {
           <!-- Play Button Overlay -->
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transform scale-90 group-hover:scale-110 transition-all duration-300 group-hover:bg-white">
-              <i class="fas fa-play text-blue-600 text-xl ml-1 group-hover:text-blue-700"></i>
+              <i class="fal fa-play-circle text-blue-600 text-xl ml-1 group-hover:text-blue-700"></i>
             </div>
           </div>
           
@@ -107,7 +107,7 @@ export class WebropolVideoCard extends BaseComponent {
         <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50/30">
           <div class="flex items-center justify-between">
             <button class="video-play-btn flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors group/btn">
-              <i class="fas fa-play mr-2 group-hover/btn:scale-110 transition-transform duration-200"></i>
+              <i class="fal fa-play-circle mr-2 group-hover/btn:scale-110 transition-transform duration-200"></i>
               Watch Video
             </button>
             
@@ -116,7 +116,7 @@ export class WebropolVideoCard extends BaseComponent {
                 <i class="far fa-bookmark"></i>
               </button>
               <button class="video-share-btn p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
-                <i class="fas fa-share-alt"></i>
+                <i class="fal fa-share-alt"></i>
               </button>
             </div>
           </div>
@@ -176,14 +176,14 @@ export class WebropolVideoCard extends BaseComponent {
 
   toggleBookmark() {
     const bookmarkBtn = this.querySelector('.video-bookmark-btn i');
-    const isBookmarked = bookmarkBtn.classList.contains('fas');
+    const isBookmarked = bookmarkBtn.classList.contains('fal');
     
     if (isBookmarked) {
-      bookmarkBtn.classList.remove('fas');
+      bookmarkBtn.classList.remove('fal');
       bookmarkBtn.classList.add('far');
     } else {
       bookmarkBtn.classList.remove('far');
-      bookmarkBtn.classList.add('fas');
+      bookmarkBtn.classList.add('fal');
     }
 
     this.emit('webropol-video-bookmark', {
@@ -209,3 +209,4 @@ export class WebropolVideoCard extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-video-card', WebropolVideoCard);
+

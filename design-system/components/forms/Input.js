@@ -54,7 +54,7 @@ export class WebropolInput extends BaseComponent {
         <div class="relative">
           ${icon ? `
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="fas fa-${icon} text-webropol-gray-400"></i>
+              <i class="fal fa-${icon} text-webropol-gray-400"></i>
             </div>
           ` : ''}
           
@@ -74,7 +74,7 @@ export class WebropolInput extends BaseComponent {
         
         ${error ? `
           <p id="${this.inputId}-error" class="mt-2 text-sm text-red-600 flex items-center">
-            <i class="fas fa-exclamation-circle mr-1"></i>
+            <i class="fal fa-exclamation-circle mr-1"></i>
             ${error}
           </p>
         ` : ''}
@@ -164,3 +164,4 @@ export class WebropolInput extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-input', WebropolInput);
+

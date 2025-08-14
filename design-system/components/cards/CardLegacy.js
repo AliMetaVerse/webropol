@@ -132,7 +132,7 @@ export class WebropolCardList extends BaseComponent {
             <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
             ${collapsible ? `
               <button @click="open = !open" class="text-webropol-teal-600 hover:text-webropol-teal-700 transition-colors">
-                <i class="fas fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                <i class="fal fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
               </button>
             ` : ''}
           </div>
@@ -278,3 +278,4 @@ customElements.define('webropol-card-list', WebropolCardList);
 customElements.define('webropol-card-list-item', WebropolCardListItem);
 customElements.define('webropol-card-actions', WebropolCardActions);
 customElements.define('webropol-gradient-card', WebropolGradientCard);
+

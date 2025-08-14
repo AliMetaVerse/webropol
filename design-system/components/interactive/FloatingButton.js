@@ -46,7 +46,7 @@ export class WebropolFloatingButton extends BaseComponent {
               <!-- Surveys -->
               <button data-type="surveys"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-poll-h text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-chart-bar text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
                   <span class="font-semibold text-webropol-gray-900 block">Surveys</span>
                   <span class="text-xs text-webropol-gray-500">Custom surveys</span>
@@ -56,7 +56,7 @@ export class WebropolFloatingButton extends BaseComponent {
               <!-- Events -->
               <button data-type="events"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-calendar-alt text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-calendar-alt text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
                   <span class="font-semibold text-webropol-gray-900 block">Events</span>
                   <span class="text-xs text-webropol-gray-500">Event management</span>
@@ -66,7 +66,7 @@ export class WebropolFloatingButton extends BaseComponent {
               <!-- EXW Surveys -->
               <button data-type="exw-surveys"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-chart-line text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-chart-line text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
                   <span class="font-semibold text-webropol-gray-900 block">EXW Surveys</span>
                   <span class="text-xs text-webropol-gray-500">Employee experience</span>
@@ -76,7 +76,7 @@ export class WebropolFloatingButton extends BaseComponent {
               <!-- Employee -->
               <button data-type="employee"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-users text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-users text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
                   <span class="font-semibold text-webropol-gray-900 block">Employee</span>
                   <span class="text-xs text-webropol-gray-500">HR management</span>
@@ -86,7 +86,7 @@ export class WebropolFloatingButton extends BaseComponent {
               <!-- Campaign -->
               <button data-type="campaign"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fas fa-bullhorn text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-bullhorn text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
                   <span class="font-semibold text-webropol-gray-900 block">Campaign</span>
                   <span class="text-xs text-webropol-gray-500">Marketing campaigns</span>
@@ -99,7 +99,7 @@ export class WebropolFloatingButton extends BaseComponent {
 
         <!-- Main Floating Button -->
         <button class="main-floating-btn ${sizeClasses[size]} bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center group">
-          <i class="fas fa-plus text-xl transition-transform duration-300 group-hover:rotate-180"></i>
+          <i class="fal fa-plus text-xl transition-transform duration-300 group-hover:rotate-180"></i>
         </button>
       </div>
     `;
@@ -184,3 +184,4 @@ export class WebropolFloatingButton extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-floating-button', WebropolFloatingButton);
+

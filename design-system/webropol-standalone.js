@@ -176,8 +176,8 @@ class WebropolButton extends BaseComponent {
       this.getSizeClasses('button', size)
     );
 
-    const iconHtml = icon ? `<i class="fas fa-${icon} ${text ? (iconPosition === 'right' ? 'ml-2' : 'mr-2') : ''}"></i>` : '';
-    const loadingHtml = loading ? '<i class="fas fa-spinner animate-spin mr-2"></i>' : '';
+    const iconHtml = icon ? `<i class="fal fa-${icon} ${text ? (iconPosition === 'right' ? 'ml-2' : 'mr-2') : ''}"></i>` : '';
+    const loadingHtml = loading ? '<i class="fal fa-spinner animate-spin mr-2"></i>' : '';
 
     const content = loading ? loadingHtml + text : 
                    iconPosition === 'right' ? text + iconHtml : iconHtml + text;
@@ -409,12 +409,12 @@ class WebropolBadge extends BaseComponent {
       this.getSizeClasses('badge', size)
     );
 
-    const iconHtml = icon ? `<i class="fas fa-${icon} ${text ? 'mr-1.5' : ''} text-xs"></i>` : '';
+    const iconHtml = icon ? `<i class="fal fa-${icon} ${text ? 'mr-1.5' : ''} text-xs"></i>` : '';
     
     const dismissHtml = dismissible ? `
       <button class="badge-dismiss ml-1.5 -mr-1 p-0.5 hover:bg-black/10 rounded-full transition-colors" 
               aria-label="Remove ${text}">
-        <i class="fas fa-times text-xs"></i>
+        <i class="fal fa-times text-xs"></i>
       </button>
     ` : '';
 
@@ -457,8 +457,8 @@ class WebropolBadge extends BaseComponent {
       this.getSizeClasses('badge', size)
     );
 
-    const iconHtml = icon ? `<i class="fas fa-${icon} mr-1"></i>` : '';
-    const dismissHtml = dismissible ? '<button class="ml-2 hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"><i class="fas fa-times text-xs"></i></button>' : '';
+    const iconHtml = icon ? `<i class="fal fa-${icon} mr-1"></i>` : '';
+    const dismissHtml = dismissible ? '<button class="ml-2 hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"><i class="fal fa-times text-xs"></i></button>' : '';
 
     this.innerHTML = `
       <span class="${badgeClasses}">
@@ -501,8 +501,8 @@ class WebropolHeader extends BaseComponent {
           </div>
           <div class="flex items-center space-x-4">
             <slot name="actions"></slot>
-            ${showNotifications ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fas fa-bell"></i></button>' : ''}
-            ${showHelp ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fas fa-question-circle"></i></button>' : ''}
+            ${showNotifications ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-bell"></i></button>' : ''}
+            ${showHelp ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-question-circle"></i></button>' : ''}
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
                 <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
@@ -546,7 +546,7 @@ class WebropolSidebar extends BaseComponent {
             ? 'bg-webropol-teal-100 text-webropol-teal-700 border-r-2 border-webropol-teal-500' 
             : 'text-webropol-gray-600 hover:bg-webropol-gray-100 hover:text-webropol-gray-900'
         )}">
-          <i class="fas fa-${item.icon} w-5 h-5 mr-3"></i>
+          <i class="fal fa-${item.icon} w-5 h-5 mr-3"></i>
           ${item.label}
         </a>
       `;
@@ -602,7 +602,7 @@ class WebropolListCard extends BaseComponent {
     this.innerHTML = `
       <div class="bg-white rounded-2xl p-6 shadow-lg border border-webropol-gray-100">
         <div class="flex items-center mb-4">
-          ${icon ? `<i class="fas fa-${icon} text-webropol-teal-600 mr-2"></i>` : ''}
+          ${icon ? `<i class="fal fa-${icon} text-webropol-teal-600 mr-2"></i>` : ''}
           <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
         </div>
         <div class="${compact ? 'space-y-1' : 'space-y-2'}">
@@ -642,7 +642,7 @@ class WebropolVideoCard extends BaseComponent {
           <img src="${thumbnail}" alt="${title}" class="w-full h-48 object-cover">
           <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <div class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
-              <i class="fas fa-play text-webropol-teal-600 text-xl ml-1"></i>
+              <i class="fal fa-play-circle text-webropol-teal-600 text-xl ml-1"></i>
             </div>
           </div>
           <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
@@ -656,7 +656,7 @@ class WebropolVideoCard extends BaseComponent {
             <slot></slot>
           </div>
           <div class="flex items-center text-sm text-webropol-gray-500">
-            <i class="fas fa-eye mr-1"></i>
+            <i class="fal fa-eye mr-1"></i>
             ${views} views
           </div>
         </div>
@@ -684,7 +684,7 @@ class WebropolConfigurableCard extends BaseComponent {
       <div class="bg-white rounded-2xl p-6 shadow-lg border border-webropol-gray-100">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center">
-            ${icon ? `<i class="fas fa-${icon} text-webropol-teal-600 mr-3"></i>` : ''}
+            ${icon ? `<i class="fal fa-${icon} text-webropol-teal-600 mr-3"></i>` : ''}
             <div>
               <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
               ${subtitle ? `<p class="text-sm text-webropol-gray-600">${subtitle}</p>` : ''}
@@ -736,7 +736,7 @@ class WebropolInput extends BaseComponent {
       <div class="space-y-2">
         ${label ? `<label class="block text-sm font-medium text-webropol-gray-700">${label}${required ? ' *' : ''}</label>` : ''}
         <div class="relative">
-          ${icon ? `<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fas fa-${icon} text-webropol-gray-400"></i></div>` : ''}
+          ${icon ? `<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fal fa-${icon} text-webropol-gray-400"></i></div>` : ''}
           <input 
             type="${type}" 
             ${placeholder ? `placeholder="${placeholder}"` : ''}
@@ -770,7 +770,7 @@ class WebropolLoading extends BaseComponent {
     let loadingHtml = '';
     
     if (type === 'spinner') {
-      loadingHtml = `<i class="fas fa-spinner animate-spin ${sizeClasses[size]} text-webropol-teal-600"></i>`;
+      loadingHtml = `<i class="fal fa-spinner animate-spin ${sizeClasses[size]} text-webropol-teal-600"></i>`;
     } else if (type === 'dots') {
       loadingHtml = `
         <div class="flex space-x-1">
@@ -877,7 +877,7 @@ class WebropolTabs extends BaseComponent {
           role="tab"
           aria-selected="${isActive}"
         >
-          ${tab.icon ? `<i class="fas fa-${tab.icon} mr-2"></i>` : ''}
+          ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
           ${tab.label}
           ${tab.badge ? `<span class="ml-2 px-2 py-0.5 text-xs bg-webropol-teal-100 text-webropol-teal-800 rounded-full">${tab.badge}</span>` : ''}
         </button>
@@ -975,7 +975,7 @@ class WebropolModal extends BaseComponent {
           ${title || closable ? `
             <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200">
               ${title ? `<h2 class="text-xl font-semibold text-webropol-gray-900">${title}</h2>` : '<div></div>'}
-              ${closable ? '<button class="modal-close text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fas fa-times"></i></button>' : ''}
+              ${closable ? '<button class="modal-close text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-times"></i></button>' : ''}
             </div>
           ` : ''}
           <div class="modal-body p-6">
@@ -1107,3 +1107,4 @@ document.addEventListener('DOMContentLoaded', () => {
     WebropolDesignSystem.setTheme(savedTheme);
   }
 });
+

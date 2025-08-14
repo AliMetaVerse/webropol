@@ -68,7 +68,7 @@ All components now extend `BaseComponent` which provides:
   size="lg" 
   loading="true"
   full-width
-  icon="fas fa-save"
+  icon="fal fa-save"
   icon-position="left">
   Save Changes
 </webropol-button>
@@ -97,7 +97,7 @@ All components now extend `BaseComponent` which provides:
 <webropol-button variant="success">Save</webropol-button>
 
 <!-- With icons and loading -->
-<webropol-button variant="primary" icon="fas fa-save" loading>Saving...</webropol-button>
+<webropol-button variant="primary" icon="fal fa-save" loading>Saving...</webropol-button>
 ```
 
 ### Enhanced Card System
@@ -111,7 +111,7 @@ All components now extend `BaseComponent` which provides:
 <!-- Complex card with legacy components -->
 <webropol-card-legacy variant="gradient">
   <webropol-card-header 
-    icon="fas fa-chart-bar" 
+    icon="fal fa-chart-bar" 
     title="Analytics Dashboard" 
     subtitle="Real-time insights"
     badge="Pro">
@@ -120,7 +120,7 @@ All components now extend `BaseComponent` which provides:
   <webropol-card-content>
     <webropol-card-list title="Recent Activity">
       <webropol-card-list-item 
-        icon="fas fa-users" 
+        icon="fal fa-users" 
         title="New Survey Response" 
         subtitle="Customer Satisfaction Survey"
         status="active">
@@ -265,3 +265,4 @@ All original component names and APIs are preserved:
 5. **Use event system** for better interactivity
 
 The `/components` directory can now be safely removed as all functionality has been preserved and enhanced in `/design-system/components`.
+

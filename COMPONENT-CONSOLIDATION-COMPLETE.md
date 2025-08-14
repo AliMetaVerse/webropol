@@ -116,7 +116,7 @@ Successfully merged `/components` into `/design-system/components` with enhanced
 <webropol-button 
   variant="success" 
   size="lg"
-  icon="fas fa-check"
+  icon="fal fa-check"
   loading
   full-width>
   Save Changes

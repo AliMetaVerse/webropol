@@ -47,7 +47,7 @@ export class WebropolButton extends BaseComponent {
     );
 
     // Create icon HTML if specified
-    const iconHtml = icon ? `<i class="fas fa-${icon} ${text ? (iconPosition === 'right' ? 'ml-2' : 'mr-2') : ''}"></i>` : '';
+    const iconHtml = icon ? `<i class="fal fa-${icon} ${text ? (iconPosition === 'right' ? 'ml-2' : 'mr-2') : ''}"></i>` : '';
     
     // Create loading spinner
     const loadingHtml = loading ? `
@@ -156,3 +156,4 @@ export class WebropolButton extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-button', WebropolButton);
+

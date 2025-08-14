@@ -31,12 +31,12 @@ export class WebropolHeader extends BaseComponent {
           <div class="flex items-center space-x-3">
             ${showNotifications ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all">
-                <i class="fas fa-bell"></i>
+                <i class="fal fa-bell"></i>
               </button>
             ` : ''}
             ${showHelp ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all">
-                <i class="fas fa-question-circle"></i>
+                <i class="fal fa-question-circle"></i>
               </button>
             ` : ''}
             <slot name="actions"></slot>
@@ -44,7 +44,7 @@ export class WebropolHeader extends BaseComponent {
               <div class="relative">
                 <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors">
                   <span class="mr-2 font-medium">${username}</span>
-                  <i class="fas fa-chevron-down text-xs"></i>
+                  <i class="fal fa-chevron-down text-xs"></i>
                 </button>
               </div>
             ` : ''}
@@ -76,3 +76,4 @@ export class WebropolHeader extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-header', WebropolHeader);
+

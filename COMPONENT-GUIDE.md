@@ -16,7 +16,7 @@ This document outlines the standardized button and card components for the Webro
 
 #### Usage
 ```html
-<webropol-button variant="primary" size="md" icon="fas fa-plus">
+<webropol-button variant="primary" size="md" icon="fal fa-plus">
   Button Text
 </webropol-button>
 ```
@@ -60,7 +60,7 @@ Header section with icon, title, subtitle, and optional badge.
 
 ```html
 <webropol-card-header 
-  icon="fas fa-chart-line" 
+  icon="fal fa-chart-line" 
   title="Analytics Dashboard" 
   subtitle="View detailed insights"
   badge="New"
@@ -91,12 +91,12 @@ Individual list item with icon, title, subtitle, status, and actions.
 
 ```html
 <webropol-card-list-item 
-  icon="fas fa-poll"
+  icon="fal fa-chart-bar"
   title="Survey Name"
   subtitle="Created 2 days ago"
   status="active"
   action="View Results"
-  action-icon="fas fa-chart-bar"
+  action-icon="fal fa-chart-bar"
   clickable>
 </webropol-card-list-item>
 ```
@@ -116,7 +116,7 @@ Special homepage-style cards with gradients and centered content.
 
 ```html
 <webropol-gradient-card 
-  icon="fa-solid fa-poll-h"
+  icon="fa-solid fa-chart-bar"
   title="Gain insight with surveys"
   button-text="Create survey"
   gradient="from-webropol-teal-100 to-webropol-teal-100/80">
@@ -214,3 +214,4 @@ When migrating existing UI to use these components:
 - Animation and transition utilities
 - Form integration components
 - Data visualization card types
+
