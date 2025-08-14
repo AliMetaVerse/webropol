@@ -7,7 +7,7 @@ export const designTokens = {
   // Colors
   colors: {
     primary: {
-      50: '#f0fdff',
+      50:  '#f0fdff',
       100: '#ccf7fe',
       200: '#99effd',
       300: '#66e0fa',
@@ -19,7 +19,7 @@ export const designTokens = {
       900: '#164e63'
     },
     secondary: {
-      50: '#eff6ff',
+      50:  '#eff6ff',
       100: '#dbeafe',
       200: '#bfdbfe',
       300: '#93c5fd',
@@ -31,7 +31,7 @@ export const designTokens = {
       900: '#1e3a8a'
     },
     neutral: {
-      50: '#f8fafc',
+      50:  '#f8fafc',
       100: '#f1f5f9',
       200: '#e2e8f0',
       300: '#cbd5e1',
@@ -94,6 +94,48 @@ export const designTokens = {
       700: '#b91c1c',
       800: '#991b1b',
       900: '#7f1d1d'
+    },
+    // Royal Violet palette
+    royalViolet: {
+      50:  '#F1E9FB',
+      100: '#D5BEF4',
+      200: '#BA92EC',
+      300: '#9E67E5',
+      400: '#8C50E0',
+      500: '#823BDD',
+      600: '#6922C4',
+      700: '#511A98',
+      800: '#3A136D',
+      900: '#230B41',
+      950: '#0C0416'
+    },
+    // Royal Turquoise palette
+    royalTurquoise: {
+      50:  '#ECFEFF',
+      100: '#CFFAFE',
+      200: '#A5F3FC',
+      300: '#67E8F9',
+      400: '#22D3EE',
+      500: '#06B6D4',
+      600: '#0891B2',
+      700: '#0E7490',
+      800: '#155E75',
+      900: '#164E63',
+      950: '#083344'
+    },
+    // Royal Blue palette
+    royalBlue: {
+      50:  '#EEF2FF',
+      100: '#E0E7FF',
+      200: '#C7D2FE',
+      300: '#A5B4FC',
+      400: '#818CF8',
+      500: '#6366F1',
+      600: '#4F46E5',
+      700: '#4338CA',
+      800: '#3730A3',
+      900: '#312E81',
+      950: '#1E1B4B'
     }
   },
 
