@@ -926,15 +926,15 @@
                     <div class="settings-section">
                         <h3 class="section-title">
                             Question description
+                            <span class="info-tooltip" data-tooltip="Additional information to help users understand the question">
+                                <i class="fal fa-question-circle"></i>
+                            </span>
                         </h3>
                         <div class="form-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="showDescription" class="checkbox-input">
                                 <div class="checkbox-content">
                                     <label for="showDescription" class="checkbox-title">Show question description</label>
-                                    <span class="info-tooltip" data-tooltip="Additional information to help users understand the question">
-                                        <i class="fal fa-question-circle"></i>
-                                    </span>
                                     <div class="placement-options" id="placementOptions" style="display: none;">
                                         <label class="form-label">Placement</label>
                                         <div class="placement-radio">
@@ -968,16 +968,16 @@
                     <div class="settings-section">
                         <h3 class="section-title">
                             Auto-suggest File
+                            <span class="info-tooltip" data-tooltip="When uploading an AutoSuggest file with more than 1,000 options, it will be placed into a processing queue. While processing you won't be able to send out your survey. Once complete, you'll receive an email notification.">
+                                <i class="fal fa-question-circle"></i>
+                            </span>
                         </h3>
                         <div class="file-upload-section-button">
                             <div class="file-actions">
                                 <button class="btn btn-primary" onclick="openUploadModal()">
                                     Upload file
                                 </button>
-                                <div class="upload-status">
-                                    <span class="info-tooltip" data-tooltip="When uploading an AutoSuggest file with more than 1,000 options, it will be placed into a processing queue. While processing you won't be able to send out your survey. Once complete, you'll receive an email notification.">
-                                        <i class="fal fa-question-circle"></i>
-                                    </span>
+                                <div id="mainUploadStatus" class="upload-status">
                                     No file uploaded
                                 </div>
                             </div>
@@ -1108,29 +1108,33 @@
                                 accept=".csv"
                                 style="display: none;"
                             >
-                            <button class="btn btn-primary" onclick="document.getElementById('csvFile').click()">
-                                <i class="fal fa-folder-open" style="color: white; margin-top: -3px"></i>
-                                Choose File
-                            </button>
+                            <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: center;">
+                                <button id="chooseFileBtn" class="btn btn-secondary" onclick="document.getElementById('csvFile').click()">
+                                    <i class="fal fa-folder-open" style="margin-right: 0.5rem;"></i>
+                                    Choose File
+                                </button>
+                                <button id="uploadBtn" class="btn btn-primary" onclick="performUpload()" disabled>
+                                    <i class="fal fa-cloud-upload" style="margin-right: 0.5rem; color: white;"></i>
+                                    Upload
+                                </button>
+                            </div>
                             <div id="fileName" style="margin-top: 1rem; font-weight: var(--font-weight-medium); color: var(--primary-600);"></div>
-                            <button id="removeFileBtn" class="btn btn-secondary" style="display: none; margin-top: 0.75rem;" onclick="removeSelectedFile()">
-                                <i class="fal fa-times"></i>
-                                Remove file
+                            <button id="removeFileBtn" class="btn" style="display: none; margin-top: 0.75rem; background: var(--neutral-100); border: 1px solid var(--neutral-300); color: var(--neutral-600); padding: 0.5rem; border-radius: var(--border-radius-md); cursor: pointer; transition: all 0.2s ease;" onclick="removeSelectedFile()" onmouseover="this.style.background='var(--danger-100)'; this.style.borderColor='var(--danger-300)'; this.style.color='var(--danger-600)'; this.querySelector('i').style.color='var(--danger-600)'" onmouseout="this.style.background='var(--neutral-100)'; this.style.borderColor='var(--neutral-300)'; this.style.color='var(--neutral-600)'; this.querySelector('i').style.color='var(--neutral-600)'">
+                                <i class="fal fa-trash" style="color: var(--neutral-600);"></i>
                             </button>
                         </div>
                     </div>
                     <div class="settings-section">
                         <button id="removeStoredBtn" class="btn btn-secondary" onclick="removeAutoSuggest()" disabled>
-                            <i class="fal fa-trash"></i>
+                            <i class="fal fa-trash" style="margin-right: 0.5rem;"></i>
                             Remove uploaded auto-suggest list
-                        </button>
-                </div>
+                    </div>
                 <div class="modal-footer">
                     <div></div>
                     <div class="footer-actions">
                         <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
-                        <button class="btn btn-primary" id="uploadBtn" disabled>
-                            Upload
+                        <button class="btn btn-primary" onclick="applyAndClose()">
+                            Apply
                         </button>
                     </div>
                 </div>
@@ -1163,12 +1167,20 @@
             const file = e.target.files[0];
             const fileNameDiv = document.getElementById('fileName');
             const uploadBtn = document.getElementById('uploadBtn');
+            const chooseFileBtn = document.getElementById('chooseFileBtn');
             const removeFileBtn = document.getElementById('removeFileBtn');
             const removeStoredBtn = document.getElementById('removeStoredBtn');
 
             if (file) {
                 fileNameDiv.innerHTML = `<i class="fal fa-file-csv"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
                 uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fal fa-cloud-upload" style="margin-right: 0.5rem; color: white;"></i>Upload';
+                
+                // Reset choose file button text if it was previously "Replace File"
+                if (chooseFileBtn && chooseFileBtn.innerHTML.includes('Replace File')) {
+                    chooseFileBtn.innerHTML = '<i class="fal fa-folder-open" style="margin-right: 0.5rem;"></i>Choose File';
+                }
+                
                 if (removeFileBtn) removeFileBtn.style.display = 'inline-flex';
 
                 // Simulate file validation
@@ -1180,6 +1192,13 @@
             } else {
                 fileNameDiv.innerHTML = '';
                 uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fal fa-cloud-upload" style="margin-right: 0.5rem; color: white;"></i>Upload';
+                
+                // Reset choose file button text
+                if (chooseFileBtn) {
+                    chooseFileBtn.innerHTML = '<i class="fal fa-folder-open" style="margin-right: 0.5rem;"></i>Choose File';
+                }
+                
                 if (removeFileBtn) removeFileBtn.style.display = 'none';
                 if (removeStoredBtn) removeStoredBtn.disabled = true;
             }
@@ -1190,6 +1209,7 @@
             const input = document.getElementById('csvFile');
             const fileNameDiv = document.getElementById('fileName');
             const uploadBtn = document.getElementById('uploadBtn');
+            const chooseFileBtn = document.getElementById('chooseFileBtn');
             const removeFileBtn = document.getElementById('removeFileBtn');
             const removeStoredBtn = document.getElementById('removeStoredBtn');
 
@@ -1200,7 +1220,13 @@
 
             // Reset UI
             if (fileNameDiv) fileNameDiv.innerHTML = '';
-            if (uploadBtn) uploadBtn.disabled = true;
+            if (uploadBtn) {
+                uploadBtn.disabled = true;
+                uploadBtn.innerHTML = '<i class="fal fa-cloud-upload" style="margin-right: 0.5rem; color: white;"></i>Upload';
+            }
+            if (chooseFileBtn) {
+                chooseFileBtn.innerHTML = '<i class="fal fa-folder-open" style="margin-right: 0.5rem;"></i>Choose File';
+            }
             if (removeFileBtn) removeFileBtn.style.display = 'none';
             if (removeStoredBtn) removeStoredBtn.disabled = true;
         }
@@ -1249,6 +1275,17 @@
                 // Simulate removal
                 alert('Auto-suggest list removed successfully.');
                 
+                // Update main modal status
+                const mainUploadStatus = document.getElementById('mainUploadStatus');
+                if (mainUploadStatus) {
+                    mainUploadStatus.innerHTML = `
+                        <span class="info-tooltip" data-tooltip="When uploading an AutoSuggest file with more than 1,000 options, it will be placed into a processing queue. While processing you won't be able to send out your survey. Once complete, you'll receive an email notification.">
+                            <i class="fal fa-question-circle"></i>
+                        </span>
+                        No file uploaded
+                    `;
+                }
+                
                 // Disable the button after removal since there's no stored list anymore
                 if (removeStoredBtn) removeStoredBtn.disabled = true;
                 
@@ -1256,6 +1293,68 @@
                 removeSelectedFile();
                 
                 closeUploadModal();
+            }
+        }
+
+        // Perform file upload
+        function performUpload() {
+            const uploadBtn = document.getElementById('uploadBtn');
+            const chooseFileBtn = document.getElementById('chooseFileBtn');
+            const csvFile = document.getElementById('csvFile');
+            const mainUploadStatus = document.getElementById('mainUploadStatus');
+            
+            if (!csvFile.files[0] || uploadBtn.disabled) return;
+            
+            const file = csvFile.files[0];
+            
+            // Simulate upload process
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="fal fa-spinner fa-spin" style="margin-right: 0.5rem; color: white;"></i> Uploading...';
+            
+            setTimeout(() => {
+                // Update main modal status
+                if (mainUploadStatus) {
+                    mainUploadStatus.innerHTML = `
+                        <i class="fal fa-file-csv" style="color: var(--success-600);"></i>
+                        ${file.name} (${(file.size / 1024).toFixed(1)} KB)
+                        <button class="btn" style="margin-left: 0.5rem; padding: 0.375rem; background: var(--neutral-100); border: 1px solid var(--neutral-300); color: var(--neutral-600); border-radius: var(--border-radius-sm); cursor: pointer; transition: all 0.2s ease;" onclick="removeUploadedFile()" onmouseover="this.style.background='var(--danger-100)'; this.style.borderColor='var(--danger-300)'; this.style.color='var(--danger-600)'; this.querySelector('i').style.color='var(--danger-600)'" onmouseout="this.style.background='var(--neutral-100)'; this.style.borderColor='var(--neutral-300)'; this.style.color='var(--neutral-600)'; this.querySelector('i').style.color='var(--neutral-600)'">
+                            <i class="fal fa-trash" style="color: var(--neutral-600);"></i>
+                        </button>
+                    `;
+                }
+                
+                // Reset upload button to success state
+                uploadBtn.innerHTML = '<i class="fal fa-check" style="margin-right: 0.5rem; color: white;"></i>Uploaded';
+                uploadBtn.disabled = true;
+                
+                // Change choose file button to replace file
+                if (chooseFileBtn) {
+                    chooseFileBtn.innerHTML = '<i class="fal fa-sync" style="margin-right: 0.5rem;"></i>Replace File';
+                }
+                
+                // Keep modal open - user will press Apply to close
+            }, 2000); // 2 second upload simulation
+        }
+
+        // Apply changes and close modal
+        function applyAndClose() {
+            closeUploadModal();
+        }
+
+        // Remove uploaded file from main modal
+        function removeUploadedFile() {
+            const mainUploadStatus = document.getElementById('mainUploadStatus');
+            const removeStoredBtn = document.getElementById('removeStoredBtn');
+            
+            if (confirm('Are you sure you want to remove the uploaded auto-suggest file?')) {
+                if (mainUploadStatus) {
+                    mainUploadStatus.innerHTML = 'No file uploaded';
+                }
+                
+                // Disable the remove stored button since no file is uploaded
+                if (removeStoredBtn) removeStoredBtn.disabled = true;
+                
+                alert('File removed successfully!');
             }
         }
 
