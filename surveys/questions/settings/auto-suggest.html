@@ -1090,6 +1090,7 @@
                             Get template file
                         </button>
                     </div>
+                    <hr>
                     <div class="settings-section">
                         <h3 class="section-title">
                             <i class="fal fa-upload"></i>
@@ -1137,7 +1138,7 @@
                     <div></div>
                     <div class="footer-actions">
                         <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
-                        <button class="btn btn-primary" onclick="applyAndClose()">
+                        <button id="applyBtn" class="btn btn-primary" onclick="applyAndClose()" disabled>
                             Apply
                         </button>
                     </div>
@@ -1159,6 +1160,16 @@
         function openUploadModal() {
             document.getElementById('uploadModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Check if there are uploaded files and set Apply button state
+            const mainUploadStatus = document.getElementById('mainUploadStatus');
+            const applyBtn = document.getElementById('applyBtn');
+            
+            if (applyBtn) {
+                // Enable Apply if there are uploaded files, disable if not
+                const hasUploadedFile = mainUploadStatus && mainUploadStatus.innerHTML.includes('fa-file-csv');
+                applyBtn.disabled = !hasUploadedFile;
+            }
         }
 
         function closeUploadModal() {
@@ -1340,6 +1351,10 @@
                     chooseFileBtn.innerHTML = '<i class="fal fa-sync" style="margin-right: 0.5rem;"></i>Replace File';
                 }
                 
+                // Enable Apply button since file is now uploaded
+                const applyBtn = document.getElementById('applyBtn');
+                if (applyBtn) applyBtn.disabled = false;
+                
                 // Keep modal open - user will press Apply to close
             }, 2000); // 2 second upload simulation
         }
@@ -1353,6 +1368,7 @@
         function removeUploadedFile() {
             const mainUploadStatus = document.getElementById('mainUploadStatus');
             const removeStoredBtn = document.getElementById('removeStoredBtn');
+            const applyBtn = document.getElementById('applyBtn');
             
             if (confirm('Are you sure you want to remove the uploaded auto-suggest file?')) {
                 if (mainUploadStatus) {
@@ -1361,6 +1377,9 @@
                 
                 // Disable the remove stored button since no file is uploaded
                 if (removeStoredBtn) removeStoredBtn.disabled = true;
+                
+                // Disable Apply button since no file is uploaded
+                if (applyBtn) applyBtn.disabled = true;
                 
                 alert('File removed successfully!');
             }
