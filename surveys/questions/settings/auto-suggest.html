@@ -385,7 +385,6 @@
         }
 
         .file-upload-section-button {
-            padding: 1.5rem;
             text-align: center;
             margin-bottom: 1rem;
         }
@@ -1091,24 +1090,17 @@
                                 style="display: none;"
                             >
                             <button class="btn btn-primary" onclick="document.getElementById('csvFile').click()">
-                                <i class="fal fa-folder-open"></i>
+                                <i class="fal fa-folder-open" style="color: white; margin-top: -3px"></i>
                                 Choose File
                             </button>
                             <div id="fileName" style="margin-top: 1rem; font-weight: var(--font-weight-medium); color: var(--primary-600);"></div>
                         </div>
                     </div>
                     <div class="settings-section">
-                        <div style="background: var(--warning-50); border: 1px solid var(--warning-200); border-radius: var(--border-radius-lg); padding: 1rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                <i class="fal fa-exclamation-triangle" style="color: var(--warning-600);"></i>
-                                <strong style="color: var(--warning-800);">Remove uploaded auto-suggest list</strong>
-                            </div>
-                            <button class="btn" style="background: var(--warning-100); color: var(--warning-700); border: 1px solid var(--warning-300);" onclick="removeAutoSuggest()">
-                                <i class="fal fa-trash"></i>
-                                Remove uploaded auto-suggest list
-                            </button>
-                        </div>
-                    </div>
+                        <button class="btn btn-secondary" onclick="removeAutoSuggest()">
+                            <i class="fal fa-trash"></i>
+                            Remove uploaded auto-suggest list
+                        </button>
                 </div>
                 <div class="modal-footer">
                     <div></div>
@@ -1284,6 +1276,109 @@
         document.addEventListener('DOMContentLoaded', function () {
             openModal();
         });
+
+        // Keywords input behaviour (ported from mywebropol/library.html)
+        (function () {
+            const MAX_KEYWORDS = 20;
+            const MAX_KEYWORD_LENGTH = 50;
+            let keywords = [];
+
+            const input = document.querySelector('.keywords-input input[type="text"]');
+            const chipsContainer = document.querySelector('.keywords-chips');
+            const countEl = document.querySelector('.keywords-count');
+
+            function updateCount() {
+                if (countEl) countEl.textContent = String(keywords.length);
+            }
+
+            function renderChips() {
+                if (!chipsContainer) return;
+                chipsContainer.innerHTML = '';
+                keywords.forEach(k => {
+                    const chip = document.createElement('span');
+                    chip.className = 'keyword-chip';
+                    chip.setAttribute('role', 'listitem');
+                    chip.textContent = k;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.setAttribute('aria-label', `Remove keyword ${k}`);
+                    removeBtn.style.marginLeft = '0.4rem';
+                    removeBtn.style.background = 'transparent';
+                    removeBtn.style.border = 'none';
+                    removeBtn.style.cursor = 'pointer';
+                    removeBtn.innerHTML = '<i class="fal fa-times"></i>';
+                    removeBtn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        removeKeyword(k);
+                    });
+
+                    chip.appendChild(removeBtn);
+                    chipsContainer.appendChild(chip);
+                });
+                updateCount();
+            }
+
+            function addKeywordFromString(raw) {
+                if (!raw) return;
+                const candidate = raw.trim();
+                if (!candidate) return;
+                if (candidate.length > MAX_KEYWORD_LENGTH) {
+                    alert('Keyword too long (max ' + MAX_KEYWORD_LENGTH + ' characters)');
+                    return;
+                }
+                if (keywords.includes(candidate)) return;
+                if (keywords.length >= MAX_KEYWORDS) {
+                    alert('Maximum number of keywords (' + MAX_KEYWORDS + ') reached');
+                    return;
+                }
+                keywords.push(candidate);
+                renderChips();
+            }
+
+            function addKeywordFromInput() {
+                if (!input) return;
+                const value = input.value || '';
+                // Allow comma-separated values or single
+                const parts = value.split(',').map(p => p.trim()).filter(Boolean);
+                parts.forEach(p => addKeywordFromString(p));
+                input.value = '';
+            }
+
+            function removeKeyword(keyword) {
+                keywords = keywords.filter(k => k !== keyword);
+                renderChips();
+            }
+
+            if (input) {
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        addKeywordFromInput();
+                    }
+                });
+
+                // Support pasting comma separated lists
+                input.addEventListener('paste', function (e) {
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    if (paste && paste.includes(',')) {
+                        e.preventDefault();
+                        const parts = paste.split(',').map(p => p.trim()).filter(Boolean);
+                        parts.forEach(p => addKeywordFromString(p));
+                    }
+                });
+            }
+
+            // Expose small API for potential future use
+            window.autoSuggestKeywords = {
+                get: () => [...keywords],
+                add: (kw) => { addKeywordFromString(kw); },
+                remove: (kw) => { removeKeyword(kw); }
+            };
+
+            // Initial render
+            renderChips();
+        })();
         </script>
     </body>
 </html>
