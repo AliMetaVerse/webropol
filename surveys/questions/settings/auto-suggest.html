@@ -128,17 +128,21 @@
         }
 
         .modal-header {
-            padding: 1.5rem;
+            padding: 1.25rem 1.5rem;
             background: var(--neutral-0);
             border-bottom: 1px solid var(--neutral-200);
             display: flex;
             align-items: center;
-            justify-content: between;
+            justify-content: space-between;
             gap: 1rem;
         }
 
         .modal-title-section {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
         }
 
         .modal-title {
@@ -154,6 +158,8 @@
         .modal-subtitle {
             font-size: var(--font-size-sm);
             color: var(--neutral-600);
+            /* align subtitle with the title text (skip the icon) */
+            margin-left: calc(2.5rem + 0.75rem);
         }
 
         .modal-close {
@@ -463,7 +469,8 @@
         .keywords-section {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .keywords-label {
@@ -483,9 +490,45 @@
             font-weight: var(--font-weight-medium);
         }
 
+        /* Inline keywords input and chips (UI-only, no JS behavior) */
+        .keywords-input {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--neutral-0);
+            padding: 0.5rem;
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--neutral-200);
+        }
+
+        .keywords-input input[type="text"] {
+            border: none;
+            outline: none;
+            font-size: var(--font-size-sm);
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            min-width: 160px;
+        }
+
+        .keywords-chips {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .keyword-chip {
+            background: var(--neutral-100);
+            color: var(--neutral-800);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+        }
+
         .footer-actions {
             display: flex;
             gap: 0.75rem;
+            margin-left: auto; /* push actions to the right when possible */
         }
 
         .info-tooltip {
@@ -493,20 +536,32 @@
             cursor: help;
         }
 
-        .info-tooltip:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+        /* Disable CSS pseudo tooltip; we'll use a JS floating tooltip appended to the document body */
+        .info-tooltip::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .floating-tooltip {
+            position: fixed;
             background: var(--neutral-800);
             color: white;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: var(--border-radius-md);
             font-size: var(--font-size-xs);
-            white-space: nowrap;
-            z-index: 1001;
-            margin-bottom: 0.25rem;
+            line-height: 1.3;
+            max-width: 520px;
+            box-shadow: 0 8px 26px rgba(0,0,0,0.18);
+            z-index: 99999;
+            word-wrap: break-word;
+            text-align: left;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 150ms ease;
+        }
+
+        .floating-tooltip.visible {
+            opacity: 1;
         }
 
         .enhanced-feature {
@@ -566,6 +621,10 @@
             .modal-content {
                 margin: 1rem;
                 max-height: calc(100vh - 2rem);
+            }
+            /* subtitle should align naturally on small screens */
+            .modal-subtitle {
+                margin-left: 0;
             }
 
             .visibility-options {
@@ -659,7 +718,6 @@
                         </div>
                         Question settings
                     </h2>
-                    <p class="modal-subtitle">Configure question behavior and auto-suggestions</p>
                 </div>
                 <button class="modal-close" onclick="closeModal()" aria-label="Close modal">
                     <i class="fal fa-times"></i>
@@ -669,7 +727,6 @@
                 <!-- Option Orientation Section -->
                 <div class="settings-section">
                     <h3 class="section-title">
-                        <i class="fal fa-arrows-alt"></i>
                         Option orientation
                     </h3>
                         <div class="form-group">
@@ -692,7 +749,6 @@
                 <!-- Column Configuration Section -->
                 <div class="settings-section">
                     <h3 class="section-title">
-                        <i class="fal fa-columns"></i>
                         Number of options per column
                     </h3>
                     <div class="form-group">
@@ -721,7 +777,6 @@
                     <!-- Option Placement Section -->
                     <div class="settings-section" style="flex: 1; margin-bottom: 0;">
                         <h3 class="section-title">
-                            <i class="fal fa-align-left"></i>
                             Option placement title
                         </h3>
                         <div class="form-group">
@@ -788,17 +843,18 @@
                 <!-- Auto-Suggest Section -->
                 <div class="settings-section">
                     <h3 class="section-title">
-                        <i class="fal fa-magic"></i>
+                        <i class="fal fa-file-lines"></i>
                         Auto-suggest configuration
                     </h3>
                     <div class="file-upload-section">
                         <div class="file-actions">
                             <button class="btn btn-primary" onclick="openUploadModal()">
-                                <i class="fal fa-upload"></i>
                                 Upload file
                             </button>
                             <div class="upload-status">
-                                <i class="fal fa-info-circle"></i>
+                            <span class="info-tooltip" data-tooltip="When uploading an AutoSuggest file with more than 1,000 options, it will be placed into a processing queue. While processing you won't be able to send out your survey. Once complete, you'll receive an email notification.">
+                                <i class="fal fa-question-circle" style="margin-left:0.25rem; color: var(--neutral-700);"></i>
+                            </span>
                                 No file uploaded
                             </div>
 
@@ -808,6 +864,8 @@
                         </p>
                     </div>
                 </div>
+                
+
                 <!-- Visibility Section -->
                 <div class="settings-section">
                     <h3 class="section-title">
@@ -840,23 +898,32 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div class="keywords-section">
-                    <button class="btn btn-secondary">
-                        <i class="fal fa-save"></i>
-                        Save question to library
-                    </button>
-                    <div class="keywords-label">
-                        <i class="fal fa-tags"></i>
-                        Keywords
-                        <span class="keywords-count">0</span>
-                        <span class="info-tooltip"
-                            data-tooltip="Add keywords to help categorize and find this question later">
-                            <i class="fal fa-question-circle"></i>
-                        </span>
+                <!-- Keywords / Save to library -->
+                <div class="settings-section">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+                        <button class="btn btn-secondary" style="display:inline-flex; align-items:center; gap:0.5rem;">
+                            <i class="fal fa-save"></i>
+                            Save question to library
+                        </button>
+                        <div style="display:flex; align-items:center; gap:1rem;">
+                            <div class="keywords-label">
+                                <i class="fal fa-tags"></i>
+                                Keywords
+                                <span class="keywords-count">0</span>
+                                <span class="info-tooltip" data-tooltip="Add keywords to help categorize and find this question later">
+                                    <i class="fal fa-question-circle"></i>
+                                </span>
+                            </div>
+                            <div class="keywords-input" aria-hidden="true">
+                                <div class="keywords-chips"></div>
+                                <input type="text" placeholder="Add a keyword" />
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+            </div>
+            <div class="modal-footer">
                 <div class="footer-actions">
                     <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                     <button class="btn btn-primary">
@@ -932,10 +999,6 @@
                             <i class="fal fa-exclamation-triangle" style="color: var(--warning-600);"></i>
                             <strong style="color: var(--warning-800);">Remove uploaded auto-suggest list</strong>
                         </div>
-                        <p style="color: var(--warning-700); margin-bottom: 1rem; font-size: var(--font-size-sm);">
-                            This will remove the current auto-suggest file and disable auto-completion for this
-                            question.
-                        </p>
                         <button class="btn"
                             style="background: var(--warning-100); color: var(--warning-700); border: 1px solid var(--warning-300);"
                             onclick="removeAutoSuggest()">
@@ -1061,12 +1124,59 @@
             });
         });
 
-        // Initialize tooltips
-        document.querySelectorAll('.info-tooltip').forEach(tooltip => {
-            tooltip.addEventListener('mouseenter', function () {
-                // Tooltip functionality can be enhanced here
+        // Floating tooltips: append tooltip element to body to avoid clipping
+        (function() {
+            let tipEl = null;
+
+            function showTip(target) {
+                const text = target.getAttribute('data-tooltip');
+                if (!text) return;
+                if (!tipEl) {
+                    tipEl = document.createElement('div');
+                    tipEl.className = 'floating-tooltip';
+                    document.body.appendChild(tipEl);
+                }
+                tipEl.innerText = text;
+                tipEl.classList.add('visible');
+
+                // Positioning
+                const rect = target.getBoundingClientRect();
+                const tipRect = tipEl.getBoundingClientRect();
+                const spaceAbove = rect.top;
+                const spaceBelow = window.innerHeight - rect.bottom;
+
+                // Prefer above, but flip if not enough space
+                let top = rect.top - tipRect.height - 10; // 10px offset
+                let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+                if (spaceAbove < tipRect.height + 12 && spaceBelow > spaceAbove) {
+                    top = rect.bottom + 10;
+                }
+
+                // keep within viewport
+                left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+                top = Math.max(8, Math.min(top, window.innerHeight - tipRect.height - 8));
+
+                tipEl.style.left = left + 'px';
+                tipEl.style.top = top + 'px';
+            }
+
+            function hideTip() {
+                if (tipEl) {
+                    tipEl.classList.remove('visible');
+                }
+            }
+
+            document.querySelectorAll('.info-tooltip').forEach(el => {
+                el.addEventListener('mouseenter', () => showTip(el));
+                el.addEventListener('focus', () => showTip(el));
+                el.addEventListener('mouseleave', hideTip);
+                el.addEventListener('blur', hideTip);
             });
-        });
+
+            // Reposition on resize/scroll
+            window.addEventListener('resize', () => { if (tipEl && tipEl.classList.contains('visible')) tipEl.classList.remove('visible'); });
+            window.addEventListener('scroll', () => { if (tipEl && tipEl.classList.contains('visible')) tipEl.classList.remove('visible'); }, true);
+        })();
 
         // Auto-open modal on page load
         document.addEventListener('DOMContentLoaded', function() {
