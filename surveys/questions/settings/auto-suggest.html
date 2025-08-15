@@ -1047,7 +1047,6 @@
                             </div>
                             Upload answer options for auto-suggest list
                         </h2>
-                        <p class="modal-subtitle">Upload a CSV file with predefined answer options</p>
                     </div>
                     <button class="modal-close" onclick="closeUploadModal()" aria-label="Close modal">
                         <i class="fal fa-times"></i>
@@ -1094,6 +1093,10 @@
                                 Choose File
                             </button>
                             <div id="fileName" style="margin-top: 1rem; font-weight: var(--font-weight-medium); color: var(--primary-600);"></div>
+                            <button id="removeFileBtn" class="btn btn-secondary" style="display: none; margin-top: 0.75rem;" onclick="removeSelectedFile()">
+                                <i class="fal fa-times"></i>
+                                Remove file
+                            </button>
                         </div>
                     </div>
                     <div class="settings-section">
@@ -1107,7 +1110,6 @@
                     <div class="footer-actions">
                         <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
                         <button class="btn btn-primary" id="uploadBtn" disabled>
-                            <i class="fal fa-upload"></i>
                             Upload
                         </button>
                     </div>
@@ -1141,10 +1143,12 @@
             const file = e.target.files[0];
             const fileNameDiv = document.getElementById('fileName');
             const uploadBtn = document.getElementById('uploadBtn');
+            const removeFileBtn = document.getElementById('removeFileBtn');
 
             if (file) {
                 fileNameDiv.innerHTML = `<i class="fal fa-file-csv"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
                 uploadBtn.disabled = false;
+                if (removeFileBtn) removeFileBtn.style.display = 'inline-flex';
 
                 // Simulate file validation
                 setTimeout(() => {
@@ -1153,8 +1157,27 @@
             } else {
                 fileNameDiv.innerHTML = '';
                 uploadBtn.disabled = true;
+                if (removeFileBtn) removeFileBtn.style.display = 'none';
             }
         });
+
+        // Allow removing a selected file before uploading (clears input and UI)
+        function removeSelectedFile() {
+            const input = document.getElementById('csvFile');
+            const fileNameDiv = document.getElementById('fileName');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const removeFileBtn = document.getElementById('removeFileBtn');
+
+            if (!input) return;
+
+            // Clear the input value (works for file inputs)
+            input.value = '';
+
+            // Reset UI
+            if (fileNameDiv) fileNameDiv.innerHTML = '';
+            if (uploadBtn) uploadBtn.disabled = true;
+            if (removeFileBtn) removeFileBtn.style.display = 'none';
+        }
 
         // Radio button interactions
         document.querySelectorAll('.radio-item').forEach(item => {
