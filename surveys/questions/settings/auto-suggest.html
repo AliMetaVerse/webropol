@@ -84,6 +84,26 @@
             border-color: var(--neutral-400);
         }
 
+        .btn:disabled,
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn-primary:disabled,
+        .btn-primary[disabled] {
+            background: var(--neutral-300);
+            color: var(--neutral-500);
+        }
+
+        .btn-secondary:disabled,
+        .btn-secondary[disabled] {
+            background: var(--neutral-100);
+            color: var(--neutral-400);
+            border-color: var(--neutral-300);
+        }
+
         hr {
             border: none;
             height: 1px;
@@ -1100,7 +1120,7 @@
                         </div>
                     </div>
                     <div class="settings-section">
-                        <button class="btn btn-secondary" onclick="removeAutoSuggest()">
+                        <button id="removeStoredBtn" class="btn btn-secondary" onclick="removeAutoSuggest()" disabled>
                             <i class="fal fa-trash"></i>
                             Remove uploaded auto-suggest list
                         </button>
@@ -1144,6 +1164,7 @@
             const fileNameDiv = document.getElementById('fileName');
             const uploadBtn = document.getElementById('uploadBtn');
             const removeFileBtn = document.getElementById('removeFileBtn');
+            const removeStoredBtn = document.getElementById('removeStoredBtn');
 
             if (file) {
                 fileNameDiv.innerHTML = `<i class="fal fa-file-csv"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
@@ -1153,11 +1174,14 @@
                 // Simulate file validation
                 setTimeout(() => {
                     fileNameDiv.innerHTML += ` <span style="color: var(--success-600);"><i class="fal fa-check-circle"></i> Validated</span>`;
+                    // Enable remove stored button after validation (simulates that a file is now uploaded)
+                    if (removeStoredBtn) removeStoredBtn.disabled = false;
                 }, 1000);
             } else {
                 fileNameDiv.innerHTML = '';
                 uploadBtn.disabled = true;
                 if (removeFileBtn) removeFileBtn.style.display = 'none';
+                if (removeStoredBtn) removeStoredBtn.disabled = true;
             }
         });
 
@@ -1167,6 +1191,7 @@
             const fileNameDiv = document.getElementById('fileName');
             const uploadBtn = document.getElementById('uploadBtn');
             const removeFileBtn = document.getElementById('removeFileBtn');
+            const removeStoredBtn = document.getElementById('removeStoredBtn');
 
             if (!input) return;
 
@@ -1177,6 +1202,7 @@
             if (fileNameDiv) fileNameDiv.innerHTML = '';
             if (uploadBtn) uploadBtn.disabled = true;
             if (removeFileBtn) removeFileBtn.style.display = 'none';
+            if (removeStoredBtn) removeStoredBtn.disabled = true;
         }
 
         // Radio button interactions
@@ -1216,9 +1242,19 @@
 
         // Remove auto-suggest
         function removeAutoSuggest() {
+            const removeStoredBtn = document.getElementById('removeStoredBtn');
+            if (!removeStoredBtn || removeStoredBtn.disabled) return;
+
             if (confirm('Are you sure you want to remove the auto-suggest list? This action cannot be undone.')) {
                 // Simulate removal
                 alert('Auto-suggest list removed successfully.');
+                
+                // Disable the button after removal since there's no stored list anymore
+                if (removeStoredBtn) removeStoredBtn.disabled = true;
+                
+                // Also clear any selected file
+                removeSelectedFile();
+                
                 closeUploadModal();
             }
         }
