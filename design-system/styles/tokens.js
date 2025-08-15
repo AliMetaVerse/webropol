@@ -24,6 +24,7 @@ export const designTokens = {
     // NOTE: 'secondary' (blue) palette removed — components now use `primary` (teal) as secondary fallback.
 
     neutral: {
+      0:   '#ffffff',
       50:  '#f9fafa',
       100: '#f3f4f4',
       200: '#e6e7e8',
