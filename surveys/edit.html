@@ -30,6 +30,11 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --border-radius-full: 9999px;
+      --primary-600: #1d809d;
+    }
+
     [x-cloak] {
       display: none !important;
     }
@@ -240,7 +245,7 @@
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Upload Image">
                         <i class="fal fa-image text-white"></i>
                       </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Settings" onclick="toggleQuestionSettings()">
+                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Settings" onclick="openQuestionSettingsModal()">
                         <i class="fal fa-cog text-white"></i>
                       </button>
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Copy">
@@ -430,8 +435,8 @@
       </div>
       <div class="modal-footer">
         <div class="footer-actions">
-          <button class="px-4 py-2 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 rounded-lg font-medium transition-colors" onclick="closeUploadModal()">Cancel</button>
-          <button id="applyBtn" class="px-4 py-2 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white rounded-lg font-medium transition-all" onclick="applyAndClose()" disabled>
+          <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+          <button id="applyBtn" class="btn btn-primary" onclick="applyAndClose()" disabled>
             Apply
           </button>
         </div>
@@ -734,6 +739,83 @@
       visibility: visible;
     }
 
+    /* Ensure Upload modal can appear above Question Settings modal */
+    #uploadModal {
+      z-index: 1000;
+    }
+
+    #uploadModal.above-settings {
+      z-index: 1001;
+    }
+
+    /* Button Styles from auto-suggest.html */
+    .btn {
+      padding: 0.625rem 1.5rem;
+      border: none;
+      border-radius: 9999px !important;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background: #0891b2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0e7490;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #374151;
+      border: 1px solid #0891b2;
+    }
+
+    .btn-secondary:hover {
+      background: #ccf7fe;
+      border-color: #94a3b8;
+    }
+
+    .btn:disabled,
+    .btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-primary:disabled,
+    .btn-primary[disabled] {
+      background: #d1d5db;
+      color: #6b7280;
+    }
+
+    .btn-secondary:disabled,
+    .btn-secondary[disabled] {
+      background: #f3f4f6;
+      color: #9ca3af;
+      border-color: #d1d5db;
+    }
+
+    .delete-btn:hover i {
+      color: #dc2626 !important;
+    }
+
+    .btn i {
+      font-size: 1.125rem;
+    }
+
+    .btn i.fal {
+      color: #0891b2;
+    }
+
     .modal-content {
       background: white;
       border-radius: 1rem;
@@ -895,6 +977,18 @@
     .btn-secondary:hover:not(:disabled) {
       background: #e2e8f0;
       border-color: #cbd5e1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #0891b2, #0e7490);
+      color: white;
+      border: none;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(to right, #0e7490, #164e63);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
     }
 
     /* Utility classes */
@@ -1303,14 +1397,31 @@
     // Modal functionality
     function openUploadModal() {
       const modal = document.getElementById('uploadModal');
+      const questionSettingsModal = document.getElementById('questionSettingsModal');
+      
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      
+      // If Question Settings modal is open, make Upload modal appear above it
+      if (questionSettingsModal && questionSettingsModal.classList.contains('active')) {
+        modal.classList.add('above-settings');
+      } else {
+        modal.classList.remove('above-settings');
+      }
     }
 
     function closeUploadModal() {
       const modal = document.getElementById('uploadModal');
+      const questionSettingsModal = document.getElementById('questionSettingsModal');
+      
       modal.classList.remove('active');
-      document.body.style.overflow = '';
+      modal.classList.remove('above-settings'); // Reset z-index class
+      
+      // Only restore body overflow if Question Settings modal is not open
+      if (!questionSettingsModal || !questionSettingsModal.classList.contains('active')) {
+        document.body.style.overflow = '';
+      }
+      
       // Reset modal state
       resetModalState();
     }
@@ -1383,7 +1494,14 @@
 
     function applyAndClose() {
       // Add logic to apply the uploaded suggestions
+      const questionSettingsModal = document.getElementById('questionSettingsModal');
+      
       closeUploadModal();
+      
+      // If Question Settings modal is still open, ensure it stays visible
+      if (questionSettingsModal && questionSettingsModal.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      }
     }
 
     // Question Settings Modal functionality
@@ -1511,6 +1629,81 @@
           }
         });
       }
+
+      // Floating tooltips functionality
+      (function () {
+        let tipEl = null;
+
+        function showTip(target) {
+          const text = target.getAttribute('data-tooltip');
+          if (!text) return;
+          if (!tipEl) {
+            tipEl = document.createElement('div');
+            tipEl.className = 'floating-tooltip';
+            tipEl.style.cssText = `
+              position: fixed;
+              background: #1f2937;
+              color: white;
+              padding: 0.75rem;
+              border-radius: 0.375rem;
+              font-size: 0.75rem;
+              line-height: 1.3;
+              max-width: 320px;
+              box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
+              z-index: 99999;
+              word-wrap: break-word;
+              text-align: left;
+              pointer-events: none;
+              opacity: 0;
+              transition: opacity 150ms ease;
+            `;
+            document.body.appendChild(tipEl);
+          }
+          tipEl.innerText = text;
+          tipEl.style.opacity = '1';
+
+          // Positioning
+          const rect = target.getBoundingClientRect();
+          const tipRect = tipEl.getBoundingClientRect();
+          const spaceAbove = rect.top;
+          const spaceBelow = window.innerHeight - rect.bottom;
+
+          // Prefer above, but flip if not enough space
+          let top = rect.top - tipRect.height - 10; // 10px offset
+          let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+          if (spaceAbove < tipRect.height + 12 && spaceBelow > spaceAbove) {
+            top = rect.bottom + 10;
+          }
+
+          // Keep within viewport
+          left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+          top = Math.max(8, Math.min(top, window.innerHeight - tipRect.height - 8));
+
+          tipEl.style.left = left + 'px';
+          tipEl.style.top = top + 'px';
+        }
+
+        function hideTip() {
+          if (tipEl) {
+            tipEl.style.opacity = '0';
+          }
+        }
+
+        document.querySelectorAll('.info-tooltip').forEach(el => {
+          el.addEventListener('mouseenter', () => showTip(el));
+          el.addEventListener('focus', () => showTip(el));
+          el.addEventListener('mouseleave', hideTip);
+          el.addEventListener('blur', hideTip);
+        });
+
+        // Reposition on resize/scroll
+        window.addEventListener('resize', () => { 
+          if (tipEl && tipEl.style.opacity === '1') tipEl.style.opacity = '0'; 
+        });
+        window.addEventListener('scroll', () => { 
+          if (tipEl && tipEl.style.opacity === '1') tipEl.style.opacity = '0'; 
+        }, true);
+      })();
     });
   </script>
 </body>
