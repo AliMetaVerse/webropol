@@ -38,7 +38,7 @@ export class WebropolSidebar extends BaseComponent {
                     xl:px-8 px-4
                     group-hover:px-8
                     transition-all duration-300">
-          <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <i class="fal fa-chart-bar text-white text-lg"></i>
           </div>
           <div class="ml-3 overflow-hidden transition-all duration-300
