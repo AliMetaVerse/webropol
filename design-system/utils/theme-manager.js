@@ -97,11 +97,11 @@ export class ThemeManager {
     style.id = 'webropol-theme-styles';
     style.textContent = `
       .bg-sun-to-br {
-        background: linear-gradient(to bottom right, #fed7aa, #fed7aa) !important;
+        background: linear-gradient(to bottom right, #ffead1ff, #fed7aa) !important;
       }
 
       .bg-sky-to-br {
-        background: linear-gradient(to bottom right, #ebf4f7, #ebf4f7) !important;
+        background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;
       }
 
       /* Theme transition for smooth changes */
