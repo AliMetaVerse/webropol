@@ -109,17 +109,6 @@
                   </span>
                 </div>
               </div>
-              
-              <div class="flex items-center space-x-3">
-                <button class="btn btn-secondary">
-                  <i class="fal fa-eye"></i>
-                  <span>Preview & test</span>
-                </button>
-                <button class="btn btn-primary">
-                  <i class="fal fa-save"></i>
-                  <span>Save & Close</span>
-                </button>
-              </div>
             </div>
 
             <!-- Action Tabs -->
@@ -151,7 +140,7 @@
           <!-- Survey Editor Layout -->
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Left Sidebar - Survey Structure -->
-            <div class="lg:col-span-1">
+            <div class="lg:col-span-1" x-data="surveyStructureApp()">
               <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover-lift">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-semibold text-webropol-gray-900">Survey structure</h3>
@@ -160,8 +149,28 @@
                   </button>
                 </div>
                 
-                <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-2 mb-4">
+                <!-- Structure Tabs -->
+                <div class="flex bg-webropol-gray-100 p-1 rounded-lg mb-4">
+                  <button 
+                    @click="activeTab = 'pages'" 
+                    :class="activeTab === 'pages' ? 'bg-white text-webropol-teal-600 shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-800'"
+                    class="flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 flex items-center justify-center gap-2"
+                  >
+                    <i class="fal fa-file-alt"></i>
+                    <span>Pages</span>
+                  </button>
+                  <button 
+                    @click="activeTab = 'styles'" 
+                    :class="activeTab === 'styles' ? 'bg-white text-webropol-teal-600 shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-800'"
+                    class="flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 flex items-center justify-center gap-2"
+                  >
+                    <i class="fal fa-paint-brush"></i>
+                    <span>Styles</span>
+                  </button>
+                </div>
+                
+                <!-- Action Buttons - Show only for Pages tab -->
+                <div x-show="activeTab === 'pages'" class="flex flex-wrap gap-2 mb-4">
                   <button class="btn btn-secondary">
                     <i class="fal fa-arrows-alt text-xs"></i>
                     <span>Move</span>
@@ -176,8 +185,8 @@
                   </button>
                 </div>
                 
-                <!-- Survey Structure Tree -->
-                <div class="space-y-3 mb-6">
+                <!-- Survey Structure Tree - Pages Tab -->
+                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6">
                   <!-- Page 1 -->
                   <div class="flex items-center space-x-3 p-3 bg-webropol-teal-50 rounded-lg border border-webropol-teal-200">
                     <i class="fal fa-chevron-down text-webropol-teal-600"></i>
@@ -197,10 +206,102 @@
                     <i class="fal fa-heart text-green-600"></i>
                     <span class="text-webropol-gray-700">Thank you page</span>
                   </div>
+                  
+                  <!-- Cancelled Participants -->
+                  <div class="flex items-center space-x-3 p-3 hover:bg-webropol-gray-50 rounded-lg cursor-pointer transition-colors">
+                    <i class="fal fa-user-times text-red-600"></i>
+                    <span class="text-webropol-gray-700">Cancelled Participants</span>
+                  </div>
                 </div>
                 
-                <!-- Add Content Section -->
-                <div class="space-y-3">
+                <!-- Styles Tab Content -->
+                <div x-show="activeTab === 'styles'" class="space-y-3 mb-6">
+                  <!-- Overall survey background color or image -->
+                  <div class="p-3 bg-webropol-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-sm font-medium text-webropol-gray-700">Overall survey background color or image</span>
+                    </div>
+                    <p class="text-xs text-webropol-gray-500 mb-3">Choose or background image of the whole survey</p>
+                    
+                    <!-- Color Picker Preview -->
+                    <div class="mb-3">
+                      <div class="w-16 h-12 bg-gradient-to-br from-orange-200 via-pink-200 to-blue-200 rounded border-2 border-white shadow-sm"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- Survey bg checkbox -->
+                  <div class="flex items-center space-x-3 p-3 bg-webropol-gray-50 rounded-lg">
+                    <input type="checkbox" class="w-4 h-4 text-webropol-teal-600 rounded" checked>
+                    <span class="text-sm font-medium text-webropol-gray-700">Survey bg</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-500 -mt-2 ml-7">Default colour when unchecked</p>
+                  
+                  <!-- Survey Background -->
+                  <div class="p-3 bg-webropol-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-sm font-medium text-webropol-gray-700">Survey Background</span>
+                    </div>
+                    <p class="text-xs text-webropol-gray-500 mb-3">Override background colour</p>
+                  </div>
+                  
+                  <!-- Properties Section -->
+                  <div class="space-y-3">
+                    <h4 class="text-sm font-medium text-webropol-gray-700">Properties</h4>
+                    
+                    <!-- Background Image Repeat -->
+                    <div class="flex items-center justify-between p-3 bg-webropol-gray-50 rounded-lg">
+                      <div class="flex items-center space-x-2">
+                        <i class="fal fa-repeat text-webropol-teal-600"></i>
+                        <span class="text-sm text-webropol-gray-700">Background Image Repeat</span>
+                      </div>
+                      <select class="text-xs bg-white border border-webropol-gray-300 rounded px-2 py-1 min-w-20">
+                        <option value="fit">fit</option>
+                        <option value="repeat">repeat</option>
+                        <option value="no-repeat">no-repeat</option>
+                      </select>
+                    </div>
+                    
+                    <!-- Background image alignment -->
+                    <div class="p-3 bg-webropol-gray-50 rounded-lg">
+                      <div class="flex items-center space-x-2 mb-3">
+                        <i class="fal fa-align-center text-webropol-teal-600"></i>
+                        <span class="text-sm text-webropol-gray-700">Background image alignment</span>
+                      </div>
+                      <div class="grid grid-cols-3 gap-1">
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Top Left">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-webropol-teal-100 border border-webropol-teal-300 rounded text-xs flex items-center justify-center" title="Top Center">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Top Right">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Middle Left">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Middle Center">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Middle Right">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Bottom Left">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Bottom Center">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded text-xs flex items-center justify-center hover:bg-webropol-teal-50 transition-colors" title="Bottom Right">
+                          <i class="fal fa-square text-xs"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Add Content Section - Pages Tab -->
+                <div x-show="activeTab === 'pages'" class="space-y-3">
                   <button class="btn btn-primary w-full">
                     <i class="fal fa-plus"></i>
                     <span>Add question</span>
@@ -212,6 +313,22 @@
                   <button class="btn btn-secondary w-full">
                     <i class="fal fa-cut"></i>
                     <span>Add page break</span>
+                  </button>
+                </div>
+                
+                <!-- Style Actions Section - Styles Tab -->
+                <div x-show="activeTab === 'styles'" class="space-y-3">
+                  <button class="btn btn-primary w-full" @click="applySelectedStyle()">
+                    <i class="fal fa-check"></i>
+                    <span>Apply Changes</span>
+                  </button>
+                  <button class="btn btn-secondary w-full" @click="resetStyles()">
+                    <i class="fal fa-undo"></i>
+                    <span>Reset to Default</span>
+                  </button>
+                  <button class="btn btn-secondary w-full" @click="previewStyle()">
+                    <i class="fal fa-eye"></i>
+                    <span>Preview Changes</span>
                   </button>
                 </div>
               </div>
@@ -1395,6 +1512,43 @@
         saveSurvey() {
           console.log('Saving survey...');
           // Implementation for saving survey
+        }
+      }
+    }
+
+    function surveyStructureApp() {
+      return {
+        activeTab: 'pages',
+        selectedStyle: null,
+        
+        init() {
+          console.log('Survey Structure initialized');
+        },
+        
+        applySelectedStyle() {
+          if (this.selectedStyle) {
+            console.log('Applying style:', this.selectedStyle);
+            // Implementation for applying selected style
+            // You could emit an event or call a method to update the main canvas
+            this.$dispatch('style-applied', { style: this.selectedStyle });
+          } else {
+            console.log('Applying current style changes');
+            // Apply any current style changes
+            this.$dispatch('styles-applied');
+          }
+        },
+        
+        resetStyles() {
+          console.log('Resetting styles to default');
+          this.selectedStyle = null;
+          // Implementation for resetting styles
+          this.$dispatch('styles-reset');
+        },
+        
+        previewStyle() {
+          console.log('Previewing current style changes');
+          // Implementation for previewing selected style
+          this.$dispatch('style-preview', { style: this.selectedStyle });
         }
       }
     }
