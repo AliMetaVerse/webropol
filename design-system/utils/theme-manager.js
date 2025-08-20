@@ -19,8 +19,8 @@ export class ThemeManager {
       }
     },
     [this.THEMES.SKY]: {
-      name: 'Sky',
-      icon: 'fa-cloud',
+      name: 'Ocean',
+      icon: 'fa-droplet',
       background: {
         class: 'bg-sky-to-br',
         style: 'background: linear-gradient(to bottom right, #ebf4f7, #ebf4f7);'
