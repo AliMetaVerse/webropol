@@ -132,6 +132,21 @@ export class WebropolHeader extends BaseComponent {
       dropdown.addEventListener('click', (e) => {
         e.stopPropagation();
       });
+      
+      // Handle settings link click
+      const settingsLink = dropdown.querySelector('a:has(.fa-cog)');
+      if (settingsLink) {
+        settingsLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Close dropdown
+          dropdown.classList.add('opacity-0', 'invisible');
+          
+          // Emit settings open event
+          this.emit('settings-open');
+        });
+      }
     }
   }
 
