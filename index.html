@@ -364,7 +364,9 @@
     <script src="design-system/components/interactive/FloatingButton.js" type="module"></script>
     <script src="design-system/components/forms/Toggle.js" type="module"></script>
     <script src="design-system/components/modals/Modal.js" type="module"></script>
+    <script src="design-system/components/modals/SettingsModal.js" type="module"></script>
     <script src="design-system/utils/theme-manager.js" type="module"></script>
+    <script src="design-system/utils/global-settings-manager.js" type="module"></script>
 </head>
 
 <body x-data="libraryApp()" @click="showContextMenu = null">
@@ -387,12 +389,6 @@
                 <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
                     '[{\"label\":\"Home\",\"url\":\"index.html\"},{\"label\":\"Magic\",\"url\":\"#\"}]' : 
                     '[{\"label\":\"Home\",\"url\":\"index.html\"}]'"></webropol-breadcrumbs>
-                <!-- Quick Settings Button -->
-                <button @click="openSettings()" 
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all"
-                        title="Settings (Ctrl+,)">
-                    <i class="fal fa-cog text-sm"></i>
-                </button>
             </div>
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto px-6 py-12 lg:px-12 min-h-screen pb-24" 
@@ -1255,133 +1251,28 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div x-show="showSettingsModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-        <div @click.away="showSettingsModal = false"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden"
-            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
-            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
-            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
-
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center mr-4">
-                        <i class="fal fa-cog text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-webropol-gray-900">Settings</h2>
-                        <p class="text-sm text-webropol-gray-600">Customize your experience</p>
-                    </div>
-                </div>
-                <button @click="showSettingsModal = false" 
-                        class="w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all">
-                    <i class="fal fa-times text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Modal Content -->
-            <div class="flex-1 overflow-y-auto p-6">
-                <div class="space-y-6">
-                    <!-- Interface Settings Section -->
-                    <div class="settings-section">
-                        <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                            <i class="fal fa-desktop mr-2 text-webropol-teal-600"></i>
-                            Interface
-                        </h3>
-                        <div class="space-y-4">
-                            <!-- Floating Button Toggle -->
-                            <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                                <div class="flex-1">
-                                    <div class="flex items-center">
-                                        <label class="text-sm font-medium text-webropol-gray-700">Show Floating Button</label>
-                                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                                             title="Show or hide the floating create button in the bottom right corner">
-                                            <i class="fal fa-question-circle text-sm"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-webropol-gray-500 mt-1">Toggle the floating create button visibility</p>
-                                </div>
-                                <webropol-toggle 
-                                    x-bind:checked="settings.showFloatingButton"
-                                    @webropol-toggle-change="settings.showFloatingButton = $event.detail.checked; saveSettings()"
-                                    size="md" 
-                                    color="primary">
-                                </webropol-toggle>
-                            </div>
-                            
-                            <!-- Theme Settings -->
-                            <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                                <div class="flex-1">
-                                    <div class="flex items-center">
-                                        <label class="text-sm font-medium text-webropol-gray-700">Dark Mode</label>
-                                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                                             title="Switch between light and dark themes">
-                                            <i class="fal fa-question-circle text-sm"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-webropol-gray-500 mt-1">Toggle dark mode interface</p>
-                                </div>
-                                <webropol-toggle 
-                                    x-bind:checked="settings.darkMode"
-                                    @webropol-toggle-change="settings.darkMode = $event.detail.checked; toggleDarkMode(); saveSettings()"
-                                    size="md" 
-                                    color="primary">
-                                </webropol-toggle>
-                            </div>
-                            
-                            <!-- Auto-save Settings -->
-                            <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                                <div class="flex-1">
-                                    <div class="flex items-center">
-                                        <label class="text-sm font-medium text-webropol-gray-700">Auto-save</label>
-                                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                                             title="Automatically save your work while editing">
-                                            <i class="fal fa-question-circle text-sm"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-xs text-webropol-gray-500 mt-1">Automatically save changes</p>
-                                </div>
-                                <webropol-toggle 
-                                    x-bind:checked="settings.autoSave"
-                                    @webropol-toggle-change="settings.autoSave = $event.detail.checked; saveSettings()"
-                                    size="md" 
-                                    color="primary">
-                                </webropol-toggle>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="flex items-center justify-between p-6 border-t border-webropol-gray-200 bg-webropol-gray-50/30">
-                <div class="text-xs text-webropol-gray-500">
-                    <i class="fal fa-info-circle mr-1"></i>
-                    Settings are saved automatically
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button @click="resetSettings()" 
-                            class="px-4 py-2 text-sm text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg transition-all">
-                        <i class="fal fa-undo mr-2"></i>
-                        Reset to Default
-                    </button>
-                    <button @click="showSettingsModal = false" 
-                            class="px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-lg transition-all">
-                        <i class="fal fa-check mr-2"></i>
-                        Done
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // Global function to open settings modal
+        function openGlobalSettings() {
+            let settingsModal = document.querySelector('webropol-settings-modal');
+            if (!settingsModal) {
+                settingsModal = document.createElement('webropol-settings-modal');
+                document.body.appendChild(settingsModal);
+            }
+            
+            // Wait a moment for the element to be ready, then open
+            setTimeout(() => {
+                if (settingsModal.open) {
+                    settingsModal.open();
+                } else {
+                    settingsModal.setAttribute('open', '');
+                }
+            }, 10);
+        }
+        
+        // Make it globally available
+        window.openGlobalSettings = openGlobalSettings;
+        
         function libraryApp() {
             return {
                 // Interface mode state
@@ -1461,7 +1352,6 @@
                 showPreviewModal: false,
                 showCreateFolder: false,
                 showCreateModal: false,
-                showSettingsModal: false,
                 showMoveToFolder: null,
                 showAddToFolder: null,
                 newFolderName: '',
@@ -1549,10 +1439,6 @@
                     // For example, if autoSave setting affects some behavior
                 },
 
-                openSettings() {
-                    this.showSettingsModal = true;
-                },
-
                 // Keyboard shortcuts
                 init() {
                     // Apply settings on initialization
@@ -1569,11 +1455,6 @@
                         if (e.key === 'Escape' && this.interfaceMode === 'prompt') {
                             this.switchInterface('classic');
                         }
-                        // Ctrl/Cmd + , to open settings
-                        if ((e.ctrlKey || e.metaKey) && e.key === ',') {
-                            e.preventDefault();
-                            this.openSettings();
-                        }
                     });
                     
                     // Listen for theme changes
@@ -1585,7 +1466,23 @@
                     
                     // Listen for header settings open event
                     document.addEventListener('settings-open', () => {
-                        this.openSettings();
+                        openGlobalSettings();
+                    });
+                    
+                    // Listen for global settings changes
+                    document.addEventListener('webropol-settings-applied', (e) => {
+                        if (e.detail && e.detail.settings) {
+                            // Sync any page-specific settings if needed
+                            this.applySettings();
+                        }
+                    });
+                    
+                    // Add global settings keyboard shortcut
+                    document.addEventListener('keydown', (e) => {
+                        if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+                            e.preventDefault();
+                            openGlobalSettings();
+                        }
                     });
                 },
                 

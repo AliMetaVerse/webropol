@@ -1062,6 +1062,419 @@ customElements.define('webropol-tooltip', WebropolTooltip);
 customElements.define('webropol-tabs', WebropolTabs);
 customElements.define('webropol-modal', WebropolModal);
 
+// Global Settings Modal Component
+class WebropolSettingsModal extends BaseComponent {
+  constructor() {
+    super();
+    this.settings = this.loadSettings();
+    this.bindMethods();
+  }
+
+  bindMethods() {
+    this.close = this.close.bind(this);
+    this.handleBackdropClick = this.handleBackdropClick.bind(this);
+    this.handleKeydown = this.handleKeydown.bind(this);
+    this.saveSettings = this.saveSettings.bind(this);
+    this.resetSettings = this.resetSettings.bind(this);
+    this.toggleSetting = this.toggleSetting.bind(this);
+  }
+
+  loadSettings() {
+    const defaultSettings = {
+      showFloatingButton: true,
+      darkMode: false,
+      autoSave: true,
+      notifications: true,
+      compactMode: false,
+      autoLogout: 30,
+      language: 'en'
+    };
+
+    const stored = localStorage.getItem('webropol_global_settings');
+    return stored ? { ...defaultSettings, ...JSON.parse(stored) } : defaultSettings;
+  }
+
+  saveSettings() {
+    localStorage.setItem('webropol_global_settings', JSON.stringify(this.settings));
+    this.applySettings();
+    WebropolUtils.emitEvent(this, 'settings-changed', { settings: this.settings });
+  }
+
+  applySettings() {
+    if (this.settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    if (this.settings.compactMode) {
+      document.documentElement.classList.add('compact-mode');
+    } else {
+      document.documentElement.classList.remove('compact-mode');
+    }
+
+    const floatingButton = document.querySelector('webropol-floating-button');
+    if (floatingButton) {
+      floatingButton.style.display = this.settings.showFloatingButton ? 'block' : 'none';
+    }
+
+    window.dispatchEvent(new CustomEvent('webropol-settings-applied', { 
+      detail: { settings: this.settings } 
+    }));
+  }
+
+  resetSettings() {
+    if (confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) {
+      this.settings = this.loadSettings();
+      this.settings = {
+        showFloatingButton: true,
+        darkMode: false,
+        autoSave: true,
+        notifications: true,
+        compactMode: false,
+        autoLogout: 30,
+        language: 'en'
+      };
+      this.saveSettings();
+      this.render();
+    }
+  }
+
+  toggleSetting(key, value = null) {
+    if (value !== null) {
+      this.settings[key] = value;
+    } else {
+      this.settings[key] = !this.settings[key];
+    }
+    this.saveSettings();
+  }
+
+  render() {
+    const isOpen = WebropolUtils.getBoolAttr(this, 'open');
+    
+    this.innerHTML = `
+      <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
+           style="transition: opacity 300ms ease-out">
+        
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
+             style="transition: all 300ms ease-out"
+             role="document">
+          
+          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center mr-4">
+                <i class="fal fa-cog text-white text-lg"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-webropol-gray-900">Settings</h2>
+                <p class="text-sm text-webropol-gray-600">Customize your experience</p>
+              </div>
+            </div>
+            <button class="modal-close w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all"
+                    aria-label="Close settings modal">
+              <i class="fal fa-times text-lg"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body flex-1 overflow-y-auto p-6">
+            <div class="space-y-6">
+              
+              <div class="settings-section">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
+                  <i class="fal fa-desktop mr-2 text-webropol-teal-600"></i>
+                  Interface
+                </h3>
+                <div class="space-y-4">
+                  
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Dark Mode</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Switch between light and dark themes">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle dark mode interface</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.darkMode ? 'checked' : ''} 
+                             data-setting="darkMode">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Show Floating Button</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Show or hide the floating create button">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle floating button visibility</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
+                             data-setting="showFloatingButton">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Auto-save</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Automatically save your work">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Automatically save changes</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.autoSave ? 'checked' : ''} 
+                             data-setting="autoSave">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between p-6 border-t border-webropol-gray-200 bg-webropol-gray-50/30">
+            <div class="text-xs text-webropol-gray-500">
+              <i class="fal fa-info-circle mr-1"></i>
+              Settings are saved automatically
+            </div>
+            <div class="flex items-center space-x-3">
+              <button class="reset-button px-4 py-2 text-sm text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg transition-all">
+                <i class="fal fa-undo mr-2"></i>
+                Reset to Default
+              </button>
+              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-lg transition-all">
+                <i class="fal fa-check mr-2"></i>
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    this.bindEvents();
+  }
+
+  bindEvents() {
+    const backdrop = this.querySelector('.modal-backdrop');
+    const closeButton = this.querySelector('.modal-close');
+    const doneButton = this.querySelector('.done-button');
+    const resetButton = this.querySelector('.reset-button');
+    const checkboxes = this.querySelectorAll('input[type="checkbox"][data-setting]');
+
+    if (closeButton) {
+      this.addListener(closeButton, 'click', this.close);
+    }
+
+    if (doneButton) {
+      this.addListener(doneButton, 'click', this.close);
+    }
+
+    if (resetButton) {
+      this.addListener(resetButton, 'click', this.resetSettings);
+    }
+
+    if (backdrop) {
+      this.addListener(backdrop, 'click', this.handleBackdropClick);
+    }
+
+    const modalContent = this.querySelector('.modal-content');
+    if (modalContent) {
+      this.addListener(modalContent, 'click', (e) => e.stopPropagation());
+    }
+
+    checkboxes.forEach(checkbox => {
+      this.addListener(checkbox, 'change', (e) => {
+        const settingKey = e.target.getAttribute('data-setting');
+        this.toggleSetting(settingKey, e.target.checked);
+      });
+    });
+
+    this.addListener(document, 'keydown', this.handleKeydown);
+  }
+
+  handleBackdropClick(e) {
+    if (e.target === e.currentTarget) {
+      this.close();
+    }
+  }
+
+  handleKeydown(e) {
+    if (WebropolUtils.getBoolAttr(this, 'open') && e.key === 'Escape') {
+      e.preventDefault();
+      this.close();
+    }
+  }
+
+  open() {
+    this.setAttribute('open', '');
+    this.render();
+    
+    setTimeout(() => {
+      const closeButton = this.querySelector('.modal-close');
+      if (closeButton) {
+        closeButton.focus();
+      }
+    }, 100);
+
+    document.body.style.overflow = 'hidden';
+    WebropolUtils.emitEvent(this, 'settings-modal-opened');
+  }
+
+  close() {
+    this.removeAttribute('open');
+    document.body.style.overflow = '';
+    WebropolUtils.emitEvent(this, 'settings-modal-closed');
+  }
+
+  static get observedAttributes() {
+    return ['open'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'open' && oldValue !== newValue) {
+      this.render();
+    }
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.applySettings();
+  }
+}
+
+customElements.define('webropol-settings-modal', WebropolSettingsModal);
+
+// Global Settings Manager
+class GlobalSettingsManager {
+  constructor() {
+    this.defaultSettings = {
+      showFloatingButton: true,
+      darkMode: false,
+      autoSave: true,
+      notifications: true,
+      compactMode: false,
+      autoLogout: 30,
+      language: 'en'
+    };
+    
+    this.settings = this.loadSettings();
+    this.listeners = new Set();
+  }
+
+  loadSettings() {
+    try {
+      const stored = localStorage.getItem('webropol_global_settings');
+      return stored ? { ...this.defaultSettings, ...JSON.parse(stored) } : { ...this.defaultSettings };
+    } catch (error) {
+      console.warn('Error loading settings from localStorage:', error);
+      return { ...this.defaultSettings };
+    }
+  }
+
+  saveSettings() {
+    try {
+      localStorage.setItem('webropol_global_settings', JSON.stringify(this.settings));
+      this.applySettings();
+    } catch (error) {
+      console.error('Error saving settings to localStorage:', error);
+    }
+  }
+
+  getSetting(key) {
+    return this.settings[key] !== undefined ? this.settings[key] : this.defaultSettings[key];
+  }
+
+  setSetting(key, value) {
+    this.settings[key] = value;
+    this.saveSettings();
+  }
+
+  toggleSetting(key) {
+    if (typeof this.settings[key] === 'boolean') {
+      this.settings[key] = !this.settings[key];
+      this.saveSettings();
+    }
+  }
+
+  resetSettings() {
+    this.settings = { ...this.defaultSettings };
+    this.saveSettings();
+  }
+
+  getAllSettings() {
+    return { ...this.settings };
+  }
+
+  applySettings() {
+    if (this.settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    if (this.settings.compactMode) {
+      document.documentElement.classList.add('compact-mode');
+    } else {
+      document.documentElement.classList.remove('compact-mode');
+    }
+
+    const floatingButtons = document.querySelectorAll('webropol-floating-button');
+    floatingButtons.forEach(button => {
+      if (this.settings.showFloatingButton) {
+        button.style.display = '';
+        button.removeAttribute('hidden');
+      } else {
+        button.style.display = 'none';
+        button.setAttribute('hidden', '');
+      }
+    });
+    
+    window.dispatchEvent(new CustomEvent('webropol-settings-applied', { 
+      detail: { settings: this.settings } 
+    }));
+  }
+
+  openSettingsModal() {
+    let settingsModal = document.querySelector('webropol-settings-modal');
+    
+    if (!settingsModal) {
+      settingsModal = document.createElement('webropol-settings-modal');
+      document.body.appendChild(settingsModal);
+    }
+    
+    settingsModal.open();
+  }
+
+  init() {
+    this.applySettings();
+    
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault();
+        this.openSettingsModal();
+      }
+    });
+  }
+}
+
+// Create global instance
+window.globalSettingsManager = new GlobalSettingsManager();
+
 // Global Design System object
 window.WebropolDesignSystem = {
   version: '1.0.0',
@@ -1070,7 +1483,7 @@ window.WebropolDesignSystem = {
     'webropol-button', 'webropol-card', 'webropol-action-card', 'webropol-badge',
     'webropol-header', 'webropol-sidebar', 'webropol-list-card', 'webropol-video-card',
     'webropol-configurable-card', 'webropol-input', 'webropol-loading', 'webropol-tooltip',
-    'webropol-tabs', 'webropol-modal'
+    'webropol-tabs', 'webropol-modal', 'webropol-settings-modal'
   ],
   
   // Theme utilities
@@ -1105,6 +1518,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('webropol-theme');
   if (savedTheme) {
     WebropolDesignSystem.setTheme(savedTheme);
+  }
+  
+  // Initialize global settings manager
+  if (window.globalSettingsManager) {
+    window.globalSettingsManager.init();
   }
 });
 

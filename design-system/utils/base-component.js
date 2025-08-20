@@ -94,11 +94,21 @@ export class BaseComponent extends HTMLElement {
    * Get boolean attribute
    */
   getBoolAttr(name, defaultValue = false) {
+    // If the attribute is not present, return the provided default
     if (!this.hasAttribute(name)) {
       return defaultValue;
     }
+    // For boolean attributes, the mere presence implies true
     const value = this.getAttribute(name);
-    return value !== 'false' && value !== '0' && value !== '';
+    if (value === '' || value === null) {
+      return true;
+    }
+    // Explicit falsy string values
+    const lowered = String(value).toLowerCase();
+    if (lowered === 'false' || lowered === '0' || lowered === 'no' || lowered === 'off') {
+      return false;
+    }
+    return true;
   }
 
   /**

@@ -38,6 +38,7 @@ export { Tooltip } from './feedback/Tooltip.js';
 
 // Modal components
 export { Modal } from './modals/Modal.js';
+export { WebropolSettingsModal } from './modals/SettingsModal.js';
 
 // Auto-register all components when this module is imported
 import './buttons/Button.js';
@@ -59,6 +60,7 @@ import './feedback/Badge.js';
 import './feedback/Loading.js';
 import './feedback/Tooltip.js';
 import './modals/Modal.js';
+import './modals/SettingsModal.js';
 
 // Backward compatibility aliases
 window.WebropolComponents = {
@@ -86,5 +88,6 @@ window.WebropolComponents = {
   Badge: 'webropol-badge',
   Loading: 'webropol-loading',
   Tooltip: 'webropol-tooltip',
-  Modal: 'webropol-modal'
+  Modal: 'webropol-modal',
+  SettingsModal: 'webropol-settings-modal'
 };

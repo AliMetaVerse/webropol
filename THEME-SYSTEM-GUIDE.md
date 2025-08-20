@@ -94,7 +94,7 @@ static THEME_CONFIGS = {
     icon: 'fa-sun',
     background: {
       class: 'bg-sun-to-br',
-      style: 'background: linear-gradient(to bottom right, #fed7aa, #fed7aa);'
+      style: 'background: linear-gradient(to bottom right, #fdf5ecff, #fff0dfff);'
     }
   },
   sky: {
@@ -111,7 +111,7 @@ static THEME_CONFIGS = {
     icon: 'fa-water',
     background: {
       class: 'bg-ocean-to-br',
-      style: 'background: linear-gradient(to bottom right, #3b82f6, #1d4ed8);'
+      style: 'background: linear-gradient(to bottom right, #ebf4f7, #ebf4f7);'
     }
   }
 };

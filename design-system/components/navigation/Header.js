@@ -68,7 +68,7 @@ export class WebropolHeader extends BaseComponent {
             
             ${showUserMenu !== false ? `
               <div class="relative">
-                <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group">
+                <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group" data-action="user-menu-toggle">
                   <div class="w-8 h-8 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-3">
                     <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
                   </div>
@@ -78,11 +78,11 @@ export class WebropolHeader extends BaseComponent {
                 
                 <!-- Dropdown menu (hidden by default) -->
                 <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown z-[9999]">
-                  <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                  <a href="#" data-action="profile" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
                     <i class="fal fa-user-circle w-4 mr-3"></i>
                     Profile
                   </a>
-                  <a href="#" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                  <a href="#" data-action="settings" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
                     <i class="fal fa-cog w-4 mr-3"></i>
                     Settings
                   </a>
@@ -108,7 +108,7 @@ export class WebropolHeader extends BaseComponent {
   }
 
   addDropdownListeners() {
-    const userButton = this.querySelector('button:has(.fa-chevron-down)');
+  const userButton = this.querySelector('button[data-action="user-menu-toggle"]');
     const dropdown = this.querySelector('.user-dropdown');
 
     if (userButton && dropdown) {
@@ -134,7 +134,7 @@ export class WebropolHeader extends BaseComponent {
       });
       
       // Handle settings link click
-      const settingsLink = dropdown.querySelector('a:has(.fa-cog)');
+  const settingsLink = dropdown.querySelector('a[data-action="settings"]');
       if (settingsLink) {
         settingsLink.addEventListener('click', (e) => {
           e.preventDefault();
@@ -143,8 +143,35 @@ export class WebropolHeader extends BaseComponent {
           // Close dropdown
           dropdown.classList.add('opacity-0', 'invisible');
           
-          // Emit settings open event
-          this.emit('settings-open');
+          // Try opening the global settings modal directly with graceful fallbacks
+          try {
+            // 1) Preferred: global helper if present
+            if (typeof window !== 'undefined' && typeof window.openGlobalSettings === 'function') {
+              window.openGlobalSettings();
+            // 2) If a global manager exists
+            } else if (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.openSettingsModal === 'function') {
+              window.globalSettingsManager.openSettingsModal();
+            // 3) Direct fallback: ensure element exists and open it
+            } else if (typeof customElements !== 'undefined' && customElements.get('webropol-settings-modal')) {
+              let modal = document.querySelector('webropol-settings-modal');
+              if (!modal) {
+                modal = document.createElement('webropol-settings-modal');
+                document.body.appendChild(modal);
+              }
+              if (typeof modal.open === 'function') {
+                modal.open();
+              } else {
+                modal.setAttribute('open', '');
+              }
+            } else {
+              // 4) Last resort: emit event for any page-level listeners
+              this.emit('settings-open');
+            }
+          } catch (err) {
+            // As a safety net, still emit event
+            this.emit('settings-open');
+            console.warn('Failed to open settings modal directly, emitted settings-open instead:', err);
+          }
         });
       }
     }

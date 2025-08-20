@@ -15,7 +15,7 @@ export class ThemeManager {
       icon: 'fa-sun-bright',
       background: {
         class: 'bg-sun-to-br',
-        style: 'background: linear-gradient(to bottom right, #fed7aa, #fed7aa);'
+        background: 'linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;'
       }
     },
     [this.THEMES.SKY]: {
@@ -97,7 +97,7 @@ export class ThemeManager {
     style.id = 'webropol-theme-styles';
     style.textContent = `
       .bg-sun-to-br {
-        background: linear-gradient(to bottom right, #ffead1ff, #fed7aa) !important;
+        background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;
       }
 
       .bg-sky-to-br {
