@@ -93,8 +93,12 @@ export class BaseComponent extends HTMLElement {
   /**
    * Get boolean attribute
    */
-  getBoolAttr(name) {
-    return this.hasAttribute(name);
+  getBoolAttr(name, defaultValue = false) {
+    if (!this.hasAttribute(name)) {
+      return defaultValue;
+    }
+    const value = this.getAttribute(name);
+    return value !== 'false' && value !== '0' && value !== '';
   }
 
   /**

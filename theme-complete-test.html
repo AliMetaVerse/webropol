@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Theme Test - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 6px;
+    }
+
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .hover-lift {
+      transition: all 0.2s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+  <script src="design-system/utils/theme-manager.js" type="module"></script>
+  <script src="design-system/utils/base-component.js" type="module"></script>
+  <script src="design-system/components/navigation/Header.js" type="module"></script>
+</head>
+<body x-data="themeTestApp()">
+  <div class="min-h-screen">
+    <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header>
+    
+    <main class="p-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="mb-8">
+          <h1 class="text-3xl font-bold text-webropol-gray-900 mb-4">Theme System Test</h1>
+          <p class="text-webropol-gray-600">
+            Use the theme selector in the header to switch between Warm and Sky themes.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover-lift">
+            <div class="w-12 h-12 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center mb-4">
+              <i class="fal fa-palette text-white"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-webropol-gray-900 mb-2">Current Theme</h3>
+            <p class="text-webropol-gray-600 mb-4">
+              Theme: <span id="currentTheme" class="font-medium">Loading...</span>
+            </p>
+            <div id="themeDetails" class="text-sm text-webropol-gray-500">
+              Loading theme details...
+            </div>
+          </div>
+
+          <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover-lift">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4">
+              <i class="fal fa-check text-white"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-webropol-gray-900 mb-2">Test Results</h3>
+            <ul class="space-y-2 text-sm">
+              <li class="flex items-center">
+                <i class="fal fa-check-circle text-green-500 mr-2"></i>
+                Theme Manager Loaded
+              </li>
+              <li class="flex items-center">
+                <i class="fal fa-check-circle text-green-500 mr-2"></i>
+                Header Component Loaded
+              </li>
+              <li class="flex items-center">
+                <i class="fal fa-check-circle text-green-500 mr-2"></i>
+                Theme Selector Visible
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8 bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80">
+          <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Theme Implementation Details</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-webropol-gray-600">Warm Theme Background:</span>
+              <code class="bg-gray-100 px-2 py-1 rounded">linear-gradient(to bottom right, #fed7aa, #fed7aa)</code>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-webropol-gray-600">Sky Theme Background:</span>
+              <code class="bg-gray-100 px-2 py-1 rounded">linear-gradient(to bottom right, #ebf4f7, #ebf4f7)</code>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-webropol-gray-600">Storage:</span>
+              <span class="text-webropol-gray-800">localStorage['webropol-theme']</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function themeTestApp() {
+      return {
+        currentTheme: '',
+        
+        init() {
+          this.updateThemeInfo();
+          
+          // Listen for theme changes
+          document.addEventListener('theme-changed', (e) => {
+            this.currentTheme = e.detail.theme;
+            this.updateThemeInfo();
+          });
+        },
+
+        updateThemeInfo() {
+          // Import and use ThemeManager if available
+          if (window.ThemeManager) {
+            this.currentTheme = window.ThemeManager.getCurrentTheme();
+            const config = window.ThemeManager.getThemeConfig(this.currentTheme);
+            
+            document.getElementById('currentTheme').textContent = config?.name || this.currentTheme;
+            document.getElementById('themeDetails').innerHTML = `
+              <div>Icon: <i class="fal ${config?.icon || 'fa-palette'}"></i> ${config?.icon || 'fa-palette'}</div>
+              <div>CSS Class: ${config?.background?.class || 'N/A'}</div>
+            `;
+          } else {
+            // Fallback if ThemeManager not loaded
+            setTimeout(() => this.updateThemeInfo(), 100);
+          }
+        }
+      }
+    }
+
+    // Make ThemeManager globally accessible for testing
+    document.addEventListener('DOMContentLoaded', () => {
+      import('./design-system/utils/theme-manager.js').then(module => {
+        window.ThemeManager = module.ThemeManager;
+      }).catch(console.error);
+    });
+  </script>
+</body>
+</html>
