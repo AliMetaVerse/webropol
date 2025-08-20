@@ -12,7 +12,9 @@ export class GlobalSettingsManager {
       notifications: true,
       compactMode: false,
       autoLogout: 30, // minutes
-      language: 'en'
+  language: 'en',
+  // New: control visibility of Header Create menu
+  showHeaderCreateMenu: true
     };
     
     this.settings = this.loadSettings();
@@ -108,6 +110,9 @@ export class GlobalSettingsManager {
     // Apply floating button visibility
     this.applyFloatingButtonVisibility();
 
+  // Apply header create menu visibility
+  this.applyHeaderCreateMenuVisibility();
+
     // Update auto-logout timer
     this.setupAutoLogout();
 
@@ -132,6 +137,24 @@ export class GlobalSettingsManager {
       } else {
         button.style.display = 'none';
         button.setAttribute('hidden', '');
+      }
+    });
+  }
+
+  /**
+   * Apply header create menu visibility across any headers on the page
+   */
+  applyHeaderCreateMenuVisibility() {
+    const headers = document.querySelectorAll('webropol-header');
+    headers.forEach(header => {
+      const container = header.querySelector('[data-create-menu]');
+      if (!container) return;
+      if (this.settings.showHeaderCreateMenu) {
+        container.style.display = '';
+        container.removeAttribute('hidden');
+      } else {
+        container.style.display = 'none';
+        container.setAttribute('hidden', '');
       }
     });
   }

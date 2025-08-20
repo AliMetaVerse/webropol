@@ -34,7 +34,9 @@ export class WebropolSettingsModal extends BaseComponent {
       notifications: true,
       compactMode: false,
       autoLogout: 30, // minutes
-      language: 'en'
+      language: 'en',
+      // New: control visibility of Header Create menu
+      showHeaderCreateMenu: true
     };
 
     const stored = localStorage.getItem('webropol_global_settings');
@@ -85,7 +87,8 @@ export class WebropolSettingsModal extends BaseComponent {
         notifications: true,
         compactMode: false,
         autoLogout: 30,
-        language: 'en'
+        language: 'en',
+        showHeaderCreateMenu: true
       };
       this.saveSettings();
       this.render();
@@ -194,6 +197,25 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
                              data-setting="showFloatingButton">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                  <!-- Header Create Menu Toggle -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Show Header Create Menu</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Show or hide the Create dropdown in the header">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the Create dropdown visibility in the header</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.showHeaderCreateMenu ? 'checked' : ''} 
+                             data-setting="showHeaderCreateMenu">
                       <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>

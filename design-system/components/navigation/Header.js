@@ -19,12 +19,64 @@ export class WebropolHeader extends BaseComponent {
     const showUserMenu = this.getBoolAttr('show-user-menu');
     const showThemeSelector = this.getBoolAttr('show-theme-selector', true); // Default to true
 
+    // Determine whether to show the header Create menu from global settings (default: true)
+    const showCreateMenu = (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.getSetting === 'function')
+      ? !!window.globalSettingsManager.getSetting('showHeaderCreateMenu')
+      : true;
+
     const currentTheme = ThemeManager.getCurrentTheme();
     const allThemes = ThemeManager.getAllThemes();
 
     this.innerHTML = `
       <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
         <div class="flex items-center space-x-4">
+          ${showCreateMenu ? `
+            <div class="relative" data-create-menu>
+              <button class="px-3 h-10 inline-flex items-center justify-center text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-xl transition-all create-menu-btn">
+                <i class="fal fa-plus mr-2"></i>
+                <span>Create</span>
+              </button>
+              <!-- Create dropdown -->
+              <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 create-menu-dropdown z-[9999]">
+                <div class="px-4 py-2 text-xs uppercase tracking-wide text-webropol-gray-500">Create new</div>
+                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="surveys">
+                  <i class="fal fa-chart-bar text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1">
+                    <div class="font-medium">Surveys</div>
+                    <div class="text-xs text-webropol-gray-500">Custom surveys</div>
+                  </div>
+                </button>
+                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="events">
+                  <i class="fal fa-calendar-alt text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1">
+                    <div class="font-medium">Events</div>
+                    <div class="text-xs text-webropol-gray-500">Event management</div>
+                  </div>
+                </button>
+                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
+                  <i class="fal fa-chart-line text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1">
+                    <div class="font-medium">EXW Surveys</div>
+                    <div class="text-xs text-webropol-gray-500">Employee experience</div>
+                  </div>
+                </button>
+                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
+                  <i class="fal fa-users text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1">
+                    <div class="font-medium">Employee</div>
+                    <div class="text-xs text-webropol-gray-500">HR management</div>
+                  </div>
+                </button>
+                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="campaign">
+                  <i class="fal fa-bullhorn text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1">
+                    <div class="font-medium">Campaign</div>
+                    <div class="text-xs text-webropol-gray-500">Marketing campaigns</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          ` : ''}
           ${title ? `
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
           ` : ''}
@@ -105,6 +157,17 @@ export class WebropolHeader extends BaseComponent {
     // Add dropdown functionality
     this.addDropdownListeners();
     this.addThemeListeners();
+    this.addCreateMenuListeners();
+
+    // Re-render header if global settings applied (to reflect visibility changes)
+    if (!this._settingsListenerAdded) {
+      window.addEventListener('webropol-settings-applied', () => {
+        // Debounce minorly to avoid double renders
+        clearTimeout(this._reRenderTimer);
+        this._reRenderTimer = setTimeout(() => this.render(), 50);
+      });
+      this._settingsListenerAdded = true;
+    }
   }
 
   addDropdownListeners() {
@@ -222,6 +285,47 @@ export class WebropolHeader extends BaseComponent {
       themeDropdown.addEventListener('click', (e) => {
         e.stopPropagation();
       });
+    }
+  }
+
+  addCreateMenuListeners() {
+    const createBtn = this.querySelector('.create-menu-btn');
+    const createDropdown = this.querySelector('.create-menu-dropdown');
+
+    if (createBtn && createDropdown) {
+      // Toggle dropdown
+      createBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = !createDropdown.classList.contains('opacity-0');
+        if (isVisible) {
+          createDropdown.classList.add('opacity-0', 'invisible');
+        } else {
+          createDropdown.classList.remove('opacity-0', 'invisible');
+        }
+      });
+
+      // Item clicks
+      const itemButtons = this.querySelectorAll('.create-item');
+      itemButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const type = btn.getAttribute('data-type');
+          // Emit event from component
+          this.emit('create-item', { type, source: 'header' });
+          // Also dispatch a global event for pages to listen to
+          document.dispatchEvent(new CustomEvent('create-item', { detail: { type, source: 'header' } }));
+          // Close dropdown
+          createDropdown.classList.add('opacity-0', 'invisible');
+        });
+      });
+
+      // Close on outside click
+      document.addEventListener('click', () => {
+        createDropdown.classList.add('opacity-0', 'invisible');
+      });
+
+      // Prevent close when clicking inside
+      createDropdown.addEventListener('click', (e) => e.stopPropagation());
     }
   }
 }
