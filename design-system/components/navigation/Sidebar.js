@@ -83,7 +83,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Surveys</span>
           </a>
           
-          <a href="${link('events/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="${link('events/list.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                         xl:px-4 px-3
                                                         group-hover:px-4
                                                         py-3

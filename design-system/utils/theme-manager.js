@@ -12,7 +12,7 @@ export class ThemeManager {
   static THEME_CONFIGS = {
     [this.THEMES.WARM]: {
       name: 'Warm',
-      icon: 'fa-sun',
+      icon: 'fa-sun-bright',
       background: {
         class: 'bg-sun-to-br',
         style: 'background: linear-gradient(to bottom right, #fed7aa, #fed7aa);'
