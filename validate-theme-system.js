@@ -49,8 +49,8 @@
     test: () => {
       if (!window.ThemeManager) return Promise.resolve(false);
       
-      const originalTheme = window.ThemeManager.getCurrentTheme();
-      const testTheme = originalTheme === 'warm' ? 'sky' : 'warm';
+  const originalTheme = window.ThemeManager.getCurrentTheme();
+  const testTheme = originalTheme === 'warm' ? 'ocean' : 'warm';
       
       // Set theme and check if it persists
       window.ThemeManager.setTheme(testTheme);
@@ -71,8 +71,9 @@
       if (!window.ThemeManager) return Promise.resolve(false);
       
       const body = document.body;
-      const hasThemeClass = body.classList.contains('bg-sun-to-br') || 
-                           body.classList.contains('bg-sky-to-br');
+  const hasThemeClass = body.classList.contains('bg-sun-to-br') || 
+           body.classList.contains('bg-ocean-to-br') ||
+           body.classList.contains('bg-sky-to-br'); // legacy alias
       
       return Promise.resolve(hasThemeClass);
     }
@@ -102,7 +103,7 @@
 
     console.log('\n🎯 To test manually:');
     console.log('1. Look for a theme selector button in the header (palette icon)');
-    console.log('2. Click it to see theme options (Warm/Sky)');
+  console.log('2. Click it to see theme options (Warm/Ocean)');
     console.log('3. Select a theme and watch the background change');
     console.log('4. Refresh the page to see if theme persists');
   }

@@ -6,7 +6,7 @@
 export class ThemeManager {
   static THEMES = {
     WARM: 'warm',
-    SKY: 'sky'
+    OCEAN: 'ocean'
   };
 
   static THEME_CONFIGS = {
@@ -15,15 +15,16 @@ export class ThemeManager {
       icon: 'fa-sun-bright',
       background: {
         class: 'bg-sun-to-br',
-        background: 'linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;'
+  // Use 'style' to align with applyTheme() expectation
+  style: 'background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;'
       }
     },
-    [this.THEMES.SKY]: {
+    [this.THEMES.OCEAN]: {
       name: 'Ocean',
       icon: 'fa-droplet',
       background: {
-        class: 'bg-sky-to-br',
-        style: 'background: linear-gradient(to bottom right, #ebf4f7, #ebf4f7);'
+        class: 'bg-ocean-to-br',
+        style: 'background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;'
       }
     }
   };
@@ -34,7 +35,13 @@ export class ThemeManager {
    * Get current theme
    */
   static getCurrentTheme() {
-    return localStorage.getItem(this.STORAGE_KEY) || this.THEMES.SKY;
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    // Migrate legacy value 'sky' -> 'ocean'
+    if (stored === 'sky') {
+      localStorage.setItem(this.STORAGE_KEY, this.THEMES.OCEAN);
+      return this.THEMES.OCEAN;
+    }
+    return stored || this.THEMES.OCEAN;
   }
 
   /**
@@ -64,12 +71,14 @@ export class ThemeManager {
     Object.values(this.THEME_CONFIGS).forEach(themeConfig => {
       body.classList.remove(themeConfig.background.class);
     });
+  // Backward-compat: remove legacy class name if present
+  body.classList.remove('bg-sky-to-br');
 
     // Add current theme class
     body.classList.add(config.background.class);
     
     // Apply inline style as fallback
-    body.style.cssText = config.background.style;
+  body.style.cssText = config.background.style || '';
 
     // Store current theme in data attribute
     body.setAttribute('data-theme', theme);
@@ -100,9 +109,13 @@ export class ThemeManager {
         background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;
       }
 
-      .bg-sky-to-br {
+      /* Ocean theme */
+      .bg-ocean-to-br {
         background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;
       }
+
+      /* Legacy alias for backward compatibility */
+      .bg-sky-to-br { background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important; }
 
       /* Theme transition for smooth changes */
       body {

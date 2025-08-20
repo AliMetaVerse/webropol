@@ -35,7 +35,7 @@
 ### **Working Features:**
 - 🎨 Theme selector appears in headers of fixed pages
 - 🌞 Warm theme (orange/peach background)
-- ☁️ Sky theme (light blue background)  
+- 🌊 Ocean theme (light blue background)  
 - 💾 Theme persistence across browser sessions
 - 🔄 Real-time theme switching
 - 🎯 Consistent design across fixed pages

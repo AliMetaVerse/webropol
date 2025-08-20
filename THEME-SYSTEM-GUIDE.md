@@ -5,7 +5,7 @@
 The Webropol theme system allows users to switch between different visual themes that affect the background appearance of the application. Currently, two themes are available:
 
 - **Warm Theme**: Uses a warm orange/peach background (`#fed7aa`)
-- **Sky Theme**: Uses a cool sky blue background (`#ebf4f7`)
+ **Ocean Theme**: Uses a cool ocean blue background (`#ebf4f7`)
 
 ## Implementation
 
@@ -14,7 +14,7 @@ The Webropol theme system allows users to switch between different visual themes
 The `ThemeManager` class (`design-system/utils/theme-manager.js`) handles all theme-related functionality:
 
 ```javascript
-import { ThemeManager } from './design-system/utils/theme-manager.js';
+// Set theme
 
 // Get current theme
 const currentTheme = ThemeManager.getCurrentTheme();
@@ -23,7 +23,7 @@ const currentTheme = ThemeManager.getCurrentTheme();
 ThemeManager.setTheme('warm'); // or 'sky'
 
 // Listen for theme changes
-document.addEventListener('theme-changed', (e) => {
+  background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;
   console.log('Theme changed to:', e.detail.theme);
 });
 ```
@@ -40,11 +40,11 @@ The Header component includes a theme selector when the `show-theme-selector` at
   show-help="true" 
   show-user-menu="true">
 </webropol-header>
-```
-
+  ocean: {
+    name: 'Ocean',
 ### CSS Classes
 
-Two CSS classes are automatically injected:
+      class: 'bg-ocean-to-br',
 
 ```css
 .bg-sun-to-br {

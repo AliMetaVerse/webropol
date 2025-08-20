@@ -39,7 +39,7 @@
 1. **Theme Selector**: Palette icon in header on all survey pages
 2. **Theme Options**: 
    - 🌞 **Warm Theme**: Orange/peach background (#fed7aa)
-   - ☁️ **Sky Theme**: Light blue background (#ebf4f7)
+   - 🌊 **Ocean Theme**: Light blue background (#ebf4f7)
 3. **Persistence**: Theme choice saved in localStorage
 4. **Consistency**: All pages use the same theme system
 5. **Real-time Switching**: Background changes immediately
@@ -49,7 +49,7 @@
 1. Open any survey page (index.html, list.html, or edit.html)
 2. Look for the palette icon (🎨) in the header
 3. Click it to see theme options
-4. Select "Warm" or "Sky" theme
+4. Select "Warm" or "Ocean" theme
 5. Observe background change
 6. Navigate between pages to see theme persistence
 7. Refresh page to confirm theme is remembered
