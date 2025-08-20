@@ -206,31 +206,48 @@
             box-shadow: var(--shadow-xl);
         }
 
-        .tab-modern {
-            position: relative;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius-lg);
-            font-weight: var(--font-weight-medium);
-            transition: all 0.2s ease;
+        /* Unified Rounded Tab System */
+        .webropol-tabs-wrapper {
+            display: inline-flex;
+            background: var(--primary-50, #eefbfd);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07);
+            border: 1px solid var(--primary-100, #d5f4f8);
+            gap: 4px;
+        }
+
+        .webropol-tab {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: var(--font-weight-medium, 500);
+            transition: all 0.3s ease;
             background: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neutral-600, #787f81);
         }
 
-        .tab-modern.active {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+        .webropol-tab.active {
+            background: var(--primary-600, #1d809d);
             color: white;
-            box-shadow: var(--shadow-card);
+            box-shadow: 0 4px 12px rgba(29, 128, 157, 0.3);
+            transform: scale(1.02);
         }
 
-        .tab-modern.active::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: var(--border-radius-lg);
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
-            pointer-events: none;
+        .webropol-tab:not(.active):hover {
+            color: var(--neutral-900, #45484a);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: scale(1.01);
+        }
+
+        .webropol-tab:focus-visible {
+            outline: 2px solid var(--primary-300, #79d6e7);
+            outline-offset: 2px;
         }
 
         .search-modern {
@@ -398,15 +415,15 @@
                                 </div>
                             </div>
                             
-                            <!-- Tabs -->
-                            <div class="flex items-center space-x-2 mb-6">
+                            <!-- Unified Rounded Tabs -->
+                            <div class="webropol-tabs-wrapper mb-6">
                                 <button @click="setActiveTab('upcomings')" 
-                                        :class="activeTab === 'upcomings' ? 'tab-modern active' : 'tab-modern text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'">
+                                        :class="activeTab === 'upcomings' ? 'webropol-tab active' : 'webropol-tab'">
                                     <i class="fas fa-calendar-alt mr-2"></i>
                                     Upcoming Events
                                 </button>
                                 <button @click="setActiveTab('archive')" 
-                                        :class="activeTab === 'archive' ? 'tab-modern active' : 'tab-modern text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'">
+                                        :class="activeTab === 'archive' ? 'webropol-tab active' : 'webropol-tab'">
                                     <i class="fas fa-archive mr-2"></i>
                                     Archived Events
                                 </button>

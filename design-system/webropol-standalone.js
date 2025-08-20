@@ -853,12 +853,14 @@ class WebropolTooltip extends BaseComponent {
 // Tabs Component
 class WebropolTabs extends BaseComponent {
   static get observedAttributes() {
-    return ['active-tab', 'variant', 'tabs'];
+    return ['active-tab', 'variant', 'size', 'alignment'];
   }
 
   render() {
     const activeTab = this.getAttr('active-tab');
-    const variant = this.getAttr('variant', 'default');
+    const variant = this.getAttr('variant', 'pills');
+    const size = this.getAttr('size', 'md');
+    const alignment = this.getAttr('alignment', 'start');
     const tabsAttr = this.getAttr('tabs');
 
     let tabs = [];
@@ -868,21 +870,8 @@ class WebropolTabs extends BaseComponent {
       console.warn('Invalid JSON in tabs attribute:', e);
     }
 
-    const tabsHtml = tabs.map(tab => {
-      const isActive = tab.id === activeTab;
-      return `
-        <button 
-          class="tab-button ${this.getTabClasses(variant, isActive)}" 
-          data-tab="${tab.id}"
-          role="tab"
-          aria-selected="${isActive}"
-        >
-          ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
-          ${tab.label}
-          ${tab.badge ? `<span class="ml-2 px-2 py-0.5 text-xs bg-webropol-teal-100 text-webropol-teal-800 rounded-full">${tab.badge}</span>` : ''}
-        </button>
-      `;
-    }).join('');
+    const containerClasses = this.getContainerClasses(variant, alignment);
+    const tabsHtml = this.renderTabsByVariant(tabs, variant, size, activeTab);
 
     const contentHtml = tabs.map(tab => `
       <div class="tab-content ${tab.id === activeTab ? 'block' : 'hidden'}" data-content="${tab.id}" role="tabpanel">
@@ -892,7 +881,7 @@ class WebropolTabs extends BaseComponent {
 
     this.innerHTML = `
       <div class="tabs-container">
-        <div class="flex ${variant === 'pills' ? 'space-x-2' : 'border-b border-webropol-gray-200'}" role="tablist">
+        <div class="${containerClasses}">
           ${tabsHtml}
         </div>
         <div class="tab-contents mt-4">
@@ -902,16 +891,39 @@ class WebropolTabs extends BaseComponent {
     `;
   }
 
-  getTabClasses(variant, isActive) {
-    if (variant === 'pills') {
-      return isActive 
-        ? 'px-4 py-2 bg-webropol-teal-100 text-webropol-teal-700 rounded-lg font-medium'
-        : 'px-4 py-2 text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-webropol-gray-100 rounded-lg transition-colors';
-    }
+  getContainerClasses(variant, alignment) {
+    const alignmentClass = alignment === 'center' ? 'justify-center' : 
+                          alignment === 'end' ? 'justify-end' : 'justify-start';
     
-    return isActive
-      ? 'px-4 py-2 border-b-2 border-webropol-teal-500 text-webropol-teal-600 font-medium'
-      : 'px-4 py-2 text-webropol-gray-600 hover:text-webropol-gray-900 transition-colors';
+    const variantClass = variant === 'pills' ? 'tabs-pills' :
+                        variant === 'underline' ? 'tabs-underline' :
+                        variant === 'modern' ? 'tabs-modern' :
+                        variant === 'admin' ? 'tabs-admin' : 'tabs-pills';
+    
+    return `tabs-list ${variantClass} ${alignmentClass}`;
+  }
+
+  renderTabsByVariant(tabs, variant, size, activeTab) {
+    const sizeClass = `size-${size}`;
+    
+    return tabs.map(tab => {
+      const isActive = tab.id === activeTab;
+      const classes = `tab-button ${sizeClass} ${isActive ? 'active' : ''}`;
+      
+      return `
+        <button 
+          class="${classes}" 
+          data-tab="${tab.id}"
+          role="tab"
+          aria-selected="${isActive}"
+          aria-controls="panel-${tab.id}"
+          id="tab-${tab.id}">
+          ${tab.icon ? `<i class="fal fa-${tab.icon}"></i>` : ''}
+          ${tab.label}
+          ${tab.badge ? `<span class="tab-badge">${tab.badge}</span>` : ''}
+        </button>
+      `;
+    }).join('');
   }
 
   bindEvents() {

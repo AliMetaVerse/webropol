@@ -1,13 +1,14 @@
 /**
- * Webropol Tabs Component
- * Modern pill-style tabs with smooth animations
+ * Webropol Unified Tabs Component
+ * Consistent tab styling across all applications
+ * Supports multiple variants: pills, underline, modern, admin
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolTabs extends BaseComponent {
   static get observedAttributes() {
-    return ['active-tab', 'variant'];
+    return ['active-tab', 'variant', 'size', 'alignment', 'shape'];
   }
 
   constructor() {
@@ -33,14 +34,17 @@ export class WebropolTabs extends BaseComponent {
 
   render() {
     const activeTab = this.getAttr('active-tab', this.tabs[0]?.id || '');
-    const variant = this.getAttr('variant', 'pills');
+    const variant = this.getAttr('variant', 'unified');
+    const size = this.getAttr('size', 'md');
+    const alignment = this.getAttr('alignment', 'start');
+    const shape = this.getAttr('shape', 'pill'); // 'pill' or 'rounded'
     
     if (this.tabs.length === 0) {
-      this.innerHTML = '<div class="text-webropol-gray-500 text-sm">No tabs defined</div>';
+      this.innerHTML = '<div class="text-neutral-500 text-sm">No tabs defined</div>';
       return;
     }
 
-    const tabsHtml = variant === 'pills' ? this.renderPillTabs(activeTab) : this.renderUnderlineTabs(activeTab);
+    const tabsHtml = this.renderUnifiedTabs(activeTab, size, alignment, shape);
     
     this.innerHTML = `
       <div class="tabs-container">
@@ -52,54 +56,76 @@ export class WebropolTabs extends BaseComponent {
     `;
   }
 
-  renderPillTabs(activeTab) {
+  renderUnifiedTabs(activeTab, size, alignment, shape) {
+    const containerClasses = this.getContainerClasses(alignment, shape);
+    const sizeClasses = this.getSizeClasses(size);
+    const shapeClasses = this.getShapeClasses(shape);
+    
     return `
-      <div class="tabs-list flex">
-        <div class="inline-flex bg-webropol-teal-50 p-1.5 rounded-full shadow-soft border border-webropol-teal-100 gap-1">
-          ${this.tabs.map(tab => `
+      <div class="${containerClasses}">
+        ${this.tabs.map(tab => {
+          const isActive = tab.id === activeTab;
+          const buttonClasses = `webropol-unified-tab ${sizeClasses.button} ${shapeClasses.button} ${isActive ? 'active' : ''}`;
+          
+          return `
             <button
-              class="tab-button px-7 py-3 rounded-full font-semibold min-w-[120px] text-center text-sm tracking-wide focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-300 ease-out mx-1 ${
-                activeTab === tab.id 
-                  ? 'bg-webropol-teal-600 text-white shadow-lg transform scale-[1.02]' 
-                  : 'text-webropol-gray-600 hover:text-webropol-teal-700 hover:bg-white hover:shadow-md hover:scale-[1.01]'
-              }"
+              class="${buttonClasses}"
               data-tab="${tab.id}"
               role="tab"
-              aria-selected="${activeTab === tab.id}"
+              aria-selected="${isActive}"
               aria-controls="panel-${tab.id}"
               id="tab-${tab.id}">
-              ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
+              ${tab.icon ? `<i class="fal fa-${tab.icon} ${sizeClasses.icon}"></i>` : ''}
               ${tab.label}
-              ${tab.badge ? `<span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">${tab.badge}</span>` : ''}
+              ${tab.badge ? `<span class="webropol-tab-badge ${sizeClasses.badge}">${tab.badge}</span>` : ''}
             </button>
-          `).join('')}
-        </div>
+          `;
+        }).join('')}
       </div>
     `;
   }
 
-  renderUnderlineTabs(activeTab) {
-    return `
-      <div class="tabs-list flex border-b border-webropol-gray-200">
-        ${this.tabs.map(tab => `
-          <button
-            class="tab-button relative px-6 py-3 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:ring-offset-2 transition-all duration-200 ${
-              activeTab === tab.id 
-                ? 'text-webropol-teal-600 border-b-2 border-webropol-teal-600' 
-                : 'text-webropol-gray-600 hover:text-webropol-teal-700 border-b-2 border-transparent hover:border-webropol-gray-300'
-            }"
-            data-tab="${tab.id}"
-            role="tab"
-            aria-selected="${activeTab === tab.id}"
-            aria-controls="panel-${tab.id}"
-            id="tab-${tab.id}">
-            ${tab.icon ? `<i class="fal fa-${tab.icon} mr-2"></i>` : ''}
-            ${tab.label}
-            ${tab.badge ? `<span class="ml-2 px-2 py-1 bg-webropol-teal-100 text-webropol-teal-600 rounded-full text-xs">${tab.badge}</span>` : ''}
-          </button>
-        `).join('')}
-      </div>
-    `;
+  getContainerClasses(alignment, shape) {
+    const alignmentClass = alignment === 'center' ? 'justify-center' : 
+                          alignment === 'end' ? 'justify-end' : 'justify-start';
+    
+    const shapeClass = shape === 'pill' ? 'webropol-tabs-pill-container' : 'webropol-tabs-rounded-container';
+    
+    return `webropol-tabs-unified flex ${alignmentClass} ${shapeClass}`;
+  }
+
+  getShapeClasses(shape) {
+    if (shape === 'pill') {
+      return {
+        button: 'webropol-tab-pill'
+      };
+    } else {
+      return {
+        button: 'webropol-tab-rounded'
+      };
+    }
+  }
+
+  getSizeClasses(size) {
+    const sizes = {
+      sm: {
+        button: 'size-sm',
+        icon: 'mr-1.5',
+        badge: 'size-sm'
+      },
+      md: {
+        button: 'size-md',
+        icon: 'mr-2',
+        badge: 'size-md'
+      },
+      lg: {
+        button: 'size-lg',
+        icon: 'mr-2.5',
+        badge: 'size-lg'
+      }
+    };
+    
+    return sizes[size] || sizes.md;
   }
 
   renderPanels(activeTab) {
@@ -110,13 +136,13 @@ export class WebropolTabs extends BaseComponent {
         role="tabpanel"
         aria-labelledby="tab-${tab.id}"
         tabindex="0">
-        ${tab.content || `<div class="text-webropol-gray-500">Content for ${tab.label}</div>`}
+        ${tab.content || `<div class="text-neutral-500">Content for ${tab.label}</div>`}
       </div>
     `).join('');
   }
 
   bindEvents() {
-    const tabButtons = this.querySelectorAll('.tab-button');
+    const tabButtons = this.querySelectorAll('.webropol-unified-tab');
     
     tabButtons.forEach(button => {
       this.addListener(button, 'click', (event) => {
@@ -132,7 +158,7 @@ export class WebropolTabs extends BaseComponent {
 
   handleKeyNavigation(event) {
     const currentTab = event.currentTarget;
-    const tabButtons = Array.from(this.querySelectorAll('.tab-button'));
+    const tabButtons = Array.from(this.querySelectorAll('.webropol-unified-tab'));
     const currentIndex = tabButtons.indexOf(currentTab);
 
     let nextIndex = currentIndex;
@@ -182,7 +208,7 @@ export class WebropolTabs extends BaseComponent {
     }
   }
 
-  // Public methods
+  // Public methods for dynamic tab management
   addTab(tab) {
     this.tabs.push(tab);
     this.render();
@@ -205,6 +231,16 @@ export class WebropolTabs extends BaseComponent {
       this.render();
       this.bindEvents();
     }
+  }
+
+  // Shape switching methods
+  setShape(shape) {
+    this.setAttribute('shape', shape);
+  }
+
+  toggleShape() {
+    const currentShape = this.getAttr('shape', 'pill');
+    this.setShape(currentShape === 'pill' ? 'rounded' : 'pill');
   }
 }
 
