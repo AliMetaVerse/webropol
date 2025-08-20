@@ -45,7 +45,7 @@ export class WebropolHeader extends BaseComponent {
             ${showUserMenu !== false ? `
               <div class="relative">
                 <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-3">
+                  <div class="w-8 h-8 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-3">
                     <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
                   </div>
                   <span class="mr-2 font-medium">${username}</span>

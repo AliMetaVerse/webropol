@@ -216,7 +216,7 @@ updateSelectAllQuestions() {
     <!-- Modal Header -->
     <div class="flex items-center justify-between p-6 border-b border-webropol-gray-200">
       <div class="flex items-center">
-        <div class="w-10 h-10 bg-gradient-to-br from-color-100 to-color-100 rounded-full flex items-center justify-center mr-4">
+        <div class="w-10 h-10 bg-sun-to-br from-color-100 to-color-100 rounded-full flex items-center justify-center mr-4">
           <i class="fal fa-icon text-color-600 text-lg"></i>
         </div>
         <div>

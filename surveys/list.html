@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveys - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="../design-system/webropol-standalone.js"></script>
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .hover-lift {
+            transition: all 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Status badges */
+        .status-draft {
+            background-color: #fef3c7;
+            color: #d97706;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background-color: #dcfce7;
+            color: #16a34a;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-closed {
+            background-color: #f1f5f9;
+            color: #64748b;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Tab styling */
+        .tab-active {
+            background-color: #06b6d4;
+            color: white;
+        }
+
+        .tab-inactive {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+
+        .tab-inactive:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Table row hover */
+        .table-row:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Checkbox styling */
+        .custom-checkbox {
+            width: 1rem;
+            height: 1rem;
+            color: #0891b2;
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            border-radius: 0.25rem;
+        }
+
+        .custom-checkbox:focus {
+            outline: 2px solid rgba(8, 145, 178, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Sidebar transition effects */
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+
+        .main-content-transition {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50/30" style="background-color: #ebf4f7;" x-data="surveysListApp()" @click="showContextMenu = null">
+    <div class="flex h-screen">
+        <webropol-sidebar x-show="interfaceMode === 'classic'" 
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform -translate-x-full scale-95"
+                         x-transition:enter-end="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform -translate-x-full scale-95"
+                         class="sidebar-transition"
+                         active="surveys" base="../"></webropol-sidebar>
+        <div class="flex-1 flex flex-col overflow-hidden main-content-transition xl:ml-0 ml-0" 
+             :class="interfaceMode === 'prompt' ? 'w-full' : ''">
+            <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
+            <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4"
+                 :class="interfaceMode === 'prompt' ? 'px-8 sm:px-8' : ''">
+                <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
+                    '[{\"label\":\"Home\",\"url\":\"../index.html\"},{\"label\":\"Surveys\",\"url\":\"index.html\"},{\"label\":\"Magic\",\"url\":\"#\"}]' : 
+                    '[{\"label\":\"Home\",\"url\":\"../index.html\"},{\"label\":\"Surveys\",\"url\":\"index.html\"}]'"></webropol-breadcrumbs>
+            </div>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-12 bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50/30 min-h-screen pb-24" 
+                  :class="interfaceMode === 'prompt' ? 'px-8 lg:px-16 xl:px-24' : ''"
+                  role="main">
+                <div class="max-w-7xl mx-auto" :class="interfaceMode === 'prompt' ? 'max-w-6xl' : ''">
+                    <!-- Page Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
+                                <i class="fal fa-poll text-white text-lg"></i>
+                            </div>
+                            <h1 class="text-3xl font-bold text-webropol-gray-900">Surveys</h1>
+                        </div>
+                        <button class="bg-webropol-teal-500 hover:bg-webropol-teal-600 text-white px-4 py-2 rounded-lg font-medium transition-all flex items-center space-x-2 hover-lift">
+                            <i class="fal fa-plus"></i>
+                            <span>Create new</span>
+                        </button>
+                    </div>
+
+                    <!-- Content Container -->
+                    <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-100/80 overflow-hidden">
+                        <!-- Left Sidebar - Folders -->
+                        <div class="flex">
+                            <div class="w-64 bg-gray-50 border-r border-gray-200 p-4">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-4">Folders</h3>
+                                <div class="space-y-1">
+                                    <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50 border border-blue-200">
+                                        <div class="flex items-center space-x-2">
+                                            <i class="fal fa-folder text-blue-600"></i>
+                                            <span class="text-sm font-medium text-blue-900">Main folder</span>
+                                        </div>
+                                        <button class="text-blue-600 hover:text-blue-800">
+                                            <i class="fal fa-search text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="ml-4 space-y-1">
+                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                            <i class="fal fa-folder text-gray-400"></i>
+                                            <span class="text-sm text-gray-700">Employee surveys</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                            <i class="fal fa-folder text-gray-400"></i>
+                                            <span class="text-sm text-gray-700">Customer surveys</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                            <i class="fal fa-folder text-gray-400"></i>
+                                            <span class="text-sm text-gray-700">Lorem ipsum</span>
+                                        </div>
+                                    </div>
+                                    <button class="w-full mt-4 px-3 py-2 text-sm text-webropol-teal-600 hover:text-webropol-teal-700 hover:bg-webropol-teal-50 rounded-lg transition-colors">
+                                        Edit folders
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Main Content Area -->
+                            <div class="flex-1">
+                                <!-- Filter Tabs -->
+                                <div class="border-b border-gray-200 px-6 py-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex space-x-1">
+                                            <button class="tab-active px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                                All
+                                            </button>
+                                            <button class="tab-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                                Drafts
+                                            </button>
+                                            <button class="tab-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                                Published
+                                            </button>
+                                            <button class="tab-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                                Closed
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center space-x-4">
+                                            <!-- Search -->
+                                            <div class="relative">
+                                                <input type="text" placeholder="Search surveys" 
+                                                       class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500/20 focus:border-webropol-teal-500 text-sm">
+                                                <i class="fal fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            </div>
+                                            <!-- Show only mine toggle -->
+                                            <div class="flex items-center space-x-2">
+                                                <label class="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" class="sr-only peer">
+                                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                                                </label>
+                                                <span class="text-sm text-gray-600">Show only mine</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Table -->
+                                <div class="px-6 py-4">
+                                    <table class="w-full">
+                                        <thead>
+                                            <tr class="border-b border-gray-200">
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700 w-8">
+                                                    <input type="checkbox" class="custom-checkbox">
+                                                </th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700">Name</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700">Answers</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700">
+                                                    <div class="flex items-center space-x-1">
+                                                        <span>Last edited</span>
+                                                        <i class="fal fa-chevron-down text-xs"></i>
+                                                    </div>
+                                                </th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700">Created by</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700">Status</th>
+                                                <th class="text-left py-3 text-sm font-medium text-gray-700 w-8"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-row border-b border-gray-100 cursor-pointer">
+                                                <td class="py-3">
+                                                    <input type="checkbox" class="custom-checkbox">
+                                                </td>
+                                                <td class="py-3">
+                                                    <a href="edit.html" class="text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                                                        Cell text link
+                                                    </a>
+                                                </td>
+                                                <td class="py-3 text-gray-700">123</td>
+                                                <td class="py-3 text-gray-600 text-sm">15.12.2023 12:34</td>
+                                                <td class="py-3 text-gray-700">Jane Doe</td>
+                                                <td class="py-3">
+                                                    <span class="status-draft">Draft</span>
+                                                </td>
+                                                <td class="py-3">
+                                                    <button class="text-gray-400 hover:text-gray-600">
+                                                        <i class="fal fa-ellipsis-v"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="table-row border-b border-gray-100 cursor-pointer">
+                                                <td class="py-3">
+                                                    <input type="checkbox" class="custom-checkbox">
+                                                </td>
+                                                <td class="py-3">
+                                                    <a href="edit.html" class="text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                                                        Cell text link
+                                                    </a>
+                                                </td>
+                                                <td class="py-3 text-gray-700">123</td>
+                                                <td class="py-3 text-gray-600 text-sm">15.12.2023 12:34</td>
+                                                <td class="py-3 text-gray-700">Jane Doe</td>
+                                                <td class="py-3">
+                                                    <span class="status-published">Published</span>
+                                                </td>
+                                                <td class="py-3">
+                                                    <button class="text-gray-400 hover:text-gray-600">
+                                                        <i class="fal fa-ellipsis-v"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="table-row border-b border-gray-100 cursor-pointer">
+                                                <td class="py-3">
+                                                    <input type="checkbox" class="custom-checkbox">
+                                                </td>
+                                                <td class="py-3">
+                                                    <a href="edit.html" class="text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                                                        Cell text link
+                                                    </a>
+                                                </td>
+                                                <td class="py-3 text-gray-700">123</td>
+                                                <td class="py-3 text-gray-600 text-sm">15.12.2023 12:34</td>
+                                                <td class="py-3 text-gray-700">Jane Doe</td>
+                                                <td class="py-3">
+                                                    <span class="status-published">Published</span>
+                                                </td>
+                                                <td class="py-3">
+                                                    <button class="text-gray-400 hover:text-gray-600">
+                                                        <i class="fal fa-ellipsis-v"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="table-row cursor-pointer">
+                                                <td class="py-3">
+                                                    <input type="checkbox" class="custom-checkbox">
+                                                </td>
+                                                <td class="py-3">
+                                                    <a href="edit.html" class="text-webropol-teal-600 hover:text-webropol-teal-700 font-medium">
+                                                        Cell text link
+                                                    </a>
+                                                </td>
+                                                <td class="py-3 text-gray-700">123</td>
+                                                <td class="py-3 text-gray-600 text-sm">15.12.2023 12:34</td>
+                                                <td class="py-3 text-gray-700">Jane Doe</td>
+                                                <td class="py-3">
+                                                    <span class="status-closed">Closed</span>
+                                                </td>
+                                                <td class="py-3">
+                                                    <button class="text-gray-400 hover:text-gray-600">
+                                                        <i class="fal fa-ellipsis-v"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <!-- Pagination -->
+                                    <div class="flex items-center justify-between mt-6">
+                                        <div class="flex items-center space-x-2">
+                                            <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-teal-500/20 focus:border-webropol-teal-500">
+                                                <option>20 rows</option>
+                                                <option>50 rows</option>
+                                                <option>100 rows</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <button class="w-8 h-8 bg-webropol-teal-500 text-white rounded-lg flex items-center justify-center text-sm font-medium">
+                                                1
+                                            </button>
+                                            <button class="w-8 h-8 hover:bg-gray-100 rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">
+                                                2
+                                            </button>
+                                            <button class="w-8 h-8 hover:bg-gray-100 rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">
+                                                3
+                                            </button>
+                                            <button class="w-8 h-8 hover:bg-gray-100 rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">
+                                                4
+                                            </button>
+                                            <span class="text-gray-500 text-sm px-2">...</span>
+                                            <button class="w-8 h-8 hover:bg-gray-100 rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">
+                                                12
+                                            </button>
+                                            <button class="w-8 h-8 hover:bg-gray-100 rounded-lg flex items-center justify-center text-sm font-medium text-gray-700">
+                                                <i class="fal fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Floating Create Button Component -->
+    <webropol-floating-button></webropol-floating-button>
+
+    <script>
+        function surveysListApp() {
+            return {
+                // Interface modes
+                interfaceMode: 'classic', // 'classic' or 'prompt'
+                showContextMenu: null,
+                
+                // Survey list specific
+                selectedSurveys: [],
+                showOnlyMine: false,
+                currentTab: 'all',
+                searchQuery: '',
+                
+                init() {
+                    console.log('Surveys List initialized');
+                    
+                    // Initialize interface mode from localStorage or default to classic
+                    this.interfaceMode = localStorage.getItem('interfaceMode') || 'classic';
+                },
+                
+                // Interface mode management
+                toggleInterfaceMode() {
+                    this.interfaceMode = this.interfaceMode === 'classic' ? 'prompt' : 'classic';
+                    localStorage.setItem('interfaceMode', this.interfaceMode);
+                },
+                
+                setInterfaceMode(mode) {
+                    this.interfaceMode = mode;
+                    localStorage.setItem('interfaceMode', mode);
+                },
+                
+                // Survey list functionality
+                selectAllSurveys() {
+                    // Toggle select all functionality
+                },
+                
+                switchTab(tab) {
+                    this.currentTab = tab;
+                    // Filter surveys based on tab
+                },
+                
+                searchSurveys() {
+                    // Search functionality
+                },
+                
+                toggleShowOnlyMine() {
+                    this.showOnlyMine = !this.showOnlyMine;
+                    // Filter surveys by current user
+                }
+            }
+        }
+
+        // Handle floating button navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingButton = document.querySelector('webropol-floating-button');
+            if (floatingButton) {
+                floatingButton.addEventListener('create-item', function(e) {
+                    if (e.detail.type === 'surveys') {
+                        // Navigate to surveys index.html for creating new survey
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

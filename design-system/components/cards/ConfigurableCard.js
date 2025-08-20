@@ -40,7 +40,7 @@ export class WebropolConfigurableCard extends BaseComponent {
           <div class="flex items-start justify-between">
             <div class="flex items-start space-x-4 flex-1">
               ${icon ? `
-                <div class="w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div class="w-12 h-12 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <i class="fal fa-${icon} text-white text-lg"></i>
                 </div>
               ` : ''}

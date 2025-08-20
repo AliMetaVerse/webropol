@@ -51,7 +51,7 @@ export class WebropolListCard extends BaseComponent {
     // Add icon
     if (icon) {
       const iconDiv = document.createElement('div');
-      iconDiv.className = 'flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200';
+      iconDiv.className = 'flex-shrink-0 w-10 h-10 bg-sun-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200';
       iconDiv.innerHTML = `<i class="fal fa-${icon} text-white text-sm"></i>`;
       contentDiv.appendChild(iconDiv);
     }
@@ -146,7 +146,7 @@ export class WebropolListCard extends BaseComponent {
               
               <div class="flex items-center flex-1 min-w-0 relative z-10">
                 ${item.icon ? `
-                  <div class="w-8 h-8 mr-3 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg group-hover:scale-105 transition-transform duration-200">
+                  <div class="w-8 h-8 mr-3 flex items-center justify-center bg-sun-to-br from-blue-500 to-indigo-600 rounded-lg group-hover:scale-105 transition-transform duration-200">
                     <i class="fal fa-${item.icon} text-white text-xs"></i>
                   </div>
                 ` : ''}

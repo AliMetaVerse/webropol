@@ -30,8 +30,8 @@ export class WebropolCardLegacy extends BaseComponent {
       standard: 'bg-white border-webropol-gray-200',
       light: 'bg-white/80 border-webropol-teal-100',
       gradient: gradient ? 
-        `bg-gradient-to-br ${gradient} border-webropol-teal-100` : 
-        'bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50/80 border-webropol-teal-100',
+        `bg-sun-to-br ${gradient} border-webropol-teal-100` : 
+        'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50/80 border-webropol-teal-100',
       glass: 'bg-white/70 backdrop-blur-xl border-webropol-gray-200/50'
     };
 
@@ -247,7 +247,7 @@ export class WebropolGradientCard extends BaseComponent {
     const gradient = this.getAttr('gradient', 'from-webropol-teal-100 to-webropol-teal-100/80');
     
     this.innerHTML = `
-      <div class="relative rounded-2xl bg-gradient-to-br ${gradient} p-6 flex flex-col items-center shadow-card border border-webropol-teal-100 transition-shadow duration-200 hover:shadow-2xl">
+      <div class="relative rounded-2xl bg-sun-to-br ${gradient} p-6 flex flex-col items-center shadow-card border border-webropol-teal-100 transition-shadow duration-200 hover:shadow-2xl">
         ${badge ? `
           <span class="absolute top-4 right-4 bg-webropol-gray-700 text-white text-xs px-3 py-1 rounded-full">
             ${badge}

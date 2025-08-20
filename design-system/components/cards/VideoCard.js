@@ -59,7 +59,7 @@ export class WebropolVideoCard extends BaseComponent {
                  class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
           ` : `
-            <div class="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600"></div>
+            <div class="w-full h-full bg-sun-to-br from-blue-500 to-purple-600"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
           `}
           

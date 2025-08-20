@@ -172,7 +172,7 @@ export class BaseComponent extends HTMLElement {
       card: {
         default: 'bg-white border border-webropol-gray-200 shadow-card',
         elevated: 'bg-white border border-webropol-gray-200 shadow-medium hover:shadow-lg',
-        gradient: 'bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100 shadow-card'
+        gradient: 'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100 shadow-card'
       },
       badge: {
         primary: 'bg-webropol-teal-100 text-webropol-teal-700',

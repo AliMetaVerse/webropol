@@ -249,7 +249,7 @@ class WebropolCard extends BaseComponent {
     const variants = {
       default: 'bg-white shadow-lg border border-webropol-gray-100',
       elevated: 'bg-white shadow-xl',
-      gradient: 'bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100',
+      gradient: 'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100',
       flat: 'bg-webropol-gray-50 border border-webropol-gray-200'
     };
     return variants[variant] || variants.default;
@@ -301,12 +301,12 @@ class WebropolActionCard extends BaseComponent {
     
     // Variant gradient classes
     const variantClasses = {
-      default: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
-      workshop: 'bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-500',
-      event: 'bg-gradient-to-br from-purple-500 to-pink-500',
-      meeting: 'bg-gradient-to-br from-green-500 to-blue-500',
-      orange: 'bg-gradient-to-br from-orange-500 to-red-500',
-      pink: 'bg-gradient-to-br from-pink-500 to-purple-500'
+      default: 'bg-sun-to-br from-webropol-teal-500 to-webropol-teal-500',
+      workshop: 'bg-sun-to-br from-webropol-teal-500 to-webropol-teal-500',
+      event: 'bg-sun-to-br from-purple-500 to-pink-500',
+      meeting: 'bg-sun-to-br from-green-500 to-blue-500',
+      orange: 'bg-sun-to-br from-orange-500 to-red-500',
+      pink: 'bg-sun-to-br from-pink-500 to-purple-500'
     };
 
     // Only render if we haven't already
@@ -504,7 +504,7 @@ class WebropolHeader extends BaseComponent {
             ${showNotifications ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-bell"></i></button>' : ''}
             ${showHelp ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-question-circle"></i></button>' : ''}
             <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
                 <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
               </div>
               <span class="text-sm font-medium text-webropol-gray-700">${username}</span>
@@ -556,7 +556,7 @@ class WebropolSidebar extends BaseComponent {
       <nav class="bg-white h-full shadow-lg">
         <div class="p-6">
           <div class="flex items-center space-x-3 mb-8">
-            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
+            <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">W</span>
             </div>
             <span class="text-xl font-bold text-webropol-gray-900">Webropol</span>

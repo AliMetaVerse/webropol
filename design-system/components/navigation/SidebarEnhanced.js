@@ -29,7 +29,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     this.innerHTML = `
       <aside class="h-screen w-72 bg-white/80 backdrop-blur-xl border-r border-webropol-gray-200/50 flex flex-col flex-shrink-0 shadow-soft">
         <div class="h-20 flex items-center px-8 border-b border-webropol-gray-200/50">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center">
+          <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center">
             <i class="${brandIcon} text-white text-lg"></i>
           </div>
           <div class="ml-3">

@@ -38,7 +38,7 @@ export class WebropolSidebar extends BaseComponent {
                     xl:px-8 px-4
                     group-hover:px-8
                     transition-all duration-300">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+          <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <i class="fal fa-chart-bar text-white text-lg"></i>
           </div>
           <div class="ml-3 overflow-hidden transition-all duration-300
@@ -69,7 +69,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Home</span>
           </a>
           
-          <a href="${link('surveys/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="${link('surveys/list.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                           xl:px-4 px-3
                                                           group-hover:px-4
                                                           py-3
