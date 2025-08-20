@@ -39,37 +39,37 @@ export class WebropolHeader extends BaseComponent {
               <!-- Create dropdown -->
               <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 create-menu-dropdown z-[9999]">
                 <div class="px-4 py-2 text-xs uppercase tracking-wide text-webropol-gray-500">Create new</div>
-                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="surveys">
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="surveys">
                   <i class="fal fa-chart-bar text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1">
+                  <div class="flex-1 text-left">
                     <div class="font-medium">Surveys</div>
                     <div class="text-xs text-webropol-gray-500">Custom surveys</div>
                   </div>
                 </button>
-                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="events">
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="events">
                   <i class="fal fa-calendar-alt text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1">
+                  <div class="flex-1 text-left">
                     <div class="font-medium">Events</div>
                     <div class="text-xs text-webropol-gray-500">Event management</div>
                   </div>
                 </button>
-                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
                   <i class="fal fa-chart-line text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1">
+                  <div class="flex-1 text-left">
                     <div class="font-medium">EXW Surveys</div>
                     <div class="text-xs text-webropol-gray-500">Employee experience</div>
                   </div>
                 </button>
-                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
                   <i class="fal fa-users text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1">
+                  <div class="flex-1 text-left">
                     <div class="font-medium">Employee</div>
                     <div class="text-xs text-webropol-gray-500">HR management</div>
                   </div>
                 </button>
-                <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="campaign">
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="campaign">
                   <i class="fal fa-bullhorn text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1">
+                  <div class="flex-1 text-left">
                     <div class="font-medium">Campaign</div>
                     <div class="text-xs text-webropol-gray-500">Marketing campaigns</div>
                   </div>
