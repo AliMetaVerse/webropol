@@ -304,11 +304,11 @@ export class WebropolSettingsModal extends BaseComponent {
               Settings are saved automatically
             </div>
             <div class="flex items-center space-x-3">
-              <button class="reset-button px-4 py-2 text-sm text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg transition-all">
+              <button class="reset-button px-6 py-2.5 text-sm text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-full transition-all">
                 <i class="fal fa-undo mr-2"></i>
                 Reset to Default
               </button>
-              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-lg transition-all">
+              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-full transition-all">
                 <i class="fal fa-check mr-2"></i>
                 Done
               </button>
