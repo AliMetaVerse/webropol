@@ -69,53 +69,6 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
         }
-
-        /* Unified Rounded Tab System (surveys-style) */
-        .webropol-tabs-wrapper {
-            display: inline-flex;
-            background: var(--primary-50, #eefbfd);
-            padding: 6px;
-            border-radius: 12px;
-            box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07);
-            border: 1px solid var(--primary-100, #d5f4f8);
-            gap: 4px;
-        }
-
-        .webropol-tab {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.875rem;
-            text-align: center;
-            min-width: 80px;
-            cursor: pointer;
-            border: none;
-            background: transparent;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--neutral-600, #787f81);
-        }
-
-        .webropol-tab.active {
-            background: var(--primary-600, #1d809d);
-            color: white;
-            box-shadow: 0 4px 12px rgba(29, 128, 157, 0.3);
-            transform: scale(1.02);
-        }
-
-        .webropol-tab:not(.active):hover {
-            color: var(--primary-700, #1e6880);
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transform: scale(1.01);
-        }
-
-        .webropol-tab:focus-visible {
-            outline: 2px solid var(--primary-300, #79d6e7);
-            outline-offset: 2px;
-        }
     </style>
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -203,51 +156,61 @@
                             <div
                                 class="bg-white/70 backdrop-blur-sm p-6 rounded-2xl shadow-card border border-webropol-gray-200/50 hover-lift">
                                 <!-- Enhanced Tab Navigation -->
-                                <div class="webropol-tabs-wrapper w-full mb-6" :class="tabsOrientation === 'vertical' ? 'flex-col items-stretch' : 'items-center'">
-                                    <button @click="setView('surveys')"
-                                        class="webropol-tab"
-                                        :class="[currentView === 'surveys' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']">
-                                        <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
-                                            <div :class="tabsOrientation === 'stacked' ? 'flex items-center mb-1' : 'flex items-center'">
-                                                <i class="fal fa-chart-bar" :class="tabsOrientation === 'stacked' ? 'text-lg' : 'mr-1 sm:mr-2'"></i>
-                                                <span
-                                                    :class="[
-                                                        tabsOrientation === 'stacked' ? 'ml-1' : 'ml-1 sm:ml-2',
-                                                        'text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center',
-                                                        currentView === 'surveys' ? 
-                                                            'bg-white/20 text-white backdrop-blur-sm' : 
-                                                            'bg-webropol-gray-200 text-webropol-gray-700'
-                                                    ]"
-                                                    x-text="getFilteredSurveys().length"></span>
+                                <div class="webropol-tabs-wrapper">
+                                    <div :class="tabsOrientation === 'vertical' ? 
+                                        'flex flex-col space-y-1 mb-6 bg-white rounded-xl p-1 shadow-sm border border-webropol-gray-200' : 
+                                        'flex items-center space-x-1 mb-6 bg-white rounded-xl p-1 shadow-sm border border-webropol-gray-200'">
+                                        <button @click="setView('surveys')"
+                                            :class="currentView === 'surveys' ? 
+                                                'bg-webropol-teal-600 text-white shadow-md' : 
+                                                'text-webropol-gray-600 hover:text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                                            class="w-full flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2"
+                                            :class="tabsOrientation === 'stacked' ? 'flex-col' : 'flex-row'">
+                                            <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
+                                                <div :class="tabsOrientation === 'stacked' ? 'flex items-center mb-1' : 'flex items-center'">
+                                                    <i class="fal fa-chart-bar" :class="tabsOrientation === 'stacked' ? 'text-lg' : 'mr-1 sm:mr-2'"></i>
+                                                    <span
+                                                        :class="[
+                                                            tabsOrientation === 'stacked' ? 'ml-1' : 'ml-1 sm:ml-2',
+                                                            'text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center',
+                                                            currentView === 'surveys' ? 
+                                                                'bg-white/20 text-white backdrop-blur-sm' : 
+                                                                'bg-webropol-gray-200 text-webropol-gray-700'
+                                                        ]"
+                                                        x-text="getFilteredSurveys().length"></span>
+                                                </div>
+                                                <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
+                                                    <span class="hidden sm:inline">Surveys</span>
+                                                    <span class="sm:hidden">Survey</span>
+                                                </div>
                                             </div>
-                                            <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
-                                                <span class="hidden sm:inline">Surveys</span>
-                                                <span class="sm:hidden">Survey</span>
+                                        </button>
+                                        <button @click="setView('questions')"
+                                            :class="currentView === 'questions' ? 
+                                                'bg-webropol-teal-600 text-white shadow-md' : 
+                                                'text-webropol-gray-600 hover:text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                                            class="w-full flex items-center justify-center px-2 sm:px-4 py-3 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:ring-offset-2"
+                                            :class="tabsOrientation === 'stacked' ? 'flex-col' : 'flex-row'">
+                                            <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
+                                                <div :class="tabsOrientation === 'stacked' ? 'flex items-center mb-1' : 'flex items-center'">
+                                                    <i class="fal fa-message-question" :class="tabsOrientation === 'stacked' ? 'text-lg' : 'mr-1 sm:mr-2'"></i>
+                                                    <span
+                                                        :class="[
+                                                            tabsOrientation === 'stacked' ? 'ml-1' : 'ml-1 sm:ml-2',
+                                                            'text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center',
+                                                            currentView === 'questions' ? 
+                                                                'bg-white/20 text-white backdrop-blur-sm' : 
+                                                                'bg-webropol-gray-200 text-webropol-gray-700'
+                                                        ]"
+                                                        x-text="getFilteredQuestions().length"></span>
+                                                </div>
+                                                <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
+                                                    <span class="hidden sm:inline">Questions</span>
+                                                    <span class="sm:hidden">Question</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </button>
-                                    <button @click="setView('questions')"
-                                        class="webropol-tab"
-                                        :class="[currentView === 'questions' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']">
-                                        <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
-                                            <div :class="tabsOrientation === 'stacked' ? 'flex items-center mb-1' : 'flex items-center'">
-                                                <i class="fal fa-message-question" :class="tabsOrientation === 'stacked' ? 'text-lg' : 'mr-1 sm:mr-2'"></i>
-                                                <span
-                                                    :class="[
-                                                        tabsOrientation === 'stacked' ? 'ml-1' : 'ml-1 sm:ml-2',
-                                                        'text-xs rounded-full px-1.5 sm:px-2.5 py-1 font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center',
-                                                        currentView === 'questions' ? 
-                                                            'bg-white/20 text-white backdrop-blur-sm' : 
-                                                            'bg-webropol-gray-200 text-webropol-gray-700'
-                                                    ]"
-                                                    x-text="getFilteredQuestions().length"></span>
-                                            </div>
-                                            <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
-                                                <span class="hidden sm:inline">Questions</span>
-                                                <span class="sm:hidden">Question</span>
-                                            </div>
-                                        </div>
-                                    </button>
+                                        </button>
+                                    </div>
                                 </div> <!-- Language Selection -->
                                 <div class="relative mb-4">
                                     <select x-model="selectedLanguage"
