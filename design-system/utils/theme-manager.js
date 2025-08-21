@@ -15,8 +15,8 @@ export class ThemeManager {
       icon: 'fa-sun-bright',
       background: {
         class: 'bg-sun-to-br',
-  // Use 'style' to align with applyTheme() expectation
-  style: 'background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;'
+    // Use 'style' to align with applyTheme() expectation (no !important to allow dark-mode override)
+    style: 'background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff);'
       }
     },
     [this.THEMES.OCEAN]: {
@@ -24,22 +24,33 @@ export class ThemeManager {
       icon: 'fa-droplet',
       background: {
         class: 'bg-ocean-to-br',
-        style: 'background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;'
+    style: 'background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff);'
       }
     }
   };
 
-  static STORAGE_KEY = 'webropol-theme';
+  // Use a dedicated storage key for background theme to avoid conflict with dark/light preference
+  static STORAGE_KEY = 'webropol-bg-theme';
 
   /**
    * Get current theme
    */
   static getCurrentTheme() {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    // Prefer the new key
+    let stored = localStorage.getItem(this.STORAGE_KEY);
     // Migrate legacy value 'sky' -> 'ocean'
     if (stored === 'sky') {
       localStorage.setItem(this.STORAGE_KEY, this.THEMES.OCEAN);
       return this.THEMES.OCEAN;
+    }
+    // Backward-compat: if old key 'webropol-theme' contained a background theme value, migrate it
+    if (!stored) {
+      const legacy = localStorage.getItem('webropol-theme');
+      if (legacy === this.THEMES.WARM || legacy === this.THEMES.OCEAN || legacy === 'sky') {
+        const migrated = legacy === 'sky' ? this.THEMES.OCEAN : legacy;
+        localStorage.setItem(this.STORAGE_KEY, migrated);
+        stored = migrated;
+      }
     }
     return stored || this.THEMES.OCEAN;
   }
@@ -77,8 +88,21 @@ export class ThemeManager {
     // Add current theme class
     body.classList.add(config.background.class);
     
-    // Apply inline style as fallback
-  body.style.cssText = config.background.style || '';
+    // Apply or clear background inline style depending on dark mode
+    const isDark = document.documentElement.classList.contains('dark');
+    if (isDark) {
+      // Let CSS dark overrides control the background; clear inline background only
+      body.style.removeProperty('background');
+    } else {
+      try {
+        // Only set background property to avoid clobbering other inline styles
+        const match = (config.background.style || '').match(/background:\s*([^;]+);?/i);
+        const bg = match ? match[1].trim() : '';
+        if (bg) body.style.setProperty('background', bg);
+      } catch (_) {
+        // best effort, ignore
+      }
+    }
 
     // Store current theme in data attribute
     body.setAttribute('data-theme', theme);
@@ -93,6 +117,16 @@ export class ThemeManager {
     
     // Add CSS for theme classes
     this.injectThemeStyles();
+
+  // Ensure design tokens stylesheet is present for CSS variables and dark overrides
+  this.ensureTokensStylesIncluded();
+
+    // Re-apply theme when global settings (including dark mode) are applied
+    if (typeof window !== 'undefined') {
+      window.addEventListener('webropol-settings-applied', () => {
+        this.applyTheme(this.getCurrentTheme());
+      });
+    }
   }
 
   /**
@@ -106,16 +140,16 @@ export class ThemeManager {
     style.id = 'webropol-theme-styles';
     style.textContent = `
       .bg-sun-to-br {
-        background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff) !important;
+        background: linear-gradient(to bottom right, #fff1e0ff, #ffead1ff);
       }
 
       /* Ocean theme */
       .bg-ocean-to-br {
-        background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important;
+        background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff);
       }
 
       /* Legacy alias for backward compatibility */
-      .bg-sky-to-br { background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important; }
+      .bg-sky-to-br { background: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff); }
 
       /* Theme transition for smooth changes */
       body {
@@ -124,6 +158,28 @@ export class ThemeManager {
     `;
     
     document.head.appendChild(style);
+  }
+
+  /**
+   * Ensure tokens.css is loaded regardless of page path
+   */
+  static ensureTokensStylesIncluded() {
+    if (document.getElementById('webropol-tokens-css')) return;
+    try {
+      const tokensUrl = new URL('../styles/tokens.css', import.meta.url).href;
+      const link = document.createElement('link');
+      link.id = 'webropol-tokens-css';
+      link.rel = 'stylesheet';
+      link.href = tokensUrl;
+      document.head.appendChild(link);
+    } catch (e) {
+      // Fallback: try common relative path from site root
+      const link = document.createElement('link');
+      link.id = 'webropol-tokens-css';
+      link.rel = 'stylesheet';
+      link.href = '/design-system/styles/tokens.css';
+      document.head.appendChild(link);
+    }
   }
 
   /**

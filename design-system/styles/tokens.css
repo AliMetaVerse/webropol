@@ -126,6 +126,185 @@
   --transition-slow: 300ms;
 }
 
+/* ===== DARK THEME OVERRIDES ===== */
+/* Apply when html has .dark class; overrides light variables and base UI colors */
+.dark {
+  /* Core palette remap for dark mode surfaces and text */
+  --neutral-0:   #0b0c0d;   /* darkest bg */
+  --neutral-50:  #111315;
+  --neutral-100: #16191c;
+  --neutral-200: #1e2327;
+  --neutral-300: #2a3136;
+  --neutral-400: #3a434a;
+  --neutral-500: #515c65;   /* muted text */
+  --neutral-600: #7a8791;
+  --neutral-700: #a6b0b7;
+  --neutral-800: #c7cfd4;
+  --neutral-900: #e4eaee;   /* primary text */
+  --neutral-950: #f5f7f8;   /* highest contrast */
+
+  /* Primary accent tweaks for dark */
+  --primary-300: #5bd0e6;
+  --primary-400: #3fbcd5;
+  --primary-500: #23a2be;
+  --primary-600: #1a8aa5;
+  --primary-700: #177990;
+
+  /* Shadows a bit softer in dark */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 3px 0 rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.4);
+  --shadow-soft: 0 2px 15px -3px rgba(0,0,0,.5), 0 10px 20px -2px rgba(0,0,0,.35);
+  --shadow-medium: 0 4px 25px -5px rgba(0,0,0,.55), 0 10px 10px -5px rgba(0,0,0,.35);
+
+  /* Global element colors in dark */
+  color-scheme: dark;
+}
+
+/* Base document surfaces in dark mode */
+html.dark, html.dark body {
+  background: var(--neutral-50);
+  color: var(--neutral-900);
+}
+
+/* Common utility surfaces */
+.dark .bg-white, .dark .bg-white\/80, .dark .bg-white\/70, .dark .bg-white\/60 {
+  background-color: rgba(22, 25, 28, 0.85) !important; /* --neutral-100 with alpha */
+}
+.dark .bg-webropol-gray-50, .dark .bg-webropol-gray-100 { background-color: var(--neutral-100) !important; }
+.dark .text-webropol-gray-900, .dark .text-gray-800 { color: var(--neutral-900) !important; }
+.dark .text-webropol-gray-700, .dark .text-gray-700, .dark .text-webropol-gray-600 { color: var(--neutral-700) !important; }
+.dark .text-webropol-gray-500, .dark .text-gray-500 { color: var(--neutral-600) !important; }
+
+/* Handle Tailwind-like utility variants with slashes */
+.dark [class*="bg-white/"] { background-color: rgba(16, 19, 22, 0.7) !important; }
+.dark [class*="border-white/"] { border-color: var(--neutral-300) !important; }
+.dark .hover\:bg-white:hover { background-color: var(--neutral-200) !important; }
+.dark .focus\:ring-white:focus { --tw-ring-color: var(--neutral-300) !important; }
+
+/* Glass headers and containers */
+.dark .glass-effect {
+  background: rgba(16, 19, 22, 0.7) !important;
+  border-color: var(--neutral-300) !important;
+}
+
+/* Borders */
+.dark .border-webropol-gray-200, .dark .border-webropol-gray-300, .dark .border { border-color: var(--neutral-300) !important; }
+.dark .divide-webropol-gray-100 { --tw-divide-opacity: 1; border-color: var(--neutral-200) !important; }
+
+/* Cards, modals, inputs */
+.dark .shadow-card { box-shadow: var(--shadow-card) !important; }
+.dark .backdrop-blur, .dark .backdrop-blur-sm {
+  backdrop-filter: blur(6px);
+}
+.dark input, .dark textarea, .dark select {
+  background-color: var(--neutral-100);
+  color: var(--neutral-900);
+  border-color: var(--neutral-300);
+}
+.dark input::placeholder, .dark textarea::placeholder { color: var(--neutral-600); }
+
+/* Primary interactive states */
+.dark .hover\:bg-webropol-gray-100:hover { background-color: var(--neutral-200) !important; }
+.dark .focus\:ring-webropol-teal-500:focus { --tw-ring-color: var(--primary-500) !important; }
+.dark .text-webropol-teal-600 { color: var(--primary-400) !important; }
+.dark .bg-webropol-teal-50 { background-color: rgba(63, 188, 213, 0.08) !important; }
+.dark .border-webropol-teal-200 { border-color: rgba(63, 188, 213, 0.35) !important; }
+.dark .hover\:border-webropol-teal-300:hover { border-color: rgba(63, 188, 213, 0.5) !important; }
+
+/* Tabs wrappers using CSS variables */
+.dark .webropol-tabs-wrapper, .dark .webropol-main-tabs-wrapper {
+  background: var(--neutral-100) !important;
+  border-color: var(--neutral-300) !important;
+}
+.dark .webropol-tab:not(.active), .dark .webropol-main-tab:not(.active) {
+  color: var(--neutral-700) !important;
+}
+.dark .webropol-tab.active, .dark .webropol-main-tab.active {
+  background: var(--primary-600) !important;
+  color: var(--neutral-950) !important;
+}
+.dark .webropol-tab:not(.active):hover, .dark .webropol-main-tab:not(.active):hover {
+  background: var(--neutral-100) !important;
+  color: var(--primary-300) !important;
+}
+
+/* Header/Breadcrumbs bars that used white/alpha */
+.dark #breadcrumbs-fix-wrapper {
+  background-color: rgba(16, 19, 22, 0.7) !important;
+}
+
+/* Gradients overruled subtly in dark to avoid bright flares */
+.dark .bg-sun-to-br, .dark .bg-ocean-to-br, .dark .bg-sky-to-br {
+  background: linear-gradient(to bottom right, rgba(20,24,27,0.9), rgba(22,26,30,0.9));
+}
+
+/* Generic gradient-to-br utility hardening (cards) */
+.dark .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, rgba(20,24,27,0.9), rgba(22,26,30,0.9)) !important;
+}
+
+/* ===== Events pages: custom class overrides ===== */
+/* Modern translucent cards */
+.dark .modern-card {
+  background: rgba(16, 19, 22, 0.7) !important;
+  border-color: var(--neutral-300) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+.dark .modern-card:hover { box-shadow: var(--shadow-medium) !important; }
+
+/* Lighter variant used for accordions/sections */
+.dark .modern-card--light {
+  background: rgba(16, 19, 22, 0.55) !important;
+  border-color: var(--neutral-300) !important;
+}
+.dark .modern-card--light:hover { background: rgba(16, 19, 22, 0.75) !important; }
+
+/* Event list rows */
+.dark .event-row {
+  background: rgba(16, 19, 22, 0.6) !important;
+  border-color: var(--neutral-300) !important;
+}
+.dark .event-row:hover {
+  background: rgba(16, 19, 22, 0.85) !important;
+  border-color: rgba(63, 188, 213, 0.45) !important; /* primary hint */
+}
+
+/* Month headers (light variant) */
+.dark .month-header--light {
+  background: linear-gradient(135deg, var(--neutral-200), var(--neutral-100)) !important;
+  color: var(--neutral-900) !important;
+  border-bottom: 1px solid var(--neutral-300) !important;
+}
+.dark .month-header--light::before {
+  background: linear-gradient(45deg, transparent 30%, rgba(63, 188, 213, 0.08) 50%, transparent 70%) !important;
+}
+
+/* Search inputs with translucent backgrounds */
+.dark .search-modern {
+  background: rgba(16, 19, 22, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+.dark .search-modern:focus {
+  background: rgba(16, 19, 22, 0.85) !important;
+  border-color: var(--primary-400) !important;
+  box-shadow: 0 0 0 3px rgba(35, 162, 190, 0.18) !important;
+}
+
+/* Scrollbar in dark */
+.dark html, .dark body, .dark * {
+  scrollbar-color: rgba(90, 105, 115, 0.7) rgba(16, 19, 22, 0.3);
+}
+.dark *::-webkit-scrollbar-track { background: rgba(16, 19, 22, 0.3); }
+.dark *:hover::-webkit-scrollbar-track { background: rgba(16, 19, 22, 0.6); box-shadow: inset 0 0 6px rgba(255,255,255,0.03); }
+.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(90,105,115,.7) 0%, rgba(120,135,145,.85) 100%);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
 /* ===== GLOBAL SCROLLBAR STYLES (APPLIES SYSTEM-WIDE) ===== */
 /* Firefox */
 html, body, * {

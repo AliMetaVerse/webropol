@@ -96,8 +96,10 @@ export class GlobalSettingsManager {
     // Apply dark mode
     if (this.settings.darkMode) {
       document.documentElement.classList.add('dark');
+  try { localStorage.setItem('webropol-theme', 'dark'); } catch (_) {}
     } else {
       document.documentElement.classList.remove('dark');
+  try { localStorage.setItem('webropol-theme', 'light'); } catch (_) {}
     }
 
     // Apply compact mode
