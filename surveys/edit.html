@@ -264,11 +264,11 @@
                 </div>
                 
                 <!-- Structure Tabs with unified styling -->
-                <div class="webropol-tabs-container bg-primary-50 p-1.5 rounded-full mb-4">
+                <div class="webropol-tabs-container bg-primary-50 p-1.5 rounded-xl mb-4">
                   <button 
                     @click="activeTab = 'pages'" 
                     :class="activeTab === 'pages' ? 'webropol-edit-tab active' : 'webropol-edit-tab'"
-                    class="flex-1 px-4 py-2.5 text-sm font-medium rounded-full transition-all duration-300 flex items-center justify-center gap-2"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <i class="fal fa-file-alt"></i>
                     <span>Pages</span>
@@ -276,7 +276,7 @@
                   <button 
                     @click="activeTab = 'styles'" 
                     :class="activeTab === 'styles' ? 'webropol-edit-tab active' : 'webropol-edit-tab'"
-                    class="flex-1 px-4 py-2.5 text-sm font-medium rounded-full transition-all duration-300 flex items-center justify-center gap-2"
+                    class="flex-1 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
                   >
                     <i class="fal fa-paint-brush"></i>
                     <span>Styles</span>
@@ -521,24 +521,30 @@
                           <i class="fal fa-plus text-sm"></i>
                           <span>Add or edit multiple options</span>
                         </button>
-                        <button class="btn btn-secondary w-fit" onclick="openUploadModal()">
-                          <i class="fal fa-upload text-sm"></i>
-                          <span>Import Auto Suggestions File</span>
-                        </button>
+                        <div class="flex items-center gap-3">
+                          <button class="btn btn-secondary w-fit" onclick="openUploadModal()">
+                            <i class="fal fa-upload text-sm"></i>
+                            <span>Import Auto Suggestions File</span>
+                          </button>
+                          <span id="questionUploadStatus" class="hidden whitespace-nowrap inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm" style="background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;">
+                            <i class="fal fa-spinner fa-spin"></i>
+                            <span>Uploading...</span>
+                          </span>
+                        </div>
                       </div>
                       
                       <!-- Additional Actions -->
-                      <div class="flex items-center justify-between pt-4 border-t border-webropol-gray-200">
-                        <div class="flex space-x-4">
-                          <button class="px-4 py-2 bg-webropol-teal-500 hover:bg-webropol-teal-600 text-white rounded-lg font-medium transition-colors flex items-center space-x-2 hover-lift">
+                        <div class="flex items-center justify-between pt-4 border-t border-webropol-gray-200">
+                        <div class="flex space-x-3">
+                          <button class="btn btn-primary rounded-full">
                             <i class="fal fa-play"></i>
                             <span>Add question</span>
                           </button>
-                          <button class="px-4 py-2 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                          <button class="btn btn-secondary rounded-full">
                             <i class="fal fa-text"></i>
                             <span>Add free text/media</span>
                           </button>
-                          <button class="px-4 py-2 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                          <button class="btn btn-secondary rounded-full">
                             <i class="fal fa-cut"></i>
                             <span>Add page break</span>
                           </button>
@@ -546,14 +552,15 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                
                 <!-- Submit Button -->
-                <div class="text-center">
-                  <button class="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold hover:shadow-medium transition-all flex items-center space-x-2 mx-auto hover-lift">
+                <div class="m-8">
+                  <button class="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-semibold hover:shadow-medium transition-all flex items-center space-x-2 mx-auto hover-lift">
                     <span>Submit</span>
                   </button>
                   <p class="text-sm text-webropol-gray-500 mt-3">Add optional text here</p>
+                </div>
+                
+
                 </div>
                 
                 <!-- Thank You Page Preview -->
@@ -1236,6 +1243,9 @@
       box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
     }
 
+  /* Ensure icons inside primary buttons are visible (white) */
+  .btn-primary i { color: #ffffff !important; }
+
     /* Utility classes */
     .w-10 { width: 2.5rem; }
     .h-10 { height: 2.5rem; }
@@ -1689,6 +1699,9 @@
       } else {
         modal.classList.remove('above-settings');
       }
+
+  // Ensure statuses are synced when opening
+  syncAutoSuggestUI();
     }
 
     function closeUploadModal() {
@@ -1740,6 +1753,9 @@
         return;
       }
 
+      // Show uploading in-question status
+      setUploadingIndicator(true);
+
       // Simulate upload process
       const uploadBtn = document.getElementById('uploadBtn');
       const originalText = uploadBtn.innerHTML;
@@ -1750,10 +1766,16 @@
         uploadBtn.innerHTML = '<i class="fal fa-check"></i> <span>Uploaded</span>';
         document.getElementById('applyBtn').disabled = false;
         document.getElementById('removeStoredBtn').disabled = false;
+
+        // Persist file name and update both UIs
+        try { localStorage.setItem('autosuggestUploadedFileName', file.name); } catch(e) {}
+        syncAutoSuggestUI();
         
         setTimeout(() => {
           uploadBtn.innerHTML = originalText;
           uploadBtn.disabled = false;
+          // Hide uploading indicator after UI settles
+          setUploadingIndicator(false);
         }, 2000);
       }, 1500);
     }
@@ -1769,7 +1791,9 @@
       if (confirm('Are you sure you want to remove the uploaded auto-suggest list?')) {
         document.getElementById('removeStoredBtn').disabled = true;
         document.getElementById('applyBtn').disabled = true;
-        // Add any cleanup logic here
+  // Remove persisted file and sync
+  try { localStorage.removeItem('autosuggestUploadedFileName'); } catch(e) {}
+  syncAutoSuggestUI();
       }
     }
 
@@ -1800,6 +1824,9 @@
 
     // File input change handler and modal event listeners
     document.addEventListener('DOMContentLoaded', function() {
+  // Sync UI on page load
+  syncAutoSuggestUI();
+
       const fileInput = document.getElementById('csvFile');
       if (fileInput) {
         fileInput.addEventListener('change', function(e) {
@@ -1992,6 +2019,43 @@
         // You can add any additional theme change handling here
       });
     });
+
+    // ---- Auto-suggest UI sync helpers ----
+    function syncAutoSuggestUI() {
+      const statusMain = document.getElementById('mainUploadStatus');
+      const removeStoredBtn = document.getElementById('removeStoredBtn');
+      const questionStatus = document.getElementById('questionUploadStatus');
+
+      let fileName = null;
+      try { fileName = localStorage.getItem('autosuggestUploadedFileName'); } catch(e) {}
+
+      if (fileName) {
+        if (statusMain) statusMain.textContent = `Uploaded: ${fileName}`;
+        if (removeStoredBtn) removeStoredBtn.disabled = false;
+        if (questionStatus) {
+          questionStatus.classList.remove('hidden');
+          questionStatus.innerHTML = `<i class="fal fa-check"></i><span>Uploaded: ${fileName}</span>`;
+        }
+      } else {
+        if (statusMain) statusMain.textContent = 'No file uploaded';
+        if (removeStoredBtn) removeStoredBtn.disabled = true;
+        if (questionStatus) {
+          questionStatus.classList.add('hidden');
+          questionStatus.innerHTML = `<i class="fal fa-spinner fa-spin"></i><span>Uploading...</span>`; // default text
+        }
+      }
+    }
+
+    function setUploadingIndicator(isUploading) {
+      const questionStatus = document.getElementById('questionUploadStatus');
+      if (!questionStatus) return;
+      if (isUploading) {
+        questionStatus.classList.remove('hidden');
+        questionStatus.innerHTML = '<i class="fal fa-spinner fa-spin"></i><span>Uploading...</span>';
+      } else {
+        // Leave visibility to sync function after upload completes
+      }
+    }
   </script>
 </body>
 </html>
