@@ -13,12 +13,9 @@ Checklist
 The Import Auto Suggestions File feature allows users to bulk import answer options for auto-suggest questions in surveys. This streamlines adding large sets of predefined options that respondents can select from.
 
 ## Feature Location
-Accessible from the Survey Edit page in two places:
+Accessible from the Survey Edit page:
 
 1. Main Question Editor — "Import Auto Suggestions File" button in the question content area.
-2. Question Settings Modal — "Upload file" button in the Auto-suggest File section (may be hidden by `style="display: none"`).
-
-> If the button or modal is hidden with `display: none`, ignore that entry point — the main Question Editor path is primary.
 
 ## Workflow
 
@@ -63,16 +60,9 @@ Selection flow:
 - Modal closes and the options become available.
 
 ### 6) Remove / Manage
-- Remove before upload: clears the selected file.
+- Remove before upload: clears the selected file.!!!!!!!!!!!
 - Remove uploaded list: prompts confirmation and clears persisted data.
 
-## UI State & Persistence
-- Filenames and upload state are persisted in `localStorage` under the key `autosuggestUploadedFileName`.
-- Buttons states (Upload, Apply, Remove) change based on selection/upload state.
-- Modal behavior:
-  - Locks page scroll when active
-  - Can stack above Question Settings modal (z-index class)
-  - Closes on click outside the content area
 
 ## Technical Implementation Notes
 
