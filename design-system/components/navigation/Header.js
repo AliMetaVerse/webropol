@@ -32,7 +32,7 @@ export class WebropolHeader extends BaseComponent {
         <div class="flex items-center space-x-4">
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
-              <button class="px-3 h-10 inline-flex items-center justify-center text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-xl transition-all create-menu-btn">
+              <button class="p-6 h-10 inline-flex items-center justify-center text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-xl transition-all create-menu-btn">
                 <i class="fal fa-plus mr-2"></i>
                 <span>Create</span>
               </button>
