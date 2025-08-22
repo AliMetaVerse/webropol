@@ -493,21 +493,31 @@ export class WebropolHeader extends BaseComponent {
       this.addEventListenerToDropdown(feedbackDropdown, '.nps-option', (option, e) => {
         e.preventDefault();
         e.stopPropagation();
+        console.log('NPS button clicked:', option.getAttribute('data-score'));
+        
         const score = parseInt(option.getAttribute('data-score'));
         
-        // Update visual selection
+        // Update visual selection - remove from all buttons
         feedbackDropdown.querySelectorAll('.nps-option').forEach(btn => {
           btn.classList.remove('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
-          btn.classList.add('border-webropol-gray-300');
+          btn.classList.add('border-webropol-gray-300', 'text-gray-600');
         });
+        
+        // Add selection to clicked button
         option.classList.add('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
-        option.classList.remove('border-webropol-gray-300');
+        option.classList.remove('border-webropol-gray-300', 'text-gray-600');
         
         // Update score display and enable submit
         const scoreDisplay = feedbackDropdown.querySelector('.nps-score-display');
         const submitBtn = feedbackDropdown.querySelector('button[type="submit"]');
-        if (scoreDisplay) scoreDisplay.textContent = score;
-        if (submitBtn) submitBtn.disabled = false;
+        if (scoreDisplay) {
+          scoreDisplay.textContent = score;
+          console.log('Score display updated to:', score);
+        }
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          console.log('Submit button enabled');
+        }
       });
 
       // Handle form submissions
@@ -531,13 +541,62 @@ export class WebropolHeader extends BaseComponent {
       });
 
       // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        feedbackDropdown.classList.add('opacity-0', 'invisible');
-      });
+      const handleOutsideClick = (e) => {
+        // Don't close if clicking inside the feedback dropdown or its children
+        if (!feedbackDropdown.contains(e.target) && !e.target.closest('.feedback-dropdown')) {
+          feedbackDropdown.classList.add('opacity-0', 'invisible');
+        }
+      };
+      
+      document.addEventListener('click', handleOutsideClick);
+      document.addEventListener('mousedown', handleOutsideClick);
 
       // Prevent dropdown from closing when clicking inside it
       feedbackDropdown.addEventListener('click', (e) => {
+        // Always stop propagation for clicks inside the dropdown
         e.stopPropagation();
+        
+        // Extra protection for form elements and buttons
+        if (e.target.matches('textarea, input, button, .nps-option') || 
+            e.target.closest('textarea, input, button, .nps-option')) {
+          e.stopPropagation();
+        }
+      });
+
+      // Prevent dropdown from closing when interacting with form elements
+      feedbackDropdown.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+      });
+
+      feedbackDropdown.addEventListener('focus', (e) => {
+        e.stopPropagation();
+      }, true);
+
+      feedbackDropdown.addEventListener('input', (e) => {
+        e.stopPropagation();
+      });
+
+      // Specifically prevent text areas and inputs from closing dropdown
+      feedbackDropdown.querySelectorAll('textarea, input').forEach(element => {
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+        element.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+        });
+        element.addEventListener('focus', (e) => {
+          e.stopPropagation();
+        });
+      });
+
+      // Specifically prevent NPS buttons from closing dropdown
+      feedbackDropdown.querySelectorAll('.nps-option').forEach(element => {
+        element.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+        element.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+        });
       });
     }
   }

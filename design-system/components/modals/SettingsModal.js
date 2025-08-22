@@ -24,6 +24,7 @@ export class WebropolSettingsModal extends BaseComponent {
     this.saveSettings = this.saveSettings.bind(this);
     this.resetSettings = this.resetSettings.bind(this);
     this.toggleSetting = this.toggleSetting.bind(this);
+    this.testRatingAnimation = this.testRatingAnimation.bind(this);
   }
 
   loadSettings() {
@@ -122,29 +123,59 @@ export class WebropolSettingsModal extends BaseComponent {
   }
 
   testRatingAnimation() {
-    // Find all headers in the document and trigger their test animation
-    const headers = document.querySelectorAll('webropol-header');
-    headers.forEach(header => {
-      if (typeof header.triggerRatingAnimation === 'function') {
-        header.triggerRatingAnimation(
-          this.settings.ratingAnimationDuration,
-          this.settings.ratingAnimationType
-        );
-      }
-    });
-
-    // Provide visual feedback on the test button
-    const testBtn = this.querySelector('.test-animation-btn');
-    if (testBtn) {
-      const originalContent = testBtn.innerHTML;
-      testBtn.innerHTML = '<i class="fal fa-check mr-1"></i>Testing...';
-      testBtn.disabled = true;
+    console.log('Test animation button clicked!');
+    
+    // Close the modal first
+    this.close();
+    
+    // Wait a bit for modal to close, then trigger animation
+    setTimeout(() => {
+      // Find all headers in the document and trigger their test animation
+      const headers = document.querySelectorAll('webropol-header');
+      console.log('Found headers:', headers.length);
       
-      setTimeout(() => {
-        testBtn.innerHTML = originalContent;
-        testBtn.disabled = false;
-      }, 3000);
-    }
+      if (headers.length === 0) {
+        console.log('No webropol-header found, trying to find rating selector directly...');
+        // If no webropol-header component, try to find rating selector directly
+        const ratingContainer = document.querySelector('.rating-vibration-container');
+        const ratingButton = document.querySelector('.rating-selector-btn');
+        
+        if (ratingContainer && ratingButton) {
+          console.log('Found rating elements directly, triggering animation...');
+          // Remove any existing animation classes
+          ratingContainer.classList.remove('rating-vibration-active');
+          ratingButton.classList.remove('rating-attention-active');
+
+          // Add the appropriate animation class
+          const animationType = this.settings.ratingAnimationType || 'wave';
+          if (animationType === 'wave') {
+            ratingContainer.classList.add('rating-vibration-active');
+          } else if (animationType === 'attention') {
+            ratingButton.classList.add('rating-attention-active');
+          }
+
+          // Remove animation after specified duration
+          const duration = this.settings.ratingAnimationDuration || 5000;
+          setTimeout(() => {
+            ratingContainer.classList.remove('rating-vibration-active');
+            ratingButton.classList.remove('rating-attention-active');
+          }, duration);
+        } else {
+          console.log('No rating elements found on page');
+          alert('No rating selector found on this page. Please make sure the rating selector is visible in the header.');
+        }
+      } else {
+        headers.forEach(header => {
+          if (typeof header.triggerRatingAnimation === 'function') {
+            console.log('Triggering animation on header...');
+            header.triggerRatingAnimation(
+              this.settings.ratingAnimationDuration,
+              this.settings.ratingAnimationType
+            );
+          }
+        });
+      }
+    }, 300); // Wait 300ms for modal close animation
   }
 
   render() {
@@ -480,8 +511,8 @@ export class WebropolSettingsModal extends BaseComponent {
                         </div>
                         <p class="text-xs text-webropol-gray-500 mt-1">Trigger the animation now to see how it looks</p>
                       </div>
-                      <button class="test-animation-btn px-4 py-2 bg-webropol-orange-500 hover:bg-webropol-orange-600text-sm rounded-lg transition-colors">
-                        <i class="fal fa-play mr-1"></i>
+                      <button class="test-animation-btn px-4 py-2 bg-orange-500 hover:bg-orange-600 text-gray-900 text-sm rounded-lg transition-colors font-medium border border-gray-300">
+                        <i class="fal fa-play mr-1 text-gray-900"></i>
                         Test Now
                       </button>
                     </div>
