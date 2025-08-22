@@ -24,6 +24,11 @@ export class WebropolHeader extends BaseComponent {
       ? !!window.globalSettingsManager.getSetting('showHeaderCreateMenu')
       : true;
 
+    // Determine whether to show the rating selector from global settings (default: true)
+    const showRatingSelector = (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.getSetting === 'function')
+      ? !!window.globalSettingsManager.getSetting('showRatingSelector')
+      : true;
+
     const currentTheme = ThemeManager.getCurrentTheme();
     const allThemes = ThemeManager.getAllThemes();
 
@@ -105,6 +110,69 @@ export class WebropolHeader extends BaseComponent {
               </div>
             ` : ''}
             
+            ${showRatingSelector ? `
+              <div class="relative">
+                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-orange-600 hover:bg-webropol-orange-50 rounded-xl transition-all rating-selector-btn">
+                  <i class="fal fa-star"></i>
+                </button>
+                
+                <!-- Rating dropdown -->
+                <div class="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 rating-dropdown z-[9999]">
+                  <div class="px-4 py-2 text-xs uppercase tracking-wide text-webropol-gray-500">Rating Options</div>
+                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="5">
+                    <div class="flex mr-3">
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                    </div>
+                    Excellent
+                  </button>
+                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="4">
+                    <div class="flex mr-3">
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                    </div>
+                    Good
+                  </button>
+                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="3">
+                    <div class="flex mr-3">
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                    </div>
+                    Average
+                  </button>
+                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="2">
+                    <div class="flex mr-3">
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                    </div>
+                    Poor
+                  </button>
+                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="1">
+                    <div class="flex mr-3">
+                      <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                      <i class="fal fa-star text-gray-300 text-xs"></i>
+                    </div>
+                    Terrible
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+            
             ${showNotifications ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all relative">
                 <i class="fal fa-bell"></i>
@@ -157,6 +225,7 @@ export class WebropolHeader extends BaseComponent {
     // Add dropdown functionality
     this.addDropdownListeners();
     this.addThemeListeners();
+    this.addRatingListeners();
     this.addCreateMenuListeners();
 
     // Re-render header if global settings applied (to reflect visibility changes)
@@ -251,9 +320,12 @@ export class WebropolHeader extends BaseComponent {
         
         // Close user dropdown if open
         const userDropdown = this.querySelector('.user-dropdown');
-        if (userDropdown) {
-          userDropdown.classList.add('opacity-0', 'invisible');
-        }
+        const ratingDropdown = this.querySelector('.rating-dropdown');
+        [userDropdown, ratingDropdown].forEach(dropdown => {
+          if (dropdown) {
+            dropdown.classList.add('opacity-0', 'invisible');
+          }
+        });
         
         if (isVisible) {
           themeDropdown.classList.add('opacity-0', 'invisible');
@@ -283,6 +355,69 @@ export class WebropolHeader extends BaseComponent {
 
       // Prevent dropdown from closing when clicking inside it
       themeDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+  }
+
+  addRatingListeners() {
+    const ratingButton = this.querySelector('.rating-selector-btn');
+    const ratingDropdown = this.querySelector('.rating-dropdown');
+
+    if (ratingButton && ratingDropdown) {
+      ratingButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isVisible = !ratingDropdown.classList.contains('opacity-0');
+        
+        // Close other dropdowns if open
+        const userDropdown = this.querySelector('.user-dropdown');
+        const themeDropdown = this.querySelector('.theme-dropdown');
+        const createDropdown = this.querySelector('.create-menu-dropdown');
+        
+        [userDropdown, themeDropdown, createDropdown].forEach(dropdown => {
+          if (dropdown) {
+            dropdown.classList.add('opacity-0', 'invisible');
+          }
+        });
+        
+        if (isVisible) {
+          ratingDropdown.classList.add('opacity-0', 'invisible');
+        } else {
+          ratingDropdown.classList.remove('opacity-0', 'invisible');
+        }
+      });
+
+      // Handle rating selection
+      const ratingOptions = this.querySelectorAll('.rating-option');
+      ratingOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const selectedRating = option.getAttribute('data-rating');
+          
+          // Emit rating event
+          this.emit('rating-selected', { rating: parseInt(selectedRating) });
+          document.dispatchEvent(new CustomEvent('webropol-rating-selected', { 
+            detail: { rating: parseInt(selectedRating) } 
+          }));
+          
+          ratingDropdown.classList.add('opacity-0', 'invisible');
+          
+          // Show a brief feedback
+          const originalText = ratingButton.innerHTML;
+          ratingButton.innerHTML = '<i class="fal fa-check text-green-500"></i>';
+          setTimeout(() => {
+            ratingButton.innerHTML = originalText;
+          }, 1000);
+        });
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        ratingDropdown.classList.add('opacity-0', 'invisible');
+      });
+
+      // Prevent dropdown from closing when clicking inside it
+      ratingDropdown.addEventListener('click', (e) => {
         e.stopPropagation();
       });
     }

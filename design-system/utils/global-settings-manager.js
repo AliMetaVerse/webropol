@@ -14,7 +14,9 @@ export class GlobalSettingsManager {
       autoLogout: 30, // minutes
   language: 'en',
   // New: control visibility of Header Create menu
-  showHeaderCreateMenu: true
+  showHeaderCreateMenu: true,
+  // New: control visibility of Rating selector
+  showRatingSelector: true
     };
     
     this.settings = this.loadSettings();
@@ -115,6 +117,9 @@ export class GlobalSettingsManager {
   // Apply header create menu visibility
   this.applyHeaderCreateMenuVisibility();
 
+  // Apply rating selector visibility
+  this.applyRatingVisibility();
+
     // Update auto-logout timer
     this.setupAutoLogout();
 
@@ -157,6 +162,19 @@ export class GlobalSettingsManager {
       } else {
         container.style.display = 'none';
         container.setAttribute('hidden', '');
+      }
+    });
+  }
+
+  /**
+   * Apply rating selector visibility across any headers on the page
+   */
+  applyRatingVisibility() {
+    const headers = document.querySelectorAll('webropol-header');
+    headers.forEach(header => {
+      // Re-render the header to apply visibility changes
+      if (typeof header.render === 'function') {
+        header.render();
       }
     });
   }
