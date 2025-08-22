@@ -378,7 +378,7 @@ export class WebropolHeader extends BaseComponent {
               Tell us more (optional)
             </label>
             <textarea 
-              class="w-full h-20 px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 resize-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400"
+              class="w-full h-28 px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 resize-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400 leading-relaxed"
               placeholder="Share your thoughts on how we can improve..."
               name="reason"
               maxlength="300"
@@ -402,6 +402,29 @@ export class WebropolHeader extends BaseComponent {
             </button>
           </div>
         </form>
+        
+        <!-- Thank You Message (Hidden by default) -->
+        <div class="nps-thank-you hidden px-6 py-8 text-center">
+          <div class="mb-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <i class="fas fa-check text-white text-2xl"></i>
+            </div>
+            <div class="text-4xl mb-2 animate-pulse">🎉</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Thank you for your feedback!</h3>
+            <p class="text-sm text-gray-600 mb-4 leading-relaxed">Your input helps us make ${pageContext.area} even better for everyone.</p>
+          </div>
+          
+          <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-4">
+            <div class="nps-thank-you-message text-sm font-medium"></div>
+          </div>
+          
+          <div class="space-y-2">
+            <button class="nps-close-btn w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105">
+              <i class="fas fa-heart mr-2"></i>
+              Awesome, thanks!
+            </button>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -423,8 +446,11 @@ export class WebropolHeader extends BaseComponent {
       });
 
       // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        dropdown.classList.add('opacity-0', 'invisible');
+      document.addEventListener('click', (e) => {
+        // Only close if clicking outside the user dropdown and button
+        if (!dropdown.contains(e.target) && !userButton.contains(e.target)) {
+          dropdown.classList.add('opacity-0', 'invisible');
+        }
       });
 
       // Prevent dropdown from closing when clicking inside it
@@ -516,8 +542,12 @@ export class WebropolHeader extends BaseComponent {
       });
 
       // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        themeDropdown.classList.add('opacity-0', 'invisible');
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        // Only close if clicking outside the theme dropdown and button
+        if (!themeDropdown.contains(e.target) && !themeButton.contains(e.target)) {
+          themeDropdown.classList.add('opacity-0', 'invisible');
+        }
       });
 
       // Prevent dropdown from closing when clicking inside it
@@ -564,8 +594,8 @@ export class WebropolHeader extends BaseComponent {
 
       // Handle NPS button clicks with enhanced visual feedback
       this.addEventListenerToDropdown(feedbackDropdown, '.nps-option', (option, e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); // Prevent default button behavior
+        e.stopPropagation(); // Stop event from bubbling up
         console.log('NPS button clicked:', option.getAttribute('data-score'));
         
         const score = parseInt(option.getAttribute('data-score'));
@@ -639,7 +669,51 @@ export class WebropolHeader extends BaseComponent {
         }
       });
 
-      // Handle form submissions
+      // Backup direct event listener for NPS buttons (in case event delegation fails)
+      setTimeout(() => {
+        const npsButtons = feedbackDropdown.querySelectorAll('.nps-option');
+        npsButtons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Direct NPS button clicked:', button.getAttribute('data-score'));
+            
+            const score = parseInt(button.getAttribute('data-score'));
+            
+            // Remove selection from all buttons
+            npsButtons.forEach(btn => {
+              btn.classList.remove('ring-4', 'ring-indigo-300', 'ring-offset-2', 'shadow-xl', 'scale-110');
+              btn.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-purple-600', 'text-white', 'border-indigo-500');
+              
+              // Reset to original colors
+              const btnScore = parseInt(btn.getAttribute('data-score'));
+              if (btnScore <= 6) {
+                btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-700 hover:from-red-200 hover:to-red-300 hover:border-red-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+              } else if (btnScore <= 8) {
+                btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-300 text-amber-700 hover:from-yellow-200 hover:to-amber-300 hover:border-amber-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+              } else {
+                btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700 hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+              }
+            });
+            
+            // Add selection to clicked button
+            button.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-indigo-500 ring-4 ring-indigo-300 ring-offset-2 shadow-xl scale-110 transition-all duration-300 transform';
+            
+            // Update score display and enable submit
+            const scoreDisplay = feedbackDropdown.querySelector('.nps-score-display');
+            const submitBtn = feedbackDropdown.querySelector('button[type="submit"]');
+            if (scoreDisplay) {
+              scoreDisplay.textContent = score;
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+          });
+        });
+      }, 100);
+
+      // Handle form submissions with thank you message
       this.addEventListenerToDropdown(feedbackDropdown, '.feedback-form', (form, e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -653,12 +727,20 @@ export class WebropolHeader extends BaseComponent {
           const selectedScore = feedbackDropdown.querySelector('.nps-option[class*="from-indigo-500"]');
           if (selectedScore) {
             data.score = parseInt(selectedScore.getAttribute('data-score'));
+            
+            // Show thank you message instead of closing dropdown
+            this.showNPSThankYou(feedbackDropdown, data.score, data.reason);
+            
+            // Submit the feedback
+            this.handleFeedbackSubmission(formType, data);
+            return;
           }
         }
         
+        // For other feedback types, handle normally
         this.handleFeedbackSubmission(formType, data);
         feedbackDropdown.classList.add('opacity-0', 'invisible');
-      });
+      }, 'submit');
 
       // Add character count functionality for textarea
       this.addEventListenerToDropdown(feedbackDropdown, 'textarea[name="reason"]', (textarea, e) => {
@@ -679,6 +761,13 @@ export class WebropolHeader extends BaseComponent {
           }
         }
       }, 'input');
+
+      // Handle thank you close button
+      this.addEventListenerToDropdown(feedbackDropdown, '.nps-close-btn', (button, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        feedbackDropdown.classList.add('opacity-0', 'invisible');
+      });
 
       // Close dropdown when clicking outside
       const handleOutsideClick = (e) => {
@@ -743,21 +832,97 @@ export class WebropolHeader extends BaseComponent {
 
   addEventListenerToDropdown(dropdown, selector, callback, eventType = 'click') {
     // Use event delegation since dropdown content is dynamic
-    dropdown.addEventListener(eventType, (e) => {
+    // Create a separate handler that doesn't interfere with dropdown's own click handling
+    const delegationHandler = (e) => {
       const target = e.target.closest(selector);
       if (target) {
+        // Don't interfere with event propagation - let dropdown handle it
         callback(target, e);
       }
-    });
+    };
+    
+    // Add the handler with a unique identifier to avoid duplicates
+    if (!dropdown._eventHandlers) dropdown._eventHandlers = new Map();
+    
+    const handlerKey = `${eventType}-${selector}`;
+    if (!dropdown._eventHandlers.has(handlerKey)) {
+      dropdown.addEventListener(eventType, delegationHandler);
+      dropdown._eventHandlers.set(handlerKey, delegationHandler);
+    }
     
     // Also handle submit events for forms
-    if (eventType === 'click') {
-      dropdown.addEventListener('submit', (e) => {
-        const target = e.target.closest(selector);
-        if (target && selector.includes('form')) {
-          callback(target, e);
+    if (eventType === 'click' && selector.includes('form')) {
+      const submitHandlerKey = `submit-${selector}`;
+      if (!dropdown._eventHandlers.has(submitHandlerKey)) {
+        const submitHandler = (e) => {
+          const target = e.target.closest(selector);
+          if (target) {
+            callback(target, e);
+          }
+        };
+        dropdown.addEventListener('submit', submitHandler);
+        dropdown._eventHandlers.set(submitHandlerKey, submitHandler);
+      }
+    }
+  }
+
+  showNPSThankYou(feedbackDropdown, score, reason) {
+    // Hide the form
+    const form = feedbackDropdown.querySelector('.feedback-form');
+    const thankYou = feedbackDropdown.querySelector('.nps-thank-you');
+    
+    if (form && thankYou) {
+      form.style.display = 'none';
+      thankYou.classList.remove('hidden');
+      
+      // Generate personalized thank you message based on score
+      const thankYouMessage = feedbackDropdown.querySelector('.nps-thank-you-message');
+      if (thankYouMessage) {
+        let message = '';
+        let emoji = '';
+        
+        if (score <= 6) {
+          // Detractors
+          const messages = [
+            "We really appreciate your honest feedback! 😊 We're committed to making improvements.",
+            "Thank you for helping us identify areas to improve! 🛠️ Your voice matters.",
+            "We hear you loud and clear! 📣 We'll work hard to earn a higher score next time.",
+            "Your feedback is a gift! 🎁 We'll use it to make meaningful changes."
+          ];
+          message = messages[Math.floor(Math.random() * messages.length)];
+          emoji = '🔧';
+        } else if (score <= 8) {
+          // Passives
+          const messages = [
+            "Thanks for the feedback! 😊 We'd love to know what would make this a 10/10 experience.",
+            "We appreciate you taking the time! ⭐ What can we do to wow you next time?",
+            "Great feedback! 👍 We're always looking for ways to make things even better.",
+            "Thank you! 🙏 Your suggestions help us reach for excellence."
+          ];
+          message = messages[Math.floor(Math.random() * messages.length)];
+          emoji = '⭐';
+        } else {
+          // Promoters
+          const messages = [
+            "You're amazing! 🌟 Thanks for being such a fantastic advocate!",
+            "Woohoo! 🎉 Your enthusiasm gives us energy to keep innovating!",
+            "You made our day! ☀️ Thank you for spreading the love!",
+            "High five! 🙌 We're thrilled you're having such a great experience!",
+            "You rock! 🎸 Thanks for being part of our success story!"
+          ];
+          message = messages[Math.floor(Math.random() * messages.length)];
+          emoji = '🌟';
         }
-      });
+        
+        thankYouMessage.innerHTML = `
+          <div class="flex items-center justify-center mb-2">
+            <span class="text-2xl mr-2">${emoji}</span>
+            <span class="font-semibold text-gray-700">Score: ${score}/10</span>
+          </div>
+          <p class="text-gray-600">${message}</p>
+          ${reason ? `<div class="mt-3 p-2 bg-white/50 rounded-lg"><span class="text-xs font-medium text-gray-500">Your comment:</span><br><span class="text-sm text-gray-700 italic">"${reason}"</span></div>` : ''}
+        `;
+      }
     }
   }
 
@@ -832,8 +997,12 @@ export class WebropolHeader extends BaseComponent {
       });
 
       // Close on outside click
-      document.addEventListener('click', () => {
-        createDropdown.classList.add('opacity-0', 'invisible');
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        // Only close if clicking outside the create dropdown and button
+        if (!createDropdown.contains(e.target) && !createButton.contains(e.target)) {
+          createDropdown.classList.add('opacity-0', 'invisible');
+        }
       });
 
       // Prevent close when clicking inside
