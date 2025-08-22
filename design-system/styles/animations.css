@@ -89,6 +89,68 @@
   25% { transform: translateX(3px); }
 }
 
+/* Wave vibration animations for rating icon */
+@keyframes waveLeft {
+  0%, 100% { 
+    transform: translateX(0) scaleY(1);
+    opacity: 0.6;
+  }
+  25% { 
+    transform: translateX(-2px) scaleY(1.2);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateX(-4px) scaleY(0.8);
+    opacity: 1;
+  }
+  75% { 
+    transform: translateX(-2px) scaleY(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes waveRight {
+  0%, 100% { 
+    transform: translateX(0) scaleY(1);
+    opacity: 0.6;
+  }
+  25% { 
+    transform: translateX(2px) scaleY(1.2);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: translateX(4px) scaleY(0.8);
+    opacity: 1;
+  }
+  75% { 
+    transform: translateX(2px) scaleY(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes vibrationPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(251, 146, 60, 0.1);
+  }
+}
+
+@keyframes ratingAttention {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  20%, 60% { 
+    transform: scale(1.1);
+  }
+  40%, 80% { 
+    transform: scale(1.05);
+  }
+}
+
 /* ===== UTILITY CLASSES ===== */
 
 /* Screen reader only */
@@ -180,6 +242,55 @@
 
 .animate-wiggle {
   animation: wiggle 0.5s ease-in-out;
+}
+
+/* Rating wave animation classes */
+.rating-vibration-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rating-vibration-active .rating-wave-left {
+  animation: waveLeft 0.8s ease-in-out infinite;
+}
+
+.rating-vibration-active .rating-wave-right {
+  animation: waveRight 0.8s ease-in-out infinite;
+}
+
+.rating-vibration-active .rating-pulse {
+  animation: vibrationPulse 1.2s ease-in-out infinite;
+}
+
+.rating-attention-active {
+  animation: ratingAttention 1.5s ease-in-out 3;
+}
+
+.rating-wave {
+  position: absolute;
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(to bottom, 
+    rgba(251, 146, 60, 0.8) 0%, 
+    rgba(251, 146, 60, 0.6) 50%, 
+    rgba(251, 146, 60, 0.3) 100%);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.rating-wave-left {
+  left: -8px;
+}
+
+.rating-wave-right {
+  right: -8px;
+}
+
+.rating-vibration-active .rating-wave {
+  opacity: 1;
 }
 
 /* ===== RESPONSIVE UTILITIES ===== */

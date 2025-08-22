@@ -29,6 +29,11 @@ export class WebropolHeader extends BaseComponent {
       ? !!window.globalSettingsManager.getSetting('showRatingSelector')
       : true;
 
+    // Get the feedback question type from settings
+    const feedbackQuestionType = (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.getSetting === 'function')
+      ? window.globalSettingsManager.getSetting('feedbackQuestionType') || 'rating'
+      : 'rating';
+
     const currentTheme = ThemeManager.getCurrentTheme();
     const allThemes = ThemeManager.getAllThemes();
 
@@ -111,64 +116,16 @@ export class WebropolHeader extends BaseComponent {
             ` : ''}
             
             ${showRatingSelector ? `
-              <div class="relative">
-                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-orange-600 hover:bg-webropol-orange-50 rounded-xl transition-all rating-selector-btn">
+              <div class="relative rating-vibration-container">
+                <div class="rating-wave rating-wave-left"></div>
+                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-orange-600 hover:bg-webropol-orange-50 rounded-xl transition-all rating-selector-btn rating-pulse">
                   <i class="fal fa-star"></i>
                 </button>
+                <div class="rating-wave rating-wave-right"></div>
                 
-                <!-- Rating dropdown -->
-                <div class="absolute right-0 top-full mt-2 w-44 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 rating-dropdown z-[9999]">
-                  <div class="px-4 py-2 text-xs uppercase tracking-wide text-webropol-gray-500">Rating Options</div>
-                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="5">
-                    <div class="flex mr-3">
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                    </div>
-                    Excellent
-                  </button>
-                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="4">
-                    <div class="flex mr-3">
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                    </div>
-                    Good
-                  </button>
-                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="3">
-                    <div class="flex mr-3">
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                    </div>
-                    Average
-                  </button>
-                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="2">
-                    <div class="flex mr-3">
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                    </div>
-                    Poor
-                  </button>
-                  <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rating-option" data-rating="1">
-                    <div class="flex mr-3">
-                      <i class="fas fa-star text-yellow-400 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                      <i class="fal fa-star text-gray-300 text-xs"></i>
-                    </div>
-                    Terrible
-                  </button>
+                <!-- Feedback dropdown -->
+                <div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-4 opacity-0 invisible transition-all duration-200 feedback-dropdown z-[9999]">
+                  ${this.getFeedbackContent(feedbackQuestionType)}
                 </div>
               </div>
             ` : ''}
@@ -227,6 +184,9 @@ export class WebropolHeader extends BaseComponent {
     this.addThemeListeners();
     this.addRatingListeners();
     this.addCreateMenuListeners();
+    
+    // Initialize rating animation scheduler
+    this.initializeRatingAnimationScheduler();
 
     // Re-render header if global settings applied (to reflect visibility changes)
     if (!this._settingsListenerAdded) {
@@ -237,6 +197,140 @@ export class WebropolHeader extends BaseComponent {
       });
       this._settingsListenerAdded = true;
     }
+  }
+
+  getFeedbackContent(questionType) {
+    const currentPath = window.location.pathname;
+    const pageContext = this.getPageContext(currentPath);
+    
+    switch (questionType) {
+      case 'rating':
+        return this.getRatingContent();
+      case 'openended':
+        return this.getOpenEndedContent(pageContext);
+      case 'nps':
+        return this.getNPSContent(pageContext);
+      default:
+        return this.getRatingContent();
+    }
+  }
+
+  getPageContext(path) {
+    if (path.includes('/surveys/')) {
+      if (path.includes('/edit.html')) return { area: 'Survey Editor', question: 'How would you improve the survey editing experience?' };
+      if (path.includes('/list.html')) return { area: 'Survey List', question: 'How can we make managing your surveys easier?' };
+      return { area: 'Surveys', question: 'How is your experience with the surveys section?' };
+    }
+    if (path.includes('/events/')) {
+      if (path.includes('/list.html')) return { area: 'Events List', question: 'What features would help you manage events better?' };
+      return { area: 'Events', question: 'How can we improve the events experience?' };
+    }
+    if (path.includes('/admin-tools/')) return { area: 'Admin Tools', question: 'What admin features would be most helpful?' };
+    if (path.includes('/training-videos/')) return { area: 'Training Videos', question: 'What training content would you like to see?' };
+    if (path.includes('/dashboards/')) return { area: 'Dashboards', question: 'How can we make the dashboards more useful?' };
+    
+    return { area: 'Platform', question: 'How can we improve your overall experience?' };
+  }
+
+  getRatingContent() {
+    return `
+      <div class="px-4 py-2">
+        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-3">Rate Your Experience</h4>
+        <div class="space-y-2">
+          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="5">
+            <div class="flex mr-3">
+              ${[1,2,3,4,5].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
+            </div>
+            Excellent
+          </button>
+          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="4">
+            <div class="flex mr-3">
+              ${[1,2,3,4].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
+              <i class="fal fa-star text-gray-300 text-xs"></i>
+            </div>
+            Good
+          </button>
+          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="3">
+            <div class="flex mr-3">
+              ${[1,2,3].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
+              ${[4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
+            </div>
+            Average
+          </button>
+          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="2">
+            <div class="flex mr-3">
+              ${[1,2].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
+              ${[3,4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
+            </div>
+            Poor
+          </button>
+          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="1">
+            <div class="flex mr-3">
+              <i class="fas fa-star text-yellow-400 text-xs"></i>
+              ${[2,3,4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
+            </div>
+            Terrible
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  getOpenEndedContent(pageContext) {
+    return `
+      <div class="px-4 py-2">
+        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-2">${pageContext.area} Feedback</h4>
+        <p class="text-xs text-webropol-gray-600 mb-3">${pageContext.question}</p>
+        <form class="feedback-form" data-type="openended">
+          <textarea 
+            class="w-full h-20 px-3 py-2 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-webropol-teal-500 resize-none"
+            placeholder="Share your thoughts..."
+            name="feedback"
+            maxlength="500"
+          ></textarea>
+          <div class="flex justify-between items-center mt-3">
+            <span class="text-xs text-webropol-gray-500">Max 500 characters</span>
+            <button type="submit" class="px-4 py-1.5 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-sm rounded-lg transition-colors">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+
+  getNPSContent(pageContext) {
+    return `
+      <div class="px-4 py-2">
+        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-2">Net Promoter Score</h4>
+        <p class="text-xs text-webropol-gray-600 mb-4">How likely are you to recommend our ${pageContext.area} to a colleague?</p>
+        <form class="feedback-form" data-type="nps">
+          <div class="grid grid-cols-11 gap-1 mb-4">
+            ${Array.from({length: 11}, (_, i) => `
+              <button type="button" class="nps-option w-6 h-6 text-xs border border-webropol-gray-300 rounded hover:bg-webropol-teal-50 hover:border-webropol-teal-300 transition-colors" data-score="${i}">
+                ${i}
+              </button>
+            `).join('')}
+          </div>
+          <div class="flex justify-between text-xs text-webropol-gray-500 mb-4">
+            <span>Not likely</span>
+            <span>Very likely</span>
+          </div>
+          <textarea 
+            class="w-full h-16 px-3 py-2 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-webropol-teal-500 resize-none"
+            placeholder="Tell us why (optional)..."
+            name="reason"
+            maxlength="300"
+          ></textarea>
+          <div class="flex justify-between items-center mt-3">
+            <span class="text-xs text-webropol-gray-500">Score: <span class="nps-score-display">-</span></span>
+            <button type="submit" class="px-4 py-1.5 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-sm rounded-lg transition-colors" disabled>
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
   }
 
   addDropdownListeners() {
@@ -320,8 +414,8 @@ export class WebropolHeader extends BaseComponent {
         
         // Close user dropdown if open
         const userDropdown = this.querySelector('.user-dropdown');
-        const ratingDropdown = this.querySelector('.rating-dropdown');
-        [userDropdown, ratingDropdown].forEach(dropdown => {
+        const feedbackDropdown = this.querySelector('.feedback-dropdown');
+        [userDropdown, feedbackDropdown].forEach(dropdown => {
           if (dropdown) {
             dropdown.classList.add('opacity-0', 'invisible');
           }
@@ -362,12 +456,12 @@ export class WebropolHeader extends BaseComponent {
 
   addRatingListeners() {
     const ratingButton = this.querySelector('.rating-selector-btn');
-    const ratingDropdown = this.querySelector('.rating-dropdown');
+    const feedbackDropdown = this.querySelector('.feedback-dropdown');
 
-    if (ratingButton && ratingDropdown) {
+    if (ratingButton && feedbackDropdown) {
       ratingButton.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isVisible = !ratingDropdown.classList.contains('opacity-0');
+        const isVisible = !feedbackDropdown.classList.contains('opacity-0');
         
         // Close other dropdowns if open
         const userDropdown = this.querySelector('.user-dropdown');
@@ -381,45 +475,126 @@ export class WebropolHeader extends BaseComponent {
         });
         
         if (isVisible) {
-          ratingDropdown.classList.add('opacity-0', 'invisible');
+          feedbackDropdown.classList.add('opacity-0', 'invisible');
         } else {
-          ratingDropdown.classList.remove('opacity-0', 'invisible');
+          feedbackDropdown.classList.remove('opacity-0', 'invisible');
         }
       });
 
-      // Handle rating selection
-      const ratingOptions = this.querySelectorAll('.rating-option');
-      ratingOptions.forEach(option => {
-        option.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const selectedRating = option.getAttribute('data-rating');
-          
-          // Emit rating event
-          this.emit('rating-selected', { rating: parseInt(selectedRating) });
-          document.dispatchEvent(new CustomEvent('webropol-rating-selected', { 
-            detail: { rating: parseInt(selectedRating) } 
-          }));
-          
-          ratingDropdown.classList.add('opacity-0', 'invisible');
-          
-          // Show a brief feedback
-          const originalText = ratingButton.innerHTML;
-          ratingButton.innerHTML = '<i class="fal fa-check text-green-500"></i>';
-          setTimeout(() => {
-            ratingButton.innerHTML = originalText;
-          }, 1000);
+      // Handle rating selection (for star ratings)
+      this.addEventListenerToDropdown(feedbackDropdown, '.rating-option', (option, e) => {
+        e.stopPropagation();
+        const selectedRating = option.getAttribute('data-rating');
+        this.handleFeedbackSubmission('rating', { rating: parseInt(selectedRating) });
+        feedbackDropdown.classList.add('opacity-0', 'invisible');
+      });
+
+      // Handle NPS button clicks
+      this.addEventListenerToDropdown(feedbackDropdown, '.nps-option', (option, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const score = parseInt(option.getAttribute('data-score'));
+        
+        // Update visual selection
+        feedbackDropdown.querySelectorAll('.nps-option').forEach(btn => {
+          btn.classList.remove('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
+          btn.classList.add('border-webropol-gray-300');
         });
+        option.classList.add('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
+        option.classList.remove('border-webropol-gray-300');
+        
+        // Update score display and enable submit
+        const scoreDisplay = feedbackDropdown.querySelector('.nps-score-display');
+        const submitBtn = feedbackDropdown.querySelector('button[type="submit"]');
+        if (scoreDisplay) scoreDisplay.textContent = score;
+        if (submitBtn) submitBtn.disabled = false;
+      });
+
+      // Handle form submissions
+      this.addEventListenerToDropdown(feedbackDropdown, '.feedback-form', (form, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const formType = form.getAttribute('data-type');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        if (formType === 'nps') {
+          const selectedScore = feedbackDropdown.querySelector('.nps-option.bg-webropol-teal-500');
+          if (selectedScore) {
+            data.score = parseInt(selectedScore.getAttribute('data-score'));
+          }
+        }
+        
+        this.handleFeedbackSubmission(formType, data);
+        feedbackDropdown.classList.add('opacity-0', 'invisible');
       });
 
       // Close dropdown when clicking outside
       document.addEventListener('click', () => {
-        ratingDropdown.classList.add('opacity-0', 'invisible');
+        feedbackDropdown.classList.add('opacity-0', 'invisible');
       });
 
       // Prevent dropdown from closing when clicking inside it
-      ratingDropdown.addEventListener('click', (e) => {
+      feedbackDropdown.addEventListener('click', (e) => {
         e.stopPropagation();
       });
+    }
+  }
+
+  addEventListenerToDropdown(dropdown, selector, callback) {
+    // Use event delegation since dropdown content is dynamic
+    dropdown.addEventListener('click', (e) => {
+      const target = e.target.closest(selector);
+      if (target) {
+        callback(target, e);
+      }
+    });
+    
+    dropdown.addEventListener('submit', (e) => {
+      const target = e.target.closest(selector);
+      if (target && selector.includes('form')) {
+        callback(target, e);
+      }
+    });
+  }
+
+  handleFeedbackSubmission(type, data) {
+    // Add timestamp and page context
+    const submissionData = {
+      type,
+      data,
+      timestamp: new Date().toISOString(),
+      page: window.location.pathname,
+      pageContext: this.getPageContext(window.location.pathname)
+    };
+
+    // Emit events
+    this.emit('feedback-submitted', submissionData);
+    document.dispatchEvent(new CustomEvent('webropol-feedback-submitted', { 
+      detail: submissionData 
+    }));
+
+    // Store in localStorage for now (you can replace with API call)
+    const existingFeedback = JSON.parse(localStorage.getItem('webropol_feedback') || '[]');
+    existingFeedback.push(submissionData);
+    localStorage.setItem('webropol_feedback', JSON.stringify(existingFeedback));
+
+    // Show success feedback
+    this.showFeedbackSuccess(type);
+    
+    console.log('Feedback submitted:', submissionData);
+  }
+
+  showFeedbackSuccess(type) {
+    const ratingButton = this.querySelector('.rating-selector-btn');
+    if (ratingButton) {
+      const originalContent = ratingButton.innerHTML;
+      ratingButton.innerHTML = '<i class="fal fa-check text-green-500"></i>';
+      
+      setTimeout(() => {
+        ratingButton.innerHTML = originalContent;
+      }, 2000);
     }
   }
 
@@ -461,6 +636,185 @@ export class WebropolHeader extends BaseComponent {
 
       // Prevent close when clicking inside
       createDropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+  }
+
+  initializeRatingAnimationScheduler() {
+    // Clear any existing timers
+    if (this.ratingAnimationTimer) {
+      clearTimeout(this.ratingAnimationTimer);
+    }
+    if (this.ratingIntervalTimer) {
+      clearInterval(this.ratingIntervalTimer);
+    }
+
+    // Get animation settings from global settings manager
+    const getAnimationSettings = () => {
+      if (typeof window !== 'undefined' && window.globalSettingsManager) {
+        return {
+          enabled: window.globalSettingsManager.getSetting('ratingAnimationEnabled') !== false,
+          frequency: window.globalSettingsManager.getSetting('ratingAnimationFrequency') || 3, // times per day
+          duration: window.globalSettingsManager.getSetting('ratingAnimationDuration') || 5000, // milliseconds
+          startTime: window.globalSettingsManager.getSetting('ratingAnimationStartTime') || '09:00',
+          endTime: window.globalSettingsManager.getSetting('ratingAnimationEndTime') || '17:00',
+          type: window.globalSettingsManager.getSetting('ratingAnimationType') || 'wave' // 'wave' or 'attention'
+        };
+      }
+      return {
+        enabled: true,
+        frequency: 3,
+        duration: 5000,
+        startTime: '09:00',
+        endTime: '17:00',
+        type: 'wave'
+      };
+    };
+
+    const scheduleNextAnimation = () => {
+      const settings = getAnimationSettings();
+      
+      if (!settings.enabled) {
+        return;
+      }
+
+      const now = new Date();
+      const [startHour, startMinute] = settings.startTime.split(':').map(Number);
+      const [endHour, endMinute] = settings.endTime.split(':').map(Number);
+      
+      const startTime = new Date(now);
+      startTime.setHours(startHour, startMinute, 0, 0);
+      
+      const endTime = new Date(now);
+      endTime.setHours(endHour, endMinute, 0, 0);
+      
+      // If we're not in the active time window, schedule for tomorrow
+      if (now < startTime) {
+        // Schedule for start time today
+        const timeUntilStart = startTime.getTime() - now.getTime();
+        this.ratingAnimationTimer = setTimeout(() => {
+          this.startDailyAnimationCycle();
+        }, timeUntilStart);
+      } else if (now > endTime) {
+        // Schedule for start time tomorrow
+        const tomorrowStart = new Date(startTime);
+        tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+        const timeUntilTomorrow = tomorrowStart.getTime() - now.getTime();
+        this.ratingAnimationTimer = setTimeout(() => {
+          this.startDailyAnimationCycle();
+        }, timeUntilTomorrow);
+      } else {
+        // We're in the active window, start immediately
+        this.startDailyAnimationCycle();
+      }
+    };
+
+    scheduleNextAnimation();
+
+    // Re-schedule when settings change
+    window.addEventListener('webropol-settings-applied', () => {
+      scheduleNextAnimation();
+    });
+  }
+
+  startDailyAnimationCycle() {
+    const settings = this.getRatingAnimationSettings();
+    
+    if (!settings.enabled) {
+      return;
+    }
+
+    const now = new Date();
+    const [endHour, endMinute] = settings.endTime.split(':').map(Number);
+    const endTime = new Date(now);
+    endTime.setHours(endHour, endMinute, 0, 0);
+    
+    const timeWindow = endTime.getTime() - now.getTime();
+    const interval = timeWindow / settings.frequency;
+    
+    let animationCount = 0;
+    
+    const triggerAnimation = () => {
+      if (animationCount < settings.frequency && new Date() < endTime) {
+        this.triggerRatingAnimation(settings.duration, settings.type);
+        animationCount++;
+        
+        if (animationCount < settings.frequency) {
+          // Add some randomness to make it feel more natural (±20% of interval)
+          const randomOffset = (Math.random() - 0.5) * 0.4 * interval;
+          const nextAnimationTime = interval + randomOffset;
+          
+          this.ratingAnimationTimer = setTimeout(triggerAnimation, nextAnimationTime);
+        }
+      }
+    };
+
+    // Trigger first animation immediately
+    triggerAnimation();
+  }
+
+  getRatingAnimationSettings() {
+    if (typeof window !== 'undefined' && window.globalSettingsManager) {
+      return {
+        enabled: window.globalSettingsManager.getSetting('ratingAnimationEnabled') !== false,
+        frequency: window.globalSettingsManager.getSetting('ratingAnimationFrequency') || 3,
+        duration: window.globalSettingsManager.getSetting('ratingAnimationDuration') || 5000,
+        startTime: window.globalSettingsManager.getSetting('ratingAnimationStartTime') || '09:00',
+        endTime: window.globalSettingsManager.getSetting('ratingAnimationEndTime') || '17:00',
+        type: window.globalSettingsManager.getSetting('ratingAnimationType') || 'wave'
+      };
+    }
+    return {
+      enabled: true,
+      frequency: 3,
+      duration: 5000,
+      startTime: '09:00',
+      endTime: '17:00',
+      type: 'wave'
+    };
+  }
+
+  triggerRatingAnimation(duration = 5000, type = 'wave') {
+    const ratingContainer = this.querySelector('.rating-vibration-container');
+    const ratingButton = this.querySelector('.rating-selector-btn');
+    
+    if (!ratingContainer || !ratingButton) {
+      return;
+    }
+
+    // Remove any existing animation classes
+    ratingContainer.classList.remove('rating-vibration-active');
+    ratingButton.classList.remove('rating-attention-active');
+
+    // Add the appropriate animation class
+    if (type === 'wave') {
+      ratingContainer.classList.add('rating-vibration-active');
+    } else if (type === 'attention') {
+      ratingButton.classList.add('rating-attention-active');
+    }
+
+    // Remove animation after specified duration
+    setTimeout(() => {
+      ratingContainer.classList.remove('rating-vibration-active');
+      ratingButton.classList.remove('rating-attention-active');
+    }, duration);
+
+    // Emit event for analytics or other purposes
+    this.emit('rating-animation-triggered', { 
+      type, 
+      duration, 
+      timestamp: new Date().toISOString() 
+    });
+  }
+
+  // Cleanup method
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    
+    if (this.ratingAnimationTimer) {
+      clearTimeout(this.ratingAnimationTimer);
+    }
+    if (this.ratingIntervalTimer) {
+      clearInterval(this.ratingIntervalTimer);
     }
   }
 }

@@ -16,7 +16,14 @@ export class GlobalSettingsManager {
   // New: control visibility of Header Create menu
   showHeaderCreateMenu: true,
   // New: control visibility of Rating selector
-  showRatingSelector: true
+  showRatingSelector: true,
+  // New: feedback question type
+  feedbackQuestionType: 'rating', // 'rating', 'openended', 'nps'
+  // Rating animation settings
+  ratingAnimationEnabled: true,
+  ratingAnimationFrequency: 3, // times per day
+  ratingAnimationDuration: 5000, // milliseconds
+  ratingAnimationType: 'wave' // 'wave' or 'attention'
     };
     
     this.settings = this.loadSettings();

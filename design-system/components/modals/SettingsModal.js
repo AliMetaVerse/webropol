@@ -38,7 +38,14 @@ export class WebropolSettingsModal extends BaseComponent {
       // New: control visibility of Header Create menu
       showHeaderCreateMenu: true,
       // New: control visibility of Rating selector
-      showRatingSelector: true
+      showRatingSelector: true,
+      // New: feedback question type
+      feedbackQuestionType: 'rating', // 'rating', 'openended', 'nps'
+      // New: rating animation settings
+      ratingAnimationEnabled: true,
+      ratingAnimationFrequency: 3, // times per day
+      ratingAnimationDuration: 5000, // milliseconds
+      ratingAnimationType: 'wave' // 'wave' or 'attention'
     };
 
     const stored = localStorage.getItem('webropol_global_settings');
@@ -93,7 +100,12 @@ export class WebropolSettingsModal extends BaseComponent {
         autoLogout: 30,
         language: 'en',
         showHeaderCreateMenu: true,
-        showRatingSelector: true
+        showRatingSelector: true,
+        feedbackQuestionType: 'rating',
+        ratingAnimationEnabled: true,
+        ratingAnimationFrequency: 3,
+        ratingAnimationDuration: 5000,
+        ratingAnimationType: 'wave'
       };
       this.saveSettings();
       this.render();
@@ -107,6 +119,32 @@ export class WebropolSettingsModal extends BaseComponent {
       this.settings[key] = !this.settings[key];
     }
     this.saveSettings();
+  }
+
+  testRatingAnimation() {
+    // Find all headers in the document and trigger their test animation
+    const headers = document.querySelectorAll('webropol-header');
+    headers.forEach(header => {
+      if (typeof header.triggerRatingAnimation === 'function') {
+        header.triggerRatingAnimation(
+          this.settings.ratingAnimationDuration,
+          this.settings.ratingAnimationType
+        );
+      }
+    });
+
+    // Provide visual feedback on the test button
+    const testBtn = this.querySelector('.test-animation-btn');
+    if (testBtn) {
+      const originalContent = testBtn.innerHTML;
+      testBtn.innerHTML = '<i class="fal fa-check mr-1"></i>Testing...';
+      testBtn.disabled = true;
+      
+      setTimeout(() => {
+        testBtn.innerHTML = originalContent;
+        testBtn.disabled = false;
+      }, 3000);
+    }
   }
 
   render() {
@@ -225,25 +263,6 @@ export class WebropolSettingsModal extends BaseComponent {
                     </label>
                   </div>
                   
-                  <!-- Rating Selector Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
-                      <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Show Rating Selector</label>
-                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="Show or hide the star rating selector in the header">
-                          <i class="fal fa-question-circle text-sm"></i>
-                        </div>
-                      </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the rating selector visibility in the header</p>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" class="sr-only peer" ${this.settings.showRatingSelector ? 'checked' : ''} 
-                             data-setting="showRatingSelector">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
-                    </label>
-                  </div>
-                  
                 </div>
               </div>
               
@@ -318,6 +337,159 @@ export class WebropolSettingsModal extends BaseComponent {
                 </div>
               </div>
               
+              <!-- User Feedback Settings Section -->
+              <div class="settings-section">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
+                  <i class="fal fa-star mr-2 text-webropol-orange-600"></i>
+                  User Feedback
+                </h3>
+                <div class="space-y-4">
+                  
+                  <!-- Rating Selector Toggle -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Show Rating Selector</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Show or hide the star rating selector in the header">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the rating selector visibility in the header</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.showRatingSelector ? 'checked' : ''} 
+                             data-setting="showRatingSelector">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                  <!-- Feedback Question Type -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Feedback Question Type</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Choose the type of feedback question to display">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Select the feedback method for user input</p>
+                    </div>
+                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                            data-setting="feedbackQuestionType">
+                      <option value="rating" ${this.settings.feedbackQuestionType === 'rating' ? 'selected' : ''}>Star Rating</option>
+                      <option value="openended" ${this.settings.feedbackQuestionType === 'openended' ? 'selected' : ''}>Open-ended Question</option>
+                      <option value="nps" ${this.settings.feedbackQuestionType === 'nps' ? 'selected' : ''}>NPS Score</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Animation Enabled Toggle -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Enable Rating Animation</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Enable periodic animations on the rating selector to draw attention">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Show attention-grabbing animations on rating icon</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.ratingAnimationEnabled ? 'checked' : ''} 
+                             data-setting="ratingAnimationEnabled">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+                  
+                  <!-- Animation Type -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Animation Type</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Choose between wave vibration or attention pulse animation">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Wave shows side vibrations, Attention pulses the icon</p>
+                    </div>
+                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                            data-setting="ratingAnimationType">
+                      <option value="wave" ${this.settings.ratingAnimationType === 'wave' ? 'selected' : ''}>Wave Vibration</option>
+                      <option value="attention" ${this.settings.ratingAnimationType === 'attention' ? 'selected' : ''}>Attention Pulse</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Animation Frequency -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Daily Frequency</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="How many times per day the animation should appear">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Number of animations per day</p>
+                    </div>
+                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                            data-setting="ratingAnimationFrequency">
+                      <option value="1" ${this.settings.ratingAnimationFrequency === 1 ? 'selected' : ''}>1 time</option>
+                      <option value="2" ${this.settings.ratingAnimationFrequency === 2 ? 'selected' : ''}>2 times</option>
+                      <option value="3" ${this.settings.ratingAnimationFrequency === 3 ? 'selected' : ''}>3 times</option>
+                      <option value="4" ${this.settings.ratingAnimationFrequency === 4 ? 'selected' : ''}>4 times</option>
+                      <option value="5" ${this.settings.ratingAnimationFrequency === 5 ? 'selected' : ''}>5 times</option>
+                      <option value="6" ${this.settings.ratingAnimationFrequency === 6 ? 'selected' : ''}>6 times</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Animation Duration -->
+                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex-1">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Animation Duration</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="How long each animation should last">
+                          <i class="fal fa-question-circle text-sm"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Duration of each animation</p>
+                    </div>
+                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                            data-setting="ratingAnimationDuration">
+                      <option value="2000" ${this.settings.ratingAnimationDuration === 2000 ? 'selected' : ''}>2 seconds</option>
+                      <option value="3000" ${this.settings.ratingAnimationDuration === 3000 ? 'selected' : ''}>3 seconds</option>
+                      <option value="5000" ${this.settings.ratingAnimationDuration === 5000 ? 'selected' : ''}>5 seconds</option>
+                      <option value="8000" ${this.settings.ratingAnimationDuration === 8000 ? 'selected' : ''}>8 seconds</option>
+                      <option value="10000" ${this.settings.ratingAnimationDuration === 10000 ? 'selected' : ''}>10 seconds</option>
+                    </select>
+                  </div>
+                  
+                  <!-- Test Animation Button -->
+                  <div class="py-3 px-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center">
+                          <label class="text-sm font-medium text-webropol-gray-700">Test Animation</label>
+                          <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                               title="Trigger the rating animation immediately for testing">
+                            <i class="fal fa-question-circle text-sm"></i>
+                          </div>
+                        </div>
+                        <p class="text-xs text-webropol-gray-500 mt-1">Trigger the animation now to see how it looks</p>
+                      </div>
+                      <button class="test-animation-btn px-4 py-2 bg-webropol-orange-500 hover:bg-webropol-orange-600text-sm rounded-lg transition-colors">
+                        <i class="fal fa-play mr-1"></i>
+                        Test Now
+                      </button>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+              
             </div>
           </div>
           
@@ -366,6 +538,12 @@ export class WebropolSettingsModal extends BaseComponent {
       this.addListener(resetButton, 'click', this.resetSettings);
     }
 
+    // Test animation button
+    const testButton = this.querySelector('.test-animation-btn');
+    if (testButton) {
+      this.addListener(testButton, 'click', this.testRatingAnimation);
+    }
+
     // Backdrop click
     if (backdrop) {
       this.addListener(backdrop, 'click', this.handleBackdropClick);
@@ -388,7 +566,7 @@ export class WebropolSettingsModal extends BaseComponent {
     selects.forEach(select => {
       this.addListener(select, 'change', (e) => {
         const settingKey = e.target.getAttribute('data-setting');
-        const value = e.target.value === '0' ? 0 : parseInt(e.target.value);
+        const value = e.target.value === '0' ? 0 : (isNaN(e.target.value) ? e.target.value : parseInt(e.target.value));
         this.toggleSetting(settingKey, value);
       });
     });
