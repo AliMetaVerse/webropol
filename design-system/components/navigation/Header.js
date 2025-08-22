@@ -301,31 +301,104 @@ export class WebropolHeader extends BaseComponent {
 
   getNPSContent(pageContext) {
     return `
-      <div class="px-4 py-2">
-        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-2">Net Promoter Score</h4>
-        <p class="text-xs text-webropol-gray-600 mb-4">How likely are you to recommend our ${pageContext.area} to a colleague?</p>
+      <div class="px-6 py-5 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <!-- Header Section with Icon -->
+        <div class="flex items-center mb-4">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+            <i class="fas fa-chart-line text-white text-lg"></i>
+          </div>
+          <div>
+            <h4 class="text-lg font-bold text-gray-800 leading-tight">Net Promoter Score</h4>
+            <p class="text-xs text-gray-600 font-medium">Help us improve ${pageContext.area}</p>
+          </div>
+        </div>
+        
+        <!-- Question -->
+        <div class="mb-6">
+          <p class="text-sm text-gray-700 font-medium text-center leading-relaxed">
+            How likely are you to recommend our <span class="font-bold text-indigo-600">${pageContext.area}</span> to a colleague?
+          </p>
+        </div>
+        
         <form class="feedback-form" data-type="nps">
-          <div class="grid grid-cols-11 gap-1 mb-4">
-            ${Array.from({length: 11}, (_, i) => `
-              <button type="button" class="nps-option w-6 h-6 text-xs border border-webropol-gray-300 rounded hover:bg-webropol-teal-50 hover:border-webropol-teal-300 transition-colors" data-score="${i}">
-                ${i}
-              </button>
-            `).join('')}
+          <!-- NPS Score Grid with Modern Design -->
+          <div class="mb-5">
+            <div class="grid grid-cols-11 gap-2 mb-4">
+              ${Array.from({length: 11}, (_, i) => {
+                let colorClass = '';
+                let hoverClass = '';
+                if (i <= 6) {
+                  // Detractors (0-6) - Red gradient
+                  colorClass = 'bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-700';
+                  hoverClass = 'hover:from-red-200 hover:to-red-300 hover:border-red-400 hover:shadow-lg hover:scale-110';
+                } else if (i <= 8) {
+                  // Passives (7-8) - Yellow gradient
+                  colorClass = 'bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-300 text-amber-700';
+                  hoverClass = 'hover:from-yellow-200 hover:to-amber-300 hover:border-amber-400 hover:shadow-lg hover:scale-110';
+                } else {
+                  // Promoters (9-10) - Green gradient
+                  colorClass = 'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700';
+                  hoverClass = 'hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110';
+                }
+                
+                return `
+                  <button type="button" class="nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl ${colorClass} ${hoverClass} transition-all duration-300 transform active:scale-95 shadow-sm" data-score="${i}">
+                    ${i}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+            
+            <!-- Labels with enhanced styling -->
+            <div class="flex justify-between items-center px-1">
+              <div class="text-center">
+                <div class="text-xs font-semibold text-red-600 mb-1">Not likely</div>
+                <div class="w-3 h-1 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto"></div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs font-semibold text-emerald-600 mb-1">Very likely</div>
+                <div class="w-3 h-1 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full mx-auto"></div>
+              </div>
+            </div>
           </div>
-          <div class="flex justify-between text-xs text-webropol-gray-500 mb-4">
-            <span>Not likely</span>
-            <span>Very likely</span>
+          
+          <!-- Category Indicator -->
+          <div class="mb-5">
+            <div class="nps-category-indicator hidden p-3 rounded-xl text-center font-medium text-sm transition-all duration-300">
+              <div class="nps-category-icon text-2xl mb-1"></div>
+              <div class="nps-category-title font-bold"></div>
+              <div class="nps-category-desc text-xs opacity-90"></div>
+            </div>
           </div>
-          <textarea 
-            class="w-full h-16 px-3 py-2 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-webropol-teal-500 resize-none"
-            placeholder="Tell us why (optional)..."
-            name="reason"
-            maxlength="300"
-          ></textarea>
-          <div class="flex justify-between items-center mt-3">
-            <span class="text-xs text-webropol-gray-500">Score: <span class="nps-score-display">-</span></span>
-            <button type="submit" class="px-4 py-1.5 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-sm rounded-lg transition-colors" disabled>
-              Submit
+          
+          <!-- Enhanced Textarea -->
+          <div class="mb-5">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-comment-dots mr-2 text-indigo-500"></i>
+              Tell us more (optional)
+            </label>
+            <textarea 
+              class="w-full h-20 px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 resize-none transition-all duration-300 bg-white/80 backdrop-blur-sm placeholder-gray-400"
+              placeholder="Share your thoughts on how we can improve..."
+              name="reason"
+              maxlength="300"
+            ></textarea>
+            <div class="text-right mt-1">
+              <span class="text-xs text-gray-400">0/300 characters</span>
+            </div>
+          </div>
+          
+          <!-- Enhanced Footer -->
+          <div class="flex justify-between items-center pt-2 border-t border-gray-200">
+            <div class="flex items-center space-x-3">
+              <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full animate-pulse"></div>
+                <span class="text-xs font-medium text-gray-600">Score: <span class="nps-score-display font-bold text-indigo-600">-</span></span>
+              </div>
+            </div>
+            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none" disabled>
+              <i class="fas fa-paper-plane mr-2"></i>
+              Submit Feedback
             </button>
           </div>
         </form>
@@ -489,7 +562,7 @@ export class WebropolHeader extends BaseComponent {
         feedbackDropdown.classList.add('opacity-0', 'invisible');
       });
 
-      // Handle NPS button clicks
+      // Handle NPS button clicks with enhanced visual feedback
       this.addEventListenerToDropdown(feedbackDropdown, '.nps-option', (option, e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -499,13 +572,22 @@ export class WebropolHeader extends BaseComponent {
         
         // Update visual selection - remove from all buttons
         feedbackDropdown.querySelectorAll('.nps-option').forEach(btn => {
-          btn.classList.remove('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
-          btn.classList.add('border-webropol-gray-300', 'text-gray-600');
+          btn.classList.remove('ring-4', 'ring-indigo-300', 'ring-offset-2', 'shadow-xl', 'scale-110');
+          btn.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-purple-600', 'text-white', 'border-indigo-500');
+          
+          // Reset to original colors based on score
+          const btnScore = parseInt(btn.getAttribute('data-score'));
+          if (btnScore <= 6) {
+            btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-700 hover:from-red-200 hover:to-red-300 hover:border-red-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+          } else if (btnScore <= 8) {
+            btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-300 text-amber-700 hover:from-yellow-200 hover:to-amber-300 hover:border-amber-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+          } else {
+            btn.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700 hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110 transition-all duration-300 transform active:scale-95 shadow-sm';
+          }
         });
         
-        // Add selection to clicked button
-        option.classList.add('bg-webropol-teal-500', 'text-white', 'border-webropol-teal-500');
-        option.classList.remove('border-webropol-gray-300', 'text-gray-600');
+        // Add vibrant selection to clicked button
+        option.className = 'nps-option w-8 h-8 text-sm font-bold border-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-indigo-500 ring-4 ring-indigo-300 ring-offset-2 shadow-xl scale-110 transition-all duration-300 transform';
         
         // Update score display and enable submit
         const scoreDisplay = feedbackDropdown.querySelector('.nps-score-display');
@@ -516,7 +598,44 @@ export class WebropolHeader extends BaseComponent {
         }
         if (submitBtn) {
           submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
           console.log('Submit button enabled');
+        }
+        
+        // Show and update category indicator
+        const categoryIndicator = feedbackDropdown.querySelector('.nps-category-indicator');
+        const categoryIcon = feedbackDropdown.querySelector('.nps-category-icon');
+        const categoryTitle = feedbackDropdown.querySelector('.nps-category-title');
+        const categoryDesc = feedbackDropdown.querySelector('.nps-category-desc');
+        
+        if (categoryIndicator && categoryIcon && categoryTitle && categoryDesc) {
+          categoryIndicator.classList.remove('hidden');
+          
+          if (score <= 6) {
+            // Detractors
+            categoryIndicator.className = 'nps-category-indicator p-3 rounded-xl text-center font-medium text-sm transition-all duration-300 bg-gradient-to-br from-red-100 to-pink-100 border-2 border-red-200';
+            categoryIcon.innerHTML = '😔';
+            categoryTitle.textContent = 'Detractor';
+            categoryTitle.className = 'nps-category-title font-bold text-red-700';
+            categoryDesc.textContent = 'Help us understand what we can improve';
+            categoryDesc.className = 'nps-category-desc text-xs opacity-90 text-red-600';
+          } else if (score <= 8) {
+            // Passives
+            categoryIndicator.className = 'nps-category-indicator p-3 rounded-xl text-center font-medium text-sm transition-all duration-300 bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-amber-200';
+            categoryIcon.innerHTML = '😐';
+            categoryTitle.textContent = 'Passive';
+            categoryTitle.className = 'nps-category-title font-bold text-amber-700';
+            categoryDesc.textContent = 'What would make this experience amazing?';
+            categoryDesc.className = 'nps-category-desc text-xs opacity-90 text-amber-600';
+          } else {
+            // Promoters
+            categoryIndicator.className = 'nps-category-indicator p-3 rounded-xl text-center font-medium text-sm transition-all duration-300 bg-gradient-to-br from-green-100 to-emerald-100 border-2 border-emerald-200';
+            categoryIcon.innerHTML = '😊';
+            categoryTitle.textContent = 'Promoter';
+            categoryTitle.className = 'nps-category-title font-bold text-emerald-700';
+            categoryDesc.textContent = 'Thank you! Tell us what you love most';
+            categoryDesc.className = 'nps-category-desc text-xs opacity-90 text-emerald-600';
+          }
         }
       });
 
@@ -530,7 +649,8 @@ export class WebropolHeader extends BaseComponent {
         const data = Object.fromEntries(formData.entries());
         
         if (formType === 'nps') {
-          const selectedScore = feedbackDropdown.querySelector('.nps-option.bg-webropol-teal-500');
+          // Find selected score with new styling classes
+          const selectedScore = feedbackDropdown.querySelector('.nps-option[class*="from-indigo-500"]');
           if (selectedScore) {
             data.score = parseInt(selectedScore.getAttribute('data-score'));
           }
@@ -539,6 +659,26 @@ export class WebropolHeader extends BaseComponent {
         this.handleFeedbackSubmission(formType, data);
         feedbackDropdown.classList.add('opacity-0', 'invisible');
       });
+
+      // Add character count functionality for textarea
+      this.addEventListenerToDropdown(feedbackDropdown, 'textarea[name="reason"]', (textarea, e) => {
+        const charCount = textarea.value.length;
+        const maxLength = parseInt(textarea.getAttribute('maxlength')) || 300;
+        const charCountDisplay = feedbackDropdown.querySelector('.text-xs.text-gray-400');
+        
+        if (charCountDisplay) {
+          charCountDisplay.textContent = `${charCount}/${maxLength} characters`;
+          
+          // Change color based on character count
+          if (charCount > maxLength * 0.9) {
+            charCountDisplay.className = 'text-xs text-red-500 font-medium';
+          } else if (charCount > maxLength * 0.7) {
+            charCountDisplay.className = 'text-xs text-amber-500 font-medium';
+          } else {
+            charCountDisplay.className = 'text-xs text-gray-400';
+          }
+        }
+      }, 'input');
 
       // Close dropdown when clicking outside
       const handleOutsideClick = (e) => {
@@ -601,21 +741,24 @@ export class WebropolHeader extends BaseComponent {
     }
   }
 
-  addEventListenerToDropdown(dropdown, selector, callback) {
+  addEventListenerToDropdown(dropdown, selector, callback, eventType = 'click') {
     // Use event delegation since dropdown content is dynamic
-    dropdown.addEventListener('click', (e) => {
+    dropdown.addEventListener(eventType, (e) => {
       const target = e.target.closest(selector);
       if (target) {
         callback(target, e);
       }
     });
     
-    dropdown.addEventListener('submit', (e) => {
-      const target = e.target.closest(selector);
-      if (target && selector.includes('form')) {
-        callback(target, e);
-      }
-    });
+    // Also handle submit events for forms
+    if (eventType === 'click') {
+      dropdown.addEventListener('submit', (e) => {
+        const target = e.target.closest(selector);
+        if (target && selector.includes('form')) {
+          callback(target, e);
+        }
+      });
+    }
   }
 
   handleFeedbackSubmission(type, data) {
