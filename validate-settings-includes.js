@@ -40,9 +40,15 @@ function validateOrder(content, basePrefix) {
     `${basePrefix}design-system/utils/theme-manager.js`,
     `${basePrefix}design-system/utils/global-settings-manager.js`,
   ];
+  const requiredCss = [
+    `${basePrefix}design-system/styles/animations.css`,
+  ];
 
   const indices = required.map((src) => content.indexOf(src));
   const missing = required.filter((src, i) => indices[i] === -1);
+
+  // CSS presence (not order-sensitive)
+  const missingCss = requiredCss.filter((href) => content.indexOf(href) === -1);
 
   const duplicates = required
     .map((src) => ({ src, count: (content.match(new RegExp(src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length }))
@@ -54,7 +60,7 @@ function validateOrder(content, basePrefix) {
     orderOk = indices.every((idx, i) => i === 0 || idx > indices[i - 1]);
   }
 
-  return { missing, duplicates, orderOk };
+  return { missing, missingCss, duplicates, orderOk };
 }
 
 function expectedBasePrefix(filePath) {
@@ -69,10 +75,11 @@ function validateFile(filePath) {
   if (!hasHeader(html)) return null; // Only validate Header-enabled pages
 
   const basePrefix = expectedBasePrefix(filePath);
-  const { missing, duplicates, orderOk } = validateOrder(html, basePrefix);
+  const { missing, missingCss, duplicates, orderOk } = validateOrder(html, basePrefix);
 
   const issues = [];
   if (missing.length) issues.push(`Missing: ${missing.join(', ')}`);
+  if (missingCss.length) issues.push(`Missing CSS: ${missingCss.join(', ')}`);
   if (duplicates.length) issues.push(`Duplicates: ${duplicates.map((d) => `${d.src} x${d.count}`).join('; ')}`);
   if (!orderOk) issues.push('Incorrect include order');
 

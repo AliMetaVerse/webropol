@@ -25,6 +25,8 @@ export class WebropolSettingsModal extends BaseComponent {
     this.resetSettings = this.resetSettings.bind(this);
     this.toggleSetting = this.toggleSetting.bind(this);
     this.testRatingAnimation = this.testRatingAnimation.bind(this);
+  this.animateHeader = this.animateHeader.bind(this);
+  this.triggerPreviewAnimation = this.triggerPreviewAnimation.bind(this);
   }
 
   loadSettings() {
@@ -130,52 +132,77 @@ export class WebropolSettingsModal extends BaseComponent {
     
     // Wait a bit for modal to close, then trigger animation
     setTimeout(() => {
-      // Find all headers in the document and trigger their test animation
+      this.animateHeader(this.settings.ratingAnimationType, this.settings.ratingAnimationDuration);
+    }, 300); // Wait 300ms for modal close animation
+  }
+
+  // Trigger header rating animation without closing the modal (used for live preview)
+  animateHeader(type = 'wave', duration = 5000) {
+    try {
+      // Prefer calling the component API if available
       const headers = document.querySelectorAll('webropol-header');
-      console.log('Found headers:', headers.length);
-      
-      if (headers.length === 0) {
-        console.log('No webropol-header found, trying to find rating selector directly...');
-        // If no webropol-header component, try to find rating selector directly
-        const ratingContainer = document.querySelector('.rating-vibration-container');
-        const ratingButton = document.querySelector('.rating-selector-btn');
-        
-        if (ratingContainer && ratingButton) {
-          console.log('Found rating elements directly, triggering animation...');
-          // Remove any existing animation classes
-          ratingContainer.classList.remove('rating-vibration-active');
-          ratingButton.classList.remove('rating-attention-active');
-
-          // Add the appropriate animation class
-          const animationType = this.settings.ratingAnimationType || 'wave';
-          if (animationType === 'wave') {
-            ratingContainer.classList.add('rating-vibration-active');
-          } else if (animationType === 'attention') {
-            ratingButton.classList.add('rating-attention-active');
-          }
-
-          // Remove animation after specified duration
-          const duration = this.settings.ratingAnimationDuration || 5000;
-          setTimeout(() => {
-            ratingContainer.classList.remove('rating-vibration-active');
-            ratingButton.classList.remove('rating-attention-active');
-          }, duration);
-        } else {
-          console.log('No rating elements found on page');
-          alert('No rating selector found on this page. Please make sure the rating selector is visible in the header.');
-        }
-      } else {
+      if (headers && headers.length) {
         headers.forEach(header => {
           if (typeof header.triggerRatingAnimation === 'function') {
-            console.log('Triggering animation on header...');
-            header.triggerRatingAnimation(
-              this.settings.ratingAnimationDuration,
-              this.settings.ratingAnimationType
-            );
+            header.triggerRatingAnimation(duration, type);
           }
         });
+        return;
       }
-    }, 300); // Wait 300ms for modal close animation
+
+      // Fallback: manipulate DOM classes directly if header API not found
+      const ratingContainer = document.querySelector('.rating-vibration-container');
+      const ratingButton = document.querySelector('.rating-selector-btn');
+      if (!ratingContainer || !ratingButton) {
+        console.warn('[SettingsModal] No rating selector found in header for animation preview');
+        return;
+      }
+
+      ratingContainer.classList.remove('rating-vibration-active');
+      ratingButton.classList.remove('rating-attention-active');
+
+      if (type === 'wave') {
+        ratingContainer.classList.add('rating-vibration-active');
+      } else if (type === 'attention') {
+        ratingButton.classList.add('rating-attention-active');
+      }
+
+      setTimeout(() => {
+        ratingContainer.classList.remove('rating-vibration-active');
+        ratingButton.classList.remove('rating-attention-active');
+      }, duration);
+    } catch (err) {
+      console.warn('[SettingsModal] Failed to animate header preview:', err);
+    }
+  }
+
+  // Inline preview animation inside the modal (on the small star icon)
+  triggerPreviewAnimation() {
+    try {
+      const container = this.querySelector('.preview-star');
+      const icon = this.querySelector('.preview-star-icon');
+      if (!container || !icon) return;
+
+      // Clear any state
+      container.classList.remove('rating-vibration-active');
+      icon.classList.remove('rating-attention-active');
+
+      if (!this.settings.ratingAnimationEnabled) return;
+
+      const type = this.settings.ratingAnimationType || 'wave';
+      const duration = this.settings.ratingAnimationDuration || 5000;
+
+      if (type === 'wave') {
+        container.classList.add('rating-vibration-active');
+      } else {
+        icon.classList.add('rating-attention-active');
+      }
+
+      setTimeout(() => {
+        container.classList.remove('rating-vibration-active');
+        icon.classList.remove('rating-attention-active');
+      }, duration);
+    } catch {}
   }
 
   render() {
@@ -511,10 +538,18 @@ export class WebropolSettingsModal extends BaseComponent {
                         </div>
                         <p class="text-xs text-webropol-gray-500 mt-1">Trigger the animation now to see how it looks</p>
                       </div>
-                      <button class="test-animation-btn px-4 py-2 bg-orange-500 hover:bg-orange-600 text-gray-900 text-sm rounded-lg transition-colors font-medium border border-gray-300">
-                        <i class="fal fa-play mr-1 text-gray-900"></i>
-                        Test Now
-                      </button>
+                      <div class="flex items-center space-x-3">
+                        <!-- Inline preview: visible while modal is open -->
+                        <div class="preview-star rating-vibration-container inline-flex items-center justify-center w-10 h-10 rounded-xl bg-webropol-orange-50 text-webropol-orange-600 border border-webropol-orange-100">
+                          <div class="rating-wave rating-wave-left"></div>
+                          <i class="fal fa-star preview-star-icon rating-pulse"></i>
+                          <div class="rating-wave rating-wave-right"></div>
+                        </div>
+                        <button class="test-animation-btn px-4 py-2 bg-orange-500 hover:bg-orange-600 text-gray-900 text-sm rounded-lg transition-colors font-medium border border-gray-300">
+                          <i class="fal fa-play mr-1 text-gray-900"></i>
+                          Test Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                   
@@ -546,6 +581,8 @@ export class WebropolSettingsModal extends BaseComponent {
     `;
 
     this.bindEvents();
+  // Kick off a quick inline preview after rendering the modal
+  setTimeout(() => this.triggerPreviewAnimation(), 200);
   }
 
   bindEvents() {
@@ -591,6 +628,9 @@ export class WebropolSettingsModal extends BaseComponent {
       this.addListener(checkbox, 'change', (e) => {
         const settingKey = e.target.getAttribute('data-setting');
         this.toggleSetting(settingKey, e.target.checked);
+        if (['ratingAnimationEnabled'].includes(settingKey)) {
+          this.triggerPreviewAnimation();
+        }
       });
     });
 
@@ -599,6 +639,9 @@ export class WebropolSettingsModal extends BaseComponent {
         const settingKey = e.target.getAttribute('data-setting');
         const value = e.target.value === '0' ? 0 : (isNaN(e.target.value) ? e.target.value : parseInt(e.target.value));
         this.toggleSetting(settingKey, value);
+        if (['ratingAnimationType','ratingAnimationDuration'].includes(settingKey)) {
+          this.triggerPreviewAnimation();
+        }
       });
     });
 
