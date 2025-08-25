@@ -551,6 +551,9 @@ export class WebropolHeader extends BaseComponent {
         e.stopPropagation();
         const isVisible = !feedbackDropdown.classList.contains('opacity-0');
         
+        // Stop any ongoing settings animations when feedback icon is clicked
+        this.stopSettingsAnimation();
+        
         // Close other dropdowns if open
         const userDropdown = this.querySelector('.user-dropdown');
         const themeDropdown = this.querySelector('.theme-dropdown');
@@ -1279,6 +1282,58 @@ export class WebropolHeader extends BaseComponent {
      });
   }
 
+  stopSettingsAnimation() {
+    const settingsContainer = this.querySelector('.settings-animation-container');
+    const settingsButton = this.querySelector('.settings-button');
+    
+    if (!settingsContainer || !settingsButton) {
+      console.warn('[Header] Settings container or button not found');
+      return;
+    }
+
+    console.log('[Header] Stopping settings animation');
+
+    // Clear any active timers
+    if (this.settingsAnimationTimer) {
+      clearTimeout(this.settingsAnimationTimer);
+      this.settingsAnimationTimer = null;
+    }
+    if (this.settingsIntervalTimer) {
+      clearInterval(this.settingsIntervalTimer);
+      this.settingsIntervalTimer = null;
+    }
+
+    // Remove all animation classes
+    const animationClasses = [
+      'settings-magnetic-active',
+      'settings-morphing-active', 
+      'settings-ripple-active',
+      'settings-breathing-active',
+      'settings-elastic-active',
+      'settings-particle-active'
+    ];
+    
+    animationClasses.forEach(cls => settingsContainer.classList.remove(cls));
+
+    // Cleanup any inline overrides from animations
+    settingsContainer.style.animationIterationCount = '';
+    settingsButton.style.border = '';
+    settingsButton.style.background = '';
+    settingsButton.style.boxShadow = '';
+    
+    // Reset the notification badge
+    const badge = settingsContainer.querySelector('.settings-notification-badge');
+    if (badge) {
+      badge.style.opacity = '';
+      badge.style.background = '';
+    }
+
+    // Emit event for analytics or other purposes
+    this.emit('settings-animation-stopped', { 
+      timestamp: new Date().toISOString() 
+    });
+  }
+
   // Cleanup method
   disconnectedCallback() {
     super.disconnectedCallback();
@@ -1296,6 +1351,12 @@ export class WebropolHeader extends BaseComponent {
     console.log(`[Header] Manual test: triggering ${type} settings animation`);
     this.triggerSettingsAnimation(2000, type);
   }
+
+  // Test method to manually stop animation (for development/testing)
+  testStopAnimation() {
+    console.log('[Header] Manual test: stopping settings animation');
+    this.stopSettingsAnimation();
+  }
 }
 
 customElements.define('webropol-header', WebropolHeader);
@@ -1310,6 +1371,17 @@ window.testSettingsAnimation = function(type = 'magnetic') {
   }
 };
 
+// Global function to stop settings animation
+window.stopSettingsAnimation = function() {
+  const header = document.querySelector('webropol-header');
+  if (header && header.stopSettingsAnimation) {
+    header.stopSettingsAnimation();
+    console.log('Settings animation stopped manually');
+  } else {
+    console.error('Header component not found or stopSettingsAnimation method not available');
+  }
+};
+
 // Log available test commands
 console.log('🎨 Settings Animation Test Commands:');
 console.log('testSettingsAnimation() - Test magnetic animation');
@@ -1319,4 +1391,6 @@ console.log('testSettingsAnimation("ripple") - Test ripple wave');
 console.log('testSettingsAnimation("breathing") - Test breathing glow');
 console.log('testSettingsAnimation("elastic") - Test elastic bounce');
 console.log('testSettingsAnimation("particle") - Test particle burst');
+console.log('stopSettingsAnimation() - Stop any ongoing animation');
+console.log('💡 Tip: Click the star icon to stop animations and show the feedback menu');
 
