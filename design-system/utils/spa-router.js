@@ -206,6 +206,13 @@ class WebropolSPA {
         }
       }
 
+      // Update globals so pages can read their own query via window.__pageQueryString
+      // This MUST be done BEFORE injecting content so Alpine.js can read it during initialization
+      const qIndex = path.indexOf('?');
+      const queryString = qIndex >= 0 ? path.substring(qIndex) : '';
+      window.__pageRoute = path;
+      window.__pageQueryString = queryString;
+
   // Clean up previously injected page styles
   this.cleanupPageStyles();
   this.cleanupPageScripts();
@@ -233,15 +240,14 @@ class WebropolSPA {
       // Re-initialize Alpine components within the injected content (if Alpine is present)
       try {
         if (window.Alpine && typeof window.Alpine.initTree === 'function') {
-          window.Alpine.initTree(this.container);
+          // Give Alpine a moment to detect the new DOM structure
+          setTimeout(() => {
+            window.Alpine.initTree(this.container);
+          }, 10);
         }
-      } catch(_) {}
-
-  // Update globals so pages can read their own query via window.__pageQueryString
-  const qIndex = path.indexOf('?');
-  const queryString = qIndex >= 0 ? path.substring(qIndex) : '';
-  window.__pageRoute = path;
-  window.__pageQueryString = queryString;
+      } catch(e) {
+        console.warn('[SPA] Alpine.js re-initialization failed:', e);
+      }
 
   // Emit custom event for components that need to react to route changes
   window.dispatchEvent(new CustomEvent('spa-route-change', { 

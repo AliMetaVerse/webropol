@@ -169,7 +169,7 @@
   <!-- Import Global Design Tokens -->
   <link rel="stylesheet" href="../design-system/styles/tokens.css">
 </head>
-<body x-data="universalCreateApp()">
+<body>
   <div class="flex h-screen">
     <webropol-sidebar :active="contentConfig.sidebarActive" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -178,7 +178,7 @@
         <webropol-breadcrumbs :trail="breadcrumbTrail"></webropol-breadcrumbs>
       </div>
       
-      <main class="flex-1 overflow-hidden" role="main">
+      <main class="flex-1 overflow-hidden" role="main" x-data="universalCreateApp()">
         <div class="h-full flex">
           <!-- Left Panel - Creation Form -->
           <div class="w-1/2 overflow-y-auto px-8 py-8 bg-white/50">
@@ -404,9 +404,17 @@
   <script>
     function universalCreateApp() {
       return {
-        // Content type from URL parameter
-        contentType: 'survey', // Default value, will be updated in init()
+        // Content type from URL parameter - make it reactive
+        get contentType() {
+          // Always compute from current query string
+          const search = (window.__pageQueryString || window.location.search || '').replace(/^\?/, '');
+          const params = new URLSearchParams(search);
+          return params.get('type') || 'survey';
+        },
         activeCategory: 'webropol',
+        
+        // Track content type changes
+        _lastContentType: '',
         
         // Form data
         formData: {
@@ -418,9 +426,42 @@
           selectedTemplate: 'blank'
         },
 
-        // Initialize component and update contentType from query
+        // Initialize component
         init() {
-          this.updateContentType();
+          this.initializeFormData();
+          
+          // Track contentType changes
+          this._lastContentType = this.contentType;
+
+          // Watch for query string changes in SPA context
+          if (typeof window !== 'undefined') {
+            // Listen for custom event from SPA router
+            window.addEventListener('spa-route-change', () => {
+              // Check if content type actually changed
+              if (this.contentType !== this._lastContentType) {
+                this._lastContentType = this.contentType;
+                this.initializeFormData();
+                // Force Alpine to re-evaluate all bindings
+                this.$nextTick(() => {
+                  // Trigger any x-show/x-if re-evaluation
+                  this.$el.dispatchEvent(new Event('alpine:updated'));
+                });
+              }
+            });
+          }
+        },
+
+        initializeFormData() {
+          
+          // Reset form data
+          this.formData = {
+            title: '',
+            description: '',
+            autoDelete: false,
+            deleteDate: '',
+            selectedFolder: 'root',
+            selectedTemplate: 'blank'
+          };
           
           // Set default date to 30 days from now for auto-delete
           const futureDate = new Date();
@@ -444,38 +485,6 @@
           // Set default template if templates are shown
           if (this.contentConfig.showTemplates && this.contentConfig.templates && this.contentConfig.templates.length > 0) {
             this.formData.selectedTemplate = this.contentConfig.templates[0].id;
-          }
-
-          // Watch for query string changes in SPA context
-          if (typeof window !== 'undefined') {
-            // Listen for custom event from SPA router
-            window.addEventListener('spa-route-change', () => {
-              this.updateContentType();
-            });
-          }
-        },
-
-        updateContentType() {
-          // Support SPA: window.__pageQueryString is set by the SPA router
-          const search = (window.__pageQueryString || window.location.search || '').replace(/^\?/, '');
-          const params = new URLSearchParams(search);
-          const newType = params.get('type') || 'survey';
-          
-          if (this.contentType !== newType) {
-            this.contentType = newType;
-            // Reset form data when type changes
-            this.formData = {
-              title: '',
-              description: '',
-              autoDelete: false,
-              deleteDate: '',
-              selectedFolder: 'root',
-              selectedTemplate: 'blank'
-            };
-            // Update the selected template to the first one of the new type
-            if (this.contentConfig.templates && this.contentConfig.templates.length > 0) {
-              this.formData.selectedTemplate = this.contentConfig.templates[0].id;
-            }
           }
         },
 
