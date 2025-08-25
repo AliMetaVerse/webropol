@@ -82,10 +82,10 @@ export class WebropolFloatingButton extends BaseComponent {
             <!-- Header -->
             <div class="relative mb-6 text-center">
               <div class="flex items-center justify-center space-x-3 mb-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
-                  <i class="fal fa-magic text-white text-sm"></i>
+                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
+                  <i class="fal fa-plus text-white text-sm"></i>
                 </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">Create Something Amazing</h3>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-webropol-teal-600 to-webropol-teal-700 bg-clip-text text-transparent">Create Something Amazing</h3>
               </div>
               <p class="text-sm text-gray-600">What would you like to build today?</p>
             </div>
@@ -93,76 +93,76 @@ export class WebropolFloatingButton extends BaseComponent {
             <div class="relative space-y-3">
               <!-- Surveys -->
               <button data-type="surveys"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-purple-200/50 hover:border-purple-300 bg-white/50 hover:bg-purple-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
                   <i class="fal fa-chart-bar text-white text-lg group-hover:animate-pulse"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-purple-700 transition-colors duration-300 block">Surveys</span>
-                  <span class="text-sm text-gray-600 group-hover:text-purple-600 transition-colors duration-300">Create custom surveys</span>
+                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Surveys</span>
+                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Create custom surveys</span>
                 </div>
                 <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-purple-500"></i>
+                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
                 </div>
               </button>
 
               <!-- Events -->
               <button data-type="events"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-blue-200/50 hover:border-blue-300 bg-white/50 hover:bg-blue-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
                   <i class="fal fa-calendar-alt text-white text-lg group-hover:animate-pulse"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors duration-300 block">Events</span>
-                  <span class="text-sm text-gray-600 group-hover:text-blue-600 transition-colors duration-300">Event management</span>
+                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Events</span>
+                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Event management</span>
                 </div>
                 <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-blue-500"></i>
+                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
                 </div>
               </button>
 
               <!-- 2-Way SMS -->
               <button data-type="2-way-sms"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-green-200/50 hover:border-green-300 bg-white/50 hover:bg-green-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-comments text-white text-lg group-hover:animate-pulse"></i>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-sms text-white text-lg group-hover:animate-pulse"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-green-700 transition-colors duration-300 block">2-Way SMS</span>
-                  <span class="text-sm text-gray-600 group-hover:text-green-600 transition-colors duration-300">Send and receive</span>
+                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">2-Way SMS</span>
+                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Send and receive</span>
                 </div>
                 <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-green-500"></i>
+                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
                 </div>
               </button>
 
               <!-- EXW Surveys -->
               <button data-type="exw-surveys"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-teal-200/50 hover:border-teal-300 bg-white/50 hover:bg-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-chart-line text-white text-lg group-hover:animate-pulse"></i>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-user-chart text-white text-lg group-hover:animate-pulse"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-teal-700 transition-colors duration-300 block">EXW Surveys</span>
-                  <span class="text-sm text-gray-600 group-hover:text-teal-600 transition-colors duration-300">Employee experience</span>
+                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">EXW Surveys</span>
+                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Employee experience</span>
                 </div>
                 <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-teal-500"></i>
+                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
                 </div>
               </button>
 
               <!-- Case Management -->
               <button data-type="case-management"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-indigo-200/50 hover:border-indigo-300 bg-white/50 hover:bg-indigo-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-users-cog text-white text-lg group-hover:animate-pulse"></i>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-briefcase text-white text-lg group-hover:animate-pulse"></i>
                 </div>
                 <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-indigo-700 transition-colors duration-300 block">Case Management</span>
-                  <span class="text-sm text-gray-600 group-hover:text-indigo-600 transition-colors duration-300">Manage your team</span>
+                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Case Management</span>
+                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Manage your team</span>
                 </div>
                 <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-indigo-500"></i>
+                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
                 </div>
               </button>
             </div>
@@ -177,12 +177,12 @@ export class WebropolFloatingButton extends BaseComponent {
         </div>
 
         <!-- Main Floating Button with Enhanced Design -->
-        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-purple-500 via-blue-500 to-teal-500 hover:from-purple-600 hover:via-blue-600 hover:to-teal-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
+        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
           <!-- Animated background layers -->
-          <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
           
           <!-- Rotating border effect -->
-          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-blue-400 to-teal-400 opacity-75 blur-md group-hover:animate-spin-slow"></div>
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-webropol-teal-300 to-webropol-teal-500 opacity-75 blur-md group-hover:animate-spin-slow"></div>
           
           <!-- Shimmer effect -->
           <div class="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
