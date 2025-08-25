@@ -4,6 +4,7 @@
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
+import { renderCreateMenu, bindCreateMenu } from './CreateMenu.js';
 
 export class WebropolFloatingButton extends BaseComponent {
   constructor() {
@@ -68,112 +69,7 @@ export class WebropolFloatingButton extends BaseComponent {
       <div class="${positionClasses[position]} z-40">
         <!-- Menu Items Grid with New Design -->
         <div class="floating-menu absolute ${position === 'relative' ? 'bottom-full mb-4' : 'bottom-20'} left-1/2 transform -translate-x-1/2 transition-all duration-500 opacity-0 translate-y-8 scale-95 pointer-events-none">
-          <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30 min-w-96 overflow-hidden">
-            <!-- Animated background -->
-            <div class="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-blue-50/50 to-teal-50/50 rounded-3xl"></div>
-            
-            <!-- Floating particles background -->
-            <div class="absolute inset-0 overflow-hidden rounded-3xl">
-              <div class="floating-particle absolute w-2 h-2 bg-purple-400/30 rounded-full animate-float-1"></div>
-              <div class="floating-particle absolute w-1 h-1 bg-blue-400/30 rounded-full animate-float-2"></div>
-              <div class="floating-particle absolute w-3 h-3 bg-teal-400/30 rounded-full animate-float-3"></div>
-            </div>
-            
-            <!-- Header -->
-            <div class="relative mb-6 text-center">
-              <div class="flex items-center justify-center space-x-3 mb-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
-                  <i class="fal fa-plus text-white text-sm"></i>
-                </div>
-                <h3 class="text-xl font-bold bg-gradient-to-r from-webropol-teal-600 to-webropol-teal-700 bg-clip-text text-transparent">Create Something Amazing</h3>
-              </div>
-              <p class="text-sm text-gray-600">What would you like to build today?</p>
-            </div>
-            
-            <div class="relative space-y-3">
-              <!-- Surveys -->
-              <button data-type="surveys"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-chart-bar text-white text-lg group-hover:animate-pulse"></i>
-                </div>
-                <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Surveys</span>
-                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Create custom surveys</span>
-                </div>
-                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
-                </div>
-              </button>
-
-              <!-- Events -->
-              <button data-type="events"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-calendar-alt text-white text-lg group-hover:animate-pulse"></i>
-                </div>
-                <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Events</span>
-                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Event management</span>
-                </div>
-                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
-                </div>
-              </button>
-
-              <!-- 2-Way SMS -->
-              <button data-type="2-way-sms"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-sms text-white text-lg group-hover:animate-pulse"></i>
-                </div>
-                <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">2-Way SMS</span>
-                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Send and receive</span>
-                </div>
-                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
-                </div>
-              </button>
-
-              <!-- EXW Surveys -->
-              <button data-type="exw-surveys"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-user-chart text-white text-lg group-hover:animate-pulse"></i>
-                </div>
-                <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">EXW Surveys</span>
-                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Employee experience</span>
-                </div>
-                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
-                </div>
-              </button>
-
-              <!-- Case Management -->
-              <button data-type="case-management"
-                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-teal-200/50 hover:border-webropol-teal-300 bg-white/50 hover:bg-webropol-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-                  <i class="fal fa-briefcase text-white text-lg group-hover:animate-pulse"></i>
-                </div>
-                <div class="ml-4 flex-1">
-                  <span class="font-bold text-gray-800 group-hover:text-webropol-teal-700 transition-colors duration-300 block">Case Management</span>
-                  <span class="text-sm text-gray-600 group-hover:text-webropol-teal-600 transition-colors duration-300">Manage your team</span>
-                </div>
-                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                  <i class="fal fa-arrow-right text-webropol-teal-600"></i>
-                </div>
-              </button>
-            </div>
-            
-            <!-- Inspirational footer -->
-            <div class="relative mt-6 pt-4 border-t border-white/30">
-              <div class="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                <span class="font-medium">Build something extraordinary</span>
-              </div>
-            </div>
-          </div>
+          ${renderCreateMenu()}
         </div>
 
         <!-- Main Floating Button with Enhanced Design -->
@@ -202,9 +98,8 @@ export class WebropolFloatingButton extends BaseComponent {
   }
 
   bindEvents() {
-    const mainButton = this.querySelector('.main-floating-btn');
-    const menu = this.querySelector('.floating-menu');
-    const createButtons = this.querySelectorAll('.create-item-btn');
+  const mainButton = this.querySelector('.main-floating-btn');
+  const menu = this.querySelector('.floating-menu');
 
     if (mainButton && menu) {
       this.addListener(mainButton, 'click', (e) => {
@@ -219,18 +114,12 @@ export class WebropolFloatingButton extends BaseComponent {
         }
       });
 
-      // Handle create item clicks
-      createButtons.forEach(btn => {
-        this.addListener(btn, 'click', (e) => {
-          e.stopPropagation();
-          const type = btn.getAttribute('data-type');
-          
-          // Handle navigation based on type
-          this.handleNavigation(type);
-          
-          this.emit('create-item', { type, originalEvent: e });
-          this.hideMenu();
-        });
+      // Bind shared create menu interactions
+      bindCreateMenu(menu, (type, e) => {
+        e && e.stopPropagation();
+        this.handleNavigation(type);
+        this.emit('create-item', { type, source: 'floating-button', originalEvent: e });
+        this.hideMenu();
       });
     }
   }
