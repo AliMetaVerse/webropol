@@ -53,7 +53,8 @@ export class WebropolFloatingButton extends BaseComponent {
       'bottom-right': 'fixed bottom-6 right-6',
       'bottom-left': 'fixed bottom-6 left-6',
       'top-right': 'fixed top-6 right-6',
-      'top-left': 'fixed top-6 left-6'
+      'top-left': 'fixed top-6 left-6',
+      'relative': 'relative'
     };
 
     // Size classes
@@ -65,68 +66,136 @@ export class WebropolFloatingButton extends BaseComponent {
 
     this.innerHTML = `
       <div class="${positionClasses[position]} z-40">
-        <!-- Menu Items Grid -->
-        <div class="floating-menu absolute bottom-16 left-1/2 transform -translate-x-1/2 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
-          <div class="bg-white rounded-2xl shadow-2xl p-6 border border-webropol-gray-200 min-w-64">
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-4 text-center">Create New</h3>
-            <div class="space-y-2">
+        <!-- Menu Items Grid with New Design -->
+        <div class="floating-menu absolute ${position === 'relative' ? 'bottom-full mb-4' : 'bottom-20'} left-1/2 transform -translate-x-1/2 transition-all duration-500 opacity-0 translate-y-8 scale-95 pointer-events-none">
+          <div class="relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/30 min-w-96 overflow-hidden">
+            <!-- Animated background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-blue-50/50 to-teal-50/50 rounded-3xl"></div>
+            
+            <!-- Floating particles background -->
+            <div class="absolute inset-0 overflow-hidden rounded-3xl">
+              <div class="floating-particle absolute w-2 h-2 bg-purple-400/30 rounded-full animate-float-1"></div>
+              <div class="floating-particle absolute w-1 h-1 bg-blue-400/30 rounded-full animate-float-2"></div>
+              <div class="floating-particle absolute w-3 h-3 bg-teal-400/30 rounded-full animate-float-3"></div>
+            </div>
+            
+            <!-- Header -->
+            <div class="relative mb-6 text-center">
+              <div class="flex items-center justify-center space-x-3 mb-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                  <i class="fal fa-magic text-white text-sm"></i>
+                </div>
+                <h3 class="text-xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">Create Something Amazing</h3>
+              </div>
+              <p class="text-sm text-gray-600">What would you like to build today?</p>
+            </div>
+            
+            <div class="relative space-y-3">
               <!-- Surveys -->
               <button data-type="surveys"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-chart-bar text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Surveys</span>
-                  <span class="text-xs text-webropol-gray-500">Custom surveys</span>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-purple-200/50 hover:border-purple-300 bg-white/50 hover:bg-purple-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-chart-bar text-white text-lg group-hover:animate-pulse"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                  <span class="font-bold text-gray-800 group-hover:text-purple-700 transition-colors duration-300 block">Surveys</span>
+                  <span class="text-sm text-gray-600 group-hover:text-purple-600 transition-colors duration-300">Create custom surveys</span>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <i class="fal fa-arrow-right text-purple-500"></i>
                 </div>
               </button>
 
               <!-- Events -->
               <button data-type="events"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-calendar-alt text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Events</span>
-                  <span class="text-xs text-webropol-gray-500">Event management</span>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-blue-200/50 hover:border-blue-300 bg-white/50 hover:bg-blue-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-calendar-alt text-white text-lg group-hover:animate-pulse"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                  <span class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors duration-300 block">Events</span>
+                  <span class="text-sm text-gray-600 group-hover:text-blue-600 transition-colors duration-300">Event management</span>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <i class="fal fa-arrow-right text-blue-500"></i>
                 </div>
               </button>
 
               <!-- 2-Way SMS -->
               <button data-type="2-way-sms"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-comments text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">2-Way SMS</span>
-                  <span class="text-xs text-webropol-gray-500">Send and receive</span>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-green-200/50 hover:border-green-300 bg-white/50 hover:bg-green-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-comments text-white text-lg group-hover:animate-pulse"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                  <span class="font-bold text-gray-800 group-hover:text-green-700 transition-colors duration-300 block">2-Way SMS</span>
+                  <span class="text-sm text-gray-600 group-hover:text-green-600 transition-colors duration-300">Send and receive</span>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <i class="fal fa-arrow-right text-green-500"></i>
                 </div>
               </button>
 
               <!-- EXW Surveys -->
               <button data-type="exw-surveys"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-chart-line text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">EXW Surveys</span>
-                  <span class="text-xs text-webropol-gray-500">Employee experience</span>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-teal-200/50 hover:border-teal-300 bg-white/50 hover:bg-teal-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-chart-line text-white text-lg group-hover:animate-pulse"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                  <span class="font-bold text-gray-800 group-hover:text-teal-700 transition-colors duration-300 block">EXW Surveys</span>
+                  <span class="text-sm text-gray-600 group-hover:text-teal-600 transition-colors duration-300">Employee experience</span>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <i class="fal fa-arrow-right text-teal-500"></i>
                 </div>
               </button>
 
               <!-- Case Management -->
               <button data-type="case-management"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-users-cog text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Case Management</span>
-                  <span class="text-xs text-webropol-gray-500">Manage your team</span>
+                class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-indigo-200/50 hover:border-indigo-300 bg-white/50 hover:bg-indigo-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                  <i class="fal fa-users-cog text-white text-lg group-hover:animate-pulse"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                  <span class="font-bold text-gray-800 group-hover:text-indigo-700 transition-colors duration-300 block">Case Management</span>
+                  <span class="text-sm text-gray-600 group-hover:text-indigo-600 transition-colors duration-300">Manage your team</span>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <i class="fal fa-arrow-right text-indigo-500"></i>
                 </div>
               </button>
-
+            </div>
+            
+            <!-- Inspirational footer -->
+            <div class="relative mt-6 pt-4 border-t border-white/30">
+              <div class="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                <span class="font-medium">Build something extraordinary</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Main Floating Button -->
-        <button class="main-floating-btn ${sizeClasses[size]} bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center group">
-          <i class="fal fa-plus text-xl transition-transform duration-300 group-hover:rotate-180"></i>
+        <!-- Main Floating Button with Enhanced Design -->
+        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-purple-500 via-blue-500 to-teal-500 hover:from-purple-600 hover:via-blue-600 hover:to-teal-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
+          <!-- Animated background layers -->
+          <div class="absolute inset-0 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
+          
+          <!-- Rotating border effect -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400 via-blue-400 to-teal-400 opacity-75 blur-md group-hover:animate-spin-slow"></div>
+          
+          <!-- Shimmer effect -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+          
+          <!-- Main icon -->
+          <div class="relative z-10 transform transition-all duration-300 group-hover:rotate-180 group-hover:scale-110">
+            <i class="fal fa-plus text-2xl font-bold"></i>
+          </div>
+          
+          <!-- Floating sparkles -->
+          <div class="absolute top-1 right-1 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-100"></div>
+          <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-200"></div>
+          <div class="absolute top-1 left-1 w-1.5 h-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-300"></div>
         </button>
       </div>
     `;
@@ -228,21 +297,21 @@ export class WebropolFloatingButton extends BaseComponent {
 
   showMenuVisually(menu, icon) {
     if (menu) {
-      menu.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
-      menu.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+      menu.classList.remove('opacity-0', 'translate-y-8', 'scale-95', 'pointer-events-none');
+      menu.classList.add('opacity-100', 'translate-y-0', 'scale-100', 'pointer-events-auto');
     }
     if (icon) {
-      icon.classList.add('rotate-45');
+      icon.classList.add('rotate-180', 'scale-110');
     }
   }
 
   hideMenuVisually(menu, icon) {
     if (menu) {
-      menu.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
-      menu.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      menu.classList.remove('opacity-100', 'translate-y-0', 'scale-100', 'pointer-events-auto');
+      menu.classList.add('opacity-0', 'translate-y-8', 'scale-95', 'pointer-events-none');
     }
     if (icon) {
-      icon.classList.remove('rotate-45');
+      icon.classList.remove('rotate-180', 'scale-110');
     }
   }
 }

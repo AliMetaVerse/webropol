@@ -42,48 +42,120 @@ export class WebropolHeader extends BaseComponent {
         <div class="flex items-center space-x-4">
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
-              <button class="p-6 h-10 inline-flex items-center justify-center text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-xl transition-all create-menu-btn">
-                <i class="fal fa-plus mr-2"></i>
-                <span>Create New</span>
+              <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-purple-600 via-blue-600 to-teal-600 hover:from-purple-700 hover:via-blue-700 hover:to-teal-700 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-white font-semibold">
+                <!-- Animated background layer -->
+                <div class="absolute inset-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <!-- Shimmer effect -->
+                <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out"></div>
+                
+                <!-- Content -->
+                <div class="relative flex items-center space-x-2">
+                  <div class="create-icon-container relative">
+                    <i class="fal fa-plus text-lg transform group-hover:rotate-180 transition-transform duration-300"></i>
+                    <!-- Sparkle effects -->
+                    <div class="absolute -top-1 -right-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-100"></div>
+                    <div class="absolute -bottom-1 -left-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-200"></div>
+                  </div>
+                  <span class="text-sm font-bold tracking-wide">Create New</span>
+                </div>
+                
+                <!-- Magical border glow -->
+                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-400 via-blue-400 to-teal-400 opacity-0 group-hover:opacity-75 blur-sm -z-10 transition-opacity duration-300"></div>
               </button>
               <!-- Create dropdown -->
-              <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 create-menu-dropdown z-[9999]">
-                <div class="px-4 py-2 text-xs uppercase tracking-wide text-webropol-gray-500">Create new</div>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="surveys">
-                  <i class="fal fa-chart-bar text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">Surveys</div>
-                    <div class="text-xs text-webropol-gray-500">Custom surveys</div>
+              <div class="absolute left-0 top-full mt-3 w-80 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 py-4 opacity-0 invisible transition-all duration-300 create-menu-dropdown z-[9999] overflow-hidden">
+                <!-- Gradient background overlay -->
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-50/80 via-blue-50/80 to-teal-50/80 rounded-3xl"></div>
+                
+                <!-- Header section -->
+                <div class="relative px-6 py-3 border-b border-white/30">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <h3 class="text-lg font-bold bg-gradient-to-r from-purple-600 to-teal-600 bg-clip-text text-transparent">Create New</h3>
+                      <p class="text-xs text-gray-600 mt-1">Choose what you'd like to create</p>
+                    </div>
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
+                      <i class="fal fa-magic text-white text-sm"></i>
+                    </div>
                   </div>
-                </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="events">
-                  <i class="fal fa-calendar-alt text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">Events</div>
-                    <div class="text-xs text-webropol-gray-500">Event management</div>
+                </div>
+                
+                <!-- Menu items grid -->
+                <div class="relative px-4 py-2 space-y-2">
+                  <button class="create-item group w-full flex items-center p-4 rounded-2xl border border-transparent hover:border-purple-200 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.02] hover:shadow-lg" data-type="surveys">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <i class="fal fa-chart-bar text-white text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <div class="font-bold text-gray-800 group-hover:text-purple-700 transition-colors duration-300">Surveys</div>
+                      <div class="text-xs text-gray-600 group-hover:text-purple-600 transition-colors duration-300">Create custom surveys</div>
+                    </div>
+                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fal fa-arrow-right text-purple-500"></i>
+                    </div>
+                  </button>
+                  
+                  <button class="create-item group w-full flex items-center p-4 rounded-2xl border border-transparent hover:border-blue-200 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.02] hover:shadow-lg" data-type="events">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <i class="fal fa-calendar-alt text-white text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <div class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors duration-300">Events</div>
+                      <div class="text-xs text-gray-600 group-hover:text-blue-600 transition-colors duration-300">Event management</div>
+                    </div>
+                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fal fa-arrow-right text-blue-500"></i>
+                    </div>
+                  </button>
+                  
+                  <button class="create-item group w-full flex items-center p-4 rounded-2xl border border-transparent hover:border-green-200 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.02] hover:shadow-lg" data-type="2-way-sms">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <i class="fal fa-comments text-white text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <div class="font-bold text-gray-800 group-hover:text-green-700 transition-colors duration-300">2-Way SMS</div>
+                      <div class="text-xs text-gray-600 group-hover:text-green-600 transition-colors duration-300">Send and receive</div>
+                    </div>
+                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fal fa-arrow-right text-green-500"></i>
+                    </div>
+                  </button>
+                  
+                  <button class="create-item group w-full flex items-center p-4 rounded-2xl border border-transparent hover:border-teal-200 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.02] hover:shadow-lg" data-type="exw-surveys">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <i class="fal fa-chart-line text-white text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <div class="font-bold text-gray-800 group-hover:text-teal-700 transition-colors duration-300">EXW Surveys</div>
+                      <div class="text-xs text-gray-600 group-hover:text-teal-600 transition-colors duration-300">Employee experience</div>
+                    </div>
+                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fal fa-arrow-right text-teal-500"></i>
+                    </div>
+                  </button>
+                  
+                  <button class="create-item group w-full flex items-center p-4 rounded-2xl border border-transparent hover:border-indigo-200 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.02] hover:shadow-lg" data-type="case-management">
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                      <i class="fal fa-users-cog text-white text-lg"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <div class="font-bold text-gray-800 group-hover:text-indigo-700 transition-colors duration-300">Case Management</div>
+                      <div class="text-xs text-gray-600 group-hover:text-indigo-600 transition-colors duration-300">Manage your team</div>
+                    </div>
+                    <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <i class="fal fa-arrow-right text-indigo-500"></i>
+                    </div>
+                  </button>
+                </div>
+                
+                <!-- Footer with inspiration -->
+                <div class="relative px-6 py-3 border-t border-white/30 mt-2">
+                  <div class="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                    <i class="fal fa-lightbulb text-yellow-500"></i>
+                    <span>Ready to create something amazing?</span>
                   </div>
-                </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="2-way-sms">
-                  <i class="fal fa-comments text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">2-Way SMS</div>
-                    <div class="text-xs text-webropol-gray-500">Send and receive</div>
-                  </div>
-                </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
-                  <i class="fal fa-chart-line text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">EXW Surveys</div>
-                    <div class="text-xs text-webropol-gray-500">Employee experience</div>
-                  </div>
-                </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="case-management">
-                  <i class="fal fa-users-cog text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">Case Management</div>
-                    <div class="text-xs text-webropol-gray-500">Manage your team</div>
-                  </div>
-                </button>
+                </div>
               </div>
             </div>
           ` : ''}
