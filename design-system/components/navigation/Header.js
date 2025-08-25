@@ -63,11 +63,11 @@ export class WebropolHeader extends BaseComponent {
                     <div class="text-xs text-webropol-gray-500">Event management</div>
                   </div>
                 </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
-                  <i class="fal fa-users text-webropol-teal-600 w-5 mr-3"></i>
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="2-way-sms">
+                  <i class="fal fa-comments text-webropol-teal-600 w-5 mr-3"></i>
                   <div class="flex-1 text-left">
                     <div class="font-medium">2-Way SMS</div>
-                    <div class="text-xs text-webropol-gray-500">Send and Recieve</div>
+                    <div class="text-xs text-webropol-gray-500">Send and receive</div>
                   </div>
                 </button>
                 <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
@@ -77,10 +77,10 @@ export class WebropolHeader extends BaseComponent {
                     <div class="text-xs text-webropol-gray-500">Employee experience</div>
                   </div>
                 </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="campaign">
-                  <i class="fal fa-bullhorn text-webropol-teal-600 w-5 mr-3"></i>
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="case-management">
+                  <i class="fal fa-users-cog text-webropol-teal-600 w-5 mr-3"></i>
                   <div class="flex-1 text-left">
-                    <div class="font-medium">Case Managment</div>
+                    <div class="font-medium">Case Management</div>
                     <div class="text-xs text-webropol-gray-500">Manage your team</div>
                   </div>
                 </button>
@@ -986,6 +986,10 @@ export class WebropolHeader extends BaseComponent {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const type = btn.getAttribute('data-type');
+          
+          // Handle navigation to universal create page
+          this.handleCreateNavigation(type);
+          
           // Emit event from component
           this.emit('create-item', { type, source: 'header' });
           // Also dispatch a global event for pages to listen to
@@ -1007,6 +1011,40 @@ export class WebropolHeader extends BaseComponent {
       // Prevent close when clicking inside
       createDropdown.addEventListener('click', (e) => e.stopPropagation());
     }
+  }
+
+  handleCreateNavigation(type) {
+    const currentPath = window.location.pathname;
+    let targetUrl = '';
+
+    // Determine the correct base path more robustly
+    let basePath = '';
+    
+    // Count the depth level by counting slashes after the initial one
+    const pathParts = currentPath.split('/').filter(part => part); // Remove empty parts
+    const depth = pathParts.length;
+    
+    // If we're in the root (like /index.html), no base path needed
+    if (depth <= 1) {
+      basePath = './';
+    } else {
+      // Go up directories based on depth
+      basePath = '../'.repeat(depth - 1);
+    }
+
+    // Map header create types to URL types
+    const typeMapping = {
+      'surveys': 'survey',
+      'events': 'event', 
+      '2-way-sms': 'sms',
+      'exw-surveys': 'exw',
+      'case-management': 'case-management'
+    };
+
+    const urlType = typeMapping[type] || type;
+    targetUrl = `${basePath}create/index.html?type=${urlType}`;
+
+    window.location.href = targetUrl;
   }
 
   initializeSettingsAnimationScheduler() {

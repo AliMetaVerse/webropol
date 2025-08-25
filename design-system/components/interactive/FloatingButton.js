@@ -9,10 +9,37 @@ export class WebropolFloatingButton extends BaseComponent {
   constructor() {
     super();
     this.showMenu = false;
+    this.setupGlobalSettingsListener();
   }
 
   static get observedAttributes() {
     return ['position', 'size', 'show-menu'];
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.applyVisibilityFromSettings();
+  }
+
+  setupGlobalSettingsListener() {
+    // Listen for global settings changes
+    document.addEventListener('webropol-settings-applied', (e) => {
+      this.applyVisibilityFromSettings();
+    });
+  }
+
+  applyVisibilityFromSettings() {
+    // Check if global settings manager is available
+    if (typeof window !== 'undefined' && window.globalSettingsManager) {
+      const showFloatingButton = window.globalSettingsManager.getSetting('showFloatingButton');
+      if (showFloatingButton) {
+        this.style.display = '';
+        this.removeAttribute('hidden');
+      } else {
+        this.style.display = 'none';
+        this.setAttribute('hidden', '');
+      }
+    }
   }
 
   render() {
@@ -63,6 +90,16 @@ export class WebropolFloatingButton extends BaseComponent {
                 </div>
               </button>
 
+              <!-- 2-Way SMS -->
+              <button data-type="2-way-sms"
+                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
+                <i class="fal fa-comments text-webropol-teal-600 mr-3 w-5"></i>
+                <div class="flex-1">
+                  <span class="font-semibold text-webropol-gray-900 block">2-Way SMS</span>
+                  <span class="text-xs text-webropol-gray-500">Send and receive</span>
+                </div>
+              </button>
+
               <!-- EXW Surveys -->
               <button data-type="exw-surveys"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
@@ -73,23 +110,13 @@ export class WebropolFloatingButton extends BaseComponent {
                 </div>
               </button>
 
-              <!-- Employee -->
-              <button data-type="employee"
+              <!-- Case Management -->
+              <button data-type="case-management"
                 class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-users text-webropol-teal-600 mr-3 w-5"></i>
+                <i class="fal fa-users-cog text-webropol-teal-600 mr-3 w-5"></i>
                 <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Employee</span>
-                  <span class="text-xs text-webropol-gray-500">HR management</span>
-                </div>
-              </button>
-
-              <!-- Campaign -->
-              <button data-type="campaign"
-                class="create-item-btn w-full flex items-center p-3 rounded-lg border border-webropol-gray-200 hover:border-webropol-teal-300 hover:bg-webropol-teal-50 transition-all duration-200 text-left">
-                <i class="fal fa-bullhorn text-webropol-teal-600 mr-3 w-5"></i>
-                <div class="flex-1">
-                  <span class="font-semibold text-webropol-gray-900 block">Campaign</span>
-                  <span class="text-xs text-webropol-gray-500">Marketing campaigns</span>
+                  <span class="font-semibold text-webropol-gray-900 block">Case Management</span>
+                  <span class="text-xs text-webropol-gray-500">Manage your team</span>
                 </div>
               </button>
 
@@ -128,11 +155,49 @@ export class WebropolFloatingButton extends BaseComponent {
         this.addListener(btn, 'click', (e) => {
           e.stopPropagation();
           const type = btn.getAttribute('data-type');
+          
+          // Handle navigation based on type
+          this.handleNavigation(type);
+          
           this.emit('create-item', { type, originalEvent: e });
           this.hideMenu();
         });
       });
     }
+  }
+
+  handleNavigation(type) {
+    const currentPath = window.location.pathname;
+    let targetUrl = '';
+
+    // Determine the correct base path more robustly
+    let basePath = '';
+    
+    // Count the depth level by counting slashes after the initial one
+    const pathParts = currentPath.split('/').filter(part => part); // Remove empty parts
+    const depth = pathParts.length;
+    
+    // If we're in the root (like /index.html), no base path needed
+    if (depth <= 1) {
+      basePath = './';
+    } else {
+      // Go up directories based on depth
+      basePath = '../'.repeat(depth - 1);
+    }
+
+    // Map floating button types to URL types
+    const typeMapping = {
+      'surveys': 'survey',
+      'events': 'event', 
+      '2-way-sms': 'sms',
+      'exw-surveys': 'exw',
+      'case-management': 'case-management'
+    };
+
+    const urlType = typeMapping[type] || type;
+    targetUrl = `${basePath}create/index.html?type=${urlType}`;
+
+    window.location.href = targetUrl;
   }
 
   toggleMenu() {
