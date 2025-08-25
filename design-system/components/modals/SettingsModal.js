@@ -259,7 +259,7 @@ export class WebropolSettingsModal extends BaseComponent {
       <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
            style="transition: opacity 300ms ease-out">
         
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
              style="transition: all 300ms ease-out"
              role="document">
           
@@ -282,89 +282,92 @@ export class WebropolSettingsModal extends BaseComponent {
           
           <!-- Modal Body -->
           <div class="modal-body flex-1 overflow-y-auto p-6">
-            <div class="space-y-6">
+            <!-- Settings Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               
               <!-- Interface Settings Section -->
-              <div class="settings-section">
+              <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-teal-50/30 rounded-xl p-5 border border-webropol-gray-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <i class="fal fa-desktop mr-2 text-webropol-teal-600"></i>
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-desktop text-white text-sm"></i>
+                  </div>
                   Interface
                 </h3>
-                <div class="space-y-4">
+                <div class="space-y-3">
                   
                   <!-- Dark Mode Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Dark Mode</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Dark Mode</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Switch between light and dark themes">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle dark mode interface</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Toggle dark mode interface</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.darkMode ? 'checked' : ''} 
                              data-setting="darkMode">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   
                   <!-- Compact Mode Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Compact Mode</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Compact Mode</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Reduce spacing and padding for a more compact interface">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Reduce interface spacing</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Reduce interface spacing</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.compactMode ? 'checked' : ''} 
                              data-setting="compactMode">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   
                   <!-- Floating Button Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Show Floating Button</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Floating Button</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Show or hide the floating create button in the bottom right corner">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the floating create button visibility</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Toggle floating create button</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
                              data-setting="showFloatingButton">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   
                   <!-- Header Create Menu Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Show Header Create Menu</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Header Create Menu</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Show or hide the Create dropdown in the header">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the Create dropdown visibility in the header</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Toggle Create dropdown visibility</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showHeaderCreateMenu ? 'checked' : ''} 
                              data-setting="showHeaderCreateMenu">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   
@@ -372,64 +375,65 @@ export class WebropolSettingsModal extends BaseComponent {
               </div>
               
               <!-- Behavior Settings Section -->
-              <div class="settings-section">
+              <div class="settings-section bg-gradient-to-br from-webropol-blue-50/50 to-webropol-purple-50/30 rounded-xl p-5 border border-webropol-blue-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <i class="fal fa-cogs mr-2 text-webropol-teal-600"></i>
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-blue-500 to-webropol-purple-600 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-cogs text-white text-sm"></i>
+                  </div>
                   Behavior
                 </h3>
-                <div class="space-y-4">
+                <div class="space-y-3">
                   
                   <!-- Auto-save Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Auto-save</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Auto-save</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Automatically save your work while editing">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Automatically save changes</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Automatically save changes</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.autoSave ? 'checked' : ''} 
                              data-setting="autoSave">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-blue-600"></div>
                     </label>
                   </div>
                   
                   <!-- Notifications Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Notifications</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Notifications</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Receive notifications for important events">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Enable system notifications</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Enable system notifications</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.notifications ? 'checked' : ''} 
                              data-setting="notifications">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-blue-600"></div>
                     </label>
                   </div>
                   
                   <!-- Auto Logout Setting -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+                    <div class="flex items-center justify-between mb-2">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700">Auto Logout</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Automatically log out after a period of inactivity">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Minutes of inactivity before logout</p>
                     </div>
-                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                    <select class="w-full px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-blue-500 bg-white"
                             data-setting="autoLogout">
                       <option value="15" ${this.settings.autoLogout === 15 ? 'selected' : ''}>15 minutes</option>
                       <option value="30" ${this.settings.autoLogout === 30 ? 'selected' : ''}>30 minutes</option>
@@ -442,46 +446,47 @@ export class WebropolSettingsModal extends BaseComponent {
                 </div>
               </div>
               
-              <!-- User Feedback Settings Section -->
-              <div class="settings-section">
+              <!-- User Feedback & Animation Settings Section -->
+              <div class="settings-section bg-gradient-to-br from-webropol-green-50/50 to-webropol-yellow-50/30 rounded-xl p-5 border border-webropol-green-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <i class="fal fa-cog mr-2 text-webropol-blue-600"></i>
-                  Settings Animation
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-green-500 to-webropol-yellow-600 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-magic text-white text-sm"></i>
+                  </div>
+                  Animation
                 </h3>
-                <div class="space-y-4">
+                <div class="space-y-3">
                   
                   <!-- Rating Selector Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Show Rating Selector</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Rating Selector</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Show or hide the star rating selector in the header">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Toggle the rating selector visibility in the header</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Toggle rating selector visibility</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showRatingSelector ? 'checked' : ''} 
                              data-setting="showRatingSelector">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-green-600"></div>
                     </label>
                   </div>
                   
                   <!-- Feedback Question Type -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+                    <div class="flex items-center justify-between mb-2">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Feedback Question Type</label>
+                        <label class="text-sm font-medium text-webropol-gray-700">Feedback Type</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Choose the type of feedback question to display">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Select the feedback method for user input</p>
                     </div>
-                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                    <select class="w-full px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-green-500 bg-white"
                             data-setting="feedbackQuestionType">
                       <option value="rating" ${this.settings.feedbackQuestionType === 'rating' ? 'selected' : ''}>Star Rating</option>
                       <option value="openended" ${this.settings.feedbackQuestionType === 'openended' ? 'selected' : ''}>Open-ended Question</option>
@@ -490,39 +495,51 @@ export class WebropolSettingsModal extends BaseComponent {
                   </div>
                   
                   <!-- Animation Enabled Toggle -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+                    <div class="flex-1 min-w-0">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Enable Settings Animation</label>
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Settings Animation</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
                              title="Enable modern animations on the settings button to draw attention">
-                          <i class="fal fa-question-circle text-sm"></i>
+                          <i class="fal fa-question-circle text-xs"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Show modern, attractive animations on settings icon</p>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Modern animations on settings icon</p>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.settingsAnimationEnabled ? 'checked' : ''} 
                              data-setting="settingsAnimationEnabled">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-green-600"></div>
                     </label>
                   </div>
                   
+                </div>
+              </div>
+              
+              <!-- Animation Configuration Section (spans full width) -->
+              <div class="settings-section bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
+                <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-purple-500 to-webropol-pink-600 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-wand-magic text-white text-sm"></i>
+                  </div>
+                  Animation Configuration
+                </h3>
+                
+                <!-- Grid for animation settings -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  
                   <!-- Animation Type -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
-                      <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Animation Type</label>
-                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="Choose between different modern animation styles">
-                          <i class="fal fa-question-circle text-sm"></i>
-                        </div>
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+                    <div class="flex items-center mb-2">
+                      <label class="text-sm font-medium text-webropol-gray-700">Animation Type</label>
+                      <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                           title="Choose between different modern animation styles">
+                        <i class="fal fa-question-circle text-xs"></i>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Modern animations based on 2025 UI trends</p>
                     </div>
-                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                    <select class="w-full px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-purple-500 bg-white"
                             data-setting="settingsAnimationType">
-                      <option value="magnetic" ${this.settings.settingsAnimationType === 'magnetic' ? 'selected' : ''}>Magnetic Pull (Recommended)</option>
+                      <option value="magnetic" ${this.settings.settingsAnimationType === 'magnetic' ? 'selected' : ''}>Magnetic Pull</option>
                       <option value="morphing" ${this.settings.settingsAnimationType === 'morphing' ? 'selected' : ''}>Morphing Gradient</option>
                       <option value="ripple" ${this.settings.settingsAnimationType === 'ripple' ? 'selected' : ''}>Ripple Wave</option>
                       <option value="breathing" ${this.settings.settingsAnimationType === 'breathing' ? 'selected' : ''}>Breathing Glow</option>
@@ -532,18 +549,15 @@ export class WebropolSettingsModal extends BaseComponent {
                   </div>
                   
                   <!-- Animation Frequency -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
-                      <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Daily Frequency</label>
-                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="How many times per day the animation should appear">
-                          <i class="fal fa-question-circle text-sm"></i>
-                        </div>
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+                    <div class="flex items-center mb-2">
+                      <label class="text-sm font-medium text-webropol-gray-700">Daily Frequency</label>
+                      <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                           title="How many times per day the animation should appear">
+                        <i class="fal fa-question-circle text-xs"></i>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Number of animations per day</p>
                     </div>
-                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                    <select class="w-full px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-purple-500 bg-white"
                             data-setting="settingsAnimationFrequency">
                       <option value="1" ${this.settings.settingsAnimationFrequency === 1 ? 'selected' : ''}>1 time</option>
                       <option value="2" ${this.settings.settingsAnimationFrequency === 2 ? 'selected' : ''}>2 times</option>
@@ -555,18 +569,15 @@ export class WebropolSettingsModal extends BaseComponent {
                   </div>
                   
                   <!-- Animation Duration -->
-                  <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex-1">
-                      <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Animation Duration</label>
-                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="How long each animation should last">
-                          <i class="fal fa-question-circle text-sm"></i>
-                        </div>
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+                    <div class="flex items-center mb-2">
+                      <label class="text-sm font-medium text-webropol-gray-700">Animation Duration</label>
+                      <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                           title="How long each animation should last">
+                        <i class="fal fa-question-circle text-xs"></i>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Duration of each animation</p>
                     </div>
-                    <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
+                    <select class="w-full px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-purple-500 bg-white"
                             data-setting="settingsAnimationDuration">
                       <option value="1500" ${this.settings.settingsAnimationDuration === 1500 ? 'selected' : ''}>1.5 seconds</option>
                       <option value="2000" ${this.settings.settingsAnimationDuration === 2000 ? 'selected' : ''}>2 seconds</option>
@@ -576,29 +587,24 @@ export class WebropolSettingsModal extends BaseComponent {
                     </select>
                   </div>
                   
-                  <!-- Test Animation Button -->
-                  <div class="py-3 px-4 bg-webropol-gray-50 rounded-xl">
-                    <div class="flex items-center justify-between">
-                      <div class="flex-1">
-                        <div class="flex items-center">
-                          <label class="text-sm font-medium text-webropol-gray-700">Test Animation</label>
-                          <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                               title="Trigger the settings animation immediately for testing">
-                            <i class="fal fa-question-circle text-sm"></i>
-                          </div>
-                        </div>
-                        <p class="text-xs text-webropol-gray-500 mt-1">Trigger the animation now to see how it looks</p>
+                  <!-- Test Animation Section -->
+                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+                    <div class="flex items-center mb-2">
+                      <label class="text-sm font-medium text-webropol-gray-700">Test Animation</label>
+                      <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                           title="Trigger the settings animation immediately for testing">
+                        <i class="fal fa-question-circle text-xs"></i>
                       </div>
-                      <div class="flex items-center space-x-3">
-                        <!-- Inline preview: visible while modal is open -->
-                        <div class="preview-settings settings-animation-container inline-flex items-center justify-center w-10 h-10 rounded-xl bg-webropol-blue-50 text-webropol-blue-600 border border-webropol-blue-100">
-                          <i class="fal fa-cog preview-settings-icon"></i>
-                        </div>
-                        <button class="test-animation-btn px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors font-medium">
-                          <i class="fal fa-play mr-1"></i>
-                          Test Now
-                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <!-- Inline preview: visible while modal is open -->
+                      <div class="preview-settings settings-animation-container inline-flex items-center justify-center w-8 h-8 rounded-lg bg-webropol-purple-50 text-webropol-purple-600 border border-webropol-purple-100">
+                        <i class="fal fa-cog preview-settings-icon text-sm"></i>
                       </div>
+                      <button class="test-animation-btn flex-1 px-3 py-1.5 bg-gradient-to-r from-webropol-purple-500 to-webropol-pink-500 hover:from-webropol-purple-600 hover:to-webropol-pink-600 text-white text-sm rounded-lg transition-all font-medium">
+                        <i class="fal fa-play mr-1"></i>
+                        Test
+                      </button>
                     </div>
                   </div>
                   
