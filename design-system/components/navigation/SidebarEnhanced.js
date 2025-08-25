@@ -54,9 +54,13 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <i class="fal fa-sms w-5 mr-4 group-hover:scale-110 transition-transform"></i>
             <span class="font-medium">2-Way SMS</span>
           </a>
-          <a href="${link('dashboards/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fal fa-chart-line w-5 mr-4 group-hover:scale-110 transition-transform"></i>
-            <span class="font-medium">Dashboards</span>
+          <a href="${link('exw/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='exw' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fal fa-user-chart w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <span class="font-medium">EXW</span>
+          </a>
+          <a href="${link('case-management/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='case-management' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fal fa-briefcase w-5 mr-4 group-hover:scale-110 transition-transform"></i>
+            <span class="font-medium">Case Management</span>
           </a>
           <div class="pt-4 border-t border-webropol-gray-200/50 mt-4">
             <a href="${link('mywebropol/index.html')}" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 group ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">

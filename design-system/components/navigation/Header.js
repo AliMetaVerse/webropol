@@ -63,6 +63,13 @@ export class WebropolHeader extends BaseComponent {
                     <div class="text-xs text-webropol-gray-500">Event management</div>
                   </div>
                 </button>
+                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
+                  <i class="fal fa-users text-webropol-teal-600 w-5 mr-3"></i>
+                  <div class="flex-1 text-left">
+                    <div class="font-medium">2-Way SMS</div>
+                    <div class="text-xs text-webropol-gray-500">Send and Recieve</div>
+                  </div>
+                </button>
                 <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="exw-surveys">
                   <i class="fal fa-chart-line text-webropol-teal-600 w-5 mr-3"></i>
                   <div class="flex-1 text-left">
@@ -70,18 +77,11 @@ export class WebropolHeader extends BaseComponent {
                     <div class="text-xs text-webropol-gray-500">Employee experience</div>
                   </div>
                 </button>
-                <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="employee">
-                  <i class="fal fa-users text-webropol-teal-600 w-5 mr-3"></i>
-                  <div class="flex-1 text-left">
-                    <div class="font-medium">Employee</div>
-                    <div class="text-xs text-webropol-gray-500">HR management</div>
-                  </div>
-                </button>
                 <button class="flex items-center justify-start w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 create-item" data-type="campaign">
                   <i class="fal fa-bullhorn text-webropol-teal-600 w-5 mr-3"></i>
                   <div class="flex-1 text-left">
-                    <div class="font-medium">Campaign</div>
-                    <div class="text-xs text-webropol-gray-500">Marketing campaigns</div>
+                    <div class="font-medium">Case Managment</div>
+                    <div class="text-xs text-webropol-gray-500">Manage your team</div>
                   </div>
                 </button>
               </div>

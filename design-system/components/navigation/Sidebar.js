@@ -111,18 +111,32 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">2-Way SMS</span>
           </a>
           
-          <a href="${link('dashboards/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
-                                                            xl:px-4 px-3
-                                                            group-hover:px-4
-                                                            py-3
-                                                            ${active==='dashboards' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
-            <i class="fal fa-chart-line w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+          <a href="${link('exw/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                     xl:px-4 px-3
+                                                     group-hover:px-4
+                                                     py-3
+                                                     ${active==='exw' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fal fa-user-chart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
                         xl:opacity-100 xl:w-auto
                         opacity-0 w-0
-                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Dashboards</span>
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">EXW</span>
+          </a>
+          
+          <a href="${link('case-management/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                               xl:px-4 px-3
+                                                               group-hover:px-4
+                                                               py-3
+                                                               ${active==='case-management' ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700'}">
+            <i class="fal fa-briefcase w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                     xl:mr-4 mr-0
+                     group-hover:mr-4"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Case Management</span>
           </a>
           
           <div class="pt-4 border-t border-webropol-gray-200/50 mt-4">
