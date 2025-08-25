@@ -11,6 +11,12 @@ export class WebropolSidebar extends BaseComponent {
     return ['active', 'base'];
   }
 
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
+    }
+  }
+
   render() {
     const active = this.getAttr('active', 'home');
     const base = this.getAttr('base', '');

@@ -101,12 +101,14 @@ class WebropolSPA {
       // Preserve the current shell content for home and set hash
       location.replace(`#${initialRoute}`);
     }
+    
+    // Always update sidebar and breadcrumbs, even for initial load
+    this.updateBreadcrumbs(initialRoute);
+    this.updateSidebarActive(initialRoute);
+    
     // Load if route is not home (shell already shows home content)
     if (initialRoute !== '/home' && initialRoute !== '/') {
       this.load(initialRoute);
-    } else {
-      this.updateBreadcrumbs(initialRoute);
-      this.updateSidebarActive(initialRoute);
     }
   }
 
@@ -240,6 +242,11 @@ class WebropolSPA {
   const queryString = qIndex >= 0 ? path.substring(qIndex) : '';
   window.__pageRoute = path;
   window.__pageQueryString = queryString;
+
+  // Emit custom event for components that need to react to route changes
+  window.dispatchEvent(new CustomEvent('spa-route-change', { 
+    detail: { path, queryString } 
+  }));
 
   // Execute inline scripts inside main/body of fetched doc
       this.runPageScripts(doc);

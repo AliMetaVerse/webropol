@@ -169,7 +169,7 @@
   <!-- Import Global Design Tokens -->
   <link rel="stylesheet" href="../design-system/styles/tokens.css">
 </head>
-<body class="bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50/30" x-data="universalCreateApp()">
+<body x-data="universalCreateApp()">
   <div class="flex h-screen">
     <webropol-sidebar :active="contentConfig.sidebarActive" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -405,12 +405,7 @@
     function universalCreateApp() {
       return {
         // Content type from URL parameter
-        contentType: (function(){
-          // Support SPA: window.__pageQueryString is set by the SPA router
-          const search = (window.__pageQueryString || window.location.search || '').replace(/^\?/, '');
-          const params = new URLSearchParams(search);
-          return params.get('type') || 'survey';
-        })(),
+        contentType: 'survey', // Default value, will be updated in init()
         activeCategory: 'webropol',
         
         // Form data
@@ -421,6 +416,67 @@
           deleteDate: '',
           selectedFolder: 'root',
           selectedTemplate: 'blank'
+        },
+
+        // Initialize component and update contentType from query
+        init() {
+          this.updateContentType();
+          
+          // Set default date to 30 days from now for auto-delete
+          const futureDate = new Date();
+          futureDate.setDate(futureDate.getDate() + 30);
+          this.formData.deleteDate = futureDate.toISOString().split('T')[0];
+
+          // Initialize custom fields in form data
+          for (const field of this.contentConfig.customFields) {
+            if (field.type === 'select' && field.options.length > 0) {
+              this.formData[field.name] = field.options[0].value;
+            } else {
+              this.formData[field.name] = '';
+            }
+          }
+
+          // Set default folder
+          if (this.contentConfig.folders && this.contentConfig.folders.length > 0) {
+            this.formData.selectedFolder = this.contentConfig.folders[0].value;
+          }
+
+          // Set default template if templates are shown
+          if (this.contentConfig.showTemplates && this.contentConfig.templates && this.contentConfig.templates.length > 0) {
+            this.formData.selectedTemplate = this.contentConfig.templates[0].id;
+          }
+
+          // Watch for query string changes in SPA context
+          if (typeof window !== 'undefined') {
+            // Listen for custom event from SPA router
+            window.addEventListener('spa-route-change', () => {
+              this.updateContentType();
+            });
+          }
+        },
+
+        updateContentType() {
+          // Support SPA: window.__pageQueryString is set by the SPA router
+          const search = (window.__pageQueryString || window.location.search || '').replace(/^\?/, '');
+          const params = new URLSearchParams(search);
+          const newType = params.get('type') || 'survey';
+          
+          if (this.contentType !== newType) {
+            this.contentType = newType;
+            // Reset form data when type changes
+            this.formData = {
+              title: '',
+              description: '',
+              autoDelete: false,
+              deleteDate: '',
+              selectedFolder: 'root',
+              selectedTemplate: 'blank'
+            };
+            // Update the selected template to the first one of the new type
+            if (this.contentConfig.templates && this.contentConfig.templates.length > 0) {
+              this.formData.selectedTemplate = this.contentConfig.templates[0].id;
+            }
+          }
         },
 
         // Content configurations
@@ -833,32 +889,6 @@
           
           // In a real app, this would redirect to the appropriate management page
           // window.location.href = `/${this.contentType === 'survey' ? 'surveys' : this.contentType}/`;
-        },
-
-        init() {
-          // Set default date to 30 days from now for auto-delete
-          const futureDate = new Date();
-          futureDate.setDate(futureDate.getDate() + 30);
-          this.formData.deleteDate = futureDate.toISOString().split('T')[0];
-
-          // Initialize custom fields in form data
-          for (const field of this.contentConfig.customFields) {
-            if (field.type === 'select' && field.options.length > 0) {
-              this.formData[field.name] = field.options[0].value;
-            } else {
-              this.formData[field.name] = '';
-            }
-          }
-
-          // Set default folder
-          if (this.contentConfig.folders && this.contentConfig.folders.length > 0) {
-            this.formData.selectedFolder = this.contentConfig.folders[0].value;
-          }
-
-          // Set default template if templates are shown
-          if (this.contentConfig.showTemplates && this.contentConfig.templates && this.contentConfig.templates.length > 0) {
-            this.formData.selectedTemplate = this.contentConfig.templates[0].id;
-          }
         }
       }
     }
