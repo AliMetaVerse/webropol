@@ -44,7 +44,7 @@ export class WebropolHeader extends BaseComponent {
             <div class="relative" data-create-menu>
               <button class="p-6 h-10 inline-flex items-center justify-center text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-xl transition-all create-menu-btn">
                 <i class="fal fa-plus mr-2"></i>
-                <span>Create</span>
+                <span>Create New</span>
               </button>
               <!-- Create dropdown -->
               <div class="absolute left-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 create-menu-dropdown z-[9999]">
