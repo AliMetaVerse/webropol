@@ -191,11 +191,30 @@ export class WebropolSettingsModal extends BaseComponent {
         feedbackButton.classList.add('settings-particle-active');
       }
 
-      // Auto-cleanup based on animation duration
-      setTimeout(() => {
-        feedbackContainer.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
-        feedbackButton.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
-      }, duration);
+      // If duration > 4s, loop for the full duration by increasing iteration count
+      const baseCycleMap = {
+        magnetic: 1500,
+        morphing: 2500,
+        ripple: 1800,
+        breathing: 2200,
+        elastic: 1000,
+        particle: 1200
+      };
+      const baseCycle = baseCycleMap[type] || 1500;
+      const targetEl = (type === 'breathing' || type === 'elastic' || type === 'particle') ? feedbackButton : feedbackContainer;
+      if (duration > 4000 && targetEl) {
+        const iterations = Math.max(2, Math.ceil(duration / baseCycle));
+        targetEl.style.animationIterationCount = String(iterations);
+      }
+      
+       // Auto-cleanup based on animation duration
+       setTimeout(() => {
+         feedbackContainer.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
+         feedbackButton.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
+        // Cleanup inline overrides
+        if (feedbackContainer) feedbackContainer.style.animationIterationCount = '';
+        if (feedbackButton) feedbackButton.style.animationIterationCount = '';
+       }, duration);
     } catch (err) {
       console.warn('[SettingsModal] Failed to animate header preview:', err);
     }
@@ -584,6 +603,9 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="2500" ${this.settings.settingsAnimationDuration === 2500 ? 'selected' : ''}>2.5 seconds</option>
                       <option value="3000" ${this.settings.settingsAnimationDuration === 3000 ? 'selected' : ''}>3 seconds</option>
                       <option value="4000" ${this.settings.settingsAnimationDuration === 4000 ? 'selected' : ''}>4 seconds</option>
+                      <option value="6000" ${this.settings.settingsAnimationDuration === 6000 ? 'selected' : ''}>6 seconds</option>
+                      <option value="8000" ${this.settings.settingsAnimationDuration === 8000 ? 'selected' : ''}>8 seconds</option>
+                      <option value="10000" ${this.settings.settingsAnimationDuration === 10000 ? 'selected' : ''}>10 seconds</option>
                     </select>
                   </div>
                   
@@ -601,7 +623,7 @@ export class WebropolSettingsModal extends BaseComponent {
                       <div class="preview-settings settings-animation-container inline-flex items-center justify-center w-8 h-8 rounded-lg bg-webropol-purple-50 text-webropol-purple-600 border border-webropol-purple-100">
                         <i class="fal fa-cog preview-settings-icon text-sm"></i>
                       </div>
-                      <button class="test-animation-btn flex-1 px-3 py-1.5 bg-gradient-to-r from-webropol-purple-500 to-webropol-pink-500 hover:from-webropol-purple-600 hover:to-webropol-pink-600 text-white text-sm rounded-lg transition-all font-medium">
+                      <button class="test-animation-btn flex-1 px-3 py-1.5 bg-gradient-to-r from-webropol-teal-400 to-webropol-teal-600 hover:from-webropol-purple-600 hover:to-webropol-pink-600 text-white text-sm rounded-lg transition-all font-medium">
                         <i class="fal fa-play mr-1"></i>
                         Test
                       </button>

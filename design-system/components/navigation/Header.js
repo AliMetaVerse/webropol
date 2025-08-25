@@ -1218,47 +1218,65 @@ export class WebropolHeader extends BaseComponent {
     switch(type) {
       case 'magnetic':
         animationClass = 'settings-magnetic-active';
-        animationDuration = 1500;
+        animationDuration = Math.max(duration, 1800);
         break;
       case 'morphing':
         animationClass = 'settings-morphing-active';
-        animationDuration = 2500;
+        animationDuration = Math.max(duration, 2500);
         break;
       case 'ripple':
         animationClass = 'settings-ripple-active';
-        animationDuration = 1800;
+        animationDuration = Math.max(duration, 1800);
         break;
       case 'breathing':
         animationClass = 'settings-breathing-active';
-        animationDuration = 4400; // 2.2s × 2 iterations
+        animationDuration = Math.max(duration, 4400); // 2.2s × 2
         break;
       case 'elastic':
         animationClass = 'settings-elastic-active';
-        animationDuration = 800;
+        animationDuration = Math.max(duration, 1000);
         break;
       case 'particle':
         animationClass = 'settings-particle-active';
-        animationDuration = 1200;
+        animationDuration = Math.max(duration, 1200);
         break;
       default:
         animationClass = 'settings-magnetic-active';
-        animationDuration = 1500;
+        animationDuration = Math.max(duration, 1800);
     }
     
     settingsContainer.classList.add(animationClass);
 
-    // Auto-remove animation class after animation completes
-    setTimeout(() => {
-      settingsContainer.classList.remove(animationClass);
-      console.log(`[Header] Settings animation ${type} completed`);
-    }, Math.min(duration, animationDuration));
+    // If duration > 4s, loop the animation for the whole duration by increasing iteration count
+    const baseCycleMap = {
+      magnetic: 1500,
+      morphing: 2500,
+      ripple: 1800,
+      breathing: 2200,
+      elastic: 1000,
+      particle: 1200
+    };
+    const baseCycle = baseCycleMap[type] || 1500;
+    const targetEl = settingsContainer; // class is applied to container
+    if (animationDuration > 4000 && targetEl) {
+      const iterations = Math.max(2, Math.ceil(animationDuration / baseCycle));
+      targetEl.style.animationIterationCount = String(iterations);
+    }
 
-    // Emit event for analytics or other purposes
-    this.emit('settings-animation-triggered', { 
-      type, 
-      duration: Math.min(duration, animationDuration), 
-      timestamp: new Date().toISOString() 
-    });
+     // Auto-remove animation class after animation completes
+     setTimeout(() => {
+       settingsContainer.classList.remove(animationClass);
+      // Cleanup any inline overrides
+      settingsContainer.style.animationIterationCount = '';
+       console.log(`[Header] Settings animation ${type} completed`);
+     }, animationDuration);
+
+     // Emit event for analytics or other purposes
+     this.emit('settings-animation-triggered', { 
+       type, 
+       duration: animationDuration, 
+       timestamp: new Date().toISOString() 
+     });
   }
 
   // Cleanup method
