@@ -116,15 +116,14 @@ export class WebropolHeader extends BaseComponent {
             ` : ''}
             
             ${showRatingSelector ? `
-              <div class="relative rating-vibration-container">
-                <div class="rating-wave rating-wave-left"></div>
-                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-orange-600 hover:bg-webropol-orange-50 rounded-xl transition-all rating-selector-btn rating-pulse">
+              <div class="relative settings-animation-container">
+                <div class="settings-notification-badge"></div>
+                <button class="settings-button rating-selector-btn">
                   <i class="fal fa-star"></i>
                 </button>
-                <div class="rating-wave rating-wave-right"></div>
                 
-                <!-- Feedback dropdown -->
-                <div class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-4 opacity-0 invisible transition-all duration-200 feedback-dropdown z-[9999]">
+                <!-- Settings dropdown -->
+                <div class="absolute right-0 top-full mt-2 w-96 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl shadow-lg border border-webropol-gray-200 py-4 opacity-0 invisible transition-all duration-200 feedback-dropdown z-[9999]">
                   ${this.getFeedbackContent(feedbackQuestionType)}
                 </div>
               </div>
@@ -185,8 +184,8 @@ export class WebropolHeader extends BaseComponent {
     this.addRatingListeners();
     this.addCreateMenuListeners();
     
-    // Initialize rating animation scheduler
-    this.initializeRatingAnimationScheduler();
+    // Initialize settings animation scheduler
+    this.initializeSettingsAnimationScheduler();
 
     // Re-render header if global settings applied (to reflect visibility changes)
     if (!this._settingsListenerAdded) {
@@ -1010,34 +1009,34 @@ export class WebropolHeader extends BaseComponent {
     }
   }
 
-  initializeRatingAnimationScheduler() {
+  initializeSettingsAnimationScheduler() {
     // Clear any existing timers
-    if (this.ratingAnimationTimer) {
-      clearTimeout(this.ratingAnimationTimer);
+    if (this.settingsAnimationTimer) {
+      clearTimeout(this.settingsAnimationTimer);
     }
-    if (this.ratingIntervalTimer) {
-      clearInterval(this.ratingIntervalTimer);
+    if (this.settingsIntervalTimer) {
+      clearInterval(this.settingsIntervalTimer);
     }
 
     // Get animation settings from global settings manager
     const getAnimationSettings = () => {
       if (typeof window !== 'undefined' && window.globalSettingsManager) {
         return {
-          enabled: window.globalSettingsManager.getSetting('ratingAnimationEnabled') !== false,
-          frequency: window.globalSettingsManager.getSetting('ratingAnimationFrequency') || 3, // times per day
-          duration: window.globalSettingsManager.getSetting('ratingAnimationDuration') || 5000, // milliseconds
-          startTime: window.globalSettingsManager.getSetting('ratingAnimationStartTime') || '09:00',
-          endTime: window.globalSettingsManager.getSetting('ratingAnimationEndTime') || '17:00',
-          type: window.globalSettingsManager.getSetting('ratingAnimationType') || 'wave' // 'wave' or 'attention'
+          enabled: window.globalSettingsManager.getSetting('settingsAnimationEnabled') !== false,
+          frequency: window.globalSettingsManager.getSetting('settingsAnimationFrequency') || 3, // times per day
+          duration: window.globalSettingsManager.getSetting('settingsAnimationDuration') || 2000, // milliseconds
+          startTime: window.globalSettingsManager.getSetting('settingsAnimationStartTime') || '09:00',
+          endTime: window.globalSettingsManager.getSetting('settingsAnimationEndTime') || '17:00',
+          type: window.globalSettingsManager.getSetting('settingsAnimationType') || 'magnetic' // modern animation type
         };
       }
       return {
         enabled: true,
         frequency: 3,
-        duration: 5000,
+        duration: 2000,
         startTime: '09:00',
         endTime: '17:00',
-        type: 'wave'
+        type: 'magnetic'
       };
     };
 
@@ -1062,7 +1061,7 @@ export class WebropolHeader extends BaseComponent {
       if (now < startTime) {
         // Schedule for start time today
         const timeUntilStart = startTime.getTime() - now.getTime();
-        this.ratingAnimationTimer = setTimeout(() => {
+        this.settingsAnimationTimer = setTimeout(() => {
           this.startDailyAnimationCycle();
         }, timeUntilStart);
       } else if (now > endTime) {
@@ -1070,7 +1069,7 @@ export class WebropolHeader extends BaseComponent {
         const tomorrowStart = new Date(startTime);
         tomorrowStart.setDate(tomorrowStart.getDate() + 1);
         const timeUntilTomorrow = tomorrowStart.getTime() - now.getTime();
-        this.ratingAnimationTimer = setTimeout(() => {
+        this.settingsAnimationTimer = setTimeout(() => {
           this.startDailyAnimationCycle();
         }, timeUntilTomorrow);
       } else {
@@ -1088,7 +1087,7 @@ export class WebropolHeader extends BaseComponent {
   }
 
   startDailyAnimationCycle() {
-    const settings = this.getRatingAnimationSettings();
+    const settings = this.getSettingsAnimationSettings();
     
     if (!settings.enabled) {
       return;
@@ -1106,7 +1105,7 @@ export class WebropolHeader extends BaseComponent {
     
     const triggerAnimation = () => {
       if (animationCount < settings.frequency && new Date() < endTime) {
-        this.triggerRatingAnimation(settings.duration, settings.type);
+        this.triggerSettingsAnimation(settings.duration, settings.type);
         animationCount++;
         
         if (animationCount < settings.frequency) {
@@ -1114,7 +1113,7 @@ export class WebropolHeader extends BaseComponent {
           const randomOffset = (Math.random() - 0.5) * 0.4 * interval;
           const nextAnimationTime = interval + randomOffset;
           
-          this.ratingAnimationTimer = setTimeout(triggerAnimation, nextAnimationTime);
+          this.settingsAnimationTimer = setTimeout(triggerAnimation, nextAnimationTime);
         }
       }
     };
@@ -1123,56 +1122,120 @@ export class WebropolHeader extends BaseComponent {
     triggerAnimation();
   }
 
-  getRatingAnimationSettings() {
+  getSettingsAnimationSettings() {
     if (typeof window !== 'undefined' && window.globalSettingsManager) {
       return {
-        enabled: window.globalSettingsManager.getSetting('ratingAnimationEnabled') !== false,
-        frequency: window.globalSettingsManager.getSetting('ratingAnimationFrequency') || 3,
-        duration: window.globalSettingsManager.getSetting('ratingAnimationDuration') || 5000,
-        startTime: window.globalSettingsManager.getSetting('ratingAnimationStartTime') || '09:00',
-        endTime: window.globalSettingsManager.getSetting('ratingAnimationEndTime') || '17:00',
-        type: window.globalSettingsManager.getSetting('ratingAnimationType') || 'wave'
+        enabled: window.globalSettingsManager.getSetting('settingsAnimationEnabled') !== false,
+        frequency: window.globalSettingsManager.getSetting('settingsAnimationFrequency') || 3,
+        duration: window.globalSettingsManager.getSetting('settingsAnimationDuration') || 2000,
+        startTime: window.globalSettingsManager.getSetting('settingsAnimationStartTime') || '09:00',
+        endTime: window.globalSettingsManager.getSetting('settingsAnimationEndTime') || '17:00',
+        type: window.globalSettingsManager.getSetting('settingsAnimationType') || 'magnetic'
       };
     }
     return {
       enabled: true,
       frequency: 3,
-      duration: 5000,
+      duration: 2000,
       startTime: '09:00',
       endTime: '17:00',
-      type: 'wave'
+      type: 'magnetic'
     };
   }
 
-  triggerRatingAnimation(duration = 5000, type = 'wave') {
-    const ratingContainer = this.querySelector('.rating-vibration-container');
-    const ratingButton = this.querySelector('.rating-selector-btn');
+  triggerSettingsAnimation(duration = 2000, type = 'magnetic') {
+    const settingsContainer = this.querySelector('.settings-animation-container');
+    const settingsButton = this.querySelector('.settings-button');
     
-    if (!ratingContainer || !ratingButton) {
+    if (!settingsContainer || !settingsButton) {
+      console.warn('[Header] Settings container or button not found');
       return;
     }
 
-    // Remove any existing animation classes
-    ratingContainer.classList.remove('rating-vibration-active');
-    ratingButton.classList.remove('rating-attention-active');
-
-    // Add the appropriate animation class
-    if (type === 'wave') {
-      ratingContainer.classList.add('rating-vibration-active');
-    } else if (type === 'attention') {
-      ratingButton.classList.add('rating-attention-active');
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hasReduceMotionClass = document.body.classList.contains('reduce-motion');
+    
+    if (prefersReducedMotion || hasReduceMotionClass) {
+      // For reduced motion users, just show a subtle static indicator
+      settingsButton.style.border = '2px solid #06b6d4';
+      settingsButton.style.background = 'rgba(6, 182, 212, 0.05)';
+      const badge = settingsContainer.querySelector('.settings-notification-badge');
+      if (badge) {
+        badge.style.opacity = '1';
+        badge.style.background = '#06b6d4';
+      }
+      setTimeout(() => {
+        settingsButton.style.border = '';
+        settingsButton.style.background = '';
+        if (badge) {
+          badge.style.opacity = '';
+          badge.style.background = '';
+        }
+      }, 2000);
+      return;
     }
 
-    // Remove animation after specified duration
+    console.log(`[Header] Triggering ${type} settings animation for ${duration}ms`);
+
+    // Remove any existing animation classes
+    const animationClasses = [
+      'settings-magnetic-active',
+      'settings-morphing-active', 
+      'settings-ripple-active',
+      'settings-breathing-active',
+      'settings-elastic-active',
+      'settings-particle-active'
+    ];
+    
+    animationClasses.forEach(cls => settingsContainer.classList.remove(cls));
+
+    // Add the appropriate animation class based on type
+    let animationClass = '';
+    let animationDuration = duration;
+    
+    switch(type) {
+      case 'magnetic':
+        animationClass = 'settings-magnetic-active';
+        animationDuration = 1500;
+        break;
+      case 'morphing':
+        animationClass = 'settings-morphing-active';
+        animationDuration = 2500;
+        break;
+      case 'ripple':
+        animationClass = 'settings-ripple-active';
+        animationDuration = 1800;
+        break;
+      case 'breathing':
+        animationClass = 'settings-breathing-active';
+        animationDuration = 4400; // 2.2s × 2 iterations
+        break;
+      case 'elastic':
+        animationClass = 'settings-elastic-active';
+        animationDuration = 800;
+        break;
+      case 'particle':
+        animationClass = 'settings-particle-active';
+        animationDuration = 1200;
+        break;
+      default:
+        animationClass = 'settings-magnetic-active';
+        animationDuration = 1500;
+    }
+    
+    settingsContainer.classList.add(animationClass);
+
+    // Auto-remove animation class after animation completes
     setTimeout(() => {
-      ratingContainer.classList.remove('rating-vibration-active');
-      ratingButton.classList.remove('rating-attention-active');
-    }, duration);
+      settingsContainer.classList.remove(animationClass);
+      console.log(`[Header] Settings animation ${type} completed`);
+    }, Math.min(duration, animationDuration));
 
     // Emit event for analytics or other purposes
-    this.emit('rating-animation-triggered', { 
+    this.emit('settings-animation-triggered', { 
       type, 
-      duration, 
+      duration: Math.min(duration, animationDuration), 
       timestamp: new Date().toISOString() 
     });
   }
@@ -1181,14 +1244,40 @@ export class WebropolHeader extends BaseComponent {
   disconnectedCallback() {
     super.disconnectedCallback();
     
-    if (this.ratingAnimationTimer) {
-      clearTimeout(this.ratingAnimationTimer);
+    if (this.settingsAnimationTimer) {
+      clearTimeout(this.settingsAnimationTimer);
     }
-    if (this.ratingIntervalTimer) {
-      clearInterval(this.ratingIntervalTimer);
+    if (this.settingsIntervalTimer) {
+      clearInterval(this.settingsIntervalTimer);
     }
+  }
+
+  // Test method to manually trigger animation (for development/testing)
+  testAnimation(type = 'magnetic') {
+    console.log(`[Header] Manual test: triggering ${type} settings animation`);
+    this.triggerSettingsAnimation(2000, type);
   }
 }
 
 customElements.define('webropol-header', WebropolHeader);
+
+// Global test function for browser console
+window.testSettingsAnimation = function(type = 'magnetic') {
+  const header = document.querySelector('webropol-header');
+  if (header && header.testAnimation) {
+    header.testAnimation(type);
+  } else {
+    console.error('Header component not found or testAnimation method not available');
+  }
+};
+
+// Log available test commands
+console.log('🎨 Settings Animation Test Commands:');
+console.log('testSettingsAnimation() - Test magnetic animation');
+console.log('testSettingsAnimation("magnetic") - Test magnetic pull');
+console.log('testSettingsAnimation("morphing") - Test morphing gradient');
+console.log('testSettingsAnimation("ripple") - Test ripple wave');
+console.log('testSettingsAnimation("breathing") - Test breathing glow');
+console.log('testSettingsAnimation("elastic") - Test elastic bounce');
+console.log('testSettingsAnimation("particle") - Test particle burst');
 

@@ -24,7 +24,7 @@ export class WebropolSettingsModal extends BaseComponent {
     this.saveSettings = this.saveSettings.bind(this);
     this.resetSettings = this.resetSettings.bind(this);
     this.toggleSetting = this.toggleSetting.bind(this);
-    this.testRatingAnimation = this.testRatingAnimation.bind(this);
+    this.testSettingsAnimation = this.testSettingsAnimation.bind(this);
   this.animateHeader = this.animateHeader.bind(this);
   this.triggerPreviewAnimation = this.triggerPreviewAnimation.bind(this);
   }
@@ -44,11 +44,11 @@ export class WebropolSettingsModal extends BaseComponent {
       showRatingSelector: true,
       // New: feedback question type
       feedbackQuestionType: 'rating', // 'rating', 'openended', 'nps'
-      // New: rating animation settings
-      ratingAnimationEnabled: true,
-      ratingAnimationFrequency: 3, // times per day
-      ratingAnimationDuration: 5000, // milliseconds
-      ratingAnimationType: 'wave' // 'wave' or 'attention'
+      // New: settings animation settings (modern, attractive)
+      settingsAnimationEnabled: true,
+      settingsAnimationFrequency: 3, // times per day
+      settingsAnimationDuration: 2000, // milliseconds - modern animations are shorter
+      settingsAnimationType: 'magnetic' // 'magnetic', 'morphing', 'ripple', 'breathing', 'elastic', 'particle'
     };
 
     const stored = localStorage.getItem('webropol_global_settings');
@@ -105,10 +105,10 @@ export class WebropolSettingsModal extends BaseComponent {
         showHeaderCreateMenu: true,
         showRatingSelector: true,
         feedbackQuestionType: 'rating',
-        ratingAnimationEnabled: true,
-        ratingAnimationFrequency: 3,
-        ratingAnimationDuration: 5000,
-        ratingAnimationType: 'wave'
+        settingsAnimationEnabled: true,
+        settingsAnimationFrequency: 3,
+        settingsAnimationDuration: 2000,
+        settingsAnimationType: 'magnetic'
       };
       this.saveSettings();
       this.render();
@@ -124,7 +124,7 @@ export class WebropolSettingsModal extends BaseComponent {
     this.saveSettings();
   }
 
-  testRatingAnimation() {
+  testSettingsAnimation() {
     console.log('Test animation button clicked!');
     
     // Close the modal first
@@ -132,75 +132,122 @@ export class WebropolSettingsModal extends BaseComponent {
     
     // Wait a bit for modal to close, then trigger animation
     setTimeout(() => {
-      this.animateHeader(this.settings.ratingAnimationType, this.settings.ratingAnimationDuration);
+      this.animateHeader(this.settings.settingsAnimationType, this.settings.settingsAnimationDuration);
     }, 300); // Wait 300ms for modal close animation
   }
 
-  // Trigger header rating animation without closing the modal (used for live preview)
-  animateHeader(type = 'wave', duration = 5000) {
+  // Trigger header settings animation without closing the modal (used for live preview)
+  animateHeader(type = 'magnetic', duration = 2000) {
     try {
       // Prefer calling the component API if available
       const headers = document.querySelectorAll('webropol-header');
       if (headers && headers.length) {
         headers.forEach(header => {
-          if (typeof header.triggerRatingAnimation === 'function') {
-            header.triggerRatingAnimation(duration, type);
+          if (typeof header.triggerSettingsAnimation === 'function') {
+            header.triggerSettingsAnimation(duration, type);
           }
         });
         return;
       }
 
       // Fallback: manipulate DOM classes directly if header API not found
-      const ratingContainer = document.querySelector('.rating-vibration-container');
-      const ratingButton = document.querySelector('.rating-selector-btn');
-      if (!ratingContainer || !ratingButton) {
-        console.warn('[SettingsModal] No rating selector found in header for animation preview');
+      // Target the actual elements in the header (star/feedback icon)
+      const feedbackContainer = document.querySelector('.settings-animation-container');
+      const feedbackButton = document.querySelector('.rating-selector-btn');
+      if (!feedbackContainer || !feedbackButton) {
+        console.warn('[SettingsModal] No feedback/star button found in header for animation preview');
         return;
       }
 
-      ratingContainer.classList.remove('rating-vibration-active');
-      ratingButton.classList.remove('rating-attention-active');
-
-      if (type === 'wave') {
-        ratingContainer.classList.add('rating-vibration-active');
-      } else if (type === 'attention') {
-        ratingButton.classList.add('rating-attention-active');
+      // Check for reduced motion preferences
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const hasReduceMotionClass = document.body.classList.contains('reduce-motion');
+      
+      if (prefersReducedMotion || hasReduceMotionClass) {
+        // Show static indicator for reduced motion users
+        feedbackButton.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.5)';
+        setTimeout(() => {
+          feedbackButton.style.boxShadow = '';
+        }, 1500);
+        return;
       }
 
+      // Clear any existing animation classes
+      feedbackContainer.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
+      feedbackButton.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
+
+      // Apply the appropriate animation class based on type
+      if (type === 'magnetic') {
+        feedbackContainer.classList.add('settings-magnetic-active');
+      } else if (type === 'morphing') {
+        feedbackContainer.classList.add('settings-morphing-active');
+      } else if (type === 'ripple') {
+        feedbackContainer.classList.add('settings-ripple-active');
+      } else if (type === 'breathing') {
+        feedbackButton.classList.add('settings-breathing-active');
+      } else if (type === 'elastic') {
+        feedbackButton.classList.add('settings-elastic-active');
+      } else if (type === 'particle') {
+        feedbackButton.classList.add('settings-particle-active');
+      }
+
+      // Auto-cleanup based on animation duration
       setTimeout(() => {
-        ratingContainer.classList.remove('rating-vibration-active');
-        ratingButton.classList.remove('rating-attention-active');
+        feedbackContainer.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
+        feedbackButton.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
       }, duration);
     } catch (err) {
       console.warn('[SettingsModal] Failed to animate header preview:', err);
     }
   }
 
-  // Inline preview animation inside the modal (on the small star icon)
+  // Inline preview animation inside the modal (on the small settings icon)
   triggerPreviewAnimation() {
     try {
-      const container = this.querySelector('.preview-star');
-      const icon = this.querySelector('.preview-star-icon');
+      const container = this.querySelector('.preview-settings');
+      const icon = this.querySelector('.preview-settings-icon');
       if (!container || !icon) return;
 
+      // Check for reduced motion preferences
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const hasReduceMotionClass = document.body.classList.contains('reduce-motion');
+
       // Clear any state
-      container.classList.remove('rating-vibration-active');
-      icon.classList.remove('rating-attention-active');
+      container.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
+      icon.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
 
-      if (!this.settings.ratingAnimationEnabled) return;
+      if (!this.settings.settingsAnimationEnabled) return;
 
-      const type = this.settings.ratingAnimationType || 'wave';
-      const duration = this.settings.ratingAnimationDuration || 5000;
+      const type = this.settings.settingsAnimationType || 'magnetic';
+      const duration = this.settings.settingsAnimationDuration || 2000;
 
-      if (type === 'wave') {
-        container.classList.add('rating-vibration-active');
-      } else {
-        icon.classList.add('rating-attention-active');
+      if (prefersReducedMotion || hasReduceMotionClass) {
+        // Show static indicator for reduced motion users
+        icon.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.5)';
+        setTimeout(() => {
+          icon.style.boxShadow = '';
+        }, 1500);
+        return;
       }
 
+      if (type === 'magnetic') {
+        container.classList.add('settings-magnetic-active');
+      } else if (type === 'morphing') {
+        container.classList.add('settings-morphing-active');
+      } else if (type === 'ripple') {
+        container.classList.add('settings-ripple-active');
+      } else if (type === 'breathing') {
+        icon.classList.add('settings-breathing-active');
+      } else if (type === 'elastic') {
+        icon.classList.add('settings-elastic-active');
+      } else if (type === 'particle') {
+        icon.classList.add('settings-particle-active');
+      }
+
+      // Auto-cleanup
       setTimeout(() => {
-        container.classList.remove('rating-vibration-active');
-        icon.classList.remove('rating-attention-active');
+        container.classList.remove('settings-magnetic-active', 'settings-morphing-active', 'settings-ripple-active');
+        icon.classList.remove('settings-breathing-active', 'settings-elastic-active', 'settings-particle-active');
       }, duration);
     } catch {}
   }
@@ -398,8 +445,8 @@ export class WebropolSettingsModal extends BaseComponent {
               <!-- User Feedback Settings Section -->
               <div class="settings-section">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <i class="fal fa-star mr-2 text-webropol-orange-600"></i>
-                  User Feedback
+                  <i class="fal fa-cog mr-2 text-webropol-blue-600"></i>
+                  Settings Animation
                 </h3>
                 <div class="space-y-4">
                   
@@ -446,17 +493,17 @@ export class WebropolSettingsModal extends BaseComponent {
                   <div class="flex items-center justify-between py-3 px-4 bg-webropol-gray-50 rounded-xl">
                     <div class="flex-1">
                       <div class="flex items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Enable Rating Animation</label>
+                        <label class="text-sm font-medium text-webropol-gray-700">Enable Settings Animation</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="Enable periodic animations on the rating selector to draw attention">
+                             title="Enable modern animations on the settings button to draw attention">
                           <i class="fal fa-question-circle text-sm"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Show attention-grabbing animations on rating icon</p>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Show modern, attractive animations on settings icon</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" class="sr-only peer" ${this.settings.ratingAnimationEnabled ? 'checked' : ''} 
-                             data-setting="ratingAnimationEnabled">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.settingsAnimationEnabled ? 'checked' : ''} 
+                             data-setting="settingsAnimationEnabled">
                       <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
@@ -467,16 +514,20 @@ export class WebropolSettingsModal extends BaseComponent {
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700">Animation Type</label>
                         <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                             title="Choose between wave vibration or attention pulse animation">
+                             title="Choose between different modern animation styles">
                           <i class="fal fa-question-circle text-sm"></i>
                         </div>
                       </div>
-                      <p class="text-xs text-webropol-gray-500 mt-1">Wave shows side vibrations, Attention pulses the icon</p>
+                      <p class="text-xs text-webropol-gray-500 mt-1">Modern animations based on 2025 UI trends</p>
                     </div>
                     <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
-                            data-setting="ratingAnimationType">
-                      <option value="wave" ${this.settings.ratingAnimationType === 'wave' ? 'selected' : ''}>Wave Vibration</option>
-                      <option value="attention" ${this.settings.ratingAnimationType === 'attention' ? 'selected' : ''}>Attention Pulse</option>
+                            data-setting="settingsAnimationType">
+                      <option value="magnetic" ${this.settings.settingsAnimationType === 'magnetic' ? 'selected' : ''}>Magnetic Pull (Recommended)</option>
+                      <option value="morphing" ${this.settings.settingsAnimationType === 'morphing' ? 'selected' : ''}>Morphing Gradient</option>
+                      <option value="ripple" ${this.settings.settingsAnimationType === 'ripple' ? 'selected' : ''}>Ripple Wave</option>
+                      <option value="breathing" ${this.settings.settingsAnimationType === 'breathing' ? 'selected' : ''}>Breathing Glow</option>
+                      <option value="elastic" ${this.settings.settingsAnimationType === 'elastic' ? 'selected' : ''}>Elastic Bounce</option>
+                      <option value="particle" ${this.settings.settingsAnimationType === 'particle' ? 'selected' : ''}>Particle Burst</option>
                     </select>
                   </div>
                   
@@ -493,13 +544,13 @@ export class WebropolSettingsModal extends BaseComponent {
                       <p class="text-xs text-webropol-gray-500 mt-1">Number of animations per day</p>
                     </div>
                     <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
-                            data-setting="ratingAnimationFrequency">
-                      <option value="1" ${this.settings.ratingAnimationFrequency === 1 ? 'selected' : ''}>1 time</option>
-                      <option value="2" ${this.settings.ratingAnimationFrequency === 2 ? 'selected' : ''}>2 times</option>
-                      <option value="3" ${this.settings.ratingAnimationFrequency === 3 ? 'selected' : ''}>3 times</option>
-                      <option value="4" ${this.settings.ratingAnimationFrequency === 4 ? 'selected' : ''}>4 times</option>
-                      <option value="5" ${this.settings.ratingAnimationFrequency === 5 ? 'selected' : ''}>5 times</option>
-                      <option value="6" ${this.settings.ratingAnimationFrequency === 6 ? 'selected' : ''}>6 times</option>
+                            data-setting="settingsAnimationFrequency">
+                      <option value="1" ${this.settings.settingsAnimationFrequency === 1 ? 'selected' : ''}>1 time</option>
+                      <option value="2" ${this.settings.settingsAnimationFrequency === 2 ? 'selected' : ''}>2 times</option>
+                      <option value="3" ${this.settings.settingsAnimationFrequency === 3 ? 'selected' : ''}>3 times</option>
+                      <option value="4" ${this.settings.settingsAnimationFrequency === 4 ? 'selected' : ''}>4 times</option>
+                      <option value="5" ${this.settings.settingsAnimationFrequency === 5 ? 'selected' : ''}>5 times</option>
+                      <option value="6" ${this.settings.settingsAnimationFrequency === 6 ? 'selected' : ''}>6 times</option>
                     </select>
                   </div>
                   
@@ -516,12 +567,12 @@ export class WebropolSettingsModal extends BaseComponent {
                       <p class="text-xs text-webropol-gray-500 mt-1">Duration of each animation</p>
                     </div>
                     <select class="px-3 py-1.5 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500"
-                            data-setting="ratingAnimationDuration">
-                      <option value="2000" ${this.settings.ratingAnimationDuration === 2000 ? 'selected' : ''}>2 seconds</option>
-                      <option value="3000" ${this.settings.ratingAnimationDuration === 3000 ? 'selected' : ''}>3 seconds</option>
-                      <option value="5000" ${this.settings.ratingAnimationDuration === 5000 ? 'selected' : ''}>5 seconds</option>
-                      <option value="8000" ${this.settings.ratingAnimationDuration === 8000 ? 'selected' : ''}>8 seconds</option>
-                      <option value="10000" ${this.settings.ratingAnimationDuration === 10000 ? 'selected' : ''}>10 seconds</option>
+                            data-setting="settingsAnimationDuration">
+                      <option value="1500" ${this.settings.settingsAnimationDuration === 1500 ? 'selected' : ''}>1.5 seconds</option>
+                      <option value="2000" ${this.settings.settingsAnimationDuration === 2000 ? 'selected' : ''}>2 seconds</option>
+                      <option value="2500" ${this.settings.settingsAnimationDuration === 2500 ? 'selected' : ''}>2.5 seconds</option>
+                      <option value="3000" ${this.settings.settingsAnimationDuration === 3000 ? 'selected' : ''}>3 seconds</option>
+                      <option value="4000" ${this.settings.settingsAnimationDuration === 4000 ? 'selected' : ''}>4 seconds</option>
                     </select>
                   </div>
                   
@@ -532,7 +583,7 @@ export class WebropolSettingsModal extends BaseComponent {
                         <div class="flex items-center">
                           <label class="text-sm font-medium text-webropol-gray-700">Test Animation</label>
                           <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
-                               title="Trigger the rating animation immediately for testing">
+                               title="Trigger the settings animation immediately for testing">
                             <i class="fal fa-question-circle text-sm"></i>
                           </div>
                         </div>
@@ -540,13 +591,11 @@ export class WebropolSettingsModal extends BaseComponent {
                       </div>
                       <div class="flex items-center space-x-3">
                         <!-- Inline preview: visible while modal is open -->
-                        <div class="preview-star rating-vibration-container inline-flex items-center justify-center w-10 h-10 rounded-xl bg-webropol-orange-50 text-webropol-orange-600 border border-webropol-orange-100">
-                          <div class="rating-wave rating-wave-left"></div>
-                          <i class="fal fa-star preview-star-icon rating-pulse"></i>
-                          <div class="rating-wave rating-wave-right"></div>
+                        <div class="preview-settings settings-animation-container inline-flex items-center justify-center w-10 h-10 rounded-xl bg-webropol-blue-50 text-webropol-blue-600 border border-webropol-blue-100">
+                          <i class="fal fa-cog preview-settings-icon"></i>
                         </div>
-                        <button class="test-animation-btn px-4 py-2 bg-orange-500 hover:bg-orange-600 text-gray-900 text-sm rounded-lg transition-colors font-medium border border-gray-300">
-                          <i class="fal fa-play mr-1 text-gray-900"></i>
+                        <button class="test-animation-btn px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors font-medium">
+                          <i class="fal fa-play mr-1"></i>
                           Test Now
                         </button>
                       </div>
@@ -609,7 +658,7 @@ export class WebropolSettingsModal extends BaseComponent {
     // Test animation button
     const testButton = this.querySelector('.test-animation-btn');
     if (testButton) {
-      this.addListener(testButton, 'click', this.testRatingAnimation);
+      this.addListener(testButton, 'click', this.testSettingsAnimation);
     }
 
     // Backdrop click
@@ -628,7 +677,7 @@ export class WebropolSettingsModal extends BaseComponent {
       this.addListener(checkbox, 'change', (e) => {
         const settingKey = e.target.getAttribute('data-setting');
         this.toggleSetting(settingKey, e.target.checked);
-        if (['ratingAnimationEnabled'].includes(settingKey)) {
+        if (['settingsAnimationEnabled'].includes(settingKey)) {
           this.triggerPreviewAnimation();
         }
       });
@@ -639,7 +688,7 @@ export class WebropolSettingsModal extends BaseComponent {
         const settingKey = e.target.getAttribute('data-setting');
         const value = e.target.value === '0' ? 0 : (isNaN(e.target.value) ? e.target.value : parseInt(e.target.value));
         this.toggleSetting(settingKey, value);
-        if (['ratingAnimationType','ratingAnimationDuration'].includes(settingKey)) {
+        if (['settingsAnimationType','settingsAnimationDuration'].includes(settingKey)) {
           this.triggerPreviewAnimation();
         }
       });
