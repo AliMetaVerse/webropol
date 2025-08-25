@@ -169,7 +169,7 @@
   <!-- Import Global Design Tokens -->
   <link rel="stylesheet" href="../design-system/styles/tokens.css">
 </head>
-<body class="bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50/30" style="background-color: #ebf4f7;" x-data="universalCreateApp()">
+<body class="bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-50/30" x-data="universalCreateApp()">
   <div class="flex h-screen">
     <webropol-sidebar :active="contentConfig.sidebarActive" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -405,7 +405,12 @@
     function universalCreateApp() {
       return {
         // Content type from URL parameter
-        contentType: new URLSearchParams(window.location.search).get('type') || 'survey',
+        contentType: (function(){
+          // Support SPA: window.__pageQueryString is set by the SPA router
+          const search = (window.__pageQueryString || window.location.search || '').replace(/^\?/, '');
+          const params = new URLSearchParams(search);
+          return params.get('type') || 'survey';
+        })(),
         activeCategory: 'webropol',
         
         // Form data
@@ -857,6 +862,17 @@
         }
       }
     }
+    // Ensure this page runs inside the SPA shell: if no shell detected, bounce to root shell with hash
+    (function ensureSpaShell(){
+      try {
+        const hasShell = document.querySelector('webropol-sidebar') && document.querySelector('webropol-header') && !window.top.document.querySelector('#app-content');
+      } catch(_) {}
+      // If this file is opened directly (no #/ in URL), redirect to SPA entry with hash
+      if (!location.hash && !document.querySelector('#app-content')) {
+        const qs = location.search || '';
+        location.href = `../index.html#/create${qs}`;
+      }
+    })();
   </script>
 
   <!-- Floating Button -->

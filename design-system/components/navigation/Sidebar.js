@@ -24,7 +24,7 @@ export class WebropolSidebar extends BaseComponent {
       return normalizedBase + normalizedPath;
     };
 
-    this.innerHTML = `
+  this.innerHTML = `
       <aside class="sidebar-container group h-screen bg-white/80 backdrop-blur-xl border-r border-webropol-gray-200/50 flex flex-col flex-shrink-0 shadow-soft
                      xl:w-72 w-16 
                      relative
@@ -55,7 +55,7 @@ export class WebropolSidebar extends BaseComponent {
                     xl:px-4 px-2
                     group-hover:px-4
                     transition-all duration-300">
-          <a href="${link('index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/home" data-route="/home" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                   xl:px-4 px-3
                                                   group-hover:px-4
                                                   py-3
@@ -69,7 +69,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Home</span>
           </a>
           
-          <a href="${link('surveys/list.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/surveys/list" data-route="/surveys/list" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                           xl:px-4 px-3
                                                           group-hover:px-4
                                                           py-3
@@ -83,7 +83,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Surveys</span>
           </a>
           
-          <a href="${link('events/list.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/events/list" data-route="/events/list" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                         xl:px-4 px-3
                                                         group-hover:px-4
                                                         py-3
@@ -97,7 +97,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Events</span>
           </a>
           
-          <a href="${link('sms/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/sms" data-route="/sms" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                     xl:px-4 px-3
                                                     group-hover:px-4
                                                     py-3
@@ -111,7 +111,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">2-Way SMS</span>
           </a>
           
-          <a href="${link('exw/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/exw" data-route="/exw" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                      xl:px-4 px-3
                                                      group-hover:px-4
                                                      py-3
@@ -125,7 +125,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">EXW</span>
           </a>
           
-          <a href="${link('case-management/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/case-management" data-route="/case-management" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                                xl:px-4 px-3
                                                                group-hover:px-4
                                                                py-3
@@ -140,7 +140,7 @@ export class WebropolSidebar extends BaseComponent {
           </a>
           
           <div class="pt-4 border-t border-webropol-gray-200/50 mt-4">
-            <a href="${link('mywebropol/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+            <a href="#/mywebropol" data-route="/mywebropol" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                               xl:px-4 px-3
                                                               group-hover:px-4
                                                               py-3
@@ -154,7 +154,7 @@ export class WebropolSidebar extends BaseComponent {
                           group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">MyWebropol</span>
             </a>
             
-            <a href="${link('admin-tools/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+            <a href="#/admin-tools" data-route="/admin-tools" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                               xl:px-4 px-3
                                                               group-hover:px-4
                                                               py-3
@@ -168,7 +168,7 @@ export class WebropolSidebar extends BaseComponent {
                           group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Admin Tools</span>
             </a>
             
-            <a href="${link('training-videos/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+            <a href="#/training-videos" data-route="/training-videos" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                                   xl:px-4 px-3
                                                                   group-hover:px-4
                                                                   py-3
@@ -182,7 +182,7 @@ export class WebropolSidebar extends BaseComponent {
                           group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Training Videos</span>
             </a>
             
-            <a href="${link('shop/index.html')}" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+            <a href="#/shop" data-route="/shop" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                         xl:px-4 px-3
                                                         group-hover:px-4
                                                         py-3
@@ -219,16 +219,25 @@ export class WebropolSidebar extends BaseComponent {
       </aside>
     `;
 
-    // Add event listeners for collapsing sidebar after action on smaller screens
+    // Add event listeners for SPA navigation and collapsing
     this.addEventListener('click', (e) => {
       const navItem = e.target.closest('.nav-item');
-      if (navItem && window.innerWidth <= 1280) {
-        // Small delay to allow navigation, then collapse
+      if (!navItem) return;
+
+      // SPA client-side route
+      const route = navItem.getAttribute('data-route');
+      if (route && window.WebropolSPA) {
+        e.preventDefault();
+        window.WebropolSPA.navigate(route);
+      }
+
+      // Collapse on small screens after navigation
+      if (window.innerWidth <= 1280) {
         setTimeout(() => {
-          this.querySelector('.sidebar-container').classList.remove('hover:w-72');
-          setTimeout(() => {
-            this.querySelector('.sidebar-container').classList.add('hover:w-72');
-          }, 100);
+          const sc = this.querySelector('.sidebar-container');
+          if (!sc) return;
+          sc.classList.remove('hover:w-72');
+          setTimeout(() => sc.classList.add('hover:w-72'), 100);
         }, 150);
       }
     });

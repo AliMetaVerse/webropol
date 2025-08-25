@@ -1075,7 +1075,7 @@ export class WebropolHeader extends BaseComponent {
       // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
         // Only close if clicking outside the create dropdown and button
-        if (!createDropdown.contains(e.target) && !createButton.contains(e.target)) {
+  if (!createDropdown.contains(e.target) && !createBtn.contains(e.target)) {
           createDropdown.classList.add('opacity-0', 'invisible');
         }
       });
@@ -1086,36 +1086,30 @@ export class WebropolHeader extends BaseComponent {
   }
 
   handleCreateNavigation(type) {
-    const currentPath = window.location.pathname;
-    let targetUrl = '';
-
-    // Determine the correct base path more robustly
-    let basePath = '';
-    
-    // Count the depth level by counting slashes after the initial one
-    const pathParts = currentPath.split('/').filter(part => part); // Remove empty parts
-    const depth = pathParts.length;
-    
-    // If we're in the root (like /index.html), no base path needed
-    if (depth <= 1) {
-      basePath = './';
-    } else {
-      // Go up directories based on depth
-      basePath = '../'.repeat(depth - 1);
-    }
-
-    // Map header create types to URL types
+    // Map header create types to URL query values
     const typeMapping = {
       'surveys': 'survey',
-      'events': 'event', 
+      'events': 'event',
       '2-way-sms': 'sms',
       'exw-surveys': 'exw',
       'case-management': 'case-management'
     };
 
     const urlType = typeMapping[type] || type;
-    targetUrl = `${basePath}create/index.html?type=${urlType}`;
+    const spaRoute = `/create?type=${urlType}`;
 
+    // Prefer SPA navigation
+    if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+      window.WebropolSPA.navigate(spaRoute);
+      return;
+    }
+
+    // Fallback to full navigation with relative path calculation
+    const currentPath = window.location.pathname;
+    const pathParts = currentPath.split('/').filter(Boolean);
+    const depth = pathParts.length;
+    const basePath = depth <= 1 ? './' : '../'.repeat(depth - 1);
+    const targetUrl = `${basePath}create/index.html?type=${urlType}`;
     window.location.href = targetUrl;
   }
 
