@@ -498,18 +498,31 @@
                       </label>
                       
                       <!-- Info Box: Auto Suggest Explanation -->
-                      <div role="note" aria-label="Auto Suggest information" class="mb-5 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-900 flex gap-3">
+                      <div id="autosuggestInfo" role="note" aria-label="Auto Suggest information" class="mb-5 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-900 flex gap-3">
                         <div class="shrink-0 w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
                           <i class="fal fa-info-circle"></i>
                         </div>
-                        <div class="text-sm leading-relaxed">
-                          <p class="font-medium mb-1">What is Auto Suggest?</p>
-                          <p class="mb-2">Respondents get type-ahead suggestions as they type. Suggestions come from the option list you configure below or import from a file.</p>
-                          <ul class="list-disc ml-5 space-y-1">
-                            <li>Reporting requires specific prerequisites.</li>
-                            <li>CSV must be comma-delimited; one option per row. Use the template to avoid format issues.</li>
-                            <li>If your file contains more than 1,000 options, it’s queued for processing. Sending is disabled until processing completes. You’ll receive an email when it’s done.</li>
-                          </ul>
+                        <div class="flex-1">
+                          <div class="text-sm leading-relaxed">
+                            <p class="font-medium mb-1">What is Auto Suggest?</p>
+                            <p class="mb-2">Respondents get type-ahead suggestions as they type. Suggestions come from the option list you configure below or import from a file.</p>
+                            <ul class="list-disc ml-5 space-y-1">
+                              <li>Reporting requires specific prerequisites.</li>
+                              <li>CSV must be comma-delimited; one option per row. Use the template to avoid format issues.</li>
+                              <li>If your file contains more than 1,000 options, it’s queued for processing. Sending is disabled until processing completes. You’ll receive an email when it’s done.</li>
+                            </ul>
+                          </div>
+                          <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                            <label class="inline-flex items-center gap-2 text-sm select-none">
+                              <input id="autosuggestInfoHide" type="checkbox" class="w-4 h-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500">
+                              <span>Don’t show this again</span>
+                            </label>
+                            <div class="flex-1"></div>
+                            <button id="autosuggestInfoOk" class="btn btn-secondary w-fit self-start sm:self-auto">
+                              <i class="fal fa-check text-sm"></i>
+                              <span>Understood</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                       
@@ -2065,6 +2078,34 @@
             el.setAttribute('aria-describedby', '');
           });
         } catch (e) {}
+
+        // Handle info box visibility/dismissal with persistence
+        try {
+          const INFO_KEY = 'autosuggestInfoDismissed';
+          const infoEl = document.getElementById('autosuggestInfo');
+          const okBtn = document.getElementById('autosuggestInfoOk');
+          const hideCb = document.getElementById('autosuggestInfoHide');
+
+          if (infoEl) {
+            const dismissed = (function(){ try { return localStorage.getItem(INFO_KEY) === '1'; } catch(e){ return false; } })();
+            if (dismissed) {
+              infoEl.style.display = 'none';
+            } else {
+              infoEl.style.display = '';
+            }
+          }
+
+          if (okBtn) {
+            okBtn.addEventListener('click', function() {
+              const checked = !!(hideCb && hideCb.checked);
+              if (checked) {
+                try { localStorage.setItem(INFO_KEY, '1'); } catch(e) {}
+              }
+              const el = document.getElementById('autosuggestInfo');
+              if (el) el.style.display = 'none';
+            });
+          }
+        } catch(e) {}
       }
 
       // Initialize now if DOM is ready, else on DOMContentLoaded
