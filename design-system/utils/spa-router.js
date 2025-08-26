@@ -9,8 +9,8 @@ class WebropolSPA {
     this.breadcrumbs = null;
     this.loadedExternalScripts = new Set();
     this.pageStyleNodes = [];
-    this.pageScriptNodes = [];
-    this.pageScriptNodes = [];    // Map routes to source HTML files (relative to repo root)
+  this.pageScriptNodes = [];
+  // Map routes to source HTML files (relative to repo root)
     this.routes = new Map([
       ['/', 'index.html'],
       ['/home', 'index.html'],
@@ -163,6 +163,9 @@ class WebropolSPA {
   async load(path) {
     const file = this.pathToFile(path);
     if (!file) return;
+  // Compute absolute URL and base directory URL for the fetched document
+  const fileUrl = new URL(file, location.href);
+  const baseUrl = new URL('./', fileUrl);
     this.setLoading(true);
     try {
       const res = await fetch(file, { cache: 'no-cache' });
@@ -220,6 +223,9 @@ class WebropolSPA {
 
   // Swap content
       this.container.innerHTML = nextHTML;
+
+  // Rewrite internal links and asset URLs inside injected content to be SPA- and base-aware
+  this.rewriteContentUrls(baseUrl);
       
       // Apply body attributes to container for Alpine.js context
       if (bodyAttribs) {
@@ -235,8 +241,8 @@ class WebropolSPA {
         }
       }
 
-  // Attach page-specific styles from fetched document
-  this.attachPageStyles(doc);
+  // Attach page-specific styles from fetched document (respecting base path)
+  this.attachPageStyles(doc, baseUrl);
       // Re-initialize Alpine components within the injected content (if Alpine is present)
       try {
         if (window.Alpine && typeof window.Alpine.initTree === 'function') {
@@ -254,8 +260,8 @@ class WebropolSPA {
     detail: { path, queryString } 
   }));
 
-  // Execute inline scripts inside main/body of fetched doc
-      this.runPageScripts(doc);
+  // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
+      this.runPageScripts(doc, baseUrl);
 
       // Update stateful UI parts
       this.updateBreadcrumbs(path);
@@ -269,7 +275,7 @@ class WebropolSPA {
     }
   }
 
-  attachPageStyles(doc) {
+  attachPageStyles(doc, baseUrl) {
     try {
       const head = doc.querySelector('head');
       if (!head) return;
@@ -300,7 +306,13 @@ class WebropolSPA {
       head.querySelectorAll('link[rel="stylesheet"]').forEach((linkEl) => {
         const href = linkEl.getAttribute('href');
         if (!href) return;
-        const abs = new URL(href, location.href).href;
+        // Resolve relative to the fetched page's base
+        let abs;
+        try {
+          abs = new URL(href, baseUrl).href;
+        } catch {
+          abs = href;
+        }
         // Skip if already in document.head, but don't skip design-system or common styles
         const already = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]'))
           .some((l) => {
@@ -313,7 +325,7 @@ class WebropolSPA {
         if (already) return;
         const clone = document.createElement('link');
         clone.rel = 'stylesheet';
-        clone.href = href;
+        clone.href = abs;
         clone.setAttribute('data-spa-page-style', '');
         document.head.appendChild(clone);
         nodes.push(clone);
@@ -369,10 +381,17 @@ class WebropolSPA {
         // Skip shared libs already in shell, but allow component scripts
         const skip = /tailwindcss/.test(src) || /alpinejs/.test(src) || /kit\.fontawesome\.com/.test(src);
         if (skip) continue;
-        const abs = new URL(src, location.href).href;
+        // Resolve relative to the fetched page's base (not the shell)
+        let abs;
+        try {
+          // Infer base from document URL if provided via argument by binding
+          abs = new URL(src, this._currentBaseUrl || location.href).href;
+        } catch {
+          abs = src;
+        }
         if (this.loadedExternalScripts.has(abs)) continue;
         const script = document.createElement('script');
-        script.src = src;
+        script.src = abs;
         if (isModule) script.type = 'module';
         script.setAttribute('data-spa-page-script', '');
         document.body.appendChild(script);
@@ -387,6 +406,63 @@ class WebropolSPA {
         document.body.appendChild(script);
         this.pageScriptNodes.push(script);
       }
+    }
+  }
+
+  // Normalize all in-content URLs to work within the SPA and respect the loaded page base
+  rewriteContentUrls(baseUrl) {
+    try {
+      // Keep a reference for runPageScripts to resolve external script paths
+      this._currentBaseUrl = baseUrl.href;
+
+      // 1) Fix anchors to point to hash-based routes
+      this.container.querySelectorAll('a[href]').forEach((a) => {
+        const href = a.getAttribute('href');
+        const target = a.getAttribute('target');
+        if (!href) return;
+        // Skip external and special schemes or explicit new tab
+        if (/^(https?:|mailto:|tel:|javascript:)/i.test(href) || target === '_blank') return;
+        // Already a hash route
+        if (href.startsWith('#/')) return;
+        // In-page anchors like #section
+        if (href.startsWith('#')) return;
+
+        try {
+          const absUrl = new URL(href, baseUrl);
+          const absPath = absUrl.pathname + (absUrl.search || '');
+          if (/\.html(\?|$)/i.test(absPath)) {
+            const { route, query } = this.hrefToRoute(absPath);
+            a.setAttribute('href', `#${query ? `${route}?${query}` : route}`);
+          } else {
+            // Non-HTML resources or clean paths: convert to hash route if internal path
+            if (absPath.startsWith('/')) {
+              a.setAttribute('href', `#${absPath}${absUrl.search || ''}`);
+            }
+          }
+        } catch (_) {
+          // If URL construction fails, leave it as-is
+        }
+      });
+
+      // 2) Fix common asset attributes within content to be absolute to the loaded page
+      const attrMap = [
+        { sel: 'img[src]', attr: 'src' },
+        { sel: 'source[src]', attr: 'src' },
+        { sel: 'video[src]', attr: 'src' },
+        { sel: 'audio[src]', attr: 'src' },
+        { sel: 'link[rel="preload"][href], link[rel="prefetch"][href]', attr: 'href' },
+      ];
+      attrMap.forEach(({ sel, attr }) => {
+        this.container.querySelectorAll(sel).forEach((el) => {
+          const v = el.getAttribute(attr);
+          if (!v || /^(https?:|data:|blob:|#|\/)/i.test(v)) return;
+          try {
+            el.setAttribute(attr, new URL(v, baseUrl).href);
+          } catch (_) {}
+        });
+      });
+    } catch (e) {
+      // no-op
     }
   }
 

@@ -1024,13 +1024,13 @@ export class WebropolHeader extends BaseComponent {
       return;
     }
 
-    // Fallback to full navigation with relative path calculation
-    const currentPath = window.location.pathname;
-    const pathParts = currentPath.split('/').filter(Boolean);
-    const depth = pathParts.length;
-    const basePath = depth <= 1 ? './' : '../'.repeat(depth - 1);
-    const targetUrl = `${basePath}create/index.html?type=${urlType}`;
-    window.location.href = targetUrl;
+  // Fallback to SPA entry with hash route if opened directly
+  const currentPath = window.location.pathname;
+  const pathParts = currentPath.split('/').filter(Boolean);
+  const depth = pathParts.length;
+  const basePath = depth <= 1 ? './' : '../'.repeat(depth - 1);
+  const targetUrl = `${basePath}index.html#${spaRoute}`;
+  window.location.href = targetUrl;
   }
 
   initializeSettingsAnimationScheduler() {

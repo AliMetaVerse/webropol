@@ -126,22 +126,6 @@ export class WebropolFloatingButton extends BaseComponent {
 
   handleNavigation(type) {
     const currentPath = window.location.pathname;
-    let targetUrl = '';
-
-    // Determine the correct base path more robustly
-    let basePath = '';
-    
-    // Count the depth level by counting slashes after the initial one
-    const pathParts = currentPath.split('/').filter(part => part); // Remove empty parts
-    const depth = pathParts.length;
-    
-    // If we're in the root (like /index.html), no base path needed
-    if (depth <= 1) {
-      basePath = './';
-    } else {
-      // Go up directories based on depth
-      basePath = '../'.repeat(depth - 1);
-    }
 
     // Map floating button types to URL types
     const typeMapping = {
@@ -153,8 +137,20 @@ export class WebropolFloatingButton extends BaseComponent {
     };
 
     const urlType = typeMapping[type] || type;
-    targetUrl = `${basePath}create/index.html?type=${urlType}`;
+    const spaRoute = `/create?type=${urlType}`;
 
+    // Prefer SPA navigation if available
+    if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+      window.WebropolSPA.navigate(spaRoute);
+      return;
+    }
+
+    // Fallback to SPA entry with hash route if opened directly
+    let basePath = '';
+    const pathParts = currentPath.split('/').filter(part => part);
+    const depth = pathParts.length;
+    basePath = depth <= 1 ? './' : '../'.repeat(depth - 1);
+    const targetUrl = `${basePath}index.html#${spaRoute}`;
     window.location.href = targetUrl;
   }
 

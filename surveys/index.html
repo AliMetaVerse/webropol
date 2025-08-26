@@ -143,8 +143,13 @@
       if (floatingButton) {
         floatingButton.addEventListener('create-item', function(e) {
           if (e.detail.type === 'surveys') {
-            // Navigate to surveys index.html for creating new survey
-            window.location.href = 'index.html';
+            // Navigate via SPA to Create (surveys)
+            if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+              window.WebropolSPA.navigate('/create?type=survey');
+            } else {
+              // Fallback if opened directly
+              window.location.href = '../index.html#/create?type=survey';
+            }
           }
         });
       }

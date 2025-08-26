@@ -498,12 +498,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             const floatingButton = document.querySelector('webropol-floating-button');
             if (floatingButton) {
-                floatingButton.addEventListener('create-item', function(e) {
-                    if (e.detail.type === 'surveys') {
-                        // Navigate to universal create page for surveys
-                        window.location.href = '../create/index.html?type=survey';
-                    }
-                });
+                    floatingButton.addEventListener('create-item', function(e) {
+                        if (e.detail.type === 'surveys') {
+                            // Navigate via SPA to Create (survey)
+                            if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+                                window.WebropolSPA.navigate('/create?type=survey');
+                            } else {
+                                // Fallback if opened directly
+                                window.location.href = '../index.html#/create?type=survey';
+                            }
+                        }
+                    });
             }
 
             // Listen for theme changes
