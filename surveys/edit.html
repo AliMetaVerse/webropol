@@ -461,10 +461,11 @@
                   </div>
                 </div>
                 
-                <!-- Question Container -->
-                <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 overflow-hidden hover-lift">
-                  <!-- Question Header -->
-                  <div class="bg-gradient-to-r from-webropol-teal-600 to-webropol-teal-700 text-white p-4 flex items-center justify-between">
+                <!-- Question Container (selected/unselected states) -->
+                <div x-data="{ selected: false }" x-on:click.outside="selected = false"
+                     class="relative bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 overflow-hidden hover-lift">
+                  <!-- Expanded header and toolbar (selected) -->
+                  <div x-show="selected" class="bg-gradient-to-r from-webropol-teal-600 to-webropol-teal-700 text-white p-4 flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                       <span class="bg-white/20 px-2 py-1 rounded text-sm font-medium">Autosuggest text field</span>
                     </div>
@@ -489,14 +490,44 @@
                       </button>
                     </div>
                   </div>
-                  
-                  <!-- Question Content -->
-                  <div class="p-6">
+
+                  <!-- Collapsed (unselected) content preview -->
+                  <div x-show="!selected" class="p-6 cursor-pointer" @click="selected = true">
+                    <label class="block text-lg font-semibold text-webropol-gray-900 mb-4">
+                      1. Auto Suggest
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+                      <span class="text-sm text-webropol-gray-600">Option</span>
+                      <div class="sm:col-span-2">
+                        <input type="text" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg" disabled placeholder="">
+                      </div>
+                    </div>
+                    <!-- Collapsed quick actions -->
+                    <div class="mt-6 pt-4 border-t border-webropol-gray-200" @click.stop>
+                      <div class="flex items-center gap-2">
+                        <button type="button" class="btn btn-primary rounded-full">
+                          <i class="fal fa-play"></i>
+                          <span>Add question</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary rounded-full">
+                          <i class="fal fa-text"></i>
+                          <span>Add free text/media</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary rounded-full">
+                          <i class="fal fa-cut"></i>
+                          <span>Add page break</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Expanded (selected) content -->
+                  <div x-show="selected" class="p-6">
                     <div class="mb-6">
                       <label class="block text-lg font-semibold text-webropol-gray-900 mb-2">
                         1. Auto Suggest
                       </label>
-                      
+
                       <!-- Info Box: Auto Suggest Explanation -->
                       <div id="autosuggestInfo" role="note" aria-label="Auto Suggest information" class="mb-5 p-4 rounded-xl border border-blue-200 bg-blue-50 text-blue-900 flex gap-3">
                         <div class="shrink-0 w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
@@ -525,7 +556,7 @@
                           </div>
                         </div>
                       </div>
-                      
+
                       <!-- Option Input -->
                       <div class="mb-4">
                         <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Option</label>
@@ -540,7 +571,7 @@
                           </button>
                         </div>
                       </div>
-                      
+
                       <!-- Add Option Buttons -->
                       <div class="flex flex-col gap-3 mb-6">
                         <button class="btn btn-secondary w-fit">
@@ -566,9 +597,9 @@
                           </span>
                         </div>
                       </div>
-                      
+
                       <!-- Additional Actions -->
-                        <div class="flex items-center justify-between pt-4 border-t border-webropol-gray-200">
+                      <div class="flex items-center justify-between pt-4 border-t border-webropol-gray-200">
                         <div class="flex space-x-3">
                           <button class="btn btn-primary rounded-full">
                             <i class="fal fa-play"></i>
@@ -586,6 +617,14 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- Drag handle (visible when selected) -->
+                  <button x-show="selected" title="Drag to reorder" role="button"
+                          class="hidden sm:flex items-center justify-center cursor-move text-white bg-webropol-teal-700 hover:bg-webropol-teal-800 transition-colors rounded-l-xl w-10 h-14 absolute right-0 top-1/2 -translate-y-1/2 shadow"
+                          aria-hidden="false">
+                    <i class="fal fa-arrows-alt"></i>
+                  </button>
+                </div>
                 <!-- Submit Button -->
                 <div class="m-8">
                   <button class="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-semibold hover:shadow-medium transition-all flex items-center space-x-2 mx-auto hover-lift">
