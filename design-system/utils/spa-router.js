@@ -278,11 +278,24 @@ class WebropolSPA {
   attachPageStyles(doc, baseUrl) {
     try {
       const head = doc.querySelector('head');
-      if (!head) return;
+      const body = doc.querySelector('body');
+      if (!head && !body) return;
       const nodes = [];
 
-      // Copy meta tags that might affect styling (viewport, etc.)
-      head.querySelectorAll('meta[name="viewport"], meta[charset]').forEach((metaEl) => {
+      // Helper to add <style> blocks from a given scope
+      const addStyleBlocksFrom = (scopeEl) => {
+        if (!scopeEl) return;
+        scopeEl.querySelectorAll('style').forEach((styleEl) => {
+          const clone = document.createElement('style');
+          clone.textContent = styleEl.textContent || '';
+          clone.setAttribute('data-spa-page-style', '');
+          document.head.appendChild(clone);
+          nodes.push(clone);
+        });
+      };
+
+      // Copy meta tags that might affect styling (viewport, etc.) from head only
+      if (head) head.querySelectorAll('meta[name="viewport"], meta[charset]').forEach((metaEl) => {
         const name = metaEl.getAttribute('name') || metaEl.getAttribute('charset');
         if (!name) return;
         const already = document.head.querySelector(`meta[name="${name}"], meta[charset="${name}"]`);
@@ -293,17 +306,12 @@ class WebropolSPA {
         nodes.push(clone);
       });
 
-      // Copy <style> blocks
-      head.querySelectorAll('style').forEach((styleEl) => {
-        const clone = document.createElement('style');
-        clone.textContent = styleEl.textContent || '';
-        clone.setAttribute('data-spa-page-style', '');
-        document.head.appendChild(clone);
-        nodes.push(clone);
-      });
+      // Copy <style> blocks from head and body (some pages place critical CSS after <main>)
+      addStyleBlocksFrom(head);
+      addStyleBlocksFrom(body);
 
       // Copy <link rel="stylesheet"> not already present
-      head.querySelectorAll('link[rel="stylesheet"]').forEach((linkEl) => {
+      if (head) head.querySelectorAll('link[rel="stylesheet"]').forEach((linkEl) => {
         const href = linkEl.getAttribute('href');
         if (!href) return;
         // Resolve relative to the fetched page's base
@@ -332,7 +340,7 @@ class WebropolSPA {
       });
 
       // Also copy any Google Fonts or other external font links
-      head.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]').forEach((linkEl) => {
+      if (head) head.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]').forEach((linkEl) => {
         const href = linkEl.getAttribute('href');
         if (!href) return;
         const abs = new URL(href, location.href).href;
