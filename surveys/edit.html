@@ -506,7 +506,7 @@
                           <p class="font-medium mb-1">What is Auto Suggest?</p>
                           <p class="mb-2">Respondents get type-ahead suggestions as they type. Suggestions come from the option list you configure below or import from a file.</p>
                           <ul class="list-disc ml-5 space-y-1">
-                            <li>Add options one-by-one, paste multiple, or import using our CSV template.</li>
+                            <li>Reporting requires specific prerequisites.</li>
                             <li>CSV must be comma-delimited; one option per row. Use the template to avoid format issues.</li>
                             <li>If your file contains more than 1,000 options, it’s queued for processing. Sending is disabled until processing completes. You’ll receive an email when it’s done.</li>
                           </ul>
@@ -1843,203 +1843,249 @@
       document.body.style.overflow = '';
     }
 
-    // File input change handler and modal event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-  // Sync UI on page load
-  syncAutoSuggestUI();
+    // File input change handler and modal event listeners (SPA-friendly init)
+    (function() {
+      // Prevent double-binding across SPA navigations
+      if (window.__surveyEditBindingsBound) return;
+      window.__surveyEditBindingsBound = true;
 
-      const fileInput = document.getElementById('csvFile');
-      if (fileInput) {
-        fileInput.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            document.getElementById('fileName').textContent = file.name;
-            document.getElementById('uploadBtn').disabled = false;
-            document.getElementById('removeFileBtn').classList.remove('hidden');
-          }
-        });
-      }
-
-      // Close modal when clicking outside
-      const uploadModal = document.getElementById('uploadModal');
-      if (uploadModal) {
-        uploadModal.addEventListener('click', function(e) {
-          if (e.target === this) {
-            closeUploadModal();
-          }
-        });
-      }
-
-      // Question Settings Modal event listeners
-      const questionSettingsModal = document.getElementById('questionSettingsModal');
-      if (questionSettingsModal) {
-        questionSettingsModal.addEventListener('click', function(e) {
-          if (e.target === this) {
-            closeQuestionSettingsModal();
-          }
-        });
-      }
-
-      // Radio button interactions for question settings
-      document.querySelectorAll('#questionSettingsModal .radio-item').forEach(item => {
-        item.addEventListener('click', function() {
-          const radio = this.querySelector('input[type="radio"]');
-          if (radio) {
-            // Remove active class from siblings
-            const siblings = this.closest('.radio-group').querySelectorAll('.radio-item');
-            siblings.forEach(sibling => sibling.classList.remove('active'));
-
-            // Add active class to clicked item
-            this.classList.add('active');
-            radio.checked = true;
-          }
-        });
-      });
-
-      // Checkbox interaction for question description
-      const showDescriptionCheckbox = document.getElementById('showDescription');
-      if (showDescriptionCheckbox) {
-        showDescriptionCheckbox.addEventListener('change', function() {
-          const placementOptions = document.getElementById('placementOptions');
-          if (placementOptions) {
-            placementOptions.style.display = this.checked ? 'block' : 'none';
-          }
-        });
-      }
-
-      // Keywords functionality (simplified version)
-      const keywordsInput = document.querySelector('#questionSettingsModal .keywords-input input[type="text"]');
-      const keywordsChips = document.querySelector('#questionSettingsModal .keywords-chips');
-      const keywordsCount = document.querySelector('#questionSettingsModal .keywords-count');
-      let keywords = [];
-
-      function updateKeywordsCount() {
-        if (keywordsCount) keywordsCount.textContent = keywords.length;
-      }
-
-      function renderKeywordsChips() {
-        if (!keywordsChips) return;
-        keywordsChips.innerHTML = '';
-        keywords.forEach(keyword => {
-          const chip = document.createElement('span');
-          chip.className = 'keyword-chip';
-          chip.textContent = keyword;
-          
-          const removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.style.marginLeft = '0.4rem';
-          removeBtn.style.background = 'transparent';
-          removeBtn.style.border = 'none';
-          removeBtn.style.cursor = 'pointer';
-          removeBtn.innerHTML = '<i class="fal fa-times"></i>';
-          removeBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            keywords = keywords.filter(k => k !== keyword);
-            renderKeywordsChips();
-            updateKeywordsCount();
+      function bindOnce() {
+        const fileInput = document.getElementById('csvFile');
+        if (fileInput) {
+          fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              document.getElementById('fileName').textContent = file.name;
+              document.getElementById('uploadBtn').disabled = false;
+              document.getElementById('removeFileBtn').classList.remove('hidden');
+            }
           });
-          
-          chip.appendChild(removeBtn);
-          keywordsChips.appendChild(chip);
-        });
-        updateKeywordsCount();
-      }
+        }
 
-      if (keywordsInput) {
-        keywordsInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            const value = this.value.trim();
-            if (value && !keywords.includes(value) && keywords.length < 20) {
-              keywords.push(value);
+        // Close modal when clicking outside
+        const uploadModal = document.getElementById('uploadModal');
+        if (uploadModal) {
+          uploadModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeUploadModal();
+            }
+          });
+        }
+
+        // Question Settings Modal event listeners
+        const questionSettingsModal = document.getElementById('questionSettingsModal');
+        if (questionSettingsModal) {
+          questionSettingsModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeQuestionSettingsModal();
+            }
+          });
+        }
+
+        // Radio button interactions for question settings
+        document.querySelectorAll('#questionSettingsModal .radio-item').forEach(item => {
+          item.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+              // Remove active class from siblings
+              const siblings = this.closest('.radio-group').querySelectorAll('.radio-item');
+              siblings.forEach(sibling => sibling.classList.remove('active'));
+
+              // Add active class to clicked item
+              this.classList.add('active');
+              radio.checked = true;
+            }
+          });
+        });
+
+        // Checkbox interaction for question description
+        const showDescriptionCheckbox = document.getElementById('showDescription');
+        if (showDescriptionCheckbox) {
+          showDescriptionCheckbox.addEventListener('change', function() {
+            const placementOptions = document.getElementById('placementOptions');
+            if (placementOptions) {
+              placementOptions.style.display = this.checked ? 'block' : 'none';
+            }
+          });
+        }
+
+        // Keywords functionality (simplified version)
+        const keywordsInput = document.querySelector('#questionSettingsModal .keywords-input input[type="text"]');
+        const keywordsChips = document.querySelector('#questionSettingsModal .keywords-chips');
+        const keywordsCount = document.querySelector('#questionSettingsModal .keywords-count');
+        let keywords = [];
+
+        function updateKeywordsCount() {
+          if (keywordsCount) keywordsCount.textContent = keywords.length;
+        }
+
+        function renderKeywordsChips() {
+          if (!keywordsChips) return;
+          keywordsChips.innerHTML = '';
+          keywords.forEach(keyword => {
+            const chip = document.createElement('span');
+            chip.className = 'keyword-chip';
+            chip.textContent = keyword;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.style.marginLeft = '0.4rem';
+            removeBtn.style.background = 'transparent';
+            removeBtn.style.border = 'none';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.innerHTML = '<i class="fal fa-times"></i>';
+            removeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              keywords = keywords.filter(k => k !== keyword);
               renderKeywordsChips();
-              this.value = '';
+              updateKeywordsCount();
+            });
+            
+            chip.appendChild(removeBtn);
+            keywordsChips.appendChild(chip);
+          });
+          updateKeywordsCount();
+        }
+
+        if (keywordsInput) {
+          keywordsInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',') {
+              e.preventDefault();
+              const value = this.value.trim();
+              if (value && !keywords.includes(value) && keywords.length < 20) {
+                keywords.push(value);
+                renderKeywordsChips();
+                this.value = '';
+              }
+            }
+          });
+        }
+
+        // Floating tooltips via event delegation (works with SPA)
+        if (!window.__surveyEditTooltipDelegated) {
+          window.__surveyEditTooltipDelegated = true;
+          let tipEl = null;
+          let currentTarget = null;
+
+          function ensureTip() {
+            if (!tipEl) {
+              tipEl = document.createElement('div');
+              tipEl.className = 'floating-tooltip';
+              tipEl.style.cssText = `
+                position: fixed;
+                background: #1f2937;
+                color: white;
+                padding: 0.75rem;
+                border-radius: 0.375rem;
+                font-size: 0.75rem;
+                line-height: 1.3;
+                max-width: 320px;
+                box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
+                z-index: 99999;
+                word-wrap: break-word;
+                text-align: left;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity 150ms ease;
+              `;
+              document.body.appendChild(tipEl);
             }
           }
+
+          function showTip(target) {
+            const text = target.getAttribute('data-tooltip');
+            if (!text) return;
+            ensureTip();
+            tipEl.innerText = text;
+            tipEl.style.opacity = '1';
+
+            const rect = target.getBoundingClientRect();
+            const tipRect = tipEl.getBoundingClientRect();
+            const spaceAbove = rect.top;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            let top = rect.top - tipRect.height - 10;
+            let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+            if (spaceAbove < tipRect.height + 12 && spaceBelow > spaceAbove) {
+              top = rect.bottom + 10;
+            }
+            left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+            top = Math.max(8, Math.min(top, window.innerHeight - tipRect.height - 8));
+            tipEl.style.left = left + 'px';
+            tipEl.style.top = top + 'px';
+          }
+
+          function hideTip() {
+            if (tipEl) tipEl.style.opacity = '0';
+          }
+
+          document.addEventListener('mouseover', (e) => {
+            const t = e.target.closest && e.target.closest('.info-tooltip');
+            if (t) {
+              currentTarget = t;
+              showTip(t);
+            }
+          });
+          document.addEventListener('mouseout', (e) => {
+            if (currentTarget && (!e.relatedTarget || !e.relatedTarget.closest('.info-tooltip'))) {
+              hideTip();
+              currentTarget = null;
+            }
+          });
+          document.addEventListener('focusin', (e) => {
+            const t = e.target.closest && e.target.closest('.info-tooltip');
+            if (t) {
+              currentTarget = t;
+              showTip(t);
+            }
+          });
+          document.addEventListener('focusout', (e) => {
+            if (currentTarget && (!e.relatedTarget || !e.relatedTarget.closest('.info-tooltip'))) {
+              hideTip();
+              currentTarget = null;
+            }
+          });
+
+          window.addEventListener('resize', hideTip);
+          window.addEventListener('scroll', hideTip, true);
+        }
+
+        // Listen for theme changes
+        document.addEventListener('theme-changed', function(e) {
+          console.log('Theme changed to:', e.detail.theme);
         });
       }
 
-      // Floating tooltips functionality
-      (function () {
-        let tipEl = null;
+      function initPerLoad() {
+        // Sync autosuggest UI state when this route is loaded
+        try { syncAutoSuggestUI(); } catch (e) {}
+        // Ensure tooltips are keyboard-focusable
+        try {
+          document.querySelectorAll('.info-tooltip').forEach(el => {
+            if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+            el.setAttribute('aria-describedby', '');
+          });
+        } catch (e) {}
+      }
 
-        function showTip(target) {
-          const text = target.getAttribute('data-tooltip');
-          if (!text) return;
-          if (!tipEl) {
-            tipEl = document.createElement('div');
-            tipEl.className = 'floating-tooltip';
-            tipEl.style.cssText = `
-              position: fixed;
-              background: #1f2937;
-              color: white;
-              padding: 0.75rem;
-              border-radius: 0.375rem;
-              font-size: 0.75rem;
-              line-height: 1.3;
-              max-width: 320px;
-              box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
-              z-index: 99999;
-              word-wrap: break-word;
-              text-align: left;
-              pointer-events: none;
-              opacity: 0;
-              transition: opacity 150ms ease;
-            `;
-            document.body.appendChild(tipEl);
-          }
-          tipEl.innerText = text;
-          tipEl.style.opacity = '1';
-
-          // Positioning
-          const rect = target.getBoundingClientRect();
-          const tipRect = tipEl.getBoundingClientRect();
-          const spaceAbove = rect.top;
-          const spaceBelow = window.innerHeight - rect.bottom;
-
-          // Prefer above, but flip if not enough space
-          let top = rect.top - tipRect.height - 10; // 10px offset
-          let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
-          if (spaceAbove < tipRect.height + 12 && spaceBelow > spaceAbove) {
-            top = rect.bottom + 10;
-          }
-
-          // Keep within viewport
-          left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
-          top = Math.max(8, Math.min(top, window.innerHeight - tipRect.height - 8));
-
-          tipEl.style.left = left + 'px';
-          tipEl.style.top = top + 'px';
-        }
-
-        function hideTip() {
-          if (tipEl) {
-            tipEl.style.opacity = '0';
-          }
-        }
-
-        document.querySelectorAll('.info-tooltip').forEach(el => {
-          el.addEventListener('mouseenter', () => showTip(el));
-          el.addEventListener('focus', () => showTip(el));
-          el.addEventListener('mouseleave', hideTip);
-          el.addEventListener('blur', hideTip);
+      // Initialize now if DOM is ready, else on DOMContentLoaded
+      if (document.readyState !== 'loading') {
+        bindOnce();
+        initPerLoad();
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          bindOnce();
+          initPerLoad();
         });
+      }
 
-        // Reposition on resize/scroll
-        window.addEventListener('resize', () => { 
-          if (tipEl && tipEl.style.opacity === '1') tipEl.style.opacity = '0'; 
-        });
-        window.addEventListener('scroll', () => { 
-          if (tipEl && tipEl.style.opacity === '1') tipEl.style.opacity = '0'; 
-        }, true);
-      })();
-
-      // Listen for theme changes
-      document.addEventListener('theme-changed', function(e) {
-        console.log('Theme changed to:', e.detail.theme);
-        // You can add any additional theme change handling here
+      // Re-init per route navigation within SPA
+      window.addEventListener('spa-route-change', (e) => {
+        const p = (e && e.detail && e.detail.path) || '';
+        if (p.startsWith('/surveys/edit')) {
+          initPerLoad();
+        }
       });
-    });
+    })();
 
     // ---- Auto-suggest UI sync helpers ----
     function syncAutoSuggestUI() {
