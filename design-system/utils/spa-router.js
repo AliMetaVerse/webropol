@@ -10,6 +10,7 @@ class WebropolSPA {
     this.loadedExternalScripts = new Set();
     this.pageStyleNodes = [];
   this.pageScriptNodes = [];
+  this.pageModalNodes = [];
   // Map routes to source HTML files (relative to repo root)
     this.routes = new Map([
       ['/', 'index.html'],
@@ -166,6 +167,8 @@ class WebropolSPA {
   // Compute absolute URL and base directory URL for the fetched document
   const fileUrl = new URL(file, location.href);
   const baseUrl = new URL('./', fileUrl);
+  // Make base URL available to helpers (e.g., script/link resolution)
+  this._currentBaseUrl = baseUrl.href;
     this.setLoading(true);
     try {
       const res = await fetch(file, { cache: 'no-cache' });
@@ -219,13 +222,17 @@ class WebropolSPA {
   // Clean up previously injected page styles
   this.cleanupPageStyles();
   this.cleanupPageScripts();
+  this.cleanupPageModals();
   this.cleanupContainerAttributes();
 
   // Swap content
       this.container.innerHTML = nextHTML;
 
   // Rewrite internal links and asset URLs inside injected content to be SPA- and base-aware
-  this.rewriteContentUrls(baseUrl);
+  this.rewriteContentUrls(baseUrl, this.container);
+
+      // Attach modal/pop-up elements that live outside <main> in the source page
+      this.attachPageModals(doc, main, baseUrl);
       
       // Apply body attributes to container for Alpine.js context
       if (bodyAttribs) {
@@ -249,19 +256,25 @@ class WebropolSPA {
           // Give Alpine a moment to detect the new DOM structure
           setTimeout(() => {
             window.Alpine.initTree(this.container);
+            // Also init any appended modals/popups (kept inside container for Alpine scope)
+            if (this.pageModalNodes && this.pageModalNodes.length) {
+              this.pageModalNodes.forEach((n) => {
+                try { window.Alpine.initTree(n); } catch(_) {}
+              });
+            }
           }, 10);
         }
       } catch(e) {
         console.warn('[SPA] Alpine.js re-initialization failed:', e);
       }
 
-  // Emit custom event for components that need to react to route changes
-  window.dispatchEvent(new CustomEvent('spa-route-change', { 
-    detail: { path, queryString } 
-  }));
-
-  // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
+      // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
       this.runPageScripts(doc, baseUrl);
+
+      // Emit custom event AFTER scripts are executed so pages can listen during SPA loads
+      window.dispatchEvent(new CustomEvent('spa-route-change', { 
+        detail: { path, queryString } 
+      }));
 
       // Update stateful UI parts
       this.updateBreadcrumbs(path);
@@ -392,7 +405,7 @@ class WebropolSPA {
         // Resolve relative to the fetched page's base (not the shell)
         let abs;
         try {
-          // Infer base from document URL if provided via argument by binding
+          // Resolve relative to fetched page base
           abs = new URL(src, this._currentBaseUrl || location.href).href;
         } catch {
           abs = src;
@@ -418,13 +431,13 @@ class WebropolSPA {
   }
 
   // Normalize all in-content URLs to work within the SPA and respect the loaded page base
-  rewriteContentUrls(baseUrl) {
+  rewriteContentUrls(baseUrl, rootEl = this.container) {
     try {
       // Keep a reference for runPageScripts to resolve external script paths
       this._currentBaseUrl = baseUrl.href;
 
       // 1) Fix anchors to point to hash-based routes
-      this.container.querySelectorAll('a[href]').forEach((a) => {
+      rootEl.querySelectorAll('a[href]').forEach((a) => {
         const href = a.getAttribute('href');
         const target = a.getAttribute('target');
         if (!href) return;
@@ -461,7 +474,7 @@ class WebropolSPA {
         { sel: 'link[rel="preload"][href], link[rel="prefetch"][href]', attr: 'href' },
       ];
       attrMap.forEach(({ sel, attr }) => {
-        this.container.querySelectorAll(sel).forEach((el) => {
+        rootEl.querySelectorAll(sel).forEach((el) => {
           const v = el.getAttribute(attr);
           if (!v || /^(https?:|data:|blob:|#|\/)/i.test(v)) return;
           try {
@@ -499,6 +512,51 @@ class WebropolSPA {
       attrsToRemove.forEach(name => {
         this.container.removeAttribute(name);
       });
+    } catch (e) {
+      // noop
+    }
+  }
+
+  // Extract and attach modal/pop-up nodes that are outside <main> in the source page
+  attachPageModals(doc, mainEl, baseUrl) {
+    try {
+      const body = doc.querySelector('body');
+      if (!body) return;
+
+      const candidates = new Set();
+      const pushAll = (list) => list.forEach((el) => candidates.add(el));
+      pushAll(Array.from(body.querySelectorAll('.modal-overlay')));
+      pushAll(Array.from(body.querySelectorAll('webropol-modal, webropol-settings-modal')));
+      pushAll(Array.from(body.querySelectorAll('[role="dialog"]')));
+      // Common fixed full-screen overlays
+      pushAll(Array.from(body.querySelectorAll('div.fixed.inset-0')));
+
+      // Filter out anything already inside <main>
+      const nodes = Array.from(candidates).filter((el) => {
+        return !mainEl || !mainEl.contains(el);
+      });
+
+      if (!nodes.length) return;
+
+      this.pageModalNodes = [];
+      nodes.forEach((el) => {
+        const clone = el.cloneNode(true);
+        clone.setAttribute('data-spa-page-modal', '');
+        // Ensure URLs inside the modal are rewritten too
+        try { this.rewriteContentUrls(new URL(this._currentBaseUrl || location.href, location.href), clone); } catch (_) {}
+        this.container.appendChild(clone);
+        this.pageModalNodes.push(clone);
+      });
+    } catch (e) {
+      console.warn('[SPA] Failed to attach page modals', e);
+    }
+  }
+
+  cleanupPageModals() {
+    try {
+      if (!this.pageModalNodes || !this.pageModalNodes.length) return;
+      this.pageModalNodes.forEach((n) => { try { n.remove(); } catch(_) {} });
+      this.pageModalNodes = [];
     } catch (e) {
       // noop
     }
