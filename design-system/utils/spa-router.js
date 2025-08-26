@@ -11,6 +11,12 @@ class WebropolSPA {
     this.pageStyleNodes = [];
   this.pageScriptNodes = [];
   this.pageModalNodes = [];
+  // Detect hosting base segment (e.g., "/webropol" on GitHub Pages project sites)
+  const seg = (location.pathname || '/')
+    .split('/')
+    .filter(Boolean)[0] || '';
+  this._baseSegment = seg; // e.g., "webropol" or '' when hosted at root
+  this._basePrefix = seg ? `/${seg}` : '';
   // Map routes to source HTML files (relative to repo root)
     this.routes = new Map([
       ['/', 'index.html'],
@@ -93,6 +99,12 @@ class WebropolSPA {
     // React to hash changes
     window.addEventListener('hashchange', () => {
       const route = this.currentRouteFromHash();
+      const normalizedHash = `#${route.startsWith('/') ? route : `/${route}`}`;
+      // If the hash contains the repo base segment, rewrite it once to a clean hash
+      if (location.hash !== normalizedHash) {
+        location.replace(normalizedHash);
+        return; // wait for next hashchange or proceed on next event
+      }
       this.load(route);
     });
 
@@ -101,6 +113,12 @@ class WebropolSPA {
     if (!location.hash) {
       // Preserve the current shell content for home and set hash
       location.replace(`#${initialRoute}`);
+    } else {
+      // Normalize an existing hash that might include the repo base segment
+      const normalizedHash = `#${initialRoute.startsWith('/') ? initialRoute : `/${initialRoute}`}`;
+      if (location.hash !== normalizedHash) {
+        location.replace(normalizedHash);
+      }
     }
     
     // Always update sidebar and breadcrumbs, even for initial load
@@ -118,11 +136,15 @@ class WebropolSPA {
     if (!hash.startsWith('#/')) return '';
     try {
       const url = new URL(hash.substring(1), location.origin);
-      const route = url.pathname || '/';
+      let route = url.pathname || '/';
+      // Normalize routes like "/webropol/..." (shared externally) to "/..."
+      route = this.stripBasePrefix(route);
       const query = url.search || '';
       return `${route}${query}`;
     } catch (_) {
-      return hash.substring(1) || '/';
+      // Best-effort fallback
+      const raw = hash.substring(1) || '/';
+      return this.stripBasePrefix(raw) || '/';
     }
   }
 
@@ -133,6 +155,8 @@ class WebropolSPA {
     // Compute path relative to origin
     let path = a.pathname;
     if (!path) return '/';
+    // Strip hosting base prefix if present (e.g., /webropol/...)
+    path = this.stripBasePrefix(path);
     // Convert /surveys/list.html -> /surveys/list
     path = path.replace(/\\/g, '/').replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
     const query = (a.search || '').replace(/^\?/, '');
@@ -158,6 +182,22 @@ class WebropolSPA {
     } else {
       // Same route, force load
       this.load(normalized);
+    }
+  }
+
+  // Remove the repo base prefix (e.g., "/webropol") from a path if present
+  stripBasePrefix(p) {
+    try {
+      if (!p) return p;
+      // Ensure leading slash for consistent checks
+      const path = p.startsWith('/') ? p : `/${p}`;
+      if (this._basePrefix && (path === this._basePrefix || path.startsWith(`${this._basePrefix}/`))) {
+        const stripped = path.slice(this._basePrefix.length);
+        return stripped || '/';
+      }
+      return path;
+    } catch (_) {
+      return p;
     }
   }
 
@@ -450,14 +490,15 @@ class WebropolSPA {
 
         try {
           const absUrl = new URL(href, baseUrl);
-          const absPath = absUrl.pathname + (absUrl.search || '');
-          if (/\.html(\?|$)/i.test(absPath)) {
-            const { route, query } = this.hrefToRoute(absPath);
+          const hasHtml = /\.html(\?|$)/i.test(absUrl.pathname + (absUrl.search || ''));
+          if (hasHtml) {
+            const { route, query } = this.hrefToRoute(absUrl.href);
             a.setAttribute('href', `#${query ? `${route}?${query}` : route}`);
           } else {
             // Non-HTML resources or clean paths: convert to hash route if internal path
-            if (absPath.startsWith('/')) {
-              a.setAttribute('href', `#${absPath}${absUrl.search || ''}`);
+            if (absUrl.pathname.startsWith('/')) {
+              const stripped = this.stripBasePrefix(absUrl.pathname) + (absUrl.search || '');
+              a.setAttribute('href', `#${stripped}`);
             }
           }
         } catch (_) {
