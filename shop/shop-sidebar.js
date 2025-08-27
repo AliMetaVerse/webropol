@@ -11,7 +11,7 @@ class ShopSidebar extends HTMLElement {
 
     // Build modern sidebar markup with enhanced styling and animations
     this.innerHTML = `
-      <aside class="hidden lg:block w-80 shrink-0 sticky top-6 h-[calc(100vh-120px)]">
+      <aside class="shop-sidebar-root hidden lg:block w-80 shrink-0 sticky top-6 h-[calc(100vh-120px)]">
         <div class="glass-card rounded-3xl p-6 h-full flex flex-col overflow-hidden">
           <!-- Header -->
           <div class="flex items-center gap-3 mb-8">
@@ -63,7 +63,8 @@ class ShopSidebar extends HTMLElement {
       </aside>
       
       <style>
-        .glass-card {
+        /* Scope all styles to this component root to avoid leaking into main sidebar */
+        .shop-sidebar-root .glass-card {
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px) saturate(180%);
           border: 1px solid rgba(255, 255, 255, 0.25);
@@ -73,13 +74,13 @@ class ShopSidebar extends HTMLElement {
             inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
         
-        .nav-item {
+        .shop-sidebar-root .nav-item {
           position: relative;
           overflow: hidden;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .nav-item::before {
+        .shop-sidebar-root .nav-item::before {
           content: '';
           position: absolute;
           top: 0;
@@ -90,16 +91,16 @@ class ShopSidebar extends HTMLElement {
           transition: left 0.6s ease;
         }
         
-        .nav-item:hover::before {
+        .shop-sidebar-root .nav-item:hover::before {
           left: 100%;
         }
         
-        .nav-item:hover {
+        .shop-sidebar-root .nav-item:hover {
           transform: translateX(4px);
           background: rgba(6, 182, 212, 0.05);
         }
         
-        .nav-item.active {
+        .shop-sidebar-root .nav-item.active {
           background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
           border-left: 4px solid #06b6d4;
           transform: translateX(4px);
