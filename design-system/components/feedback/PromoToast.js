@@ -198,6 +198,18 @@ class WebropolPromo extends BaseComponent {
     setTimeout(() => this.hide(), 2000);
   }
 
+  // helpers for feedback UI
+  renderNpsButton(n) {
+    const isSel = this.state.npsScore === n;
+    const clsSel = isSel ? 'border-webropol-teal-600 bg-webropol-teal-50 text-webropol-teal-800' : 'border-webropol-gray-300 text-webropol-gray-700 hover:border-webropol-teal-400 hover:bg-webropol-teal-50';
+    return `<button class="w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base rounded-lg border-2 ${clsSel} transition font-semibold" data-action="nps" data-score="${n}">${n}</button>`;
+  }
+  renderNpsRow(start, end) {
+    const parts = [];
+    for (let i = start; i <= end; i++) parts.push(this.renderNpsButton(i));
+    return parts.join('');
+  }
+
   render() {
     const visible = !!this.state.visible;
     const mode = this.getAttr('mode', 'auto');
@@ -229,10 +241,10 @@ class WebropolPromo extends BaseComponent {
             </div>
             <div class="flex-1">
               <div class="text-base sm:text-lg font-semibold text-webropol-gray-900">${s.title || 'Discover more in the Shop'}</div>
-              <div class="text-sm text-webropol-gray-600 mt-1">${s.desc || 'Enhance your current workflow with add‑ons.'}</div>
+              <div class="text-sm text-webropol-gray-600 mt-1">${s.desc || 'Explore add-ons and capabilities to enhance your workflow.'}</div>
               <div class="mt-3">
-                <a href="${s.href || '#/shop'}" class="inline-flex items-center px-4 py-2 rounded-xl text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-sm font-semibold shadow">
-                  ${s.cta || 'Open Shop'}
+                <a class="inline-flex items-center px-3 py-2 rounded-xl text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-sm font-semibold shadow" href="${s.href || '#/shop'}">
+                  ${s.cta || 'Explore'}
                   <i class="fal fa-arrow-right ml-2"></i>
                 </a>
               </div>
@@ -240,12 +252,6 @@ class WebropolPromo extends BaseComponent {
           </div>
         </div>
       `;
-    };
-
-    const npsButtons = () => {
-      return Array.from({ length: 11 }, (_, i) => i)
-        .map((n) => `<button class="w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base rounded-lg border-2 ${this.state.npsScore===n? 'border-webropol-teal-600 bg-webropol-teal-50 text-webropol-teal-800' : 'border-webropol-gray-300 text-webropol-gray-700 hover:border-webropol-teal-400 hover:bg-webropol-teal-50'} transition font-semibold" data-action="nps" data-score="${n}">${n}</button>`) 
-        .join('');
     };
 
     const feedback = () => {
@@ -264,7 +270,10 @@ class WebropolPromo extends BaseComponent {
                 <span>Not at all likely</span>
                 <span>Extremely likely</span>
               </div>
-              <div class="grid grid-cols-11 gap-1.5 sm:gap-2">${npsButtons()}</div>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between gap-1.5 sm:gap-2">${this.renderNpsRow(0,5)}</div>
+                <div class="flex items-center justify-between gap-1.5 sm:gap-2">${this.renderNpsRow(6,10)}</div>
+              </div>
             </div>
           </div>
         `;
@@ -305,7 +314,6 @@ class WebropolPromo extends BaseComponent {
   }
 
   bindEvents() {
-    const root = this;
     this.addListener(this, 'click', (e) => {
       const btn = e.target.closest('[data-action]');
       if (!btn) return;
@@ -346,19 +354,14 @@ class WebropolPromo extends BaseComponent {
 customElements.define('webropol-promo', WebropolPromo);
 
 // Auto-inject a single instance into the page when settings allow
-const ensurePromoInjected = () => {
-  try {
-    if (document.querySelector('webropol-promo')) return;
-    const el = document.createElement('webropol-promo');
-    el.setAttribute('mode', 'auto');
-    document.body.appendChild(el);
-  } catch (_) {}
-};
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', ensurePromoInjected);
-} else {
-  ensurePromoInjected();
-}
-
-export { WebropolPromo };
+(function ensureSingleton() {
+  if (typeof window === 'undefined') return;
+  if (window.__webropolPromoAdded) return;
+  window.__webropolPromoAdded = true;
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!document.querySelector('webropol-promo')) {
+      const el = document.createElement('webropol-promo');
+      document.body.appendChild(el);
+    }
+  });
+})();
