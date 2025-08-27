@@ -219,44 +219,28 @@ export class WebropolHeader extends BaseComponent {
 
   getRatingContent() {
     return `
-      <div class="px-4 py-2">
-        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-3">Rate Your Experience</h4>
-        <div class="space-y-2">
-          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="5">
-            <div class="flex mr-3">
-              ${[1,2,3,4,5].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
+      <div class="px-5 py-4">
+        <h4 class="text-sm font-semibold text-webropol-gray-800 mb-1">Rate Your Experience</h4>
+        <p class="text-xs text-webropol-gray-500 mb-3">Tap a star from 1 (poor) to 5 (excellent)</p>
+        <form class="feedback-form" data-type="rating">
+          <input type="hidden" name="rating" value="" />
+          <div class="rating-stars flex items-center justify-between bg-white/70 rounded-xl px-3 py-2 border border-webropol-gray-200 shadow-sm" role="radiogroup" aria-label="Rate your experience">
+            ${[1,2,3,4,5].map((n) => `
+              <button type="button" class="star group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300" role="radio" aria-checked="false" aria-label="${n} star${n>1?'s':''}" data-value="${n}">
+                <span class="sr-only">${n}</span>
+                <i class="fal fa-star text-2xl text-gray-300 group-hover:scale-110 group-active:scale-95 transition-transform"></i>
+              </button>
+            `).join('')}
+          </div>
+          <div class="flex items-center justify-between mt-3">
+            <div class="text-xs font-medium text-webropol-gray-600">
+              <span class="rating-label">Choose a rating</span>
             </div>
-            Excellent
-          </button>
-          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="4">
-            <div class="flex mr-3">
-              ${[1,2,3,4].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
-              <i class="fal fa-star text-gray-300 text-xs"></i>
-            </div>
-            Good
-          </button>
-          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="3">
-            <div class="flex mr-3">
-              ${[1,2,3].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
-              ${[4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
-            </div>
-            Average
-          </button>
-          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="2">
-            <div class="flex mr-3">
-              ${[1,2].map(() => '<i class="fas fa-star text-yellow-400 text-xs"></i>').join('')}
-              ${[3,4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
-            </div>
-            Poor
-          </button>
-          <button class="flex items-center w-full px-3 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg rating-option" data-rating="1">
-            <div class="flex mr-3">
-              <i class="fas fa-star text-yellow-400 text-xs"></i>
-              ${[2,3,4,5].map(() => '<i class="fal fa-star text-gray-300 text-xs"></i>').join('')}
-            </div>
-            Terrible
-          </button>
-        </div>
+            <button type="submit" class="px-4 py-2 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-xs font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
     `;
   }
@@ -569,16 +553,132 @@ export class WebropolHeader extends BaseComponent {
           feedbackDropdown.classList.add('opacity-0', 'invisible');
         } else {
           feedbackDropdown.classList.remove('opacity-0', 'invisible');
+          // Initialize star UI if present
+          try {
+            const hidden = feedbackDropdown.querySelector('form.feedback-form[data-type="rating"] input[name="rating"]');
+            const current = hidden && hidden.value ? parseInt(hidden.value, 10) : 0;
+            const container = feedbackDropdown.querySelector('.rating-stars');
+            if (container) {
+              container.querySelectorAll('.star').forEach((btn) => {
+                const val = parseInt(btn.dataset.value, 10);
+                const icon = btn.querySelector('i');
+                if (val <= current) {
+                  icon.classList.remove('fal');
+                  icon.classList.add('fas');
+                  icon.classList.remove('text-gray-300');
+                  icon.classList.add('text-yellow-400', 'drop-shadow');
+                } else {
+                  icon.classList.remove('fas');
+                  icon.classList.add('fal');
+                  icon.classList.remove('text-yellow-400', 'drop-shadow');
+                  icon.classList.add('text-gray-300');
+                }
+                btn.setAttribute('aria-checked', String(val === current));
+              });
+              const label = feedbackDropdown.querySelector('.rating-label');
+              if (label) label.textContent = current ? `${current} - ${current===1?'Poor':current===2?'Fair':current===3?'Okay':current===4?'Good':'Excellent'}` : 'Choose a rating';
+              const submit = feedbackDropdown.querySelector('form.feedback-form[data-type="rating"] button[type="submit"]');
+              if (submit) submit.disabled = !current;
+            }
+          } catch {}
         }
       });
 
-      // Handle rating selection (for star ratings)
-      this.addEventListenerToDropdown(feedbackDropdown, '.rating-option', (option, e) => {
+      // Interactive star rating: hover, select, submit
+      const ratingContainer = () => feedbackDropdown.querySelector('.rating-stars');
+      const getHiddenInput = () => feedbackDropdown.querySelector('form.feedback-form[data-type="rating"] input[name="rating"]');
+      const getSubmitBtn = () => feedbackDropdown.querySelector('form.feedback-form[data-type="rating"] button[type="submit"]');
+      const getLabelEl = () => feedbackDropdown.querySelector('.rating-label');
+
+      const labels = {
+        1: '1 - Poor',
+        2: '2 - Fair',
+        3: '3 - Okay',
+        4: '4 - Good',
+        5: '5 - Excellent'
+      };
+
+      const paintStars = (value = 0) => {
+        const container = ratingContainer();
+        if (!container) return;
+        container.querySelectorAll('.star').forEach((btn) => {
+          const i = parseInt(btn.dataset.value, 10);
+          const icon = btn.querySelector('i');
+          if (i <= value) {
+            icon.classList.remove('fal');
+            icon.classList.add('fas');
+            icon.classList.remove('text-gray-300');
+            icon.classList.add('text-yellow-400', 'drop-shadow');
+          } else {
+            icon.classList.remove('fas');
+            icon.classList.add('fal');
+            icon.classList.remove('text-yellow-400', 'drop-shadow');
+            icon.classList.add('text-gray-300');
+          }
+          btn.setAttribute('aria-checked', String(i === value));
+        });
+        const labelEl = getLabelEl();
+        if (labelEl) labelEl.textContent = value ? labels[value] : 'Choose a rating';
+        const submit = getSubmitBtn();
+        if (submit) submit.disabled = !value;
+      };
+
+      // Hover preview
+      this.addEventListenerToDropdown(feedbackDropdown, '.rating-stars .star', (star, e) => {
+        const value = parseInt(star.dataset.value, 10);
+        paintStars(value);
+      }, 'mouseover');
+
+      // Keyboard focus preview
+      this.addEventListenerToDropdown(feedbackDropdown, '.rating-stars .star', (star, e) => {
+        const value = parseInt(star.dataset.value, 10);
+        paintStars(value);
+      }, 'focus');
+
+      // Click to select
+      this.addEventListenerToDropdown(feedbackDropdown, '.rating-stars .star', (star, e) => {
+        e.preventDefault();
         e.stopPropagation();
-        const selectedRating = option.getAttribute('data-rating');
-        this.handleFeedbackSubmission('rating', { rating: parseInt(selectedRating) });
-        feedbackDropdown.classList.add('opacity-0', 'invisible');
+        const value = parseInt(star.dataset.value, 10);
+        const hidden = getHiddenInput();
+        if (hidden) hidden.value = String(value);
+        paintStars(value);
       });
+
+      // Mouse leave: keep selected
+      setTimeout(() => {
+        const container = ratingContainer();
+        if (!container) return;
+        container.addEventListener('mouseleave', () => {
+          const hidden = getHiddenInput();
+          const selected = hidden && hidden.value ? parseInt(hidden.value, 10) : 0;
+          paintStars(selected);
+        });
+        // Keyboard support: arrows and enter
+        container.querySelectorAll('.star').forEach((btn) => {
+          btn.setAttribute('tabindex', '0');
+          btn.addEventListener('keydown', (ev) => {
+            const hidden = getHiddenInput();
+            const current = hidden && hidden.value ? parseInt(hidden.value, 10) : 0;
+            if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') {
+              const next = Math.min(5, (current || parseInt(btn.dataset.value, 10)) + 1);
+              hidden.value = String(next);
+              paintStars(next);
+              ev.preventDefault();
+            } else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') {
+              const prev = Math.max(1, (current || parseInt(btn.dataset.value, 10)) - 1);
+              hidden.value = String(prev);
+              paintStars(prev);
+              ev.preventDefault();
+            } else if (ev.key === 'Enter' || ev.key === ' ') {
+              const value = parseInt(btn.dataset.value, 10);
+              hidden.value = String(value);
+              paintStars(value);
+              ev.preventDefault();
+            }
+          });
+        });
+      }, 50);
 
       // Handle NPS button clicks with enhanced visual feedback
       this.addEventListenerToDropdown(feedbackDropdown, '.nps-option', (option, e) => {
@@ -725,9 +825,32 @@ export class WebropolHeader extends BaseComponent {
           }
         }
         
-        // For other feedback types, handle normally
-        this.handleFeedbackSubmission(formType, data);
-        feedbackDropdown.classList.add('opacity-0', 'invisible');
+        // For rating type, use a quick thank-you without closing immediately
+        if (formType === 'rating') {
+          const rating = parseInt(data.rating || '0', 10);
+          if (rating > 0) {
+            this.handleFeedbackSubmission('rating', { rating });
+            // Swap form with a simple toast area
+            const original = form.innerHTML;
+            form.innerHTML = `
+              <div class="flex items-center justify-center py-4">
+                <div class="flex items-center space-x-2 text-webropol-teal-700 bg-webropol-teal-50 border border-webropol-teal-200 rounded-lg px-3 py-2">
+                  <i class="fas fa-check-circle"></i>
+                  <span class="text-sm font-medium">Thanks for rating ${rating}/5!</span>
+                </div>
+              </div>`;
+            setTimeout(() => {
+              // Close after a brief delay and restore for next open
+              feedbackDropdown.classList.add('opacity-0', 'invisible');
+              form.innerHTML = original;
+            }, 1200);
+            return;
+          }
+        } else {
+          // Other feedback types
+          this.handleFeedbackSubmission(formType, data);
+          feedbackDropdown.classList.add('opacity-0', 'invisible');
+        }
       }, 'submit');
 
       // Add character count functionality for textarea
