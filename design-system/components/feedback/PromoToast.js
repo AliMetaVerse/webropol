@@ -204,9 +204,21 @@ class WebropolPromo extends BaseComponent {
 
   // helpers for feedback UI
   renderNpsButton(n) {
-    const isSel = this.state.npsScore === n;
-    const clsSel = isSel ? 'border-webropol-teal-600 bg-webropol-teal-50 text-webropol-teal-800' : 'border-webropol-gray-300 text-webropol-gray-700 hover:border-webropol-teal-400 hover:bg-webropol-teal-50';
-    return `<button class="w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base rounded-lg border-2 ${clsSel} transition font-semibold" data-action="nps" data-score="${n}">${n}</button>`;
+    // Apply the same visual language as Header NPS (color-coded by score)
+    let colorClass = '';
+    let hoverClass = '';
+    if (n <= 6) {
+      colorClass = 'bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-700';
+      hoverClass = 'hover:from-red-200 hover:to-red-300 hover:border-red-400 hover:shadow-lg hover:scale-110';
+    } else if (n <= 8) {
+      colorClass = 'bg-gradient-to-br from-yellow-100 to-amber-200 border-amber-300 text-amber-700';
+      hoverClass = 'hover:from-yellow-200 hover:to-amber-300 hover:border-amber-400 hover:shadow-lg hover:scale-110';
+    } else {
+      colorClass = 'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700';
+      hoverClass = 'hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110';
+    }
+    const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-xl transition-all duration-300 transform active:scale-95 shadow-sm';
+    return `<button class="${base} ${colorClass} ${hoverClass}" data-action="nps" data-score="${n}">${n}</button>`;
   }
   renderNpsRow(start, end) {
     const parts = [];
@@ -270,9 +282,15 @@ class WebropolPromo extends BaseComponent {
                 </div>
                 <div class="font-semibold text-webropol-gray-900">How likely are you to recommend Webropol?</div>
               </div>
-              <div class="flex items-center justify-between text-xs text-webropol-gray-500 mb-2">
-                <span>Not at all likely</span>
-                <span>Extremely likely</span>
+              <div class="flex justify-between items-center px-1 mb-2">
+                <div class="text-center">
+                  <div class="text-xs font-semibold text-red-600 mb-1">Not likely</div>
+                  <div class="w-3 h-1 bg-gradient-to-r from-red-400 to-red-500 rounded-full mx-auto"></div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs font-semibold text-emerald-600 mb-1">Very likely</div>
+                  <div class="w-3 h-1 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full mx-auto"></div>
+                </div>
               </div>
               <div class="space-y-2">
                 <div class="flex items-center justify-center gap-1.5 sm:gap-2">${this.renderNpsRow(0,5)}</div>
@@ -329,6 +347,17 @@ class WebropolPromo extends BaseComponent {
         const n = parseInt(btn.getAttribute('data-score'), 10);
         this.handleNpsSelect(n);
         this.render();
+        // Enhance selection visuals like header NPS
+        const container = this.querySelector('[data-action="nps"]')?.closest('.space-y-2') || this;
+        if (container) {
+          container.querySelectorAll('[data-action="nps"]').forEach(b => {
+            const score = parseInt(b.getAttribute('data-score'), 10);
+            const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-xl transition-all duration-300 transform active:scale-95 shadow-sm';
+            if (score === n) {
+              b.className = `${base} bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-indigo-500 ring-4 ring-indigo-300 ring-offset-2 shadow-xl scale-110`;
+            }
+          });
+        }
       } else if (action === 'back') {
         this.setState({ step: 1 });
         this.render();
