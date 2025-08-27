@@ -161,7 +161,7 @@
                       </div>
                       <h3 class="text-lg font-semibold text-slate-900 mb-2">Interactive Demo</h3>
                       <p class="text-slate-600 mb-4">See BI View in action</p>
-                      <button class="px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all">
+                      <button class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-all">
                         <i class="fal fa-play mr-2"></i>Watch Demo
                       </button>
                     </div>
@@ -258,24 +258,20 @@
                   <div class="text-4xl font-bold mb-1">€60</div>
                   <div class="text-sm opacity-90 mb-6">per month</div>
                   
-                  <!-- Company Size Selector -->
+                  <!-- Company Size Information -->
                   <div class="mb-6">
-                    <label class="block text-sm font-medium mb-2 text-left" for="companySize">Company size</label>
-                    <select 
-                      id="companySize" 
-                      x-model="selectedSize"
-                      @change="updatePricing()"
-                      class="w-full rounded-xl border-0 bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-white/50"
-                    >
-                      <option value="1-10" class="text-slate-900">1–10 employees</option>
-                      <option value="11-50" class="text-slate-900">11–50 employees</option>
-                      <option value="51-200" class="text-slate-900" selected>51–200 employees</option>
-                      <option value="201-1000" class="text-slate-900">201–1000 employees</option>
-                      <option value=">1000" class="text-slate-900">1000+ employees</option>
-                    </select>
+                    <div class="text-left">
+                      <h4 class="text-sm font-medium mb-1">Company Size</h4>
+                      <div class="bg-white/20 rounded-xl p-3 text-sm">
+                        <div class="font-medium mb-1">Medium Enterprise (51-200 employees)</div>
+                        <div class="text-xs opacity-90">
+                          Pricing is automatically determined based on your organization's profile and usage requirements.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
-                  <button class="gradient-btn w-full py-4 rounded-2xl text-white font-semibold mb-4">
+                  <button class="gradient-btn w-full py-4 rounded-full text-white font-semibold mb-4">
                     <i class="fal fa-shopping-cart mr-2"></i>Add to Order
                   </button>
                   
@@ -292,7 +288,7 @@
                   </div>
                   <h3 class="font-semibold text-slate-900 mb-2">Need Custom Pricing?</h3>
                   <p class="text-slate-600 text-sm mb-4">Get in touch for enterprise discounts and custom solutions.</p>
-                  <button class="w-full py-3 border-2 border-orange-500 text-orange-600 rounded-xl hover:bg-orange-50 transition-all">
+                  <button class="w-full py-3 border-2 border-orange-500 text-orange-600 rounded-full hover:bg-orange-50 transition-all">
                     <i class="fal fa-envelope mr-2"></i>Contact Sales
                   </button>
                 </div>
@@ -330,23 +326,8 @@
   <script>
     function productStore() {
       return {
-        selectedSize: '51-200',
-        
         init() {
-          // Load saved company size
-          try {
-            const saved = localStorage.getItem('webropol_company_size');
-            if (saved) this.selectedSize = saved;
-          } catch (e) {}
-        },
-        
-        updatePricing() {
-          try {
-            localStorage.setItem('webropol_company_size', this.selectedSize);
-          } catch (e) {}
-          
-          // Here you could update pricing based on company size
-          // For now, we'll just save the preference
+          // Initialize product store
         }
       }
     }
