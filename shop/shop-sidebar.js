@@ -47,16 +47,15 @@ class ShopSidebar extends HTMLElement {
             <!-- SMS Credits Section -->
             <div>
               <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">SMS Credits</h3>
-              <a href="#/shop/sms-credits" class="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-300 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg transform scale-105' : 'hover:bg-orange-50 text-slate-700 hover:text-orange-700 hover:transform hover:scale-105'}">
-                <div class="w-10 h-10 rounded-xl ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-white/20' : 'bg-orange-100 group-hover:bg-orange-200'} flex items-center justify-center transition-all duration-300">
-                  <i class="fal fa-sms ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-white' : 'text-orange-600'}"></i>
-                </div>
-                <div class="flex-1">
-                  <span class="font-semibold block">Buy Credits</span>
-                  <span class="text-xs opacity-75">SMS messaging</span>
-                </div>
-                <i class="fal fa-chevron-right text-xs opacity-50 group-hover:opacity-100 transition-opacity duration-300"></i>
-              </a>
+              <ul class="space-y-2">
+                <li>
+                  <a href="#/shop/sms-credits" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
+                    <i class="fal fa-sms w-4 text-center ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
+                    <span class="font-medium text-sm flex-1">Buy Credits</span>
+                    <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'opacity-100 text-teal-500' : ''}"></i>
+                  </a>
+                </li>
+              </ul>
             </div>
 
           </nav>
@@ -105,57 +104,14 @@ class ShopSidebar extends HTMLElement {
           border-left: 4px solid #06b6d4;
           transform: translateX(4px);
         }
-        
-        .nav-item.active .category-dot {
-          transform: scale(1.2);
-          box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
-        }
-        
-        .category-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          flex-shrink: 0;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .analytics-dot { 
-          background: linear-gradient(135deg, #8b5cf6, #7c3aed); 
-          box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
-        }
-        .ai-dot { 
-          background: linear-gradient(135deg, #06b6d4, #0891b2); 
-          box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
-        }
-        .assessment-dot { 
-          background: linear-gradient(135deg, #10b981, #059669); 
-          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
-        }
-        .mobile-dot { 
-          background: linear-gradient(135deg, #f59e0b, #d97706); 
-          box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
-        }
-        .case-dot { 
-          background: linear-gradient(135deg, #ef4444, #dc2626); 
-          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
-        }
       </style>
     `;
   }
 
   linkItem(label, href, active, icon, category) {
-    const categoryDots = {
-      'analytics': 'analytics-dot',
-      'ai': 'ai-dot', 
-      'assessment': 'assessment-dot',
-      'mobile': 'mobile-dot',
-      'case': 'case-dot'
-    };
-    
     return `
       <li>
         <a href="${href}" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${active ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
-          <div class="category-dot ${categoryDots[category] || 'analytics-dot'}"></div>
           <i class="${icon} w-4 text-center ${active ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
           <span class="font-medium text-sm flex-1">${label}</span>
           <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${active ? 'opacity-100 text-teal-500' : ''}"></i>
