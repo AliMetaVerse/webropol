@@ -39,7 +39,7 @@ export class WebropolSettingsModal extends BaseComponent {
       autoLogout: 30, // minutes
       language: 'en',
   // Promos
-  promosEnabled: true,
+  promosEnabled: false,
       // New: control visibility of Header Create menu
       showHeaderCreateMenu: true,
       // New: control visibility of Rating selector
@@ -104,7 +104,7 @@ export class WebropolSettingsModal extends BaseComponent {
         compactMode: false,
         autoLogout: 30,
         language: 'en',
-  promosEnabled: true,
+  promosEnabled: false,
         showHeaderCreateMenu: true,
         showRatingSelector: true,
         feedbackQuestionType: 'rating',
@@ -440,7 +440,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.autoSave ? 'checked' : ''} 
                              data-setting="autoSave">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-blue-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   
@@ -459,7 +459,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.notifications ? 'checked' : ''} 
                              data-setting="notifications">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-blue-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>
                   

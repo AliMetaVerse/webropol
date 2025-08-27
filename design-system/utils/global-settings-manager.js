@@ -14,7 +14,7 @@ export class GlobalSettingsManager {
       autoLogout: 30, // minutes
   language: 'en',
   // Promo settings
-  promosEnabled: true,
+  promosEnabled: false,
   promoFrequency: 'per-route-session', // future: 'always' | 'daily' | 'per-route-session'
   // New: control visibility of Header Create menu
   showHeaderCreateMenu: true,

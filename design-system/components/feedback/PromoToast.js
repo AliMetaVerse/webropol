@@ -81,7 +81,7 @@ class WebropolPromo extends BaseComponent {
   }
 
   applyVisibilityFromSettings() {
-    const enabled = this._settings?.promosEnabled !== false; // default true
+    const enabled = this._settings?.promosEnabled === true; // default off unless explicitly enabled
     if (!enabled) {
       this.hide();
       return;
