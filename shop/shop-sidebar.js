@@ -26,20 +26,6 @@ class ShopSidebar extends HTMLElement {
 
           <!-- Navigation -->
           <nav class="flex-1 space-y-8 overflow-y-auto">
-            <!-- Quick Stats -->
-            <div class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-4 border border-teal-100">
-              <div class="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <div class="text-2xl font-bold text-teal-700">8</div>
-                  <div class="text-xs text-slate-600">Modules</div>
-                </div>
-                <div>
-                  <div class="text-2xl font-bold text-teal-700">60€</div>
-                  <div class="text-xs text-slate-600">From</div>
-                </div>
-              </div>
-            </div>
-
             <!-- Modules Section -->
             <div>
               <div class="flex items-center justify-between mb-4">
