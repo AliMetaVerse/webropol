@@ -73,21 +73,6 @@ class ShopSidebar extends HTMLElement {
               </a>
             </div>
 
-            <!-- Help Section -->
-            <div class="bg-slate-50 rounded-2xl p-4">
-              <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <i class="fal fa-question-circle text-blue-600 text-sm"></i>
-                </div>
-                <div>
-                  <h4 class="font-medium text-slate-900 text-sm mb-1">Need Help?</h4>
-                  <p class="text-xs text-slate-600 mb-3">Our team can help you choose the right modules for your needs.</p>
-                  <button class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors">
-                    Contact Sales
-                  </button>
-                </div>
-              </div>
-            </div>
           </nav>
         </div>
       </aside>
