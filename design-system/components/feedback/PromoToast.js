@@ -182,7 +182,8 @@ class WebropolPromo extends BaseComponent {
   }
 
   handleNpsSelect(score) {
-    this.setState({ npsScore: score, step: 2 });
+  // Only select the score; remain on step 1 so users can Submit directly or add a comment
+  this.setState({ npsScore: score });
   }
 
   handleFeedbackSubmit() {
@@ -217,7 +218,7 @@ class WebropolPromo extends BaseComponent {
       colorClass = 'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700';
       hoverClass = 'hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110';
     }
-    const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-xl transition-all duration-300 transform active:scale-95 shadow-sm';
+  const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-full transition-all duration-300 transform active:scale-95 shadow-sm';
     return `<button class="${base} ${colorClass} ${hoverClass}" data-action="nps" data-score="${n}">${n}</button>`;
   }
   renderNpsRow(start, end) {
@@ -273,12 +274,12 @@ class WebropolPromo extends BaseComponent {
     const feedback = () => {
       if (this.state.step === 1) {
         return `
-          <div class="relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white shadow-2xl">
+          <div class="relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 shadow-2xl">
             ${closeBtn}
             <div class="p-4 sm:p-5">
               <div class="flex items-center mb-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center mr-3">
-                  <i class="fal fa-star"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center mr-3 shadow-lg">
+                  <i class="fas fa-chart-line"></i>
                 </div>
                 <div class="font-semibold text-webropol-gray-900">How likely are you to recommend Webropol?</div>
               </div>
@@ -296,6 +297,11 @@ class WebropolPromo extends BaseComponent {
                 <div class="flex items-center justify-center gap-1.5 sm:gap-2">${this.renderNpsRow(0,5)}</div>
                 <div class="flex items-center justify-center gap-1.5 sm:gap-2">${this.renderNpsRow(6,10)}</div>
               </div>
+              <div class="mt-4 flex items-center justify-end">
+                <button class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-semibold rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" data-action="next" ${this.state.npsScore == null ? 'disabled' : ''}>
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -309,7 +315,7 @@ class WebropolPromo extends BaseComponent {
               <textarea class="w-full p-3 border border-webropol-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-500 text-sm" rows="3" placeholder="Your feedback helps us improve" data-ref="text">${this.state.text || ''}</textarea>
               <div class="mt-3 flex items-center justify-between">
                 <button class="text-sm text-webropol-gray-500 hover:text-webropol-gray-700" data-action="back">Back</button>
-                <button class="px-4 py-2 rounded-xl text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-sm font-semibold" data-action="submit">Send</button>
+                <button class="px-4 py-2 rounded-full text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-sm font-semibold" data-action="submit">Send</button>
               </div>
             </div>
           </div>
@@ -357,6 +363,12 @@ class WebropolPromo extends BaseComponent {
               b.className = `${base} bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-indigo-500 ring-4 ring-indigo-300 ring-offset-2 shadow-xl scale-110`;
             }
           });
+        }
+      } else if (action === 'next') {
+        // Proceed to step 2 (comment) if a score exists
+        if (this.state.npsScore != null) {
+          this.setState({ step: 2 });
+          this.render();
         }
       } else if (action === 'back') {
         this.setState({ step: 1 });
