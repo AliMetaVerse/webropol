@@ -218,7 +218,7 @@ class WebropolPromo extends BaseComponent {
       colorClass = 'bg-gradient-to-br from-green-100 to-emerald-200 border-emerald-300 text-emerald-700';
       hoverClass = 'hover:from-green-200 hover:to-emerald-300 hover:border-emerald-400 hover:shadow-lg hover:scale-110';
     }
-  const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-full transition-all duration-300 transform active:scale-95 shadow-sm';
+  const base = 'w-9 h-9 sm:w-10 sm:h-10 text-sm sm:text-base font-bold border-2 rounded-2xl transition-all duration-300 transform active:scale-95 shadow-sm';
     return `<button class="${base} ${colorClass} ${hoverClass}" data-action="nps" data-score="${n}">${n}</button>`;
   }
   renderNpsRow(start, end) {
