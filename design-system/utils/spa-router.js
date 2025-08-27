@@ -33,6 +33,15 @@ class WebropolSPA {
       ['/admin-tools', 'admin-tools/index.html'],
       ['/training-videos', 'training-videos/index.html'],
       ['/shop', 'shop/index.html'],
+  ['/shop/sms-credits', 'shop/sms-credits.html'],
+  ['/shop/products/bi-view', 'shop/products/bi-view.html'],
+  ['/shop/products/ai-text-analysis', 'shop/products/ai-text-analysis.html'],
+  ['/shop/products/etest', 'shop/products/etest.html'],
+  ['/shop/products/360-assessments', 'shop/products/360-assessments.html'],
+  ['/shop/products/direct-mobile-feedback', 'shop/products/direct-mobile-feedback.html'],
+  ['/shop/products/analytics', 'shop/products/analytics.html'],
+  ['/shop/products/case-management', 'shop/products/case-management.html'],
+  ['/shop/products/wott', 'shop/products/wott.html'],
       ['/create', 'create/index.html'],
       ['/design-system', 'design-system/index.html'],
     ]);
@@ -228,9 +237,23 @@ class WebropolSPA {
       }
       
       if (main) {
-        // For pages with main tags, use the full main content including the wrapper
-        // This preserves complex layouts like the create page's split screen
-        nextHTML = main.outerHTML;
+        // If a shop-specific sidebar exists as a sibling, inject their shared container instead of just <main>
+        const shopBar = doc.querySelector('shop-sidebar');
+        if (shopBar && !main.contains(shopBar)) {
+          const shared = main.closest('div.flex');
+          if (shared && shared.contains(shopBar)) {
+            // Clone and strip any nested webropol header/sidebar/breadcrumbs just in case
+            const clone = shared.cloneNode(true);
+            clone.querySelectorAll('webropol-sidebar, webropol-header, webropol-breadcrumbs').forEach(el => el.remove());
+            nextHTML = clone.outerHTML;
+          } else {
+            nextHTML = main.outerHTML;
+          }
+        } else {
+          // For pages with main tags, use the full main content including the wrapper
+          // This preserves complex layouts like the create page's split screen
+          nextHTML = main.outerHTML;
+        }
       } else {
         // For pages without main, try to find content container
         const contentArea = doc.querySelector('.flex-1') || doc.querySelector('#app-content') || doc.body;
@@ -248,7 +271,10 @@ class WebropolSPA {
             nextHTML = bodyClone.innerHTML;
           }
         } else {
-          nextHTML = contentArea.innerHTML;
+          // Clone and strip nested nav/header components before injecting
+          const areaClone = contentArea.cloneNode(true);
+          areaClone.querySelectorAll('webropol-sidebar, webropol-header, webropol-breadcrumbs').forEach(el => el.remove());
+          nextHTML = areaClone.innerHTML;
         }
       }
 
@@ -279,12 +305,27 @@ class WebropolSPA {
         // Parse and apply x-data and other Alpine attributes
         const bodyEl = doc.querySelector('body');
         if (bodyEl) {
+          // 1) Apply x-* attributes directly (these are reactive scopes)
           Array.from(bodyEl.attributes).forEach(attr => {
-            // Apply Alpine and CSS classes but skip inline styles to avoid static background conflicts
-            if (attr.name.startsWith('x-') || attr.name === 'class') {
+            if (attr.name.startsWith('x-')) {
               this.container.setAttribute(attr.name, attr.value);
             }
           });
+
+          // 2) Merge body classes into container without removing shell classes
+          const newBodyClass = bodyEl.getAttribute('class') || '';
+          // Remove any previously added per-page classes
+          const prev = this.container.dataset.spaPageBodyClass || '';
+          if (prev) {
+            prev.split(/\s+/).filter(Boolean).forEach(c => this.container.classList.remove(c));
+          }
+          if (newBodyClass) {
+            newBodyClass.split(/\s+/).filter(Boolean).forEach(c => this.container.classList.add(c));
+            this.container.dataset.spaPageBodyClass = newBodyClass;
+          } else {
+            // Clear tracking if no classes on this page
+            delete this.container.dataset.spaPageBodyClass;
+          }
         }
       }
 
@@ -459,7 +500,10 @@ class WebropolSPA {
         this.loadedExternalScripts.add(abs);
         this.pageScriptNodes.push(script);
       } else if (content) {
-        // Always execute inline scripts, especially Tailwind configs and page logic
+        // Skip re-defining Tailwind CDN config during SPA loads to prevent style resets
+        const isTailwindConfig = /tailwind\.config\s*=/.test(content);
+        if (isTailwindConfig) continue;
+        // Execute other inline scripts (page logic, small helpers)
         const script = document.createElement('script');
         if (isModule) script.type = 'module';
         script.textContent = content;
@@ -543,16 +587,23 @@ class WebropolSPA {
   cleanupContainerAttributes() {
     try {
       if (!this.container) return;
-      // Remove Alpine.js and page-specific attributes
+      // Remove Alpine.js and previous page-specific attributes (but preserve shell class/style)
       const attrsToRemove = [];
       Array.from(this.container.attributes).forEach(attr => {
-        if (attr.name.startsWith('x-') || attr.name.startsWith('data-spa-') || attr.name === 'class' || attr.name === 'style') {
+        if (attr.name.startsWith('x-') || attr.name.startsWith('data-spa-')) {
           attrsToRemove.push(attr.name);
         }
       });
       attrsToRemove.forEach(name => {
         this.container.removeAttribute(name);
       });
+
+      // Also remove previously added per-page body classes if any
+      const prev = this.container.dataset.spaPageBodyClass || '';
+      if (prev) {
+        prev.split(/\s+/).filter(Boolean).forEach(c => this.container.classList.remove(c));
+        delete this.container.dataset.spaPageBodyClass;
+      }
     } catch (e) {
       // noop
     }
