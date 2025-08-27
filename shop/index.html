@@ -24,88 +24,224 @@
             'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
             'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            'glow': '0 0 20px rgba(6, 182, 212, 0.3)',
+            'glow-lg': '0 0 40px rgba(6, 182, 212, 0.2)',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.6s ease-out',
+            'bounce-subtle': 'bounceSubtle 0.6s ease-out',
+            'glow-pulse': 'glowPulse 2s ease-in-out infinite',
           }
         }
       }
     }
   </script>
   <link href="../design-system/styles/animations.css" rel="stylesheet">
+  
   <style>
-    .glass-effect {
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.9);
+    /* Custom animations for the redesigned shop */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
-    .premium-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounceSubtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.5); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    /* Modern glass effect */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       box-shadow: 
         0 8px 32px rgba(6, 182, 212, 0.1),
         0 1px 2px rgba(0, 0, 0, 0.05),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
     
-    .premium-card:hover {
-      transform: translateY(-8px) scale(1.02);
+    /* Hover animations */
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-12px) scale(1.02) rotateX(5deg);
       box-shadow: 
         0 25px 50px rgba(6, 182, 212, 0.15),
         0 10px 20px rgba(0, 0, 0, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
     
+    /* Icon glow effect */
     .icon-glow {
       box-shadow: 
-        0 0 20px rgba(6, 182, 212, 0.3),
-        0 0 40px rgba(6, 182, 212, 0.1),
+        0 0 20px rgba(6, 182, 212, 0.4),
+        0 0 40px rgba(6, 182, 212, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
     }
     
-    .nav-pill {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .nav-pill.active {
-      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-      border: 1px solid rgba(6, 182, 212, 0.3);
-    }
-    
-    .nav-pill:hover {
-      background: rgba(6, 182, 212, 0.1);
-      transform: translateY(-1px);
-    }
-    
-    .pricing-badge {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
-      border: 1px solid rgba(6, 182, 212, 0.2);
-    }
-    
-    .cta-button {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    .icon-glow:hover {
       box-shadow: 
-        0 4px 15px rgba(15, 23, 42, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        0 0 30px rgba(6, 182, 212, 0.6),
+        0 0 60px rgba(6, 182, 212, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transform: scale(1.1) rotate(5deg);
     }
     
-    .cta-button:hover {
-      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-      transform: translateY(-1px);
+    /* Gradient button */
+    .gradient-button {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0891b2 100%);
+      background-size: 200% 200%;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gradient-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .gradient-button:hover {
+      background-position: 100% 0%;
+      transform: translateY(-2px);
       box-shadow: 
         0 8px 25px rgba(6, 182, 212, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
     
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .gradient-button:hover::before {
+      left: 100%;
     }
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
+    
+    /* Pricing badge */
+    .pricing-badge {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .pricing-badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .card-hover:hover .pricing-badge::before {
+      left: 100%;
+    }
+    
+    /* Category filter pills */
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .filter-pill:hover {
+      background: rgba(6, 182, 212, 0.1);
+      border-color: rgba(6, 182, 212, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .filter-pill.active {
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    
+    /* Stats counter animation */
+    .stat-number {
+      background: linear-gradient(45deg, #06b6d4, #0891b2, #06b6d4);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    /* Floating elements */
+    .float-animation {
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    /* Enhanced search bar */
+    .search-bar {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .search-bar:focus-within {
+      background: rgba(255, 255, 255, 1);
+      border-color: rgba(6, 182, 212, 0.5);
+      box-shadow: 
+        0 0 0 4px rgba(6, 182, 212, 0.1),
+        0 8px 25px rgba(6, 182, 212, 0.15);
+    }
+    
+    /* Module category icons */
+    .category-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .analytics-icon { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+    .ai-icon { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+    .assessment-icon { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+    .mobile-icon { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .case-icon { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+    .bi-icon { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+    
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .card-hover:hover {
+        transform: translateY(-6px) scale(1.01);
+      }
     }
   </style>
   <!-- Remove global app sidebar for shop; use dedicated shop sidebar instead -->
@@ -119,190 +255,182 @@
   <script src="./shop-sidebar.js" type="module"></script>
   <script src="./header-guard.js"></script>
 </head>
-<body x-data="{ createDropdownOpen: false }">
-  <div class="flex h-screen">
+<body x-data="shopStore()" class="bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 min-h-screen">
+  <!-- Background decoration -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-teal-200 to-blue-200 rounded-full opacity-20 float-animation"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-15 float-animation" style="animation-delay: -3s;"></div>
+    <div class="absolute top-1/2 right-1/4 w-64 h-64 bg-gradient-to-br from-orange-200 to-yellow-200 rounded-full opacity-10 float-animation" style="animation-delay: -6s;"></div>
+  </div>
+
+  <div class="flex h-screen relative z-10">
     <div class="flex-1 flex flex-col overflow-hidden xl:ml-0 ml-0">
       <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
-    <div class="bg-white/70 backdrop-blur">
+      
+      <div class="bg-white/70 backdrop-blur-sm border-b border-white/20">
         <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"MyWebropol","url":"../mywebropol/index.html"},{"label":"Shop","url":"index.html"}]'></webropol-breadcrumbs>
       </div>
-      <main class="flex-1 overflow-y-auto min-h-screen">
-        <div class="relative z-10">
-          <div class="flex gap-6">
+      
+      <main class="flex-1 overflow-y-auto">
+        <div class="flex gap-6 h-full">
+          <!-- Modern Sidebar -->
+          <div class="hidden lg:block">
             <shop-sidebar></shop-sidebar>
-            <div class="flex-1 min-w-0">
-              <div class="max-w-12xl mx-auto">
-                <!-- Premium Navigation -->
-                <div class="sticky top-0 z-50">
-                  <div class="px-3 lg:px-4 py-3">
-              <!-- Main Navigation -->
-              <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center space-x-3">
-                  <div class="w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg flex items-center justify-center">
-                    <i class="fal fa-shopping-bag text-white text-sm"></i>
+          </div>
+          
+          <!-- Main Content -->
+          <div class="flex-1 min-w-0 px-4 lg:px-6 py-6">
+            <!-- Hero Section -->
+            <div class="glass-card rounded-3xl p-8 mb-8 animate-fade-in">
+              <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div class="text-center lg:text-left">
+                  <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-teal-700 to-slate-900 bg-clip-text text-transparent mb-4">
+                    Modules & Add-ons
+                  </h1>
+                  <p class="text-lg text-slate-600 mb-6 max-w-2xl">
+                    Enhance your Webropol experience with powerful modules designed to unlock deeper insights and streamline your workflows.
+                  </p>
+                  
+                  <!-- Stats -->
+                  <div class="flex flex-wrap justify-center lg:justify-start gap-6">
+                    <div class="text-center">
+                      <div class="text-3xl font-bold stat-number">8</div>
+                      <div class="text-sm text-slate-500">Modules Available</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-3xl font-bold stat-number">60€</div>
+                      <div class="text-sm text-slate-500">Starting From</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-3xl font-bold stat-number">24/7</div>
+                      <div class="text-sm text-slate-500">Support</div>
+                    </div>
                   </div>
-                  <h1 class="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Modules</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                  <div class="text-sm text-slate-600">8 modules available</div>
-                  <button class="px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full text-sm text-slate-600 hover:bg-white/80 transition-all">
-                    <i class="fal fa-filter mr-2"></i>Filter
+                
+                <!-- Search & Filters -->
+                <div class="w-full lg:w-auto lg:min-w-[300px]">
+                  <div class="search-bar rounded-2xl p-4 mb-4">
+                    <div class="flex items-center gap-3">
+                      <i class="fal fa-search text-slate-400"></i>
+                      <input 
+                        type="text" 
+                        placeholder="Search modules..." 
+                        x-model="searchQuery"
+                        class="flex-1 bg-transparent border-none outline-none text-slate-700 placeholder-slate-400"
+                      >
+                    </div>
+                  </div>
+                  
+                  <!-- Category Filters -->
+                  <div class="flex flex-wrap gap-2">
+                    <template x-for="category in categories" :key="category.id">
+                      <button 
+                        @click="activeCategory = category.id"
+                        :class="{'active': activeCategory === category.id}"
+                        class="filter-pill px-4 py-2 rounded-full text-sm font-medium"
+                        x-text="category.name">
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modules Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <template x-for="(module, index) in filteredModules" :key="module.id">
+                <div 
+                  class="glass-card card-hover rounded-3xl p-6 group cursor-pointer animate-slide-up"
+                  :style="`animation-delay: ${index * 0.1}s`"
+                  @click="openModule(module)"
+                >
+                  <!-- Status Indicator -->
+                  <div class="flex justify-between items-start mb-4">
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-glow-pulse"></div>
+                    <div class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full" x-text="module.category"></div>
+                  </div>
+                  
+                  <!-- Icon -->
+                  <div class="flex justify-center mb-6">
+                    <div 
+                      class="category-icon icon-glow"
+                      :class="getIconClass(module.category)"
+                    >
+                      <i :class="module.icon" class="text-2xl text-white"></i>
+                    </div>
+                  </div>
+                  
+                  <!-- Content -->
+                  <div class="text-center">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-teal-700 transition-colors" x-text="module.title"></h3>
+                    <p class="text-sm text-slate-600 mb-4 line-clamp-2" x-text="module.description"></p>
+                    
+                    <!-- Pricing -->
+                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-4">
+                      <span x-text="module.price"></span>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-1 mb-6">
+                      <template x-for="feature in module.features.slice(0, 2)" :key="feature">
+                        <div class="flex items-center justify-center gap-2 text-xs text-slate-500">
+                          <i class="fal fa-check text-green-500"></i>
+                          <span x-text="feature"></span>
+                        </div>
+                      </template>
+                    </div>
+                    
+                    <!-- CTA Button -->
+                    <button class="gradient-button w-full py-3 rounded-2xl text-white font-semibold text-sm transition-all">
+                      Learn More
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </div>
+            
+            <!-- Empty State -->
+            <div x-show="filteredModules.length === 0" class="text-center py-12 animate-fade-in">
+              <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center">
+                <i class="fal fa-search text-3xl text-slate-400"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-slate-700 mb-2">No modules found</h3>
+              <p class="text-slate-500 mb-4">Try adjusting your search or filter criteria</p>
+              <button @click="clearFilters()" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors">
+                Clear Filters
+              </button>
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-12 glass-card rounded-3xl p-8 text-center animate-fade-in">
+              <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center">
+                    <i class="fal fa-info-circle text-white text-xl"></i>
+                  </div>
+                  <div class="text-left">
+                    <h4 class="font-semibold text-slate-900">Need Help Choosing?</h4>
+                    <p class="text-slate-600 text-sm">Our team can help you find the perfect modules for your needs</p>
+                  </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <button class="px-6 py-3 bg-white border border-teal-200 text-teal-700 rounded-xl hover:bg-teal-50 transition-all">
+                    <i class="fal fa-phone mr-2"></i>
+                    Contact Sales
+                  </button>
+                  <button class="px-6 py-3 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-all">
+                    <i class="fal fa-play mr-2"></i>
+                    Watch Demo
                   </button>
                 </div>
               </div>
               
-
-          <!-- Premium Content -->
-          <div class="px-6 lg:px-8 py-10">
-            <!-- Module Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
-              
-              <!-- BI View -->
-              <a href="#/shop/products/bi-view" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-chart-bar text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">BI View</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 60 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- AI Text Analysis -->
-              <a href="#/shop/products/ai-text-analysis" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-search text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">AI Text Analysis</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 62.50 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- eTest -->
-              <a href="#/shop/products/etest" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-question-circle text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">eTest</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 60 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- 360 Assessments -->
-              <a href="#/shop/products/360-assessments" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-sync text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">360 Assessments</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 150 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- Direct -->
-              <a href="#/shop/products/direct-mobile-feedback" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-mobile-alt text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">Direct</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 50 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- Analytics -->
-              <a href="#/shop/products/analytics" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-chart-line text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">Analytics</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 130 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- Case Management -->
-              <a href="#/shop/products/case-management" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-tasks text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">Case Management</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 130 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-              <!-- WOTT additional module -->
-              <a href="#/shop/products/wott" class="premium-card group rounded-3xl p-8 transition-all duration-500 cursor-pointer relative overflow-hidden block">
-                <div class="absolute top-4 right-4 w-2 h-2 bg-green-400 rounded-full shadow-lg shadow-green-400/50"></div>
-                <div class="flex flex-col h-full">
-                  <div class="icon-glow w-16 h-16 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-110">
-                    <i class="fal fa-cube text-2xl text-white"></i>
-                  </div>
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors">WOTT additional module</h3>
-                    <div class="pricing-badge inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-teal-700 mb-6">
-                      from 49 € / month
-                    </div>
-                  </div>
-          <div class="cta-button w-full py-4 rounded-2xl text-white font-semibold text-sm text-center">Learn more</div>
-                </div>
-        </a>
-
-            </div>
-
-            <!-- Premium Footer -->
-            <div class="mt-20 text-center">
-              <div class="inline-flex items-center space-x-2 px-6 py-3 bg-white/40 backdrop-blur-sm rounded-full text-sm text-slate-600">
-                <i class="fal fa-info-circle text-teal-500"></i>
-                <span>Prices excluding VAT</span>
-              </div>
-            </div>
-          </div>
+              <div class="mt-6 pt-6 border-t border-slate-200">
+                <p class="text-sm text-slate-500">
+                  <i class="fal fa-shield-check text-teal-500 mr-2"></i>
+                  All prices exclude VAT • 30-day money-back guarantee • Enterprise discounts available
+                </p>
               </div>
             </div>
           </div>
@@ -346,5 +474,156 @@
       }
     ]'>
   </webropol-floating-button>
-</body>
-</html>
+
+  <script>
+    function shopStore() {
+      return {
+        searchQuery: '',
+        activeCategory: 'all',
+        
+        categories: [
+          { id: 'all', name: 'All' },
+          { id: 'analytics', name: 'Analytics' },
+          { id: 'ai', name: 'AI & ML' },
+          { id: 'assessment', name: 'Assessment' },
+          { id: 'mobile', name: 'Mobile' },
+          { id: 'case', name: 'Case Mgmt' }
+        ],
+        
+        modules: [
+          {
+            id: 'bi-view',
+            title: 'BI View',
+            description: 'Powerful dashboards and insights with advanced analytics and custom reporting capabilities.',
+            price: 'from 60 € / month',
+            category: 'analytics',
+            icon: 'fal fa-chart-bar',
+            features: ['Real-time dashboards', 'Custom reports', 'Data visualization', 'Export options'],
+            url: 'products/bi-view.html'
+          },
+          {
+            id: 'ai-text-analysis',
+            title: 'AI Text Analysis',
+            description: 'Advanced AI-powered text analysis for sentiment analysis, topic modeling, and insights extraction.',
+            price: 'from 62.50 € / month',
+            category: 'ai',
+            icon: 'fal fa-brain',
+            features: ['Sentiment analysis', 'Topic modeling', 'Auto categorization', 'Multi-language support'],
+            url: 'products/ai-text-analysis.html'
+          },
+          {
+            id: 'etest',
+            title: 'eTest',
+            description: 'Comprehensive testing and evaluation platform with advanced question types and scoring.',
+            price: 'from 60 € / month',
+            category: 'assessment',
+            icon: 'fal fa-question-circle',
+            features: ['Advanced question types', 'Auto scoring', 'Detailed analytics', 'Certification support'],
+            url: 'products/etest.html'
+          },
+          {
+            id: '360-assessments',
+            title: '360 Assessments',
+            description: 'Multi-perspective evaluation system for comprehensive performance and feedback analysis.',
+            price: 'from 150 € / month',
+            category: 'assessment',
+            icon: 'fal fa-sync',
+            features: ['Multi-rater feedback', 'Development planning', 'Competency mapping', 'Progress tracking'],
+            url: 'products/360-assessments.html'
+          },
+          {
+            id: 'direct',
+            title: 'Direct',
+            description: 'Mobile-first feedback collection with real-time notifications and instant insights.',
+            price: 'from 50 € / month',
+            category: 'mobile',
+            icon: 'fal fa-mobile-alt',
+            features: ['Mobile-optimized', 'Real-time feedback', 'Push notifications', 'Offline capability'],
+            url: 'products/direct-mobile-feedback.html'
+          },
+          {
+            id: 'analytics',
+            title: 'Analytics',
+            description: 'Advanced statistical analysis and data science tools for deep insights and predictive modeling.',
+            price: 'from 130 € / month',
+            category: 'analytics',
+            icon: 'fal fa-chart-line',
+            features: ['Statistical analysis', 'Predictive modeling', 'Data mining', 'Advanced visualizations'],
+            url: 'products/analytics.html'
+          },
+          {
+            id: 'case-management',
+            title: 'Case Management',
+            description: 'Comprehensive case and workflow management system with automation and tracking capabilities.',
+            price: 'from 130 € / month',
+            category: 'case',
+            icon: 'fal fa-tasks',
+            features: ['Workflow automation', 'Case tracking', 'Team collaboration', 'SLA management'],
+            url: 'products/case-management.html'
+          },
+          {
+            id: 'wott',
+            title: 'WOTT Module',
+            description: 'Specialized workflow optimization and task tracking module for enhanced productivity.',
+            price: 'from 49 € / month',
+            category: 'case',
+            icon: 'fal fa-cog',
+            features: ['Task automation', 'Workflow optimization', 'Performance tracking', 'Integration support'],
+            url: 'products/wott.html'
+          }
+        ],
+        
+        get filteredModules() {
+          let filtered = this.modules;
+          
+          // Filter by category
+          if (this.activeCategory !== 'all') {
+            filtered = filtered.filter(module => module.category === this.activeCategory);
+          }
+          
+          // Filter by search query
+          if (this.searchQuery) {
+            const query = this.searchQuery.toLowerCase();
+            filtered = filtered.filter(module => 
+              module.title.toLowerCase().includes(query) ||
+              module.description.toLowerCase().includes(query) ||
+              module.features.some(feature => feature.toLowerCase().includes(query))
+            );
+          }
+          
+          return filtered;
+        },
+        
+        getIconClass(category) {
+          const classes = {
+            'analytics': 'analytics-icon',
+            'ai': 'ai-icon',
+            'assessment': 'assessment-icon',
+            'mobile': 'mobile-icon',
+            'case': 'case-icon'
+          };
+          return classes[category] || 'bi-icon';
+        },
+        
+        openModule(module) {
+          // Add click animation
+          const event = new Event('click');
+          window.location.href = module.url;
+        },
+        
+        clearFilters() {
+          this.searchQuery = '';
+          this.activeCategory = 'all';
+        }
+      }
+    }
+    
+    // Add staggered animation to cards on load
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card-hover');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('animate-slide-up');
+      });
+    });
+  </script>

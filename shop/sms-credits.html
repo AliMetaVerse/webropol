@@ -8,96 +8,452 @@
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
-    tailwind.config = { theme: { extend: { colors: { teal: { 50:'#f0fdfa',100:'#ccfbf1',200:'#99f6e4',500:'#14b8a6',600:'#0d9488',700:'#0f766e' } } } } };
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            'glow': '0 0 20px rgba(6, 182, 212, 0.3)',
+            'glow-lg': '0 0 40px rgba(6, 182, 212, 0.2)',
+          }
+        }
+      }
+    }
   </script>
   <link href="../design-system/styles/animations.css" rel="stylesheet">
-  <link href="../design-system/styles/shop-shared.css" rel="stylesheet">
+  
+  <style>
+    /* Modern glass card styling */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 
+        0 8px 32px rgba(6, 182, 212, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Enhanced animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(251, 146, 60, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(251, 146, 60, 0.5); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .animate-pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    /* Credit package cards */
+    .credit-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .credit-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(251, 146, 60, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .credit-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 15px 30px rgba(251, 146, 60, 0.15);
+    }
+    
+    .credit-card.selected {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.05) 0%, rgba(251, 146, 60, 0.02) 100%);
+    }
+    
+    .credit-card:hover::before {
+      left: 100%;
+    }
+    
+    /* Popular badge */
+    .popular-badge {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      position: absolute;
+      top: -8px;
+      right: 20px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    }
+    
+    /* Gradient buttons */
+    .gradient-btn {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gradient-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .gradient-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    }
+    
+    .gradient-btn:hover::before {
+      left: 100%;
+    }
+    
+    /* Usage calculator */
+    .calculator-card {
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(251, 146, 60, 0.05) 100%);
+      border: 2px solid rgba(251, 146, 60, 0.2);
+    }
+    
+    /* Statistics animation */
+    .stat-number {
+      background: linear-gradient(45deg, #f59e0b, #d97706, #f59e0b);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    /* Radio button styling */
+    .custom-radio {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #cbd5e1;
+      border-radius: 50%;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .custom-radio:checked {
+      border-color: #f59e0b;
+      background: #f59e0b;
+    }
+    
+    .custom-radio:checked::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+  </style>
+  
   <script type="module" src="../design-system/components/navigation/Header.js"></script>
   <script type="module" src="../design-system/components/navigation/Breadcrumbs.js"></script>
   <script type="module" src="../design-system/utils/global-settings-manager.js"></script>
   <script type="module" src="./shop-sidebar.js"></script>
   <script src="./header-guard.js"></script>
 </head>
-<body>
-  <div class="flex min-h-screen">
+<body class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 min-h-screen" x-data="smsStore()">
+  <!-- Background decoration -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-200 to-yellow-200 rounded-full opacity-20 animate-pulse-glow"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-amber-200 to-orange-200 rounded-full opacity-15 animate-pulse-glow" style="animation-delay: -1.5s;"></div>
+  </div>
+
+  <div class="flex min-h-screen relative z-10">
     <div class="flex-1 flex flex-col">
       <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
-  <div class="flex flex-1 min-h-screen">
+      
+      <div class="flex">
         <shop-sidebar></shop-sidebar>
-        <main class="flex-1">
-          <div class="bg-white/70 backdrop-blur">
-            <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Shop","url":"/shop/index.html"},{"label":"SMS Credits","url":"#"}]'></webropol-breadcrumbs>
+        
+        <main class="flex-1 px-6 py-8">
+          <div class="bg-white/70 backdrop-blur-sm rounded-2xl mb-6">
+            <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Shop","url":"index.html"},{"label":"SMS Credits","url":"#"}]'></webropol-breadcrumbs>
           </div>
-          <div class="max-w-7xl mx-auto px-6 lg:px-8 py-10" x-data="{ amount: '1000' }">
-            <h1 class="text-3xl font-bold text-slate-900 mb-6">SMS credits – also for 2‑way SMS surveys</h1>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <section class="lg:col-span-2 space-y-3">
-                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-white">
-                  <div class="divide-y divide-slate-200">
-                    <label class="flex items-center justify-between p-4 cursor-pointer hover:bg-teal-50/40">
-                      <div class="flex items-center gap-3">
-                        <input type="radio" name="pkg" value="1000" x-model="amount" class="text-teal-600">
-                        <span class="font-medium">1000</span>
-                      </div>
-                      <div class="flex items-center gap-3">
-                        <span class="text-slate-600">140,00 € + VAT</span>
-                        <button class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm">Add to order</button>
-                      </div>
-                    </label>
-                    <label class="flex items-center justify-between p-4 cursor-pointer hover:bg-teal-50/40">
-                      <div class="flex items-center gap-3">
-                        <input type="radio" name="pkg" value="2000" x-model="amount" class="text-teal-600">
-                        <span class="font-medium">2000</span>
-                      </div>
-                      <div class="text-slate-600">280,00 € + VAT</div>
-                    </label>
-                    <label class="flex items-center justify-between p-4 cursor-pointer hover:bg-teal-50/40">
-                      <div class="flex items-center gap-3">
-                        <input type="radio" name="pkg" value="5000" x-model="amount" class="text-teal-600">
-                        <span class="font-medium">5000</span>
-                      </div>
-                      <div class="text-slate-600">700,00 € + VAT</div>
-                    </label>
-                    <label class="flex items-center justify-between p-4 cursor-pointer hover:bg-teal-50/40">
-                      <div class="flex items-center gap-3">
-                        <input type="radio" name="pkg" value="10000" x-model="amount" class="text-teal-600">
-                        <span class="font-medium">10000</span>
-                      </div>
-                      <div class="text-slate-600">1 400,00 € + VAT</div>
-                    </label>
-                    <div class="p-4">
-                      <label class="text-sm text-slate-700">Other amount</label>
-                      <div class="mt-2 flex gap-2">
-                        <input type="number" min="100" step="100" placeholder="Amount" class="w-40 rounded-lg border-slate-300 focus:border-teal-500 focus:ring-teal-500" />
-                        <button class="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">Add</button>
-                      </div>
+          
+          <div class="max-w-7xl mx-auto">
+            <!-- Hero Section -->
+            <div class="glass-card rounded-3xl p-8 mb-8 animate-fade-in-up">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center animate-pulse-glow">
+                      <i class="fal fa-sms text-2xl text-white"></i>
+                    </div>
+                    <div>
+                      <h1 class="text-4xl font-bold bg-gradient-to-r from-slate-900 to-orange-700 bg-clip-text text-transparent">SMS Credits</h1>
+                      <p class="text-orange-600 font-medium">Professional SMS Solutions</p>
+                    </div>
+                  </div>
+                  
+                  <p class="text-xl text-slate-600 mb-6 leading-relaxed">
+                    Reach your audience directly with SMS campaigns and 2-way SMS surveys. Choose from flexible credit packages that never expire.
+                  </p>
+                  
+                  <!-- Key Statistics -->
+                  <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="text-center p-4 glass-card rounded-2xl">
+                      <div class="text-2xl font-bold stat-number">99%</div>
+                      <div class="text-sm text-slate-600">Delivery Rate</div>
+                    </div>
+                    <div class="text-center p-4 glass-card rounded-2xl">
+                      <div class="text-2xl font-bold stat-number">5s</div>
+                      <div class="text-sm text-slate-600">Avg. Delivery</div>
+                    </div>
+                    <div class="text-center p-4 glass-card rounded-2xl">
+                      <div class="text-2xl font-bold stat-number">200+</div>
+                      <div class="text-sm text-slate-600">Countries</div>
                     </div>
                   </div>
                 </div>
-                <div class="rounded-xl bg-teal-50 border border-teal-100 p-4 text-teal-800 flex items-start gap-3">
-                  <i class="fal fa-info-circle mt-1"></i>
-                  <p class="text-sm">SMS credits can be transferred to another user if necessary, in the MyWebropol section. Unused SMS credits will not be refunded.</p>
+                
+                <!-- Quick Calculator -->
+                <div class="calculator-card rounded-3xl p-6">
+                  <h3 class="text-xl font-bold text-slate-900 mb-4">Calculate Your Needs</h3>
+                  
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-slate-700 mb-2">Monthly SMS volume</label>
+                      <input 
+                        type="number" 
+                        x-model="monthlyVolume" 
+                        @input="calculateSuggestion()"
+                        class="w-full rounded-xl border-orange-200 focus:border-orange-500 focus:ring-orange-500"
+                        placeholder="1000"
+                      >
+                    </div>
+                    
+                    <div class="bg-white/70 rounded-xl p-4 text-center">
+                      <div class="text-sm text-slate-600 mb-1">Recommended package</div>
+                      <div class="text-2xl font-bold text-orange-600" x-text="suggestedPackage"></div>
+                      <div class="text-sm text-slate-500 mt-1">≈ €<span x-text="suggestedCost"></span></div>
+                    </div>
+                  </div>
                 </div>
-                <div class="bg-white rounded-2xl border border-slate-200 p-6">
-                  <h2 class="font-semibold text-slate-900 mb-2">SMS‑Surveys</h2>
-                  <ul class="list-disc ml-5 text-slate-700 text-sm space-y-1">
-                    <li>Send a link to the survey via SMS to the respondent.</li>
-                    <li>Perceived as a more personal approach.</li>
-                    <li>Reliable and secure delivery to your customer.</li>
-                    <li>Use when email is not enough.</li>
-                    <li>Reminder email might get lost in the email.</li>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <!-- Credit Packages -->
+              <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6">Choose Your Package</h2>
+                
+                <div class="space-y-4 mb-8">
+                  <template x-for="(pkg, index) in packages" :key="pkg.id">
+                    <div 
+                      class="credit-card glass-card rounded-2xl p-6 cursor-pointer"
+                      :class="{'selected': selectedPackage === pkg.id}"
+                      @click="selectPackage(pkg.id)"
+                      :style="`animation-delay: ${index * 0.1}s`"
+                    >
+                      <div x-show="pkg.popular" class="popular-badge">
+                        <i class="fal fa-star mr-1"></i>Most Popular
+                      </div>
+                      
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                          <input 
+                            type="radio" 
+                            :name="'package'" 
+                            :value="pkg.id"
+                            x-model="selectedPackage"
+                            class="custom-radio"
+                          >
+                          <div>
+                            <div class="flex items-center gap-3 mb-1">
+                              <span class="text-xl font-bold text-slate-900" x-text="pkg.credits.toLocaleString()"></span>
+                              <span class="text-sm text-slate-500">SMS credits</span>
+                            </div>
+                            <div class="text-sm text-slate-600" x-text="pkg.description"></div>
+                          </div>
+                        </div>
+                        
+                        <div class="text-right">
+                          <div class="text-2xl font-bold text-orange-600">€<span x-text="pkg.price"></span></div>
+                          <div class="text-sm text-slate-500">+ VAT</div>
+                          <div class="text-xs text-slate-400 mt-1">€<span x-text="pkg.perSMS"></span> per SMS</div>
+                        </div>
+                      </div>
+                      
+                      <div class="mt-4 pt-4 border-t border-slate-200">
+                        <div class="flex flex-wrap gap-2">
+                          <template x-for="feature in pkg.features" :key="feature">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                              <i class="fal fa-check text-orange-600"></i>
+                              <span x-text="feature"></span>
+                            </span>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Custom Amount -->
+                <div class="glass-card rounded-2xl p-6">
+                  <h3 class="text-lg font-semibold text-slate-900 mb-4">Need a Custom Amount?</h3>
+                  <div class="flex gap-4">
+                    <input 
+                      type="number" 
+                      x-model="customAmount"
+                      min="100" 
+                      step="100" 
+                      placeholder="Enter amount (min. 100)" 
+                      class="flex-1 rounded-xl border-slate-300 focus:border-orange-500 focus:ring-orange-500"
+                    >
+                    <button 
+                      @click="addCustomPackage()"
+                      class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition-colors"
+                      :disabled="!customAmount || customAmount < 100"
+                    >
+                      Add Package
+                    </button>
+                  </div>
+                  <p class="text-sm text-slate-500 mt-2">Minimum order: 100 credits • Volume discounts available for 10,000+ credits</p>
+                </div>
+
+                <!-- Info Section -->
+                <div class="mt-8 glass-card rounded-2xl p-6">
+                  <h3 class="text-lg font-semibold text-slate-900 mb-4">SMS Survey Features</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <ul class="space-y-3 text-sm text-slate-700">
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>Send survey links via SMS to respondents</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>More personal approach than email</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>Reliable and secure delivery</span>
+                      </li>
+                    </ul>
+                    <ul class="space-y-3 text-sm text-slate-700">
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>Perfect when email isn't enough</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>Avoid lost reminder emails</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <i class="fal fa-check text-green-500 mt-0.5"></i>
+                        <span>Real-time delivery reports</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sidebar -->
+              <aside class="space-y-6">
+                <!-- Selected Package -->
+                <div class="glass-card rounded-2xl p-6 sticky top-6">
+                  <h3 class="text-lg font-semibold text-slate-900 mb-4">Order Summary</h3>
+                  
+                  <div x-show="selectedPackage">
+                    <div class="text-center mb-6">
+                      <div class="text-3xl font-bold text-orange-600" x-text="getSelectedPackage()?.credits?.toLocaleString() + ' Credits'"></div>
+                      <div class="text-lg font-semibold text-slate-900 mt-1">€<span x-text="getSelectedPackage()?.price"></span> + VAT</div>
+                      <div class="text-sm text-slate-500">€<span x-text="getSelectedPackage()?.perSMS"></span> per SMS</div>
+                    </div>
+                    
+                    <button 
+                      @click="addToCart()"
+                      class="gradient-btn w-full py-4 rounded-2xl text-white font-semibold mb-4"
+                    >
+                      <i class="fal fa-shopping-cart mr-2"></i>Add to Order
+                    </button>
+                  </div>
+                  
+                  <div x-show="!selectedPackage" class="text-center py-8 text-slate-500">
+                    <i class="fal fa-package text-3xl mb-3 opacity-50"></i>
+                    <p>Select a package to continue</p>
+                  </div>
+                  
+                  <div class="text-xs text-slate-500 text-center">
+                    <i class="fal fa-shield-check mr-1"></i>
+                    Credits never expire • Secure payment
+                  </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="glass-card rounded-2xl p-6">
+                  <h3 class="font-semibold text-slate-900 mb-3">Need 2-Way SMS Surveys?</h3>
+                  <p class="text-slate-600 text-sm mb-4">Contact our team for advanced SMS survey features and custom solutions.</p>
+                  <a 
+                    href="mailto:sales@webropol.com" 
+                    class="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 text-sm font-medium"
+                  >
+                    <i class="fal fa-envelope"></i>
+                    sales@webropol.com
+                  </a>
+                </div>
+
+                <!-- Trust Indicators -->
+                <div class="glass-card rounded-2xl p-6">
+                  <h3 class="font-semibold text-slate-900 mb-4">Why Choose Our SMS?</h3>
+                  <ul class="space-y-3 text-sm">
+                    <li class="flex items-center gap-3">
+                      <i class="fal fa-shield-check text-green-500"></i>
+                      <span class="text-slate-700">GDPR Compliant</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                      <i class="fal fa-clock text-green-500"></i>
+                      <span class="text-slate-700">Instant Delivery</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                      <i class="fal fa-globe text-green-500"></i>
+                      <span class="text-slate-700">Global Coverage</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                      <i class="fal fa-chart-line text-green-500"></i>
+                      <span class="text-slate-700">Real-time Analytics</span>
+                    </li>
                   </ul>
-                </div>
-              </section>
-              <aside>
-                <div class="rounded-2xl border border-slate-200 bg-white p-6">
-                  <div class="text-sm text-slate-500 mb-2">Selected package</div>
-                  <div class="text-2xl font-semibold text-teal-700" x-text="amount + ' credits'"></div>
-                  <button class="mt-4 w-full bg-gradient-to-r from-teal-600 to-teal-500 text-white font-medium py-3 rounded-lg hover:shadow-lg">Add to order</button>
-                  <p class="text-xs text-slate-500 mt-4">Prices exclude VAT</p>
-                </div>
-                <div class="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-600">
-                  Looking for 2‑way SMS survey? Contact <a class="text-teal-700 underline" href="mailto:sales@webropol.com">sales@webropol.com</a>.
                 </div>
               </aside>
             </div>
@@ -106,5 +462,102 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function smsStore() {
+      return {
+        selectedPackage: '',
+        monthlyVolume: 1000,
+        suggestedPackage: '1000 Credits',
+        suggestedCost: 140,
+        customAmount: '',
+        
+        packages: [
+          {
+            id: '1000',
+            credits: 1000,
+            price: 140,
+            perSMS: '0.140',
+            description: 'Perfect for small campaigns',
+            popular: false,
+            features: ['Basic analytics', 'Delivery reports', 'Standard support']
+          },
+          {
+            id: '2000',
+            credits: 2000,
+            price: 280,
+            perSMS: '0.140',
+            description: 'Great for regular communication',
+            popular: true,
+            features: ['Advanced analytics', 'Priority support', 'Custom sender ID']
+          },
+          {
+            id: '5000',
+            credits: 5000,
+            price: 700,
+            perSMS: '0.140',
+            description: 'Ideal for marketing campaigns',
+            popular: false,
+            features: ['Full analytics', 'Dedicated support', 'Bulk operations']
+          },
+          {
+            id: '10000',
+            credits: 10000,
+            price: 1400,
+            perSMS: '0.140',
+            description: 'Enterprise-level messaging',
+            popular: false,
+            features: ['Enterprise features', '24/7 support', 'Custom integrations']
+          }
+        ],
+        
+        selectPackage(packageId) {
+          this.selectedPackage = packageId;
+        },
+        
+        getSelectedPackage() {
+          return this.packages.find(pkg => pkg.id === this.selectedPackage);
+        },
+        
+        calculateSuggestion() {
+          if (this.monthlyVolume <= 1000) {
+            this.suggestedPackage = '1000 Credits';
+            this.suggestedCost = 140;
+          } else if (this.monthlyVolume <= 2000) {
+            this.suggestedPackage = '2000 Credits';
+            this.suggestedCost = 280;
+          } else if (this.monthlyVolume <= 5000) {
+            this.suggestedPackage = '5000 Credits';
+            this.suggestedCost = 700;
+          } else {
+            this.suggestedPackage = '10000 Credits';
+            this.suggestedCost = 1400;
+          }
+        },
+        
+        addCustomPackage() {
+          if (this.customAmount && this.customAmount >= 100) {
+            const cost = this.customAmount * 0.140;
+            console.log(`Custom package: ${this.customAmount} credits for €${cost}`);
+            // Here you would add the custom package to cart
+          }
+        },
+        
+        addToCart() {
+          const selected = this.getSelectedPackage();
+          if (selected) {
+            console.log('Adding to cart:', selected);
+            // Here you would integrate with your cart/checkout system
+          }
+        },
+        
+        init() {
+          this.calculateSuggestion();
+          // Auto-select the most popular package
+          this.selectedPackage = '2000';
+        }
+      }
+    }
+  </script>
 </body>
 </html>
