@@ -11,7 +11,7 @@ class ShopSidebar extends HTMLElement {
 
     // Build modern sidebar markup with enhanced styling and animations
     this.innerHTML = `
-      <aside class="hidden lg:block w-80 shrink-0 sticky top-6 h-[calc(100vh-120px)] animate-fade-in">
+      <aside class="hidden lg:block w-80 shrink-0 sticky top-6 h-[calc(100vh-120px)]">
         <div class="glass-card rounded-3xl p-6 h-full flex flex-col">
           <!-- Header -->
           <div class="flex items-center gap-3 mb-8">
@@ -61,15 +61,15 @@ class ShopSidebar extends HTMLElement {
             <!-- SMS Credits Section -->
             <div>
               <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">SMS Credits</h3>
-              <a href="#/shop/sms-credits" class="group flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-300 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' : 'hover:bg-orange-50 text-slate-700 hover:text-orange-700'}">
-                <div class="w-10 h-10 rounded-xl ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-white/20' : 'bg-orange-100 group-hover:bg-orange-200'} flex items-center justify-center transition-all">
+              <a href="#/shop/sms-credits" class="group flex items-center gap-3 rounded-2xl px-4 py-3 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg' : 'hover:bg-orange-50 text-slate-700 hover:text-orange-700'}">
+                <div class="w-10 h-10 rounded-xl ${/#\/shop\/sms-credits$/.test(location.hash) ? 'bg-white/20' : 'bg-orange-100 group-hover:bg-orange-200'} flex items-center justify-center">
                   <i class="fal fa-sms ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-white' : 'text-orange-600'}"></i>
                 </div>
                 <div class="flex-1">
                   <span class="font-semibold block">Buy Credits</span>
                   <span class="text-xs opacity-75">SMS messaging</span>
                 </div>
-                <i class="fal fa-chevron-right text-xs opacity-50 group-hover:opacity-100 transition-opacity"></i>
+                <i class="fal fa-chevron-right text-xs opacity-50 group-hover:opacity-100"></i>
               </a>
             </div>
 
@@ -104,7 +104,6 @@ class ShopSidebar extends HTMLElement {
         }
         
         .nav-item {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
         }
@@ -117,15 +116,6 @@ class ShopSidebar extends HTMLElement {
           width: 100%;
           height: 100%;
           background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-          transition: left 0.5s ease;
-        }
-        
-        .nav-item:hover::before {
-          left: 100%;
-        }
-        
-        .nav-item:hover {
-          transform: translateX(4px);
         }
         
         .nav-item.active {
@@ -138,7 +128,6 @@ class ShopSidebar extends HTMLElement {
           height: 8px;
           border-radius: 50%;
           flex-shrink: 0;
-          transition: all 0.3s ease;
         }
         
         .analytics-dot { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
@@ -146,15 +135,6 @@ class ShopSidebar extends HTMLElement {
         .assessment-dot { background: linear-gradient(135deg, #10b981, #059669); }
         .mobile-dot { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .case-dot { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateX(-20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 0.6s ease-out;
-        }
       </style>
     `;
   }
@@ -171,10 +151,10 @@ class ShopSidebar extends HTMLElement {
     return `
       <li>
         <a href="${href}" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${active ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
-          <div class="category-dot ${categoryDots[category] || 'analytics-dot'} group-hover:scale-125"></div>
+          <div class="category-dot ${categoryDots[category] || 'analytics-dot'}"></div>
           <i class="${icon} w-4 text-center ${active ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
           <span class="font-medium text-sm flex-1">${label}</span>
-          <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-opacity ${active ? 'opacity-100 text-teal-500' : ''}"></i>
+          <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${active ? 'opacity-100 text-teal-500' : ''}"></i>
         </a>
       </li>`;
   }
