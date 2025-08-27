@@ -65,9 +65,12 @@ class WebropolPromo extends BaseComponent {
   // Simple throttle: show once per route per session
   canShowNow() {
     try {
-      const store = JSON.parse(localStorage.getItem(this._lastShownKey) || '{}');
-      const key = this._route || '/';
-      return !store[key];
+  const store = JSON.parse(localStorage.getItem(this._lastShownKey) || '{}');
+  const key = this._route || '/';
+  const r = (key || '').toLowerCase();
+  // Always allow on Home and Shop pages
+  if (r === '/home' || r.startsWith('/home/') || r.startsWith('/shop')) return true;
+  return !store[key];
     } catch (_) { return true; }
   }
 
@@ -102,8 +105,9 @@ class WebropolPromo extends BaseComponent {
 
   pickModeForRoute(route) {
     const r = (route || '').toLowerCase();
-    if (r.startsWith('/shop')) return 'feedback'; // gathering shop feedback
-    if (r.startsWith('/design-system')) return 'feedback';
+  if (r.startsWith('/shop')) return 'feedback'; // Shop: gather feedback
+  if (r.startsWith('/home')) return 'feedback'; // Home: always feedback
+  if (r.startsWith('/design-system')) return 'feedback';
     // Default to eSales for functional sections
     return 'esales';
   }
@@ -271,8 +275,8 @@ class WebropolPromo extends BaseComponent {
                 <span>Extremely likely</span>
               </div>
               <div class="space-y-2">
-                <div class="flex items-center justify-between gap-1.5 sm:gap-2">${this.renderNpsRow(0,5)}</div>
-                <div class="flex items-center justify-between gap-1.5 sm:gap-2">${this.renderNpsRow(6,10)}</div>
+                <div class="flex items-center justify-center gap-1.5 sm:gap-2">${this.renderNpsRow(0,5)}</div>
+                <div class="flex items-center justify-center gap-1.5 sm:gap-2">${this.renderNpsRow(6,10)}</div>
               </div>
             </div>
           </div>
