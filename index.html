@@ -398,6 +398,47 @@
         body.mode-prompt webropol-sidebar {
             display: none !important;
         }
+
+        /* Continuous gradient overlay for cards */
+        .gradient-card {
+            position: relative;
+            overflow: hidden;
+            /* keep existing rounded corners and shadows from utility classes */
+        }
+        .gradient-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 0;
+            background: linear-gradient(120deg,
+                rgba(20, 184, 166, 0.14) 0%,   /* webropol-teal-500 */
+                rgba(99, 102, 241, 0.14) 50%,  /* royalBlue-500 */
+                rgba(139, 92, 246, 0.14) 100%  /* royalViolet-500 */
+            );
+            background-size: 300% 300%;
+            animation: gradientFlow 16s ease-in-out infinite;
+            animation-delay: var(--gradient-delay, 0s);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            will-change: background-position, transform, opacity;
+        }
+        .gradient-card:hover::before {
+            opacity: 0.22;
+            transform: scale(1.02);
+        }
+        .gradient-card > * {
+            position: relative;
+            z-index: 1; /* keep content above overlay */
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .gradient-card::before { animation: none; }
+        }
     </style>
     <script src="design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="design-system/components/navigation/Header.js" type="module"></script>
@@ -506,7 +547,7 @@
                         <h3 class="text-xl font-semibold mb-6 text-webropol-gray-900">Choose what you want to create</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
                             <!-- Card 1 -->
-                            <div class="rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            <div class="gradient-card rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105" style="--gradient-delay: 0s;">
                                 <i class="fa-solid fa-chart-bar text-4xl text-emerald-600 mb-4"></i>
                                 <div class="font-semibold text-lg text-gray-800 mb-2 text-center">Gain insight with surveys</div>
                                 <button class="mt-2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-full shadow hover:from-emerald-600 hover:to-teal-700 transition-all duration-200">
@@ -514,7 +555,7 @@
                                 </button>
                             </div>
                             <!-- Card 2 -->
-                            <div class="rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            <div class="gradient-card rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105" style="--gradient-delay: 0.4s;">
                                 <i class="fa-solid fa-calendar text-4xl text-orange-600 mb-4"></i>
                                 <div class="font-semibold text-lg text-gray-800 mb-2 text-center">Organise successful events</div>
                                 <button class="mt-2 px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold rounded-full shadow hover:from-orange-600 hover:to-amber-700 transition-all duration-200">
@@ -522,14 +563,14 @@
                                 </button>
                             </div>
                             <!-- Card 3 -->
-                            <div class="relative rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            <div class="gradient-card relative rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105" style="--gradient-delay: 0.8s;">
                                 <span class="absolute top-4 right-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs px-3 py-1 rounded-full shadow-lg">Popular</span>
                                 <i class="fa-solid fa-magnifying-glass-chart text-4xl text-purple-600 mb-4"></i>
                                 <div class="font-semibold text-lg text-gray-800 mb-2 text-center">AI Text Analysis</div>
                                 <a href="#" class="mt-2 text-purple-700 font-semibold hover:text-purple-800 transition-colors">Read more</a>
                             </div>
                             <!-- Card 4 -->
-                            <div class="relative rounded-2xl bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            <div class="gradient-card relative rounded-2xl bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 p-6 flex flex-col items-center shadow-card border border-white/50 transition-all duration-300 hover:shadow-2xl hover:scale-105" style="--gradient-delay: 1.2s;">
                                 <span class="absolute top-4 right-4 bg-gradient-to-r from-pink-600 to-rose-600 text-white text-xs px-3 py-1 rounded-full shadow-lg">Popular</span>
                                 <i class="fa-solid fa-tasks text-4xl text-pink-600 mb-4"></i>
                                 <div class="font-semibold text-lg text-gray-800 mb-2 text-center">Manage feedback instantly</div>
