@@ -307,8 +307,8 @@ export class WebropolSettingsModal extends BaseComponent {
               <!-- Interface Settings Section -->
               <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-teal-50/30 rounded-xl p-5 border border-webropol-gray-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center mr-3">
-                    <i class="fal fa-desktop text-white text-sm"></i>
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-desktop text-sm"></i>
                   </div>
                   Interface
                 </h3>
@@ -396,8 +396,8 @@ export class WebropolSettingsModal extends BaseComponent {
               <!-- Behavior Settings Section -->
               <div class="settings-section bg-gradient-to-br from-webropol-blue-50/50 to-webropol-purple-50/30 rounded-xl p-5 border border-webropol-blue-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-blue-500 to-webropol-purple-600 rounded-lg flex items-center justify-center mr-3">
-                    <i class="fal fa-cogs text-white text-sm"></i>
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-cogs text-sm"></i>
                   </div>
                   Behavior
                 </h3>
@@ -535,11 +535,14 @@ export class WebropolSettingsModal extends BaseComponent {
                 </div>
               </div>
               
+
+              
+            </div>
               <!-- Animation Configuration Section (spans full width) -->
-              <div class="settings-section bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
+              <div class="settings-section mt-4 bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-purple-500 to-webropol-pink-600 rounded-lg flex items-center justify-center mr-3">
-                    <i class="fal fa-wand-magic text-white text-sm"></i>
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fal fa-wand-magic text-sm"></i>
                   </div>
                   Animation Configuration
                 </h3>
@@ -632,8 +635,6 @@ export class WebropolSettingsModal extends BaseComponent {
                   
                 </div>
               </div>
-              
-            </div>
           </div>
           
           <!-- Modal Footer -->
