@@ -13,6 +13,9 @@ export class GlobalSettingsManager {
       compactMode: false,
       autoLogout: 30, // minutes
   language: 'en',
+  // Promo settings
+  promosEnabled: true,
+  promoFrequency: 'per-route-session', // future: 'always' | 'daily' | 'per-route-session'
   // New: control visibility of Header Create menu
   showHeaderCreateMenu: true,
   // New: control visibility of Rating selector
@@ -121,6 +124,9 @@ export class GlobalSettingsManager {
     // Apply floating button visibility
     this.applyFloatingButtonVisibility();
 
+  // Apply promo settings (show/hide existing instance)
+  this.applyPromoVisibility();
+
   // Apply header create menu visibility
   this.applyHeaderCreateMenuVisibility();
 
@@ -171,6 +177,22 @@ export class GlobalSettingsManager {
         container.setAttribute('hidden', '');
       }
     });
+  }
+
+  /**
+   * Apply promo visibility across pages
+   */
+  applyPromoVisibility() {
+    try {
+      const inst = document.querySelector('webropol-promo');
+      if (!inst) return;
+      if (this.settings.promosEnabled) {
+        // trigger internal logic to show on next route or immediately
+        if (typeof inst.applyVisibilityFromSettings === 'function') inst.applyVisibilityFromSettings();
+      } else {
+        if (typeof inst.hide === 'function') inst.hide();
+      }
+    } catch (_) {}
   }
 
   /**

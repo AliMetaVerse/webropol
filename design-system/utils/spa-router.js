@@ -45,6 +45,7 @@ class WebropolSPA {
   ['/shop/products/wott', 'shop/products/wott.html'],
       ['/create', 'create/index.html'],
       ['/design-system', 'design-system/index.html'],
+  ['/promo', 'promo/index.html'],
     ]);
 
     // Labels for breadcrumb generation
@@ -63,6 +64,7 @@ class WebropolSPA {
       shop: 'Shop',
       create: 'Create',
       'design-system': 'Design System',
+  promo: 'Promo',
       list: 'List',
       edit: 'Edit',
       index: 'Home'

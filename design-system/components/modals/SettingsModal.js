@@ -38,6 +38,8 @@ export class WebropolSettingsModal extends BaseComponent {
       compactMode: false,
       autoLogout: 30, // minutes
       language: 'en',
+  // Promos
+  promosEnabled: true,
       // New: control visibility of Header Create menu
       showHeaderCreateMenu: true,
       // New: control visibility of Rating selector
@@ -102,6 +104,7 @@ export class WebropolSettingsModal extends BaseComponent {
         compactMode: false,
         autoLogout: 30,
         language: 'en',
+  promosEnabled: true,
         showHeaderCreateMenu: true,
         showRatingSelector: true,
         feedbackQuestionType: 'rating',
@@ -367,6 +370,25 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
                              data-setting="showFloatingButton">
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                    </label>
+                  </div>
+
+                  <!-- Promos Toggle -->
+                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Promos</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Show or hide promo toasts (eSales and feedback)">
+                          <i class="fal fa-question-circle text-xs"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Activate/deactivate promo toasts</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.promosEnabled ? 'checked' : ''} 
+                             data-setting="promosEnabled">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
                   </div>

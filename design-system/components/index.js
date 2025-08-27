@@ -35,6 +35,7 @@ export { Input } from './forms/Input.js';
 export { Badge } from './feedback/Badge.js';
 export { Loading } from './feedback/Loading.js';
 export { Tooltip } from './feedback/Tooltip.js';
+export { WebropolPromo } from './feedback/PromoToast.js';
 
 // Modal components
 export { Modal } from './modals/Modal.js';
@@ -59,6 +60,7 @@ import './forms/Input.js';
 import './feedback/Badge.js';
 import './feedback/Loading.js';
 import './feedback/Tooltip.js';
+import './feedback/PromoToast.js';
 import './modals/Modal.js';
 import './modals/SettingsModal.js';
 
@@ -88,6 +90,7 @@ window.WebropolComponents = {
   Badge: 'webropol-badge',
   Loading: 'webropol-loading',
   Tooltip: 'webropol-tooltip',
+  Promo: 'webropol-promo',
   Modal: 'webropol-modal',
   SettingsModal: 'webropol-settings-modal'
 };
