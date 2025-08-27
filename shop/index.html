@@ -268,7 +268,7 @@
           <!-- Main Content -->
           <div class="flex-1 min-w-0 px-4 lg:px-6 py-6">
             <!-- Hero Section -->
-            <div class="glass-card rounded-3xl p-8 mb-8 animate-fade-in">
+            <div class="mb-8 animate-fade-in">
               <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
                 <div class="text-center lg:text-left">
                   <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-teal-700 to-slate-900 bg-clip-text text-transparent mb-4">
@@ -577,8 +577,22 @@
         },
         
         openModule(module) {
-          // Add click animation
-          const event = new Event('click');
+          // Prefer SPA navigation when available to avoid full-page reloads
+          try {
+            // Compute SPA route from module.url (e.g., products/bi-view.html -> /shop/products/bi-view)
+            const clean = (module.url || '').replace(/^\.\/?/, '');
+            const route = `/shop/${clean.replace(/\.html$/i, '')}`;
+            if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+              window.WebropolSPA.navigate(route);
+              return;
+            }
+            // If SPA exists but navigate wasn't available for some reason, try setting hash
+            if (window.WebropolSPA && route) {
+              location.hash = `#${route}`;
+              return;
+            }
+          } catch (_) {}
+          // Last resort: navigate to the HTML file (works when running shop page standalone)
           window.location.href = module.url;
         },
         
