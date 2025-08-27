@@ -393,6 +393,10 @@
         webropol-sidebar {
             transition: all 0.3s ease-in-out;
         }
+        /* Hide sidebar in Magic mode (AI Prompt) regardless of component internal state */
+        body.mode-prompt webropol-sidebar {
+            display: none !important;
+        }
     </style>
     <script src="design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="design-system/components/navigation/Header.js" type="module"></script>
@@ -1397,6 +1401,9 @@
                         
                         // Save interface mode to localStorage
                         localStorage.setItem('webropol_interface_mode', mode);
+                        // Toggle body class so layout can react (e.g., hide sidebar)
+                        document.body.classList.toggle('mode-prompt', mode === 'prompt');
+                        document.body.classList.toggle('mode-classic', mode === 'classic');
                         
                         // Reset transition state after animation completes
                         setTimeout(() => {
@@ -1436,6 +1443,9 @@
                 init() {
                     // Apply settings on initialization
                     this.applySettings();
+                    // Ensure body has the correct interface mode class on load
+                    document.body.classList.toggle('mode-prompt', this.interfaceMode === 'prompt');
+                    document.body.classList.toggle('mode-classic', this.interfaceMode === 'classic');
                     
                     // Add keyboard listener for interface switching
                     document.addEventListener('keydown', (e) => {
