@@ -4,10 +4,11 @@
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
+import { WebropolHeader as LegacyHeader } from './Header.js';
 
 export class WebropolHeader extends BaseComponent {
   static get observedAttributes() {
-    return ['username', 'title', 'show-notifications', 'show-help', 'show-user-menu'];
+  return ['username', 'title', 'show-notifications', 'show-help', 'show-user-menu', 'show-feedback'];
   }
 
   constructor() {
@@ -18,6 +19,9 @@ export class WebropolHeader extends BaseComponent {
   this._activeDropdown = null; // 'user' | 'notifications' | 'help' | null
   this.handleDocClick = this.handleDocClick.bind(this);
   this.handleKeyDown = this.handleKeyDown.bind(this);
+  // Legacy feedback reuse
+  this._legacyHost = null; // instance of legacy header to reuse feedback dropdown
+  this._legacyFeedbackEl = null; // reference to moved dropdown element
   }
 
   connectedCallback() {
@@ -52,12 +56,13 @@ export class WebropolHeader extends BaseComponent {
     const showNotifications = this.getBoolAttr('show-notifications');
     const showHelp = this.getBoolAttr('show-help');
     const showUserMenu = this.getBoolAttr('show-user-menu');
+  const showFeedback = this.hasAttribute('show-feedback') ? this.getBoolAttr('show-feedback') : true;
 
     console.log('Header: Rendering - isMobile:', this.isMobile, 'width:', window.innerWidth);
 
     if (this.isMobile) {
       console.log('Header: Rendering mobile header');
-      this.innerHTML = this.renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu);
+      this.innerHTML = this.renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu, showFeedback);
     } else {
       // On desktop, delegate to the full-featured legacy header to preserve all elements
       console.log('Header: Rendering legacy desktop header via proxy');
@@ -81,7 +86,7 @@ export class WebropolHeader extends BaseComponent {
     this.addEventListeners();
   }
 
-  renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu) {
+  renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu, showFeedback) {
     return `
       <header class="mobile-header h-16 bg-white/95 backdrop-blur-xl border-b border-webropol-gray-200/50 flex items-center justify-between px-4 shadow-soft sticky top-0"
               style="z-index: var(--z-mobile-header);">
@@ -104,6 +109,11 @@ export class WebropolHeader extends BaseComponent {
         
         <!-- Mobile Right Section -->
         <div class="flex items-center space-x-2">
+          ${showFeedback ? `
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200" aria-label="Feedback">
+              <i class="fal fa-star text-lg"></i>
+            </button>
+          ` : ''}
           ${showNotifications ? `
             <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200">
               <i class="fal fa-bell text-lg"></i>
@@ -212,6 +222,19 @@ export class WebropolHeader extends BaseComponent {
       });
     }
     
+    // Feedback button → reuse existing flows
+  const feedbackIcon = this.querySelector('button .fa-star');
+    if (feedbackIcon) {
+      const btn = feedbackIcon.parentElement;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.emit('feedback-click');
+  // Prefer the legacy dropdown UI when possible
+  this.openDropdown('legacy-feedback', btn);
+      });
+    }
+
     // Help button
   const helpIcon = this.querySelector('button .fa-question-circle');
     if (helpIcon) {
@@ -312,7 +335,7 @@ export class WebropolHeader extends BaseComponent {
     // Also ignore clicks on the anchor buttons within this header
     const isHeaderClick = this.contains(e.target);
     if (isHeaderClick) return;
-    this.closeDropdown();
+  this.closeDropdown();
   }
 
   handleKeyDown(e) {
@@ -334,13 +357,13 @@ export class WebropolHeader extends BaseComponent {
     // Clear previous
     layer.innerHTML = '';
 
-    const rect = anchorBtn.getBoundingClientRect();
+  const rect = anchorBtn.getBoundingClientRect();
     const dropdown = document.createElement('div');
     dropdown.setAttribute('data-dropdown', type);
     dropdown.style.position = 'fixed';
     dropdown.style.top = `${Math.round(rect.bottom + 8)}px`;
     // Align right edge with button when possible
-    const width = type === 'user' ? 192 : 320; // px
+  const width = type === 'user' ? 192 : 320; // px
     const left = Math.min(Math.max(8, rect.right - width), window.innerWidth - width - 8);
     dropdown.style.left = `${Math.round(left)}px`;
     dropdown.style.width = `${width}px`;
@@ -362,13 +385,56 @@ export class WebropolHeader extends BaseComponent {
           <div class="px-3 py-2 rounded-lg hover:bg-webropol-teal-50 text-webropol-gray-700">No new notifications</div>
         </div>
       `;
-    } else if (type === 'help') {
+  } else if (type === 'help') {
       dropdown.innerHTML = `
         <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Help</div>
         <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/training-videos">Training Videos</a>
         <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/docs">Documentation</a>
         <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/support">Contact Support</a>
       `;
+    } else if (type === 'legacy-feedback') {
+      // Reuse the legacy header's feedback dropdown
+      if (!this._legacyHost) {
+        try {
+          this._legacyHost = new LegacyHeader();
+          // Render builds DOM and attaches listeners internally
+          this._legacyHost.render();
+        } catch (err) {
+          console.error('Legacy header init failed:', err);
+        }
+      }
+      const legacy = this._legacyHost || document.querySelector('webropol-header');
+      const feedback = legacy && legacy.querySelector('.feedback-dropdown');
+      if (feedback) {
+        // Prepare element for body-layer use
+        this._legacyFeedbackEl = feedback;
+        this._legacyFeedbackEl.setAttribute('data-dropdown', 'legacy-feedback');
+        this._legacyFeedbackEl.style.position = 'fixed';
+        this._legacyFeedbackEl.style.top = `${Math.round(rect.bottom + 8)}px`;
+        const w = 384; // match w-96
+        const l = Math.min(Math.max(8, rect.right - w), window.innerWidth - w - 8);
+        this._legacyFeedbackEl.style.left = `${Math.round(l)}px`;
+        this._legacyFeedbackEl.style.width = `${w}px`;
+        this._legacyFeedbackEl.style.pointerEvents = 'auto';
+        this._legacyFeedbackEl.classList.remove('opacity-0', 'invisible');
+
+        // Append into layer and skip our default dropdown
+        layer.appendChild(this._legacyFeedbackEl);
+        this._activeDropdown = 'legacy-feedback';
+        // Tailwind refresh
+        if (window.tailwind && typeof window.tailwind.refresh === 'function') {
+          try { window.tailwind.refresh(); } catch {}
+        }
+        return; // early exit since we used the existing element
+      } else {
+        console.warn('Legacy feedback dropdown not found; falling back to promo');
+        // Fallback to promo to avoid broken UX
+        let promo = document.querySelector('webropol-promo');
+        if (!promo) { promo = document.createElement('webropol-promo'); document.body.appendChild(promo); }
+        promo.setAttribute('mode', 'feedback');
+        promo.setAttribute('open', 'true');
+        return;
+      }
     }
 
     // Animate in
@@ -393,6 +459,19 @@ export class WebropolHeader extends BaseComponent {
       dropdown.classList.add('opacity-0', 'translate-y-1');
       setTimeout(() => {
         if (dropdown && dropdown.parentNode) dropdown.parentNode.removeChild(dropdown);
+        // If we moved the legacy feedback element, reattach it to its host for reuse
+        if (this._activeDropdown === 'legacy-feedback' && this._legacyFeedbackEl && this._legacyHost) {
+          try {
+            // Restore classes and positioning for next use
+            this._legacyFeedbackEl.classList.add('opacity-0', 'invisible');
+            this._legacyFeedbackEl.style.position = '';
+            this._legacyFeedbackEl.style.top = '';
+            this._legacyFeedbackEl.style.left = '';
+            this._legacyFeedbackEl.style.width = '';
+            this._legacyFeedbackEl.style.pointerEvents = '';
+            this._legacyHost.appendChild(this._legacyFeedbackEl);
+          } catch {}
+        }
       }, 150);
     }
     this._activeDropdown = null;
