@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Header Test - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="design-system/styles/tokens.css">
+    <link rel="stylesheet" href="design-system/styles/mobile-responsive.css">
+    <script src="design-system/components/navigation/SidebarEnhanced.js" type="module"></script>
+    <script src="design-system/components/navigation/HeaderEnhanced.js" type="module"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Enhanced Sidebar -->
+        <webropol-sidebar-enhanced active="home"></webropol-sidebar-enhanced>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Enhanced Header -->
+            <webropol-header username="Test User" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
+            
+            <!-- Test Content -->
+            <main class="flex-1 p-8 bg-gray-50">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">Mobile Header Test</h1>
+                    
+                    <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Testing Instructions:</h2>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                            <li>On desktop: The mobile menu toggle should be hidden</li>
+                            <li>On mobile (≤767px): The mobile menu toggle (hamburger) should be visible</li>
+                            <li>Click the mobile menu toggle to open/close the sidebar drawer</li>
+                            <li>Check browser console for debugging information</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <h3 class="text-lg font-semibold mb-3">Current Viewport</h3>
+                            <p class="text-gray-600">Width: <span id="viewport-width"></span>px</p>
+                            <p class="text-gray-600">Mobile Mode: <span id="mobile-mode"></span></p>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-6 shadow-sm">
+                            <h3 class="text-lg font-semibold mb-3">Component Status</h3>
+                            <p class="text-gray-600">Header: <span id="header-status"></span></p>
+                            <p class="text-gray-600">Sidebar: <span id="sidebar-status"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Update viewport info
+        function updateViewportInfo() {
+            const width = window.innerWidth;
+            const isMobile = width <= 767;
+            
+            document.getElementById('viewport-width').textContent = width;
+            document.getElementById('mobile-mode').textContent = isMobile ? 'Yes' : 'No';
+        }
+        
+        // Check component status
+        function updateComponentStatus() {
+            const header = document.querySelector('webropol-header');
+            const sidebar = document.querySelector('webropol-sidebar-enhanced');
+            
+            document.getElementById('header-status').textContent = header ? 'Found' : 'Not Found';
+            document.getElementById('sidebar-status').textContent = sidebar ? 'Found' : 'Not Found';
+            
+            // Test if methods are available
+            if (sidebar && typeof sidebar.toggleMobileMenu === 'function') {
+                document.getElementById('sidebar-status').textContent += ' (with toggleMobileMenu)';
+            }
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            updateViewportInfo();
+            updateComponentStatus();
+        });
+        
+        window.addEventListener('resize', updateViewportInfo);
+        
+        // Listen for mobile menu events
+        document.addEventListener('mobile-menu-toggle', () => {
+            console.log('Mobile menu toggle event received');
+        });
+        
+        document.addEventListener('mobile-menu-opened', () => {
+            console.log('Mobile menu opened event received');
+        });
+        
+        document.addEventListener('mobile-menu-closed', () => {
+            console.log('Mobile menu closed event received');
+        });
+    </script>
+</body>
+</html>
