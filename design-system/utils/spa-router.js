@@ -353,6 +353,13 @@ class WebropolSPA {
         console.warn('[SPA] Alpine.js re-initialization failed:', e);
       }
 
+      // Ask Tailwind Play CDN (if present) to rescan the DOM and generate any needed utilities
+      try {
+        if (window.tailwind && typeof window.tailwind.refresh === 'function') {
+          window.tailwind.refresh();
+        }
+      } catch(_) {}
+
       // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
       this.runPageScripts(doc, baseUrl);
 
@@ -437,8 +444,8 @@ class WebropolSPA {
         nodes.push(clone);
       });
 
-      // Also copy any Google Fonts or other external font links
-      if (head) head.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"]').forEach((linkEl) => {
+  // Also copy any Google Fonts or other external font links
+  if (head) head.querySelectorAll('link[href*="fonts.googleapis.com"], link[href*="fonts.gstatic.com"], link[href*="font-awesome"], link[href*="cdnjs.cloudflare.com/ajax/libs/font-awesome"]').forEach((linkEl) => {
         const href = linkEl.getAttribute('href');
         if (!href) return;
         const abs = new URL(href, location.href).href;

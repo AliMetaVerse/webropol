@@ -22,6 +22,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   this._mobileLayer = null; // wrapper div
   this._backdropEl = null;  // backdrop div
   this._drawerEl = null;    // aside drawer
+  // Route sync
+  this.handleHashChange = this.handleHashChange.bind(this);
   }
 
   connectedCallback() {
@@ -30,12 +32,20 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     this.checkViewport();
     window.addEventListener('resize', this.checkViewport);
     this.setupMobileMenu();
+    // Sync active item from current route and listen for changes
+    window.addEventListener('hashchange', this.handleHashChange);
+    // Initialize active attribute if missing
+    const initialActive = this.getAttr('active') || this.getActiveIdFromHash();
+    if (initialActive && initialActive !== this.getAttr('active')) {
+      this.setAttribute('active', initialActive);
+    }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.checkViewport);
     this.cleanupMobileMenu();
+  window.removeEventListener('hashchange', this.handleHashChange);
   }
 
   checkViewport() {
@@ -61,7 +71,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   }
 
   render() {
-    const active = this.getAttr('active', 'home');
+    const active = this.getAttr('active') || this.getActiveIdFromHash() || 'home';
     const base = this.getAttr('base', '');
     const mobileOpen = this.getBoolAttr('mobile-open');
     
@@ -89,6 +99,34 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     }
 
     this.addEventListeners();
+  }
+
+  // Map location.hash to our known nav ids
+  getActiveIdFromHash() {
+    const h = (window.location.hash || '#/home').toLowerCase();
+    if (h === '' || h === '#' || h === '#/' || h.startsWith('#/home')) return 'home';
+    if (h.startsWith('#/surveys')) return 'surveys';
+    if (h.startsWith('#/events')) return 'events';
+    if (h.startsWith('#/sms')) return 'sms';
+    if (h.startsWith('#/exw')) return 'exw';
+    if (h.startsWith('#/case-management')) return 'case-management';
+    if (h.startsWith('#/mywebropol')) return 'mywebropol';
+    if (h.startsWith('#/admin-tools')) return 'admin-tools';
+    if (h.startsWith('#/training-videos')) return 'training-videos';
+    if (h.startsWith('#/shop')) return 'shop';
+    return 'home';
+  }
+
+  handleHashChange() {
+    const active = this.getActiveIdFromHash();
+    // Update attribute so desktop/tablet re-render and mobile sync updates
+    if (this.getAttr('active') !== active) {
+      this.setAttribute('active', active);
+    } else if (this.isMobile && this.getBoolAttr('mobile-open')) {
+      // Ensure open mobile drawer updates highlight too
+      const navItems = this.generateNavigationItems(active, (p) => p);
+      this.syncBodyLayer(navItems, true);
+    }
   }
 
   generateNavigationItems(active, link) {
@@ -207,8 +245,10 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       layer.setAttribute('data-mobile-layer', '');
       layer.style.position = 'fixed';
       layer.style.inset = '0';
-      layer.style.zIndex = String(2147483647); // max practical
-      layer.style.pointerEvents = 'none';
+  // Start disabled and behind everything; we only raise z-index when open
+  layer.style.zIndex = '-1';
+  layer.style.pointerEvents = 'none';
+  layer.style.display = 'block';
 
       const backdrop = document.createElement('div');
       backdrop.setAttribute('data-mobile-backdrop', '');
@@ -218,7 +258,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       backdrop.style.opacity = '0';
       backdrop.style.visibility = 'hidden';
       backdrop.style.transition = 'opacity 0.3s ease';
-      backdrop.style.pointerEvents = 'auto';
+  // Backdrop should not catch events until menu is open
+  backdrop.style.pointerEvents = 'none';
 
       const drawer = document.createElement('aside');
       drawer.setAttribute('data-mobile-drawer', '');
@@ -276,13 +317,19 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     // Apply open/close state
     if (this._mobileLayer && this._backdropEl && this._drawerEl) {
       if (isOpen) {
+        // Enable interactions and bring layer to front
+        this._mobileLayer.style.zIndex = '2147483647';
         this._mobileLayer.style.pointerEvents = 'auto';
+        this._backdropEl.style.pointerEvents = 'auto';
         this._backdropEl.style.opacity = '1';
         this._backdropEl.style.visibility = 'visible';
         this._drawerEl.style.transform = 'translateX(0)';
         document.body.style.overflow = 'hidden';
       } else {
+        // Hide interactions and send layer behind everything
         this._mobileLayer.style.pointerEvents = 'none';
+        this._mobileLayer.style.zIndex = '-1';
+        this._backdropEl.style.pointerEvents = 'none';
         this._backdropEl.style.opacity = '0';
         this._backdropEl.style.visibility = 'hidden';
         this._drawerEl.style.transform = 'translateX(-100%)';
@@ -411,7 +458,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
 
     if (viewType === 'mobile') {
       return `
-        <a href="${item.href}" data-route="${item.href.replace('#', '')}" 
+  <a href="${item.href}" data-route="${item.href.replace('#', '')}" data-id="${item.id}" 
            class="${baseClasses} px-4 py-3 mx-4 mb-1 ${activeClasses}">
           <i class="${item.icon} w-5 mr-4 group-hover/item:scale-110 transition-transform"></i>
           <span class="font-medium">${item.label}</span>
@@ -419,7 +466,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       `;
     } else if (viewType === 'tablet') {
       return `
-        <a href="${item.href}" data-route="${item.href.replace('#', '')}" 
+  <a href="${item.href}" data-route="${item.href.replace('#', '')}" data-id="${item.id}" 
            class="${baseClasses} px-3 py-3 mx-2 group-hover:px-4 group-hover:mx-4 transition-all duration-300 ${activeClasses}">
           <i class="${item.icon} w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform"></i>
           <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">${item.label}</span>
@@ -427,7 +474,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       `;
     } else {
       return `
-        <a href="${item.href}" data-route="${item.href.replace('#', '')}" 
+  <a href="${item.href}" data-route="${item.href.replace('#', '')}" data-id="${item.id}" 
            class="${baseClasses} xl:px-4 px-3 group-hover:px-4 py-3 ${activeClasses}">
           <i class="${item.icon} w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0 group-hover:mr-4"></i>
@@ -469,9 +516,13 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     } else if (navItem) {
       // Handle SPA navigation
       const route = navItem.getAttribute('data-route');
+      const id = navItem.getAttribute('data-id');
       if (route && window.WebropolSPA) {
         e.preventDefault();
         window.WebropolSPA.navigate(route);
+      }
+      if (id) {
+        this.setAttribute('active', id);
       }
 
       // Close mobile menu after navigation
@@ -493,7 +544,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     console.log('Sidebar: openMobileMenu called');
     this.setAttribute('mobile-open', 'true');
   // Ensure body-layer exists and sync open state
-  const navItems = this.generateNavigationItems(this.getAttr('active', 'home'), (p) => p);
+  const activeId = this.getAttr('active') || this.getActiveIdFromHash() || 'home';
+  const navItems = this.generateNavigationItems(activeId, (p) => p);
   this.syncBodyLayer(navItems, true);
     this.emit('mobile-menu-opened');
   }
@@ -501,7 +553,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   closeMobileMenu() {
     console.log('Sidebar: closeMobileMenu called');
     this.setAttribute('mobile-open', 'false');
-  const navItems = this.generateNavigationItems(this.getAttr('active', 'home'), (p) => p);
+  const activeId = this.getAttr('active') || this.getActiveIdFromHash() || 'home';
+  const navItems = this.generateNavigationItems(activeId, (p) => p);
   this.syncBodyLayer(navItems, false);
     this.emit('mobile-menu-closed');
   }

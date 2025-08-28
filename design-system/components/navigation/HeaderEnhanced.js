@@ -14,6 +14,10 @@ export class WebropolHeader extends BaseComponent {
     super();
     this.isMobile = false;
     this.checkViewport = this.checkViewport.bind(this);
+  this._dropdownLayer = null;
+  this._activeDropdown = null; // 'user' | 'notifications' | 'help' | null
+  this.handleDocClick = this.handleDocClick.bind(this);
+  this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   connectedCallback() {
@@ -25,6 +29,9 @@ export class WebropolHeader extends BaseComponent {
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.checkViewport);
+  document.removeEventListener('click', this.handleDocClick, true);
+  document.removeEventListener('keydown', this.handleKeyDown, true);
+  this.destroyDropdownLayer();
   }
 
   checkViewport() {
@@ -174,26 +181,34 @@ export class WebropolHeader extends BaseComponent {
     }
 
     // Notification button
-    const notificationBtn = this.querySelector('button .fa-bell');
-    if (notificationBtn) {
-      notificationBtn.parentElement.addEventListener('click', () => {
-        this.emit('notification-click');
+    const notificationIcon = this.querySelector('button .fa-bell');
+    if (notificationIcon) {
+      const btn = notificationIcon.parentElement;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('notifications', btn);
       });
     }
     
     // Help button
-    const helpBtn = this.querySelector('button .fa-question-circle');
-    if (helpBtn) {
-      helpBtn.parentElement.addEventListener('click', () => {
-        this.emit('help-click');
+    const helpIcon = this.querySelector('button .fa-question-circle');
+    if (helpIcon) {
+      const btn = helpIcon.parentElement;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('help', btn);
       });
     }
 
     // User menu buttons
     const userMenuBtns = this.querySelectorAll('.mobile-user-menu, .desktop-user-menu');
     userMenuBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.emit('user-menu-click');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('user', btn);
       });
     });
   }
@@ -241,6 +256,125 @@ export class WebropolHeader extends BaseComponent {
   bindEvents() {
     // Legacy method for backward compatibility
     this.addEventListeners();
+  }
+
+  // ===== Dropdowns (body-level) =====
+  ensureDropdownLayer() {
+    if (this._dropdownLayer) return this._dropdownLayer;
+    const layer = document.createElement('div');
+    layer.setAttribute('data-header-layer', '');
+    layer.style.position = 'fixed';
+    layer.style.inset = '0';
+    layer.style.pointerEvents = 'none';
+    layer.style.zIndex = '2147483646';
+    document.body.appendChild(layer);
+    this._dropdownLayer = layer;
+    // Global listeners for outside click and ESC
+    document.addEventListener('click', this.handleDocClick, true);
+    document.addEventListener('keydown', this.handleKeyDown, true);
+    return layer;
+  }
+
+  destroyDropdownLayer() {
+    if (this._dropdownLayer && this._dropdownLayer.parentNode) {
+      this._dropdownLayer.parentNode.removeChild(this._dropdownLayer);
+    }
+    this._dropdownLayer = null;
+    this._activeDropdown = null;
+  }
+
+  handleDocClick(e) {
+    if (!this._dropdownLayer || !this._activeDropdown) return;
+    const dropdown = this._dropdownLayer.querySelector('[data-dropdown]');
+    if (!dropdown) return;
+    if (dropdown.contains(e.target)) return; // clicks inside allowed
+    // Also ignore clicks on the anchor buttons within this header
+    const isHeaderClick = this.contains(e.target);
+    if (isHeaderClick) return;
+    this.closeDropdown();
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'Escape' && this._activeDropdown) {
+      this.closeDropdown();
+    }
+  }
+
+  toggleDropdown(type, anchorBtn) {
+    if (this._activeDropdown === type) {
+      this.closeDropdown();
+    } else {
+      this.openDropdown(type, anchorBtn);
+    }
+  }
+
+  openDropdown(type, anchorBtn) {
+    const layer = this.ensureDropdownLayer();
+    // Clear previous
+    layer.innerHTML = '';
+
+    const rect = anchorBtn.getBoundingClientRect();
+    const dropdown = document.createElement('div');
+    dropdown.setAttribute('data-dropdown', type);
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = `${Math.round(rect.bottom + 8)}px`;
+    // Align right edge with button when possible
+    const width = type === 'user' ? 192 : 320; // px
+    const left = Math.min(Math.max(8, rect.right - width), window.innerWidth - width - 8);
+    dropdown.style.left = `${Math.round(left)}px`;
+    dropdown.style.width = `${width}px`;
+    dropdown.style.pointerEvents = 'auto';
+    dropdown.className = 'bg-white rounded-xl shadow-lg border border-webropol-gray-200 p-2 opacity-0 translate-y-1 transition-all duration-150';
+
+    // Content per type (lightweight)
+    if (type === 'user') {
+      dropdown.innerHTML = `
+        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Profile</button>
+        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Settings</button>
+        <div class="my-1 border-t border-webropol-gray-200"></div>
+        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Sign out</button>
+      `;
+    } else if (type === 'notifications') {
+      dropdown.innerHTML = `
+        <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Notifications</div>
+        <div class="max-h-64 overflow-auto">
+          <div class="px-3 py-2 rounded-lg hover:bg-webropol-teal-50 text-webropol-gray-700">No new notifications</div>
+        </div>
+      `;
+    } else if (type === 'help') {
+      dropdown.innerHTML = `
+        <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Help</div>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/training-videos">Training Videos</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/docs">Documentation</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/support">Contact Support</a>
+      `;
+    }
+
+    // Animate in
+    requestAnimationFrame(() => {
+      dropdown.classList.remove('opacity-0', 'translate-y-1');
+      dropdown.classList.add('opacity-100', 'translate-y-0');
+    });
+
+    layer.appendChild(dropdown);
+    this._activeDropdown = type;
+
+    // Tailwind play CDN refresh for dynamic classes
+    if (window.tailwind && typeof window.tailwind.refresh === 'function') {
+      try { window.tailwind.refresh(); } catch {}
+    }
+  }
+
+  closeDropdown() {
+    if (!this._dropdownLayer) return;
+    const dropdown = this._dropdownLayer.querySelector('[data-dropdown]');
+    if (dropdown) {
+      dropdown.classList.add('opacity-0', 'translate-y-1');
+      setTimeout(() => {
+        if (dropdown && dropdown.parentNode) dropdown.parentNode.removeChild(dropdown);
+      }, 150);
+    }
+    this._activeDropdown = null;
   }
 }
 
