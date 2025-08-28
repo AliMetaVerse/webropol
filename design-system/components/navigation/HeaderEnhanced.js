@@ -59,8 +59,23 @@ export class WebropolHeader extends BaseComponent {
       console.log('Header: Rendering mobile header');
       this.innerHTML = this.renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu);
     } else {
-      console.log('Header: Rendering desktop header');
-      this.innerHTML = this.renderDesktopHeader(username, title, showNotifications, showHelp, showUserMenu);
+      // On desktop, delegate to the full-featured legacy header to preserve all elements
+      console.log('Header: Rendering legacy desktop header via proxy');
+      const notifAttr = showNotifications ? ' show-notifications' : '';
+      const helpAttr = showHelp ? ' show-help' : '';
+      const userAttr = showUserMenu !== false ? ' show-user-menu' : '';
+      const titleAttr = title ? ` title="${title.replace(/"/g, '&quot;')}"` : '';
+      const usernameAttr = ` username="${username.replace(/"/g, '&quot;')}"`;
+      // Legacy header supports theme selector and feedback menus; keep them on
+      this.innerHTML = `
+        <webropol-header${usernameAttr}${titleAttr}${notifAttr}${helpAttr}${userAttr} show-theme-selector>
+          <!-- Optional projected areas if used in pages -->
+          <slot name="title"></slot>
+          <slot name="left"></slot>
+          <slot name="actions"></slot>
+          <slot name="right"></slot>
+        </webropol-header>
+      `;
     }
 
     this.addEventListeners();
@@ -166,6 +181,12 @@ export class WebropolHeader extends BaseComponent {
 
   addEventListeners() {
     console.log('Header: Adding event listeners, isMobile:', this.isMobile);
+    // Desktop uses the legacy header implementation with its own listeners
+    if (!this.isMobile) {
+      // Ensure our mobile-only dropdown layer is torn down
+      this.destroyDropdownLayer();
+      return;
+    }
     
     // Mobile menu toggle
     const mobileMenuToggle = this.querySelector('.mobile-menu-toggle');
@@ -181,7 +202,7 @@ export class WebropolHeader extends BaseComponent {
     }
 
     // Notification button
-    const notificationIcon = this.querySelector('button .fa-bell');
+  const notificationIcon = this.querySelector('button .fa-bell');
     if (notificationIcon) {
       const btn = notificationIcon.parentElement;
       btn.addEventListener('click', (e) => {
@@ -192,7 +213,7 @@ export class WebropolHeader extends BaseComponent {
     }
     
     // Help button
-    const helpIcon = this.querySelector('button .fa-question-circle');
+  const helpIcon = this.querySelector('button .fa-question-circle');
     if (helpIcon) {
       const btn = helpIcon.parentElement;
       btn.addEventListener('click', (e) => {
@@ -203,7 +224,7 @@ export class WebropolHeader extends BaseComponent {
     }
 
     // User menu buttons
-    const userMenuBtns = this.querySelectorAll('.mobile-user-menu, .desktop-user-menu');
+  const userMenuBtns = this.querySelectorAll('.mobile-user-menu, .desktop-user-menu');
     userMenuBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
