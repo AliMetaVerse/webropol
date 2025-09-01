@@ -8,6 +8,17 @@ class ShopSidebar extends HTMLElement {
     super();
     this._launcher = null; // floating launcher when collapsed
     this._menu = null; // floating menu content
+    this._resizeHandler = null;
+    this._sidebarWatchers = [];
+  this._hashHandler = null;
+  }
+  
+  disconnectedCallback() {
+    this.removeFloatingListeners();
+    if (this._hashHandler) {
+      window.removeEventListener('hashchange', this._hashHandler);
+      this._hashHandler = null;
+    }
   }
 
   connectedCallback() {
@@ -18,6 +29,25 @@ class ShopSidebar extends HTMLElement {
       else if (saved === 'false') this.removeAttribute('collapsed');
     } catch (_) {}
     this.render();
+
+    // React to route changes so floating menu only appears on shop routes
+    if (!this._hashHandler) {
+      this._hashHandler = () => {
+        if (this.isCollapsed()) {
+          if (this.isShopRoute()) {
+            this.createLauncher();
+            this.buildMenu((f)=>`#/shop/products/${f.replace(/\.html$/,'')}`,(fn)=>/#\/shop\//.test(location.hash)&&location.hash.endsWith(fn.replace(/\.html$/,'')));
+            this.repositionFloatingUI();
+          } else {
+            this.hideMenu();
+            this.removeMenu();
+            this.removeLauncher();
+            this.removeFloatingListeners();
+          }
+        }
+      };
+      window.addEventListener('hashchange', this._hashHandler);
+    }
   }
 
   attributeChangedCallback(name, oldVal, newVal) {
@@ -29,6 +59,7 @@ class ShopSidebar extends HTMLElement {
   }
 
   isCollapsed() { return this.hasAttribute('collapsed'); }
+  isShopRoute() { try { return /^#\/shop(\/|$)/.test(location.hash); } catch (_) { return false; } }
 
   collapse() { this.setAttribute('collapsed', ''); }
   expand() { this.removeAttribute('collapsed'); }
@@ -41,8 +72,16 @@ class ShopSidebar extends HTMLElement {
       // Hide the sidebar and show a floating launcher + menu
       this.innerHTML = '';
       this.style.display = 'none';
-      this.createLauncher();
-      this.buildMenu(href, isActive);
+      if (this.isShopRoute()) {
+        this.createLauncher();
+        this.buildMenu(href, isActive);
+        this.repositionFloatingUI();
+      } else {
+        this.hideMenu();
+        this.removeMenu();
+        this.removeLauncher();
+        this.removeFloatingListeners();
+      }
       return;
     }
 
@@ -50,6 +89,7 @@ class ShopSidebar extends HTMLElement {
     this.style.display = '';
     this.removeLauncher();
     this.removeMenu();
+  this.removeFloatingListeners();
 
     this.innerHTML = `
       <aside class="shop-sidebar-root hidden lg:block w-80 shrink-0 sticky top-6 h-[calc(100vh-120px)]">
@@ -184,6 +224,9 @@ class ShopSidebar extends HTMLElement {
     });
     document.body.appendChild(btn);
     this._launcher = btn;
+
+    // Listeners for repositioning
+    this.ensureFloatingListeners();
   }
 
   removeLauncher() {
@@ -215,7 +258,10 @@ class ShopSidebar extends HTMLElement {
           <i class="fal fa-shopping-bag text-teal-600"></i>
           <span class="font-semibold text-slate-800">Shop Menu</span>
         </div>
-        <button class="shop-menu-close w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Close"><i class="fal fa-times"></i></button>
+        <div class="flex items-center gap-1">
+          <button class="shop-menu-restore w-8 h-8 rounded-lg hover:bg-teal-50 text-teal-600" title="Show sidebar" aria-label="Show sidebar"><i class="fal fa-columns"></i></button>
+          <button class="shop-menu-close w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Close"><i class="fal fa-times"></i></button>
+        </div>
       </div>
       <div class="p-2">
         <div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Modules</div>
@@ -253,12 +299,16 @@ class ShopSidebar extends HTMLElement {
     // Wire menu interactions
     menu.addEventListener('click', (e) => {
       const close = e.target.closest('.shop-menu-close');
+      const restore = e.target.closest('.shop-menu-restore');
       const navItem = e.target.closest('.nav-item');
       if (close) { this.hideMenu(); }
+      if (restore) { this.hideMenu(); this.expand(); }
       if (navItem) {
         setTimeout(() => this.hideMenu(), 150);
       }
     });
+
+    this.ensureFloatingListeners();
   }
 
   updateMenuActiveStates() {
@@ -271,9 +321,86 @@ class ShopSidebar extends HTMLElement {
     });
   }
 
-  toggleMenu() { if (!this._menu) return; this._menu.style.display = (this._menu.style.display === 'none' || !this._menu.style.display) ? 'block' : 'none'; }
+  toggleMenu() { if (!this.isShopRoute()) return; if (!this._menu) return; this._menu.style.display = (this._menu.style.display === 'none' || !this._menu.style.display) ? 'block' : 'none'; }
   hideMenu() { if (this._menu) this._menu.style.display = 'none'; }
   removeMenu() { if (this._menu && this._menu.parentNode) this._menu.parentNode.removeChild(this._menu); this._menu = null; }
+
+  // --- Positioning helpers for floating UI relative to main sidebar ---
+  computeLeftOffset() {
+    try {
+      let maxRight = 0;
+      // Modern enhanced sidebar
+      const enhanced = document.querySelector('webropol-sidebar-enhanced');
+      if (enhanced) {
+        const el = enhanced.shadowRoot ? enhanced : enhanced; // no shadow expected, but safe
+        const rect = enhanced.getBoundingClientRect();
+        if (rect && rect.width > 1) maxRight = Math.max(maxRight, rect.right);
+      }
+      // Legacy sidebar inner container
+      const legacyInner = document.querySelector('webropol-sidebar aside.sidebar-container') || document.querySelector('aside.sidebar-container');
+      if (legacyInner) {
+        const r = legacyInner.getBoundingClientRect();
+        if (r && r.width > 1) maxRight = Math.max(maxRight, r.right);
+      }
+      // If nothing meaningful, keep default 16px
+      if (!maxRight || maxRight < 1) return 16;
+      return Math.round(maxRight + 16);
+    } catch (_) {
+      return 16;
+    }
+  }
+
+  repositionFloatingUI() {
+    const left = this.computeLeftOffset();
+    if (this._launcher) this._launcher.style.left = left + 'px';
+    if (this._menu) this._menu.style.left = left + 'px';
+  }
+
+  ensureFloatingListeners() {
+    if (!this._resizeHandler) {
+      this._resizeHandler = () => this.repositionFloatingUI();
+      window.addEventListener('resize', this._resizeHandler);
+    }
+    // watch main sidebar transitions/hover for width changes
+    this.addSidebarWatchers();
+    // initial tick after layout settles
+    setTimeout(() => this.repositionFloatingUI(), 0);
+  }
+
+  removeFloatingListeners() {
+    if (this._resizeHandler) {
+      window.removeEventListener('resize', this._resizeHandler);
+      this._resizeHandler = null;
+    }
+    this.removeSidebarWatchers();
+  }
+
+  addSidebarWatchers() {
+    this.removeSidebarWatchers();
+    const cands = [];
+    const enhanced = document.querySelector('webropol-sidebar-enhanced');
+    if (enhanced) cands.push(enhanced);
+    const legacyInner = document.querySelector('webropol-sidebar aside.sidebar-container') || document.querySelector('aside.sidebar-container');
+    if (legacyInner) cands.push(legacyInner);
+    cands.forEach(el => {
+      const handler = () => setTimeout(() => this.repositionFloatingUI(), 50);
+      el.addEventListener('transitionend', handler);
+      el.addEventListener('mouseenter', handler);
+      el.addEventListener('mouseleave', handler);
+      this._sidebarWatchers.push({ el, handler });
+    });
+  }
+
+  removeSidebarWatchers() {
+    this._sidebarWatchers.forEach(({ el, handler }) => {
+      try {
+        el.removeEventListener('transitionend', handler);
+        el.removeEventListener('mouseenter', handler);
+        el.removeEventListener('mouseleave', handler);
+      } catch (_) {}
+    });
+    this._sidebarWatchers = [];
+  }
 
   linkItem(label, href, active, icon, category) {
     return `

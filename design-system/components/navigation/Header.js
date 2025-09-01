@@ -39,8 +39,13 @@ export class WebropolHeader extends BaseComponent {
     const allThemes = ThemeManager.getAllThemes();
 
     this.innerHTML = `
-      <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
+  <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
   <div class="flex items-center space-x-4">
+      <!-- Hamburger visible only when main sidebar is collapsed (desktop only) -->
+      <button class="collapsed-hamburger hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-600 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all"
+      title="Open menu" aria-label="Open menu">
+    <i class="fal fa-bars"></i>
+      </button>
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
               <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
@@ -174,6 +179,7 @@ export class WebropolHeader extends BaseComponent {
     this.addRatingListeners();
     this.addCreateMenuListeners();
   this.addSidebarToggleListener();
+  this.addCollapsedHamburgerListener();
     
     // Initialize settings animation scheduler
     this.initializeSettingsAnimationScheduler();
@@ -1157,6 +1163,50 @@ export class WebropolHeader extends BaseComponent {
         if (isCollapsed) sidebar.removeAttribute('collapsed'); else sidebar.setAttribute('collapsed', 'true');
       }
     });
+  }
+
+  // Show a hamburger button left of Create New when main sidebar is collapsed
+  addCollapsedHamburgerListener() {
+    const btn = this.querySelector('.collapsed-hamburger');
+    if (!btn) return;
+    const sidebar = document.querySelector('webropol-sidebar-enhanced');
+
+    const setVisibility = () => {
+      const collapsed = !!(sidebar && (sidebar.getAttribute('collapsed') === 'true' || sidebar.hasAttribute('collapsed')));
+      // Only show on desktop
+      const isDesktop = window.innerWidth >= 1024;
+      btn.style.display = collapsed && isDesktop ? 'flex' : 'none';
+    };
+
+    // Click opens the overlay/drawer menu (not expand)
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!sidebar) return;
+      if (typeof sidebar.openMobileMenu === 'function') sidebar.openMobileMenu();
+      else sidebar.setAttribute('mobile-open', 'true');
+    });
+
+    // Observe collapsed attribute changes
+    if (sidebar) {
+      // Save observer for cleanup
+      if (this._hamburgerObserver) this._hamburgerObserver.disconnect();
+      this._hamburgerObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (m.type === 'attributes' && m.attributeName === 'collapsed') {
+            setVisibility();
+          }
+        }
+      });
+      try { this._hamburgerObserver.observe(sidebar, { attributes: true, attributeFilter: ['collapsed'] }); } catch {}
+    }
+
+    // React to viewport changes
+    const resizeHandler = () => setVisibility();
+    window.addEventListener('resize', resizeHandler);
+    this._hamburgerResizeHandler = resizeHandler;
+
+    // Initial state
+    setVisibility();
   }
 
   handleCreateNavigation(type) {

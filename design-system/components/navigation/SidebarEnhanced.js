@@ -26,6 +26,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   this._collapsedLauncher = null;
   // Route sync
   this.handleHashChange = this.handleHashChange.bind(this);
+  // Header watcher to remove body launcher when header exists
+  this._headerObserver = null;
   }
 
   connectedCallback() {
@@ -63,6 +65,10 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     window.removeEventListener('resize', this.checkViewport);
     this.cleanupMobileMenu();
   window.removeEventListener('hashchange', this.handleHashChange);
+    if (this._headerObserver) {
+      try { this._headerObserver.disconnect(); } catch {}
+      this._headerObserver = null;
+    }
   }
 
   checkViewport() {
@@ -134,7 +140,12 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         // Hide sidebar; provide launcher to open menu
         this.innerHTML = '';
         this.style.display = 'none';
-        this.createCollapsedLauncher();
+        // If a header exists, it will provide the hamburger; skip body launcher
+        if (!this.hasHeader()) {
+          this.createCollapsedLauncher();
+        } else {
+          this.removeCollapsedLauncher();
+        }
         // Ensure overlay has current items but closed
         this.syncBodyLayer(navigationItems, false);
       } else {
@@ -145,6 +156,13 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     }
 
     this.addEventListeners();
+
+    // Watch for header insertion/removal to keep launcher hidden when header is present
+    this.ensureHeaderObserver();
+  }
+
+  hasHeader() {
+    return !!document.querySelector('webropol-header, webropol-header-enhanced');
   }
 
   // Map location.hash to our known nav ids
@@ -639,6 +657,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   }
 
   createCollapsedLauncher() {
+  // Do not create if a header exists; header provides its own hamburger
+  if (this.hasHeader()) { this.removeCollapsedLauncher(); return; }
     if (this._collapsedLauncher) return;
     const btn = document.createElement('button');
     btn.setAttribute('data-sidebar-launcher', '');
@@ -665,6 +685,20 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       this._collapsedLauncher.parentNode.removeChild(this._collapsedLauncher);
     }
     this._collapsedLauncher = null;
+  }
+
+  ensureHeaderObserver() {
+    if (this._headerObserver) return;
+    try {
+      this._headerObserver = new MutationObserver(() => {
+        if (this.hasHeader()) {
+          this.removeCollapsedLauncher();
+        } else if (this.getBoolAttr('collapsed') && !this.isMobile && !this.isTablet) {
+          this.createCollapsedLauncher();
+        }
+      });
+      this._headerObserver.observe(document.body, { childList: true, subtree: true });
+    } catch {}
   }
 
   addEventListeners() {
