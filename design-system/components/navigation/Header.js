@@ -40,7 +40,7 @@ export class WebropolHeader extends BaseComponent {
 
     this.innerHTML = `
       <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
-        <div class="flex items-center space-x-4">
+  <div class="flex items-center space-x-4">
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
               <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
@@ -76,6 +76,10 @@ export class WebropolHeader extends BaseComponent {
           ${title ? `
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
           ` : ''}
+          <!-- Desktop sidebar toggle (hidden on small screens) -->
+          <button class="ml-2 hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
+            <i class="fal fa-columns"></i>
+          </button>
           <slot name="title"></slot>
           <slot name="left"></slot>
         </div>
@@ -169,6 +173,7 @@ export class WebropolHeader extends BaseComponent {
     this.addThemeListeners();
     this.addRatingListeners();
     this.addCreateMenuListeners();
+  this.addSidebarToggleListener();
     
     // Initialize settings animation scheduler
     this.initializeSettingsAnimationScheduler();
@@ -1135,6 +1140,23 @@ export class WebropolHeader extends BaseComponent {
       // Prevent close when clicking inside
       createDropdown.addEventListener('click', (e) => e.stopPropagation());
     }
+  }
+
+  addSidebarToggleListener() {
+    // Desktop-only toggle for main sidebar visibility
+    const btn = this.querySelector('button[data-action="toggle-main-sidebar"]');
+    if (!btn) return;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sidebar = document.querySelector('webropol-sidebar-enhanced');
+      if (!sidebar) return;
+      const isCollapsed = sidebar.getAttribute('collapsed') === 'true' || sidebar.hasAttribute('collapsed');
+      if (typeof sidebar.toggleCollapsedSidebar === 'function') {
+        sidebar.toggleCollapsedSidebar();
+      } else {
+        if (isCollapsed) sidebar.removeAttribute('collapsed'); else sidebar.setAttribute('collapsed', 'true');
+      }
+    });
   }
 
   handleCreateNavigation(type) {

@@ -8,7 +8,7 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolSidebarEnhanced extends BaseComponent {
   static get observedAttributes() {
-    return ['active', 'base', 'mobile-open'];
+  return ['active', 'base', 'mobile-open', 'collapsed'];
   }
 
   constructor() {
@@ -22,6 +22,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   this._mobileLayer = null; // wrapper div
   this._backdropEl = null;  // backdrop div
   this._drawerEl = null;    // aside drawer
+  // Collapsed launcher button (desktop)
+  this._collapsedLauncher = null;
   // Route sync
   this.handleHashChange = this.handleHashChange.bind(this);
   }
@@ -39,6 +41,21 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     if (initialActive && initialActive !== this.getAttr('active')) {
       this.setAttribute('active', initialActive);
     }
+    // Restore collapsed preference on desktop only
+    try {
+      const saved = localStorage.getItem('webropol.sidebar.collapsed');
+      if (saved !== null) {
+        const wantCollapsed = saved === 'true';
+        // Apply only for desktop states
+        if (!this.isMobile && !this.isTablet) {
+          if (wantCollapsed) {
+            this.setAttribute('collapsed', 'true');
+          } else {
+            this.removeAttribute('collapsed');
+          }
+        }
+      }
+    } catch (_) {}
   }
 
   disconnectedCallback() {
@@ -64,6 +81,19 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     if (oldValue !== newValue) {
       if (name === 'mobile-open') {
         this.updateMobileState();
+      } else if (name === 'collapsed') {
+        // Toggle collapsed state on desktop
+        this.render();
+        // When collapsing on desktop, immediately show the overlay menu; when expanding, close it
+        if (!this.isMobile && !this.isTablet) {
+          if (this.getBoolAttr('collapsed')) {
+            try { this.openMobileMenu(); } catch {}
+          } else {
+            try { this.closeMobileMenu(); } catch {}
+          }
+        }
+  // Persist preference
+  try { localStorage.setItem('webropol.sidebar.collapsed', this.getBoolAttr('collapsed') ? 'true' : 'false'); } catch (_) {}
       } else {
         this.render();
       }
@@ -74,6 +104,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     const active = this.getAttr('active') || this.getActiveIdFromHash() || 'home';
     const base = this.getAttr('base', '');
     const mobileOpen = this.getBoolAttr('mobile-open');
+  const collapsed = this.getBoolAttr('collapsed');
     
     // Helper to prefix base to links
     const link = (path) => {
@@ -92,10 +123,25 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       this.innerHTML = '';
       // Ensure body layer reflects current state
       this.syncBodyLayer(navigationItems, mobileOpen);
+      // No launcher on mobile
+      this.removeCollapsedLauncher();
     } else if (this.isTablet) {
       this.innerHTML = this.renderTabletSidebar(navigationItems);
+      this.style.display = '';
+      this.removeCollapsedLauncher();
     } else {
-      this.innerHTML = this.renderDesktopSidebar(navigationItems);
+      if (collapsed) {
+        // Hide sidebar; provide launcher to open menu
+        this.innerHTML = '';
+        this.style.display = 'none';
+        this.createCollapsedLauncher();
+        // Ensure overlay has current items but closed
+        this.syncBodyLayer(navigationItems, false);
+      } else {
+        this.style.display = '';
+        this.innerHTML = this.renderDesktopSidebar(navigationItems);
+        this.removeCollapsedLauncher();
+      }
     }
 
     this.addEventListeners();
@@ -293,7 +339,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
 
       // Listeners
       backdrop.addEventListener('click', () => this.closeMobileMenu());
-      drawer.addEventListener('click', (e) => {
+  drawer.addEventListener('click', (e) => {
         const closeBtn = e.target.closest('.mobile-close-btn');
         const navItem = e.target.closest('.nav-item');
         if (closeBtn) {
@@ -389,16 +435,21 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     xl:px-8 px-4
                     group-hover:px-8
                     transition-all duration-300">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i class="fal fa-chart-bar text-white text-lg"></i>
+          <div class="flex items-center min-w-0 flex-1">
+            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <i class="fal fa-chart-bar text-white text-lg"></i>
+            </div>
+            <div class="ml-3 overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
+              <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
+              <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
+            </div>
           </div>
-          <div class="ml-3 overflow-hidden transition-all duration-300
-                      xl:opacity-100 xl:w-auto
-                      opacity-0 w-0
-                      group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
-            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
-          </div>
+          <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
+            <i class="fal fa-angle-double-left"></i>
+          </button>
         </div>
         
         <!-- Desktop Navigation -->
@@ -573,6 +624,49 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     // The state is managed through re-rendering
   }
 
+  // ===== Collapsed (desktop) handling =====
+  collapseSidebar() {
+    if (this.isMobile || this.isTablet) return;
+    this.setAttribute('collapsed', 'true');
+  }
+
+  expandSidebar() {
+    this.removeAttribute('collapsed');
+  }
+
+  toggleCollapsedSidebar() {
+    if (this.getBoolAttr('collapsed')) this.expandSidebar(); else this.collapseSidebar();
+  }
+
+  createCollapsedLauncher() {
+    if (this._collapsedLauncher) return;
+    const btn = document.createElement('button');
+    btn.setAttribute('data-sidebar-launcher', '');
+    btn.title = 'Open menu / Show sidebar';
+    btn.setAttribute('aria-label', 'Open menu');
+    Object.assign(btn.style, {
+      position: 'fixed',
+      top: '84px',
+      left: '16px',
+      zIndex: '2147483646'
+    });
+    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-webropol-gray-600 border border-webropol-gray-200 shadow-md hover:text-webropol-teal-600 hover:border-webropol-teal-300 hover:shadow-lg transition-all';
+    btn.innerHTML = '<i class="fal fa-bars"></i>';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.openMobileMenu();
+    });
+    document.body.appendChild(btn);
+    this._collapsedLauncher = btn;
+  }
+
+  removeCollapsedLauncher() {
+    if (this._collapsedLauncher && this._collapsedLauncher.parentNode) {
+      this._collapsedLauncher.parentNode.removeChild(this._collapsedLauncher);
+    }
+    this._collapsedLauncher = null;
+  }
+
   addEventListeners() {
     // Add collapsing functionality for desktop/tablet
     if (!this.isMobile) {
@@ -596,6 +690,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           }
         });
       });
+      // Collapse button in desktop header
+      const collapseBtn = this.querySelector('.sidebar-collapse-btn');
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.collapseSidebar();
+        });
+      }
     }
   }
 }
