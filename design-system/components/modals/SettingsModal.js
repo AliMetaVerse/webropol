@@ -278,7 +278,7 @@ export class WebropolSettingsModal extends BaseComponent {
     const isOpen = this.getBoolAttr('open');
     
     this.innerHTML = `
-      <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
+  <div class="modal-backdrop mobile-modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100001] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
            style="transition: opacity 300ms ease-out">
         
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"

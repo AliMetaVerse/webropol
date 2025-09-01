@@ -121,11 +121,43 @@ export class ThemeManager {
   // Ensure design tokens stylesheet is present for CSS variables and dark overrides
   this.ensureTokensStylesIncluded();
 
+  // Ensure global mobile responsive stylesheet is present across pages
+  this.ensureResponsiveStylesIncluded();
+
     // Re-apply theme when global settings (including dark mode) are applied
     if (typeof window !== 'undefined') {
       window.addEventListener('webropol-settings-applied', () => {
         this.applyTheme(this.getCurrentTheme());
       });
+
+      // Provide a lightweight global helper to open settings across pages
+      if (typeof window.openGlobalSettings !== 'function') {
+        window.openGlobalSettings = async () => {
+          try {
+            // Prefer global manager if available
+            if (window.globalSettingsManager && typeof window.globalSettingsManager.openSettingsModal === 'function') {
+              window.globalSettingsManager.openSettingsModal();
+              return;
+            }
+            // Ensure the SettingsModal is registered (dynamic import if needed)
+            if (!customElements.get('webropol-settings-modal')) {
+              try {
+                await import('../components/modals/SettingsModal.js');
+              } catch (_) {}
+            }
+            // Create/attach and open
+            let modal = document.querySelector('webropol-settings-modal');
+            if (!modal) {
+              modal = document.createElement('webropol-settings-modal');
+              document.body.appendChild(modal);
+            }
+            if (typeof modal.open === 'function') modal.open(); else modal.setAttribute('open', '');
+          } catch (err) {
+            // As a last resort emit an event others can listen to
+            document.dispatchEvent(new CustomEvent('settings-open'));
+          }
+        };
+      }
     }
   }
 
@@ -178,6 +210,28 @@ export class ThemeManager {
       link.id = 'webropol-tokens-css';
       link.rel = 'stylesheet';
       link.href = '/design-system/styles/tokens.css';
+      document.head.appendChild(link);
+    }
+  }
+
+  /**
+   * Ensure mobile-responsive.css is loaded on all pages that include this theme manager
+   */
+  static ensureResponsiveStylesIncluded() {
+    if (document.getElementById('webropol-mobile-responsive-css')) return;
+    try {
+      const responsiveUrl = new URL('../styles/mobile-responsive.css', import.meta.url).href;
+      const link = document.createElement('link');
+      link.id = 'webropol-mobile-responsive-css';
+      link.rel = 'stylesheet';
+      link.href = responsiveUrl;
+      document.head.appendChild(link);
+    } catch (e) {
+      // Fallback: try common relative path from site root
+      const link = document.createElement('link');
+      link.id = 'webropol-mobile-responsive-css';
+      link.rel = 'stylesheet';
+      link.href = '/design-system/styles/mobile-responsive.css';
       document.head.appendChild(link);
     }
   }

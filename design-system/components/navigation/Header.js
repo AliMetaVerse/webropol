@@ -430,7 +430,7 @@ export class WebropolHeader extends BaseComponent {
       // Handle settings link click
   const settingsLink = dropdown.querySelector('a[data-action="settings"]');
       if (settingsLink) {
-        settingsLink.addEventListener('click', (e) => {
+        settingsLink.addEventListener('click', async (e) => {
           e.preventDefault();
           e.stopPropagation();
           
@@ -446,7 +446,16 @@ export class WebropolHeader extends BaseComponent {
             } else if (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.openSettingsModal === 'function') {
               window.globalSettingsManager.openSettingsModal();
             // 3) Direct fallback: ensure element exists and open it
-            } else if (typeof customElements !== 'undefined' && customElements.get('webropol-settings-modal')) {
+            } else if (typeof customElements !== 'undefined') {
+              // If not registered, dynamically import the component
+              if (!customElements.get('webropol-settings-modal')) {
+                try {
+                  await import('../modals/SettingsModal.js');
+                } catch (err) {
+                  console.warn('Failed to load SettingsModal module dynamically', err);
+                }
+              }
+              // Create/attach and open
               let modal = document.querySelector('webropol-settings-modal');
               if (!modal) {
                 modal = document.createElement('webropol-settings-modal');

@@ -373,10 +373,10 @@ export class WebropolHeader extends BaseComponent {
     // Content per type (lightweight)
     if (type === 'user') {
       dropdown.innerHTML = `
-        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Profile</button>
-        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Settings</button>
+        <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Profile</button>
+        <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Settings</button>
         <div class="my-1 border-t border-webropol-gray-200"></div>
-        <button class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Sign out</button>
+        <button data-action="signout" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Sign out</button>
       `;
     } else if (type === 'notifications') {
       dropdown.innerHTML = `
@@ -445,6 +445,40 @@ export class WebropolHeader extends BaseComponent {
 
     layer.appendChild(dropdown);
     this._activeDropdown = type;
+
+    // Wire actions for user dropdown (open settings)
+    if (type === 'user') {
+      const settingsBtn = dropdown.querySelector('button[data-action="settings"]');
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          // Close the dropdown first so it doesn't overlay the modal
+          this.closeDropdown();
+          try {
+            if (typeof window !== 'undefined' && typeof window.openGlobalSettings === 'function') {
+              window.openGlobalSettings();
+              return;
+            }
+            if (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.openSettingsModal === 'function') {
+              window.globalSettingsManager.openSettingsModal();
+              return;
+            }
+            if (typeof customElements !== 'undefined' && !customElements.get('webropol-settings-modal')) {
+              try { await import('../modals/SettingsModal.js'); } catch (_) {}
+            }
+            let modal = document.querySelector('webropol-settings-modal');
+            if (!modal) {
+              modal = document.createElement('webropol-settings-modal');
+              document.body.appendChild(modal);
+            }
+            if (typeof modal.open === 'function') { modal.open(); } else { modal.setAttribute('open', ''); }
+          } catch (err) {
+            document.dispatchEvent(new CustomEvent('settings-open'));
+          }
+        });
+      }
+    }
 
     // Tailwind play CDN refresh for dynamic classes
     if (window.tailwind && typeof window.tailwind.refresh === 'function') {
