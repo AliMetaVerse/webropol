@@ -24,6 +24,7 @@ export { WebropolSidebar } from './navigation/Sidebar.js';
 export { WebropolSidebarEnhanced } from './navigation/SidebarEnhanced.js';
 export { WebropolBreadcrumbs } from './navigation/Breadcrumbs.js';
 export { Tabs } from './navigation/Tabs.js';
+export { WebropolBrand } from './navigation/Brand.js';
 
 // Interactive components
 export { WebropolFloatingButton } from './interactive/FloatingButton.js';
@@ -55,6 +56,7 @@ import './navigation/Sidebar.js';
 import './navigation/SidebarEnhanced.js';
 import './navigation/Breadcrumbs.js';
 import './navigation/Tabs.js';
+import './navigation/Brand.js';
 import './interactive/FloatingButton.js';
 import './forms/Input.js';
 import './feedback/Badge.js';
@@ -83,6 +85,7 @@ window.WebropolComponents = {
   HeaderEnhanced: 'webropol-header-enhanced',
   Sidebar: 'webropol-sidebar',
   SidebarEnhanced: 'webropol-sidebar-enhanced',
+  Brand: 'webropol-brand',
   Breadcrumbs: 'webropol-breadcrumbs',
   Tabs: 'webropol-tabs',
   FloatingButton: 'webropol-floating-button',
