@@ -380,10 +380,36 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       
       <!-- Mobile Footer -->
       <div class="border-t border-webropol-gray-200 p-4">
-        <a href="#" class="flex items-center px-4 py-3 text-webropol-teal-700 hover:bg-webropol-teal-50 rounded-xl transition-all">
-          <i class="fal fa-envelope w-5 mr-3"></i>
-          <span class="font-medium">Contact Us</span>
-        </a>
+        <!-- Contact Us - Redesigned Mobile Footer Button -->
+        <div class="relative">
+          <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+            <!-- Icon with animated background -->
+            <div class="relative flex-shrink-0">
+              <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-lg"></i>
+              </div>
+              <!-- Pulse animation on hover -->
+              <div class="absolute inset-0 w-10 h-10 bg-webropol-teal-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+            </div>
+            
+            <!-- Text content -->
+            <div class="ml-4 flex-1">
+              <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm">
+                Contact Us
+              </div>
+              <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300">
+                Gain Insight & Get Support
+              </div>
+            </div>
+          </a>
+        </div>
+        
+        <!-- Version info -->
+        <div class="mt-3 text-center">
+          <div class="text-xs text-webropol-gray-400">
+            Webropol v3.2.1
+          </div>
+        </div>
       </div>
     `;
   }
@@ -514,10 +540,29 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         
         <!-- Tablet Footer -->
         <div class="p-2 group-hover:p-4 transition-all duration-300">
-          <a href="#" class="flex items-center justify-center group-hover:justify-start px-3 py-3 text-webropol-teal-700 hover:bg-webropol-teal-50 rounded-xl transition-all">
-            <i class="fal fa-envelope w-5 flex-shrink-0"></i>
-            <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">Contact Us</span>
-          </a>
+          <!-- Contact Us - Redesigned Tablet Footer Button -->
+          <div class="relative">
+            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center justify-center group-hover:justify-start rounded-2xl font-semibold transition-all duration-300 p-3 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+              <!-- Icon with animated background -->
+              <div class="relative flex-shrink-0">
+                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-lg flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-sm"></i>
+                </div>
+                <!-- Pulse animation on hover -->
+                <div class="absolute inset-0 w-8 h-8 bg-webropol-teal-400 rounded-lg opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+              </div>
+              
+              <!-- Text content (appears on hover) -->
+              <div class="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden group-hover:w-auto w-0">
+                <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+                  Contact Us
+                </div>
+                <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300 whitespace-nowrap">
+                  Gain Insight & Get Support
+                </div>
+              </div>
+            </a>
+          </div>
         </div>
       </aside>
     `;
@@ -570,18 +615,42 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     xl:px-4 px-2
                     group-hover:px-4
                     pb-6">
-          <a href="#" class="nav-item flex items-center rounded-xl font-semibold text-webropol-teal-700 hover:bg-webropol-teal-50 transition-all duration-200
-                             xl:px-4 px-3
-                             group-hover:px-4
-                             py-3">
-            <i class="fal fa-envelope w-5 flex-shrink-0
-                     xl:mr-4 mr-0
-                     group-hover:mr-4"></i>
-            <span class="overflow-hidden transition-all duration-300
-                        xl:opacity-100 xl:w-auto
-                        opacity-0 w-0
-                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Contact Us</span>
-          </a>
+          <!-- Contact Us - Redesigned Desktop Footer Button -->
+          <div class="relative">
+            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+              <!-- Icon with animated background -->
+              <div class="relative flex-shrink-0">
+                <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-lg"></i>
+                </div>
+                <!-- Pulse animation on hover -->
+                <div class="absolute inset-0 w-10 h-10 bg-webropol-teal-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+              </div>
+              
+              <!-- Text content -->
+              <div class="ml-4 overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto xl:block
+                          opacity-0 w-0 hidden
+                          group-hover:opacity-100 group-hover:w-auto group-hover:block">
+                <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+                  Contact Us
+                </div>
+                <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300 whitespace-nowrap">
+                  Gain Insight & Get Support
+                </div>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Version info -->
+          <div class="mt-3 text-center overflow-hidden transition-all duration-300
+                      xl:opacity-100 xl:block
+                      opacity-0 hidden
+                      group-hover:opacity-100 group-hover:block">
+            <div class="text-xs text-webropol-gray-400 whitespace-nowrap">
+              Webropol v3.2.1
+            </div>
+          </div>
         </div>
       </aside>
     `;
