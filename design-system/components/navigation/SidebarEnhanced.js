@@ -407,7 +407,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         <!-- Version info -->
         <div class="mt-3 text-center">
           <div class="text-xs text-webropol-gray-400">
-            Webropol v3.2.1
+            Webropol Devlopment v3.2.1
           </div>
         </div>
       </div>
@@ -648,7 +648,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                       opacity-0 hidden
                       group-hover:opacity-100 group-hover:block">
             <div class="text-xs text-webropol-gray-400 whitespace-nowrap">
-              Webropol v3.2.1
+              Webropol Development v3.2.1
             </div>
           </div>
         </div>
