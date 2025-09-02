@@ -141,7 +141,7 @@ All components now extend `BaseComponent` which provides:
 <webropol-sidebar-enhanced 
   active="surveys" 
   brand-title="MyWebropol"
-  brand-subtitle="Survey Platform">
+  brand-subtitle="Survey Tool Forerunner">
   
   <div slot="menu-items">
     <a href="/custom" class="sidebar-link">Custom Link</a>

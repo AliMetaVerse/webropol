@@ -52,7 +52,7 @@ export class WebropolSidebar extends BaseComponent {
                       opacity-0 w-0
                       group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
             <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
+            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
           </div>
         </div>
         

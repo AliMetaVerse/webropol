@@ -529,7 +529,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           </div>
           <div class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
             <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
+            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
           </div>
         </div>
         
@@ -594,7 +594,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                         opacity-0 w-0
                         group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
               <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-              <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Platform</p>
+              <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
             </div>
           </div>
           <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
