@@ -349,8 +349,9 @@
 					<h2>Webropol CP</h2>
 					<nav class="nav" style="margin-top:16px;">
 						<a href="#overview" data-link class="active">Overview</a>
-						<a href="#global-settings" data-link>Global Settings</a>
-						<a href="#modal-controls" data-link>Settings Modal Controls</a>
+						<a href="#functions" data-link>Functions</a>
+						<a href="#modules" data-link>Modules</a>
+						<a href="#features" data-link>Features</a>
 					</nav>
 				</div>
 				<div style="margin-top: auto; padding-top: 20px;">
@@ -386,31 +387,73 @@
 					</div>
 				</div>
 
-				<div id="panel-global" class="panel" hidden>
-					<div class="two-col">
-						<div class="card">
-							<h3 style="margin:0 0 10px;">Interface</h3>
-							<div id="ifaceList"></div>
+				<div id="panel-functions" class="panel" hidden>
+					<div class="card" style="margin-bottom: 30px;">
+						<h2 style="font-family: 'Orbitron', monospace; color: #8b5cf6; margin: 0 0 20px; text-align: center; font-size: 20px; letter-spacing: 2px;">GLOBAL SETTINGS</h2>
+						<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+							<div class="card">
+								<h3 style="margin:0 0 10px;">Interface Settings</h3>
+								<div id="ifaceList"></div>
+							</div>
+							<div class="card">
+								<h3 style="margin:0 0 10px;">Behavior Settings</h3>
+								<div id="behaviorList"></div>
+							</div>
+							<div class="card">
+								<h3 style="margin:0 0 10px;">Feedback & Animation Settings</h3>
+								<div id="animList"></div>
+							</div>
 						</div>
-						<div class="card">
-							<h3 style="margin:0 0 10px;">Behavior</h3>
-							<div id="behaviorList"></div>
-						</div>
-						<div class="card" style="grid-column: 1 / -1;">
-							<h3 style="margin:0 0 10px;">Feedback & Animation</h3>
-							<div id="animList"></div>
+					</div>
+					
+					<div class="card">
+						<h2 style="font-family: 'Orbitron', monospace; color: #8b5cf6; margin: 0 0 20px; text-align: center; font-size: 20px; letter-spacing: 2px;">SETTINGS MODAL CONTROLS</h2>
+						<div class="two-col">
+							<div class="card">
+								<h3 style="margin:0 0 10px;">Modal Sections Control</h3>
+								<div class="muted" style="margin-bottom: 15px;">Control which sections appear in the settings modal</div>
+								<div id="modalSections"></div>
+							</div>
+							<div class="card">
+								<h3 style="margin:0 0 10px;">Modal Controls Visibility</h3>
+								<div class="muted" style="margin-bottom: 15px;">Control which individual controls are visible in the settings modal</div>
+								<div id="modalControls"></div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div id="panel-modal" class="panel" hidden>
-					<div class="card">
-						<h3 style="margin:0 0 10px;">Sections</h3>
-						<div id="modalSections"></div>
+				<div id="panel-modules" class="panel" hidden>
+					<div class="two-col">
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Main Application Modules</h3>
+							<div id="modulesList"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Module Status</h3>
+							<div id="moduleStatus"></div>
+						</div>
 					</div>
-					<div class="card">
-						<h3 style="margin:0 0 10px;">Controls</h3>
-						<div id="modalControls"></div>
+				</div>
+
+				<div id="panel-features" class="panel" hidden>
+					<div class="two-col">
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Survey Features</h3>
+							<div id="surveyFeatures"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Dashboard Features</h3>
+							<div id="dashboardFeatures"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Admin Features</h3>
+							<div id="adminFeatures"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Shop Features</h3>
+							<div id="shopFeatures"></div>
+						</div>
 					</div>
 				</div>
 			</main>
@@ -424,7 +467,12 @@
 
 			function setActive(link) {
 				qsa('[data-link]').forEach(a => a.classList.toggle('active', a === link));
-				const map = { '#overview': ['panel-overview','Overview'], '#global-settings': ['panel-global','Global Settings'], '#modal-controls': ['panel-modal','Settings Modal Controls'] };
+				const map = { 
+					'#overview': ['panel-overview','Overview'], 
+					'#functions': ['panel-functions','Functions'], 
+					'#modules': ['panel-modules','Modules'], 
+					'#features': ['panel-features','Features'] 
+				};
 				const key = link.getAttribute('href');
 				const [id, title] = map[key] || ['panel-overview','Overview'];
 				qsa('.panel').forEach(p => p.hidden = true);
@@ -534,13 +582,82 @@
 				);
 			}
 
+			function renderModules() {
+				const s = guardedGetSettings();
+				const modules = s.modules || {};
+				const modulesList = qs('#modulesList');
+				const moduleStatus = qs('#moduleStatus');
+				modulesList.innerHTML = ''; moduleStatus.innerHTML = '';
+
+				const setModule = (k, v) => { const cur = guardedGetSettings(); const next = { ...(cur.modules||{}), [k]: v }; saveSetting('modules', next); };
+
+				modulesList.append(
+					inputRow('mod_surveys','Surveys Module', modules.surveysEnabled!==false, v => setModule('surveysEnabled', v)),
+					inputRow('mod_dashboards','Dashboards Module', modules.dashboardsEnabled!==false, v => setModule('dashboardsEnabled', v)),
+					inputRow('mod_admin','Admin Tools Module', modules.adminToolsEnabled!==false, v => setModule('adminToolsEnabled', v)),
+					inputRow('mod_shop','Shop Module', modules.shopEnabled!==false, v => setModule('shopEnabled', v)),
+					inputRow('mod_events','Events Module', modules.eventsEnabled!==false, v => setModule('eventsEnabled', v)),
+					inputRow('mod_mywebropol','My Webropol Module', modules.mywebropolEnabled!==false, v => setModule('mywebropolEnabled', v)),
+					inputRow('mod_news','News Module', modules.newsEnabled!==false, v => setModule('newsEnabled', v)),
+					inputRow('mod_training','Training Videos Module', modules.trainingEnabled!==false, v => setModule('trainingEnabled', v))
+				);
+
+				moduleStatus.append(
+					inputRow('mod_sidebar','Show in Sidebar', modules.showInSidebar!==false, v => setModule('showInSidebar', v)),
+					inputRow('mod_header','Show in Header', modules.showInHeader!==false, v => setModule('showInHeader', v)),
+					inputRow('mod_mobile','Mobile Responsive', modules.mobileResponsive!==false, v => setModule('mobileResponsive', v))
+				);
+			}
+
+			function renderFeatures() {
+				const s = guardedGetSettings();
+				const features = s.features || {};
+				const surveyFeatures = qs('#surveyFeatures');
+				const dashboardFeatures = qs('#dashboardFeatures');
+				const adminFeatures = qs('#adminFeatures');
+				const shopFeatures = qs('#shopFeatures');
+				surveyFeatures.innerHTML = ''; dashboardFeatures.innerHTML = ''; adminFeatures.innerHTML = ''; shopFeatures.innerHTML = '';
+
+				const setFeature = (k, v) => { const cur = guardedGetSettings(); const next = { ...(cur.features||{}), [k]: v }; saveSetting('features', next); };
+
+				surveyFeatures.append(
+					inputRow('feat_survey_create','Survey Creation', features.surveyCreateEnabled!==false, v => setFeature('surveyCreateEnabled', v)),
+					inputRow('feat_survey_edit','Survey Editing', features.surveyEditEnabled!==false, v => setFeature('surveyEditEnabled', v)),
+					inputRow('feat_survey_preview','Survey Preview', features.surveyPreviewEnabled!==false, v => setFeature('surveyPreviewEnabled', v)),
+					inputRow('feat_survey_analytics','Survey Analytics', features.surveyAnalyticsEnabled!==false, v => setFeature('surveyAnalyticsEnabled', v)),
+					inputRow('feat_survey_export','Survey Export', features.surveyExportEnabled!==false, v => setFeature('surveyExportEnabled', v))
+				);
+
+				dashboardFeatures.append(
+					inputRow('feat_dash_widgets','Dashboard Widgets', features.dashboardWidgetsEnabled!==false, v => setFeature('dashboardWidgetsEnabled', v)),
+					inputRow('feat_dash_custom','Custom Dashboards', features.customDashboardsEnabled!==false, v => setFeature('customDashboardsEnabled', v)),
+					inputRow('feat_dash_real','Real-time Updates', features.realtimeUpdatesEnabled!==false, v => setFeature('realtimeUpdatesEnabled', v)),
+					inputRow('feat_dash_export','Dashboard Export', features.dashboardExportEnabled!==false, v => setFeature('dashboardExportEnabled', v))
+				);
+
+				adminFeatures.append(
+					inputRow('feat_admin_users','User Management', features.userManagementEnabled!==false, v => setFeature('userManagementEnabled', v)),
+					inputRow('feat_admin_perms','Permissions', features.permissionsEnabled!==false, v => setFeature('permissionsEnabled', v)),
+					inputRow('feat_admin_audit','Audit Logs', features.auditLogsEnabled!==false, v => setFeature('auditLogsEnabled', v)),
+					inputRow('feat_admin_backup','Backup & Restore', features.backupRestoreEnabled!==false, v => setFeature('backupRestoreEnabled', v))
+				);
+
+				shopFeatures.append(
+					inputRow('feat_shop_credits','SMS Credits', features.smsCreditsEnabled!==false, v => setFeature('smsCreditsEnabled', v)),
+					inputRow('feat_shop_products','Product Catalog', features.productCatalogEnabled!==false, v => setFeature('productCatalogEnabled', v)),
+					inputRow('feat_shop_billing','Billing & Invoicing', features.billingEnabled!==false, v => setFeature('billingEnabled', v)),
+					inputRow('feat_shop_support','Customer Support', features.customerSupportEnabled!==false, v => setFeature('customerSupportEnabled', v))
+				);
+			}
+
 			function wireNav() {
 				qsa('[data-link]').forEach(a => {
 					a.addEventListener('click', (e) => {
 						e.preventDefault(); setActive(a);
 						const hash = a.getAttribute('href');
-						if (hash === '#global-settings') { renderGlobal(); }
-						if (hash === '#modal-controls') { renderModalControls(); }
+						if (hash === '#functions') { renderGlobal(); renderModalControls(); }
+						if (hash === '#modules') { renderModules(); }
+						if (hash === '#features') { renderFeatures(); }
 						renderDump();
 					});
 				});
@@ -552,14 +669,26 @@
 
 			function mountApp() {
 				qs('#app').hidden = false;
-				wireNav(); renderGlobal(); renderModalControls(); renderDump();
+				wireNav(); 
+				renderGlobal(); 
+				renderModalControls(); 
+				renderModules(); 
+				renderFeatures(); 
+				renderDump();
 				qs('#logoutBtn').onclick = () => {
 					sessionStorage.removeItem('cpSession');
 					localStorage.removeItem('cpRemember');
 					window.location.replace('./login.html');
 				};
 				qs('#openSettingsModalBtn').onclick = openSettingsModal;
-				qs('#resetSettingsBtn').onclick = () => { try { window.globalSettingsManager?.resetSettings(); } catch {} renderGlobal(); renderModalControls(); renderDump(); };
+				qs('#resetSettingsBtn').onclick = () => { 
+					try { window.globalSettingsManager?.resetSettings(); } catch {} 
+					renderGlobal(); 
+					renderModalControls(); 
+					renderModules(); 
+					renderFeatures(); 
+					renderDump(); 
+				};
 				qs('#exportBtn').onclick = () => {
 					const blob = new Blob([JSON.stringify(guardedGetSettings(), null, 2)], { type: 'application/json' });
 					const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'webropol-settings.json'; a.click(); URL.revokeObjectURL(a.href);
