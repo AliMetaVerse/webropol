@@ -60,6 +60,9 @@ export class GlobalSettingsManager {
       mywebropolEnabled: true,
       newsEnabled: true,
       trainingEnabled: true,
+      smsEnabled: true,
+      exwEnabled: true,
+      caseManagementEnabled: true,
       showInSidebar: true,
       showInHeader: true,
       mobileResponsive: true

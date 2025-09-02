@@ -243,21 +243,24 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         href: '#/sms',
         icon: 'fal fa-sms',
         label: '2-Way SMS',
-        active: active === 'sms'
+        active: active === 'sms',
+        moduleKey: 'smsEnabled'
       },
       {
         id: 'exw',
         href: '#/exw',
         icon: 'fal fa-user-chart',
         label: 'EXW',
-        active: active === 'exw'
+        active: active === 'exw',
+        moduleKey: 'exwEnabled'
       },
       {
         id: 'case-management',
         href: '#/case-management',
         icon: 'fal fa-briefcase',
         label: 'Case Management',
-        active: active === 'case-management'
+        active: active === 'case-management',
+        moduleKey: 'caseManagementEnabled'
       },
       // Divider
       { type: 'divider' },
