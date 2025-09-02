@@ -50,7 +50,27 @@ export class WebropolSettingsModal extends BaseComponent {
       settingsAnimationEnabled: true,
       settingsAnimationFrequency: 3, // times per day
       settingsAnimationDuration: 2000, // milliseconds - modern animations are shorter
-      settingsAnimationType: 'magnetic' // 'magnetic', 'morphing', 'ripple', 'breathing', 'elastic', 'particle'
+      settingsAnimationType: 'magnetic', // 'magnetic', 'morphing', 'ripple', 'breathing', 'elastic', 'particle'
+      // Meta: control what this modal shows
+      settingsModal: {
+        showInterfaceSection: true,
+        showBehaviorSection: true,
+        showAnimationSection: true,
+        showDarkMode: true,
+        showCompactMode: true,
+        showFloatingButton: true,
+        showPromosEnabled: true,
+        showHeaderCreateMenu: true,
+        showRatingSelector: true,
+        showAutoSave: true,
+        showNotifications: true,
+        showAutoLogout: true,
+        showFeedbackType: true,
+        showSettingsAnimation: true,
+        showAnimationType: true,
+        showAnimationFrequency: true,
+        showAnimationDuration: true
+      }
     };
 
     const stored = localStorage.getItem('webropol_global_settings');
@@ -111,7 +131,26 @@ export class WebropolSettingsModal extends BaseComponent {
         settingsAnimationEnabled: true,
         settingsAnimationFrequency: 3,
         settingsAnimationDuration: 2000,
-        settingsAnimationType: 'magnetic'
+        settingsAnimationType: 'magnetic',
+        settingsModal: {
+          showInterfaceSection: true,
+          showBehaviorSection: true,
+          showAnimationSection: true,
+          showDarkMode: true,
+          showCompactMode: true,
+          showFloatingButton: true,
+          showPromosEnabled: true,
+          showHeaderCreateMenu: true,
+          showRatingSelector: true,
+          showAutoSave: true,
+          showNotifications: true,
+          showAutoLogout: true,
+          showFeedbackType: true,
+          showSettingsAnimation: true,
+          showAnimationType: true,
+          showAnimationFrequency: true,
+          showAnimationDuration: true
+        }
       };
       this.saveSettings();
       this.render();
@@ -276,6 +315,9 @@ export class WebropolSettingsModal extends BaseComponent {
 
   render() {
     const isOpen = this.getBoolAttr('open');
+    const sm = (this.settings && this.settings.settingsModal) ? this.settings.settingsModal : { showInterfaceSection: true, showBehaviorSection: true, showAnimationSection: true,
+      showDarkMode: true, showCompactMode: true, showFloatingButton: true, showPromosEnabled: true, showHeaderCreateMenu: true, showRatingSelector: true,
+      showAutoSave: true, showNotifications: true, showAutoLogout: true, showFeedbackType: true, showSettingsAnimation: true, showAnimationType: true, showAnimationFrequency: true, showAnimationDuration: true };
     
     this.innerHTML = `
   <div class="modal-backdrop mobile-modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100001] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
@@ -305,10 +347,11 @@ export class WebropolSettingsModal extends BaseComponent {
           <!-- Modal Body -->
           <div class="modal-body flex-1 overflow-y-auto p-6">
             <!-- Settings Grid Layout -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               
-              <!-- Interface Settings Section -->
-              <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-teal-50/30 rounded-xl p-5 border border-webropol-gray-100">
+        <!-- Interface Settings Section -->
+        ${sm.showInterfaceSection ? `
+        <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-teal-50/30 rounded-xl p-5 border border-webropol-gray-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
                   <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-desktop text-sm"></i>
@@ -317,8 +360,9 @@ export class WebropolSettingsModal extends BaseComponent {
                 </h3>
                 <div class="space-y-3">
                   
-                  <!-- Dark Mode Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+          <!-- Dark Mode Toggle -->
+          ${sm.showDarkMode ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Dark Mode</label>
@@ -334,10 +378,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="darkMode">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Compact Mode Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+          <!-- Compact Mode Toggle -->
+          ${sm.showCompactMode ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Compact Mode</label>
@@ -353,10 +398,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="compactMode">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Floating Button Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+          <!-- Floating Button Toggle -->
+          ${sm.showFloatingButton ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Floating Button</label>
@@ -372,10 +418,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="showFloatingButton">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
 
-                  <!-- Promos Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+          <!-- Promos Toggle -->
+          ${sm.showPromosEnabled ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Promos</label>
@@ -391,10 +438,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="promosEnabled">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Header Create Menu Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
+          <!-- Header Create Menu Toggle -->
+          ${sm.showHeaderCreateMenu ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-gray-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Header Create Menu</label>
@@ -410,13 +458,15 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="showHeaderCreateMenu">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
                 </div>
-              </div>
+        </div>
+        ` : ''}
               
-              <!-- Behavior Settings Section -->
-              <div class="settings-section bg-gradient-to-br from-webropol-blue-50/50 to-webropol-purple-50/30 rounded-xl p-5 border border-webropol-blue-100">
+        <!-- Behavior Settings Section -->
+        ${sm.showBehaviorSection ? `
+        <div class="settings-section bg-gradient-to-br from-webropol-blue-50/50 to-webropol-purple-50/30 rounded-xl p-5 border border-webropol-blue-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
                   <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-cogs text-sm"></i>
@@ -425,8 +475,9 @@ export class WebropolSettingsModal extends BaseComponent {
                 </h3>
                 <div class="space-y-3">
                   
-                  <!-- Auto-save Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+          <!-- Auto-save Toggle -->
+          ${sm.showAutoSave ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Auto-save</label>
@@ -442,10 +493,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="autoSave">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Notifications Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+          <!-- Notifications Toggle -->
+          ${sm.showNotifications ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Notifications</label>
@@ -461,10 +513,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="notifications">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Auto Logout Setting -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+          <!-- Auto Logout Setting -->
+          ${sm.showAutoLogout ? `
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
                     <div class="flex items-center justify-between mb-2">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700">Auto Logout</label>
@@ -482,13 +535,15 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="120" ${this.settings.autoLogout === 120 ? 'selected' : ''}>2 hours</option>
                       <option value="0" ${this.settings.autoLogout === 0 ? 'selected' : ''}>Never</option>
                     </select>
-                  </div>
+          </div>` : ''}
                   
                 </div>
-              </div>
+        </div>
+        ` : ''}
               
-              <!-- User Feedback & Animation Settings Section -->
-              <div class="settings-section bg-gradient-to-br from-webropol-green-50/50 to-webropol-yellow-50/30 rounded-xl p-5 border border-webropol-green-100">
+        <!-- User Feedback & Animation Settings Section -->
+        ${sm.showAnimationSection ? `
+        <div class="settings-section bg-gradient-to-br from-webropol-green-50/50 to-webropol-yellow-50/30 rounded-xl p-5 border border-webropol-green-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
                   <div class="w-8 h-8 bg-gradient-to-br from-webropol-green-500 to-webropol-yellow-600 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-magic text-white text-sm"></i>
@@ -497,8 +552,9 @@ export class WebropolSettingsModal extends BaseComponent {
                 </h3>
                 <div class="space-y-3">
                   
-                  <!-- Rating Selector Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+          <!-- Rating Selector Toggle -->
+          ${sm.showRatingSelector ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Rating Selector</label>
@@ -514,10 +570,11 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="showRatingSelector">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-green-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Feedback Question Type -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+          <!-- Feedback Question Type -->
+          ${sm.showFeedbackType ? `
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
                     <div class="flex items-center justify-between mb-2">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700">Feedback Type</label>
@@ -533,10 +590,11 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="openended" ${this.settings.feedbackQuestionType === 'openended' ? 'selected' : ''}>Open-ended Question</option>
                       <option value="nps" ${this.settings.feedbackQuestionType === 'nps' ? 'selected' : ''}>NPS Score</option>
                     </select>
-                  </div>
+          </div>` : ''}
                   
-                  <!-- Animation Enabled Toggle -->
-                  <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
+          <!-- Animation Enabled Toggle -->
+          ${sm.showSettingsAnimation ? `
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-green-100/50">
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center">
                         <label class="text-sm font-medium text-webropol-gray-700 truncate">Settings Animation</label>
@@ -552,16 +610,18 @@ export class WebropolSettingsModal extends BaseComponent {
                              data-setting="settingsAnimationEnabled">
                       <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-green-600"></div>
                     </label>
-                  </div>
+          </div>` : ''}
                   
                 </div>
-              </div>
+        </div>
+        ` : ''}
               
 
               
             </div>
               <!-- Animation Configuration Section (spans full width) -->
-              <div class="settings-section mt-4 bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
+        ${sm.showAnimationSection ? `
+        <div class="settings-section mt-4 bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
                   <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-wand-magic text-sm"></i>
@@ -573,7 +633,8 @@ export class WebropolSettingsModal extends BaseComponent {
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   
                   <!-- Animation Type -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+          ${sm.showAnimationType ? `
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
                     <div class="flex items-center mb-2">
                       <label class="text-sm font-medium text-webropol-gray-700">Animation Type</label>
                       <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
@@ -590,10 +651,11 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="elastic" ${this.settings.settingsAnimationType === 'elastic' ? 'selected' : ''}>Elastic Bounce</option>
                       <option value="particle" ${this.settings.settingsAnimationType === 'particle' ? 'selected' : ''}>Particle Burst</option>
                     </select>
-                  </div>
+          </div>` : ''}
                   
                   <!-- Animation Frequency -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+          ${sm.showAnimationFrequency ? `
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
                     <div class="flex items-center mb-2">
                       <label class="text-sm font-medium text-webropol-gray-700">Daily Frequency</label>
                       <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
@@ -610,10 +672,11 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="5" ${this.settings.settingsAnimationFrequency === 5 ? 'selected' : ''}>5 times</option>
                       <option value="6" ${this.settings.settingsAnimationFrequency === 6 ? 'selected' : ''}>6 times</option>
                     </select>
-                  </div>
+          </div>` : ''}
                   
                   <!-- Animation Duration -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+          ${sm.showAnimationDuration ? `
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
                     <div class="flex items-center mb-2">
                       <label class="text-sm font-medium text-webropol-gray-700">Animation Duration</label>
                       <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
@@ -632,10 +695,10 @@ export class WebropolSettingsModal extends BaseComponent {
                       <option value="8000" ${this.settings.settingsAnimationDuration === 8000 ? 'selected' : ''}>8 seconds</option>
                       <option value="10000" ${this.settings.settingsAnimationDuration === 10000 ? 'selected' : ''}>10 seconds</option>
                     </select>
-                  </div>
+          </div>` : ''}
                   
                   <!-- Test Animation Section -->
-                  <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
+          <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-purple-100/50">
                     <div class="flex items-center mb-2">
                       <label class="text-sm font-medium text-webropol-gray-700">Test Animation</label>
                       <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
@@ -657,6 +720,7 @@ export class WebropolSettingsModal extends BaseComponent {
                   
                 </div>
               </div>
+        ` : ''}
           </div>
           
           <!-- Modal Footer -->

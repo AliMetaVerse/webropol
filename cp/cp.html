@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Webropol Control Panel</title>
+		<link rel="stylesheet" href="../design-system/styles/tokens.css" />
+		<link rel="stylesheet" href="../design-system/styles/mobile-responsive.css" />
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+			
+			* { box-sizing: border-box; }
+			
+			body { 
+				font-family: 'Exo 2', sans-serif; 
+				background: radial-gradient(ellipse at center, #0a0d1a 0%, #000 70%), 
+				            conic-gradient(from 45deg at 20% 80%, #4c1d95 0deg, #1e1b4b 90deg, #312e81 180deg, #4c1d95 360deg);
+				background-size: 100% 100%, 200% 200%;
+				background-position: center, 0% 0%;
+				animation: cosmicShift 30s ease-in-out infinite;
+				color: #e2e8f0; 
+				margin: 0;
+				overflow-x: hidden;
+				position: relative;
+			}
+			
+			@keyframes cosmicShift {
+				0%, 100% { background-position: center, 0% 0%; }
+				50% { background-position: center, 100% 100%; }
+			}
+			
+			body::before {
+				content: '';
+				position: fixed;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: 
+					radial-gradient(circle at 15% 25%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+					radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+					radial-gradient(circle at 50% 10%, rgba(147, 51, 234, 0.04) 0%, transparent 50%);
+				animation: starField 40s linear infinite;
+				pointer-events: none;
+				z-index: 0;
+			}
+			
+			@keyframes starField {
+				0% { transform: rotate(0deg) scale(1); }
+				100% { transform: rotate(360deg) scale(1.05); }
+			}
+			
+			.container { 
+				display: grid; 
+				grid-template-columns: 280px 1fr; 
+				min-height: 100vh; 
+				position: relative;
+				z-index: 1;
+			}
+			
+			.sidebar { 
+				background: linear-gradient(180deg, 
+					rgba(15, 23, 42, 0.95) 0%, 
+					rgba(30, 27, 75, 0.9) 50%, 
+					rgba(15, 23, 42, 0.95) 100%);
+				color: #e2e8f0; 
+				padding: 24px; 
+				border-right: 1px solid rgba(139, 92, 246, 0.2);
+				backdrop-filter: blur(20px);
+				position: relative;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+			}
+			
+			.sidebar::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.02) 50%, transparent 70%);
+				animation: shimmer 4s ease-in-out infinite;
+				pointer-events: none;
+			}
+			
+			@keyframes shimmer {
+				0%, 100% { transform: translateY(-100%); }
+				50% { transform: translateY(100%); }
+			}
+			
+			.sidebar h2 { 
+				font-family: 'Orbitron', monospace; 
+				font-size: 18px; 
+				font-weight: 900;
+				margin: 0 0 16px; 
+				letter-spacing: 2px; 
+				background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+				background-clip: text;
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				text-align: center;
+			}
+			
+			.nav a { 
+				display: block; 
+				padding: 12px 16px; 
+				border-radius: 12px; 
+				color: #cbd5e1; 
+				text-decoration: none; 
+				margin-bottom: 8px; 
+				transition: all 0.3s ease;
+				font-weight: 500;
+				position: relative;
+				overflow: hidden;
+			}
+			
+			.nav a::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+			
+			.nav a.active, .nav a:hover { 
+				background: rgba(139, 92, 246, 0.15);
+				color: #ffffff;
+				border: 1px solid rgba(139, 92, 246, 0.3);
+				transform: translateX(4px);
+			}
+			
+			.nav a.active::before, .nav a:hover::before {
+				opacity: 1;
+			}
+			
+			.header { 
+				display: flex; 
+				align-items: center; 
+				justify-content: space-between; 
+				padding: 20px 24px; 
+				border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+				background: linear-gradient(90deg, 
+					rgba(15, 23, 42, 0.95) 0%, 
+					rgba(30, 27, 75, 0.8) 50%, 
+					rgba(15, 23, 42, 0.95) 100%);
+				position: sticky; 
+				top: 0; 
+				z-index: 10;
+				backdrop-filter: blur(20px);
+			}
+			
+			.content { 
+				background: transparent;
+				min-height: 0; 
+			}
+			
+			.panel { 
+				padding: 24px; 
+			}
+			
+			.card { 
+				background: linear-gradient(135deg, 
+					rgba(15, 23, 42, 0.9) 0%, 
+					rgba(30, 27, 75, 0.7) 50%, 
+					rgba(15, 23, 42, 0.9) 100%);
+				border: 1px solid rgba(139, 92, 246, 0.2);
+				border-radius: 16px; 
+				padding: 20px; 
+				margin-bottom: 20px; 
+				backdrop-filter: blur(15px);
+				position: relative;
+				overflow: hidden;
+			}
+			
+			.card::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.02) 50%, transparent 70%);
+				animation: cardShimmer 6s ease-in-out infinite;
+				pointer-events: none;
+			}
+			
+			@keyframes cardShimmer {
+				0%, 100% { transform: translateX(-100%); }
+				50% { transform: translateX(100%); }
+			}
+			
+			.card h3 {
+				font-family: 'Orbitron', monospace;
+				font-weight: 700;
+				color: #8b5cf6;
+				margin: 0 0 16px;
+				letter-spacing: 1px;
+			}
+			
+			.row { 
+				display: flex; 
+				align-items: center; 
+				justify-content: space-between; 
+				gap: 16px; 
+				padding: 12px 0; 
+				border-bottom: 1px dashed rgba(139, 92, 246, 0.2);
+			}
+			
+			.row:last-child { 
+				border-bottom: 0; 
+			}
+			
+			.row label { 
+				font-weight: 600; 
+				font-size: 14px; 
+				color: #e2e8f0;
+			}
+			
+			.muted { 
+				color: #94a3b8; 
+				font-size: 12px; 
+				font-weight: 300;
+			}
+			
+			.controls { 
+				display: flex; 
+				align-items: center; 
+				gap: 12px; 
+			}
+			
+			select, input[type="text"], input[type="password"] { 
+				border: 1px solid rgba(139, 92, 246, 0.3);
+				border-radius: 10px; 
+				padding: 8px 12px; 
+				background: rgba(15, 23, 42, 0.8);
+				color: #e2e8f0;
+				font-family: 'Exo 2', sans-serif;
+				transition: all 0.3s ease;
+			}
+			
+			select:focus, input[type="text"]:focus, input[type="password"]:focus {
+				outline: none;
+				border-color: #8b5cf6;
+				box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+			}
+			
+			input[type="checkbox"] {
+				accent-color: #8b5cf6;
+				width: 18px;
+				height: 18px;
+			}
+			
+			.btn { 
+				padding: 10px 16px; 
+				border-radius: 10px; 
+				border: 1px solid transparent; 
+				cursor: pointer; 
+				font-family: 'Orbitron', monospace;
+				font-weight: 600;
+				font-size: 11px;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+			}
+			
+			.btn::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+				transform: translateX(-100%);
+				transition: transform 0.6s ease;
+			}
+			
+			.btn:hover::before {
+				transform: translateX(100%);
+			}
+			
+			.btn.primary { 
+				background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+				color: #ffffff; 
+				box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+			}
+			
+			.btn.primary:hover {
+				transform: translateY(-1px);
+				box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+			}
+			
+			.btn.ghost { 
+				background: rgba(139, 92, 246, 0.1); 
+				border-color: rgba(139, 92, 246, 0.3);
+				color: #8b5cf6; 
+			}
+			
+			.btn.ghost:hover {
+				background: rgba(139, 92, 246, 0.2);
+				border-color: #8b5cf6;
+			}
+			
+			.tag { 
+				background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2));
+				color: #8b5cf6; 
+				font-family: 'Orbitron', monospace;
+				font-weight: 700; 
+				font-size: 10px; 
+				padding: 6px 12px; 
+				border-radius: 12px; 
+				border: 1px solid rgba(139, 92, 246, 0.3);
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+			
+			.two-col { 
+				display: grid; 
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+				gap: 20px; 
+			}
+			
+			#pageTitle {
+				font-family: 'Orbitron', monospace;
+				font-weight: 700;
+				color: #8b5cf6;
+				font-size: 18px;
+				letter-spacing: 1px;
+			}
+			
+			#settingsDump {
+				white-space: pre-wrap; 
+				font-size: 11px; 
+				margin: 0;
+				font-family: 'JetBrains Mono', 'Courier New', monospace;
+				background: rgba(0, 0, 0, 0.3);
+				padding: 16px;
+				border-radius: 12px;
+				border: 1px solid rgba(139, 92, 246, 0.1);
+				color: #94a3b8;
+			}
+			
+			@media (max-width: 920px) { 
+				.container { grid-template-columns: 1fr; } 
+				.sidebar { position: sticky; top: 0; z-index: 20; padding: 16px; } 
+				.two-col { grid-template-columns: 1fr; }
+			}
+		</style>
+		<script type="module" src="../design-system/utils/global-settings-manager.js"></script>
+	</head>
+	<body>
+
+		<div id="app" class="container" hidden>
+			<aside class="sidebar">
+				<div>
+					<h2>Webropol CP</h2>
+					<nav class="nav" style="margin-top:16px;">
+						<a href="#overview" data-link class="active">Overview</a>
+						<a href="#global-settings" data-link>Global Settings</a>
+						<a href="#modal-controls" data-link>Settings Modal Controls</a>
+					</nav>
+				</div>
+				<div style="margin-top: auto; padding-top: 20px;">
+					<button id="logoutBtn" class="btn ghost" style="width: 100%; justify-content: center;" title="Log out">Logout</button>
+				</div>
+			</aside>
+			<main class="content">
+				<div class="header">
+					<div style="display:flex; align-items:center; gap:10px;">
+						<strong id="pageTitle">Overview</strong>
+						<span class="tag">Admin</span>
+					</div>
+					<div class="controls">
+						<button id="openSettingsModalBtn" class="btn ghost">Open Settings Modal</button>
+						<button id="resetSettingsBtn" class="btn ghost">Reset All</button>
+					</div>
+				</div>
+				<div id="panel-overview" class="panel">
+					<div class="card">
+						<div class="row" style="border:0;">
+							<div>
+								<div><strong>Status</strong></div>
+								<div class="muted">Using unified settings via localStorage</div>
+							</div>
+							<div class="controls">
+								<button id="exportBtn" class="btn ghost">Export</button>
+								<button id="importBtn" class="btn ghost">Import</button>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<pre id="settingsDump" style="white-space:pre-wrap; font-size:12px; margin:0;"></pre>
+					</div>
+				</div>
+
+				<div id="panel-global" class="panel" hidden>
+					<div class="two-col">
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Interface</h3>
+							<div id="ifaceList"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">Behavior</h3>
+							<div id="behaviorList"></div>
+						</div>
+						<div class="card" style="grid-column: 1 / -1;">
+							<h3 style="margin:0 0 10px;">Feedback & Animation</h3>
+							<div id="animList"></div>
+						</div>
+					</div>
+				</div>
+
+				<div id="panel-modal" class="panel" hidden>
+					<div class="card">
+						<h3 style="margin:0 0 10px;">Sections</h3>
+						<div id="modalSections"></div>
+					</div>
+					<div class="card">
+						<h3 style="margin:0 0 10px;">Controls</h3>
+						<div id="modalControls"></div>
+					</div>
+				</div>
+			</main>
+		</div>
+
+		<script>
+			const state = { view: 'overview' };
+
+			const qs = (s, r=document) => r.querySelector(s);
+			const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+			function setActive(link) {
+				qsa('[data-link]').forEach(a => a.classList.toggle('active', a === link));
+				const map = { '#overview': ['panel-overview','Overview'], '#global-settings': ['panel-global','Global Settings'], '#modal-controls': ['panel-modal','Settings Modal Controls'] };
+				const key = link.getAttribute('href');
+				const [id, title] = map[key] || ['panel-overview','Overview'];
+				qsa('.panel').forEach(p => p.hidden = true);
+				qs('#'+id).hidden = false;
+				qs('#pageTitle').textContent = title;
+			}
+
+			function guardedGetSettings() {
+				try { return window.globalSettingsManager?.getAllSettings() || {}; } catch { return {}; }
+			}
+			function saveSetting(key, val) {
+				try { window.globalSettingsManager?.setSetting(key, val); } catch {}
+				renderDump();
+			}
+			function renderDump() {
+				const s = guardedGetSettings();
+				qs('#settingsDump').textContent = JSON.stringify(s, null, 2);
+			}
+
+			function inputRow(id, label, current, onChange, opts={}) {
+				const wrap = document.createElement('div');
+				wrap.className = 'row';
+				const left = document.createElement('div');
+				left.innerHTML = `<div><label>${label}</label></div>${opts.hint ? `<div class="muted">${opts.hint}</div>` : ''}`;
+				const right = document.createElement('div');
+				right.className = 'controls';
+				let input;
+				if (opts.type === 'select') {
+					input = document.createElement('select');
+					opts.options.forEach(([v, t]) => {
+						const o = document.createElement('option'); o.value = v; o.textContent = t; if (String(current)===String(v)) o.selected = true; input.appendChild(o);
+					});
+					input.addEventListener('change', () => onChange(input.value));
+				} else {
+					input = document.createElement('input');
+					input.type = 'checkbox';
+					input.checked = !!current;
+					input.addEventListener('change', () => onChange(input.checked));
+				}
+				right.appendChild(input);
+				wrap.append(left, right);
+				return wrap;
+			}
+
+			function renderGlobal() {
+				const s = guardedGetSettings();
+				const iface = qs('#ifaceList');
+				iface.innerHTML = '';
+				iface.append(
+					inputRow('darkMode','Dark Mode', s.darkMode, v => saveSetting('darkMode', v)),
+					inputRow('compactMode','Compact Mode', s.compactMode, v => saveSetting('compactMode', v)),
+					inputRow('showFloatingButton','Floating Button', s.showFloatingButton, v => saveSetting('showFloatingButton', v), { hint: 'Show/hide global floating button' }),
+					inputRow('promosEnabled','Promos', s.promosEnabled, v => saveSetting('promosEnabled', v), { hint: 'Enable promo toasts' }),
+					inputRow('showHeaderCreateMenu','Header Create Menu', s.showHeaderCreateMenu, v => saveSetting('showHeaderCreateMenu', v)),
+					inputRow('showRatingSelector','Rating Selector', s.showRatingSelector, v => saveSetting('showRatingSelector', v))
+				);
+
+				const beh = qs('#behaviorList');
+				beh.innerHTML = '';
+				beh.append(
+					inputRow('autoSave','Auto-save', s.autoSave, v => saveSetting('autoSave', v)),
+					inputRow('notifications','Notifications', s.notifications, v => saveSetting('notifications', v)),
+					inputRow('autoLogout','Auto Logout', s.autoLogout, v => saveSetting('autoLogout', parseInt(v,10)), { type:'select', options: [['15','15 minutes'],['30','30 minutes'],['60','1 hour'],['120','2 hours'],['0','Never']] })
+				);
+
+				const anim = qs('#animList');
+				anim.innerHTML = '';
+				anim.append(
+					inputRow('feedbackQuestionType','Feedback Type', s.feedbackQuestionType, v => saveSetting('feedbackQuestionType', v), { type:'select', options: [['rating','Star Rating'],['openended','Open-ended'],['nps','NPS']] }),
+					inputRow('settingsAnimationEnabled','Settings Animation', s.settingsAnimationEnabled, v => saveSetting('settingsAnimationEnabled', v)),
+					inputRow('settingsAnimationType','Animation Type', s.settingsAnimationType, v => saveSetting('settingsAnimationType', v), { type:'select', options: [['magnetic','Magnetic'],['morphing','Morphing'],['ripple','Ripple'],['breathing','Breathing'],['elastic','Elastic'],['particle','Particle']] }),
+					inputRow('settingsAnimationFrequency','Daily Frequency', s.settingsAnimationFrequency, v => saveSetting('settingsAnimationFrequency', parseInt(v,10)), { type:'select', options: [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6']] }),
+					inputRow('settingsAnimationDuration','Animation Duration', s.settingsAnimationDuration, v => saveSetting('settingsAnimationDuration', parseInt(v,10)), { type:'select', options: [['1500','1.5s'],['2000','2s'],['2500','2.5s'],['3000','3s'],['4000','4s'],['6000','6s'],['8000','8s'],['10000','10s']] })
+				);
+			}
+
+			function renderModalControls() {
+				const s = guardedGetSettings();
+				const sm = s.settingsModal || {};
+				const sections = qs('#modalSections');
+				const controls = qs('#modalControls');
+				sections.innerHTML=''; controls.innerHTML='';
+
+				const setSm = (k, v) => { const cur = guardedGetSettings(); const next = { ...(cur.settingsModal||{}), [k]: v }; saveSetting('settingsModal', next); };
+
+				sections.append(
+					inputRow('sm_iface','Interface section', sm.showInterfaceSection!==false, v => setSm('showInterfaceSection', v)),
+					inputRow('sm_beh','Behavior section', sm.showBehaviorSection!==false, v => setSm('showBehaviorSection', v)),
+					inputRow('sm_anim','Animation section', sm.showAnimationSection!==false, v => setSm('showAnimationSection', v))
+				);
+
+				controls.append(
+					inputRow('sm_dark','Dark Mode', sm.showDarkMode!==false, v => setSm('showDarkMode', v)),
+					inputRow('sm_compact','Compact Mode', sm.showCompactMode!==false, v => setSm('showCompactMode', v)),
+					inputRow('sm_float','Floating Button', sm.showFloatingButton!==false, v => setSm('showFloatingButton', v)),
+					inputRow('sm_promo','Promos', sm.showPromosEnabled!==false, v => setSm('showPromosEnabled', v)),
+					inputRow('sm_create','Header Create Menu', sm.showHeaderCreateMenu!==false, v => setSm('showHeaderCreateMenu', v)),
+					inputRow('sm_rate','Rating Selector', sm.showRatingSelector!==false, v => setSm('showRatingSelector', v)),
+					inputRow('sm_save','Auto-save', sm.showAutoSave!==false, v => setSm('showAutoSave', v)),
+					inputRow('sm_notif','Notifications', sm.showNotifications!==false, v => setSm('showNotifications', v)),
+					inputRow('sm_logout','Auto Logout', sm.showAutoLogout!==false, v => setSm('showAutoLogout', v)),
+					inputRow('sm_feed','Feedback Type', sm.showFeedbackType!==false, v => setSm('showFeedbackType', v)),
+					inputRow('sm_anim_en','Settings Animation', sm.showSettingsAnimation!==false, v => setSm('showSettingsAnimation', v)),
+					inputRow('sm_anim_type','Animation Type', sm.showAnimationType!==false, v => setSm('showAnimationType', v)),
+					inputRow('sm_anim_freq','Animation Frequency', sm.showAnimationFrequency!==false, v => setSm('showAnimationFrequency', v)),
+					inputRow('sm_anim_dur','Animation Duration', sm.showAnimationDuration!==false, v => setSm('showAnimationDuration', v))
+				);
+			}
+
+			function wireNav() {
+				qsa('[data-link]').forEach(a => {
+					a.addEventListener('click', (e) => {
+						e.preventDefault(); setActive(a);
+						const hash = a.getAttribute('href');
+						if (hash === '#global-settings') { renderGlobal(); }
+						if (hash === '#modal-controls') { renderModalControls(); }
+						renderDump();
+					});
+				});
+			}
+
+			function openSettingsModal() {
+				try { window.globalSettingsManager?.openSettingsModal(); } catch {}
+			}
+
+			function mountApp() {
+				qs('#app').hidden = false;
+				wireNav(); renderGlobal(); renderModalControls(); renderDump();
+				qs('#logoutBtn').onclick = () => {
+					sessionStorage.removeItem('cpSession');
+					localStorage.removeItem('cpRemember');
+					window.location.replace('./login.html');
+				};
+				qs('#openSettingsModalBtn').onclick = openSettingsModal;
+				qs('#resetSettingsBtn').onclick = () => { try { window.globalSettingsManager?.resetSettings(); } catch {} renderGlobal(); renderModalControls(); renderDump(); };
+				qs('#exportBtn').onclick = () => {
+					const blob = new Blob([JSON.stringify(guardedGetSettings(), null, 2)], { type: 'application/json' });
+					const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'webropol-settings.json'; a.click(); URL.revokeObjectURL(a.href);
+				};
+				qs('#importBtn').onclick = async () => {
+					const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
+					input.onchange = async () => {
+						const file = input.files?.[0]; if (!file) return; const text = await file.text();
+						try { const obj = JSON.parse(text); window.globalSettingsManager?.importSettings(obj); renderGlobal(); renderModalControls(); renderDump(); }
+						catch { alert('Invalid settings JSON'); }
+					};
+					input.click();
+				};
+			}
+
+			function boot() { mountApp(); }
+
+			// Enforce login: if no session token, try remember token or redirect
+			(function enforceAuth(){
+				const sess = sessionStorage.getItem('cpSession');
+				if (sess) return;
+				try {
+					const raw = localStorage.getItem('cpRemember');
+					if (raw) {
+						const obj = JSON.parse(raw);
+						if (obj && obj.expires > Date.now() && obj.token) {
+							sessionStorage.setItem('cpSession', obj.token);
+							return;
+						}
+					}
+				} catch {}
+				window.location.replace('./login.html');
+			})();
+
+			window.addEventListener('DOMContentLoaded', boot);
+		</script>
+	</body>
+</html>

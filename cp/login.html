@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Webropol CP Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+    
+    * { box-sizing: border-box; }
+    
+    body { 
+      font-family: 'Exo 2', sans-serif; 
+      background: radial-gradient(ellipse at center, #0a0d1a 0%, #000 70%), 
+                  conic-gradient(from 45deg at 20% 80%, #4c1d95 0deg, #1e1b4b 90deg, #312e81 180deg, #4c1d95 360deg);
+      background-size: 100% 100%, 200% 200%;
+      background-position: center, 0% 0%;
+      animation: cosmicShift 20s ease-in-out infinite;
+      color: #e2e8f0; 
+      display: grid; 
+      place-items: center; 
+      min-height: 100vh; 
+      margin: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    @keyframes cosmicShift {
+      0%, 100% { background-position: center, 0% 0%; }
+      50% { background-position: center, 100% 100%; }
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(147, 51, 234, 0.06) 0%, transparent 50%);
+      animation: starField 30s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes starField {
+      0% { transform: rotate(0deg) scale(1); }
+      100% { transform: rotate(360deg) scale(1.1); }
+    }
+    
+    .box { 
+      width: min(420px, 92vw); 
+      background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.95) 0%, 
+        rgba(30, 27, 75, 0.9) 50%, 
+        rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 24px; 
+      padding: 32px; 
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(139, 92, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+    
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(139, 92, 246, 0.03) 50%, transparent 70%);
+      animation: shimmer 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes shimmer {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+    
+    h1 { 
+      font-family: 'Orbitron', monospace; 
+      font-size: 24px; 
+      font-weight: 900;
+      margin: 0 0 8px; 
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4, #10b981);
+      background-size: 200% 200%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientText 4s ease-in-out infinite;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    
+    @keyframes gradientText {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .muted { 
+      font-size: 13px; 
+      color: #94a3b8; 
+      text-align: center;
+      margin-bottom: 24px;
+      font-weight: 300;
+    }
+    
+    label { 
+      display: block; 
+      font-family: 'Orbitron', monospace;
+      font-weight: 600; 
+      font-size: 11px; 
+      margin: 20px 0 8px; 
+      color: #8b5cf6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    input[type="text"], input[type="password"] { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border-radius: 12px; 
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(15, 23, 42, 0.8);
+      color: #e2e8f0; 
+      font-family: 'Exo 2', sans-serif;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    input[type="text"]:focus, input[type="password"]:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1), 0 0 20px rgba(139, 92, 246, 0.2);
+      background: rgba(15, 23, 42, 0.95);
+    }
+    
+    input[type="checkbox"] {
+      accent-color: #8b5cf6;
+      width: 16px;
+      height: 16px;
+    }
+    
+    .row { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      margin-top: 20px; 
+    }
+    
+    .btn { 
+      padding: 12px 24px; 
+      border-radius: 12px; 
+      border: 1px solid transparent; 
+      font-family: 'Orbitron', monospace;
+      font-weight: 700; 
+      font-size: 12px;
+      cursor: pointer; 
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+    
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
+    
+    .btn.primary { 
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      color: #ffffff; 
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    }
+    
+    .btn.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6);
+    }
+    
+    .btn.ghost { 
+      background: rgba(139, 92, 246, 0.1); 
+      color: #8b5cf6; 
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+    
+    .btn.ghost:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: #8b5cf6;
+    }
+    
+    .error { 
+      color: #fca5a5; 
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(153, 27, 27, 0.2));
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-radius: 12px; 
+      padding: 12px 16px; 
+      margin-top: 16px; 
+      display: none;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .pass-hint { 
+      font-size: 11px; 
+      color: #64748b; 
+      margin-top: 8px; 
+      font-weight: 300;
+    }
+    
+    .grid2 { 
+      display: grid; 
+      grid-template-columns: 1fr; 
+      gap: 12px; 
+      align-items: end; 
+    }
+    
+    .small { 
+      font-size: 11px; 
+      color: #64748b; 
+      text-align: center;
+      line-height: 1.5;
+      font-weight: 300;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Control Panel Login</h1>
+    <div class="muted">Secure client-side authentication</div>
+    
+    <form id="loginForm" autocomplete="on">
+      <div id="err" class="error">Invalid credentials</div>
+      <div id="setupMsg" class="small" style="display:none; margin-top: 8px;">No admin user yet. Create a strong password below to initialize.</div>
+
+      <label for="user">Username</label>
+      <input id="user" name="username" type="text" autocomplete="username" placeholder="admin" />
+
+      <div class="grid2">
+        <div>
+          <label for="pass">Password</label>
+          <input id="pass" name="password" type="password" autocomplete="current-password" placeholder="••••••••••••••••" />
+        </div>
+      </div>
+
+      <div class="row" style="justify-content: flex-start; gap: 12px;">
+        <label style="display:flex; align-items:center; gap:8px;">
+          <input id="remember" type="checkbox" /> Remember my credentials
+        </label>
+      </div>
+
+      <div class="row">
+        <a class="btn ghost" href="../index.html">Cancel</a>
+        <button id="loginBtn" class="btn primary" type="submit">Continue</button>
+      </div>
+    </form>
+
+    <div class="small" style="margin-top:16px;">Credentials are read from the local file and used only in this browser. For production, move auth server-side.</div>
+  </div>  <script>
+    // Config loaded from credentials file
+    let USERS = [];
+    let REMEMBER_DAYS = 30;
+    function randHex(lenBytes=16) { const buf = new Uint8Array(lenBytes); crypto.getRandomValues(buf); return [...buf].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+
+    function setRemember(token) {
+      if (!token) { localStorage.removeItem('cpRemember'); return; }
+      const expires = Date.now() + (REMEMBER_DAYS * 24*60*60*1000);
+      localStorage.setItem('cpRemember', JSON.stringify({ token, expires }));
+    }
+    
+    function setStoredCredentials(username, shouldRemember) {
+      if (shouldRemember) {
+        localStorage.setItem('cpStoredUsername', username);
+        localStorage.setItem('cpRememberCredentials', 'true');
+      } else {
+        localStorage.removeItem('cpStoredUsername');
+        localStorage.removeItem('cpRememberCredentials');
+      }
+    }
+    
+    function getStoredCredentials() {
+      const shouldRemember = localStorage.getItem('cpRememberCredentials') === 'true';
+      const username = localStorage.getItem('cpStoredUsername') || '';
+      return { username, shouldRemember };
+    }
+    
+    function validRemember() {
+      try {
+        const raw = localStorage.getItem('cpRemember'); if (!raw) return null;
+        const obj = JSON.parse(raw); if (!obj || obj.expires < Date.now()) { localStorage.removeItem('cpRemember'); return null; }
+        return obj.token;
+      } catch { return null; }
+    }
+
+    function redirectToCP() {
+      window.location.href = './cp.html';
+    }
+
+    async function loadCreds() {
+      try {
+        const res = await fetch('../xsl454rere/credentials.json', { cache: 'no-store' });
+        const cfg = await res.json();
+        USERS = Array.isArray(cfg.users) ? cfg.users : [];
+        REMEMBER_DAYS = cfg.rememberMaxDays || 30;
+      } catch {}
+    }
+
+    async function init() {
+  await loadCreds();
+      const userEl = document.getElementById('user');
+      const passEl = document.getElementById('pass');
+      const rememberEl = document.getElementById('remember');
+      const err = document.getElementById('err');
+      const setupMsg = document.getElementById('setupMsg');
+
+      // Fast path: remember token
+      const rem = validRemember();
+      if (rem) { sessionStorage.setItem('cpSession', rem); redirectToCP(); return; }
+
+      setupMsg.style.display = 'none';
+
+      // Load stored credentials if available
+      const storedCreds = getStoredCredentials();
+      if (storedCreds.username) {
+        userEl.value = storedCreds.username;
+        if (storedCreds.password) {
+          passEl.value = storedCreds.password;
+          rememberEl.checked = true;
+        }
+      }
+
+      async function handleLogin(e) {
+        if (e) e.preventDefault(); // Prevent form submission
+        err.style.display = 'none';
+        const u = userEl.value.trim() || 'admin';
+        const p = passEl.value;
+
+        const match = USERS.find(x => x.username === u && x.password === p);
+        if (!match) { err.textContent = 'Invalid credentials'; err.style.display = 'block'; return; }
+
+        const sessionToken = randHex(16);
+        sessionStorage.setItem('cpSession', sessionToken);
+        
+        // Store credentials in localStorage when remember is checked
+        if (rememberEl.checked) { 
+          setRemember(sessionToken); 
+          setStoredCredentials(u, p);
+        } else { 
+          setRemember(null);
+          setStoredCredentials(null, null);
+        }
+        
+        redirectToCP();
+      }
+
+      // Handle form submission for browser password manager
+      const loginForm = document.getElementById('loginForm');
+      loginForm.addEventListener('submit', handleLogin);
+      
+      document.getElementById('loginBtn').addEventListener('click', handleLogin);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

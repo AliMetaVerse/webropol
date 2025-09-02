@@ -27,6 +27,29 @@ export class GlobalSettingsManager {
   ratingAnimationFrequency: 3, // times per day
   ratingAnimationDuration: 5000, // milliseconds
   ratingAnimationType: 'wave' // 'wave' or 'attention'
+    ,
+    // Settings Modal meta-controls (control what the Settings modal shows)
+    settingsModal: {
+      // Section visibility
+      showInterfaceSection: true,
+      showBehaviorSection: true,
+      showAnimationSection: true,
+      // Control-level visibility
+      showDarkMode: true,
+      showCompactMode: true,
+      showFloatingButton: true,
+      showPromosEnabled: true,
+      showHeaderCreateMenu: true,
+      showRatingSelector: true,
+      showAutoSave: true,
+      showNotifications: true,
+      showAutoLogout: true,
+      showFeedbackType: true,
+      showSettingsAnimation: true,
+      showAnimationType: true,
+      showAnimationFrequency: true,
+      showAnimationDuration: true
+    }
     };
     
     this.settings = this.loadSettings();
