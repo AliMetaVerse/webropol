@@ -49,6 +49,44 @@ export class GlobalSettingsManager {
       showAnimationType: true,
       showAnimationFrequency: true,
       showAnimationDuration: true
+    },
+    // Module controls
+    modules: {
+      surveysEnabled: true,
+      dashboardsEnabled: true,
+      adminToolsEnabled: true,
+      shopEnabled: true,
+      eventsEnabled: true,
+      mywebropolEnabled: true,
+      newsEnabled: true,
+      trainingEnabled: true,
+      showInSidebar: true,
+      showInHeader: true,
+      mobileResponsive: true
+    },
+    // Feature controls
+    features: {
+      // Survey features
+      surveyCreateEnabled: true,
+      surveyEditEnabled: true,
+      surveyPreviewEnabled: true,
+      surveyAnalyticsEnabled: true,
+      surveyExportEnabled: true,
+      // Dashboard features
+      dashboardWidgetsEnabled: true,
+      customDashboardsEnabled: true,
+      realtimeUpdatesEnabled: true,
+      dashboardExportEnabled: true,
+      // Admin features
+      userManagementEnabled: true,
+      permissionsEnabled: true,
+      auditLogsEnabled: true,
+      backupRestoreEnabled: true,
+      // Shop features
+      smsCreditsEnabled: true,
+      productCatalogEnabled: true,
+      billingEnabled: true,
+      customerSupportEnabled: true
     }
     };
     

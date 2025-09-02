@@ -64,11 +64,17 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     super.disconnectedCallback();
     window.removeEventListener('resize', this.checkViewport);
     this.cleanupMobileMenu();
-  window.removeEventListener('hashchange', this.handleHashChange);
+    window.removeEventListener('hashchange', this.handleHashChange);
     if (this._headerObserver) {
       try { this._headerObserver.disconnect(); } catch {}
       this._headerObserver = null;
     }
+  }
+
+  // Method to refresh sidebar when module settings change
+  refreshSidebar() {
+    const active = this.getAttr('active') || 'home';
+    this.render();
   }
 
   checkViewport() {
@@ -194,7 +200,21 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   }
 
   generateNavigationItems(active, link) {
-    return [
+    // Get module settings from global settings manager
+    const getModuleSettings = () => {
+      try {
+        return window.globalSettingsManager?.getAllSettings()?.modules || {};
+      } catch {
+        return {};
+      }
+    };
+
+    const modules = getModuleSettings();
+    
+    // Default all modules to enabled if settings don't exist
+    const isModuleEnabled = (moduleKey) => modules[moduleKey] !== false;
+
+    const allItems = [
       {
         id: 'home',
         href: '#/home',
@@ -207,14 +227,16 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         href: '#/surveys/list',
         icon: 'fal fa-chart-bar',
         label: 'Surveys',
-        active: active === 'surveys'
+        active: active === 'surveys',
+        moduleKey: 'surveysEnabled'
       },
       {
         id: 'events',
         href: '#/events/list',
         icon: 'fal fa-calendar-alt',
         label: 'Events',
-        active: active === 'events'
+        active: active === 'events',
+        moduleKey: 'eventsEnabled'
       },
       {
         id: 'sms',
@@ -244,31 +266,46 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         href: '#/mywebropol',
         icon: 'fal fa-book-open',
         label: 'MyWebropol',
-        active: active === 'mywebropol'
+        active: active === 'mywebropol',
+        moduleKey: 'mywebropolEnabled'
       },
       {
         id: 'admin-tools',
         href: '#/admin-tools',
         icon: 'fal fa-tools',
         label: 'Admin Tools',
-        active: active === 'admin-tools'
+        active: active === 'admin-tools',
+        moduleKey: 'adminToolsEnabled'
       },
       {
         id: 'training-videos',
         href: '#/training-videos',
         icon: 'fal fa-video',
         label: 'Training Videos',
-        active: active === 'training-videos'
+        active: active === 'training-videos',
+        moduleKey: 'trainingEnabled'
       },
       {
         id: 'shop',
         href: '#/shop',
         icon: 'fal fa-shopping-cart',
         label: 'Shop',
-        active: active === 'shop'
+        active: active === 'shop',
+        moduleKey: 'shopEnabled'
       }
     ];
+
+    // Filter out disabled modules
+    return allItems.filter(item => {
+      // Always show dividers and items without moduleKey (like Home)
+      if (item.type === 'divider' || !item.moduleKey) {
+        return true;
+      }
+      // Check if module is enabled
+      return isModuleEnabled(item.moduleKey);
+    });
   }
+
   // Build just the inner HTML for the drawer content (used by body layer)
   renderMobileDrawerContent(navigationItems) {
     return `

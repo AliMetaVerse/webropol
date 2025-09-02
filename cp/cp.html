@@ -465,6 +465,50 @@
 			const qs = (s, r=document) => r.querySelector(s);
 			const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
 
+			// Load last viewed section from localStorage
+			function getLastViewedSection() {
+				try {
+					return localStorage.getItem('cpLastSection') || 'overview';
+				} catch {
+					return 'overview';
+				}
+			}
+
+			// Save current section to localStorage
+			function saveLastViewedSection(section) {
+				try {
+					localStorage.setItem('cpLastSection', section);
+				} catch {}
+			}
+
+			// Utility to refresh main app sidebar
+			function refreshMainAppSidebar() {
+				try {
+					// Try current window first
+					const currentSidebar = document.querySelector('webropol-sidebar-enhanced');
+					if (currentSidebar && typeof currentSidebar.refreshSidebar === 'function') {
+						currentSidebar.refreshSidebar();
+						return;
+					}
+					
+					// Try parent window (if CP is in iframe/popup)
+					const parentSidebar = window.parent?.document?.querySelector('webropol-sidebar-enhanced');
+					if (parentSidebar && typeof parentSidebar.refreshSidebar === 'function') {
+						parentSidebar.refreshSidebar();
+						return;
+					}
+					
+					// Try opener window (if CP is opened in new tab)
+					const openerSidebar = window.opener?.document?.querySelector('webropol-sidebar-enhanced');
+					if (openerSidebar && typeof openerSidebar.refreshSidebar === 'function') {
+						openerSidebar.refreshSidebar();
+						return;
+					}
+				} catch (e) {
+					console.log('Could not refresh main app sidebar:', e.message);
+				}
+			}
+
 			function setActive(link) {
 				qsa('[data-link]').forEach(a => a.classList.toggle('active', a === link));
 				const map = { 
@@ -478,6 +522,11 @@
 				qsa('.panel').forEach(p => p.hidden = true);
 				qs('#'+id).hidden = false;
 				qs('#pageTitle').textContent = title;
+				
+				// Save the current section
+				const sectionName = key.replace('#', '');
+				state.view = sectionName;
+				saveLastViewedSection(sectionName);
 			}
 
 			function guardedGetSettings() {
@@ -589,7 +638,16 @@
 				const moduleStatus = qs('#moduleStatus');
 				modulesList.innerHTML = ''; moduleStatus.innerHTML = '';
 
-				const setModule = (k, v) => { const cur = guardedGetSettings(); const next = { ...(cur.modules||{}), [k]: v }; saveSetting('modules', next); };
+				const setModule = (k, v) => { 
+					console.log('Setting module:', k, '=', v);
+					const cur = guardedGetSettings(); 
+					const next = { ...(cur.modules||{}), [k]: v }; 
+					saveSetting('modules', next); 
+					renderDump(); // Update the settings dump when modules change
+					
+					// Refresh the main app sidebar
+					refreshMainAppSidebar();
+				};
 
 				modulesList.append(
 					inputRow('mod_surveys','Surveys Module', modules.surveysEnabled!==false, v => setModule('surveysEnabled', v)),
@@ -618,7 +676,13 @@
 				const shopFeatures = qs('#shopFeatures');
 				surveyFeatures.innerHTML = ''; dashboardFeatures.innerHTML = ''; adminFeatures.innerHTML = ''; shopFeatures.innerHTML = '';
 
-				const setFeature = (k, v) => { const cur = guardedGetSettings(); const next = { ...(cur.features||{}), [k]: v }; saveSetting('features', next); };
+				const setFeature = (k, v) => { 
+					console.log('Setting feature:', k, '=', v);
+					const cur = guardedGetSettings(); 
+					const next = { ...(cur.features||{}), [k]: v }; 
+					saveSetting('features', next); 
+					renderDump(); // Update the settings dump when features change
+				};
 
 				surveyFeatures.append(
 					inputRow('feat_survey_create','Survey Creation', features.surveyCreateEnabled!==false, v => setFeature('surveyCreateEnabled', v)),
@@ -675,6 +739,17 @@
 				renderModules(); 
 				renderFeatures(); 
 				renderDump();
+				
+				// Restore last viewed section
+				const lastSection = getLastViewedSection();
+				const targetLink = qs(`[href="#${lastSection}"]`);
+				if (targetLink) {
+					setActive(targetLink);
+					// Trigger appropriate render functions based on section
+					if (lastSection === 'functions') { renderGlobal(); renderModalControls(); }
+					if (lastSection === 'modules') { renderModules(); }
+					if (lastSection === 'features') { renderFeatures(); }
+				}
 				qs('#logoutBtn').onclick = () => {
 					sessionStorage.removeItem('cpSession');
 					localStorage.removeItem('cpRemember');
@@ -697,7 +772,15 @@
 					const input = document.createElement('input'); input.type='file'; input.accept='.json,application/json';
 					input.onchange = async () => {
 						const file = input.files?.[0]; if (!file) return; const text = await file.text();
-						try { const obj = JSON.parse(text); window.globalSettingsManager?.importSettings(obj); renderGlobal(); renderModalControls(); renderDump(); }
+						try { 
+							const obj = JSON.parse(text); 
+							window.globalSettingsManager?.importSettings(obj); 
+							renderGlobal(); 
+							renderModalControls(); 
+							renderModules(); 
+							renderFeatures(); 
+							renderDump(); 
+						}
 						catch { alert('Invalid settings JSON'); }
 					};
 					input.click();
