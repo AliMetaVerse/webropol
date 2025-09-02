@@ -472,7 +472,7 @@
                   </div>
 
                   <!-- Question Container (selected/unselected states) -->
-         <div x-data="{ selected: false }" x-on:click.outside="selected = false"
+         <div x-data="{ selected: localStorage.getItem('autosuggestEditorOpen') === 'true' }" x-init="$watch('selected', value => localStorage.setItem('autosuggestEditorOpen', value ? 'true' : 'false'))"
            class="relative rounded-2xl overflow-hidden bg-white border border-webropol-gray-200 transition-shadow"
            :class="selected ? 'shadow-card hover-lift' : 'shadow-none'">
                   <!-- Expanded header and toolbar (selected) -->
@@ -498,6 +498,9 @@
                       </button>
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Delete">
                         <i class="fal fa-trash text-white"></i>
+                      </button>
+                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Close editor" aria-label="Close editor" @click="selected = false">
+                        <i class="fal fa-times text-white"></i>
                       </button>
                     </div>
                   </div>
@@ -687,8 +690,9 @@
       <div class="modal-body">
         <div class="settings-section">
           <h3 class="section-title">
+            <span class="step-badge">Step 1</span>
             <i class="fal fa-download"></i>
-            Step 1: Download template
+            <span>Download template</span>
           </h3>
           <button class="btn btn-secondary" onclick="downloadTemplate()">
             <i class="fal fa-download"></i>
@@ -698,8 +702,9 @@
         <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
         <div class="settings-section">
           <h3 class="section-title">
+            <span class="step-badge">Step 2</span>
             <i class="fal fa-upload"></i>
-            Step 2: Upload template
+            <span>Upload template</span>
           </h3>
           <p style="margin-bottom: 1rem; color: var(--webropol-gray-600);">
             Note: must be in CSV format, comma delimited
@@ -1216,6 +1221,22 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+
+    /* Step badge to emphasize sequential steps in modal */
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      gap: 0.375rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      line-height: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+  background: #fff7ed; /* orange-50 */
+  color: #c2410c; /* orange-700 */
+  border: 1px solid #fed7aa; /* orange-200 */
     }
 
     .file-upload-section {
