@@ -365,7 +365,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           <div class="w-6 h-6 flex items-center justify-center mr-3">
             <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
           </div>
-          <h2 class="font-bold text-webropol-gray-900 text-lg">Webropol</h2>
+          <h2 class="font-bold text-webropol-gray-900 text-lg uppercase">WEB<span style="color: var(--accent-500)">RO</span>POL</h2>
         </div>
         <button class="mobile-close-btn w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 rounded-lg transition-all"
                 aria-label="Close navigation menu">
@@ -528,7 +528,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
           </div>
           <div class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
-            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
+            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap uppercase">WEB<span style="color: var(--accent-500)">RO</span>POL</h1>
             <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
           </div>
         </div>
@@ -593,7 +593,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                         xl:opacity-100 xl:w-auto
                         opacity-0 w-0
                         group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
-              <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
+              <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap uppercase">WEB<span style="color: var(--accent-500)">RO</span>POL</h1>
               <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
             </div>
           </div>
