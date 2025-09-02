@@ -6,7 +6,7 @@
 export class GlobalSettingsManager {
   constructor() {
     this.defaultSettings = {
-      showFloatingButton: true,
+  showFloatingButton: false,
       darkMode: false,
       autoSave: true,
       notifications: true,
@@ -26,7 +26,12 @@ export class GlobalSettingsManager {
   ratingAnimationEnabled: true,
   ratingAnimationFrequency: 3, // times per day
   ratingAnimationDuration: 5000, // milliseconds
-  ratingAnimationType: 'wave' // 'wave' or 'attention'
+  ratingAnimationType: 'wave', // 'wave' or 'attention'
+  // Back-compat for Header/UI that read settingsAnimation*
+  settingsAnimationEnabled: true,
+  settingsAnimationFrequency: 3,
+  settingsAnimationDuration: 5000,
+  settingsAnimationType: 'ripple'
     ,
     // Settings Modal meta-controls (control what the Settings modal shows)
     settingsModal: {
@@ -35,10 +40,10 @@ export class GlobalSettingsManager {
       showBehaviorSection: true,
       showAnimationSection: true,
       // Control-level visibility
-      showDarkMode: true,
-      showCompactMode: true,
-      showFloatingButton: true,
-      showPromosEnabled: true,
+  showDarkMode: false,
+  showCompactMode: false,
+  showFloatingButton: false,
+  showPromosEnabled: false,
       showHeaderCreateMenu: true,
       showRatingSelector: true,
       showAutoSave: true,
@@ -53,16 +58,16 @@ export class GlobalSettingsManager {
     // Module controls
     modules: {
       surveysEnabled: true,
-      dashboardsEnabled: true,
-      adminToolsEnabled: true,
-      shopEnabled: true,
-      eventsEnabled: true,
+  dashboardsEnabled: false,
+  adminToolsEnabled: false,
+  shopEnabled: false,
+  eventsEnabled: false,
       mywebropolEnabled: true,
-      newsEnabled: true,
-      trainingEnabled: true,
-      smsEnabled: true,
-      exwEnabled: true,
-      caseManagementEnabled: true,
+  newsEnabled: false,
+  trainingEnabled: false,
+  smsEnabled: false,
+  exwEnabled: false,
+  caseManagementEnabled: false,
       showInSidebar: true,
       showInHeader: true,
       mobileResponsive: true

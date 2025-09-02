@@ -1026,7 +1026,8 @@
     </div>
 
     <!-- Floating Create Button Component -->
-    <webropol-floating-button x-show="interfaceMode === 'classic' && settings.showFloatingButton" 
+    <!-- Visibility is controlled by GlobalSettingsManager; only gate by interface mode here -->
+    <webropol-floating-button x-show="interfaceMode === 'classic'" 
                              x-transition:enter="transition ease-out duration-300"
                              x-transition:enter-start="opacity-0 transform scale-90"
                              x-transition:enter-end="opacity-100 transform scale-100"
@@ -1638,11 +1639,16 @@
                 showOnlyTitles: false,
                 selectedActivityTab: 'all',
                 
-                // Settings state
-                settings: JSON.parse(localStorage.getItem('webropol_settings') || JSON.stringify({
-                    showFloatingButton: true,
-                    autoSave: true
-                })),
+                // Settings state (mirror of GlobalSettingsManager)
+                // Initialize from global manager if available; fallback to stored global/local keys
+                settings: (window.globalSettingsManager && typeof window.globalSettingsManager.getAllSettings === 'function'
+                    ? window.globalSettingsManager.getAllSettings()
+                    : JSON.parse(
+                        localStorage.getItem('webropol_global_settings')
+                        || localStorage.getItem('webropol_settings')
+                        || JSON.stringify({ showFloatingButton: false, autoSave: true })
+                      )
+                  ),
                 
                 // Selection state
                 selectedQuestions: [],
@@ -1678,19 +1684,26 @@
 
                 // Settings methods
                 saveSettings() {
-                    localStorage.setItem('webropol_settings', JSON.stringify(this.settings));
-                    
-                    // Apply settings immediately
-                    this.applySettings();
+                    // Route saves through the GlobalSettingsManager when present
+                    if (window.globalSettingsManager && typeof window.globalSettingsManager.importSettings === 'function') {
+                        window.globalSettingsManager.importSettings(this.settings);
+                        // settings will be reapplied and events dispatched by the manager
+                    } else {
+                        // Fallback to legacy local storage key
+                        localStorage.setItem('webropol_settings', JSON.stringify(this.settings));
+                        this.applySettings();
+                    }
                 },
 
                 resetSettings() {
-                    if (confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) {
-                        this.settings = {
-                            showFloatingButton: true,
-                            autoSave: true
-                        };
-                        this.saveSettings();
+                    if (!confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) return;
+                    if (window.globalSettingsManager && typeof window.globalSettingsManager.resetSettings === 'function') {
+                        window.globalSettingsManager.resetSettings();
+                        this.settings = window.globalSettingsManager.getAllSettings();
+                    } else {
+                        this.settings = { showFloatingButton: false, autoSave: true };
+                        localStorage.setItem('webropol_settings', JSON.stringify(this.settings));
+                        this.applySettings();
                     }
                 },
 
@@ -1732,7 +1745,8 @@
                     // Listen for global settings changes
                     document.addEventListener('webropol-settings-applied', (e) => {
                         if (e.detail && e.detail.settings) {
-                            // Sync any page-specific settings if needed
+                            // Mirror global settings into Alpine state so UI can react if needed
+                            this.settings = e.detail.settings;
                             this.applySettings();
                         }
                     });

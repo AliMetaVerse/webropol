@@ -363,7 +363,14 @@ class WebropolSPA {
       // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
       this.runPageScripts(doc, baseUrl);
 
-      // Emit custom event AFTER scripts are executed so pages can listen during SPA loads
+      // Re-apply global settings after content load so UI reflects current configuration
+      try {
+        if (window.globalSettingsManager && typeof window.globalSettingsManager.applySettings === 'function') {
+          window.globalSettingsManager.applySettings();
+        }
+      } catch (_) {}
+
+  // Emit custom event AFTER scripts and settings are applied so pages can listen during SPA loads
       window.dispatchEvent(new CustomEvent('spa-route-change', { 
         detail: { path, queryString } 
       }));

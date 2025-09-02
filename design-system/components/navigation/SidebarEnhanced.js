@@ -36,6 +36,41 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     this.checkViewport();
     window.addEventListener('resize', this.checkViewport);
     this.setupMobileMenu();
+    // Hide initially if global settings manager isn't ready, to avoid showing wrong items
+    if (!window.globalSettingsManager) {
+      try { this.style.visibility = 'hidden'; } catch (_) {}
+    }
+    // Ensure an initial render happens once the GlobalSettingsManager is available
+    this._settingsWaitAttempts = 0;
+    this._settingsWaitTimer = null;
+    const waitAndRender = () => {
+      const gsm = window.globalSettingsManager;
+      if (gsm && typeof gsm.getAllSettings === 'function') {
+        // Manager ready: render with correct module visibility
+        try { this.render(); } catch (_) {}
+        try { this.style.visibility = ''; } catch (_) {}
+        this._settingsWaitTimer && clearTimeout(this._settingsWaitTimer);
+        this._settingsWaitTimer = null;
+        return;
+      }
+      // Cap retries to ~2s (40 * 50ms)
+      if (this._settingsWaitAttempts++ < 40) {
+        this._settingsWaitTimer = setTimeout(waitAndRender, 50);
+      } else {
+        // Give up gracefully: show sidebar with current state
+        try { this.style.visibility = ''; } catch (_) {}
+      }
+    };
+    // Kick off polling and add a window load fallback
+    this._settingsWaitTimer = setTimeout(waitAndRender, 0);
+    this._onWindowLoad = () => { try { waitAndRender(); } catch (_) {} };
+    window.addEventListener('load', this._onWindowLoad, { once: true });
+    // Re-render when global settings are applied (e.g., module toggles from CP)
+    this._settingsAppliedHandler = () => {
+      try { this.render(); } catch (_) {}
+      try { this.style.visibility = ''; } catch (_) {}
+    };
+    document.addEventListener('webropol-settings-applied', this._settingsAppliedHandler);
     // Sync active item from current route and listen for changes
     window.addEventListener('hashchange', this.handleHashChange);
     // Initialize active attribute if missing
@@ -65,6 +100,18 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     window.removeEventListener('resize', this.checkViewport);
     this.cleanupMobileMenu();
     window.removeEventListener('hashchange', this.handleHashChange);
+    if (this._settingsWaitTimer) {
+      try { clearTimeout(this._settingsWaitTimer); } catch (_) {}
+      this._settingsWaitTimer = null;
+    }
+    if (this._onWindowLoad) {
+      try { window.removeEventListener('load', this._onWindowLoad); } catch (_) {}
+      this._onWindowLoad = null;
+    }
+    if (this._settingsAppliedHandler) {
+      try { document.removeEventListener('webropol-settings-applied', this._settingsAppliedHandler); } catch {}
+      this._settingsAppliedHandler = null;
+    }
     if (this._headerObserver) {
       try { this._headerObserver.disconnect(); } catch {}
       this._headerObserver = null;

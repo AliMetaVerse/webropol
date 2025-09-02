@@ -31,7 +31,7 @@ export class WebropolSettingsModal extends BaseComponent {
 
   loadSettings() {
     const defaultSettings = {
-      showFloatingButton: true,
+      showFloatingButton: false,
       darkMode: false,
       autoSave: true,
       notifications: true,
@@ -40,26 +40,32 @@ export class WebropolSettingsModal extends BaseComponent {
       language: 'en',
   // Promos
   promosEnabled: false,
+      promoFrequency: 'per-route-session',
       // New: control visibility of Header Create menu
       showHeaderCreateMenu: true,
       // New: control visibility of Rating selector
       showRatingSelector: true,
       // New: feedback question type
       feedbackQuestionType: 'rating', // 'rating', 'openended', 'nps'
-      // New: settings animation settings (modern, attractive)
-      settingsAnimationEnabled: true,
-      settingsAnimationFrequency: 3, // times per day
-      settingsAnimationDuration: 2000, // milliseconds - modern animations are shorter
-      settingsAnimationType: 'magnetic', // 'magnetic', 'morphing', 'ripple', 'breathing', 'elastic', 'particle'
+  // Align with rating animation terms from request
+      ratingAnimationEnabled: true,
+      ratingAnimationFrequency: 3, // times per day
+      ratingAnimationDuration: 5000, // milliseconds
+  ratingAnimationType: 'wave',
+  // Back-compat: keep existing settingsAnimation* keys used by UI/Header
+  settingsAnimationEnabled: true,
+  settingsAnimationFrequency: 3,
+  settingsAnimationDuration: 5000,
+  settingsAnimationType: 'ripple', // closest to "wave"
       // Meta: control what this modal shows
       settingsModal: {
         showInterfaceSection: true,
         showBehaviorSection: true,
         showAnimationSection: true,
-        showDarkMode: true,
-        showCompactMode: true,
-        showFloatingButton: true,
-        showPromosEnabled: true,
+        showDarkMode: false,
+        showCompactMode: false,
+        showFloatingButton: false,
+        showPromosEnabled: false,
         showHeaderCreateMenu: true,
         showRatingSelector: true,
         showAutoSave: true,
@@ -117,7 +123,7 @@ export class WebropolSettingsModal extends BaseComponent {
       this.settings = this.loadSettings();
       // Reset to actual defaults
       this.settings = {
-        showFloatingButton: true,
+        showFloatingButton: false,
         darkMode: false,
         autoSave: true,
         notifications: true,
@@ -125,21 +131,27 @@ export class WebropolSettingsModal extends BaseComponent {
         autoLogout: 30,
         language: 'en',
   promosEnabled: false,
+        promoFrequency: 'per-route-session',
         showHeaderCreateMenu: true,
         showRatingSelector: true,
         feedbackQuestionType: 'rating',
-        settingsAnimationEnabled: true,
-        settingsAnimationFrequency: 3,
-        settingsAnimationDuration: 2000,
-        settingsAnimationType: 'magnetic',
+  ratingAnimationEnabled: true,
+  ratingAnimationFrequency: 3,
+  ratingAnimationDuration: 5000,
+  ratingAnimationType: 'wave',
+  // Back-compat for UI/Header controls
+  settingsAnimationEnabled: true,
+  settingsAnimationFrequency: 3,
+  settingsAnimationDuration: 5000,
+  settingsAnimationType: 'ripple',
         settingsModal: {
           showInterfaceSection: true,
           showBehaviorSection: true,
           showAnimationSection: true,
-          showDarkMode: true,
-          showCompactMode: true,
-          showFloatingButton: true,
-          showPromosEnabled: true,
+          showDarkMode: false,
+          showCompactMode: false,
+          showFloatingButton: false,
+          showPromosEnabled: false,
           showHeaderCreateMenu: true,
           showRatingSelector: true,
           showAutoSave: true,
