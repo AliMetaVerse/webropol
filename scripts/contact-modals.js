@@ -5,6 +5,7 @@
     root: null,
     backdrop: null,
     content: null,
+    modal: null,
     open: false,
     step: 'step1'
   };
@@ -19,6 +20,7 @@
     Object.assign(backdrop.style, { position:'absolute', inset:'0', background:'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.15) 50%, rgba(139, 92, 246, 0.1) 100%)', backdropFilter:'blur(12px) saturate(180%)', opacity:'0', transition:'all 300ms cubic-bezier(0.4, 0, 0.2, 1)' });
 
     const modal = document.createElement('div');
+    modal.setAttribute('data-contact-modal', '');
     Object.assign(modal.style, { 
       position:'absolute', top:'50%', left:'50%', 
       transform:'translate(-50%,-50%) scale(0.95)', 
@@ -48,10 +50,11 @@
       color:'#6b7280', 
       display:'flex', alignItems:'center', justifyContent:'center', 
       cursor:'pointer',
+      pointerEvents:'auto',
       boxShadow:'0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
       transition:'all 200ms ease',
       fontSize:'16px',
-      zIndex:'10'
+      zIndex:'100'
     });
     
     closeBtn.addEventListener('mouseenter', ()=> {
@@ -65,16 +68,31 @@
       closeBtn.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)';
     });
 
-    closeBtn.addEventListener('click', closeModal);
-    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', (e) => {
+      console.log('Close button clicked!', e);
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    });
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) {
+        console.log('Backdrop clicked!', e);
+        e.preventDefault();
+        e.stopPropagation();
+        closeModal();
+      }
+    });
 
     modal.appendChild(closeBtn);
     modal.appendChild(content);
+    modal.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent clicks on modal content from reaching backdrop
+    });
     root.appendChild(backdrop);
     root.appendChild(modal);
     document.body.appendChild(root);
 
-    STATE.root = root; STATE.backdrop = backdrop; STATE.content = content;
+    STATE.root = root; STATE.backdrop = backdrop; STATE.content = content; STATE.modal = modal;
     return root;
   }
 
@@ -84,15 +102,13 @@
       STATE.root.style.display = 'block';
       requestAnimationFrame(()=>{
         STATE.backdrop.style.opacity = '1';
-        const modal = STATE.root.querySelector('[data-contact-modal]');
-        if (modal) modal.style.transform = 'translate(-50%, -50%) scale(1)';
+        if (STATE.modal) STATE.modal.style.transform = 'translate(-50%, -50%) scale(1)';
         document.body.style.overflow = 'hidden';
         STATE.open = true;
       });
     } else {
       STATE.backdrop.style.opacity = '0';
-      const modal = STATE.root.querySelector('[data-contact-modal]');
-      if (modal) modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+      if (STATE.modal) STATE.modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
       STATE.open = false;
       setTimeout(()=>{ 
         if (!STATE.open && STATE.root) {
@@ -103,7 +119,10 @@
     }
   }
 
-  function closeModal(){ setOpen(false); }
+  function closeModal(){ 
+    console.log('closeModal called!'); 
+    setOpen(false); 
+  }
 
   function renderStep1(){
     ensureModal();
@@ -228,6 +247,7 @@
 
   function renderStep2(){
     ensureModal();
+    console.log('Rendering step 2, close button exists:', !!STATE.root.querySelector('[aria-label="Close"]'));
     STATE.step = 'step2';
     const username = (document.querySelector('webropol-header, webropol-header-enhanced')?.getAttribute('username')) || '';
     // Premium contact form with enhanced styling
