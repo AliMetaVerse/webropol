@@ -281,12 +281,14 @@
       localStorage.setItem('cpRemember', JSON.stringify({ token, expires }));
     }
     
-    function setStoredCredentials(username, shouldRemember) {
+    function setStoredCredentials(username, password, shouldRemember) {
       if (shouldRemember) {
         localStorage.setItem('cpStoredUsername', username);
+        localStorage.setItem('cpStoredPassword', password);
         localStorage.setItem('cpRememberCredentials', 'true');
       } else {
         localStorage.removeItem('cpStoredUsername');
+        localStorage.removeItem('cpStoredPassword');
         localStorage.removeItem('cpRememberCredentials');
       }
     }
@@ -294,7 +296,8 @@
     function getStoredCredentials() {
       const shouldRemember = localStorage.getItem('cpRememberCredentials') === 'true';
       const username = localStorage.getItem('cpStoredUsername') || '';
-      return { username, shouldRemember };
+      const password = localStorage.getItem('cpStoredPassword') || '';
+      return { username, password, shouldRemember };
     }
     
     function validRemember() {
@@ -336,9 +339,9 @@
       const storedCreds = getStoredCredentials();
       if (storedCreds.username) {
         userEl.value = storedCreds.username;
-        if (storedCreds.password) {
+        rememberEl.checked = storedCreds.shouldRemember;
+        if (storedCreds.password && storedCreds.shouldRemember) {
           passEl.value = storedCreds.password;
-          rememberEl.checked = true;
         }
       }
 
@@ -357,10 +360,10 @@
         // Store credentials in localStorage when remember is checked
         if (rememberEl.checked) { 
           setRemember(sessionToken); 
-          setStoredCredentials(u, p);
+          setStoredCredentials(u, p, true);
         } else { 
           setRemember(null);
-          setStoredCredentials(null, null);
+          setStoredCredentials(null, null, false);
         }
         
         redirectToCP();
