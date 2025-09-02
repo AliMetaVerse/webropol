@@ -888,6 +888,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           this.collapseSidebar();
         });
       }
+
     }
   }
 }
