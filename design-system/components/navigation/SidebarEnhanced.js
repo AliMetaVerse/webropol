@@ -362,8 +362,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       <!-- Mobile Header -->
       <div class="flex items-center justify-between h-16 px-4 border-b border-webropol-gray-200 bg-white">
         <div class="flex items-center">
-          <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center mr-3">
-            <i class="fal fa-chart-bar text-white text-sm"></i>
+          <div class="w-6 h-6 flex items-center justify-center mr-3">
+            <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
           </div>
           <h2 class="font-bold text-webropol-gray-900 text-lg">Webropol</h2>
         </div>
@@ -524,12 +524,12 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         
         <!-- Tablet Header -->
         <div class="h-20 flex items-center justify-center group-hover:justify-start group-hover:px-6 border-b border-webropol-gray-200/50 transition-all duration-300">
-          <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i class="fal fa-chart-bar text-white text-lg"></i>
+          <div class="w-6 h-6 flex items-center justify-center flex-shrink-0">
+            <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
           </div>
           <div class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
             <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-            <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
+            <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
           </div>
         </div>
         
@@ -586,15 +586,15 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     group-hover:px-8
                     transition-all duration-300">
           <div class="flex items-center min-w-0 flex-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
-              <i class="fal fa-chart-bar text-white text-lg"></i>
+            <div class="w-7 h-7 flex items-center justify-center flex-shrink-0">
+              <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <div class="ml-3 overflow-hidden transition-all duration-300
                         xl:opacity-100 xl:w-auto
                         opacity-0 w-0
                         group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
               <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap">Webropol</h1>
-              <p class="text-xs text-webropol-gray-500 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
+              <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
             </div>
           </div>
           <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
