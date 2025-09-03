@@ -15,17 +15,18 @@ export class WebropolBrand extends BaseComponent {
     // Keep styling inherited from the host element's classes
     this.innerHTML = `
       <span class="webropol-brand-text inline-block">
-        <span>WEB</span>
+  <span style="font-size: 1.22em;">WEB</span>
         <span class="webropol-brand-ro" style="
           color: var(--accent-500);
           display: inline-flex;
-          transform: rotate(-90deg) scale(0.6);
+          transform: rotate(-90deg);
           transform-origin: center center;
           line-height: 1;
-          margin: -10px;
-          vertical-align: middle;
+          font-size: 0.7em;
+          margin: -5px -2px 0px -8px;
+          padding-top: 9px;
         ">RO</span>
-        <span>POL</span>
+  <span style="font-size: 1.22em;">POL</span>
       </span>
     `;
   }

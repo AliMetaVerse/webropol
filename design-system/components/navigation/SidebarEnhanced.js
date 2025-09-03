@@ -587,7 +587,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     group-hover:px-8
                     transition-all duration-300">
           <div class="flex items-center min-w-0 flex-1">
-            <div class="w-7 h-7 flex items-center justify-center flex-shrink-0">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
             </div>
             <div class="ml-3 overflow-hidden transition-all duration-300
