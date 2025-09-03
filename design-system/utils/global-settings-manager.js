@@ -38,8 +38,7 @@ export class GlobalSettingsManager {
       // Control Panel (Features): master app-wide visibility toggle. Default hidden.
       // If hidden here => hidden everywhere in the App (but still configurable in CP view itself).
       enabledInApp: false,
-      // Settings (Functions → Control): controls visibility in App header independent of CP.
-      // If disabled here => still visible inside Settings for control; applies to app only.
+  // Settings Modal control (user-level): when master is on, this flag controls header visibility.
       enabledFromSettings: true
     },
     // Settings Modal meta-controls (control what the Settings modal shows)
@@ -302,16 +301,7 @@ export class GlobalSettingsManager {
         header.render();
       }
     });
-    // If master disabled, ensure the settings toggle behaves disabled in any open modal (UI reflects immediately)
-    try {
-      const modal = document.querySelector('webropol-settings-modal');
-      if (modal) {
-        const toggle = modal.querySelector('input[data-setting="aiAssistant.enabledFromSettings"]');
-        if (toggle) {
-          toggle.disabled = this.settings.aiAssistant?.enabledInApp === false;
-        }
-      }
-    } catch {}
+  // Settings modal will conditionally render the AI control based on master flag; no need to disable dynamically here.
   }
 
   /**

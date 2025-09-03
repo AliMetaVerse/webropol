@@ -57,7 +57,9 @@ export class WebropolSettingsModal extends BaseComponent {
   settingsAnimationFrequency: 3,
   settingsAnimationDuration: 5000,
   settingsAnimationType: 'ripple', // closest to "wave"
-      // Meta: control what this modal shows
+  // AI assistant default struct (master off by default; settings flag true so it takes effect once master is enabled from CP Features)
+  aiAssistant: { enabledInApp: false, enabledFromSettings: true },
+  // Meta: control what this modal shows
       settingsModal: {
         showInterfaceSection: true,
         showBehaviorSection: true,
@@ -120,7 +122,7 @@ export class WebropolSettingsModal extends BaseComponent {
 
   resetSettings() {
     if (confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) {
-      this.settings = this.loadSettings();
+  this.settings = this.loadSettings();
       // Reset to actual defaults
       this.settings = {
         showFloatingButton: false,
@@ -488,17 +490,19 @@ export class WebropolSettingsModal extends BaseComponent {
                 </h3>
                 <div class="space-y-3">
           <!-- AI Assistant Controls (Functions → Control) -->
+          ${this.settings.aiAssistant?.enabledInApp ? `
           <div class="py-2.5 px-3 bg-white/90 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
             <div class="flex items-center justify-between">
               <div class="flex items-center">
                 <label class="text-sm font-medium text-webropol-gray-700">AI Assistant</label>
               </div>
               <label class="relative inline-flex items-center cursor-pointer ml-3">
-                <input type="checkbox" class="sr-only peer" ${this.settings.aiAssistant?.enabledFromSettings ? 'checked' : ''} ${this.settings.aiAssistant?.enabledInApp === false ? 'disabled' : ''} data-setting="aiAssistant.enabledFromSettings">
-                <div class="w-9 h-5 ${this.settings.aiAssistant?.enabledInApp === false ? 'bg-gray-100' : 'bg-gray-200'} peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all ${this.settings.aiAssistant?.enabledInApp === false ? '' : 'peer-checked:bg-webropol-blue-600'}"></div>
+                <input type="checkbox" class="sr-only peer" ${this.settings.aiAssistant?.enabledFromSettings ? 'checked' : ''} data-setting="aiAssistant.enabledFromSettings">
+                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-blue-600"></div>
               </label>
             </div>
           </div>
+          ` : ''}
                   
           <!-- Auto-save Toggle -->
           ${sm.showAutoSave ? `

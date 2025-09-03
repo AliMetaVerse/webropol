@@ -133,8 +133,11 @@ export class WebropolHeader extends BaseComponent {
 
             ${showAIAssistant ? `
               <div class="relative" data-ai-assistant>
-                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all ai-assistant-btn" title="AI Assistant" aria-label="AI Assistant">
-                  <i class="fal fa-sparkles"></i>
+                <button class="ai-assistant-btn group relative overflow-hidden px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-sky-400 hover:from-indigo-600 hover:via-fuchsia-600 hover:to-sky-500 text-white font-semibold flex items-center gap-2" title="AI Assistant" aria-label="AI Assistant">
+                  <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-white/15 group-hover:bg-white/20 transition-colors">
+                    <i class="fal fa-sparkles"></i>
+                  </span>
+                  <span class="text-sm">AI Assistant</span>
                 </button>
               </div>
             ` : ''}
