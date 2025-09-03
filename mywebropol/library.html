@@ -129,7 +129,7 @@
 </head>
 
 <body class=""
-    x-data="libraryApp()" @click="showContextMenu = null">
+    x-data="libraryApp()" x-init="init()" @click="showContextMenu = null">
 
     <div class="flex h-screen">
         <webropol-sidebar active="mywebropol" base="../"></webropol-sidebar>
@@ -608,9 +608,9 @@
                                                             class="h-5 w-5 mt-1 rounded border-webropol-gray-300 text-webropol-teal-600 focus:ring-webropol-teal-500 mr-3 md:mr-4">
                                                         <div class="flex-1">
                                                             <div class="flex flex-col sm:flex-row sm:items-center mb-3 space-y-2 sm:space-y-0">
-                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'A frozen question means it cannot be modified once it is added to the survey.' : null" aria-label="A frozen question means it cannot be modified once it is added to the survey.">
+                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'Once frozen, it cannot be edited after being added to the survey.' : null" aria-label="Once frozen, it cannot be edited after being added to the survey.">
                                                                     <h3 class="text-lg font-semibold text-webropol-gray-900" x-text="question.name"></h3>
-                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen question means it cannot be modified once it is added to the survey." aria-label="A frozen question means it cannot be modified once it is added to the survey."></i>
+                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Once frozen, it cannot be edited after being added to the survey." aria-label="Once frozen, it cannot be edited after being added to the survey."></i>
                                                                 </div>
                                                                 <div class="flex flex-wrap items-center gap-2">
                                                                     <span
@@ -820,7 +820,7 @@
                                                         <td class="px-2 sm:px-4 py-6">
                                                             <div class="font-semibold text-webropol-gray-900 flex items-center">
                                                                 <span x-text="survey.name"></span>
-                                                                <i x-show="survey.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen survey means it cannot be modified when it is imported into another survey." aria-label="A frozen survey means it cannot be modified when it is imported into another survey."></i>
+                                                                <i x-show="survey.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Once frozen, it cannot be edited after being added to the survey." aria-label="Once frozen, it cannot be edited after being added to the survey."></i>
                                                             </div>
                                                             <!-- Mobile info -->
                                                             <div class="md:hidden mt-1 space-y-1">
@@ -1722,9 +1722,9 @@
                                             </label>
                                             
                                             <div class="flex-1">
-                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'A frozen question means it cannot be modified once it is added to the survey.' : null" aria-label="A frozen question means it cannot be modified once it is added to the survey." x-bind="{}">
+                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'Once frozen, it cannot be edited after being added to the survey.' : null" aria-label="Once frozen, it cannot be edited after being added to the survey." x-bind="{}">
                                                                     <h3 class="text-lg font-semibold text-webropol-gray-900" x-text="question.name"></h3>
-                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen question means it cannot be modified once it is added to the survey." aria-label="A frozen question means it cannot be modified once it is added to the survey."></i>
+                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Once frozen, it cannot be edited after being added to the survey." aria-label="Once frozen, it cannot be edited after being added to the survey."></i>
                                                 </div>
                                                 
                                                 <div x-show="!showOnlyTitles" class="ml-9 space-y-2">
@@ -2168,6 +2168,15 @@
                             </div>
                         </div>
 
+                        <!-- Frozen State -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <label class="text-sm font-medium text-webropol-gray-700">Frozen:</label>
+                            <div class="md:col-span-2 flex items-center">
+                                <input id="surveyFrozenCheckbox" type="checkbox" :checked="surveyInfoData?.isFrozen" @change="setSurveyFrozen(surveyInfoData.id, $event.target.checked)" class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-teal-600 focus:ring-webropol-teal-500 mr-3">
+                                <span class="text-sm text-webropol-gray-600">Once frozen, it cannot be edited after being added to the survey.</span>
+                            </div>
+                        </div>
+
                         <!-- Keywords Accordion -->
                         <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
                             <button @click="keywordsExpanded = !keywordsExpanded" 
@@ -2397,6 +2406,15 @@
                         <label class="text-sm font-medium text-webropol-gray-700">Created by:</label>
                         <div class="md:col-span-2">
                             <span class="text-sm text-webropol-gray-900" x-text="questionInfoData?.createdBy || ''"></span>
+                        </div>
+                    </div>
+
+                    <!-- Frozen State -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700">Frozen:</label>
+                        <div class="md:col-span-2 flex items-center">
+                            <input id="questionFrozenCheckbox" type="checkbox" :checked="questionInfoData?.isFrozen" @change="setQuestionFrozen(questionInfoData.id, $event.target.checked)" class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-teal-600 focus:ring-webropol-teal-500 mr-3">
+                            <span class="text-sm text-webropol-gray-600">Once frozen, it cannot be edited after being added to the survey.</span>
                         </div>
                     </div>
 
@@ -2680,6 +2698,16 @@
     <script>
         function libraryApp() {
             return {
+                // Lifecycle
+                init() {
+                    // Load persisted frozen states
+                    const frozenQuestions = JSON.parse(localStorage.getItem('webropol-frozen-questions') || '[]');
+                    const frozenSurveys = JSON.parse(localStorage.getItem('webropol-frozen-surveys') || '[]');
+                    const qSet = new Set(frozenQuestions);
+                    const sSet = new Set(frozenSurveys);
+                    this.questions = this.questions.map(q => ({ ...q, isFrozen: qSet.has(q.id) }));
+                    this.surveys = this.surveys.map(s => ({ ...s, isFrozen: sSet.has(s.id) }));
+                },
                 currentView: localStorage.getItem('webropol-library-current-view') || 'surveys',
                 selectedLanguage: 'en',
                 searchTerm: '',
@@ -2776,6 +2804,22 @@
                 showBulkFreezeModal: false,
                 bulkActionType: '', // 'questions' or 'surveys'
                 bulkActionCount: 0,
+
+                // Persistence helpers
+                persistFrozenState() {
+                    const frozenQuestions = this.questions.filter(q => q.isFrozen).map(q => q.id);
+                    const frozenSurveys = this.surveys.filter(s => s.isFrozen).map(s => s.id);
+                    localStorage.setItem('webropol-frozen-questions', JSON.stringify(frozenQuestions));
+                    localStorage.setItem('webropol-frozen-surveys', JSON.stringify(frozenSurveys));
+                },
+                setQuestionFrozen(id, value) {
+                    const q = this.questions.find(x => x.id === id);
+                    if (q) { q.isFrozen = !!value; this.persistFrozenState(); }
+                },
+                setSurveyFrozen(id, value) {
+                    const s = this.surveys.find(x => x.id === id);
+                    if (s) { s.isFrozen = !!value; this.persistFrozenState(); }
+                },
 
                 // Sample data with nested subfolder structure
                 folders: [
@@ -3754,16 +3798,14 @@
                 },
 
                 freezeSelectedItems() {
-                    // Mark selected items as frozen so the UI shows the snowflake icon
+                    // Mark selected items as frozen and persist
                     if (this.currentView === 'questions') {
-                        const selectedSet = new Set(this.selectedQuestions);
-                        this.questions = this.questions.map(q => selectedSet.has(q.id) ? { ...q, isFrozen: true } : q);
+                        for (const id of this.selectedQuestions) this.setQuestionFrozen(id, true);
                         // Clear selection after action
                         this.selectedQuestions = [];
                         this.selectAllQuestions = false;
                     } else {
-                        const selectedSet = new Set(this.selectedSurveys);
-                        this.surveys = this.surveys.map(s => selectedSet.has(s.id) ? { ...s, isFrozen: true } : s);
+                        for (const id of this.selectedSurveys) this.setSurveyFrozen(id, true);
                         // Clear selection after action
                         this.selectedSurveys = [];
                         this.selectAllSurveys = false;
@@ -3817,13 +3859,11 @@
                     console.log('Show only titles:', this.showOnlyTitles);
                     console.log('Selected frozen questions:', this.selectedFrozenQuestions);
 
-                    // Set frozen flag on the target item so icon appears immediately
+                    // Set frozen flag on the target item so icon appears immediately and persist
                     if (this.freezeItemType === 'survey') {
-                        const survey = this.surveys.find(s => s.id === this.freezeItemId);
-                        if (survey) survey.isFrozen = true;
+                        this.setSurveyFrozen(this.freezeItemId, true);
                     } else if (this.freezeItemType === 'question') {
-                        const question = this.questions.find(q => q.id === this.freezeItemId);
-                        if (question) question.isFrozen = true;
+                        this.setQuestionFrozen(this.freezeItemId, true);
                     }
                     
                     // Close the modal and reset state
