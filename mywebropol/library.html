@@ -608,8 +608,10 @@
                                                             class="h-5 w-5 mt-1 rounded border-webropol-gray-300 text-webropol-teal-600 focus:ring-webropol-teal-500 mr-3 md:mr-4">
                                                         <div class="flex-1">
                                                             <div class="flex flex-col sm:flex-row sm:items-center mb-3 space-y-2 sm:space-y-0">
-                                                                <h3 class="text-lg font-semibold text-webropol-gray-900 mr-3"
-                                                                    x-text="question.name"></h3>
+                                                                <div class="flex items-center mr-3">
+                                                                    <h3 class="text-lg font-semibold text-webropol-gray-900" x-text="question.name"></h3>
+                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Frozen" aria-label="Frozen"></i>
+                                                                </div>
                                                                 <div class="flex flex-wrap items-center gap-2">
                                                                     <span
                                                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-webropol-teal-100 text-webropol-teal-800"
@@ -811,7 +813,10 @@
                                                                 class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-teal-600">
                                                         </td>
                                                         <td class="px-2 sm:px-4 py-6">
-                                                            <div class="font-semibold text-webropol-gray-900" x-text="survey.name"></div>
+                                                            <div class="font-semibold text-webropol-gray-900 flex items-center">
+                                                                <span x-text="survey.name"></span>
+                                                                <i x-show="survey.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Frozen" aria-label="Frozen"></i>
+                                                            </div>
                                                             <!-- Mobile info -->
                                                             <div class="md:hidden mt-1 space-y-1">
                                                                 <div class="flex items-center space-x-2">
@@ -3744,14 +3749,17 @@
                 },
 
                 freezeSelectedItems() {
-                    // Implement freeze functionality
-                    const selectedIds = this.currentView === 'questions' ? this.selectedQuestions : this.selectedSurveys;
-                    console.log('Freezing items:', selectedIds);
-                    // Clear selection after action
+                    // Mark selected items as frozen so the UI shows the snowflake icon
                     if (this.currentView === 'questions') {
+                        const selectedSet = new Set(this.selectedQuestions);
+                        this.questions = this.questions.map(q => selectedSet.has(q.id) ? { ...q, isFrozen: true } : q);
+                        // Clear selection after action
                         this.selectedQuestions = [];
                         this.selectAllQuestions = false;
                     } else {
+                        const selectedSet = new Set(this.selectedSurveys);
+                        this.surveys = this.surveys.map(s => selectedSet.has(s.id) ? { ...s, isFrozen: true } : s);
+                        // Clear selection after action
                         this.selectedSurveys = [];
                         this.selectAllSurveys = false;
                     }
@@ -3803,6 +3811,15 @@
                     console.log('Select all questions:', this.selectAllQuestions);
                     console.log('Show only titles:', this.showOnlyTitles);
                     console.log('Selected frozen questions:', this.selectedFrozenQuestions);
+
+                    // Set frozen flag on the target item so icon appears immediately
+                    if (this.freezeItemType === 'survey') {
+                        const survey = this.surveys.find(s => s.id === this.freezeItemId);
+                        if (survey) survey.isFrozen = true;
+                    } else if (this.freezeItemType === 'question') {
+                        const question = this.questions.find(q => q.id === this.freezeItemId);
+                        if (question) question.isFrozen = true;
+                    }
                     
                     // Close the modal and reset state
                     this.showFreezeModal = false;
