@@ -301,6 +301,35 @@ class WebropolSPA {
   // Rewrite internal links and asset URLs inside injected content to be SPA- and base-aware
   this.rewriteContentUrls(baseUrl, this.container);
 
+      // Ensure fluid layout by removing max-width caps from common containers (applies in all modes)
+      try {
+        // Target typical layout wrappers that center content
+        const candidates = this.container.querySelectorAll('.mx-auto, main, [class*="max-w-"], .container');
+        candidates.forEach((el) => {
+          if (!el.classList) return;
+          // Remove any Tailwind max-w-* classes, including arbitrary values like max-w-[1600px]
+          const toRemove = [];
+          el.classList.forEach((c) => {
+            if (c.startsWith('max-w-') || c === 'container') toRemove.push(c);
+          });
+          toRemove.forEach((c) => el.classList.remove(c));
+
+          // For common wrappers, make them fluid and centered
+          if (toRemove.length || el.classList.contains('mx-auto') || el.tagName.toLowerCase() === 'main') {
+            try { el.classList.add('w-full'); } catch(_) {}
+            // Center if it’s intended as a centered wrapper
+            if (!el.style.marginLeft && !el.style.marginRight) {
+              el.style.marginLeft = 'auto';
+              el.style.marginRight = 'auto';
+            }
+            // Do not enforce any inline max-width; let the page expand fully
+            if (el.style.maxWidth) {
+              el.style.maxWidth = '';
+            }
+          }
+        });
+      } catch (_) { /* no-op */ }
+
       // Attach modal/pop-up elements that live outside <main> in the source page
       this.attachPageModals(doc, main, baseUrl);
       
