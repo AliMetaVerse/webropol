@@ -16,7 +16,15 @@ export class WebropolBrand extends BaseComponent {
     this.innerHTML = `
       <span class="webropol-brand-text inline-block">
         <span>WEB</span>
-        <span class="webropol-brand-ro" style="color: var(--accent-500)">RO</span>
+        <span class="webropol-brand-ro" style="
+          color: var(--accent-500);
+          display: inline-flex;
+          transform: rotate(-90deg) scale(0.6);
+          transform-origin: center center;
+          line-height: 1;
+          margin: -10px;
+          vertical-align: middle;
+        ">RO</span>
         <span>POL</span>
       </span>
     `;
