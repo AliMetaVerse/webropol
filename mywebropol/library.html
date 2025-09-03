@@ -608,9 +608,9 @@
                                                             class="h-5 w-5 mt-1 rounded border-webropol-gray-300 text-webropol-teal-600 focus:ring-webropol-teal-500 mr-3 md:mr-4">
                                                         <div class="flex-1">
                                                             <div class="flex flex-col sm:flex-row sm:items-center mb-3 space-y-2 sm:space-y-0">
-                                                                <div class="flex items-center mr-3">
+                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'A frozen question means it cannot be modified once it is added to the survey.' : null" aria-label="A frozen question means it cannot be modified once it is added to the survey.">
                                                                     <h3 class="text-lg font-semibold text-webropol-gray-900" x-text="question.name"></h3>
-                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Frozen" aria-label="Frozen"></i>
+                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen question means it cannot be modified once it is added to the survey." aria-label="A frozen question means it cannot be modified once it is added to the survey."></i>
                                                                 </div>
                                                                 <div class="flex flex-wrap items-center gap-2">
                                                                     <span
@@ -711,6 +711,11 @@
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
                                                                         <i class="fal fa-arrows mr-3 text-black"></i>
                                                                         Move Question
+                                                                    </button>
+                                                                    <button @click="selectedQuestions = [question.id]; bulkActionType = 'questions'; bulkActionCount = 1; showBulkFreezeModal = true; showContextMenu = null;"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-webropol-gray-50 transition-colors">
+                                                                        <i class="fal fa-snowflake mr-3 text-black"></i>
+                                                                        Freeze Question
                                                                     </button>
                                                                     <button @click="openDeleteConfirmationModal(question.id, question.name, 'question')"
                                                                         class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-red-50 transition-colors">
@@ -815,7 +820,7 @@
                                                         <td class="px-2 sm:px-4 py-6">
                                                             <div class="font-semibold text-webropol-gray-900 flex items-center">
                                                                 <span x-text="survey.name"></span>
-                                                                <i x-show="survey.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="Frozen" aria-label="Frozen"></i>
+                                                                <i x-show="survey.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen survey means it cannot be modified when it is imported into another survey." aria-label="A frozen survey means it cannot be modified when it is imported into another survey."></i>
                                                             </div>
                                                             <!-- Mobile info -->
                                                             <div class="md:hidden mt-1 space-y-1">
@@ -1717,9 +1722,9 @@
                                             </label>
                                             
                                             <div class="flex-1">
-                                                <div class="flex items-center mb-3">
-                                                    <span class="w-6 h-6 bg-webropol-teal-100 text-webropol-teal-700 text-xs font-bold rounded-full flex items-center justify-center mr-3">1</span>
-                                                    <h5 class="text-sm font-semibold text-webropol-gray-900">Are you satisfied with our services?</h5>
+                                                                <div class="flex items-center mr-3" :title="question.isFrozen ? 'A frozen question means it cannot be modified once it is added to the survey.' : null" aria-label="A frozen question means it cannot be modified once it is added to the survey." x-bind="{}">
+                                                                    <h3 class="text-lg font-semibold text-webropol-gray-900" x-text="question.name"></h3>
+                                                                    <i x-show="question.isFrozen" class="fal fa-snowflake text-webropol-teal-600 ml-2" title="A frozen question means it cannot be modified once it is added to the survey." aria-label="A frozen question means it cannot be modified once it is added to the survey."></i>
                                                 </div>
                                                 
                                                 <div x-show="!showOnlyTitles" class="ml-9 space-y-2">
