@@ -46,6 +46,7 @@ All pages include these standard components:
 - Notification center
 - Help access
 - Consistent branding
+- AI Assistant button (sparkles icon) can appear here when enabled; it opens a right-side panel and is never shown outside the header.
 
 ### Breadcrumb Navigation (`<webropol-breadcrumbs>`)
 - Hierarchical navigation

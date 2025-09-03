@@ -30,6 +30,13 @@ export class WebropolHeader extends BaseComponent {
       ? !!window.globalSettingsManager.getSetting('showRatingSelector')
       : true;
 
+    // AI assistant visibility rules
+    const aiCfg = (typeof window !== 'undefined' && window.globalSettingsManager)
+      ? window.globalSettingsManager.getSetting('aiAssistant') || { enabledInApp: false, enabledFromSettings: true }
+      : { enabledInApp: false, enabledFromSettings: true };
+    // Assistant shows in header only when both app-level enabled and settings-level enabled
+    const showAIAssistant = !!(aiCfg.enabledInApp && aiCfg.enabledFromSettings);
+
     // Get the feedback question type from settings
     const feedbackQuestionType = (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.getSetting === 'function')
       ? window.globalSettingsManager.getSetting('feedbackQuestionType') || 'rating'
@@ -89,7 +96,7 @@ export class WebropolHeader extends BaseComponent {
           <slot name="left"></slot>
         </div>
         
-        <div class="flex items-center space-x-6">
+  <div class="flex items-center space-x-6">
           <div class="flex items-center space-x-3">
             ${showThemeSelector ? `
               <div class="relative">
@@ -121,6 +128,14 @@ export class WebropolHeader extends BaseComponent {
                 <div class="absolute right-0 top-full mt-2 w-96 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl shadow-lg border border-webropol-gray-200 py-4 opacity-0 invisible transition-all duration-200 feedback-dropdown z-[9999]">
                   ${this.getFeedbackContent(feedbackQuestionType)}
                 </div>
+              </div>
+            ` : ''}
+
+            ${showAIAssistant ? `
+              <div class="relative" data-ai-assistant>
+                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all ai-assistant-btn" title="AI Assistant" aria-label="AI Assistant">
+                  <i class="fal fa-sparkles"></i>
+                </button>
               </div>
             ` : ''}
             
@@ -180,6 +195,7 @@ export class WebropolHeader extends BaseComponent {
     this.addCreateMenuListeners();
   this.addSidebarToggleListener();
   this.addCollapsedHamburgerListener();
+  this.addAIAssistantListener();
     
     // Initialize settings animation scheduler
     this.initializeSettingsAnimationScheduler();
@@ -193,6 +209,32 @@ export class WebropolHeader extends BaseComponent {
       });
       this._settingsListenerAdded = true;
     }
+  }
+
+  addAIAssistantListener() {
+    const btn = this.querySelector('.ai-assistant-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Ensure component is defined
+      if (!customElements.get('webropol-ai-assistant')) {
+        try { await import('../ai/AIAssistantPanel.js'); } catch {}
+      }
+      let panel = document.querySelector('webropol-ai-assistant');
+      if (!panel) {
+        panel = document.createElement('webropol-ai-assistant');
+        document.body.appendChild(panel);
+      }
+      // Set top/height dynamically to match header height if available
+      try {
+        const headerEl = this.querySelector('header');
+        const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 80;
+        panel.style.top = `${headerHeight}px`;
+        panel.style.height = `calc(100% - ${headerHeight}px)`;
+      } catch {}
+      if (typeof panel.open === 'function') panel.open(); else panel.setAttribute('open','');
+    });
   }
 
   getFeedbackContent(questionType) {

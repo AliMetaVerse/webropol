@@ -75,7 +75,7 @@ export class WebropolSettingsModal extends BaseComponent {
         showSettingsAnimation: true,
         showAnimationType: true,
         showAnimationFrequency: true,
-        showAnimationDuration: true
+  showAnimationDuration: true
       }
     };
 
@@ -144,6 +144,7 @@ export class WebropolSettingsModal extends BaseComponent {
   settingsAnimationFrequency: 3,
   settingsAnimationDuration: 5000,
   settingsAnimationType: 'ripple',
+  aiAssistant: { enabledInApp: false, enabledFromSettings: true },
         settingsModal: {
           showInterfaceSection: true,
           showBehaviorSection: true,
@@ -486,6 +487,18 @@ export class WebropolSettingsModal extends BaseComponent {
                   Behavior
                 </h3>
                 <div class="space-y-3">
+          <!-- AI Assistant Controls (Functions → Control) -->
+          <div class="py-2.5 px-3 bg-white/90 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <label class="text-sm font-medium text-webropol-gray-700">AI Assistant</label>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer ml-3">
+                <input type="checkbox" class="sr-only peer" ${this.settings.aiAssistant?.enabledFromSettings ? 'checked' : ''} ${this.settings.aiAssistant?.enabledInApp === false ? 'disabled' : ''} data-setting="aiAssistant.enabledFromSettings">
+                <div class="w-9 h-5 ${this.settings.aiAssistant?.enabledInApp === false ? 'bg-gray-100' : 'bg-gray-200'} peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all ${this.settings.aiAssistant?.enabledInApp === false ? '' : 'peer-checked:bg-webropol-blue-600'}"></div>
+              </label>
+            </div>
+          </div>
                   
           <!-- Auto-save Toggle -->
           ${sm.showAutoSave ? `
@@ -766,7 +779,7 @@ export class WebropolSettingsModal extends BaseComponent {
     const closeButton = this.querySelector('.modal-close');
     const doneButton = this.querySelector('.done-button');
     const resetButton = this.querySelector('.reset-button');
-    const checkboxes = this.querySelectorAll('input[type="checkbox"][data-setting]');
+  const checkboxes = this.querySelectorAll('input[type="checkbox"][data-setting]');
     const selects = this.querySelectorAll('select[data-setting]');
 
     // Close modal events
@@ -803,7 +816,15 @@ export class WebropolSettingsModal extends BaseComponent {
     checkboxes.forEach(checkbox => {
       this.addListener(checkbox, 'change', (e) => {
         const settingKey = e.target.getAttribute('data-setting');
-        this.toggleSetting(settingKey, e.target.checked);
+        const value = e.target.checked;
+        if (settingKey && settingKey.startsWith('aiAssistant.')) {
+          // deep update
+          const subKey = settingKey.split('.')[1];
+          this.settings.aiAssistant = { ...(this.settings.aiAssistant||{}), [subKey]: value };
+          this.saveSettings();
+        } else {
+          this.toggleSetting(settingKey, value);
+        }
         if (['settingsAnimationEnabled'].includes(settingKey)) {
           this.triggerPreviewAnimation();
         }
@@ -814,7 +835,13 @@ export class WebropolSettingsModal extends BaseComponent {
       this.addListener(select, 'change', (e) => {
         const settingKey = e.target.getAttribute('data-setting');
         const value = e.target.value === '0' ? 0 : (isNaN(e.target.value) ? e.target.value : parseInt(e.target.value));
-        this.toggleSetting(settingKey, value);
+        if (settingKey && settingKey.startsWith('aiAssistant.')) {
+          const subKey = settingKey.split('.')[1];
+          this.settings.aiAssistant = { ...(this.settings.aiAssistant||{}), [subKey]: value };
+          this.saveSettings();
+        } else {
+          this.toggleSetting(settingKey, value);
+        }
         if (['settingsAnimationType','settingsAnimationDuration'].includes(settingKey)) {
           this.triggerPreviewAnimation();
         }

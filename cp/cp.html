@@ -408,6 +408,10 @@
 								<h3 style="margin:0 0 10px;">Feedback & Animation Settings</h3>
 								<div id="animList"></div>
 							</div>
+							<div class="card">
+								<h3 style="margin:0 0 10px;">AI Assistant (Functions → Control)</h3>
+								<div id="aiControlList"></div>
+							</div>
 						</div>
 					</div>
 					
@@ -458,6 +462,11 @@
 						<div class="card">
 							<h3 style="margin:0 0 10px;">Shop Features</h3>
 							<div id="shopFeatures"></div>
+						</div>
+						<div class="card">
+							<h3 style="margin:0 0 10px;">AI Assistant (Features)</h3>
+							<div class="muted" style="margin-bottom:8px;">If hidden here, the assistant is hidden across the App (header). This does not hide it from CP itself.</div>
+							<div id="aiFeatureList"></div>
 						</div>
 					</div>
 				</div>
@@ -601,6 +610,21 @@
 					inputRow('settingsAnimationFrequency','Daily Frequency', s.settingsAnimationFrequency, v => saveSetting('settingsAnimationFrequency', parseInt(v,10)), { type:'select', options: [['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6']] }),
 					inputRow('settingsAnimationDuration','Animation Duration', s.settingsAnimationDuration, v => saveSetting('settingsAnimationDuration', parseInt(v,10)), { type:'select', options: [['1500','1.5s'],['2000','2s'],['2500','2.5s'],['3000','3s'],['4000','4s'],['6000','6s'],['8000','8s'],['10000','10s']] })
 				);
+
+				// AI assistant control (Functions → Control)
+				const aiList = qs('#aiControlList');
+				if (aiList) {
+					aiList.innerHTML = '';
+					const ai = s.aiAssistant || { enabledInApp: false, enabledFromSettings: true };
+					const setAI = (k, v) => {
+						const cur = guardedGetSettings();
+						const next = { ...(cur.aiAssistant||{}), [k]: v };
+						saveSetting('aiAssistant', next);
+					};
+					aiList.append(
+						inputRow('ai_settings_visible','Visible from Settings (App header)', ai.enabledFromSettings!==false, v => setAI('enabledFromSettings', v), { hint: 'Hides/shows assistant in App header; still available in Settings.' })
+					);
+				}
 			}
 
 			function renderModalControls() {
@@ -682,6 +706,7 @@
 				const dashboardFeatures = qs('#dashboardFeatures');
 				const adminFeatures = qs('#adminFeatures');
 				const shopFeatures = qs('#shopFeatures');
+				const aiFeatureList = qs('#aiFeatureList');
 				surveyFeatures.innerHTML = ''; dashboardFeatures.innerHTML = ''; adminFeatures.innerHTML = ''; shopFeatures.innerHTML = '';
 
 				const setFeature = (k, v) => { 
@@ -720,6 +745,20 @@
 					inputRow('feat_shop_billing','Billing & Invoicing', features.billingEnabled!==false, v => setFeature('billingEnabled', v)),
 					inputRow('feat_shop_support','Customer Support', features.customerSupportEnabled!==false, v => setFeature('customerSupportEnabled', v))
 				);
+
+				// AI Assistant master visibility under Features
+				if (aiFeatureList) {
+					aiFeatureList.innerHTML = '';
+					const ai = s.aiAssistant || { enabledInApp: false, enabledFromSettings: true };
+					const setAI = (k, v) => {
+						const cur = guardedGetSettings();
+						const next = { ...(cur.aiAssistant||{}), [k]: v };
+						saveSetting('aiAssistant', next);
+					};
+					aiFeatureList.append(
+						inputRow('ai_master','Enable in App (Header only)', ai.enabledInApp!==false, v => setAI('enabledInApp', v), { hint: 'If off here, assistant is hidden across the App.' })
+					);
+				}
 			}
 
 			function wireNav() {

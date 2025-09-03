@@ -33,6 +33,15 @@ export class GlobalSettingsManager {
   settingsAnimationDuration: 5000,
   settingsAnimationType: 'ripple'
     ,
+    // AI assistant visibility controls
+    aiAssistant: {
+      // Control Panel (Features): master app-wide visibility toggle. Default hidden.
+      // If hidden here => hidden everywhere in the App (but still configurable in CP view itself).
+      enabledInApp: false,
+      // Settings (Functions → Control): controls visibility in App header independent of CP.
+      // If disabled here => still visible inside Settings for control; applies to app only.
+      enabledFromSettings: true
+    },
     // Settings Modal meta-controls (control what the Settings modal shows)
     settingsModal: {
       // Section visibility
@@ -202,6 +211,9 @@ export class GlobalSettingsManager {
   // Apply rating selector visibility
   this.applyRatingVisibility();
 
+  // Apply AI assistant visibility rules across headers
+  this.applyAIAssistantVisibility();
+
     // Update auto-logout timer
     this.setupAutoLogout();
 
@@ -275,6 +287,31 @@ export class GlobalSettingsManager {
         header.render();
       }
     });
+  }
+
+  /**
+   * Apply AI assistant visibility to headers based on rules
+   * Rules summary:
+   * - Control Panel (Features) toggle (aiAssistant.enabledInApp): if false => assistant hidden across the App (but CP unaffected)
+   * - Settings (Functions → Control) toggle (aiAssistant.enabledFromSettings): controls App header visibility only; Settings always keeps control UI
+   */
+  applyAIAssistantVisibility() {
+    const headers = document.querySelectorAll('webropol-header');
+    headers.forEach(header => {
+      if (typeof header.render === 'function') {
+        header.render();
+      }
+    });
+    // If master disabled, ensure the settings toggle behaves disabled in any open modal (UI reflects immediately)
+    try {
+      const modal = document.querySelector('webropol-settings-modal');
+      if (modal) {
+        const toggle = modal.querySelector('input[data-setting="aiAssistant.enabledFromSettings"]');
+        if (toggle) {
+          toggle.disabled = this.settings.aiAssistant?.enabledInApp === false;
+        }
+      }
+    } catch {}
   }
 
   /**

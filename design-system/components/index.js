@@ -37,6 +37,8 @@ export { Badge } from './feedback/Badge.js';
 export { Loading } from './feedback/Loading.js';
 export { Tooltip } from './feedback/Tooltip.js';
 export { WebropolPromo } from './feedback/PromoToast.js';
+// AI components
+export { WebropolAIAssistant } from './ai/AIAssistantPanel.js';
 
 // Modal components
 export { Modal } from './modals/Modal.js';
@@ -65,6 +67,7 @@ import './feedback/Tooltip.js';
 import './feedback/PromoToast.js';
 import './modals/Modal.js';
 import './modals/SettingsModal.js';
+import './ai/AIAssistantPanel.js';
 
 // Backward compatibility aliases
 window.WebropolComponents = {
@@ -95,5 +98,6 @@ window.WebropolComponents = {
   Tooltip: 'webropol-tooltip',
   Promo: 'webropol-promo',
   Modal: 'webropol-modal',
-  SettingsModal: 'webropol-settings-modal'
+  SettingsModal: 'webropol-settings-modal',
+  AIAssistant: 'webropol-ai-assistant'
 };
