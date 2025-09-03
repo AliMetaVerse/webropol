@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Webropol Tabs – 10 Design Variants</title>
+		<!-- Base design system styles -->
+		<link rel="stylesheet" href="../../styles/tokens.css" />
+		<link rel="stylesheet" href="../../styles/tabs.css" />
+		<style>
+			/* Showcase layout */
+			body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--neutral-800, #515557); background: var(--neutral-25, #fcfdfd); }
+			.page { max-width: 1200px; margin: 32px auto; padding: 0 20px; }
+			h1 { font-size: 1.5rem; margin: 0 0 4px; }
+			p.lead { margin: 0 0 20px; color: var(--neutral-600, #787f81); }
+
+			.showcase-grid { display: grid; grid-template-columns: minmax(220px, max-content) repeat(6, 1fr); gap: 12px 16px; align-items: center; }
+			.showcase-grid .th { font-size: 12px; color: var(--neutral-600, #787f81); text-transform: uppercase; letter-spacing: .06em; text-align: center; }
+			.divider { margin: 16px 0 24px; height: 1px; background: var(--neutral-200, #e6e7e8); }
+
+			/* Cell framing similar to the screenshot */
+			.demo-cell { padding: 6px; display: flex; justify-content: center; align-items: center; min-height: 60px; }
+			.demo-wrap { display: inline-flex; }
+
+			/* Ensure tabs are centered within their containers */
+			.webropol-tabs-unified { justify-content: center; }
+			.micro { padding: 4px; display: flex; justify-content: center; }
+
+			/* Helpers to simulate states for static showcase */
+			.webropol-unified-tab.is-hover:not(.active) {
+				color: var(--primary-700, #1e6880);
+				background: #fff;
+				box-shadow: var(--shadow-card, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+				transform: scale(1.01);
+			}
+			.webropol-unified-tab.is-focus { outline: 2px solid var(--primary-300, #79d6e7); outline-offset: 2px; position: relative; z-index: 1; }
+
+			/* Variant palettes built on top of tabs.css rules */
+			/* 1) Primary – uses default styles from tabs.css */
+
+			/* 2) Secondary – white background with primary outline when active */
+			.variant-secondary .webropol-unified-tab.active {
+				background: #fff;
+				color: var(--primary-700, #1e6880);
+				border: 1px solid var(--primary-300, #79d6e7);
+				box-shadow: var(--shadow-card, 0 1px 3px 0 rgba(0, 0, 0, 0.1));
+			}
+
+			/* 3) Primary Leaf – soft filled look */
+			.variant-leaf-primary .webropol-unified-tab.active {
+				background: var(--primary-300, #79d6e7);
+				color: #073d4b;
+			}
+
+			/* 4) Secondary Leaf – subtle tint with border */
+			.variant-leaf-secondary .webropol-unified-tab.active {
+				background: var(--primary-100, #d5f4f8);
+				color: var(--primary-700, #1e6880);
+				border: 1px solid var(--primary-300, #79d6e7);
+			}
+
+			/* 5) Secondary Light – ghost style when active */
+			.variant-secondary-light .webropol-unified-tab.active {
+				background: var(--neutral-50, #f9fafa);
+				color: var(--primary-700, #1e6880);
+				border: 1px solid var(--neutral-200, #e6e7e8);
+			}
+
+			/* 6/7) Rounded container variants reuse base colors; emphasize wrapper change */
+			.variant-rounded .webropol-tabs-unified { background: rgba(255,255,255,.7); border: 1px solid var(--neutral-200, #e6e7e8); }
+
+			/* 8) Gradient active */
+			.variant-gradient .webropol-unified-tab.active { background: linear-gradient(135deg, var(--primary-500, #209fba), var(--primary-700, #1e6880)); }
+
+			/* 9) Compact – small size tokens */
+			.variant-compact .webropol-unified-tab { font-weight: 600; }
+
+			/* 10) Elevated – stronger shadows */
+			.variant-elevated .webropol-tabs-unified { box-shadow: 0 10px 30px -10px rgba(0,0,0,.2); }
+			.variant-elevated .webropol-unified-tab.active { box-shadow: 0 12px 24px -8px rgba(0,0,0,.25); }
+
+			/* Utility to trim container padding inside each grid cell */
+			.label { font-size: 12px; color: var(--neutral-700, #61686a); font-weight: 500; padding: 8px 4px; text-align: left; }
+
+			/* Small heart icon without external fonts */
+			.heart { width: 14px; height: 14px; margin-right: 8px; fill: currentColor; opacity: .9; }
+
+			/* Responsive adjustments */
+			@media (max-width: 1024px) {
+				.showcase-grid { grid-template-columns: minmax(180px, max-content) repeat(6, 1fr); gap: 8px 12px; }
+				.demo-cell { min-height: 50px; padding: 4px; }
+			}
+
+			@media (max-width: 768px) {
+				.page { padding: 0 16px; }
+				.showcase-grid { 
+					grid-template-columns: 1fr; 
+					gap: 16px; 
+					text-align: center;
+				}
+				.showcase-grid .th { display: none; }
+				.label { 
+					font-size: 14px; 
+					font-weight: 600; 
+					margin-bottom: 12px; 
+					text-align: center;
+					padding: 12px 8px;
+					background: var(--neutral-50, #f9fafa);
+					border-radius: 8px;
+				}
+				.demo-cell { 
+					display: grid; 
+					grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+					gap: 12px;
+					justify-items: center;
+					padding: 12px;
+					background: white;
+					border-radius: 8px;
+					box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+				}
+				.demo-cell::before {
+					content: attr(data-state);
+					font-size: 10px;
+					color: var(--neutral-500, #8e9394);
+					text-transform: uppercase;
+					letter-spacing: 0.05em;
+					margin-bottom: 8px;
+					grid-column: 1 / -1;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="page">
+			<h1>Tabs – 10 design variants</h1>
+			<p class="lead">Matrix below mirrors the button-spec approach: each row is a design, and columns show key states.</p>
+
+			<div class="showcase-grid" role="table" aria-label="Tabs design showcase">
+				<div></div>
+				<div class="th" role="columnheader">Active</div>
+				<div class="th" role="columnheader">Inactive</div>
+				<div class="th" role="columnheader">Inactive Hover</div>
+				<div class="th" role="columnheader">Active Focus</div>
+				<div class="th" role="columnheader">Inactive Focus</div>
+				<div class="th" role="columnheader">Disabled</div>
+
+				<!-- 1) Primary Pill -->
+				<div class="label" role="rowheader">1. Primary Pill</div>
+				<div class="demo-cell" data-state="Active">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell" data-state="Inactive">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell" data-state="Inactive Hover">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell" data-state="Active Focus">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell" data-state="Inactive Focus">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell" data-state="Disabled">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 2) Secondary Pill (outline active) -->
+				<div class="label" role="rowheader">2. Secondary Pill</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 3) Primary Leaf -->
+				<div class="label" role="rowheader">3. Primary Leaf</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-primary" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 4) Secondary Leaf -->
+				<div class="label" role="rowheader">4. Secondary Leaf</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-leaf-secondary" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 5) Secondary Light (ghost) -->
+				<div class="label" role="rowheader">5. Secondary Light</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-secondary-light" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 6) Primary Rounded -->
+				<div class="label" role="rowheader">6. Primary Rounded</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-rounded size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 7) Secondary Rounded (outline active) -->
+				<div class="label" role="rowheader">7. Secondary Rounded</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-rounded size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-rounded-container micro variant-rounded variant-secondary" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-rounded size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 8) Gradient Active -->
+				<div class="label" role="rowheader">8. Gradient Active</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">Label</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-gradient" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">Label</button>
+					</div>
+				</div>
+
+				<!-- 9) Compact (size-sm with badge) -->
+				<div class="label" role="rowheader">9. Compact + Badge</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-sm active" role="tab" aria-selected="true">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-sm" role="tab">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-sm is-hover" role="tab">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-sm active is-focus" role="tab">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-sm is-focus" role="tab">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-compact" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-sm" role="tab" aria-disabled="true">
+							Label <span class="webropol-tab-badge size-sm">12</span>
+						</button>
+					</div>
+				</div>
+
+				<!-- 10) Elevated + Icon -->
+				<div class="label" role="rowheader">10. Elevated + Icon</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active" role="tab" aria-selected="true">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md" role="tab">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-hover" role="tab">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md active is-focus" role="tab">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button class="webropol-unified-tab webropol-tab-pill size-md is-focus" role="tab">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+				<div class="demo-cell">
+					<div class="webropol-tabs-unified webropol-tabs-pill-container micro variant-elevated" role="tablist">
+						<button disabled class="webropol-unified-tab webropol-tab-pill size-md" role="tab" aria-disabled="true">
+							<svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.716-4.35-9.428-7.06A5.3 5.3 0 0 1 12 5.25a5.3 5.3 0 0 1 9.428 8.69C18.717 16.65 12 21 12 21Z"/></svg>
+							Label
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="divider" aria-hidden="true"></div>
+
+			<section>
+				<h2 style="font-size:1.1rem; margin-bottom:8px;">Notes</h2>
+				<ul style="margin-top:8px; color: var(--neutral-700, #61686a);">
+					<li>All tabs use the unified classes from <code>styles/tabs.css</code> and small overrides scoped to this page.</li>
+					<li><code>.is-hover</code> and <code>.is-focus</code> simulate hover/focus states for static documentation.</li>
+					<li>Use <code>webropol-tabs-pill-container</code> or <code>webropol-tabs-rounded-container</code> for wrapper shapes; choose <code>webropol-tab-pill</code> or <code>webropol-tab-rounded</code> for button shapes.</li>
+				</ul>
+			</section>
+		</main>
+	</body>
+</html>
+

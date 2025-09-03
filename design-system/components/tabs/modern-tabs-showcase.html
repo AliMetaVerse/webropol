@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Enterprise Tabs – Next-Gen SaaS Design System</title>
+    <!-- Base design system styles -->
+    <link rel="stylesheet" href="../../styles/tokens.css" />
+    <style>
+      /* Enterprise SaaS layout with creative enhancements */
+      body { 
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        color: #1f2937; 
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        position: relative;
+      }
+      
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 103, 103, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+      }
+      
+      .page { 
+        max-width: 1600px; 
+        margin: 0 auto; 
+        padding: 40px 32px; 
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        min-height: 100vh;
+        border-radius: 24px;
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.06);
+        position: relative;
+        z-index: 1;
+      }
+      
+      h1 { 
+        font-size: 2.5rem; 
+        font-weight: 700; 
+        margin: 0 0 12px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+        position: relative;
+      }
+      
+      h1::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+      }
+      
+      p.lead { 
+        margin: 0 0 48px; 
+        color: #6b7280; 
+        font-size: 1.125rem; 
+        line-height: 1.6;
+        max-width: 600px;
+      }
+
+      .showcase-grid { 
+        display: grid; 
+        grid-template-columns: 200px repeat(6, 1fr); 
+        gap: 24px 20px; 
+        align-items: center; 
+        border-radius: 16px;
+        padding: 32px 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .showcase-grid::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+      }
+      
+      .showcase-grid .th { 
+        font-size: 12px; 
+        color: #6b7280; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+        font-weight: 500;
+        padding-bottom: 8px;
+      }
+      .divider { 
+        margin: 48px 0; 
+        height: 1px; 
+        background: #e5e7eb; 
+      }
+
+      /* Enhanced demo cells */
+      .demo-cell { 
+        padding: 16px 12px; 
+        display: flex; 
+        justify-content: center; 
+      }
+      
+
+
+      /* Enterprise tab base styles */
+      .enterprise-tab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 1.25;
+        padding: var(--tab-padding, 10px 16px);
+        border-radius: var(--tab-radius, 6px);
+        background: var(--tab-bg, #ffffff);
+        color: var(--tab-color, #374151);
+        border: var(--tab-border, 1px solid #d1d5db);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        outline: none;
+        min-width: 80px;
+        text-decoration: none;
+        font-family: inherit;
+      }
+
+      .enterprise-tab:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        color: #9ca3af;
+        background: #f9fafb;
+        border-color: #f3f4f6;
+      }
+
+      /* State simulators */
+      .enterprise-tab.is-hover:not(.active) {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #111827;
+      }
+      
+      .enterprise-tab.is-focus { 
+        outline: 2px solid #3b82f6; 
+        outline-offset: 2px; 
+        z-index: 1; 
+      }
+
+      /* Icon styling */
+      .tab-icon { 
+        width: 16px; 
+        height: 16px; 
+        margin-right: 8px; 
+        fill: currentColor; 
+        transition: all 0.15s ease;
+      }
+
+      /* Badge styling */
+      .tab-badge {
+        margin-left: 8px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        background: var(--badge-bg, #dbeafe);
+        color: var(--badge-color, #1d4ed8);
+        transition: all 0.15s ease;
+        line-height: 1.2;
+      }
+
+      /* === CREATIVE ENTERPRISE DESIGN VARIANTS === */
+
+      /* 1. Quantum Gradient */
+      .variant-quantum {
+        --tab-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --tab-color: #ffffff;
+        --tab-border: none;
+        --tab-padding: 12px 20px;
+        font-weight: 600;
+        position: relative;
+        overflow: hidden;
+      }
+      .variant-quantum::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+      }
+      .variant-quantum:hover::before {
+        left: 100%;
+      }
+      .variant-quantum.active {
+        --tab-bg: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
+      }
+
+      /* 2. Glassmorphism Pro */
+      .variant-glass {
+        --tab-bg: rgba(255, 255, 255, 0.15);
+        --tab-color: #1f2937;
+        --tab-border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+      .variant-glass.active {
+        --tab-bg: rgba(59, 130, 246, 0.9);
+        --tab-color: #ffffff;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3);
+      }
+
+      /* 3. Neumorphic Modern */
+      .variant-neuro {
+        --tab-bg: #f1f5f9;
+        --tab-color: #334155;
+        --tab-border: none;
+        box-shadow: 8px 8px 16px #d1d9e0, -8px -8px 16px #ffffff;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .variant-neuro.active {
+        --tab-bg: #f1f5f9;
+        --tab-color: #1e293b;
+        box-shadow: inset 6px 6px 12px #d1d9e0, inset -6px -6px 12px #ffffff;
+        font-weight: 600;
+      }
+      .variant-neuro:hover:not(.active) {
+        box-shadow: 4px 4px 8px #d1d9e0, -4px -4px 8px #ffffff;
+        transform: translateY(-1px);
+      }
+
+      /* 4. Neon Tech */
+      .variant-neon-tech {
+        --tab-bg: #0f172a;
+        --tab-color: #94a3b8;
+        --tab-border: 1px solid #1e293b;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        position: relative;
+      }
+      .variant-neon-tech.active {
+        --tab-bg: #0f172a;
+        --tab-color: #00f5ff;
+        --tab-border: 1px solid #00f5ff;
+        box-shadow: 
+          0 0 20px rgba(0, 245, 255, 0.5),
+          inset 0 0 20px rgba(0, 245, 255, 0.1);
+        text-shadow: 0 0 10px #00f5ff;
+      }
+
+      /* 5. Holographic */
+      .variant-holo {
+        --tab-bg: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        background-size: 300% 300%;
+        --tab-color: #ffffff;
+        --tab-border: none;
+        font-weight: 600;
+        animation: holoShift 6s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+      }
+      .variant-holo::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(1px);
+      }
+      .variant-holo.active {
+        animation-duration: 2s;
+        box-shadow: 0 8px 32px rgba(255, 107, 107, 0.4);
+        transform: translateY(-2px);
+      }
+      @keyframes holoShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+
+      /* 6. Particle Field */
+      .variant-particle {
+        --tab-bg: #1a202c;
+        --tab-color: #e2e8f0;
+        --tab-border: 1px solid #2d3748;
+        position: relative;
+        overflow: hidden;
+      }
+      .variant-particle::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.8) 0%, transparent 2px),
+          radial-gradient(circle at 60% 70%, rgba(139, 92, 246, 0.8) 0%, transparent 2px),
+          radial-gradient(circle at 80% 30%, rgba(34, 197, 94, 0.8) 0%, transparent 2px);
+        animation: particleFloat 4s ease-in-out infinite;
+      }
+      .variant-particle.active {
+        --tab-bg: #1e40af;
+        --tab-color: #ffffff;
+        box-shadow: 0 0 30px rgba(30, 64, 175, 0.6);
+      }
+      @keyframes particleFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-3px); }
+      }
+
+      /* 7. Prismatic */
+      .variant-prismatic {
+        --tab-bg: #ffffff;
+        --tab-color: #1f2937;
+        --tab-border: none;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        box-shadow: 
+          0 2px 4px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        position: relative;
+      }
+      .variant-prismatic::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ff6b6b);
+        border-radius: 6px 6px 0 0;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .variant-prismatic.active::before,
+      .variant-prismatic:hover::before {
+        opacity: 1;
+      }
+      .variant-prismatic.active {
+        --tab-color: #111827;
+        font-weight: 600;
+        transform: translateY(-1px);
+      }
+
+      /* 8. Morphing Tiles */
+      .variant-morph {
+        --tab-bg: #f8fafc;
+        --tab-color: #475569;
+        --tab-border: 1px solid #e2e8f0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        position: relative;
+        overflow: hidden;
+      }
+      .variant-morph::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+        transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: -1;
+      }
+      .variant-morph.active::before {
+        top: 0;
+      }
+      .variant-morph.active {
+        --tab-color: #ffffff;
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+      }
+
+      .label { 
+        font-size: 13px; 
+        color: #374151; 
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      /* Apply CSS variables */
+      .enterprise-tab {
+        background: var(--tab-bg, #ffffff);
+        color: var(--tab-color, #374151);
+        border: var(--tab-border, 1px solid #d1d5db);
+        padding: var(--tab-padding, 10px 16px);
+        border-radius: var(--tab-radius, 6px);
+      }
+
+      .tab-badge {
+        background: var(--badge-bg, #dbeafe);
+        color: var(--badge-color, #1d4ed8);
+      }
+
+      .enterprise-tab.active .tab-badge {
+        --badge-bg: rgba(255, 255, 255, 0.2);
+        --badge-color: currentColor;
+      }
+
+      /* Status indicators with animations */
+      .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        margin-right: 8px;
+        position: relative;
+        animation: statusPulse 2s ease-in-out infinite;
+      }
+      
+      .status-dot::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border: 2px solid currentColor;
+        border-radius: 50%;
+        opacity: 0;
+        animation: statusRing 2s ease-in-out infinite;
+      }
+      
+      .status-dot.warning { 
+        background: #f59e0b; 
+        animation-duration: 1.5s;
+      }
+      .status-dot.error { 
+        background: #ef4444; 
+        animation-duration: 1s;
+      }
+      .status-dot.inactive { 
+        background: #6b7280; 
+        animation: none;
+      }
+      
+      @keyframes statusPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(1.1); }
+      }
+      
+      @keyframes statusRing {
+        0% { opacity: 0; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(1.5); }
+        100% { opacity: 0; transform: scale(2); }
+      }
+
+      /* Enhanced interactive elements */
+      .micro-interaction {
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .micro-interaction::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+      }
+      
+      .micro-interaction:active::after {
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <h1>Creative Enterprise Tabs – Next-Gen SaaS Design System</h1>
+      <p class="lead">Cutting-edge, interactive tab designs that push creative boundaries while maintaining enterprise-grade usability and accessibility standards.</p>
+
+      <div class="showcase-grid" role="table" aria-label="Creative enterprise tabs showcase">
+        <div></div>
+        <div class="th" role="columnheader">Active</div>
+        <div class="th" role="columnheader">Inactive</div>
+        <div class="th" role="columnheader">Hover</div>
+        <div class="th" role="columnheader">Active Focus</div>
+        <div class="th" role="columnheader">Inactive Focus</div>
+        <div class="th" role="columnheader">Disabled</div>
+
+        <!-- 1) Quantum Gradient -->
+        <div class="label" role="rowheader">Quantum Gradient</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-quantum active micro-interaction" role="tab" aria-selected="true">
+            <svg class="tab-icon" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+            Label
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-quantum micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-quantum is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-quantum active is-focus micro-interaction" role="tab" aria-selected="true">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-quantum is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-quantum" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 2) Glassmorphism Pro -->
+        <div class="label" role="rowheader">Glassmorphism Pro</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-glass active micro-interaction" role="tab" aria-selected="true">
+            <span class="status-dot"></span>
+            Label
+            <span class="tab-badge">12</span>
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-glass micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-glass is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-glass active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-glass is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-glass" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 3) Neumorphic Modern -->
+        <div class="label" role="rowheader">Neumorphic Modern</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neuro active micro-interaction" role="tab" aria-selected="true">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neuro micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neuro is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neuro active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neuro is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-neuro" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 4) Neon Tech -->
+        <div class="label" role="rowheader">Neon Tech</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neon-tech active micro-interaction" role="tab" aria-selected="true">
+            Label
+            <span class="tab-badge">Live</span>
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neon-tech micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neon-tech is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neon-tech active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-neon-tech is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-neon-tech" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 5) Holographic -->
+        <div class="label" role="rowheader">Holographic</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-holo active micro-interaction" role="tab" aria-selected="true">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-holo micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-holo is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-holo active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-holo is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-holo" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 6) Particle Field -->
+        <div class="label" role="rowheader">Particle Field</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-particle active micro-interaction" role="tab" aria-selected="true">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-particle micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-particle is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-particle active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-particle is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-particle" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 7) Prismatic -->
+        <div class="label" role="rowheader">Prismatic</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-prismatic active micro-interaction" role="tab" aria-selected="true">
+            Label
+            <span class="tab-badge">24</span>
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-prismatic micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-prismatic is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-prismatic active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-prismatic is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-prismatic" role="tab" aria-disabled="true">Label</button>
+        </div>
+
+        <!-- 8) Morphing Tiles -->
+        <div class="label" role="rowheader">Morphing Tiles</div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-morph active micro-interaction" role="tab" aria-selected="true">
+            <span class="status-dot"></span>
+            Label
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-morph micro-interaction" role="tab">
+            <span class="status-dot error"></span>
+            Label
+          </button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-morph is-hover micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-morph active is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button class="enterprise-tab variant-morph is-focus micro-interaction" role="tab">Label</button>
+        </div>
+        <div class="demo-cell">
+          <button disabled class="enterprise-tab variant-morph" role="tab" aria-disabled="true">
+            <span class="status-dot inactive"></span>
+            Label
+          </button>
+        </div>
+      </div>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <section>
+        <h2 style="font-size:1.25rem; margin-bottom:16px; color: #111827; font-weight: 600;">Creative Innovation Features</h2>
+        <ul style="margin-top:8px; color: #374151; line-height: 1.7; font-size: 15px;">
+          <li><strong>Quantum Gradients:</strong> Dynamic color transitions with shimmer effects for premium SaaS platforms.</li>
+          <li><strong>Advanced Glassmorphism:</strong> Multi-layer blur effects with enhanced depth perception and transparency.</li>
+          <li><strong>Interactive Neumorphism:</strong> Soft shadows that respond to user interaction with realistic physics.</li>
+          <li><strong>Neon Tech Styling:</strong> Professional neon effects perfect for technology and development platforms.</li>
+          <li><strong>Holographic Animations:</strong> Color-shifting backgrounds that create premium, luxury feel.</li>
+          <li><strong>Particle Systems:</strong> Subtle animated backgrounds for high-tech dashboards.</li>
+          <li><strong>Prismatic Effects:</strong> Rainbow accent animations that add sophistication to interfaces.</li>
+          <li><strong>Micro-Interactions:</strong> Click ripple effects and hover animations for enhanced UX.</li>
+          <li><strong>Smart Status Indicators:</strong> Animated dots with pulsing effects for real-time system monitoring.</li>
+          <li><strong>Morphing Interfaces:</strong> Smooth state transitions with spring physics for modern appeal.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
