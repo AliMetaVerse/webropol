@@ -12,6 +12,8 @@ export class GlobalSettingsManager {
       notifications: true,
       compactMode: false,
       autoLogout: 30, // minutes
+  // Behavior: enable the new Library sidebar (collapse + floating menu)
+  librarySidebarEnhanced: false,
   language: 'en',
   // Promo settings
   promosEnabled: false,
