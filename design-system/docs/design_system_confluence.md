@@ -40,12 +40,12 @@ Primary brand colors used for CTAs, links, and brand elements.
 |------|-----|-----|-------|
 | Primary/50 | `#eefbfd` | rgb(238, 251, 253) | Light backgrounds |
 | Primary/100 | `#d5f4f8` | rgb(213, 244, 248) | Subtle highlights |
-| Primary/200 | `#b0e8f1` | rgb(176, 232, 241) | Light accents |
-| Primary/300 | `#79d6e7` | rgb(121, 214, 231) | Hover states |
+| Primary/200 | `#b0e8f1` | rgb(176, 232, 241) | INFO |
+| Primary/300 | `#79d6e7` | rgb(121, 214, 231) | **Primary Light brand color** Hover states |
 | Primary/400 | `#3fbcd5` | rgb(63, 188, 213) | Interactive elements |
-| Primary/500 | `#209fba` | rgb(32, 159, 186) | **Primary brand color** |
-| Primary/600 | `#1d809d` | rgb(29, 128, 157) | Primary dark |
-| Primary/700 | `#1e6880` | rgb(30, 104, 128) | Active states |
+| Primary/500 | `#209fba` | rgb(32, 159, 186) 
+| Primary/600 | `#1d809d` | rgb(29, 128, 157) 
+| Primary/700 | `#1e6880` | rgb(30, 104, 128) | **Primary Dark brand color** Active states |
 | Primary/800 | `#215669` | rgb(33, 86, 105) | Dark accents |
 | Primary/900 | `#204859` | rgb(32, 72, 89) | Darkest primary |
 | Primary/950 | `#102e3c` | rgb(16, 46, 60) | Deep backgrounds |
@@ -77,9 +77,9 @@ Used for positive states, confirmations, and success messages.
 | Success/50 | `#f5faf3` | rgb(245, 250, 243) | Success backgrounds |
 | Success/100 | `#e8f4e4` | rgb(232, 244, 228) | Light success |
 | Success/200 | `#cfe9c9` | rgb(207, 233, 201) | Success highlights |
-| Success/300 | `#a9d69f` | rgb(169, 214, 159) | Success accents |
+| Success/300 | `#a9d69f` | rgb(169, 214, 159) | **Semantic success** Success accents |
 | Success/400 | `#69b259` | rgb(105, 178, 89) | Success elements |
-| Success/500 | `#579f48` | rgb(87, 159, 72) | **Primary success** |
+| Success/500 | `#579f48` | rgb(87, 159, 72) 
 | Success/600 | `#448237` | rgb(68, 130, 55) | Success dark |
 | Success/700 | `#38672e` | rgb(56, 103, 46) | Deep success |
 | Success/800 | `#305229` | rgb(48, 82, 41) | Success text |
@@ -95,7 +95,7 @@ Used for caution states, warnings, and pending actions.
 | Warning/50 | `#fffae9` | rgb(255, 250, 233) | Warning backgrounds |
 | Warning/100 | `#fef2c7` | rgb(254, 242, 199) | Light warnings |
 | Warning/200 | `#fde38a` | rgb(253, 227, 138) | Warning highlights |
-| Warning/300 | `#fcce4d` | rgb(252, 206, 77) | Warning accents |
+| Warning/300 | `#fcce4d` | rgb(252, 206, 77) | **Semantic warning** Warning accents |
 | Warning/400 | `#fbb924` | rgb(251, 185, 36) | Warning elements |
 | Warning/500 | `#f5980b` | rgb(245, 152, 11) | **Primary warning** |
 | Warning/600 | `#d97106` | rgb(217, 113, 6) | Warning dark |
@@ -113,7 +113,7 @@ Used for error states, destructive actions, and critical alerts.
 | Error/50 | `#ffebed` | rgb(255, 235, 237) | Error backgrounds |
 | Error/100 | `#ffe4e7` | rgb(255, 228, 231) | Light errors |
 | Error/200 | `#fecdd4` | rgb(254, 205, 212) | Error highlights |
-| Error/300 | `#fda4b2` | rgb(253, 164, 178) | Error accents |
+| Error/300 | `#fda4b2` | rgb(253, 164, 178) | **Semantic error** Error accents |
 | Error/400 | `#fb7189` | rgb(251, 113, 137) | Error elements |
 | Error/500 | `#f43f63` | rgb(244, 63, 99) | **Primary error** |
 | Error/600 | `#e11d4e` | rgb(225, 29, 78) | Error dark |
