@@ -285,12 +285,6 @@ class ShopSidebar extends HTMLElement {
             </a>
           </li>
         </ul>
-        <div class="flex items-center justify-start gap-2 p-2 border-t border-slate-200">
-          <a href="#" class="flex items-center px-3 py-2 text-teal-700 hover:bg-teal-50 rounded-lg transition-all">
-            <i class="fal fa-envelope w-4 mr-2"></i>
-            <span class="font-medium text-sm">Contact Us</span>
-          </a>
-        </div>
       </div>`;
 
     document.body.appendChild(menu);
