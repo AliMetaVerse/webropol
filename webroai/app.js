@@ -1051,9 +1051,10 @@ function addQuestion() {
 
 // Admin Panel Functions
 function switchAdminTab(tabName) {
-    // Remove active class from all tabs
-    document.querySelectorAll('.admin-tab').forEach(tab => {
+    // Remove active class from all tabs and update ARIA
+    document.querySelectorAll('.webropol-unified-tab').forEach(tab => {
         tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
     });
     
     // Hide all admin content
@@ -1067,8 +1068,9 @@ function switchAdminTab(tabName) {
         selectedContent.style.display = 'block';
     }
     
-    // Add active class to clicked tab
+    // Add active class to clicked tab and update ARIA
     event.target.classList.add('active');
+    event.target.setAttribute('aria-selected', 'true');
 }
 
 function openAddUserModal() {

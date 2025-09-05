@@ -318,6 +318,7 @@
             transition: width 0.3s ease;
         }
     </style>
+    <link rel="stylesheet" href="../design-system/styles/tabs.css">
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
     <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
@@ -326,6 +327,7 @@
     <script src="../design-system/components/modals/SettingsModal.js" type="module"></script>
     <script src="../design-system/utils/theme-manager.js" type="module"></script>
     <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+    <script src="../design-system/components/tabs/unified-tabs.js" type="module"></script>
 </head>
 
 <body x-data="libraryApp()" x-init="init()" @click="showContextMenu = null">
@@ -406,96 +408,50 @@
                 <!-- Main Content Area -->
                 <div class="flex-1 flex flex-col overflow-hidden">
                     <!-- Content Header Card -->
-                    <div class="modern-card rounded-xl mb-6">
-                        <div class="p-6">
-                            <!-- Stats Cards Row -->
-                            <div class="grid grid-cols-4 gap-4 mb-6">
-                                <div class="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4 border border-primary-200">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <div class="text-2xl font-bold text-primary-700">23</div>
-                                            <div class="text-sm text-primary-600">Total Events</div>
-                                        </div>
-                                        <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-calendar text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bg-gradient-to-br from-success-50 to-success-100 rounded-xl p-4 border border-success-200">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <div class="text-2xl font-bold text-success-700">15</div>
-                                            <div class="text-sm text-success-600">Upcoming</div>
-                                        </div>
-                                        <div class="w-10 h-10 bg-success-500 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-clock text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bg-gradient-to-br from-accent-50 to-accent-100 rounded-xl p-4 border border-accent-200">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <div class="text-2xl font-bold text-accent-700">347</div>
-                                            <div class="text-sm text-accent-600">Registered</div>
-                                        </div>
-                                        <div class="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-users text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="bg-gradient-to-br from-warning-50 to-warning-100 rounded-xl p-4 border border-warning-200">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <div class="text-2xl font-bold text-warning-700">8</div>
-                                            <div class="text-sm text-warning-600">Archived</div>
-                                        </div>
-                                        <div class="w-10 h-10 bg-warning-500 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-archive text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Unified Rounded Tabs -->
-                            <div class="webropol-tabs-wrapper mb-6">
-                                <button @click="setActiveTab('upcomings')" 
-                                        :class="activeTab === 'upcomings' ? 'webropol-tab active' : 'webropol-tab'">
-                                    <i class="fas fa-calendar-alt mr-2"></i>
-                                    Upcoming Events
-                                </button>
-                                <button @click="setActiveTab('archive')" 
-                                        :class="activeTab === 'archive' ? 'webropol-tab active' : 'webropol-tab'">
-                                    <i class="fas fa-archive mr-2"></i>
-                                    Archived Events
-                                </button>
-                            </div>
-                            
-                            <!-- Search and Controls -->
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <input type="text" x-model="searchTerm" placeholder="Search events..." 
-                                            class="search-modern w-80 pl-11 pr-4 py-3 rounded-xl focus:outline-none">
-                                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
-                                    </div>
-                                    
-                                    <button class="px-4 py-3 bg-white border border-neutral-200 hover:border-neutral-300 rounded-xl text-neutral-600 hover:text-neutral-900 transition-all duration-200 flex items-center space-x-2">
-                                        <i class="fas fa-filter"></i>
-                                        <span>Filters</span>
-                                    </button>
+                    <div class="pb-6">
+                        <!-- Unified Rounded Tabs -->
+                        <div class="webropol-tabs-unified webropol-tabs-rounded-container mb-6" role="tablist" aria-label="Event filters">
+                            <button @click="setActiveTab('upcomings')" 
+                                    :class="activeTab === 'upcomings' ? 'webropol-unified-tab webropol-tab-rounded size-md active' : 'webropol-unified-tab webropol-tab-rounded size-md'"
+                                    role="tab"
+                                    :aria-selected="activeTab === 'upcomings'">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                Upcoming Events
+                            </button>
+                            <button @click="setActiveTab('archive')" 
+                                    :class="activeTab === 'archive' ? 'webropol-unified-tab webropol-tab-rounded size-md active' : 'webropol-unified-tab webropol-tab-rounded size-md'"
+                                    role="tab"
+                                    :aria-selected="activeTab === 'archive'">
+                                <i class="fas fa-archive mr-2"></i>
+                                Archived Events
+                            </button>
+                        </div>
+                        
+                        <!-- Search and Controls -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="relative">
+                                    <input type="text" x-model="searchTerm" placeholder="Search events..." 
+                                        class="search-modern w-80 pl-11 pr-4 py-3 rounded-xl focus:outline-none">
+                                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
                                 </div>
                                 
-                                <div class="flex items-center space-x-4">
-                                    <div class="flex items-center bg-white rounded-xl px-4 py-3 border border-neutral-200">
-                                        <input type="checkbox" x-model="showOnlyMine" id="show-only-mine" class="form-checkbox h-4 w-4 text-primary-600 rounded border-neutral-300 mr-3">
-                                        <label for="show-only-mine" class="text-sm text-neutral-700 cursor-pointer">Show only mine</label>
-                                    </div>
-                                    
-                                    <button class="px-4 py-3 bg-gradient-to-r brand-gradient-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full transition-all duration-200 flex items-center space-x-2 shadow-md hover:shadow-lg">
-                                        <i class="fas fa-plus"></i>
-                                        <span>New Event</span>
-                                    </button>
+                                <button class="px-4 py-3 bg-white border border-neutral-200 hover:border-neutral-300 rounded-xl text-neutral-600 hover:text-neutral-900 transition-all duration-200 flex items-center space-x-2">
+                                    <i class="fas fa-filter"></i>
+                                    <span>Filters</span>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center bg-white rounded-xl px-4 py-3 border border-neutral-200">
+                                    <input type="checkbox" x-model="showOnlyMine" id="show-only-mine" class="form-checkbox h-4 w-4 text-primary-600 rounded border-neutral-300 mr-3">
+                                    <label for="show-only-mine" class="text-sm text-neutral-700 cursor-pointer">Show only mine</label>
                                 </div>
+                                
+                                <button class="px-4 py-3 bg-gradient-to-r brand-gradient-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full transition-all duration-200 flex items-center space-x-2 shadow-md hover:shadow-lg">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Event</span>
+                                </button>
                             </div>
                         </div>
                     </div>

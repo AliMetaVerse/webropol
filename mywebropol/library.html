@@ -118,6 +118,7 @@
             outline-offset: 2px;
         }
     </style>
+    <link rel="stylesheet" href="../design-system/styles/tabs.css">
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
     <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
@@ -126,6 +127,7 @@
     <script src="../design-system/components/modals/SettingsModal.js" type="module"></script>
     <script src="../design-system/utils/theme-manager.js" type="module"></script>
     <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+    <script src="../design-system/components/tabs/unified-tabs.js" type="module"></script>
     <script src="./library-sidebar.js" type="module"></script>
 </head>
 
@@ -205,10 +207,15 @@
                             <div
                                 class="bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-webropol-gray-200/50 hover:shadow-lg hover-lift">
                                 <!-- Enhanced Tab Navigation -->
-                                <div class="webropol-tabs-wrapper w-full mb-6" :class="tabsOrientation === 'vertical' ? 'flex-col items-stretch' : 'items-center'">
+                                <div class="webropol-tabs-unified webropol-tabs-rounded-container w-full mb-6" 
+                                     :class="tabsOrientation === 'vertical' ? 'flex-col items-stretch' : 'items-center'"
+                                     role="tablist" 
+                                     aria-label="Library content type">
                                     <button @click="setView('surveys')"
-                                        class="webropol-tab"
-                                        :class="[currentView === 'surveys' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']">
+                                        class="webropol-unified-tab webropol-tab-rounded size-md"
+                                        :class="[currentView === 'surveys' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']"
+                                        role="tab"
+                                        :aria-selected="currentView === 'surveys'">
                                         <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
                                             <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
                                                 <span class="hidden sm:inline">Surveys</span>
@@ -228,8 +235,10 @@
                                         </div>
                                     </button>
                                     <button @click="setView('questions')"
-                                        class="webropol-tab"
-                                        :class="[currentView === 'questions' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']">
+                                        class="webropol-unified-tab webropol-tab-rounded size-md"
+                                        :class="[currentView === 'questions' ? 'active' : '', (tabsOrientation === 'stacked' || tabsOrientation === 'vertical') ? 'flex-col w-full' : '']"
+                                        role="tab"
+                                        :aria-selected="currentView === 'questions'">
                                         <div :class="tabsOrientation === 'stacked' ? 'flex flex-col items-center' : 'flex items-center'">
                                             <div :class="tabsOrientation === 'stacked' ? 'text-xs leading-tight text-center' : ''">
                                                 <span class="hidden sm:inline">Questions</span>
