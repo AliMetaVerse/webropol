@@ -368,38 +368,117 @@
                         <!-- Folders List -->
                         <div class="flex-1 overflow-y-auto">
                             <div class="p-4">
-                                <!-- Root Folder -->
-                                <div class="mb-2">
-                                    <div class="flex items-center p-4 rounded-xl hover:bg-primary-50 cursor-pointer transition-all duration-200 group">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center mr-3 group-hover:from-primary-200 group-hover:to-primary-300 transition-all duration-200">
-                                            <i class="fas fa-folder text-primary-600"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <span class="font-medium text-neutral-700 group-hover:text-primary-700">Root Folder</span>
-                                            <div class="text-xs text-neutral-500 mt-0.5">34 events</div>
-                                        </div>
-                                        <button class="opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-neutral-600 transition-all duration-200">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
+                                <!-- Event Folder Management -->
+                                <div class="space-y-3">
+                                    <!-- Root Level Items -->
+                                    <div class="space-y-2">
+                                        <template x-for="folder in getFilteredFolders()" :key="folder.id">
+                                            <div class="group">
+                                                <!-- Main Folder Header -->
+                                                <div @click="toggleFolder(folder.id)"
+                                                    class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200"
+                                                    :class="selectedFolderId === folder.id ? 'bg-gradient-to-r from-primary-100 to-primary-100 text-primary-800 ring-2 ring-primary-300' : 
+                                                            expandedFolders.includes(folder.id) ? 'bg-gradient-to-r from-primary-50 to-primary-50 text-primary-700' : 'hover:bg-neutral-50'">
+                                                    <div class="flex items-center">
+                                                        <div class="w-8 h-8 flex items-center justify-center rounded-lg mr-3"
+                                                            :class="selectedFolderId === folder.id ? 'bg-primary-200' : 
+                                                                    expandedFolders.includes(folder.id) ? 'bg-primary-100' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                            <i :class="folder.name === 'Organizational' ? 'fas fa-building text-primary-600' : 
+                                                                      folder.name === 'My Folders' ? 'fas fa-user text-primary-600' : 
+                                                                      'fas fa-folder text-primary-600'"></i>
+                                                        </div>
+                                                        <span class="font-medium" x-text="folder.name"></span>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2">
+                                                        <span
+                                                            class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-2 py-1 font-medium"
+                                                            x-text="getTotalFolderItemCount(folder)"></span>
+                                                        <div class="relative">
+                                                            <button @click.stop="toggleContextMenu('folder-' + folder.id, 'folder')"
+                                                                class="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center text-neutral-400 hover:text-neutral-600 rounded transition-all">
+                                                                <i class="fas fa-ellipsis-v text-xs"></i>
+                                                            </button>
+                                                            <!-- Context Menu for Main Folder -->
+                                                            <div x-show="showContextMenu === 'folder-' + folder.id" 
+                                                                @click.stop
+                                                                x-transition:enter="transition ease-out duration-100"
+                                                                x-transition:enter-start="transform opacity-0 scale-95"
+                                                                x-transition:enter-end="transform opacity-100 scale-100"
+                                                                x-transition:leave="transition ease-in duration-75"
+                                                                x-transition:leave-start="transform opacity-100 scale-100"
+                                                                x-transition:leave-end="transform opacity-0 scale-95"
+                                                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 z-30">
+                                                                <div class="py-1">
+                                                                    <button @click="openAddSubfolderModal(folder.id)"
+                                                                        class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-neutral-50 transition-colors">
+                                                                        <i class="fas fa-folder-plus mr-3 text-black"></i>
+                                                                        Add Sub Folder
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <i class="fas fa-chevron-right text-xs transition-transform"
+                                                            :class="expandedFolders.includes(folder.id) ? 'rotate-90' : ''"></i>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Nested Subfolders -->
+                                                <div x-show="expandedFolders.includes(folder.id)" x-collapse class="ml-4">
+                                                    <template x-for="subfolder in folder.children" :key="subfolder.id">
+                                                        <div class="mt-2">
+                                                            <!-- Level 1 Subfolder -->
+                                                            <div @click="toggleFolder(subfolder.id)"
+                                                                class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                :class="selectedFolderId === subfolder.id ? 'bg-gradient-to-r from-primary-100/70 to-primary-100/70 text-primary-800 ring-2 ring-primary-300' : 
+                                                                        expandedFolders.includes(subfolder.id) ? 'bg-gradient-to-r from-primary-50/70 to-primary-50/70 text-primary-700' : 'hover:bg-neutral-50'">
+                                                                <div class="flex items-center">
+                                                                    <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
+                                                                        :class="selectedFolderId === subfolder.id ? 'bg-primary-200' : 
+                                                                                expandedFolders.includes(subfolder.id) ? 'bg-primary-100' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                                        <i class="fas fa-folder text-primary-600"></i>
+                                                                    </div>
+                                                                    <span class="text-sm font-medium" x-text="subfolder.name"></span>
+                                                                </div>
+                                                                <div class="flex items-center space-x-2">
+                                                                    <span
+                                                                        class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-2 py-0.5 font-medium"
+                                                                        x-text="getTotalFolderItemCount(subfolder)"></span>
+                                                                    <i class="fas fa-chevron-right text-xs transition-transform"
+                                                                        :class="expandedFolders.includes(subfolder.id) ? 'rotate-90' : ''"></i>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Level 2 Subfolders -->
+                                                            <div x-show="expandedFolders.includes(subfolder.id)" x-collapse class="ml-6">
+                                                                <template x-for="subsubfolder in subfolder.children" :key="subsubfolder.id">
+                                                                    <div class="mt-2">
+                                                                        <!-- Level 2 Subfolder -->
+                                                                        <div @click="toggleFolder(subsubfolder.id)"
+                                                                            class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                            :class="selectedFolderId === subsubfolder.id ? 'bg-gradient-to-r from-primary-100/50 to-primary-100/50 text-primary-800 ring-2 ring-primary-300' : 'hover:bg-neutral-50'">
+                                                                            <div class="flex items-center">
+                                                                                <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
+                                                                                    :class="selectedFolderId === subsubfolder.id ? 'bg-primary-200' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                                                    <i class="fas fa-folder text-primary-600"></i>
+                                                                                </div>
+                                                                                <span class="text-sm font-medium" x-text="subsubfolder.name"></span>
+                                                                            </div>
+                                                                            <div class="flex items-center space-x-2">
+                                                                                <span
+                                                                                    class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-1.5 py-0.5 font-medium"
+                                                                                    x-text="getTotalFolderItemCount(subsubfolder)"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
-                                
-                                <!-- Additional Folders -->
-                                <div class="mb-2">
-                                    <div class="flex items-center p-4 rounded-xl hover:bg-primary-50 cursor-pointer transition-all duration-200 group">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center mr-3 group-hover:from-primary-200 group-hover:to-primary-300 transition-all duration-200">
-                                            <i class="fas fa-folder text-primary-600"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <span class="font-medium text-neutral-700 group-hover:text-primary-700">My Folder</span>
-                                            <div class="text-xs text-neutral-500 mt-0.5">12 events</div>
-                                        </div>
-                                        <button class="opacity-0 group-hover:opacity-100 text-neutral-400 hover:text-neutral-600 transition-all duration-200">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -794,30 +873,212 @@
         function libraryApp() {
             return {
                 expandedMonths: ['january', 'february'], // March is collapsed by default
+                expandedFolders: [], // Track expanded folder states
                 selectedEvents: [],
                 selectAllChecked: false,
                 showOnlyMine: false,
                 activeTab: 'upcomings',
                 searchTerm: '',
                 folderSearchTerm: '',
+                selectedFolderId: null,
+                showContextMenu: null,
                 
-                // Sample events data organized by month
+                // Sample event folders data structure (matching index.html)
+                folders: [
+                    { 
+                        id: 1, 
+                        name: 'Organizational', 
+                        description: 'Company-wide events and organizational activities',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 11,
+                                name: 'Workshops',
+                                description: 'Training workshops and skill development sessions',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 111,
+                                        name: 'Technical Workshops',
+                                        description: 'Technical training and development workshops',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: []
+                                    },
+                                    {
+                                        id: 112,
+                                        name: 'Soft Skills Workshops',
+                                        description: 'Communication and leadership workshops',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 12,
+                                name: 'Conferences',
+                                description: 'Industry conferences and large-scale events',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 121,
+                                        name: 'Annual Conference',
+                                        description: 'Yearly company conference events',
+                                        level: 2,
+                                        parentId: 12,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 13,
+                                name: 'Webinars',
+                                description: 'Online seminars and virtual events',
+                                level: 1,
+                                parentId: 1,
+                                children: []
+                            }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        name: 'My Folders', 
+                        description: 'Personal events and private activities',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 21,
+                                name: 'Training Events',
+                                description: 'Personal training and development events',
+                                level: 1,
+                                parentId: 2,
+                                children: []
+                            },
+                            {
+                                id: 22,
+                                name: 'Personal Events',
+                                description: 'Personal activities and appointments',
+                                level: 1,
+                                parentId: 2,
+                                children: []
+                            }
+                        ]
+                    }
+                ],
+                
+                // Sample events data organized by month (with folder references)
                 events: {
                     january: [
-                        { id: 1, name: "Ali's Party 1", date: "15.04.2025 12:34", registered: 20, max: 32, venue: "Venue", payment: true },
-                        { id: 2, name: "Ali's Party 2", date: "15.04.2025 12:34", registered: 20, max: 32, venue: "Venue", payment: true },
-                        { id: 3, name: "Ali's Party 3", date: "15.04.2025 12:34", registered: 20, max: 32, venue: "Venue", payment: true },
-                        { id: 4, name: "Workshop Session", date: "20.01.2025 14:00", registered: 15, max: 25, venue: "Conference Room", payment: false },
-                        { id: 5, name: "Team Meeting", date: "25.01.2025 10:00", registered: 8, max: 12, venue: "Office", payment: false }
+                        { id: 1, name: "Customer Feedback Workshop", date: "15.01.2025 12:34", registered: 20, max: 32, venue: "Conference Room A", payment: true, folderId: 111 },
+                        { id: 2, name: "Leadership Training", date: "18.01.2025 10:00", registered: 15, max: 20, venue: "Training Center", payment: false, folderId: 112 },
+                        { id: 3, name: "Annual Planning Meeting", date: "22.01.2025 14:00", registered: 45, max: 50, venue: "Main Hall", payment: false, folderId: 121 },
+                        { id: 4, name: "Data Analytics Webinar", date: "25.01.2025 16:00", registered: 89, max: 100, venue: "Online", payment: true, folderId: 13 },
+                        { id: 5, name: "Personal Development Session", date: "28.01.2025 09:00", registered: 8, max: 12, venue: "Office", payment: false, folderId: 21 }
                     ],
                     february: [
-                        { id: 6, name: "Ali's Party 1", date: "15.04.2025 12:34", registered: 20, max: 32, venue: "Venue", payment: true },
-                        { id: 7, name: "Ali's Party 2", date: "15.04.2025 12:34", registered: 20, max: 32, venue: "Venue", payment: true }
+                        { id: 6, name: "Product Launch Event", date: "02.02.2025 18:00", registered: 67, max: 80, venue: "Rooftop Terrace", payment: true, folderId: 22 },
+                        { id: 7, name: "Communication Skills Workshop", date: "10.02.2025 09:00", registered: 15, max: 20, venue: "Training Center", payment: false, folderId: 112 }
                     ],
                     march: [
-                        { id: 8, name: "Spring Conference", date: "15.03.2025 09:00", registered: 45, max: 50, venue: "Main Hall", payment: true },
-                        { id: 9, name: "Product Launch", date: "22.03.2025 16:00", registered: 30, max: 40, venue: "Auditorium", payment: false }
+                        { id: 8, name: "Spring Conference", date: "15.03.2025 09:00", registered: 156, max: 200, venue: "Convention Center", payment: true, folderId: 121 },
+                        { id: 9, name: "UX Research Workshop", date: "22.03.2025 10:00", registered: 30, max: 40, venue: "Design Studio", payment: false, folderId: 111 }
                     ]
+                },
+
+                // Folder management functions (matching index.html)
+                toggleFolder(folderId) {
+                    // Handle folder expansion/collapse
+                    if (this.expandedFolders.includes(folderId)) {
+                        this.expandedFolders = this.expandedFolders.filter(id => id !== folderId);
+                    } else {
+                        this.expandedFolders.push(folderId);
+                    }
+                    
+                    // Handle folder selection for content filtering
+                    if (this.selectedFolderId === folderId) {
+                        // If clicking the same folder, deselect it to show all content
+                        this.selectedFolderId = null;
+                    } else {
+                        // Select the folder to filter content
+                        this.selectedFolderId = folderId;
+                    }
+                },
+
+                getFilteredFolders() {
+                    return this.folders.filter(folder => {
+                        return folder.level === 0;
+                    });
+                },
+
+                // Helper function to recursively count items in folder and subfolders
+                getTotalFolderItemCount(folder) {
+                    let count = 0;
+                    
+                    // Count direct items in this folder across all months
+                    Object.values(this.events).forEach(monthEvents => {
+                        const directItems = monthEvents.filter(item => {
+                            const matchesFolder = item.folderId === folder.id;
+                            const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                            return matchesFolder && matchesSearch;
+                        });
+                        count += directItems.length;
+                    });
+                    
+                    // Recursively count items in children
+                    if (folder.children && folder.children.length > 0) {
+                        folder.children.forEach(child => {
+                            count += this.getTotalFolderItemCount(child);
+                        });
+                    }
+                    
+                    return count;
+                },
+
+                // Helper function to find folder by ID (searches recursively)
+                findFolderById(folderId, folders = this.folders) {
+                    for (let folder of folders) {
+                        if (folder.id === folderId) {
+                            return folder;
+                        }
+                        if (folder.children && folder.children.length > 0) {
+                            const found = this.findFolderById(folderId, folder.children);
+                            if (found) return found;
+                        }
+                    }
+                    return null;
+                },
+
+                // Helper function to get all child folder IDs recursively (for filtering)
+                getAllChildFolderIds(folderId) {
+                    const folder = this.findFolderById(folderId);
+                    const ids = [folderId];
+                    
+                    if (folder && folder.children) {
+                        folder.children.forEach(child => {
+                            ids.push(...this.getAllChildFolderIds(child.id));
+                        });
+                    }
+                    
+                    return ids;
+                },
+
+                // Context menu methods
+                toggleContextMenu(itemId, itemType) {
+                    if (this.showContextMenu === itemId) {
+                        this.showContextMenu = null;
+                    } else {
+                        this.showContextMenu = itemId;
+                    }
+                },
+
+                // Modal and action stubs
+                openAddSubfolderModal(folderId) {
+                    console.log('Open add subfolder modal for folder:', folderId);
                 },
 
                 // Toggle month expansion
@@ -836,7 +1097,22 @@
 
                 // Get events for a specific month
                 getEventsForMonth(month) {
-                    return this.events[month] || [];
+                    let monthEvents = this.events[month] || [];
+                    
+                    // Apply folder filtering if a folder is selected
+                    if (this.selectedFolderId !== null) {
+                        const allowedFolderIds = this.getAllChildFolderIds(this.selectedFolderId);
+                        monthEvents = monthEvents.filter(event => allowedFolderIds.includes(event.folderId));
+                    }
+                    
+                    // Apply search filtering
+                    if (this.searchTerm) {
+                        monthEvents = monthEvents.filter(event => 
+                            event.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+                        );
+                    }
+                    
+                    return monthEvents;
                 },
 
                 // Get event count for a month
@@ -866,7 +1142,7 @@
                         const allEventIds = [];
                         Object.keys(this.events).forEach(month => {
                             if (this.isMonthExpanded(month)) {
-                                this.events[month].forEach(event => {
+                                this.getEventsForMonth(month).forEach(event => {
                                     allEventIds.push(event.id);
                                 });
                             }
@@ -882,7 +1158,7 @@
                     const visibleEventIds = [];
                     Object.keys(this.events).forEach(month => {
                         if (this.isMonthExpanded(month)) {
-                            this.events[month].forEach(event => {
+                            this.getEventsForMonth(month).forEach(event => {
                                 visibleEventIds.push(event.id);
                             });
                         }
