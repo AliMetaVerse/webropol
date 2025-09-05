@@ -7,13 +7,19 @@
 
 ## 🎯 Overview
 
-The Webropol Design System is a collection of components and design tokens that ensure consistency across products and platforms.
+The Webropol Design System is a collection of components and design tokens that ensures consistency across products and platforms.
 
 ---
 
 ## Tabs
 
-- Regular • Primary
+- Variant: Regular • Primary
+- Layout
+  - Internal gap: 8px
+  - Icon: left
+  - Label: centered
+  - Badge: right
+- States
   - Active
     - Text color: neutral 0
     - Background: primary 700
@@ -34,6 +40,12 @@ The Webropol Design System is a collection of components and design tokens that 
   - Disabled
     - Text color: neutral 0
     - Background: neutral 300
+
+  Tab container:
+    - Padding: 2px vertical, 4px horizontal
+    - Border radius: 8px
+    - Border: 1px solid neutral 200
+    - Background: neutral 0
 
 > **Last Updated:** September 5, 2025  
 > **Version:** 1.0.0  
