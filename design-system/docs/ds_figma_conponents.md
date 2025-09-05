@@ -42,6 +42,7 @@ The Webropol Design System is a collection of components and design tokens that 
     - Background: neutral 300
 
   Tab container:
+    - Wrap the content
     - Padding: 2px vertical, 4px horizontal
     - Border radius: 8px
     - Border: 1px solid neutral 200
