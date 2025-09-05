@@ -98,6 +98,7 @@
     <link href="design-system/styles/shop-shared.css" rel="stylesheet">
     <link href="design-system/styles/mobile-responsive.css" rel="stylesheet">
     <link rel="stylesheet" href="design-system/styles/tokens.css">
+    <link rel="stylesheet" href="design-system/styles/tabs.css">
     <style>
         [x-cloak] {
             display: none !important;
@@ -584,6 +585,7 @@
     <script src="design-system/utils/global-settings-manager.js" type="module"></script>
     <script src="design-system/utils/spa-router.js?v=20250903-1" type="module"></script>
     <script src="scripts/contact-modals.js"></script>
+    <script defer src="design-system/components/tabs/unified-tabs.js"></script>
 </head>
 
 <body x-data="libraryApp()" @click="showContextMenu = null">
@@ -636,10 +638,11 @@
                         </div>
                         
                         <!-- Tab Navigation -->
-                        <div class="flex mb-8" role="tablist" aria-label="Interface modes">
-                            <div class="webropol-tabs-wrapper">
+                        <div class="flex mb-8">
+                            <div class="webropol-tabs-unified webropol-tabs-rounded-container" role="tablist" aria-label="Interface modes">
                                 <button
-                                    :class="[interfaceMode === 'classic' ? 'webropol-tab active' : 'webropol-tab', isTransitioning ? 'pointer-events-none' : '']"
+                                    class="webropol-unified-tab webropol-tab-rounded size-md"
+                                    :class="[interfaceMode === 'classic' ? 'active' : '', isTransitioning ? 'pointer-events-none' : '']"
                                     @click="switchInterface('classic')"
                                     role="tab"
                                     :aria-selected="interfaceMode === 'classic'"
@@ -651,7 +654,8 @@
                                     Classic
                                 </button>
                                 <button
-                                    :class="[interfaceMode === 'prompt' ? 'webropol-tab active' : 'webropol-tab', isTransitioning ? 'pointer-events-none' : '']"
+                                    class="webropol-unified-tab webropol-tab-rounded size-md"
+                                    :class="[interfaceMode === 'prompt' ? 'active' : '', isTransitioning ? 'pointer-events-none' : '']"
                                     @click="switchInterface('prompt')"
                                     role="tab"
                                     :aria-selected="interfaceMode === 'prompt'"
@@ -972,27 +976,33 @@
 
                     <!-- My latest activity -->
                     <h3 class="text-xl font-bold mb-6 text-webropol-gray-900">My latest activity</h3>
-                        <!-- Modern Tabs (aligned to surveys list tabs) -->
+                        <!-- Unified Activity Tabs -->
                         <div class="flex mb-8 overflow-x-auto">
-                            <div class="webropol-tabs-wrapper flex-shrink-0">
+                            <div class="webropol-tabs-unified webropol-tabs-rounded-container flex-shrink-0" role="tablist" aria-label="Activity filter">
                                 <button
-                                    class="webropol-tab"
+                                    class="webropol-unified-tab webropol-tab-rounded size-sm"
                                     :class="selectedActivityTab === 'all' ? 'active' : ''"
                                     @click="selectedActivityTab = 'all'"
+                                    role="tab"
+                                    :aria-selected="selectedActivityTab === 'all'"
                                 >
                                     All
                                 </button>
                                 <button
-                                    class="webropol-tab"
+                                    class="webropol-unified-tab webropol-tab-rounded size-sm"
                                     :class="selectedActivityTab === 'surveys' ? 'active' : ''"
                                     @click="selectedActivityTab = 'surveys'"
+                                    role="tab"
+                                    :aria-selected="selectedActivityTab === 'surveys'"
                                 >
                                     Surveys
                                 </button>
                                 <button
-                                    class="webropol-tab"
+                                    class="webropol-unified-tab webropol-tab-rounded size-sm"
                                     :class="selectedActivityTab === 'events' ? 'active' : ''"
                                     @click="selectedActivityTab = 'events'"
+                                    role="tab"
+                                    :aria-selected="selectedActivityTab === 'events'"
                                 >
                                     Events
                                 </button>
