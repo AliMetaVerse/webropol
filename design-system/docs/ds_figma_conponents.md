@@ -24,21 +24,21 @@ The Webropol Design System is a collection of components and design tokens that 
     - Text color: neutral 0
     - Background: primary 700
   - Inactive
-    - Text color: transparent
-    - Background: primary 700
+    - Text color: neutral 950
+    - Background: transparent
   - Hover (inactive)
-    - Text color: primary 300
-    - Background: primary 700
+    - Text color: neutral 950
+    - Background: primary 300
   - Focus (active)
-    - Text color: primary 700
+    - Text color: neutral 0
     - Background: primary 700
     - Outline: neutral 900
   - Focus (inactive)
-    - Text color: transparent
-    - Background: primary 700
+    - Text color: neutral 950
+    - Background: transparent
     - Outline: neutral 900
   - Disabled
-    - Text color: neutral 0
+    - Text color: neutral 700
     - Background: neutral 300
 
   Tab container:
