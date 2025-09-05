@@ -214,7 +214,7 @@ export class WebropolSidebar extends BaseComponent {
                     pb-6">
           <!-- Contact Us - Redesigned Footer Button -->
           <div class="relative">
-            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg" title="Contact Us - Gain Insight & Get Support">
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
                 <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
