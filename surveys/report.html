@@ -441,12 +441,12 @@
 
   <!-- Show Public Report Links Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': showPublicLinksOpen }" @click.self="showPublicLinksOpen = false" @keydown.window.escape="showPublicLinksOpen = false" role="dialog" aria-modal="true" aria-labelledby="showPublicLinksTitle">
-    <div class="modal-content" style="max-width: 800px;">
+    <div class="modal-content" style="max-width: 1000px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="showPublicLinksTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-blue-600"><i class="fal fa-link text-lg"></i></span>
-            <span>Show public report links</span>
+            <span>Manage Public Report Links</span>
           </div>
         </div>
         <button class="modal-close" aria-label="Close" @click="showPublicLinksOpen = false"><i class="fal fa-times"></i></button>
@@ -472,7 +472,7 @@
             <tbody>
               <tr class="border-b border-webropol-gray-100 hover:bg-webropol-gray-25">
                 <td class="py-3 px-4">
-                  <button @click="editReportLinkOpen = true" class="text-blue-600 hover:text-blue-800 hover:underline font-medium text-left">ali</button>
+                  <button @click="editReportLinkOpen = true" class="text-blue-600 hover:text-blue-800 hover:underline font-medium text-left">Ali's Survey Link</button>
                 </td>
                 <td class="py-3 px-4 text-webropol-gray-600">08.09.2025</td>
                 <td class="py-3 px-4 text-webropol-gray-600">Ali.Al-Zuhairi@webropol.com</td>
@@ -480,8 +480,8 @@
                 <td class="py-3 px-4 text-webropol-gray-600">—</td>
                 <td class="py-3 px-4">
                   <button @click="editReportLinkOpen = true" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
-                    <i class="fal fa-edit"></i>
-                    <span>Edit</span>
+                    <i class="fal fa-cog"></i>
+                    <span>Manage</span>
                   </button>
                 </td>
               </tr>
@@ -506,76 +506,97 @@
 
   <!-- Edit Report Link Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': editReportLinkOpen }" @click.self="editReportLinkOpen = false" @keydown.window.escape="editReportLinkOpen = false" role="dialog" aria-modal="true" aria-labelledby="editReportLinkTitle">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 800px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="editReportLinkTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-blue-600"><i class="fal fa-link text-lg"></i></span>
-            <span>Show public report links</span>
+            <span>Edit Public Report Link</span>
           </div>
         </div>
         <button class="modal-close" aria-label="Close" @click="editReportLinkOpen = false"><i class="fal fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Report name -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">ali</h3>
-          <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors">
-            <i class="fal fa-trash"></i>
-            <span>Delete report link</span>
-          </button>
-        </div>
-
-        <!-- Link display and copy -->
-        <div class="mb-6">
-          <div class="flex items-center gap-2 mb-2">
-            <input type="text" value="https://staging-v3responding.webropol.com/short/6281d786c95943538242f3df7295969;" readonly class="flex-1 px-3 py-2 bg-webropol-gray-50 border border-webropol-gray-300 rounded-lg text-sm text-webropol-gray-700">
-            <button class="inline-flex items-center justify-center w-10 h-10 text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg transition-colors" title="Copy to clipboard">
-              <i class="fal fa-copy"></i>
+        <!-- Report name and actions -->
+        <div class="bg-webropol-gray-50 rounded-xl p-4 mb-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-webropol-gray-900 mb-1">Ali's Survey Link</h3>
+              <p class="text-sm text-webropol-gray-600">Public report link settings</p>
+            </div>
+            <button class="inline-flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors">
+              <i class="fal fa-trash"></i>
+              <span>Delete Link</span>
             </button>
           </div>
-          <button class="text-sm text-blue-600 hover:text-blue-800 hover:underline">View in browser</button>
         </div>
 
-        <!-- Email integration -->
-        <div class="mb-6">
-          <div class="flex items-center gap-2 text-blue-600 mb-3">
-            <i class="fal fa-envelope"></i>
-            <span class="text-sm font-medium">Attach link to message field in your email program</span>
-          </div>
-        </div>
-
-        <!-- Form fields -->
-        <div class="space-y-6">
-          <!-- Add password -->
-          <div>
-            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Add password</label>
-            <div class="text-xs text-webropol-gray-500 mb-2">(Recommended):</div>
-            <div class="space-y-2">
-              <input type="password" x-model="editPassword" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Enter password">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" x-model="showPassword" class="w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
-                <span class="text-webropol-gray-700">Show Password</span>
-              </label>
+        <!-- Link section -->
+        <div class="border border-webropol-gray-200 rounded-xl p-4 mb-6">
+          <h4 class="font-semibold text-webropol-gray-900 mb-3">Share Link</h4>
+          <div class="space-y-3">
+            <!-- URL field -->
+            <div class="flex items-center gap-2">
+              <input type="text" value="https://staging-v3responding.webropol.com/short/6281d786c95943538242f3df7295969;" readonly class="flex-1 px-3 py-2 bg-white border border-webropol-gray-300 rounded-lg text-sm text-webropol-gray-700 font-mono">
+              <button class="inline-flex items-center justify-center w-10 h-10 text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg border border-webropol-gray-300 transition-colors" title="Copy to clipboard">
+                <i class="fal fa-copy"></i>
+              </button>
+            </div>
+            
+            <!-- Action buttons -->
+            <div class="flex items-center gap-3">
+              <button class="inline-flex items-center gap-2 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors">
+                <i class="fal fa-external-link"></i>
+                <span>View in browser</span>
+              </button>
+              <button @click="window.location.href = 'mailto:?subject=Report Link&body=Here is your report link: https://staging-v3responding.webropol.com/short/6281d786c95943538242f3df7295969;'" class="inline-flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg border border-emerald-200 transition-colors">
+                <i class="fal fa-envelope"></i>
+                <span>Attach to Email</span>
+              </button>
             </div>
           </div>
+        </div>
 
-          <!-- Report language -->
-          <div>
-            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Report language</label>
-            <select x-model="reportLanguage" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-              <option value="english">English</option>
-              <option value="finnish">Finnish</option>
-              <option value="swedish">Swedish</option>
-            </select>
-          </div>
+        <!-- Settings section -->
+        <div class="border border-webropol-gray-200 rounded-xl p-4">
+          <h4 class="font-semibold text-webropol-gray-900 mb-4">Link Settings</h4>
+          <div class="space-y-5">
+            <!-- Password protection -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-webropol-gray-700">Password Protection</label>
+                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Recommended</span>
+              </div>
+              <div class="space-y-2">
+                <input type="password" x-model="editPassword" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Enter password (optional)">
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" x-model="showPassword" class="w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
+                  <span class="text-webropol-gray-600">Show password</span>
+                </label>
+              </div>
+            </div>
 
-          <!-- Allow commenting -->
-          <div>
-            <label class="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" x-model="editAllowCommenting" class="w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
-              <span class="text-sm text-webropol-gray-700">Allow commenting on report</span>
-            </label>
+            <!-- Report language -->
+            <div>
+              <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Report Language</label>
+              <select x-model="reportLanguage" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                <option value="english">English</option>
+                <option value="finnish">Finnish</option>
+                <option value="swedish">Swedish</option>
+              </select>
+            </div>
+
+            <!-- Additional options -->
+            <div class="space-y-3">
+              <h5 class="text-sm font-medium text-webropol-gray-700">Additional Options</h5>
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" x-model="editAllowCommenting" class="mt-0.5 w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
+                <div>
+                  <span class="text-sm text-webropol-gray-700 font-medium">Allow commenting</span>
+                  <p class="text-xs text-webropol-gray-500 mt-1">Let viewers add comments to the report</p>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -1373,7 +1394,7 @@
         sharePublicLinkOpen: false,
         showPublicLinksOpen: false,
         editReportLinkOpen: false,
-        reportName: 'ali',
+        reportName: 'Ali\'s Survey Link',
         reportPassword: '',
         hideAnswersAfterCreation: false,
         allowCommenting: false,
