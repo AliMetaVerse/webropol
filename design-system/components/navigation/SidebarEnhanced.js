@@ -383,22 +383,22 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       <div class="border-t border-webropol-gray-200 p-4">
         <!-- Contact Us - Redesigned Mobile Footer Button -->
         <div class="relative">
-          <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+          <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
             <!-- Icon with animated background -->
             <div class="relative flex-shrink-0">
-              <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-lg"></i>
+              <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
               </div>
               <!-- Pulse animation on hover -->
-              <div class="absolute inset-0 w-10 h-10 bg-webropol-teal-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+              <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
             </div>
             
             <!-- Text content -->
             <div class="ml-4 flex-1">
-              <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm">
+              <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm">
                 Contact Us
               </div>
-              <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300">
+              <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300">
                 Gain Insight & Get Support
               </div>
             </div>
@@ -543,22 +543,22 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         <div class="p-2 group-hover:p-4 transition-all duration-300">
           <!-- Contact Us - Redesigned Tablet Footer Button -->
           <div class="relative">
-            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center justify-center group-hover:justify-start rounded-2xl font-semibold transition-all duration-300 p-3 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center justify-center group-hover:justify-start rounded-2xl font-semibold transition-all duration-300 p-3 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
-                <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-lg flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-sm"></i>
+                <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-lg flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-sm"></i>
                 </div>
                 <!-- Pulse animation on hover -->
-                <div class="absolute inset-0 w-8 h-8 bg-webropol-teal-400 rounded-lg opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+                <div class="absolute inset-0 w-8 h-8 bg-webropol-primary-400 rounded-lg opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
               </div>
               
               <!-- Text content (appears on hover) -->
               <div class="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden group-hover:w-auto w-0">
-                <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
                   Contact Us
                 </div>
-                <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300 whitespace-nowrap">
+                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap">
                   Gain Insight & Get Support
                 </div>
               </div>
@@ -598,7 +598,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
               <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
             </div>
           </div>
-          <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
+          <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
             <i class="fal fa-angle-double-left"></i>
           </button>
         </div>
@@ -618,14 +618,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     pb-6">
           <!-- Contact Us - Redesigned Desktop Footer Button -->
           <div class="relative">
-            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-teal-50 to-webropol-teal-100 hover:from-webropol-teal-500 hover:to-webropol-teal-600 border border-webropol-teal-200 hover:border-webropol-teal-500 shadow-sm hover:shadow-lg">
+            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
-                <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-teal-600 transition-colors duration-300 text-lg"></i>
+                <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
+                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
                 </div>
                 <!-- Pulse animation on hover -->
-                <div class="absolute inset-0 w-10 h-10 bg-webropol-teal-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
+                <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
               </div>
               
               <!-- Text content -->
@@ -633,10 +633,10 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                           xl:opacity-100 xl:w-auto xl:block
                           opacity-0 w-0 hidden
                           group-hover:opacity-100 group-hover:w-auto group-hover:block">
-                <div class="font-semibold text-webropol-teal-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
                   Contact Us
                 </div>
-                <div class="text-xs text-webropol-teal-600 group-hover/contact:text-webropol-teal-100 transition-colors duration-300 whitespace-nowrap">
+                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap">
                   Gain Insight & Get Support
                 </div>
               </div>
@@ -679,8 +679,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   renderNavigationItem(item, viewType) {
     const baseClasses = `nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item`;
     const activeClasses = item.active 
-      ? 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white shadow-medium' 
-      : 'text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700';
+      ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' 
+      : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700';
 
     if (viewType === 'mobile') {
       return `
@@ -827,7 +827,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       left: '16px',
       zIndex: '2147483646'
     });
-    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-webropol-gray-600 border border-webropol-gray-200 shadow-md hover:text-webropol-teal-600 hover:border-webropol-teal-300 hover:shadow-lg transition-all';
+    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-webropol-gray-600 border border-webropol-gray-200 shadow-md hover:text-webropol-primary-600 hover:border-webropol-primary-300 hover:shadow-lg transition-all';
     btn.innerHTML = '<i class="fal fa-bars"></i>';
     btn.addEventListener('click', (e) => {
       e.preventDefault();

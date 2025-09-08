@@ -67,7 +67,7 @@ export class WebropolCard extends BaseComponent {
 
           if (icon) {
             const iconContainer = document.createElement('div');
-            iconContainer.className = 'w-12 h-12 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-2xl flex items-center justify-center';
+            iconContainer.className = 'w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-2xl flex items-center justify-center';
             iconContainer.innerHTML = `<i class="fal fa-${icon} text-white text-lg"></i>`;
             iconBadgeRow.appendChild(iconContainer);
           }
@@ -136,7 +136,7 @@ export class WebropolCard extends BaseComponent {
       'live': 'bg-emerald-100 text-emerald-700',
       'active': 'bg-blue-100 text-blue-700',
       'pro': 'bg-yellow-100 text-yellow-700',
-      'recent': 'bg-webropol-teal-100 text-webropol-teal-700',
+      'recent': 'bg-webropol-primary-100 text-webropol-primary-700',
       'draft': 'bg-gray-100 text-gray-700',
       'default': 'bg-webropol-gray-100 text-webropol-gray-700'
     };

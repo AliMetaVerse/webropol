@@ -48,8 +48,8 @@ design-system/
 ## 🎨 Design Tokens
 
 ### Colors
-- **Primary**: Webropol Teal (`webropol-teal-*`)
-- **Secondary**: Webropol Blue (`webropol-teal-*`)
+- **Primary**: Webropol Teal (`webropol-primary-*`)
+- **Secondary**: Webropol Blue (`webropol-primary-*`)
 - **Neutral**: Webropol Gray (`webropol-gray-*`)
 
 ### Typography

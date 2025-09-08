@@ -51,7 +51,7 @@ Container component for all card types.
 
 **Attributes:**
 - `variant`: standard | light | gradient | glass (default: standard)
-- `gradient`: Custom gradient classes (e.g., "from-blue-100 to-teal-100")
+- `gradient`: Custom gradient classes (e.g., "from-blue-100 to-primary-100")
 - `hoverable`: Boolean attribute for hover effects
 - `elevated`: Boolean attribute for enhanced shadow
 
@@ -119,14 +119,14 @@ Special homepage-style cards with gradients and centered content.
   icon="fa-solid fa-chart-bar"
   title="Gain insight with surveys"
   button-text="Create survey"
-  gradient="from-webropol-teal-100 to-webropol-teal-100/80">
+  gradient="from-webropol-primary-100 to-webropol-primary-100/80">
 </webropol-gradient-card>
 ```
 
 ## Design Guidelines
 
 ### Colors
-- **Primary Colors**: Webropol teal (#06b6d4) and blue (#3b82f6)
+- **Primary Colors**: Webropol primary (#06b6d4) and blue (#3b82f6)
 - **Secondary Colors**: Gray scale for text and borders
 - **Status Colors**: Green (success), Yellow (warning), Red (danger)
 

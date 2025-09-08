@@ -145,7 +145,7 @@ Flexible card system for content organization.
   button-text="Get Started"
   button-href="/surveys"
   badge="Popular"
-  gradient="from-blue-100 to-teal-100">
+  gradient="from-blue-100 to-primary-100">
 </webropol-gradient-card>
 ```
 
@@ -211,7 +211,7 @@ Complete navigation system with headers, sidebars, and breadcrumbs.
   
   <!-- Custom menu items -->
   <div slot="menu-items">
-    <a href="/custom-reports" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 text-webropol-gray-600 hover:bg-webropol-teal-50 hover:text-webropol-teal-700">
+    <a href="/custom-reports" class="flex items-center px-4 py-3 rounded-xl font-semibold transition-all duration-200 text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
       <i class="fal fa-file-alt w-5 mr-4"></i>
       <span>Custom Reports</span>
     </a>

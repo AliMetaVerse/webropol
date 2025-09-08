@@ -37,7 +37,7 @@ Replace the existing component imports in your `index.html`:
 
 #### Before (using existing components):
 ```html
-<button class="mt-2 px-6 py-2 bg-webropol-teal-600 text-white font-semibold rounded-full shadow hover:bg-webropol-teal-700 transition">
+<button class="mt-2 px-6 py-2 bg-webropol-primary-600 text-white font-semibold rounded-full shadow hover:bg-webropol-primary-700 transition">
     Create survey
 </button>
 ```
@@ -55,7 +55,7 @@ Replace the existing component imports in your `index.html`:
 
 #### Before:
 ```html
-<div class="flex items-center justify-between bg-white/80 border border-webropol-teal-50 rounded-xl px-6 py-4 transition-shadow duration-200 hover:shadow-xl">
+<div class="flex items-center justify-between bg-white/80 border border-webropol-primary-50 rounded-xl px-6 py-4 transition-shadow duration-200 hover:shadow-xl">
     <span class="font-medium text-webropol-gray-900">Survey Name</span>
     <span class="bg-webropol-green-100 text-webropol-green-700 text-xs px-3 py-1 rounded-full">Open</span>
 </div>
@@ -74,8 +74,8 @@ Replace the existing component imports in your `index.html`:
 
 #### Before:
 ```html
-<div class="inline-flex bg-webropol-teal-50 p-1.5 rounded-full shadow-soft border border-webropol-teal-100 gap-1">
-    <button :class="selectedActivityTab === 'all' ? 'bg-webropol-teal-600 text-white' : 'text-webropol-gray-600'"
+<div class="inline-flex bg-webropol-primary-50 p-1.5 rounded-full shadow-soft border border-webropol-primary-100 gap-1">
+    <button :class="selectedActivityTab === 'all' ? 'bg-webropol-primary-600 text-white' : 'text-webropol-gray-600'"
             class="px-7 py-3 rounded-full font-semibold"
             @click="selectedActivityTab = 'all'">
         All

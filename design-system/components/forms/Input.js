@@ -35,7 +35,7 @@ export class WebropolInput extends BaseComponent {
 
     // Base input classes
     const inputClasses = this.classNames(
-      'w-full rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300 focus:border-transparent',
+      'w-full rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:border-transparent',
       sizeClasses[size] || sizeClasses.md,
       icon ? 'pl-10' : '',
       error ? 'border-red-300 bg-red-50 focus:ring-red-200' : 'border-webropol-gray-200 bg-white hover:border-webropol-gray-300',

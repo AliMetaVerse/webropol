@@ -102,13 +102,13 @@ class BaseComponent extends HTMLElement {
   getVariantClasses(component, variant) {
     const variants = {
       button: {
-        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white hover:from-webropol-teal-600 hover:to-webropol-teal-700 focus:ring-webropol-teal-300 shadow-lg',
-        secondary: 'bg-white text-webropol-gray-700 border-2 border-webropol-gray-300 hover:bg-webropol-gray-50 hover:border-webropol-teal-400 focus:ring-webropol-teal-300 shadow-md',
-        tertiary: 'bg-transparent text-webropol-teal-600 hover:bg-webropol-teal-50 focus:ring-webropol-teal-300',
+        primary: 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white hover:from-webropol-primary-600 hover:to-webropol-primary-700 focus:ring-webropol-primary-300 shadow-lg',
+        secondary: 'bg-white text-webropol-gray-700 border-2 border-webropol-gray-300 hover:bg-webropol-gray-50 hover:border-webropol-primary-400 focus:ring-webropol-primary-300 shadow-md',
+        tertiary: 'bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 focus:ring-webropol-primary-300',
         danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300 shadow-lg'
       },
       badge: {
-        primary: 'bg-webropol-teal-100 text-webropol-teal-800 border border-webropol-teal-200',
+        primary: 'bg-webropol-primary-100 text-webropol-primary-800 border border-webropol-primary-200',
         secondary: 'bg-webropol-gray-100 text-webropol-gray-800 border border-webropol-gray-200',
         success: 'bg-green-100 text-green-800 border border-green-200',
         warning: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
@@ -230,7 +230,7 @@ class WebropolCard extends BaseComponent {
             ${title ? `<h3 class="text-lg font-semibold text-webropol-gray-900 mb-1">${title}</h3>` : ''}
             ${subtitle ? `<p class="text-sm text-webropol-gray-600">${subtitle}</p>` : ''}
           </div>
-          ${badge ? `<span class="bg-webropol-teal-100 text-webropol-teal-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${badge}</span>` : ''}
+          ${badge ? `<span class="bg-webropol-primary-100 text-webropol-primary-800 text-xs font-medium px-2.5 py-0.5 rounded-full">${badge}</span>` : ''}
         </div>
       `;
     }
@@ -249,7 +249,7 @@ class WebropolCard extends BaseComponent {
     const variants = {
       default: 'bg-white shadow-lg border border-webropol-gray-100',
       elevated: 'bg-white shadow-xl',
-      gradient: 'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100',
+      gradient: 'bg-sun-to-br from-webropol-primary-50 to-webropol-primary-50 border border-webropol-primary-100',
       flat: 'bg-webropol-gray-50 border border-webropol-gray-200'
     };
     return variants[variant] || variants.default;
@@ -301,8 +301,8 @@ class WebropolActionCard extends BaseComponent {
     
     // Variant gradient classes
     const variantClasses = {
-      default: 'bg-sun-to-br from-webropol-teal-500 to-webropol-teal-500',
-      workshop: 'bg-sun-to-br from-webropol-teal-500 to-webropol-teal-500',
+      default: 'bg-sun-to-br from-webropol-primary-500 to-webropol-primary-500',
+      workshop: 'bg-sun-to-br from-webropol-primary-500 to-webropol-primary-500',
       event: 'bg-sun-to-br from-purple-500 to-pink-500',
       meeting: 'bg-sun-to-br from-green-500 to-blue-500',
       orange: 'bg-sun-to-br from-orange-500 to-red-500',
@@ -504,7 +504,7 @@ class WebropolHeader extends BaseComponent {
             ${showNotifications ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-bell"></i></button>' : ''}
             ${showHelp ? '<button class="p-2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors"><i class="fal fa-question-circle"></i></button>' : ''}
             <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center">
+              <div class="w-8 h-8 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center">
                 <span class="text-white text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
               </div>
               <span class="text-sm font-medium text-webropol-gray-700">${username}</span>
@@ -543,7 +543,7 @@ class WebropolSidebar extends BaseComponent {
         <a href="${base}${item.id}/" class="${this.classNames(
           'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors',
           isActive 
-            ? 'bg-webropol-teal-100 text-webropol-teal-700 border-r-2 border-webropol-teal-500' 
+            ? 'bg-webropol-primary-100 text-webropol-primary-700 border-r-2 border-webropol-primary-500' 
             : 'text-webropol-gray-600 hover:bg-webropol-gray-100 hover:text-webropol-gray-900'
         )}">
           <i class="fal fa-${item.icon} w-5 h-5 mr-3"></i>
@@ -556,7 +556,7 @@ class WebropolSidebar extends BaseComponent {
       <nav class="bg-white h-full shadow-lg">
         <div class="p-6">
           <div class="flex items-center space-x-3 mb-8">
-            <div class="w-10 h-10 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
+            <div class="w-10 h-10 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">W</span>
             </div>
             <span class="text-xl font-bold text-webropol-gray-900">Webropol</span>
@@ -602,7 +602,7 @@ class WebropolListCard extends BaseComponent {
     this.innerHTML = `
       <div class="bg-white rounded-2xl p-6 shadow-lg border border-webropol-gray-100">
         <div class="flex items-center mb-4">
-          ${icon ? `<i class="fal fa-${icon} text-webropol-teal-600 mr-2"></i>` : ''}
+          ${icon ? `<i class="fal fa-${icon} text-webropol-primary-600 mr-2"></i>` : ''}
           <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
         </div>
         <div class="${compact ? 'space-y-1' : 'space-y-2'}">
@@ -642,13 +642,13 @@ class WebropolVideoCard extends BaseComponent {
           <img src="${thumbnail}" alt="${title}" class="w-full h-48 object-cover">
           <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
             <div class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
-              <i class="fal fa-play-circle text-webropol-teal-600 text-xl ml-1"></i>
+              <i class="fal fa-play-circle text-webropol-primary-600 text-xl ml-1"></i>
             </div>
           </div>
           <div class="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
             ${duration}
           </div>
-          ${badge ? `<div class="absolute top-2 left-2 bg-webropol-teal-500 text-white text-xs px-2 py-1 rounded-full">${badge}</div>` : ''}
+          ${badge ? `<div class="absolute top-2 left-2 bg-webropol-primary-500 text-white text-xs px-2 py-1 rounded-full">${badge}</div>` : ''}
         </div>
         <div class="p-4">
           <h3 class="font-semibold text-webropol-gray-900 mb-2">${title}</h3>
@@ -684,14 +684,14 @@ class WebropolConfigurableCard extends BaseComponent {
       <div class="bg-white rounded-2xl p-6 shadow-lg border border-webropol-gray-100">
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center">
-            ${icon ? `<i class="fal fa-${icon} text-webropol-teal-600 mr-3"></i>` : ''}
+            ${icon ? `<i class="fal fa-${icon} text-webropol-primary-600 mr-3"></i>` : ''}
             <div>
               <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
               ${subtitle ? `<p class="text-sm text-webropol-gray-600">${subtitle}</p>` : ''}
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            ${badge ? `<span class="px-2 py-1 text-xs font-medium rounded-full bg-webropol-teal-100 text-webropol-teal-800">${badge}</span>` : ''}
+            ${badge ? `<span class="px-2 py-1 text-xs font-medium rounded-full bg-webropol-primary-100 text-webropol-primary-800">${badge}</span>` : ''}
             ${status ? `<span class="w-2 h-2 rounded-full ${this.getStatusColor(status)}"></span>` : ''}
           </div>
         </div>
@@ -741,7 +741,7 @@ class WebropolInput extends BaseComponent {
             type="${type}" 
             ${placeholder ? `placeholder="${placeholder}"` : ''}
             ${required ? 'required' : ''}
-            class="block w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-teal-500 focus:border-webropol-teal-500 transition-colors"
+            class="block w-full ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 transition-colors"
           >
         </div>
         ${helperText ? `<p class="text-sm text-webropol-gray-500">${helperText}</p>` : ''}
@@ -770,23 +770,23 @@ class WebropolLoading extends BaseComponent {
     let loadingHtml = '';
     
     if (type === 'spinner') {
-      loadingHtml = `<i class="fal fa-spinner animate-spin ${sizeClasses[size]} text-webropol-teal-600"></i>`;
+      loadingHtml = `<i class="fal fa-spinner animate-spin ${sizeClasses[size]} text-webropol-primary-600"></i>`;
     } else if (type === 'dots') {
       loadingHtml = `
         <div class="flex space-x-1">
-          <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce"></div>
-          <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-          <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+          <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+          <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
         </div>
       `;
     } else if (type === 'pulse') {
-      loadingHtml = `<div class="${sizeClasses[size]} bg-webropol-teal-600 rounded-full animate-pulse"></div>`;
+      loadingHtml = `<div class="${sizeClasses[size]} bg-webropol-primary-600 rounded-full animate-pulse"></div>`;
     } else if (type === 'bars') {
       loadingHtml = `
         <div class="flex space-x-1 items-end">
-          <div class="w-1 h-4 bg-webropol-teal-600 animate-pulse"></div>
-          <div class="w-1 h-6 bg-webropol-teal-600 animate-pulse" style="animation-delay: 0.1s"></div>
-          <div class="w-1 h-4 bg-webropol-teal-600 animate-pulse" style="animation-delay: 0.2s"></div>
+          <div class="w-1 h-4 bg-webropol-primary-600 animate-pulse"></div>
+          <div class="w-1 h-6 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.1s"></div>
+          <div class="w-1 h-4 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.2s"></div>
         </div>
       `;
     }
@@ -1172,9 +1172,9 @@ class WebropolSettingsModal extends BaseComponent {
              style="transition: all 300ms ease-out"
              role="document">
           
-          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-primary-50/30">
             <div class="flex items-center">
-              <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center mr-4">
+              <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mr-4">
                 <i class="fal fa-cog text-white text-lg"></i>
               </div>
               <div>
@@ -1193,7 +1193,7 @@ class WebropolSettingsModal extends BaseComponent {
               
               <div class="settings-section">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <i class="fal fa-desktop mr-2 text-webropol-teal-600"></i>
+                  <i class="fal fa-desktop mr-2 text-webropol-primary-600"></i>
                   Interface
                 </h3>
                 <div class="space-y-4">
@@ -1212,7 +1212,7 @@ class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" class="sr-only peer" ${this.settings.darkMode ? 'checked' : ''} 
                              data-setting="darkMode">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
                   </div>
                   
@@ -1230,7 +1230,7 @@ class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
                              data-setting="showFloatingButton">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
                   </div>
                   
@@ -1248,7 +1248,7 @@ class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" class="sr-only peer" ${this.settings.autoSave ? 'checked' : ''} 
                              data-setting="autoSave">
-                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
                   </div>
                   
@@ -1268,7 +1268,7 @@ class WebropolSettingsModal extends BaseComponent {
                 <i class="fal fa-undo mr-2"></i>
                 Reset to Default
               </button>
-              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-lg transition-all">
+              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white font-medium rounded-lg transition-all">
                 <i class="fal fa-check mr-2"></i>
                 Done
               </button>

@@ -43,7 +43,7 @@ export class WebropolToggle extends BaseComponent {
 
     // Color classes
     const colorClasses = {
-      primary: 'bg-webropol-teal-600',
+      primary: 'bg-webropol-primary-600',
       secondary: 'bg-webropol-gray-600',
       success: 'bg-webropol-green-600',
       warning: 'bg-yellow-500',
@@ -55,7 +55,7 @@ export class WebropolToggle extends BaseComponent {
 
     // Switch classes
     const switchClasses = this.classNames(
-      'relative inline-flex items-center rounded-full transition-colors duration-200 ease-in-out focus-within:ring-2 focus-within:ring-webropol-teal-300 focus-within:ring-offset-2',
+      'relative inline-flex items-center rounded-full transition-colors duration-200 ease-in-out focus-within:ring-2 focus-within:ring-webropol-primary-300 focus-within:ring-offset-2',
       currentSize.switch,
       checked ? currentColor : 'bg-webropol-gray-200',
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
@@ -189,7 +189,7 @@ export class WebropolToggle extends BaseComponent {
     if (toggle && thumb) {
       // Update switch background
       const colorClasses = {
-        primary: 'bg-webropol-teal-600',
+        primary: 'bg-webropol-primary-600',
         secondary: 'bg-webropol-gray-600',
         success: 'bg-webropol-green-600',
         warning: 'bg-yellow-500',

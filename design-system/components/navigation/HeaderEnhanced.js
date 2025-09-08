@@ -93,14 +93,14 @@ export class WebropolHeader extends BaseComponent {
         <!-- Mobile Left Section -->
         <div class="flex items-center space-x-3">
           <!-- Mobile Menu Toggle -->
-          <button class="mobile-menu-toggle w-10 h-10 flex items-center justify-center text-webropol-gray-600 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200"
+          <button class="mobile-menu-toggle w-10 h-10 flex items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200"
                   aria-label="Toggle navigation menu">
             <i class="fal fa-bars text-lg"></i>
           </button>
           
           <!-- Mobile Logo -->
           <div class="flex items-center">
-            <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-lg flex items-center justify-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
               <i class="fal fa-chart-bar text-white text-sm"></i>
             </div>
             ${title ? `<span class="ml-2 font-semibold text-webropol-gray-900 text-sm truncate max-w-[120px]">${title}</span>` : ''}
@@ -110,25 +110,25 @@ export class WebropolHeader extends BaseComponent {
         <!-- Mobile Right Section -->
         <div class="flex items-center space-x-2">
           ${showFeedback ? `
-            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200" aria-label="Feedback">
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200" aria-label="Feedback">
               <i class="fal fa-star text-lg"></i>
             </button>
           ` : ''}
           ${showNotifications ? `
-            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200">
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
               <i class="fal fa-bell text-lg"></i>
             </button>
           ` : ''}
           
           ${showHelp ? `
-            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200">
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
               <i class="fal fa-question-circle text-lg"></i>
             </button>
           ` : ''}
           
           ${showUserMenu !== false ? `
-            <button class="mobile-user-menu flex items-center px-3 py-2 text-webropol-gray-700 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-lg transition-all duration-200">
-              <div class="w-6 h-6 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-2">
+            <button class="mobile-user-menu flex items-center px-3 py-2 text-webropol-gray-700 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
+              <div class="w-6 h-6 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-2">
                 <i class="fal fa-user text-white text-xs"></i>
               </div>
               <i class="fal fa-chevron-down text-xs"></i>
@@ -157,14 +157,14 @@ export class WebropolHeader extends BaseComponent {
         <div class="flex items-center space-x-6">
           <div class="flex items-center space-x-3">
             ${showNotifications ? `
-              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all duration-200 relative">
+              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200 relative">
                 <i class="fal fa-bell text-lg"></i>
                 <span class="absolute -top-1 -right-1 w-3 h-3 bg-webropol-red-500 rounded-full opacity-0 animate-pulse"></span>
               </button>
             ` : ''}
             
             ${showHelp ? `
-              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all duration-200">
+              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200">
                 <i class="fal fa-question-circle text-lg"></i>
               </button>
             ` : ''}
@@ -173,8 +173,8 @@ export class WebropolHeader extends BaseComponent {
             
             ${showUserMenu !== false ? `
               <div class="relative">
-                <button class="desktop-user-menu flex items-center px-4 py-2 text-webropol-gray-700 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all duration-200 group">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
+                <button class="desktop-user-menu flex items-center px-4 py-2 text-webropol-gray-700 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200 group">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
                     <i class="fal fa-user text-white text-sm"></i>
                   </div>
                   <span class="mr-2 font-medium truncate max-w-[120px]">${username}</span>
@@ -373,24 +373,24 @@ export class WebropolHeader extends BaseComponent {
     // Content per type (lightweight)
     if (type === 'user') {
       dropdown.innerHTML = `
-        <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Profile</button>
-        <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Settings</button>
+        <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Profile</button>
+        <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Settings</button>
         <div class="my-1 border-t border-webropol-gray-200"></div>
-        <button data-action="signout" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50">Sign out</button>
+        <button data-action="signout" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Sign out</button>
       `;
     } else if (type === 'notifications') {
       dropdown.innerHTML = `
         <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Notifications</div>
         <div class="max-h-64 overflow-auto">
-          <div class="px-3 py-2 rounded-lg hover:bg-webropol-teal-50 text-webropol-gray-700">No new notifications</div>
+          <div class="px-3 py-2 rounded-lg hover:bg-webropol-primary-50 text-webropol-gray-700">No new notifications</div>
         </div>
       `;
   } else if (type === 'help') {
       dropdown.innerHTML = `
         <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Help</div>
-        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/training-videos">Training Videos</a>
-        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/docs">Documentation</a>
-        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-teal-50" href="#/support">Contact Support</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/training-videos">Training Videos</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/docs">Documentation</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/support">Contact Support</a>
       `;
     } else if (type === 'legacy-feedback') {
       // Reuse the legacy header's feedback dropdown

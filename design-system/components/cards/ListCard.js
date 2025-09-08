@@ -206,7 +206,7 @@ export class WebropolListCard extends BaseComponent {
       'Draft': 'bg-yellow-100 text-yellow-700',
       'Closed': 'bg-red-100 text-red-700',
       'Active': 'bg-blue-100 text-blue-700',
-      'Answered': 'bg-webropol-teal-100 text-webropol-teal-700'
+      'Answered': 'bg-webropol-primary-100 text-webropol-primary-700'
     };
     return statusClasses[status] || 'bg-webropol-gray-100 text-webropol-gray-700';
   }

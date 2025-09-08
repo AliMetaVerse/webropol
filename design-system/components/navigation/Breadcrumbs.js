@@ -40,7 +40,7 @@ export class WebropolBreadcrumbs extends BaseComponent {
           ${trail
             .map((item, i) =>
               i < trail.length - 1
-                ? `<li><a href="${item.url}" class="hover:text-webropol-teal-600 font-medium transition-colors">${item.label}</a><span class="mx-2 text-webropol-gray-400">/</span></li>`
+                ? `<li><a href="${item.url}" class="hover:text-webropol-primary-600 font-medium transition-colors">${item.label}</a><span class="mx-2 text-webropol-gray-400">/</span></li>`
                 : `<li class="text-webropol-gray-900 font-semibold">${item.label}</li>`
             )
             .join('')}

@@ -40,7 +40,7 @@ export class WebropolConfigurableCard extends BaseComponent {
           <div class="flex items-start justify-between">
             <div class="flex items-start space-x-4 flex-1">
               ${icon ? `
-                <div class="w-12 h-12 bg-sun-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <i class="fal fa-${icon} text-white text-lg"></i>
                 </div>
               ` : ''}
@@ -49,7 +49,7 @@ export class WebropolConfigurableCard extends BaseComponent {
                 <div class="flex items-center justify-between mb-2">
                   <h3 class="font-semibold text-webropol-gray-900 truncate">${title || 'Configurable Card'}</h3>
                   ${badge ? `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-webropol-teal-100 text-webropol-teal-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-webropol-primary-100 text-webropol-primary-800">
                       ${badge}
                     </span>
                   ` : ''}
@@ -107,7 +107,7 @@ export class WebropolConfigurableCard extends BaseComponent {
                   <div class="mt-4 pt-4 border-t border-webropol-gray-100">
                     <div class="flex flex-wrap gap-2 configurable-actions">
                       <slot name="actions">
-                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-teal-600 bg-webropol-teal-50 rounded-lg hover:bg-webropol-teal-100 transition-colors">
+                        <button class="px-3 py-1.5 text-sm font-medium text-webropol-primary-600 bg-webropol-primary-50 rounded-lg hover:bg-webropol-primary-100 transition-colors">
                           Edit
                         </button>
                         <button class="px-3 py-1.5 text-sm font-medium text-webropol-gray-600 bg-webropol-gray-50 rounded-lg hover:bg-webropol-gray-100 transition-colors">

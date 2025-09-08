@@ -66,7 +66,7 @@ Use this basic structure for all pages:
     <!-- Floating Create Button Component -->
     <webropol-floating-button 
         position="bottom-center"
-        theme="teal-blue"
+        theme="primary-blue"
         items='[...]'>
     </webropol-floating-button>
 </body>
@@ -123,7 +123,7 @@ The floating button component provides quick access to create new items. Add it 
 ```html
 <webropol-floating-button 
     position="bottom-center"
-    theme="teal-blue"
+    theme="primary-blue"
     items='[
         {
             "id": "surveys",
@@ -160,7 +160,7 @@ The floating button component provides quick access to create new items. Add it 
 #### Floating Button Attributes:
 
 - **`position`**: `"bottom-center"`, `"bottom-right"`, or `"bottom-left"`
-- **`theme`**: `"teal-blue"` or `"blue"`
+- **`theme`**: `"primary-blue"` or `"blue"`
 - **`items`**: JSON array of menu items with id, label, description, icon, and url
 
 #### Customizing Menu Items:
@@ -215,9 +215,9 @@ tailwind.config = {
     theme: {
         extend: {
             colors: {
-                'webropol-teal': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
                 'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-                'webropol-teal-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
             },
             fontFamily: {
                 'sans': ['Inter', 'system-ui', 'sans-serif'],

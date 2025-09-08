@@ -28,10 +28,10 @@ export class WebropolCardLegacy extends BaseComponent {
     // Variant classes
     const variantClasses = {
       standard: 'bg-white border-webropol-gray-200',
-      light: 'bg-white/80 border-webropol-teal-100',
+      light: 'bg-white/80 border-webropol-primary-100',
       gradient: gradient ? 
-        `bg-sun-to-br ${gradient} border-webropol-teal-100` : 
-        'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50/80 border-webropol-teal-100',
+        `bg-sun-to-br ${gradient} border-webropol-primary-100` : 
+        'bg-sun-to-br from-webropol-primary-50 to-webropol-primary-50/80 border-webropol-primary-100',
       glass: 'bg-white/70 backdrop-blur-xl border-webropol-gray-200/50'
     };
 
@@ -66,7 +66,7 @@ export class WebropolCardHeader extends BaseComponent {
     
     const badgeClasses = {
       default: 'bg-webropol-gray-700 text-white',
-      primary: 'bg-webropol-teal-600 text-white',
+      primary: 'bg-webropol-primary-600 text-white',
       success: 'bg-green-600 text-white',
       warning: 'bg-yellow-600 text-white',
       danger: 'bg-red-600 text-white'
@@ -76,7 +76,7 @@ export class WebropolCardHeader extends BaseComponent {
       <div class="flex items-start justify-between p-6 ${subtitle ? 'pb-4' : ''}">
         <div class="flex items-center space-x-4 flex-1">
           ${icon ? `<div class="flex-shrink-0">
-            <i class="${icon} text-3xl text-webropol-teal-600"></i>
+            <i class="${icon} text-3xl text-webropol-primary-600"></i>
           </div>` : ''}
           <div class="flex-1 min-w-0">
             ${title ? `<h3 class="text-lg font-semibold text-webropol-gray-900 truncate">${title}</h3>` : ''}
@@ -131,7 +131,7 @@ export class WebropolCardList extends BaseComponent {
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
             ${collapsible ? `
-              <button @click="open = !open" class="text-webropol-teal-600 hover:text-webropol-teal-700 transition-colors">
+              <button @click="open = !open" class="text-webropol-primary-600 hover:text-webropol-primary-700 transition-colors">
                 <i class="fal fa-chevron-down transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
               </button>
             ` : ''}
@@ -170,7 +170,7 @@ export class WebropolCardListItem extends BaseComponent {
     this.innerHTML = `
       <div class="flex items-center justify-between p-4 rounded-xl bg-webropol-gray-50/50 hover:bg-webropol-gray-50 transition-colors ${clickable ? 'cursor-pointer hover:shadow-card' : ''}">
         <div class="flex items-center space-x-3 flex-1 min-w-0">
-          ${icon ? `<i class="${icon} text-webropol-teal-600 text-lg flex-shrink-0"></i>` : ''}
+          ${icon ? `<i class="${icon} text-webropol-primary-600 text-lg flex-shrink-0"></i>` : ''}
           <div class="flex-1 min-w-0">
             ${title ? `<div class="font-medium text-webropol-gray-900 truncate">${title}</div>` : ''}
             ${subtitle ? `<div class="text-sm text-webropol-gray-600 truncate">${subtitle}</div>` : ''}
@@ -179,7 +179,7 @@ export class WebropolCardListItem extends BaseComponent {
         </div>
         <div class="flex items-center space-x-3 flex-shrink-0">
           ${status ? `<span class="text-xs px-2 py-1 rounded-full font-medium ${statusClasses[status]}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>` : ''}
-          ${action ? `<button class="text-webropol-teal-600 hover:text-webropol-teal-700 font-medium text-sm transition-colors">
+          ${action ? `<button class="text-webropol-primary-600 hover:text-webropol-primary-700 font-medium text-sm transition-colors">
             ${actionIcon ? `<i class="${actionIcon} mr-1"></i>` : ''}${action}
           </button>` : ''}
           <slot name="actions"></slot>
@@ -244,16 +244,16 @@ export class WebropolGradientCard extends BaseComponent {
     const linkText = this.getAttr('link-text');
     const linkHref = this.getAttr('link-href');
     const badge = this.getAttr('badge');
-    const gradient = this.getAttr('gradient', 'from-webropol-teal-100 to-webropol-teal-100/80');
+    const gradient = this.getAttr('gradient', 'from-webropol-primary-100 to-webropol-primary-100/80');
     
     this.innerHTML = `
-      <div class="relative rounded-2xl bg-sun-to-br ${gradient} p-6 flex flex-col items-center shadow-card border border-webropol-teal-100 transition-shadow duration-200 hover:shadow-2xl">
+      <div class="relative rounded-2xl bg-sun-to-br ${gradient} p-6 flex flex-col items-center shadow-card border border-webropol-primary-100 transition-shadow duration-200 hover:shadow-2xl">
         ${badge ? `
           <span class="absolute top-4 right-4 bg-webropol-gray-700 text-white text-xs px-3 py-1 rounded-full">
             ${badge}
           </span>
         ` : ''}
-        ${icon ? `<i class="${icon} text-4xl text-webropol-teal-600 mb-4"></i>` : ''}
+        ${icon ? `<i class="${icon} text-4xl text-webropol-primary-600 mb-4"></i>` : ''}
         ${title ? `<div class="font-semibold text-lg text-webropol-gray-900 mb-2 text-center">${title}</div>` : ''}
         ${subtitle ? `<div class="text-sm text-webropol-gray-600 text-center mb-4">${subtitle}</div>` : ''}
         <slot></slot>
@@ -263,7 +263,7 @@ export class WebropolGradientCard extends BaseComponent {
           </webropol-button>
         ` : ''}
         ${linkText ? `
-          <a href="${linkHref || '#'}" class="mt-2 text-webropol-teal-700 font-semibold hover:underline">${linkText}</a>
+          <a href="${linkHref || '#'}" class="mt-2 text-webropol-primary-700 font-semibold hover:underline">${linkText}</a>
         ` : ''}
       </div>
     `;

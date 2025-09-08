@@ -343,9 +343,9 @@ export class WebropolSettingsModal extends BaseComponent {
              role="document">
           
           <!-- Modal Header -->
-          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-primary-50/30">
             <div class="flex items-center">
-              <div class="w-10 h-10 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-xl flex items-center justify-center mr-4">
+              <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mr-4">
                 <i class="fal fa-cog text-white text-lg"></i>
               </div>
               <div>
@@ -366,9 +366,9 @@ export class WebropolSettingsModal extends BaseComponent {
               
         <!-- Interface Settings Section -->
         ${sm.showInterfaceSection ? `
-        <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-teal-50/30 rounded-xl p-5 border border-webropol-gray-100">
+        <div class="settings-section bg-gradient-to-br from-webropol-gray-50/50 to-webropol-primary-50/30 rounded-xl p-5 border border-webropol-gray-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-desktop text-sm"></i>
                   </div>
                   Interface
@@ -391,7 +391,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.darkMode ? 'checked' : ''} 
                              data-setting="darkMode">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -411,7 +411,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.compactMode ? 'checked' : ''} 
                              data-setting="compactMode">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -431,7 +431,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showFloatingButton ? 'checked' : ''} 
                              data-setting="showFloatingButton">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
 
@@ -451,7 +451,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.promosEnabled ? 'checked' : ''} 
                              data-setting="promosEnabled">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -471,7 +471,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.showHeaderCreateMenu ? 'checked' : ''} 
                              data-setting="showHeaderCreateMenu">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -483,7 +483,7 @@ export class WebropolSettingsModal extends BaseComponent {
         ${sm.showBehaviorSection ? `
         <div class="settings-section bg-gradient-to-br from-webropol-blue-50/50 to-webropol-purple-50/30 rounded-xl p-5 border border-webropol-blue-100">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-cogs text-sm"></i>
                   </div>
                   Behavior
@@ -520,7 +520,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.autoSave ? 'checked' : ''} 
                              data-setting="autoSave">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -540,7 +540,7 @@ export class WebropolSettingsModal extends BaseComponent {
                     <label class="relative inline-flex items-center cursor-pointer ml-3">
                       <input type="checkbox" class="sr-only peer" ${this.settings.notifications ? 'checked' : ''} 
                              data-setting="notifications">
-                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-teal-600"></div>
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
                     </label>
           </div>` : ''}
                   
@@ -652,7 +652,7 @@ export class WebropolSettingsModal extends BaseComponent {
         ${sm.showAnimationSection ? `
         <div class="settings-section mt-4 bg-gradient-to-br from-webropol-purple-50/50 to-webropol-pink-50/30 rounded-xl p-5 border border-webropol-purple-100 lg:col-span-2">
                 <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center">
-                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-teal-50 to-webropol-teal-100 rounded-lg flex items-center justify-center mr-3">
+                  <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg flex items-center justify-center mr-3">
                     <i class="fal fa-wand-magic text-sm"></i>
                   </div>
                   Animation Configuration
@@ -740,7 +740,7 @@ export class WebropolSettingsModal extends BaseComponent {
                       <div class="preview-settings settings-animation-container inline-flex items-center justify-center w-8 h-8 rounded-lg bg-webropol-purple-50 text-webropol-purple-600 border border-webropol-purple-100">
                         <i class="fal fa-cog preview-settings-icon text-sm"></i>
                       </div>
-                      <button class="test-animation-btn flex-1 px-3 py-1.5 bg-gradient-to-r from-webropol-teal-400 to-webropol-teal-600 hover:from-webropol-purple-600 hover:to-webropol-pink-600 text-white text-sm rounded-lg transition-all font-medium">
+                      <button class="test-animation-btn flex-1 px-3 py-1.5 bg-gradient-to-r from-webropol-primary-400 to-webropol-primary-600 hover:from-webropol-purple-600 hover:to-webropol-pink-600 text-white text-sm rounded-lg transition-all font-medium">
                         <i class="fal fa-play mr-1"></i>
                         Test
                       </button>
@@ -763,7 +763,7 @@ export class WebropolSettingsModal extends BaseComponent {
                 <i class="fal fa-undo mr-2"></i>
                 Reset to Default
               </button>
-              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white font-medium rounded-full transition-all">
+              <button class="done-button px-6 py-2.5 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white font-medium rounded-full transition-all">
                 <i class="fal fa-check mr-2"></i>
                 Done
               </button>

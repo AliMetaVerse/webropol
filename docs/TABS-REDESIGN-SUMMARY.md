@@ -74,12 +74,12 @@ Successfully redesigned and unified all tab components across the Webropol appli
 ### 1. Pills Variant (Default)
 - **Used in**: Main interface, surveys list, general navigation
 - **Features**: Rounded container with pill-shaped active tabs
-- **Colors**: Primary teal background for active, neutral for inactive
+- **Colors**: Primary primary background for active, neutral for inactive
 
 ### 2. Underline Variant
 - **Used in**: Content organization, secondary navigation
 - **Features**: Clean underline indicator for active tab
-- **Colors**: Primary teal underline, neutral text colors
+- **Colors**: Primary primary underline, neutral text colors
 
 ### 3. Modern Variant
 - **Used in**: Events list, feature toggles

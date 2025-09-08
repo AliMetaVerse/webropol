@@ -73,12 +73,12 @@ export class WebropolFloatingButton extends BaseComponent {
         </div>
 
         <!-- Main Floating Button with Enhanced Design -->
-        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
+        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
           <!-- Animated background layers -->
-          <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
           
           <!-- Rotating border effect -->
-          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-webropol-teal-300 to-webropol-teal-500 opacity-75 blur-md group-hover:animate-spin-slow"></div>
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-webropol-primary-300 to-webropol-primary-500 opacity-75 blur-md group-hover:animate-spin-slow"></div>
           
           <!-- Shimmer effect -->
           <div class="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>

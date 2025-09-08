@@ -53,7 +53,7 @@ export class WebropolModal extends BaseComponent {
              role="document">
           
           ${title || closable ? `
-            <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-teal-50/30">
+            <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-primary-50/30">
               ${title ? `
                 <div>
                   <h2 id="${this.getAttribute('aria-labelledby') || this.generateId('modal-title')}" 

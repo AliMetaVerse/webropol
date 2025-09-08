@@ -97,7 +97,7 @@ class ShopSidebar extends HTMLElement {
           <!-- Header with collapse toggle -->
           <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 grid place-items-center text-white shadow-lg">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 grid place-items-center text-white shadow-lg">
                 <i class="fal fa-shopping-bag text-xl"></i>
               </div>
               <div>
@@ -105,7 +105,7 @@ class ShopSidebar extends HTMLElement {
                 <p class="text-sm text-slate-500">Modules & Add-ons</p>
               </div>
             </div>
-            <button class="shop-collapse-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
+            <button class="shop-collapse-btn w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
               <i class="fal fa-angle-double-left"></i>
             </button>
           </div>
@@ -116,7 +116,7 @@ class ShopSidebar extends HTMLElement {
             <div>
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider">Modules</h3>
-                <span class="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded-full">8</span>
+                <span class="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">8</span>
               </div>
               <ul class="space-y-2">
                 ${this.linkItem('BI View', href('bi-view.html'), isActive('bi-view'), 'fal fa-chart-bar', 'analytics')}
@@ -135,10 +135,10 @@ class ShopSidebar extends HTMLElement {
               <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">SMS Credits</h3>
               <ul class="space-y-2">
                 <li>
-                  <a href="#/shop/sms-credits" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
-                    <i class="fal fa-sms w-4 text-center ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
+                  <a href="#/shop/sms-credits" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'active text-primary-700 bg-primary-50 border-l-4 border-primary-500' : 'hover:bg-slate-50 text-slate-700'}">
+                    <i class="fal fa-sms w-4 text-center ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-primary-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
                     <span class="font-medium text-sm flex-1">Buy Credits</span>
-                    <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'opacity-100 text-teal-500' : ''}"></i>
+                    <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'opacity-100 text-primary-500' : ''}"></i>
                   </a>
                 </li>
               </ul>
@@ -216,7 +216,7 @@ class ShopSidebar extends HTMLElement {
       left: '16px',
       zIndex: '2147483645'
     });
-    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-teal-600 hover:border-teal-300 hover:shadow-lg transition-all';
+    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-primary-600 hover:border-primary-300 hover:shadow-lg transition-all';
     btn.innerHTML = '<i class="fa-light fa-ellipsis-vertical"></i>';
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -255,11 +255,11 @@ class ShopSidebar extends HTMLElement {
     menu.innerHTML = `
       <div class="p-3 border-b border-slate-200 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <i class="fal fa-shopping-bag text-teal-600"></i>
+          <i class="fal fa-shopping-bag text-primary-600"></i>
           <span class="font-semibold text-slate-800">Shop Menu</span>
         </div>
         <div class="flex items-center gap-1">
-          <button class="shop-menu-restore w-8 h-8 rounded-lg hover:bg-teal-50 text-teal-600" title="Show sidebar" aria-label="Show sidebar"><i class="fal fa-columns"></i></button>
+          <button class="shop-menu-restore w-8 h-8 rounded-lg hover:bg-primary-50 text-primary-600" title="Show sidebar" aria-label="Show sidebar"><i class="fal fa-columns"></i></button>
           <button class="shop-menu-close w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
       </div>
@@ -278,10 +278,10 @@ class ShopSidebar extends HTMLElement {
         <div class="mt-3 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">SMS Credits</div>
         <ul class="space-y-1 px-1 mb-2">
           <li>
-            <a href="#/shop/sms-credits" class="nav-item group flex items-center gap-3 rounded-xl px-3 py-2 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
-              <i class="fal fa-sms w-4 text-center ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
+            <a href="#/shop/sms-credits" class="nav-item group flex items-center gap-3 rounded-xl px-3 py-2 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'active text-primary-700 bg-primary-50 border-l-4 border-primary-500' : 'hover:bg-slate-50 text-slate-700'}">
+              <i class="fal fa-sms w-4 text-center ${/#\/shop\/sms-credits$/.test(location.hash) ? 'text-primary-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
               <span class="font-medium text-sm flex-1">Buy Credits</span>
-              <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'opacity-100 text-teal-500' : ''}"></i>
+              <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${/#\/shop\/sms-credits$/.test(location.hash) ? 'opacity-100 text-primary-500' : ''}"></i>
             </a>
           </li>
         </ul>
@@ -399,10 +399,10 @@ class ShopSidebar extends HTMLElement {
   linkItem(label, href, active, icon, category) {
     return `
       <li>
-        <a href="${href}" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${active ? 'active text-teal-700 bg-teal-50 border-l-4 border-teal-500' : 'hover:bg-slate-50 text-slate-700'}">
-          <i class="${icon} w-4 text-center ${active ? 'text-teal-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
+        <a href="${href}" class="nav-item group flex items-center gap-3 rounded-2xl px-4 py-3 ${active ? 'active text-primary-700 bg-primary-50 border-l-4 border-primary-500' : 'hover:bg-slate-50 text-slate-700'}">
+          <i class="${icon} w-4 text-center ${active ? 'text-primary-600' : 'text-slate-400 group-hover:text-slate-600'}"></i>
           <span class="font-medium text-sm flex-1">${label}</span>
-          <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${active ? 'opacity-100 text-teal-500' : ''}"></i>
+          <i class="fal fa-chevron-right text-xs opacity-0 group-hover:opacity-100 ${active ? 'opacity-100 text-primary-500' : ''}"></i>
         </a>
       </li>`;
   }

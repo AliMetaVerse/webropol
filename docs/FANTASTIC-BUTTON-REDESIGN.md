@@ -71,20 +71,20 @@ This document outlines the comprehensive redesign of both the header "Create New
 ## 🎨 Color Palette
 
 ### Header Button Gradients
-- **Primary**: `from-purple-600 via-blue-600 to-teal-600`
-- **Hover**: `from-purple-700 via-blue-700 to-teal-700`
+- **Primary**: `from-purple-600 via-blue-600 to-primary-600`
+- **Hover**: `from-purple-700 via-blue-700 to-primary-700`
 - **Overlay**: `from-pink-500 via-purple-500 to-indigo-500`
 
 ### Floating Button Gradients
-- **Primary**: `from-purple-500 via-blue-500 to-teal-500`
-- **Hover**: `from-purple-600 via-blue-600 to-teal-600`
-- **Border**: `from-purple-400 via-blue-400 to-teal-400`
+- **Primary**: `from-purple-500 via-blue-500 to-primary-500`
+- **Hover**: `from-purple-600 via-blue-600 to-primary-600`
+- **Border**: `from-purple-400 via-blue-400 to-primary-400`
 
 ### Menu Item Colors
 - **Surveys**: Purple gradients (`from-purple-500 to-purple-600`)
 - **Events**: Blue gradients (`from-blue-500 to-blue-600`)
 - **SMS**: Green gradients (`from-green-500 to-green-600`)
-- **EXW**: Teal gradients (`from-teal-500 to-teal-600`)
+- **EXW**: Teal gradients (`from-primary-500 to-primary-600`)
 - **Case Management**: Indigo gradients (`from-indigo-500 to-indigo-600`)
 
 ## 🔧 Usage Examples

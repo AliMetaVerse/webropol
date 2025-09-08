@@ -177,20 +177,20 @@ export class BaseComponent extends HTMLElement {
   getVariantClasses(componentType, variant = 'primary') {
     const variants = {
       button: {
-        primary: 'bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 text-white border-2 border-transparent hover:from-webropol-teal-600 hover:to-webropol-teal-700 focus:ring-webropol-teal-200 active:from-webropol-teal-700 active:to-webropol-teal-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        secondary: 'bg-white text-webropol-teal-700 border-2 border-webropol-teal-500 hover:bg-webropol-teal-50 hover:border-webropol-teal-600 focus:ring-webropol-teal-200 active:bg-webropol-teal-100 active:border-webropol-teal-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
-        tertiary: 'bg-transparent text-webropol-teal-700 border-2 border-transparent hover:bg-webropol-teal-50 hover:text-webropol-teal-800 focus:ring-webropol-teal-200 active:bg-webropol-teal-100 disabled:text-webropol-gray-400 disabled:hover:bg-transparent',
+        primary: 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white border-2 border-transparent hover:from-webropol-primary-600 hover:to-webropol-primary-700 focus:ring-webropol-primary-200 active:from-webropol-primary-700 active:to-webropol-primary-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        secondary: 'bg-white text-webropol-primary-700 border-2 border-webropol-primary-500 hover:bg-webropol-primary-50 hover:border-webropol-primary-600 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 active:border-webropol-primary-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
+        tertiary: 'bg-transparent text-webropol-primary-700 border-2 border-transparent hover:bg-webropol-primary-50 hover:text-webropol-primary-800 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 disabled:text-webropol-gray-400 disabled:hover:bg-transparent',
         danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white border-2 border-transparent hover:from-red-600 hover:to-red-700 focus:ring-red-200 active:from-red-700 active:to-red-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
         success: 'bg-gradient-to-r from-green-500 to-green-600 text-white border-2 border-transparent hover:from-green-600 hover:to-green-700 focus:ring-green-200 active:from-green-700 active:to-green-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400'
       },
       card: {
         default: 'bg-white border border-webropol-gray-200 shadow-card',
         elevated: 'bg-white border border-webropol-gray-200 shadow-medium hover:shadow-lg',
-        gradient: 'bg-sun-to-br from-webropol-teal-50 to-webropol-teal-50 border border-webropol-teal-100 shadow-card'
+        gradient: 'bg-sun-to-br from-webropol-primary-50 to-webropol-primary-50 border border-webropol-primary-100 shadow-card'
       },
       badge: {
-        primary: 'bg-webropol-teal-100 text-webropol-teal-700',
-        secondary: 'bg-webropol-teal-100 text-webropol-teal-700',
+        primary: 'bg-webropol-primary-100 text-webropol-primary-700',
+        secondary: 'bg-webropol-primary-100 text-webropol-primary-700',
         success: 'bg-green-100 text-green-700',
         warning: 'bg-yellow-100 text-yellow-700',
         error: 'bg-red-100 text-red-700',

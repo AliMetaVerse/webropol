@@ -238,11 +238,11 @@ updateSelectAllQuestions() {
     <!-- Modal Footer -->
     <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
       <button @click="modalState = false"
-              class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-teal-200 transition-all border border-webropol-teal-700">
+              class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
         Cancel
       </button>
       <button @click="confirmAction()"
-              class="px-6 py-2.5 bg-webropol-teal-700 hover:bg-webropol-teal-800 text-white font-medium rounded-full transition-all">
+              class="px-6 py-2.5 bg-webropol-primary-700 hover:bg-webropol-primary-800 text-white font-medium rounded-full transition-all">
         Confirm
       </button>
     </div>

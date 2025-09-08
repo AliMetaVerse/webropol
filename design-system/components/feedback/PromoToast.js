@@ -253,14 +253,14 @@ class WebropolPromo extends BaseComponent {
         <div class="relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white shadow-2xl">
           ${closeBtn}
           <div class="p-4 sm:p-5 flex items-start space-x-4">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-600 text-white flex items-center justify-center shadow">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 text-white flex items-center justify-center shadow">
               <i class="${s.icon || 'fal fa-gift'} text-xl"></i>
             </div>
             <div class="flex-1">
               <div class="text-base sm:text-lg font-semibold text-webropol-gray-900">${s.title || 'Discover more in the Shop'}</div>
               <div class="text-sm text-webropol-gray-600 mt-1">${s.desc || 'Explore add-ons and capabilities to enhance your workflow.'}</div>
               <div class="mt-3">
-                <a class="inline-flex items-center px-3 py-2 rounded-xl text-white bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 text-sm font-semibold shadow" href="${s.href || '#/shop'}">
+                <a class="inline-flex items-center px-3 py-2 rounded-xl text-white bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-sm font-semibold shadow" href="${s.href || '#/shop'}">
                   ${s.cta || 'Explore'}
                   <i class="fal fa-arrow-right ml-2"></i>
                 </a>
@@ -312,7 +312,7 @@ class WebropolPromo extends BaseComponent {
             ${closeBtn}
             <div class="p-4 sm:p-5">
               <div class="font-semibold text-webropol-gray-900 mb-2">Thanks! What’s the main reason for your score?</div>
-              <textarea class="w-full p-3 border border-webropol-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-webropol-teal-100 focus:border-webropol-teal-500 text-sm" rows="3" placeholder="Your feedback helps us improve" data-ref="text">${this.state.text || ''}</textarea>
+              <textarea class="w-full p-3 border border-webropol-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-500 text-sm" rows="3" placeholder="Your feedback helps us improve" data-ref="text">${this.state.text || ''}</textarea>
               <div class="mt-3 flex items-center justify-between">
                 <button class="text-sm text-webropol-gray-500 hover:text-webropol-gray-700" data-action="back">Back</button>
                 <button class="px-4 py-2 rounded-full text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-sm font-semibold" data-action="submit">Send</button>

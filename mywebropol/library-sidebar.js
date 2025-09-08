@@ -148,7 +148,7 @@ class LibrarySidebarController {
       left: '16px',
       zIndex: '2147483645'
     });
-    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-teal-600 hover:border-teal-300 hover:shadow-lg transition-all';
+    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-primary-600 hover:border-primary-300 hover:shadow-lg transition-all';
     btn.innerHTML = '<i class="fal fa-angle-double-left"></i>';
     btn.addEventListener('click', (e) => { e.preventDefault(); this.collapse(); });
     document.body.appendChild(btn);
@@ -172,7 +172,7 @@ class LibrarySidebarController {
       left: '16px',
       zIndex: '2147483645'
     });
-    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-teal-600 hover:border-teal-300 hover:shadow-lg transition-all';
+    btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-primary-600 hover:border-primary-300 hover:shadow-lg transition-all';
   btn.innerHTML = '<i class="fa-light fa-ellipsis-vertical"></i>';
   btn.addEventListener('click', (e) => { e.preventDefault(); this.toggleMenu(); });
     document.body.appendChild(btn);
@@ -206,11 +206,11 @@ class LibrarySidebarController {
     menu.innerHTML = `
       <div class="p-3 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white rounded-t-[12px]">
         <div class="flex items-center gap-2">
-          <i class="fal fa-books text-teal-600"></i>
+          <i class="fal fa-books text-primary-600"></i>
           <span class="font-semibold text-slate-800">Library</span>
         </div>
         <div class="flex items-center gap-1">
-          <button class="library-menu-restore w-8 h-8 rounded-lg hover:bg-teal-50 text-teal-600" title="Show sidebar" aria-label="Show sidebar"><i class="fal fa-columns"></i></button>
+          <button class="library-menu-restore w-8 h-8 rounded-lg hover:bg-primary-50 text-primary-600" title="Show sidebar" aria-label="Show sidebar"><i class="fal fa-columns"></i></button>
           <button class="library-menu-close w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
       </div>

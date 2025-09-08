@@ -49,21 +49,21 @@ export class WebropolHeader extends BaseComponent {
   <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
   <div class="flex items-center space-x-4">
       <!-- Hamburger visible only when main sidebar is collapsed (desktop only) -->
-      <button class="collapsed-hamburger hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-600 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all"
+      <button class="collapsed-hamburger hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all"
       title="Open menu" aria-label="Open menu">
     <i class="fal fa-bars"></i>
       </button>
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
-              <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-webropol-teal-500 to-webropol-teal-600 hover:from-webropol-teal-600 hover:to-webropol-teal-700 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
+              <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
                 <!-- Animated background layer -->
-                <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-400 to-webropol-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-400 to-webropol-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 <!-- Shimmer effect -->
                 <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 ease-out"></div>
 
                 <!-- Rotating border glow effect (inspired by Floating Button) -->
-                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-teal-300 to-webropol-teal-500 opacity-75 blur-md group-hover:animate-spin-slow -z-10"></div>
+                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-primary-300 to-webropol-primary-500 opacity-75 blur-md group-hover:animate-spin-slow -z-10"></div>
                 
                 <!-- Content -->
                 <div class="relative flex items-center space-x-2">
@@ -76,8 +76,8 @@ export class WebropolHeader extends BaseComponent {
                   <span class="text-sm font-bold tracking-wide">Create New</span>
                 </div>
                 
-                <!-- Border glow (teal) -->
-                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-teal-400 to-webropol-teal-600 opacity-0 group-hover:opacity-75 blur-sm -z-10 transition-opacity duration-300"></div>
+                <!-- Border glow (primary) -->
+                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-primary-400 to-webropol-primary-600 opacity-0 group-hover:opacity-75 blur-sm -z-10 transition-opacity duration-300"></div>
               </button>
               <!-- Create dropdown powered by shared CreateMenu -->
               <div class="create-menu-dropdown absolute left-0 top-full mt-3 w-[26rem] transition-all duration-500 opacity-0 translate-y-2 scale-95 pointer-events-none z-[9999]">
@@ -89,7 +89,7 @@ export class WebropolHeader extends BaseComponent {
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
           ` : ''}
           <!-- Desktop sidebar toggle (hidden on small screens) -->
-          <button class="ml-2 hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
+          <button class="ml-2 hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
             <i class="fal fa-columns"></i>
           </button>
           <slot name="title"></slot>
@@ -100,14 +100,14 @@ export class WebropolHeader extends BaseComponent {
           <div class="flex items-center space-x-3">
             ${showThemeSelector ? `
               <div class="relative">
-                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all theme-selector-btn">
+                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all theme-selector-btn">
                   <i class="fal ${ThemeManager.getThemeConfig(currentTheme)?.icon || 'fa-palette'}"></i>
                 </button>
                 
                 <!-- Theme dropdown -->
                 <div class="absolute right-0 top-full mt-2 w-40 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 theme-dropdown z-[9999]">
                   ${allThemes.map(theme => `
-                    <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 theme-option ${theme.key === currentTheme ? 'bg-webropol-teal-50 text-webropol-teal-700' : ''}" data-theme="${theme.key}">
+                    <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 theme-option ${theme.key === currentTheme ? 'bg-webropol-primary-50 text-webropol-primary-700' : ''}" data-theme="${theme.key}">
                       <i class="fal ${theme.icon} w-4 mr-3"></i>
                       ${theme.name}
                       ${theme.key === currentTheme ? '<i class="fal fa-check ml-auto"></i>' : ''}
@@ -143,23 +143,23 @@ export class WebropolHeader extends BaseComponent {
             ` : ''}
             
             ${showNotifications ? `
-              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all relative">
+              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all relative">
                 <i class="fal fa-bell"></i>
                 <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
               </button>
             ` : ''}
             
             ${showHelp ? `
-              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-teal-600 hover:bg-webropol-teal-50 rounded-xl transition-all">
+              <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all">
                 <i class="fal fa-question-circle"></i>
               </button>
             ` : ''}
             
             ${showUserMenu !== false ? `
               <div class="relative">
-                <button class="flex items-center text-webropol-gray-700 hover:text-webropol-teal-600 transition-colors group" data-action="user-menu-toggle">
-                  <div class="w-8 h-8 bg-sky-to-br from-webropol-teal-500 to-webropol-teal-600 rounded-full flex items-center justify-center mr-3">
-                    <span class="text-webropol-teal-800 text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
+                <button class="flex items-center text-webropol-gray-700 hover:text-webropol-primary-600 transition-colors group" data-action="user-menu-toggle">
+                  <div class="w-8 h-8 bg-sky-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-webropol-primary-800 text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
                   </div>
                   <span class="mr-2 font-medium">${username}</span>
                   <i class="fal fa-chevron-down text-xs group-hover:rotate-180 transition-transform"></i>
@@ -282,7 +282,7 @@ export class WebropolHeader extends BaseComponent {
           <input type="hidden" name="rating" value="" />
           <div class="rating-stars flex items-center justify-between bg-white/70 rounded-xl px-3 py-2 border border-webropol-gray-200 shadow-sm" role="radiogroup" aria-label="Rate your experience">
             ${[1,2,3,4,5].map((n) => `
-              <button type="button" class="star group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-teal-300" role="radio" aria-checked="false" aria-label="${n} star${n>1?'s':''}" data-value="${n}">
+              <button type="button" class="star group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300" role="radio" aria-checked="false" aria-label="${n} star${n>1?'s':''}" data-value="${n}">
                 <span class="sr-only">${n}</span>
                 <i class="fal fa-star text-2xl text-gray-300 group-hover:scale-110 group-active:scale-95 transition-transform"></i>
               </button>
@@ -292,7 +292,7 @@ export class WebropolHeader extends BaseComponent {
             <div class="text-xs font-medium text-webropol-gray-600">
               <span class="rating-label">Choose a rating</span>
             </div>
-            <button type="submit" class="px-4 py-2 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-xs font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button type="submit" class="px-4 py-2 bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white text-xs font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
               Submit
             </button>
           </div>
@@ -308,14 +308,14 @@ export class WebropolHeader extends BaseComponent {
         <p class="text-xs text-webropol-gray-600 mb-3">${pageContext.question}</p>
         <form class="feedback-form" data-type="openended">
           <textarea 
-            class="w-full h-20 px-3 py-2 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500 focus:border-webropol-teal-500 resize-none"
+            class="w-full h-20 px-3 py-2 text-sm border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 resize-none"
             placeholder="Share your thoughts..."
             name="feedback"
             maxlength="500"
           ></textarea>
           <div class="flex justify-between items-center mt-3">
             <span class="text-xs text-webropol-gray-500">Max 500 characters</span>
-            <button type="submit" class="px-4 py-1.5 bg-webropol-teal-600 hover:bg-webropol-teal-700 text-white text-sm rounded-lg transition-colors">
+            <button type="submit" class="px-4 py-1.5 bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white text-sm rounded-lg transition-colors">
               Submit
             </button>
           </div>
@@ -899,7 +899,7 @@ export class WebropolHeader extends BaseComponent {
             const original = form.innerHTML;
             form.innerHTML = `
               <div class="flex items-center justify-center py-4">
-                <div class="flex items-center space-x-2 text-webropol-teal-700 bg-webropol-teal-50 border border-webropol-teal-200 rounded-lg px-3 py-2">
+                <div class="flex items-center space-x-2 text-webropol-primary-700 bg-webropol-primary-50 border border-webropol-primary-200 rounded-lg px-3 py-2">
                   <i class="fas fa-check-circle"></i>
                   <span class="text-sm font-medium">Thanks for rating ${rating}/5!</span>
                 </div>

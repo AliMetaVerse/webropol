@@ -45,7 +45,7 @@ export class WebropolLoading extends BaseComponent {
     switch (type) {
       case 'spinner':
         return `
-          <svg class="${sizeClass} animate-spin text-webropol-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg class="${sizeClass} animate-spin text-webropol-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
@@ -54,24 +54,24 @@ export class WebropolLoading extends BaseComponent {
       case 'dots':
         return `
           <div class="flex space-x-1">
-            <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce"></div>
-            <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-            <div class="w-2 h-2 bg-webropol-teal-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce"></div>
+            <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-2 h-2 bg-webropol-primary-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
           </div>
         `;
       
       case 'pulse':
         return `
-          <div class="${sizeClass} bg-webropol-teal-600 rounded-full animate-pulse"></div>
+          <div class="${sizeClass} bg-webropol-primary-600 rounded-full animate-pulse"></div>
         `;
       
       case 'bars':
         return `
           <div class="flex space-x-1 items-end">
-            <div class="w-1 h-6 bg-webropol-teal-600 animate-pulse"></div>
-            <div class="w-1 h-4 bg-webropol-teal-600 animate-pulse" style="animation-delay: 0.1s"></div>
-            <div class="w-1 h-8 bg-webropol-teal-600 animate-pulse" style="animation-delay: 0.2s"></div>
-            <div class="w-1 h-3 bg-webropol-teal-600 animate-pulse" style="animation-delay: 0.3s"></div>
+            <div class="w-1 h-6 bg-webropol-primary-600 animate-pulse"></div>
+            <div class="w-1 h-4 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.1s"></div>
+            <div class="w-1 h-8 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.2s"></div>
+            <div class="w-1 h-3 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.3s"></div>
           </div>
         `;
       

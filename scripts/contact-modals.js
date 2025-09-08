@@ -129,20 +129,20 @@
     STATE.step = 'step1';
     // Enhanced Step 1 with premium styling and animations
     STATE.content.innerHTML = `
-      <div class="relative p-8 sm:p-12 bg-gradient-to-br from-white/80 via-white/90 to-webropol-teal-50/30 backdrop-blur-sm">
+      <div class="relative p-8 sm:p-12 bg-gradient-to-br from-white/80 via-white/90 to-webropol-primary-50/30 backdrop-blur-sm">
         <!-- Animated background pattern -->
         <div class="absolute inset-0 opacity-5 pointer-events-none">
-          <div class="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 rounded-full -translate-x-16 -translate-y-16 animate-pulse"></div>
+          <div class="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 rounded-full -translate-x-16 -translate-y-16 animate-pulse"></div>
           <div class="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full translate-x-12 translate-y-12 animate-pulse" style="animation-delay: 1s;"></div>
         </div>
         
         <div class="relative z-10">
           <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-webropol-teal-500 via-webropol-teal-600 to-webropol-teal-700 rounded-3xl mb-6 shadow-2xl relative group">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-webropol-primary-500 via-webropol-primary-600 to-webropol-primary-700 rounded-3xl mb-6 shadow-2xl relative group">
               <i class="fal fa-sparkles text-white text-2xl"></i>
-              <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 animate-ping"></div>
+              <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 rounded-3xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 animate-ping"></div>
             </div>
-            <h2 class="text-4xl font-bold bg-gradient-to-r from-webropol-gray-900 via-webropol-teal-700 to-webropol-gray-900 bg-clip-text text-transparent mb-3">How may we assist you?</h2>
+            <h2 class="text-4xl font-bold bg-gradient-to-r from-webropol-gray-900 via-webropol-primary-700 to-webropol-gray-900 bg-clip-text text-transparent mb-3">How may we assist you?</h2>
             <p class="text-webropol-gray-600 text-lg font-medium">Welcome to the new era of fast and efficient responses</p>
           </div>
           
@@ -183,22 +183,22 @@
             </div>
             
             <!-- Contact Us Card -->
-            <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-white/80 to-webropol-teal-50/60 backdrop-blur-lg border border-white/40 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
+            <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-white/80 to-webropol-primary-50/60 backdrop-blur-lg border border-white/40 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:-translate-y-2 hover:scale-105">
               <!-- Animated gradient border -->
-              <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-400/20 via-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div class="absolute inset-px bg-gradient-to-br from-white/90 via-white/80 to-webropol-teal-50/60 rounded-3xl"></div>
+              <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-400/20 via-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div class="absolute inset-px bg-gradient-to-br from-white/90 via-white/80 to-webropol-primary-50/60 rounded-3xl"></div>
               
               <div class="relative p-8">
                 <div class="flex items-center mb-6">
                   <div class="relative">
-                    <div class="w-16 h-16 bg-gradient-to-br from-webropol-teal-500 to-webropol-teal-700 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 rounded-2xl flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-shadow duration-300">
                       <i class="fal fa-headset text-white text-2xl"></i>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 rounded-2xl opacity-0 group-hover:opacity-30 animate-pulse"></div>
+                    <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 rounded-2xl opacity-0 group-hover:opacity-30 animate-pulse"></div>
                   </div>
                   <div class="ml-4">
                     <h3 class="text-2xl font-bold text-webropol-gray-900">Contact Us</h3>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-webropol-teal-100 to-webropol-teal-200 text-webropol-teal-700 border border-webropol-teal-300">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-webropol-primary-100 to-webropol-primary-200 text-webropol-primary-700 border border-webropol-primary-300">
                       <i class="fal fa-clock mr-1"></i>
                       Support Team
                     </span>
@@ -207,7 +207,7 @@
                 
                 <p class="text-webropol-gray-700 leading-relaxed mb-8 text-lg">Connect with our friendly support experts who are dedicated to providing personalized assistance and rapid solutions to all your inquiries.</p>
                 
-                <button class="group/btn relative w-full bg-gradient-to-r from-webropol-teal-500 via-webropol-teal-600 to-blue-600 hover:from-webropol-teal-600 hover:via-blue-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden" data-contact-next>
+                <button class="group/btn relative w-full bg-gradient-to-r from-webropol-primary-500 via-webropol-primary-600 to-blue-600 hover:from-webropol-primary-600 hover:via-blue-600 hover:to-purple-600 text-white font-bold py-4 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden" data-contact-next>
                   <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
                   <span class="relative flex items-center justify-center">
                     <i class="fal fa-paper-plane mr-3 text-lg"></i>
@@ -254,17 +254,17 @@
     STATE.content.innerHTML = `
       <div class="flex flex-col lg:flex-row min-h-[600px]">
         <!-- Left: Enhanced Form -->
-        <div class="flex-1 p-8 lg:p-12 bg-gradient-to-br from-white/90 via-white/95 to-webropol-teal-50/30 backdrop-blur-sm relative overflow-hidden">
+        <div class="flex-1 p-8 lg:p-12 bg-gradient-to-br from-white/90 via-white/95 to-webropol-primary-50/30 backdrop-blur-sm relative overflow-hidden">
           <!-- Subtle background pattern -->
           <div class="absolute inset-0 opacity-5 pointer-events-none">
-            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-webropol-teal-400 to-webropol-teal-600 rounded-full translate-x-20 -translate-y-20 animate-pulse"></div>
+            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 rounded-full translate-x-20 -translate-y-20 animate-pulse"></div>
             <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full -translate-x-16 translate-y-16 animate-pulse" style="animation-delay: 1.5s;"></div>
           </div>
           
           <div class="relative z-10">
             <div class="flex items-center mb-8">
               <div>
-                <h2 class="text-3xl font-bold bg-gradient-to-r from-webropol-gray-900 to-webropol-teal-700 bg-clip-text text-transparent">Contact our friendly support team</h2>
+                <h2 class="text-3xl font-bold bg-gradient-to-r from-webropol-gray-900 to-webropol-primary-700 bg-clip-text text-transparent">Contact our friendly support team</h2>
                 <p class="text-webropol-gray-600 mt-1">We're here to help you succeed</p>
               </div>
             </div>
@@ -278,32 +278,32 @@
                     <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">Your name <span class="text-red-500">*</span></label>
                     <div class="relative">
                       <input type="text" name="name" value="${username.replace(/"/g,'&quot;')}" placeholder="Enter your full name" 
-                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-teal-500 focus:ring-4 focus:ring-webropol-teal-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
-                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-4 focus:ring-webropol-primary-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
+                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   </div>
                   <div class="group">
                     <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">Email <span class="text-red-500">*</span></label>
                     <div class="relative">
                       <input type="email" name="email" placeholder="you@company.com" 
-                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-teal-500 focus:ring-4 focus:ring-webropol-teal-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
-                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-4 focus:ring-webropol-primary-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
+                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   </div>
                   <div class="group">
                     <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">Phone number <span class="text-red-500">*</span></label>
                     <div class="relative">
                       <input type="tel" name="phone" placeholder="Add your phone number" 
-                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-teal-500 focus:ring-4 focus:ring-webropol-teal-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
-                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-4 focus:ring-webropol-primary-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
+                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   </div>
                   <div class="group">
                     <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">Subject <span class="text-red-500">*</span></label>
                     <div class="relative">
                       <input type="text" name="subject" placeholder="Give a short subject" 
-                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-teal-500 focus:ring-4 focus:ring-webropol-teal-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
-                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+                        class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-4 focus:ring-webropol-primary-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg" required>
+                      <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   </div>
                 </div>
@@ -311,12 +311,12 @@
                   <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">Your message <span class="text-red-500">*</span></label>
                   <div class="relative">
                     <textarea name="message" rows="6" placeholder="Describe your issue in detail. The more information you provide, the better we can assist you." 
-                      class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-teal-500 focus:ring-4 focus:ring-webropol-teal-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg resize-none" required></textarea>
-                    <div class="absolute inset-0 bg-gradient-to-r from-webropol-teal-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
+                      class="w-full bg-white/80 backdrop-blur-sm border-2 border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-4 focus:ring-webropol-primary-100 outline-none py-4 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md text-lg resize-none" required></textarea>
+                    <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500/10 to-transparent opacity-0 group-focus-within:opacity-100 rounded-xl transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 bg-gradient-to-r from-webropol-teal-50 to-blue-50 rounded-xl border border-webropol-teal-200">
-                  <input type="checkbox" id="support-permission" class="mt-1 w-5 h-5 text-webropol-teal-600 rounded focus:ring-webropol-teal-500" checked>
+                <div class="flex items-start gap-4 p-4 bg-gradient-to-r from-webropol-primary-50 to-blue-50 rounded-xl border border-webropol-primary-200">
+                  <input type="checkbox" id="support-permission" class="mt-1 w-5 h-5 text-webropol-primary-600 rounded focus:ring-webropol-primary-500" checked>
                   <label for="support-permission" class="text-sm text-webropol-gray-700 leading-relaxed">
                     <strong>Please note!</strong> I grant Webropol support permission to access my user account to provide better assistance.
                   </label>
@@ -326,7 +326,7 @@
                     <i class="fal fa-arrow-left mr-2"></i>
                     Back
                   </button>
-                  <button class="group relative inline-flex items-center px-10 py-4 bg-gradient-to-r from-webropol-teal-500 via-webropol-teal-600 to-blue-600 hover:from-webropol-teal-600 hover:via-blue-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden" data-contact-send>
+                  <button class="group relative inline-flex items-center px-10 py-4 bg-gradient-to-r from-webropol-primary-500 via-webropol-primary-600 to-blue-600 hover:from-webropol-primary-600 hover:via-blue-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden" data-contact-send>
                     <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <span class="relative flex items-center">
                       <span class="mr-3">Send Message</span>
@@ -340,9 +340,9 @@
         </div>
         
         <!-- Right: Premium Info Panel -->
-        <aside class="w-full lg:w-96 bg-gradient-to-br from-webropol-teal-700 via-webropol-teal-800 to-webropol-teal-900 text-white relative overflow-hidden">
+        <aside class="w-full lg:w-96 bg-gradient-to-br from-webropol-primary-700 via-webropol-primary-800 to-webropol-primary-900 text-white relative overflow-hidden">
           <!-- Animated background -->
-          <div class="absolute inset-0 bg-gradient-to-br from-webropol-teal-600/20 via-blue-600/10 to-purple-600/20"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-600/20 via-blue-600/10 to-purple-600/20"></div>
           <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
           <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-full translate-y-12 -translate-x-12"></div>
           
@@ -403,7 +403,7 @@
             
             <div class="mt-8 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
               <div class="flex items-center gap-3 text-white/80 text-sm">
-                <i class="fal fa-shield-check text-webropol-teal-300"></i>
+                <i class="fal fa-shield-check text-webropol-primary-300"></i>
                 <span>Your data is protected with enterprise-grade security</span>
               </div>
             </div>
