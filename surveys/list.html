@@ -46,12 +46,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="../design-system/styles/animations.css" rel="stylesheet">
     <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
+        :root {
+            --primary-50: #f0fdff;
+            --primary-100: #ccf7fe;
+            --primary-200: #99effd;
+            --primary-300: #66e0fa;
+            --primary-400: #22ccf1;
+            --primary-500: #06b6d4;
+            --primary-600: #0891b2;
+            --primary-700: #0e7490;
+            --primary-800: #155e75;
+            --primary-900: #164e63;
+            
+            --neutral-0: #ffffff;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            
+            --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 50px -12px rgba(0, 0, 0, 0.25);
+            
+            --border-radius-full: 9999px;
+            --font-weight-medium: 500;
+            --font-size-xs: 0.75rem;
         }
 
         .glass-effect {
@@ -163,13 +189,30 @@
             outline-offset: 2px;
         }
 
-        /* Sidebar transition effects */
-        .sidebar-transition {
-            transition: all 0.3s ease;
+        .modern-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .main-content-transition {
-            transition: all 0.3s ease;
+        .modern-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .search-modern {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .search-modern:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: var(--primary-400);
+            box-shadow: 0 0 0 3px rgba(var(--primary-400), 0.1);
         }
     </style>
 </head>
@@ -196,7 +239,7 @@
             </div>
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 min-h-screen pb-24" 
+            <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 min-h-screen pb-24"
                   :class="interfaceMode === 'prompt' ? 'px-8 lg:px-16 xl:px-24' : ''"
                   role="main">
                 <div class="mx-auto" :class="interfaceMode === 'prompt' ? 'max-w-6xl' : ''">
@@ -211,44 +254,155 @@
                         </a>
                     </div>
 
-                    <!-- Content Container -->
-                    <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-100/80 overflow-hidden">
-                        <!-- Left Sidebar - Folders -->
-                        <div class="flex">
-                            <div class="w-64 bg-gray-50 border-r border-gray-200 p-4">
-                                <h3 class="text-sm font-semibold text-gray-900 mb-4">Folders</h3>
-                                <div class="space-y-1">
-                                    <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50 border border-blue-200">
-                                        <div class="flex items-center space-x-2">
-                                            <i class="fal fa-folder text-blue-600"></i>
-                                            <span class="text-sm font-medium text-blue-900">Main folder</span>
-                                        </div>
-                                        <button class="text-blue-600 hover:text-blue-800">
-                                            <i class="fal fa-search text-xs"></i>
+                    <!-- Main Layout with Sidebar and Content -->
+                    <div class="flex gap-6">
+                        <!-- Folder Sidebar -->
+                        <div class="w-80 flex-shrink-0">
+                            <!-- Folders Card -->
+                            <div class="modern-card rounded-xl">
+                                <!-- Folders Header -->
+                                <div class="p-6 border-b border-neutral-100">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-lg font-semibold text-neutral-900 flex items-center">
+                                            <i class="fas fa-folder-open text-primary-500 mr-2"></i>
+                                            Folders
+                                        </h2>
+                                        <button class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg">
+                                            <i class="fas fa-plus text-sm"></i>
                                         </button>
                                     </div>
-                                    <div class="ml-4 space-y-1">
-                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                            <i class="fal fa-folder text-gray-400"></i>
-                                            <span class="text-sm text-gray-700">Employee surveys</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                            <i class="fal fa-folder text-gray-400"></i>
-                                            <span class="text-sm text-gray-700">Customer surveys</span>
-                                        </div>
-                                        <div class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                            <i class="fal fa-folder text-gray-400"></i>
-                                            <span class="text-sm text-gray-700">Lorem ipsum</span>
+
+                                    <!-- Search Folders -->
+                                    <div class="relative">
+                                        <input type="text" x-model="folderSearchTerm" placeholder="Search folders..."
+                                            class="search-modern w-full pl-11 pr-4 py-3 rounded-xl focus:outline-none text-sm">
+                                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400 text-sm"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Folders List -->
+                                <div class="flex-1 overflow-y-auto max-h-96">
+                                    <div class="p-4">
+                                        <!-- Survey Folder Management -->
+                                        <div class="space-y-3">
+                                            <!-- Root Level Items -->
+                                            <div class="space-y-2">
+                                                <template x-for="folder in getFilteredFolders()" :key="folder.id">
+                                                    <div class="group">
+                                                        <!-- Main Folder Header -->
+                                                        <div @click="toggleFolder(folder.id)"
+                                                            class="flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-200"
+                                                            :class="selectedFolderId === folder.id ? 'bg-gradient-to-r from-primary-100 to-primary-100 text-primary-800 ring-2 ring-primary-300' :
+                                                                    expandedFolders.includes(folder.id) ? 'bg-gradient-to-r from-primary-50 to-primary-50 text-primary-700' : 'hover:bg-neutral-50'">
+                                                            <div class="flex items-center">
+                                                                <div class="w-8 h-8 flex items-center justify-center rounded-lg mr-3"
+                                                                    :class="selectedFolderId === folder.id ? 'bg-primary-200' :
+                                                                            expandedFolders.includes(folder.id) ? 'bg-primary-100' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                                    <i :class="folder.name === 'Organizational' ? 'fas fa-building text-primary-600' :
+                                                                          folder.name === 'My Surveys' ? 'fas fa-user text-primary-600' :
+                                                                          'fas fa-folder text-primary-600'"></i>
+                                                                </div>
+                                                                <span class="font-medium" x-text="folder.name"></span>
+                                                            </div>
+                                                            <div class="flex items-center space-x-2">
+                                                                <span
+                                                                    class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-2 py-1 font-medium"
+                                                                    x-text="getTotalFolderItemCount(folder)"></span>
+                                                                <div class="relative">
+                                                                    <button @click.stop="toggleContextMenu('folder-' + folder.id, 'folder')"
+                                                                        class="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center text-neutral-400 hover:text-neutral-600 rounded transition-all">
+                                                                        <i class="fas fa-ellipsis-v text-xs"></i>
+                                                                    </button>
+                                                                    <!-- Context Menu for Main Folder -->
+                                                                    <div x-show="showContextMenu === 'folder-' + folder.id"
+                                                                        @click.stop
+                                                                        x-transition:enter="transition ease-out duration-100"
+                                                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                                                        x-transition:leave="transition ease-in duration-75"
+                                                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                                                        class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 z-30">
+                                                                        <div class="py-1">
+                                                                            <button @click="openAddSubfolderModal(folder.id)"
+                                                                                class="flex items-center w-full px-4 py-2 text-sm text-black hover:bg-neutral-50 transition-colors">
+                                                                                <i class="fas fa-folder-plus mr-3 text-black"></i>
+                                                                                Add Sub Folder
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <i class="fas fa-chevron-right text-xs transition-transform"
+                                                                    :class="expandedFolders.includes(folder.id) ? 'rotate-90' : ''"></i>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Nested Subfolders -->
+                                                        <div x-show="expandedFolders.includes(folder.id)" x-collapse class="ml-4">
+                                                            <template x-for="subfolder in folder.children" :key="subfolder.id">
+                                                                <div class="mt-2">
+                                                                    <!-- Level 1 Subfolder -->
+                                                                    <div @click="toggleFolder(subfolder.id)"
+                                                                        class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                        :class="selectedFolderId === subfolder.id ? 'bg-gradient-to-r from-primary-100/70 to-primary-100/70 text-primary-800 ring-2 ring-primary-300' :
+                                                                                expandedFolders.includes(subfolder.id) ? 'bg-gradient-to-r from-primary-50/70 to-primary-50/70 text-primary-700' : 'hover:bg-neutral-50'">
+                                                                        <div class="flex items-center">
+                                                                            <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
+                                                                                :class="selectedFolderId === subfolder.id ? 'bg-primary-200' :
+                                                                                        expandedFolders.includes(subfolder.id) ? 'bg-primary-100' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                                                <i class="fas fa-folder text-primary-600"></i>
+                                                                            </div>
+                                                                            <span class="text-sm font-medium" x-text="subfolder.name"></span>
+                                                                        </div>
+                                                                        <div class="flex items-center space-x-2">
+                                                                            <span
+                                                                                class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-2 py-0.5 font-medium"
+                                                                                x-text="getTotalFolderItemCount(subfolder)"></span>
+                                                                            <i class="fas fa-chevron-right text-xs transition-transform"
+                                                                                :class="expandedFolders.includes(subfolder.id) ? 'rotate-90' : ''"></i>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Level 2 Subfolders -->
+                                                                    <div x-show="expandedFolders.includes(subfolder.id)" x-collapse class="ml-6">
+                                                                        <template x-for="subsubfolder in subfolder.children" :key="subsubfolder.id">
+                                                                            <div class="mt-2">
+                                                                                <!-- Level 2 Subfolder -->
+                                                                                <div @click="toggleFolder(subsubfolder.id)"
+                                                                                    class="flex items-center justify-between p-2 pl-6 rounded-lg cursor-pointer transition-all duration-200 group"
+                                                                                    :class="selectedFolderId === subsubfolder.id ? 'bg-gradient-to-r from-primary-100/50 to-primary-100/50 text-primary-800 ring-2 ring-primary-300' : 'hover:bg-neutral-50'">
+                                                                                    <div class="flex items-center">
+                                                                                        <div class="w-6 h-6 flex items-center justify-center rounded-md mr-3"
+                                                                                            :class="selectedFolderId === subsubfolder.id ? 'bg-primary-200' : 'bg-neutral-100 group-hover:bg-primary-50'">
+                                                                                            <i class="fas fa-folder text-primary-600"></i>
+                                                                                        </div>
+                                                                                        <span class="text-sm font-medium" x-text="subsubfolder.name"></span>
+                                                                                    </div>
+                                                                                    <div class="flex items-center space-x-2">
+                                                                                        <span
+                                                                                            class="text-xs bg-neutral-200 text-neutral-700 rounded-full px-1.5 py-0.5 font-medium"
+                                                                                            x-text="getTotalFolderItemCount(subsubfolder)"></span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
-                                    <button class="w-full mt-4 px-3 py-2 text-sm text-webropol-teal-600 hover:text-webropol-teal-700 hover:bg-webropol-teal-50 rounded-lg transition-colors">
-                                        Edit folders
-                                    </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Main Content Area -->
-                            <div class="flex-1">
+                        <!-- Survey List Container -->
+                        <div class="flex-1">
+                            <!-- Content Container -->
+                            <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-100/80 overflow-hidden">
                                 <!-- Filter Tabs -->
                                 <div class="border-b border-gray-200 px-6 py-4">
                                     <div class="flex items-center justify-between">
@@ -273,7 +427,7 @@
                                         <div class="flex items-center space-x-4">
                                             <!-- Search -->
                                             <div class="relative">
-                                                <input type="text" placeholder="Search surveys" 
+                                                <input type="text" placeholder="Search surveys"
                                                        class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-teal-500/20 focus:border-webropol-teal-500 text-sm">
                                                 <i class="fal fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                                             </div>
@@ -558,6 +712,97 @@
                 showOnlyMine: false,
                 currentTab: 'all',
                 searchQuery: '',
+                folderSearchTerm: '',
+                selectedFolderId: null,
+                expandedFolders: [],
+                
+                // Sample survey folders data structure
+                folders: [
+                    { 
+                        id: 1, 
+                        name: 'Organizational', 
+                        description: 'Company-wide surveys and organizational activities',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 11,
+                                name: 'Employee Surveys',
+                                description: 'HR and employee feedback surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 111,
+                                        name: 'Performance Reviews',
+                                        description: 'Employee performance evaluation surveys',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: []
+                                    },
+                                    {
+                                        id: 112,
+                                        name: 'Satisfaction Surveys',
+                                        description: 'Employee satisfaction and engagement surveys',
+                                        level: 2,
+                                        parentId: 11,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 12,
+                                name: 'Customer Surveys',
+                                description: 'Customer feedback and satisfaction surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: [
+                                    {
+                                        id: 121,
+                                        name: 'Product Feedback',
+                                        description: 'Product-specific feedback surveys',
+                                        level: 2,
+                                        parentId: 12,
+                                        children: []
+                                    }
+                                ]
+                            },
+                            {
+                                id: 13,
+                                name: 'Training Surveys',
+                                description: 'Training and development surveys',
+                                level: 1,
+                                parentId: 1,
+                                children: []
+                            }
+                        ]
+                    },
+                    { 
+                        id: 2, 
+                        name: 'My Surveys', 
+                        description: 'Personal surveys and private activities',
+                        level: 0,
+                        parentId: null,
+                        children: [
+                            {
+                                id: 21,
+                                name: 'Research Projects',
+                                description: 'Academic and research survey projects',
+                                level: 1,
+                                parentId: 2,
+                                children: []
+                            },
+                            {
+                                id: 22,
+                                name: 'Personal Projects',
+                                description: 'Personal survey projects and experiments',
+                                level: 1,
+                                parentId: 2,
+                                children: []
+                            }
+                        ]
+                    }
+                ],
                 
                 init() {
                     console.log('Surveys List initialized');
@@ -575,6 +820,77 @@
                 setInterfaceMode(mode) {
                     this.interfaceMode = mode;
                     localStorage.setItem('interfaceMode', mode);
+                },
+                
+                // Folder management functions
+                toggleFolder(folderId) {
+                    // Handle folder expansion/collapse
+                    if (this.expandedFolders.includes(folderId)) {
+                        this.expandedFolders = this.expandedFolders.filter(id => id !== folderId);
+                    } else {
+                        this.expandedFolders.push(folderId);
+                    }
+                    
+                    // Handle folder selection for content filtering
+                    if (this.selectedFolderId === folderId) {
+                        // If clicking the same folder, deselect it to show all content
+                        this.selectedFolderId = null;
+                    } else {
+                        // Select the folder to filter content
+                        this.selectedFolderId = folderId;
+                    }
+                },
+
+                getFilteredFolders() {
+                    return this.folders.filter(folder => {
+                        return folder.level === 0;
+                    });
+                },
+
+                // Helper function to recursively count items in folder and subfolders
+                getTotalFolderItemCount(folder) {
+                    let count = 0;
+                    
+                    // Count direct items in this folder (simulated survey count)
+                    // In a real app, this would count actual surveys in the folder
+                    count = Math.floor(Math.random() * 15) + 1; // Random count for demo
+                    
+                    // Recursively count items in children
+                    if (folder.children && folder.children.length > 0) {
+                        folder.children.forEach(child => {
+                            count += this.getTotalFolderItemCount(child);
+                        });
+                    }
+                    
+                    return count;
+                },
+
+                // Helper function to find folder by ID (searches recursively)
+                findFolderById(folderId, folders = this.folders) {
+                    for (let folder of folders) {
+                        if (folder.id === folderId) {
+                            return folder;
+                        }
+                        if (folder.children && folder.children.length > 0) {
+                            const found = this.findFolderById(folderId, folder.children);
+                            if (found) return found;
+                        }
+                    }
+                    return null;
+                },
+
+                // Context menu methods
+                toggleContextMenu(itemId, itemType) {
+                    if (this.showContextMenu === itemId) {
+                        this.showContextMenu = null;
+                    } else {
+                        this.showContextMenu = itemId;
+                    }
+                },
+
+                // Modal and action stubs
+                openAddSubfolderModal(folderId) {
+                    console.log('Open add subfolder modal for folder:', folderId);
                 },
                 
                 // Survey list functionality
