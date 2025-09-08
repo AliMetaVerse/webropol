@@ -325,7 +325,7 @@
         </div>
 
         <!-- Public Links Section -->
-        <div class="p-6" x-data="{ hasLinks: false }">
+        <div class="p-6" x-data="{ get hasLinks() { return publicLinks.length > 0 } }">
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
@@ -349,7 +349,7 @@
             </div>
             <h4 class="text-lg font-semibold text-webropol-gray-900 mb-2">No public links created yet</h4>
             <p class="text-webropol-gray-500 mb-6 max-w-sm mx-auto">Create shareable links to allow others to view your report without logging in. You can add password protection and control access.</p>
-            <button @click="sharePublicLinkOpen = true; hasLinks = true" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-all hover:shadow-lg">
+            <button @click="sharePublicLinkOpen = true" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-all hover:shadow-lg">
               <i class="fal fa-plus"></i>
               <span>Create New Link</span>
             </button>
@@ -357,28 +357,30 @@
 
           <!-- Links List -->
           <div x-show="hasLinks" class="space-y-3">
-            <div class="border border-webropol-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer" @click="showPublicLinkModal = true">
-              <div class="flex items-center justify-between">
-                <div class="flex-1">
-                  <h4 class="font-medium text-webropol-gray-900 mb-1">Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor's appointment?</h4>
-                  <div class="flex items-center gap-4 text-sm text-webropol-gray-500">
-                    <span>Created: 08.09.2025</span>
-                    <span class="flex items-center gap-1">
-                      <i class="fal fa-lock"></i>
-                      Password protected
-                    </span>
+            <template x-for="link in publicLinks" :key="link.id">
+              <div class="border border-webropol-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer" @click="selectedLink = link; showPublicLinkModal = true">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <h4 class="font-medium text-webropol-gray-900 mb-1" x-text="link.name"></h4>
+                    <div class="flex items-center gap-4 text-sm text-webropol-gray-500">
+                      <span x-text="'Created: ' + link.created"></span>
+                      <span x-show="link.hasPassword" class="flex items-center gap-1">
+                        <i class="fal fa-lock"></i>
+                        Password protected
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button @click.stop="copyToClipboard(link.url)" class="p-2 text-webropol-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors" title="Copy link">
+                      <i class="fal fa-copy"></i>
+                    </button>
+                    <button @click.stop="window.open(link.url, '_blank')" class="p-2 text-webropol-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="View in browser">
+                      <i class="fal fa-external-link"></i>
+                    </button>
                   </div>
                 </div>
-                <div class="flex items-center gap-2">
-                  <button class="p-2 text-webropol-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors" title="Copy link">
-                    <i class="fal fa-copy"></i>
-                  </button>
-                  <button class="p-2 text-webropol-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="View in browser">
-                    <i class="fal fa-external-link"></i>
-                  </button>
-                </div>
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </div>
@@ -436,7 +438,7 @@
         <div></div>
         <div class="footer-actions">
           <button class="btn btn-secondary" @click="sharePublicLinkOpen = false">Cancel</button>
-          <button class="btn btn-primary">Create report link</button>
+          <button class="btn btn-primary" @click="createReportLink()">Create report link</button>
         </div>
       </div>
     </div>
@@ -462,7 +464,7 @@
               <i class="fal fa-chart-bar text-blue-600"></i>
             </div>
             <div>
-              <h3 class="font-semibold text-blue-900 mb-1">Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor's appointment?</h3>
+              <h3 class="font-semibold text-blue-900 mb-1" x-text="selectedLink?.name || 'Report Link'"></h3>
               <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
                 <i class="fal fa-trash"></i>
                 Delete dashboard link
@@ -476,11 +478,11 @@
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-semibold text-webropol-gray-900">Public Link</h4>
             <div class="flex items-center gap-2">
-              <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+              <button @click="copyToClipboard(selectedLink?.url)" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
                 <i class="fal fa-copy"></i>
                 Copy
               </button>
-              <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors">
+              <button @click="window.open(selectedLink?.url, '_blank')" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors">
                 <i class="fal fa-external-link"></i>
                 View in browser
               </button>
@@ -488,30 +490,30 @@
           </div>
           
           <div class="bg-webropol-gray-50 rounded-lg p-3 mb-4">
-            <code class="text-sm text-webropol-gray-700 break-all">https://webropol.com/35lknijhb3456lmnlkj3443nloin23kj5j56Label</code>
+            <code class="text-sm text-webropol-gray-700 break-all" x-text="selectedLink?.url || ''"></code>
           </div>
 
           <div class="flex items-center gap-2 text-sm text-webropol-gray-600">
             <i class="fal fa-envelope"></i>
-            <button class="text-blue-600 hover:text-blue-800 hover:underline">Attach link to message field in your email program</button>
+            <button @click="window.location.href = 'mailto:?subject=Report Link&body=Here is your report link: ' + (selectedLink?.url || '')" class="text-blue-600 hover:text-blue-800 hover:underline">Attach link to message field in your email program</button>
           </div>
         </div>
 
         <!-- Password Section -->
-        <div class="border border-webropol-gray-200 rounded-xl p-5">
+        <div class="border border-webropol-gray-200 rounded-xl p-5" x-show="selectedLink?.hasPassword">
           <div class="flex items-center justify-between mb-4">
             <h4 class="font-semibold text-webropol-gray-900">Add password</h4>
-            <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+            <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors" @click="showLinkPassword = !showLinkPassword">
               <i class="fal fa-eye" x-show="!showLinkPassword"></i>
               <i class="fal fa-eye-slash" x-show="showLinkPassword"></i>
-              <span x-text="showLinkPassword ? 'Hide password' : 'Show/hide password'" @click="showLinkPassword = !showLinkPassword"></span>
+              <span x-text="showLinkPassword ? 'Hide password' : 'Show/hide password'"></span>
             </button>
           </div>
           
           <div class="relative">
             <input 
               :type="showLinkPassword ? 'text' : 'password'" 
-              value="**************" 
+              :value="showLinkPassword ? (selectedLink?.password || '') : '**************'" 
               class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
               readonly
             >
@@ -1342,6 +1344,39 @@
         showPassword: false,
         reportLanguage: 'english',
         editAllowCommenting: false,
+        selectedLink: null,
+        publicLinks: [],
+        
+        // Method to create a new report link
+        createReportLink() {
+          const newLink = {
+            id: Date.now(),
+            name: this.reportName || 'Untitled Report Link',
+            created: new Date().toLocaleDateString('en-GB'),
+            url: 'https://webropol.com/' + Math.random().toString(36).substring(2, 15),
+            hasPassword: this.reportPassword.length > 0,
+            password: this.reportPassword,
+            hideAnswersAfterCreation: this.hideAnswersAfterCreation,
+            allowCommenting: this.allowCommenting
+          };
+          
+          this.publicLinks.push(newLink);
+          this.sharePublicLinkOpen = false;
+          
+          // Reset form
+          this.reportName = 'Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor\'s appointment?';
+          this.reportPassword = '';
+          this.hideAnswersAfterCreation = false;
+          this.allowCommenting = false;
+        },
+        
+        // Method to copy link to clipboard
+        copyToClipboard(url) {
+          navigator.clipboard.writeText(url).then(() => {
+            // You could add a toast notification here
+            console.log('Link copied to clipboard');
+          });
+        }
       };
     }
   </script>
