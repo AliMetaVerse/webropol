@@ -268,114 +268,117 @@
 
   <!-- Export & Share Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': exportShareOpen }" @click.self="exportShareOpen = false" @keydown.window.escape="exportShareOpen = false" role="dialog" aria-modal="true" aria-labelledby="exportShareTitle">
-    <div class="modal-content" style="max-width: 900px;">
+    <div class="modal-content" style="max-width: 700px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="exportShareTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-100 items-center justify-center text-orange-600"><i class="fal fa-share-square text-lg"></i></span>
             <span>Export &amp; Share</span>
           </div>
-          <div class="modal-subtitle">Choose how to export your report or share it with others</div>
+          <div class="modal-subtitle">Export your report or share it with others</div>
         </div>
         <button class="modal-close" aria-label="Close" @click="exportShareOpen = false"><i class="fal fa-times"></i></button>
       </div>
       <div class="modal-body p-0">
-        <!-- Export Section -->
+        <!-- Export to PDF Section -->
         <div class="p-6 border-b border-webropol-gray-100">
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <i class="fal fa-download text-blue-600 text-lg"></i>
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+              <i class="fa-regular fa-file-pdf text-red-600 text-lg"></i>
             </div>
             <div>
-              <h3 class="text-lg font-semibold text-webropol-gray-900">Export Report</h3>
-              <p class="text-sm text-webropol-gray-500">Download your report in various formats</p>
+              <h3 class="text-lg font-semibold text-webropol-gray-900">Export to PDF</h3>
+              <p class="text-sm text-webropol-gray-500">Download your report as a PDF document</p>
             </div>
           </div>
           
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-orange-200 bg-orange-50 hover:bg-orange-100 hover:border-orange-300 transition-all group">
-              <i class="fa-regular fa-file-powerpoint text-2xl text-orange-600 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">PowerPoint</span>
-            </button>
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all group">
-              <i class="fa-regular fa-file-excel text-2xl text-emerald-600 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">Excel</span>
-            </button>
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all group">
-              <i class="fa-regular fa-file-pdf text-2xl text-red-600 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">PDF</span>
-            </button>
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
-              <i class="fa-regular fa-file-word text-2xl text-blue-600 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">Word</span>
-            </button>
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-sky-300 hover:bg-sky-50 transition-all group">
-              <i class="fa-solid fa-file-csv text-2xl text-sky-600 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">CSV</span>
-            </button>
-            <button class="flex flex-col items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-cyan-300 hover:bg-cyan-50 transition-all group">
-              <i class="fa-solid fa-table text-2xl text-cyan-700 mb-2"></i>
-              <span class="font-medium text-webropol-gray-900">SPSS</span>
-            </button>
+          <div class="space-y-4">
+            <!-- Orientation Options -->
+            <div>
+              <label class="block text-sm font-medium text-webropol-gray-700 mb-3">Page Orientation</label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
+                  <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
+                  <div class="flex flex-col items-center w-full" :class="pdfOrientation === 'portrait' ? 'text-red-600' : 'text-webropol-gray-600'">
+                    <div class="w-8 h-10 border-2 rounded mb-2" :class="pdfOrientation === 'portrait' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
+                    <span class="font-medium">Portrait</span>
+                  </div>
+                </label>
+                <label class="flex items-center p-4 rounded-xl border-2 border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
+                  <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
+                  <div class="flex flex-col items-center w-full" :class="pdfOrientation === 'landscape' ? 'text-red-600' : 'text-webropol-gray-600'">
+                    <div class="w-10 h-8 border-2 rounded mb-2" :class="pdfOrientation === 'landscape' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
+                    <span class="font-medium">Landscape</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Export Button -->
+            <div class="pt-2">
+              <button class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all hover:shadow-lg">
+                <i class="fa-regular fa-file-pdf"></i>
+                <span>Export to PDF</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Share Section -->
-        <div class="p-6">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-              <i class="fal fa-share-alt text-emerald-600 text-lg"></i>
+        <!-- Public Links Section -->
+        <div class="p-6" x-data="{ hasLinks: false }">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                <i class="fal fa-link text-emerald-600 text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-webropol-gray-900">Public Links</h3>
+                <p class="text-sm text-webropol-gray-500">Create and manage shareable links</p>
+              </div>
             </div>
-            <div>
-              <h3 class="text-lg font-semibold text-webropol-gray-900">Share Report</h3>
-              <p class="text-sm text-webropol-gray-500">Share your report with others</p>
-            </div>
+            <button x-show="hasLinks" @click="sharePublicLinkOpen = true" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all">
+              <i class="fal fa-plus"></i>
+              <span>Add New Link</span>
+            </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button class="flex items-center gap-4 p-4 rounded-xl border border-webropol-gray-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all group text-left" @click="sharePublicLinkOpen = true">
-              <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <i class="fal fa-globe text-emerald-600"></i>
-              </div>
-              <div class="flex-1">
-                <div class="font-medium text-webropol-gray-900">Public Link</div>
-                <div class="text-sm text-webropol-gray-500">Create shareable link</div>
-              </div>
-              <i class="fal fa-arrow-right text-webropol-gray-400 group-hover:text-emerald-600"></i>
+          <!-- Empty State -->
+          <div x-show="!hasLinks" class="text-center py-12">
+            <div class="w-16 h-16 mx-auto bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
+              <i class="fal fa-link text-2xl text-emerald-600"></i>
+            </div>
+            <h4 class="text-lg font-semibold text-webropol-gray-900 mb-2">No public links created yet</h4>
+            <p class="text-webropol-gray-500 mb-6 max-w-sm mx-auto">Create shareable links to allow others to view your report without logging in. You can add password protection and control access.</p>
+            <button @click="sharePublicLinkOpen = true; hasLinks = true" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-all hover:shadow-lg">
+              <i class="fal fa-plus"></i>
+              <span>Create New Link</span>
             </button>
-            
-            <button class="flex items-center gap-4 p-4 rounded-xl border border-webropol-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group text-left" @click="showPublicLinksOpen = true">
-              <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <i class="fal fa-link text-blue-600"></i>
+          </div>
+
+          <!-- Links List -->
+          <div x-show="hasLinks" class="space-y-3">
+            <div class="border border-webropol-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer" @click="showPublicLinkModal = true">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <h4 class="font-medium text-webropol-gray-900 mb-1">Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor's appointment?</h4>
+                  <div class="flex items-center gap-4 text-sm text-webropol-gray-500">
+                    <span>Created: 08.09.2025</span>
+                    <span class="flex items-center gap-1">
+                      <i class="fal fa-lock"></i>
+                      Password protected
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="p-2 text-webropol-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors" title="Copy link">
+                    <i class="fal fa-copy"></i>
+                  </button>
+                  <button class="p-2 text-webropol-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="View in browser">
+                    <i class="fal fa-external-link"></i>
+                  </button>
+                </div>
               </div>
-              <div class="flex-1">
-                <div class="font-medium text-webropol-gray-900">Manage Links</div>
-                <div class="text-sm text-webropol-gray-500">View existing links</div>
-              </div>
-              <i class="fal fa-arrow-right text-webropol-gray-400 group-hover:text-blue-600"></i>
-            </button>
-            
-            <button class="flex items-center gap-4 p-4 rounded-xl border border-webropol-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all group text-left">
-              <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
-                <i class="fal fa-clock text-purple-600"></i>
-              </div>
-              <div class="flex-1">
-                <div class="font-medium text-webropol-gray-900">Schedule Sharing</div>
-                <div class="text-sm text-webropol-gray-500">Automate reports</div>
-              </div>
-              <i class="fal fa-arrow-right text-webropol-gray-400 group-hover:text-purple-600"></i>
-            </button>
-            
-            <button class="flex items-center gap-4 p-4 rounded-xl border border-webropol-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-all group text-left">
-              <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                <i class="fal fa-history text-orange-600"></i>
-              </div>
-              <div class="flex-1">
-                <div class="font-medium text-webropol-gray-900">Export History</div>
-                <div class="text-sm text-webropol-gray-500">Past exports</div>
-              </div>
-              <i class="fal fa-arrow-right text-webropol-gray-400 group-hover:text-orange-600"></i>
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -439,171 +442,86 @@
     </div>
   </div>
 
-  <!-- Show Public Report Links Modal -->
-  <div class="modal-overlay" x-cloak :class="{ 'active': showPublicLinksOpen }" @click.self="showPublicLinksOpen = false" @keydown.window.escape="showPublicLinksOpen = false" role="dialog" aria-modal="true" aria-labelledby="showPublicLinksTitle">
-    <div class="modal-content" style="max-width: 1000px;">
-      <div class="modal-header">
-        <div class="modal-title-section">
-          <div class="modal-title" id="showPublicLinksTitle">
-            <span class="inline-flex w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-blue-600"><i class="fal fa-link text-lg"></i></span>
-            <span>Manage Public Report Links</span>
-          </div>
-        </div>
-        <button class="modal-close" aria-label="Close" @click="showPublicLinksOpen = false"><i class="fal fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-webropol-gray-900 mb-2">Report links for survey: AI Auto Detect</h3>
-        </div>
-
-        <!-- Table -->
-        <div class="relative">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="border-b border-webropol-gray-200">
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Report links</th>
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Created</th>
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Created by</th>
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Password</th>
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Comments</th>
-                <th class="text-left py-3 px-4 font-semibold text-webropol-gray-700 bg-webropol-gray-50">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-webropol-gray-100 hover:bg-webropol-gray-25">
-                <td class="py-3 px-4">
-                  <button @click="editReportLinkOpen = true" class="text-blue-600 hover:text-blue-800 hover:underline font-medium text-left">Ali's Survey Link</button>
-                </td>
-                <td class="py-3 px-4 text-webropol-gray-600">08.09.2025</td>
-                <td class="py-3 px-4 text-webropol-gray-600">Ali.Al-Zuhairi@webropol.com</td>
-                <td class="py-3 px-4 text-webropol-gray-600">—</td>
-                <td class="py-3 px-4 text-webropol-gray-600">—</td>
-                <td class="py-3 px-4">
-                  <button @click="editReportLinkOpen = true" class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
-                    <i class="fal fa-cog"></i>
-                    <span>Manage</span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Empty state message if no links (hidden for now since we have one link) -->
-        <div class="hidden text-center py-8 text-webropol-gray-500">
-          <i class="fal fa-link text-3xl mb-2"></i>
-          <p>No public report links created yet</p>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div></div>
-        <div class="footer-actions">
-          <button class="btn btn-secondary" @click="showPublicLinksOpen = false">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Edit Report Link Modal -->
-  <div class="modal-overlay" x-cloak :class="{ 'active': editReportLinkOpen }" @click.self="editReportLinkOpen = false" @keydown.window.escape="editReportLinkOpen = false" role="dialog" aria-modal="true" aria-labelledby="editReportLinkTitle">
+  <!-- Public Link Details Modal (triggered by clicking on a link in the list) -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': showPublicLinkModal }" @click.self="showPublicLinkModal = false" @keydown.window.escape="showPublicLinkModal = false" role="dialog" aria-modal="true" aria-labelledby="publicLinkDetailsTitle">
     <div class="modal-content" style="max-width: 800px;">
       <div class="modal-header">
         <div class="modal-title-section">
-          <div class="modal-title" id="editReportLinkTitle">
+          <div class="modal-title" id="publicLinkDetailsTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-blue-600"><i class="fal fa-link text-lg"></i></span>
-            <span>Edit Public Report Link</span>
+            <span>Show dashboard public links</span>
           </div>
         </div>
-        <button class="modal-close" aria-label="Close" @click="editReportLinkOpen = false"><i class="fal fa-times"></i></button>
+        <button class="modal-close" aria-label="Close" @click="showPublicLinkModal = false"><i class="fal fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Report name and actions -->
-        <div class="bg-webropol-gray-50 rounded-xl p-4 mb-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-semibold text-webropol-gray-900 mb-1">Ali's Survey Link</h3>
-              <p class="text-sm text-webropol-gray-600">Public report link settings</p>
+        <!-- Dashboard Description -->
+        <div class="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-200">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="fal fa-chart-bar text-blue-600"></i>
             </div>
-            <button class="inline-flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors">
-              <i class="fal fa-trash"></i>
-              <span>Delete Link</span>
+            <div>
+              <h3 class="font-semibold text-blue-900 mb-1">Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor's appointment?</h3>
+              <button class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                <i class="fal fa-trash"></i>
+                Delete dashboard link
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Link Details -->
+        <div class="border border-webropol-gray-200 rounded-xl p-5 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-semibold text-webropol-gray-900">Public Link</h4>
+            <div class="flex items-center gap-2">
+              <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+                <i class="fal fa-copy"></i>
+                Copy
+              </button>
+              <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-colors">
+                <i class="fal fa-external-link"></i>
+                View in browser
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-webropol-gray-50 rounded-lg p-3 mb-4">
+            <code class="text-sm text-webropol-gray-700 break-all">https://webropol.com/35lknijhb3456lmnlkj3443nloin23kj5j56Label</code>
+          </div>
+
+          <div class="flex items-center gap-2 text-sm text-webropol-gray-600">
+            <i class="fal fa-envelope"></i>
+            <button class="text-blue-600 hover:text-blue-800 hover:underline">Attach link to message field in your email program</button>
+          </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="border border-webropol-gray-200 rounded-xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-semibold text-webropol-gray-900">Add password</h4>
+            <button class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
+              <i class="fal fa-eye" x-show="!showLinkPassword"></i>
+              <i class="fal fa-eye-slash" x-show="showLinkPassword"></i>
+              <span x-text="showLinkPassword ? 'Hide password' : 'Show/hide password'" @click="showLinkPassword = !showLinkPassword"></span>
             </button>
           </div>
-        </div>
-
-        <!-- Link section -->
-        <div class="border border-webropol-gray-200 rounded-xl p-4 mb-6">
-          <h4 class="font-semibold text-webropol-gray-900 mb-3">Share Link</h4>
-          <div class="space-y-3">
-            <!-- URL field -->
-            <div class="flex items-center gap-2">
-              <input type="text" value="https://staging-v3responding.webropol.com/short/6281d786c95943538242f3df7295969;" readonly class="flex-1 px-3 py-2 bg-white border border-webropol-gray-300 rounded-lg text-sm text-webropol-gray-700 font-mono">
-              <button class="inline-flex items-center justify-center w-10 h-10 text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg border border-webropol-gray-300 transition-colors" title="Copy to clipboard">
-                <i class="fal fa-copy"></i>
-              </button>
-            </div>
-            
-            <!-- Action buttons -->
-            <div class="flex items-center gap-3">
-              <button class="inline-flex items-center gap-2 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors">
-                <i class="fal fa-external-link"></i>
-                <span>View in browser</span>
-              </button>
-              <button @click="window.location.href = 'mailto:?subject=Report Link&body=Here is your report link: https://staging-v3responding.webropol.com/short/6281d786c95943538242f3df7295969;'" class="inline-flex items-center gap-2 px-4 py-2 text-sm text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg border border-emerald-200 transition-colors">
-                <i class="fal fa-envelope"></i>
-                <span>Attach to Email</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Settings section -->
-        <div class="border border-webropol-gray-200 rounded-xl p-4">
-          <h4 class="font-semibold text-webropol-gray-900 mb-4">Link Settings</h4>
-          <div class="space-y-5">
-            <!-- Password protection -->
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="text-sm font-medium text-webropol-gray-700">Password Protection</label>
-                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Recommended</span>
-              </div>
-              <div class="space-y-2">
-                <input type="password" x-model="editPassword" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Enter password (optional)">
-                <label class="flex items-center gap-2 text-sm">
-                  <input type="checkbox" x-model="showPassword" class="w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
-                  <span class="text-webropol-gray-600">Show password</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Report language -->
-            <div>
-              <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Report Language</label>
-              <select x-model="reportLanguage" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
-                <option value="english">English</option>
-                <option value="finnish">Finnish</option>
-                <option value="swedish">Swedish</option>
-              </select>
-            </div>
-
-            <!-- Additional options -->
-            <div class="space-y-3">
-              <h5 class="text-sm font-medium text-webropol-gray-700">Additional Options</h5>
-              <label class="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" x-model="editAllowCommenting" class="mt-0.5 w-4 h-4 text-blue-600 border-webropol-gray-300 rounded focus:ring-blue-500">
-                <div>
-                  <span class="text-sm text-webropol-gray-700 font-medium">Allow commenting</span>
-                  <p class="text-xs text-webropol-gray-500 mt-1">Let viewers add comments to the report</p>
-                </div>
-              </label>
-            </div>
+          
+          <div class="relative">
+            <input 
+              :type="showLinkPassword ? 'text' : 'password'" 
+              value="**************" 
+              class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+              readonly
+            >
           </div>
         </div>
       </div>
       <div class="modal-footer">
         <div></div>
         <div class="footer-actions">
-          <button class="btn btn-secondary" @click="editReportLinkOpen = false">Cancel</button>
+          <button class="btn btn-secondary" @click="showPublicLinkModal = false">Cancel</button>
           <button class="btn btn-primary">Save changes</button>
         </div>
       </div>
@@ -1365,6 +1283,25 @@
     .ml-4 { margin-left: 1rem; }
     .ml-8 { margin-left: 2rem; }
 
+    /* Radio button hidden styling for PDF orientation */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Selected state for PDF orientation options */
+    input[type="radio"]:checked + div .border-webropol-gray-300 {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+    }
+
     @media (max-width: 768px) {
       .modal-content {
         margin: 1rem;
@@ -1394,7 +1331,10 @@
         sharePublicLinkOpen: false,
         showPublicLinksOpen: false,
         editReportLinkOpen: false,
-        reportName: 'Ali\'s Survey Link',
+        showPublicLinkModal: false,
+        showLinkPassword: false,
+        pdfOrientation: 'portrait',
+        reportName: 'Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor\'s appointment?',
         reportPassword: '',
         hideAnswersAfterCreation: false,
         allowCommenting: false,
