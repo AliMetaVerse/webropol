@@ -127,7 +127,7 @@
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
 </head>
-<body x-data="surveyEditApp()">
+<body x-data="surveyEditApp()" x-init="migrateOldData()">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -279,7 +279,7 @@
         </div>
         <button class="modal-close" aria-label="Close" @click="exportShareOpen = false"><i class="fal fa-times"></i></button>
       </div>
-      <div class="modal-body p-0">
+      <div class="modal-body mb-4">
         <!-- Export to PDF Section -->
         <div class="p-3 border-b border-webropol-gray-100">
           <div class="flex items-center gap-3 mb-3">
@@ -292,30 +292,28 @@
             </div>
           </div>
           
-          <div class="space-y-2">
-            <!-- Orientation Options -->
-            <div>
-              <label class="block text-xs font-medium text-webropol-gray-700 mb-1">Orientation</label>
-              <div class="grid grid-cols-2 gap-2">
-                <label class="flex items-center p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
-                  <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
-                  <div class="flex flex-col items-center w-full" :class="pdfOrientation === 'portrait' ? 'text-red-600' : 'text-webropol-gray-600'">
-                    <div class="w-5 h-6 border rounded mb-1" :class="pdfOrientation === 'portrait' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
-                    <span class="text-xs">Portrait</span>
-                  </div>
-                </label>
-                <label class="flex items-center p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
-                  <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
-                  <div class="flex flex-col items-center w-full" :class="pdfOrientation === 'landscape' ? 'text-red-600' : 'text-webropol-gray-600'">
-                    <div class="w-6 h-5 border rounded mb-1" :class="pdfOrientation === 'landscape' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
-                    <span class="text-xs">Landscape</span>
-                  </div>
-                </label>
+          <!-- All in one row -->
+          <div class="flex items-center gap-4">
+            <!-- Portrait Option -->
+            <label class="flex items-center gap-2 p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
+              <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
+              <div class="flex items-center gap-2" :class="pdfOrientation === 'portrait' ? 'text-red-600' : 'text-webropol-gray-600'">
+                <div class="w-5 h-6 border rounded" :class="pdfOrientation === 'portrait' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
+                <span class="text-xs">Portrait</span>
               </div>
-            </div>
+            </label>
+            
+            <!-- Landscape Option -->
+            <label class="flex items-center gap-2 p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
+              <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
+              <div class="flex items-center gap-2" :class="pdfOrientation === 'landscape' ? 'text-red-600' : 'text-webropol-gray-600'">
+                <div class="w-6 h-5 border rounded" :class="pdfOrientation === 'landscape' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
+                <span class="text-xs">Landscape</span>
+              </div>
+            </label>
             
             <!-- Export Button -->
-            <div class="flex justify-center">
+            <div class="flex justify-center ml-auto">
               <button class="btn btn-primary rounded-lg text-center">
                 <i class="fa-regular fa-file-pdf block mb-1"></i>
                 <span class="block">Export to PDF</span>
@@ -336,7 +334,7 @@
                 <p class="text-sm text-webropol-gray-500">Create and manage shareable links</p>
               </div>
             </div>
-            <button x-show="hasLinks" @click="sharePublicLinkOpen = true" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all">
+            <button x-show="hasLinks" @click="sharePublicLinkOpen = true" class="btn btn-primary">
               <i class="fal fa-plus"></i>
               <span>Add New Link</span>
             </button>
@@ -446,168 +444,106 @@
 
   <!-- Public Link Details Modal (triggered by clicking on a link in the list) -->
   <div class="modal-overlay" x-cloak :class="{ 'active': showPublicLinkModal }" @click.self="showPublicLinkModal = false" @keydown.window.escape="showPublicLinkModal = false" role="dialog" aria-modal="true" aria-labelledby="publicLinkDetailsTitle">
-    <div class="modal-content" style="max-width: 1200px; max-height: 90vh; border-radius: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-      <div class="modal-header bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200" style="border-radius: 32px 32px 0 0;">
+    <div class="modal-content" style="max-width: 800px; max-height: 90vh; border-radius: 16px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);">
+      <div class="modal-header bg-white border-b border-gray-100" style="border-radius: 16px 16px 0 0; padding: 24px;">
         <div class="modal-title-section">
           <div class="modal-title" id="publicLinkDetailsTitle">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-2xl border-4 border-white/20">
-              <i class="fal fa-link text-white text-xl"></i>
+            <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+              <i class="fal fa-link text-blue-600 text-lg"></i>
             </div>
             <div>
-              <span class="text-xl font-bold text-gray-800">Dashboard Public Link</span>
-              <div class="text-sm text-gray-600 mt-1">Manage your shareable dashboard link</div>
+              <span class="text-lg font-semibold text-gray-900">Dashboard Link</span>
+              <div class="text-sm text-gray-500 mt-1">Share your dashboard</div>
             </div>
           </div>
         </div>
-        <button class="modal-close bg-white/60 hover:bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl transition-all" aria-label="Close" @click="showPublicLinkModal = false">
+        <button class="modal-close bg-gray-50 hover:bg-gray-100 rounded-lg w-10 h-10 flex items-center justify-center transition-colors" aria-label="Close" @click="showPublicLinkModal = false">
           <i class="fal fa-times text-gray-600"></i>
         </button>
       </div>
       
-      <div class="modal-body p-0 overflow-y-auto">
-        <div class="p-8 space-y-12">
-          <!-- Dashboard Information Section -->
-          <div class="flex items-start justify-between bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[2rem] p-8 border border-blue-200 shadow-lg">
-            <div class="flex items-start gap-6">
-              <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center shadow-xl border-4 border-white/30">
-                <i class="fal fa-chart-bar text-blue-600 text-3xl"></i>
-              </div>
-              <div class="flex-1 min-w-0">
-                <h3 class="text-2xl font-bold text-blue-900 mb-4" x-text="selectedLink?.name || 'Report Link'"></h3>
-                <div class="flex items-center gap-6 text-sm text-blue-700">
-                  <span class="flex items-center gap-3 bg-blue-100/70 px-6 py-3 rounded-full shadow-md border border-blue-200/50">
-                    <i class="fal fa-calendar text-blue-600"></i>
-                    <span x-text="'Created on ' + (selectedLink?.created || '')"></span>
-                  </span>
-                  <span class="flex items-center gap-3 bg-emerald-100/70 px-6 py-3 rounded-full shadow-md border border-emerald-200/50">
-                    <i class="fal fa-shield-check text-emerald-600"></i>
-                    <span>Secure Link</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <button @click="deleteLink(selectedLink?.id)" class="inline-flex items-center gap-3 px-8 py-4 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full border-2 border-red-200 transition-all transform hover:scale-105 shadow-lg hover:shadow-2xl bg-white/80">
-              <i class="fal fa-trash text-lg"></i>
-              <span class="font-semibold">Delete Link</span>
-            </button>
+      <div class="modal-body" style="padding: 32px;">
+        <div class="space-y-8">
+          <!-- Dashboard Title -->
+          <div class="text-center">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2" x-text="selectedLink?.name || 'Report Link'"></h3>
+            <p class="text-sm text-gray-500" x-text="'Created on ' + (selectedLink?.created || '')"></p>
           </div>
 
-          <!-- Link Sharing Section -->
-          <div class="space-y-8">
-            <div class="bg-gradient-to-r from-emerald-50 to-green-50 px-8 py-8 rounded-[2rem] border border-emerald-200 shadow-lg">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-6">
-                  <div class="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center shadow-xl border-4 border-white/30">
-                    <i class="fal fa-share-alt text-emerald-600 text-2xl"></i>
-                  </div>
-                  <div>
-                    <h4 class="text-xl font-bold text-gray-900 mb-2">Share Dashboard</h4>
-                    <p class="text-sm text-gray-600">Copy link or share via email</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-3 text-sm text-emerald-700 bg-emerald-100/70 px-6 py-3 rounded-full shadow-md border border-emerald-200/50">
-                  <i class="fal fa-globe text-emerald-600"></i>
-                  <span class="font-semibold">Public Access</span>
-                </div>
-              </div>
+          <!-- URL Section -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Share URL</label>
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+              <code class="text-sm text-gray-800 break-all font-mono" x-text="selectedLink?.url || ''"></code>
             </div>
-            
-            <!-- URL Display -->
-            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-[1.5rem] p-8 border border-gray-200 shadow-lg">
-              <div class="flex items-center gap-4 mb-6">
-                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center shadow-md">
-                  <i class="fal fa-link text-gray-600 text-lg"></i>
-                </div>
-                <span class="text-lg font-semibold text-gray-700">Public URL</span>
-              </div>
-              <div class="bg-white rounded-[1.25rem] p-6 border border-gray-200 mb-8 shadow-lg">
-                <code class="text-base text-gray-700 break-all font-mono leading-relaxed" x-text="selectedLink?.url || ''"></code>
-              </div>
-              <div class="flex items-center gap-6">
-                <button @click="copyToClipboard(selectedLink?.url)" class="flex-1 btn btn-secondary rounded-full">
-                  <i class="fal fa-copy text-xl"></i>
-                  <span>Copy Link</span>
-                </button>
-                <button @click="window.open(selectedLink?.url, '_blank')" class="flex-1 btn btn-secondary rounded-full">
-                  <i class="fal fa-external-link text-xl"></i>
-                  <span>Open Link</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Email Integration -->
-            <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-[1.5rem] p-8 border border-orange-200 shadow-lg">
-              <div class="flex items-center gap-6 mb-6">
-                <div class="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center shadow-lg border-4 border-white/30">
-                  <i class="fal fa-envelope text-orange-600 text-xl"></i>
-                </div>
-                <div>
-                  <h5 class="font-bold text-gray-900 text-lg mb-1">Email Integration</h5>
-                  <p class="text-sm text-gray-600">Send link directly via email</p>
-                </div>
-              </div>
-              <button @click="window.location.href = 'mailto:?subject=Dashboard Link&body=Here is your dashboard link: ' + (selectedLink?.url || '')" class="w-full btn btn-secondary rounded-full">
-                <i class="fal fa-paper-plane text-xl"></i>
-                <span>Compose Email</span>
+            <div class="flex justify-start gap-3">
+              <button @click="copyToClipboard(selectedLink?.url)" class="btn btn-secondary text-center">
+                <i class="fal fa-copy block mb-1"></i>
+                <span class="block">Copy</span>
+              </button>
+              <button @click="window.open(selectedLink?.url, '_blank')" class="btn btn-secondary text-center">
+                <i class="fal fa-external-link block mb-1"></i>
+                <span class="block">Open</span>
               </button>
             </div>
           </div>
 
-          <!-- Security Section -->
-          <div x-show="selectedLink?.hasPassword" class="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-[2rem] p-8 border border-yellow-200 shadow-lg">
-            <div class="flex items-center justify-between mb-8">
-              <div class="flex items-center gap-6">
-                <div class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center shadow-xl border-4 border-white/30">
-                  <i class="fal fa-shield-alt text-yellow-600 text-2xl"></i>
-                </div>
-                <div>
-                  <h4 class="text-xl font-bold text-gray-900 mb-2">Security Settings</h4>
-                  <p class="text-sm text-gray-600">Password protection is enabled</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-6">
-                <span class="px-6 py-3 bg-yellow-100/70 text-yellow-800 rounded-full text-sm font-bold shadow-lg border border-yellow-200/50">
-                  Protected
-                </span>
-                <button class="btn btn-secondary rounded-full" @click="showLinkPassword = !showLinkPassword">
-                  <i class="fal fa-eye text-lg" x-show="!showLinkPassword"></i>
-                  <i class="fal fa-eye-slash text-lg" x-show="showLinkPassword"></i>
-                  <span x-text="showLinkPassword ? 'Hide Password' : 'Show Password'"></span>
-                </button>
-              </div>
+          <!-- Email Section -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Send via Email</label>
+            <div class="flex justify-start">
+              <button @click="window.location.href = 'mailto:?subject=Dashboard Link&body=Here is your dashboard link: ' + (selectedLink?.url || '')" class="btn btn-secondary text-center">
+                <i class="fal fa-envelope block mb-1"></i>
+                <span class="block">Open Email</span>
+              </button>
             </div>
-            
-            <div>
-              <div class="mb-4">
-                <h5 class="font-bold text-gray-900 mb-2 text-lg">Access Password</h5>
-                <p class="text-sm text-gray-600">Required for viewing the dashboard</p>
+          </div>
+
+          <!-- Password Section -->
+          <div x-show="selectedLink?.hasPassword">
+            <label class="block text-sm font-medium text-gray-700 mb-3">Password Protection</label>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fal fa-shield-check text-yellow-600"></i>
+                <span class="text-sm font-medium text-yellow-800">This link is password protected</span>
               </div>
-              <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-[1.5rem] p-8 border border-gray-200 shadow-inner">
+              <div class="flex gap-3">
                 <input 
                   :type="showLinkPassword ? 'text' : 'password'" 
                   :value="showLinkPassword ? (selectedLink?.password || '') : '••••••••••••••'" 
-                  class="w-full px-8 py-5 border-2 border-gray-300 rounded-[1.25rem] focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 outline-none bg-white font-mono text-lg shadow-lg transition-all"
+                  class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white font-mono text-sm"
                   readonly
                 >
+                <button class="btn btn-secondary text-center" @click="showLinkPassword = !showLinkPassword">
+                  <i class="fal fa-eye block mb-1" x-show="!showLinkPassword"></i>
+                  <i class="fal fa-eye-slash block mb-1" x-show="showLinkPassword"></i>
+                  <span class="block text-xs" x-text="showLinkPassword ? 'Hide' : 'Show'"></span>
+                </button>
               </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-4 border-t border-gray-100 text-center space-y-3">
+            <h4 class="text-base font-semibold text-gray-900">Delete link</h4>
+            <p class="text-sm text-gray-500">Removing this public link will immediately revoke access for anyone with the URL.</p>
+            <div>
+              <button @click="deleteLink(selectedLink?.id)" class="btn bg-red-600 hover:bg-red-700 text-white">
+                <i class="fal fa-trash"></i>
+                <span>Delete Link</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
-      
-      <div class="modal-footer bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200" style="border-radius: 0 0 32px 32px;">
-        <div class="flex items-center gap-3 text-sm text-gray-600">
-          <i class="fal fa-shield-check text-emerald-600 text-lg"></i>
-          <span class="font-semibold">Your dashboard is secure and encrypted</span>
-        </div>
-        <div class="footer-actions">
-          <button class="btn btn-secondary rounded-full px-8 py-3 font-semibold">Close</button>
-          <button class="btn btn-primary rounded-full px-8 py-3 font-semibold">Save Changes</button>
+      <!-- Footer inside modal-content -->
+      <div class="modal-footer bg-gray-50 border-t border-gray-100" style="border-radius: 0 0 16px 16px; padding: 16px 24px;">
+        <div class="flex items-center justify-end w-full">
+          <button class="btn btn-secondary" @click="showPublicLinkModal = false">Close</button>
         </div>
       </div>
     </div>
   </div>
-
   <style>
     /* Modal Styles */
     .modal-overlay {
@@ -1026,6 +962,9 @@
   /* Ensure icons inside primary buttons are visible (white) */
   .btn-primary i { color: #ffffff !important; }
 
+  /* Ensure icons inside destructive (red) buttons are visible (white) */
+  .btn.bg-red-600 i { color: #ffffff !important; }
+
     /* Utility classes */
     .w-10 { width: 2.5rem; }
     .h-10 { height: 2.5rem; }
@@ -1414,7 +1353,7 @@
         showPublicLinkModal: false,
         showLinkPassword: false,
         pdfOrientation: 'portrait',
-        reportName: 'Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor\'s appointment?',
+  reportName: 'Basic Text analysis dashboard',
         reportPassword: '',
         hideAnswersAfterCreation: false,
         allowCommenting: false,
@@ -1424,6 +1363,32 @@
         editAllowCommenting: false,
         selectedLink: null,
         publicLinks: JSON.parse(localStorage.getItem('webropol_public_links') || '[]'),
+        
+        // One-time migration: remove old question text from any persisted link names
+        migrateOldData() {
+          const badSuffix = " - Can you describe your overall experience during your recent doctor's appointment?";
+          let changed = false;
+          // Clean current report name if somehow persisted elsewhere
+          if (typeof this.reportName === 'string' && this.reportName.includes(badSuffix)) {
+            this.reportName = 'Basic Text analysis dashboard';
+          }
+          // Clean existing public links in localStorage
+          if (Array.isArray(this.publicLinks) && this.publicLinks.length) {
+            this.publicLinks.forEach(link => {
+              if (link && typeof link.name === 'string') {
+                if (link.name.includes(badSuffix)) {
+                  link.name = link.name.replace(badSuffix, '').trim();
+                  changed = true;
+                }
+                // Also normalize any leading pattern like "Basic Text analysis dashboard - "
+                link.name = link.name.replace(/^Basic Text analysis dashboard\s*-\s*/i, 'Basic Text analysis dashboard');
+              }
+            });
+            if (changed) {
+              this.saveLinksToStorage();
+            }
+          }
+        },
         
         // Method to save links to localStorage
         saveLinksToStorage() {
@@ -1448,7 +1413,7 @@
           this.sharePublicLinkOpen = false;
           
           // Reset form
-          this.reportName = 'Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor\'s appointment?';
+          this.reportName = 'Basic Text analysis dashboard';
           this.reportPassword = '';
           this.hideAnswersAfterCreation = false;
           this.allowCommenting = false;
