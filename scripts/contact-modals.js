@@ -200,7 +200,7 @@
                     <h3 class="text-2xl font-bold text-webropol-gray-900">Contact Us</h3>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-webropol-teal-100 to-webropol-teal-200 text-webropol-teal-700 border border-webropol-teal-300">
                       <i class="fal fa-clock mr-1"></i>
-                      24/7 Support
+                      Support Team
                     </span>
                   </div>
                 </div>
