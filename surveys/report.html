@@ -133,10 +133,10 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header>
 
-      <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8" role="main">
+      <main class="flex-1 overflow-y-auto px-4 py-2 lg:px-8" role="main">
         <div class="w-full mx-auto">
           <!-- Main action tabs -->
-          <div class="mb-8">
+          <div class="mb-2">
             <div class="flex bg-webropol-primary-50 p-1.5 rounded-xl shadow-soft border border-webropol-primary-100 gap-1">
               <button onclick="window.location.href='#/surveys/edit'" class="px-6 py-3 rounded-xl font-semibold text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-white hover:shadow-md hover:scale-[1.01] transition-all duration-300 ease-out flex items-center space-x-2">
                 <i class="fal fa-edit"></i>
@@ -161,11 +161,100 @@
             </div>
           </div>
           <br>
+          <!-- Toolbar row: moved directly under main tabs, full width -->
+          <div class="flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
+            <div class="flex items-center gap-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
+                <span class="font-semibold">(Edited)</span>
+                <span>Basic report</span>
+                <i class="fal fa-angle-down ml-1"></i>
+              </div>
+              <button class="px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
+                <i class="fal fa-save mr-2"></i>Save
+              </button>
+              <button class="px-3 py-1.5 rounded-full bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 border border-webropol-gray-200">
+                <i class="fal fa-save mr-2"></i>Save as
+              </button>
+            </div>
+            <div class="flex items-center gap-8 text-webropol-gray-700">
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-filter text-xl mb-1"></i><span>Filter</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-sliders-h text-xl mb-1"></i><span>Compare</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-users text-xl mb-1"></i><span>Respondents</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-plus-square text-xl mb-1"></i><span>Add Elements</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-chart-line text-xl mb-1"></i><span>Analytics</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
+              </button>
+              <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800">
+                <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
+              </button>
+            </div>
+          </div>
           </div>
 
           <!-- Survey Editor Layout -->
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Content removed as requested -->
+            <!-- Left: simple sidebar -->
+            <aside class="lg:col-span-1">
+              <div class="bg-white/90 rounded-2xl border border-webropol-gray-100 shadow-card p-4">
+                <div class="flex items-center gap-2 text-webropol-gray-600 text-sm font-medium mb-3">
+                  <button class="w-7 h-7 inline-flex items-center justify-center rounded-lg bg-webropol-gray-50 border border-webropol-gray-200 text-webropol-gray-500" title="Drag">
+                    <i class="fal fa-grip-vertical"></i>
+                  </button>
+                  <span>Auto Detect</span>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Right: main content -->
+            <section class="lg:col-span-3 space-y-4">
+              <!-- Reminder banner -->
+              <div x-data="{ show: sessionStorage.getItem('reportBannerDismissed') !== '1', dontShow:false, dismiss(){ if(this.dontShow){ sessionStorage.setItem('reportBannerDismissed','1'); } this.show=false; } }">
+                <div x-show="show" class="bg-amber-50 border border-amber-300 rounded-xl p-4 sm:p-5 shadow-card">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 class="font-semibold text-webropol-gray-900 mb-2">Remember to save changes</h3>
+                      <p class="text-sm text-webropol-gray-700 mb-2">This version of the report has unsaved changes. If you want to keep the changes, save the report with a new name.</p>
+                      <p class="text-sm text-webropol-gray-700 mb-4">Note! The basic report contains all your original data</p>
+                      <label class="inline-flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="w-4 h-4" x-model="dontShow">
+                        <span>Don’t show this message again during this session</span>
+                      </label>
+                    </div>
+                    <button class="text-webropol-gray-500 hover:text-webropol-gray-700" @click="dismiss()" aria-label="Dismiss">
+                      <i class="fal fa-times"></i>
+                    </button>
+                  </div>
+                  <div class="mt-4 flex flex-wrap items-center gap-3">
+                    <button class="px-4 py-2 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-medium" @click="dismiss()">Continue on this (edited) report</button>
+                    <button class="px-4 py-2 rounded-full bg-white border border-webropol-gray-300 text-webropol-gray-700 hover:bg-webropol-gray-50">Open basic report</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Auto Detect card -->
+              <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100">
+                <div class="p-5 border-b border-webropol-gray-100">
+                  <h2 class="text-xl font-semibold text-webropol-gray-900">AI Auto Detect</h2>
+                </div>
+                <div class="p-5 text-webropol-gray-800">
+                  <p>Total number of respondents: <span class="font-semibold">12</span></p>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </main>
