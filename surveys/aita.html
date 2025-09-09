@@ -433,7 +433,7 @@
 
   <!-- Share Report as Public Link Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': sharePublicLinkOpen }" @click.self="sharePublicLinkOpen = false" @keydown.window.escape="sharePublicLinkOpen = false" role="dialog" aria-modal="true" aria-labelledby="sharePublicLinkTitle">
-    <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="sharePublicLinkTitle">
@@ -490,7 +490,7 @@
 
   <!-- Public Link Details Modal (triggered by clicking on a link in the list) -->
   <div class="modal-overlay" x-cloak :class="{ 'active': showPublicLinkModal }" @click.self="showPublicLinkModal = false" @keydown.window.escape="showPublicLinkModal = false" role="dialog" aria-modal="true" aria-labelledby="publicLinkDetailsTitle">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="publicLinkDetailsTitle">
@@ -530,6 +530,17 @@
                 <i class="fal fa-envelope"></i>
                 Email
               </button>
+            </div>
+
+            <!-- Dashboard Name (rename link) -->
+            <div class="mt-4 pt-4 border-t border-webropol-gray-200">
+              <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Dashboard Name</label>
+              <input
+                type="text"
+                x-model="selectedLink.name"
+                class="w-full px-4 py-2.5 border border-webropol-gray-300 rounded-lg bg-white text-base focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none"
+                placeholder="Enter dashboard name"
+              >
             </div>
           </div>
 
@@ -1488,13 +1499,28 @@
           localStorage.setItem('webropol_public_links', JSON.stringify(this.publicLinks));
         },
         
+        // Helper to generate a key for the staging reporting URL
+        generateReportKey() {
+          try {
+            if (window.crypto && crypto.randomUUID) {
+              return crypto.randomUUID();
+            }
+          } catch (e) {}
+          // Fallback UUID v4 generator
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        },
+        
         // Method to create a new report link
         createReportLink() {
+          const key = this.generateReportKey();
           const newLink = {
             id: Date.now(),
             name: this.reportName || 'Untitled Report Link',
             created: new Date().toLocaleDateString('en-GB'),
-            url: 'https://webropol.com/' + Math.random().toString(36).substring(2, 15),
+            url: 'https://staging-v3reporting.webropol.com/Report/ViewReport?key=' + key,
             hasPassword: this.reportPassword.length > 0,
             password: this.reportPassword
           };
@@ -1529,7 +1555,7 @@
         
         // Method to attach link to email program
         attachToEmail() {
-          const url = this.selectedLink?.url || 'https://webropol.com/35lknijhb3456lmnlkj3443nloin23kj5j56j';
+          const url = this.selectedLink?.url || 'https://staging-v3reporting.webropol.com/Report/ViewReport?key=87451856-b479-41dc-94d3-7766bb932860';
           const subject = 'Dashboard Link';
           const body = `Here is your dashboard link: ${url}`;
           window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -1537,11 +1563,13 @@
         
         // Method to save changes to the link
         saveChanges() {
-          if (this.selectedLink && this.linkPassword) {
+          if (!this.selectedLink) return;
+          if (this.linkPassword) {
             this.selectedLink.password = this.linkPassword;
             this.selectedLink.hasPassword = true;
-            this.saveLinksToStorage();
           }
+          // Always persist name or other edits
+          this.saveLinksToStorage();
           this.showPublicLinkModal = false;
         }
       };
