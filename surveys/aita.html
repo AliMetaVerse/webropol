@@ -468,6 +468,11 @@
       
       <div class="modal-body">
         <div class="space-y-6">
+          <!-- Question Text -->
+          <div>
+            <p class="text-sm text-webropol-gray-700">Basic Text analysis dashboard - Can you describe your overall experience during your recent doctor's appointment?</p>
+          </div>
+          
           <!-- Link Info -->
           <div class="bg-webropol-gray-50 rounded-lg p-4">
             <div class="flex items-center justify-between mb-3">
@@ -513,12 +518,37 @@
             </div>
           </div>
 
+          <!-- Add Password Field -->
+          <div class="bg-webropol-gray-50 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-webropol-gray-700">Add password</span>
+            </div>
+            <div class="relative">
+              <input 
+                :type="showPassword ? 'text' : 'password'" 
+                x-model="linkPassword"
+                class="w-full px-3 py-2 pr-10 border border-webropol-gray-300 rounded-lg bg-white text-sm font-mono focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none"
+                placeholder="**************"
+              >
+              <i 
+                class="fal fa-eye absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-pointer" 
+                x-show="!showPassword"
+                @click="showPassword = !showPassword"
+              ></i>
+              <i 
+                class="fal fa-eye-slash absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-pointer" 
+                x-show="showPassword"
+                @click="showPassword = !showPassword"
+              ></i>
+            </div>
+          </div>
+
           <!-- Actions -->
-          <div class="border-t border-webropol-gray-200 pt-6">
+          <div class="bg-red-50 rounded-lg p-4">
             <div class="flex items-center justify-between">
               <div>
-                <h4 class="text-sm font-medium text-webropol-gray-900">Delete Link</h4>
-                <p class="text-xs text-webropol-gray-500">This will immediately revoke access</p>
+                <span class="text-sm font-medium text-webropol-gray-700">Delete Link</span>
+                <p class="text-xs text-webropol-gray-500 mt-1">This will immediately revoke access</p>
               </div>
               <button @click="deleteLink(selectedLink?.id)" class="btn bg-red-600 hover:bg-red-700 text-white">
                 <i class="fal fa-trash"></i>
@@ -533,6 +563,7 @@
         <div></div>
         <div class="footer-actions">
           <button class="btn btn-secondary" @click="showPublicLinkModal = false">Close</button>
+          <button class="btn btn-primary" @click="saveChanges()">Save</button>
         </div>
       </div>
     </div>
@@ -1380,6 +1411,8 @@
         editReportLinkOpen: false,
         showPublicLinkModal: false,
         showLinkPassword: false,
+        showPassword: false,
+        linkPassword: '',
         pdfOrientation: 'portrait',
   reportName: 'Basic Text analysis dashboard',
         reportPassword: '',
@@ -1464,6 +1497,24 @@
             // You could add a toast notification here
             console.log('Link copied to clipboard');
           });
+        },
+        
+        // Method to attach link to email program
+        attachToEmail() {
+          const url = this.selectedLink?.url || 'https://webropol.com/35lknijhb3456lmnlkj3443nloin23kj5j56j';
+          const subject = 'Dashboard Link';
+          const body = `Here is your dashboard link: ${url}`;
+          window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        },
+        
+        // Method to save changes to the link
+        saveChanges() {
+          if (this.selectedLink && this.linkPassword) {
+            this.selectedLink.password = this.linkPassword;
+            this.selectedLink.hasPassword = true;
+            this.saveLinksToStorage();
+          }
+          this.showPublicLinkModal = false;
         }
       };
     }
