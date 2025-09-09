@@ -1283,7 +1283,7 @@ function generateEventPlan() {
     if (predictionsDiv) {
         predictionsDiv.innerHTML = `
             <div class="event-predictions">
-                <h3><i class="fal fa-brain"></i> AI Event Plan</h3>
+                <h3><i class="fal fa-magnifying-glass-chart"></i> AI Event Plan</h3>
                 <div class="prediction-item">
                     <strong>Event Type:</strong> ${eventPlan.eventType}
                 </div>

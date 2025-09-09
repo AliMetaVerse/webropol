@@ -120,7 +120,7 @@ class ShopSidebar extends HTMLElement {
               </div>
               <ul class="space-y-2">
                 ${this.linkItem('BI View', href('bi-view.html'), isActive('bi-view'), 'fal fa-chart-bar', 'analytics')}
-                ${this.linkItem('AI Text Analysis', href('ai-text-analysis.html'), isActive('ai-text-analysis'), 'fal fa-brain', 'ai')}
+                ${this.linkItem('AI Text Analysis', href('ai-text-analysis.html'), isActive('ai-text-analysis'), 'fal fa-magnifying-glass-chart', 'ai')}
                 ${this.linkItem('eTest', href('etest.html'), isActive('etest'), 'fal fa-question-circle', 'assessment')}
                 ${this.linkItem('360 Assessments', href('360-assessments.html'), isActive('360-assessments'), 'fal fa-sync', 'assessment')}
                 ${this.linkItem('Direct Mobile', href('direct-mobile-feedback.html'), isActive('direct-mobile-feedback'), 'fal fa-mobile-alt', 'mobile')}
@@ -267,7 +267,7 @@ class ShopSidebar extends HTMLElement {
         <div class="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Modules</div>
         <ul class="space-y-1 px-1">
           ${this.linkItem('BI View', href('bi-view.html'), isActive('bi-view'), 'fal fa-chart-bar')}
-          ${this.linkItem('AI Text Analysis', href('ai-text-analysis.html'), isActive('ai-text-analysis'), 'fal fa-brain')}
+          ${this.linkItem('AI Text Analysis', href('ai-text-analysis.html'), isActive('ai-text-analysis'), 'fal fa-magnifying-glass-chart')}
           ${this.linkItem('eTest', href('etest.html'), isActive('etest'), 'fal fa-question-circle')}
           ${this.linkItem('360 Assessments', href('360-assessments.html'), isActive('360-assessments'), 'fal fa-sync')}
           ${this.linkItem('Direct Mobile', href('direct-mobile-feedback.html'), isActive('direct-mobile-feedback'), 'fal fa-mobile-alt')}
