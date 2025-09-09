@@ -97,7 +97,7 @@ class ShopSidebar extends HTMLElement {
           <!-- Header with collapse toggle -->
           <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 grid place-items-center text-white shadow-lg">
+              <div class="w-12 h-12 rounded-2xl bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 grid place-items-center text-webropol-primary-600 shadow-lg">
                 <i class="fal fa-shopping-bag text-xl"></i>
               </div>
               <div>
