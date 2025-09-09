@@ -268,7 +268,7 @@
 
   <!-- Export & Share Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': exportShareOpen }" @click.self="exportShareOpen = false" @keydown.window.escape="exportShareOpen = false" role="dialog" aria-modal="true" aria-labelledby="exportShareTitle">
-    <div class="modal-content" style="max-width: 700px;">
+    <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="exportShareTitle">
@@ -279,106 +279,116 @@
         </div>
         <button class="modal-close" aria-label="Close" @click="exportShareOpen = false"><i class="fal fa-times"></i></button>
       </div>
-      <div class="modal-body mb-4">
-        <!-- Export to PDF Section -->
-        <div class="p-3 border-b border-webropol-gray-100">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-              <i class="fa-regular fa-file-pdf text-red-600 text-lg"></i>
-            </div>
-            <div>
-              <h3 class="text-lg font-semibold text-webropol-gray-900">Export to PDF</h3>
-              <p class="text-sm text-webropol-gray-500">Download as PDF document</p>
-            </div>
-          </div>
+      <div class="modal-body">
+        <!-- Export Section -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4 flex items-center gap-2">
+            <i class="fal fa-download text-webropol-primary-600"></i>
+            Export Options
+          </h3>
           
-          <!-- All in one row -->
-          <div class="flex items-center gap-4">
-            <!-- Portrait Option -->
-            <label class="flex items-center gap-2 p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
-              <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
-              <div class="flex items-center gap-2" :class="pdfOrientation === 'portrait' ? 'text-red-600' : 'text-webropol-gray-600'">
-                <div class="w-5 h-6 border rounded" :class="pdfOrientation === 'portrait' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
-                <span class="text-xs">Portrait</span>
+          <!-- PDF Export Card -->
+          <div class="border border-webropol-gray-200 rounded-lg p-4 hover:border-webropol-primary-300 hover:bg-webropol-primary-25 transition-all max-w-md">
+            <div class="flex items-start gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                <i class="fa-regular fa-file-pdf text-red-600 text-lg"></i>
               </div>
-            </label>
-            
-            <!-- Landscape Option -->
-            <label class="flex items-center gap-2 p-2 rounded border border-webropol-gray-200 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer">
-              <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
-              <div class="flex items-center gap-2" :class="pdfOrientation === 'landscape' ? 'text-red-600' : 'text-webropol-gray-600'">
-                <div class="w-6 h-5 border rounded" :class="pdfOrientation === 'landscape' ? 'border-red-500 bg-red-50' : 'border-webropol-gray-300'"></div>
-                <span class="text-xs">Landscape</span>
+              <div class="flex-1">
+                <h4 class="font-semibold text-webropol-gray-900">PDF Export</h4>
+                <p class="text-sm text-webropol-gray-500">Download as PDF document</p>
               </div>
-            </label>
-            
-            <!-- Export Button -->
-            <div class="flex justify-center ml-auto">
-              <button class="btn btn-primary rounded-lg text-center">
-                <i class="fa-regular fa-file-pdf block mb-1"></i>
-                <span class="block">Export to PDF</span>
-              </button>
             </div>
+            
+            <div class="flex items-center gap-3 mb-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="w-4 h-4 text-webropol-primary-600">
+                <span class="text-sm">Portrait</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="w-4 h-4 text-webropol-primary-600">
+                <span class="text-sm">Landscape</span>
+              </label>
+            </div>
+            
+            <button class="btn btn-primary w-full">
+              <i class="fal fa-file-pdf"></i>
+              Export PDF
+            </button>
           </div>
         </div>
 
-        <!-- Public Links Section -->
-        <div class="p-6" x-data="{ get hasLinks() { return publicLinks.length > 0 } }">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                <i class="fal fa-link text-emerald-600 text-lg"></i>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-webropol-gray-900">Public Links</h3>
-                <p class="text-sm text-webropol-gray-500">Create and manage shareable links</p>
-              </div>
-            </div>
+        <!-- Dashboard Links Section -->
+        <div x-data="{ get hasLinks() { return publicLinks.length > 0 } }">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-webropol-gray-900 flex items-center gap-2">
+              <i class="fal fa-link text-webropol-primary-600"></i>
+              Dashboard links
+            </h3>
             <button x-show="hasLinks" @click="sharePublicLinkOpen = true" class="btn btn-primary">
               <i class="fal fa-plus"></i>
-              <span>Add New Link</span>
+              Add New Link
             </button>
           </div>
 
           <!-- Empty State -->
-          <div x-show="!hasLinks" class="text-center py-12">
-            <div class="w-16 h-16 mx-auto bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
-              <i class="fal fa-link text-2xl text-emerald-600"></i>
+          <div x-show="!hasLinks" class="text-center py-12 border border-webropol-gray-200 rounded-lg bg-webropol-gray-25">
+            <div class="w-16 h-16 mx-auto bg-webropol-primary-50 rounded-2xl flex items-center justify-center mb-4">
+              <i class="fal fa-link text-2xl text-webropol-primary-600"></i>
             </div>
-            <h4 class="text-lg font-semibold text-webropol-gray-900 mb-2">No public links created yet</h4>
-            <p class="text-webropol-gray-500 mb-6 max-w-sm mx-auto">Create shareable links to allow others to view your report without logging in. You can add password protection and control access.</p>
+            <h4 class="text-lg font-semibold text-webropol-gray-900 mb-2">No dashboard links created yet</h4>
+            <p class="text-webropol-gray-500 mb-6 max-w-sm mx-auto">Create shareable links to allow others to view your dashboard without logging in.</p>
             <button @click="sharePublicLinkOpen = true" class="btn btn-primary">
               <i class="fal fa-plus"></i>
-              <span>Create New Link</span>
+              Create New Link
             </button>
           </div>
 
-          <!-- Links List -->
-          <div x-show="hasLinks" class="space-y-3">
-            <template x-for="link in publicLinks" :key="link.id">
-              <div class="border border-webropol-gray-200 rounded-xl p-4 hover:border-emerald-300 hover:bg-emerald-50 transition-all cursor-pointer" @click="selectedLink = link; showPublicLinkModal = true">
-                <div class="flex items-center justify-between">
-                  <div class="flex-1">
-                    <h4 class="font-medium text-webropol-gray-900 mb-1" x-text="link.name"></h4>
-                    <div class="flex items-center gap-4 text-sm text-webropol-gray-500">
-                      <span x-text="'Created: ' + link.created"></span>
-                      <span x-show="link.hasPassword" class="flex items-center gap-1">
-                        <i class="fal fa-lock"></i>
-                        Password protected
+          <!-- Dashboard Links Table -->
+          <div x-show="hasLinks" class="border border-webropol-gray-200 rounded-lg overflow-hidden">
+            <table class="w-full">
+              <thead class="bg-webropol-gray-50 border-b border-webropol-gray-200">
+                <tr>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-webropol-gray-700">Dashboard links</th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-webropol-gray-700">Created</th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-webropol-gray-700">Created by</th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-webropol-gray-700">Password</th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-webropol-gray-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-webropol-gray-200">
+                <template x-for="link in publicLinks" :key="link.id">
+                  <tr class="hover:bg-webropol-gray-25 transition-colors">
+                    <td class="px-4 py-3">
+                      <div class="text-sm font-medium text-webropol-gray-900" x-text="link.name"></div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="text-sm text-webropol-gray-700" x-text="link.created"></div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="text-sm text-webropol-gray-700">usernameABC</div>
+                    </td>
+                    <td class="px-4 py-3">
+                      <span x-show="link.hasPassword" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Yes
                       </span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <button @click.stop="copyToClipboard(link.url)" class="p-2 text-webropol-gray-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-lg transition-colors" title="Copy link">
-                      <i class="fal fa-copy"></i>
-                    </button>
-                    <button @click.stop="window.open(link.url, '_blank')" class="p-2 text-webropol-gray-400 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors" title="View in browser">
-                      <i class="fal fa-external-link"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </template>
+                      <span x-show="!link.hasPassword" class="text-sm text-webropol-gray-500">No</span>
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex items-center gap-2">
+                        <button @click="selectedLink = link; showPublicLinkModal = true" class="text-webropol-primary-600 hover:text-webropol-primary-700 text-sm flex items-center gap-1" title="Edit">
+                          <i class="fal fa-edit"></i>
+                          Manage
+                        </button>
+                        <button @click="deleteLink(link.id)" class="text-red-600 hover:text-red-700 text-sm flex items-center gap-1" title="Delete">
+                          <i class="fal fa-trash"></i>
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -494,7 +504,7 @@
             <div class="flex justify-start">
               <button @click="window.location.href = 'mailto:?subject=Dashboard Link&body=Here is your dashboard link: ' + (selectedLink?.url || '')" class="btn btn-secondary text-center">
                 <i class="fal fa-envelope block mb-1"></i>
-                <span class="block">Open Email</span>
+                <span class="block">Open Email Application</span>
               </button>
             </div>
           </div>
@@ -964,6 +974,41 @@
 
   /* Ensure icons inside destructive (red) buttons are visible (white) */
   .btn.bg-red-600 i { color: #ffffff !important; }
+
+  /* Table styling for dashboard links */
+  .dashboard-links-table {
+    font-size: 0.875rem;
+  }
+
+  .dashboard-links-table th {
+    font-weight: 500;
+    text-transform: none;
+  }
+
+  .dashboard-links-table td {
+    vertical-align: middle;
+  }
+
+  /* Webropol color variations */
+  .bg-webropol-primary-25 {
+    background-color: rgba(8, 145, 178, 0.05);
+  }
+
+  .bg-webropol-gray-25 {
+    background-color: rgba(100, 116, 139, 0.05);
+  }
+
+  .border-webropol-primary-300 {
+    border-color: rgba(8, 145, 178, 0.3);
+  }
+
+  .text-webropol-primary-600 {
+    color: #0891b2;
+  }
+
+  .text-webropol-primary-700 {
+    color: #0e7490;
+  }
 
     /* Utility classes */
     .w-10 { width: 2.5rem; }
