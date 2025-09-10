@@ -1027,7 +1027,15 @@
                         <div class="space-y-3 px-0 pb-6">
                             <template x-for="activity in filteredActivities()" :key="activity.id">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white/80 border border-webropol-primary-50 rounded-xl px-4 sm:px-6 py-4 transition-shadow duration-200 hover:shadow-xl gap-3 sm:gap-0">
-                                    <span class="font-medium text-webropol-gray-900" x-text="activity.name"></span>
+                                    <template x-if="activity.type === 'surveys'">
+                                        <a :href="activity.editUrl || 'surveys/edit.html'" class="font-medium text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer" x-text="activity.name"></a>
+                                    </template>
+                                    <template x-if="activity.type === 'events'">
+                                        <a :href="activity.editUrl || 'events/edit.html'" class="font-medium text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer" x-text="activity.name"></a>
+                                    </template>
+                                    <template x-if="activity.type !== 'surveys' && activity.type !== 'events'">
+                                        <span class="font-medium text-webropol-gray-900" x-text="activity.name"></span>
+                                    </template>
                                     <div class="flex items-center justify-start sm:justify-end">
                                         <template x-if="activity.status === 'Open'">
                                             <span class="bg-webropol-green-100 text-webropol-green-700 text-xs px-3 py-1 rounded-full">Open</span>
@@ -1873,14 +1881,14 @@
                 ],
 
                 activities: [
-                    { id: 1, name: 'Customer Satisfaction Survey', type: 'surveys', status: 'Open', answers: 25 },
-                    { id: 2, name: 'Product Launch Event', type: 'events', status: 'Draft' },
-                    { id: 3, name: 'Employee Feedback 2024', type: 'surveys', status: 'Answered', answers: 142 },
-                    { id: 4, name: 'Q4 Review Meeting', type: 'events', status: 'Open' },
-                    { id: 5, name: 'Market Research Study', type: 'surveys', status: 'Answered', answers: 78 },
-                    { id: 6, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8 },
-                    { id: 7, name: 'Long survey', type: 'surveys', status: 'Answered', answers: 2 },
-                    { id: 8, name: 'AI Text Analysis Event', type: 'events', status: 'Answered', answers: 1 }
+                    { id: 1, name: 'Customer Satisfaction Survey', type: 'surveys', status: 'Open', answers: 25, editUrl: 'surveys/edit.html?id=1' },
+                    { id: 2, name: 'Product Launch Event', type: 'events', status: 'Draft', editUrl: 'events/events.html?id=2' },
+                    { id: 3, name: 'Employee Engagement Survey 2024', type: 'surveys', status: 'Answered', answers: 142, editUrl: 'surveys/edit.html?id=3' },
+                    { id: 4, name: 'Q4 Review Meeting', type: 'events', status: 'Open', editUrl: 'events/events.html?id=4' },
+                    { id: 5, name: 'Market Research Study', type: 'surveys', status: 'Answered', answers: 78, editUrl: 'surveys/edit.html?id=5' },
+                    { id: 6, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8, editUrl: 'surveys/aita.html' },
+                    { id: 7, name: 'Product Feedback - Mobile App', type: 'surveys', status: 'Draft', answers: 0, editUrl: 'surveys/edit.html?id=7' },
+                    { id: 8, name: 'Annual Conference 2024', type: 'events', status: 'Open', editUrl: 'events/events.html?id=8' }
                 ],
 
                 questions: [
@@ -2198,12 +2206,14 @@
                 // Activity tracking
                 selectedActivityTab: 'all',
                 activities: [
-                    { id: 1, name: 'Questions', type: 'surveys', status: 'Open' },
-                    { id: 2, name: 'Translation', type: 'surveys', status: 'Draft' },
-                    { id: 3, name: 'Complex Questions', type: 'surveys', status: 'Open' },
-                    { id: 4, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8 },
-                    { id: 5, name: 'Long survey', type: 'surveys', status: 'Answered', answers: 2 },
-                    { id: 6, name: 'AI Text Analysis', type: 'events', status: 'Answered', answers: 1 },
+                    { id: 1, name: 'Customer Satisfaction Survey', type: 'surveys', status: 'Open', editUrl: 'surveys/edit.html?id=1' },
+                    { id: 2, name: 'Employee Engagement Survey 2024', type: 'surveys', status: 'Draft', editUrl: 'surveys/edit.html?id=2' },
+                    { id: 3, name: 'Product Feedback - Mobile App', type: 'surveys', status: 'Open', editUrl: 'surveys/edit.html?id=3' },
+                    { id: 4, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8, editUrl: 'surveys/aita.html' },
+                    { id: 5, name: 'Website Usability Survey', type: 'surveys', status: 'Answered', answers: 2, editUrl: 'surveys/edit.html?id=5' },
+                    { id: 6, name: 'Annual Conference 2024', type: 'events', status: 'Answered', answers: 1, editUrl: 'events/events.html?id=6' },
+                    { id: 7, name: 'Product Launch Event', type: 'events', status: 'Draft', editUrl: 'events/events.html?id=7' },
+                    { id: 8, name: 'Market Research Study', type: 'surveys', status: 'Open', answers: 45, editUrl: 'surveys/edit.html?id=8' }
                 ],
                 filteredActivities() {
                     if (this.selectedActivityTab === 'all') return this.activities;

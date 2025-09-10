@@ -88,7 +88,7 @@
           </div>
           
           <!-- Survey Management Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12">
             <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300 hover-lift">
               <div class="w-16 h-16 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-2xl flex items-center justify-center mb-6">
                 <i class="fal fa-plus text-white text-2xl"></i>
@@ -106,8 +106,8 @@
               </div>
               <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">My Surveys</h3>
               <p class="text-webropol-gray-600 mb-6">View and manage all your existing surveys</p>
-              <button class="w-full px-6 py-3 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 font-semibold rounded-xl transition-all">
-                View All
+              <button @click="showAllSurveys = !showAllSurveys" class="w-full px-6 py-3 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 font-semibold rounded-xl transition-all">
+                <span x-text="showAllSurveys ? 'Hide Surveys' : 'View All'"></span>
               </button>
             </div>
             
@@ -122,6 +122,53 @@
               </button>
             </div>
           </div>
+
+          <!-- My Surveys List -->
+          <div x-show="showAllSurveys" 
+               x-transition:enter="transition ease-out duration-300"
+               x-transition:enter-start="opacity-0 transform translate-y-4"
+               x-transition:enter-end="opacity-100 transform translate-y-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="opacity-100 transform translate-y-0"
+               x-transition:leave-end="opacity-0 transform translate-y-4"
+               class="mb-12">
+            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">My Surveys</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <template x-for="survey in surveys" :key="survey.id">
+                <div class="bg-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-webropol-gray-100/80 hover:shadow-xl transition-all duration-300 hover-lift">
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                      <a :href="survey.editUrl" class="block">
+                        <h3 class="text-lg font-semibold text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer" x-text="survey.name"></h3>
+                      </a>
+                      <p class="text-sm text-webropol-gray-500 mt-1" x-text="survey.description"></p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <span :class="survey.status === 'Open' ? 'bg-green-100 text-green-700' : survey.status === 'Draft' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'" 
+                            class="text-xs px-2 py-1 rounded-full font-medium" x-text="survey.status"></span>
+                    </div>
+                  </div>
+                  
+                  <div class="flex items-center justify-between text-sm text-webropol-gray-600 mb-4">
+                    <span x-text="'Created: ' + survey.created"></span>
+                    <span x-show="survey.responses" x-text="survey.responses + ' responses'"></span>
+                  </div>
+                  
+                  <div class="flex items-center space-x-2">
+                    <a :href="survey.editUrl" class="flex-1 px-4 py-2 bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white text-sm font-medium rounded-lg transition-colors text-center">
+                      Edit
+                    </a>
+                    <a :href="survey.collectUrl" class="flex-1 px-4 py-2 bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 text-sm font-medium rounded-lg transition-colors text-center">
+                      Collect
+                    </a>
+                    <button class="px-3 py-2 text-webropol-gray-500 hover:text-webropol-gray-700 transition-colors">
+                      <i class="fal fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -133,7 +180,69 @@
   <script>
     function surveysApp() {
       return {
-        // App-specific logic here
+        showAllSurveys: false,
+        surveys: [
+          {
+            id: 1,
+            name: 'Customer Satisfaction Survey',
+            description: 'Quarterly customer satisfaction and feedback survey',
+            status: 'Open',
+            created: 'Jan 15, 2024',
+            responses: 156,
+            editUrl: 'edit.html?id=1',
+            collectUrl: 'collect.html?id=1'
+          },
+          {
+            id: 2,
+            name: 'Employee Engagement Survey 2024',
+            description: 'Annual employee engagement and workplace satisfaction survey',
+            status: 'Open',
+            created: 'Dec 10, 2023',
+            responses: 89,
+            editUrl: 'edit.html?id=2',
+            collectUrl: 'collect.html?id=2'
+          },
+          {
+            id: 3,
+            name: 'Product Feedback - Mobile App',
+            description: 'User experience feedback for our new mobile application',
+            status: 'Draft',
+            created: 'Jan 22, 2024',
+            responses: 0,
+            editUrl: 'edit.html?id=3',
+            collectUrl: 'collect.html?id=3'
+          },
+          {
+            id: 4,
+            name: 'Market Research - Q1 2024',
+            description: 'Market trends and consumer behavior research study',
+            status: 'Open',
+            created: 'Jan 08, 2024',
+            responses: 234,
+            editUrl: 'edit.html?id=4',
+            collectUrl: 'collect.html?id=4'
+          },
+          {
+            id: 5,
+            name: 'Event Feedback - Annual Conference',
+            description: 'Post-event feedback for our 2024 annual conference',
+            status: 'Closed',
+            created: 'Nov 30, 2023',
+            responses: 67,
+            editUrl: 'edit.html?id=5',
+            collectUrl: 'collect.html?id=5'
+          },
+          {
+            id: 6,
+            name: 'AI Text Analysis Survey',
+            description: 'Survey with AI-powered text analysis capabilities',
+            status: 'Open',
+            created: 'Jan 25, 2024',
+            responses: 12,
+            editUrl: 'aita.html',
+            collectUrl: 'collect.html?id=6'
+          }
+        ]
       }
     }
 

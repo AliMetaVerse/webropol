@@ -163,12 +163,12 @@
                   <span>Follow up</span>
                 </button>
 
-                <!-- Report -->
-                <button onclick="window.location.href='#/surveys/report'" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] transition-all duration-200 ease-out -mb-[1px] flex items-center gap-2 rounded-xl">
+                <!-- Dashboard -->
+                <button onclick="window.location.href='#/surveys/dashboard'" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] transition-all duration-200 ease-out -mb-[1px] flex items-center gap-2 rounded-xl">
                   <span class="inline-flex w-8 h-8 rounded-full bg-amber-100 items-center justify-center">
                     <i class="fal fa-chart-line text-amber-700"></i>
                   </span>
-                  <span>Report</span>
+                  <span>Dashboard</span>
                 </button>
 
                 <!-- AI Text Analysis (selected) -->
@@ -198,7 +198,7 @@
             <div class="flex items-center gap-3">
               <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
                 <span class="font-semibold">(Edited)</span>
-                <span>Basic report</span>
+                <span>Basic dashboard</span>
                 <i class="fal fa-angle-down ml-1"></i>
               </div>
               <button class="px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
@@ -259,8 +259,8 @@
                   <div class="flex items-start justify-between gap-4">
                     <div>
                       <h3 class="font-semibold text-webropol-gray-900 mb-2">Remember to save changes</h3>
-                      <p class="text-sm text-webropol-gray-700 mb-2">This version of the report has unsaved changes. If you want to keep the changes, save the report with a new name.</p>
-                      <p class="text-sm text-webropol-gray-700 mb-4">Note! The basic report contains all your original data</p>
+                      <p class="text-sm text-webropol-gray-700 mb-2">This version of the dashboard has unsaved changes. If you want to keep the changes, save the dashboard with a new name.</p>
+                      <p class="text-sm text-webropol-gray-700 mb-4">Note! The basic dashboard contains all your original data</p>
                       <label class="inline-flex items-center gap-2 text-sm">
                         <input type="checkbox" class="w-4 h-4" x-model="dontShow">
                         <span>Don’t show this message again during this session</span>
@@ -271,8 +271,8 @@
                     </button>
                   </div>
                   <div class="mt-4 flex flex-wrap items-center gap-3">
-                    <button class="px-4 py-2 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-medium" @click="dismiss()">Continue on this (edited) report</button>
-                    <button class="px-4 py-2 rounded-full bg-white border border-webropol-gray-300 text-webropol-gray-700 hover:bg-webropol-gray-50">Open basic report</button>
+                    <button class="px-4 py-2 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-medium" @click="dismiss()">Continue on this (edited) dashboard</button>
+                    <button class="px-4 py-2 rounded-full bg-white border border-webropol-gray-300 text-webropol-gray-700 hover:bg-webropol-gray-50">Open basic dashboard</button>
                   </div>
                 </div>
               </div>
@@ -311,62 +311,99 @@
         <button class="modal-close" aria-label="Close" @click="exportShareOpen = false"><i class="fal fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <!-- Export Section -->
+        <!-- Export Section Accordion -->
         <div class="mb-8">
-          <h3 class="text-lg font-semibold text-webropol-gray-900 mb-6 flex items-center gap-2">
-            <i class="fal fa-download text-webropol-primary-600"></i>
-            Export Options
-          </h3>
-          
-          <!-- PDF Export Card -->
-          <div class="bg-gradient-to-br from-white to-red-50/30 border-2 border-red-100 rounded-2xl p-6 hover:border-red-200 hover:shadow-soft transition-all duration-300">
-            <!-- Header -->
-            <div class="flex items-center gap-4 mb-5">
-              <div class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 shadow-sm">
-                <i class="fa-regular fa-file-pdf text-red-600 text-xl"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="text-lg font-semibold text-webropol-gray-900 mb-1">PDF Export</h4>
-                <p class="text-sm text-webropol-gray-600">Generate a high-quality PDF report of your analysis</p>
-              </div>
+          <!-- Accordion Header -->
+          <button 
+            @click="toggleExportAccordion()" 
+            class="w-full flex items-center justify-between p-4 text-left bg-webropol-gray-50 hover:bg-webropol-gray-100 rounded-xl border border-webropol-gray-200 transition-all duration-200 mb-4"
+          >
+            <div class="flex items-center gap-3">
+              <i class="fal fa-download text-webropol-primary-600 text-lg"></i>
+              <h3 class="text-lg font-semibold text-webropol-gray-900">Export Options</h3>
             </div>
-            
-            <!-- Orientation Options and Export Button in Same Row -->
-            <div class="flex items-center gap-4">
-              <!-- Orientation Options -->
-              <div class="flex-1">
-                <label class="block text-sm font-medium text-webropol-gray-700 mb-3">Page Orientation</label>
-                <div class="grid grid-cols-2 gap-3">
-                  <label class="relative cursor-pointer">
-                    <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
-                    <div class="flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 h-12" 
-                         :class="pdfOrientation === 'portrait' ? 'border-red-500 bg-red-50 shadow-sm' : 'border-webropol-gray-200 hover:border-red-300 hover:bg-red-25'">
-                      <div class="w-6 h-8 bg-white border border-webropol-gray-300 rounded shadow-sm flex-shrink-0"></div>
-                      <div>
-                        <div class="text-sm font-medium text-webropol-gray-900">Portrait</div>
-                      </div>
+            <i class="fal fa-chevron-down text-webropol-gray-500 transition-transform duration-200" 
+               :class="{ 'rotate-180': exportAccordionOpen }"></i>
+          </button>
+          
+          <!-- Accordion Content -->
+          <div 
+            x-show="exportAccordionOpen" 
+            x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-2"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-2"
+            class="space-y-4"
+            style="display: none;"
+          >
+            <!-- All Export Options Container -->
+            <div class="bg-white rounded-xl border border-webropol-gray-200 p-4 shadow-sm">
+              
+              <!-- PDF Export Option -->
+              <div class="">
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-5">
+                  <div class="w-12 h-12 rounded-xl bg-webropol-primary-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <i class="fa-regular fa-file-pdf text-webropol-primary-600 text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="text-lg font-semibold text-webropol-gray-900 mb-1">PDF Export</h4>
+                    <p class="text-sm text-webropol-gray-600">Generate a high-quality PDF dashboard of your analysis</p>
+                  </div>
+                </div>
+                
+                <!-- Orientation Options and Export Button in Same Row -->
+                <div class="flex items-center gap-4">
+                  <!-- Orientation Options -->
+                  <div class="flex-1">
+                    <label class="block text-sm font-medium text-webropol-gray-700 mb-3">Page Orientation</label>
+                    <div class="grid grid-cols-2 gap-3">
+                      <label class="relative cursor-pointer">
+                        <input type="radio" name="orientation" value="portrait" x-model="pdfOrientation" class="sr-only">
+                        <div class="flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 h-12" 
+                             :class="pdfOrientation === 'portrait' ? 'border-webropol-primary-500 bg-webropol-primary-50 shadow-sm' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-25'">
+                          <div class="w-6 h-8 bg-white border border-webropol-gray-300 rounded shadow-sm flex-shrink-0"></div>
+                          <div>
+                            <div class="text-sm font-medium text-webropol-gray-900">Portrait</div>
+                          </div>
+                        </div>
+                      </label>
+                      <label class="relative cursor-pointer">
+                        <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
+                        <div class="flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 h-12"
+                             :class="pdfOrientation === 'landscape' ? 'border-webropol-primary-500 bg-webropol-primary-50 shadow-sm' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-25'">
+                          <div class="w-8 h-6 bg-white border border-webropol-gray-300 rounded shadow-sm flex-shrink-0"></div>
+                          <div>
+                            <div class="text-sm font-medium text-webropol-gray-900">Landscape</div>
+                          </div>
+                        </div>
+                      </label>
                     </div>
-                  </label>
-                  <label class="relative cursor-pointer">
-                    <input type="radio" name="orientation" value="landscape" x-model="pdfOrientation" class="sr-only">
-                    <div class="flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 h-12"
-                         :class="pdfOrientation === 'landscape' ? 'border-red-500 bg-red-50 shadow-sm' : 'border-webropol-gray-200 hover:border-red-300 hover:bg-red-25'">
-                      <div class="w-8 h-6 bg-white border border-webropol-gray-300 rounded shadow-sm flex-shrink-0"></div>
-                      <div>
-                        <div class="text-sm font-medium text-webropol-gray-900">Landscape</div>
-                      </div>
-                    </div>
-                  </label>
+                  </div>
+                  
+                  <!-- Export Button -->
+                  <div class="flex-shrink-0 self-end">
+                    <button class="btn btn-primary h-12 px-6" @click="exportPDF()">
+                      <i class="fal fa-file-pdf"></i>
+                      Export PDF Dashboard
+                    </button>
+                  </div>
                 </div>
               </div>
               
-              <!-- Export Button -->
-              <div class="flex-shrink-0 self-end">
-                <button class="btn btn-primary h-12 px-6" @click="exportPDF()">
-                  <i class="fal fa-file-pdf"></i>
-                  Export PDF Report
-                </button>
+              <!-- Future export options can be added here -->
+              <!-- Example placeholder for additional export formats -->
+              <!--
+              <div class="mt-4 pt-4 border-t border-webropol-gray-100">
+                <div class="text-sm text-webropol-gray-500 italic">
+                  Additional export formats coming soon...
+                </div>
               </div>
+              -->
+              
             </div>
           </div>
         </div>
@@ -459,24 +496,24 @@
     </div>
   </div>
 
-  <!-- Share Report as Public Link Modal -->
+  <!-- Share Dashboard as Public Link Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': sharePublicLinkOpen }" @click.self="sharePublicLinkOpen = false" @keydown.window.escape="sharePublicLinkOpen = false" role="dialog" aria-modal="true" aria-labelledby="sharePublicLinkTitle">
     <div class="modal-content" style="max-width: 600px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="sharePublicLinkTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-emerald-100 items-center justify-center text-emerald-600"><i class="fal fa-globe text-lg"></i></span>
-            <span>Share report as a public link</span>
+            <span>Share dashboard as a public link</span>
           </div>
         </div>
         <button class="modal-close" aria-label="Close" @click="sharePublicLinkOpen = false"><i class="fal fa-times"></i></button>
       </div>
       <div class="modal-body">
         <div class="space-y-6">
-          <!-- Report name -->
+          <!-- Dashboard name -->
           <div>
-            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Report name</label>
-            <input type="text" x-model="reportName" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" placeholder="Enter report name">
+            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Dashboard name</label>
+            <input type="text" x-model="reportName" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none" placeholder="Enter dashboard name">
           </div>
 
           <!-- Add password -->
@@ -510,7 +547,7 @@
         <div></div>
         <div class="footer-actions">
           <button class="btn btn-secondary" @click="sharePublicLinkOpen = false">Cancel</button>
-          <button class="btn btn-primary" @click="createReportLink()">Create report link</button>
+          <button class="btn btn-primary" @click="createReportLink()">Create dashboard link</button>
         </div>
       </div>
     </div>
@@ -667,12 +704,12 @@
 
   <!-- Share Confirmation Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': shareConfirmationOpen }" @click.self="shareConfirmationOpen = false" @keydown.window.escape="shareConfirmationOpen = false" role="dialog" aria-modal="true" aria-labelledby="shareConfirmationTitle">
-    <div class="modal-content" style="max-width: 600px;">
+    <div class="modal-content" style="max-width: 800px;">
       <div class="modal-header">
         <div class="modal-title-section">
           <div class="modal-title" id="shareConfirmationTitle">
             <span class="inline-flex w-10 h-10 rounded-full bg-emerald-100 items-center justify-center text-emerald-600"><i class="fal fa-globe text-lg"></i></span>
-            <span>Share report as a public link</span>
+            <span>Share dashboard as a public link</span>
           </div>
         </div>
         <button class="modal-close" aria-label="Close" @click="shareConfirmationOpen = false"><i class="fal fa-times"></i></button>
@@ -684,8 +721,8 @@
               <i class="fal fa-check text-emerald-600 text-sm"></i>
             </div>
             <div>
-              <p class="text-sm font-medium text-emerald-800 mb-1">Report link has successfully been created for report:</p>
-              <p class="text-sm text-emerald-700" x-text="createdLinkData?.name || 'Basic report - AI Text Analysis Survey'"></p>
+              <p class="text-sm font-medium text-emerald-800 mb-1">The link has successfully been created for dashboard:</p>
+              <p class="text-sm text-emerald-700" x-text="createdLinkData?.name || 'Basic dashboard - AI Text Analysis Survey'"></p>
             </div>
           </div>
         </div>
@@ -1227,6 +1264,14 @@
     color: #0e7490;
   }
 
+  .bg-webropol-primary-100 {
+    background-color: rgba(8, 145, 178, 0.1);
+  }
+
+  .border-webropol-primary-500 {
+    border-color: #0891b2;
+  }
+
   /* Additional styling for improved export card */
   .bg-red-25 {
     background-color: rgba(239, 68, 68, 0.025);
@@ -1250,6 +1295,11 @@
 
   .shadow-soft {
     box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Accordion animations */
+  .rotate-180 {
+    transform: rotate(180deg);
   }
 
     /* Utility classes */
@@ -1646,7 +1696,7 @@
         showPassword: false,
         linkPassword: '',
         pdfOrientation: 'portrait',
-  reportName: 'Basic Text analysis dashboard',
+        reportName: 'Basic Text analysis dashboard',
         reportPassword: '',
         editPassword: '',
         reportLanguage: 'english',
@@ -1654,11 +1704,14 @@
         selectedLink: null,
         publicLinks: JSON.parse(localStorage.getItem('webropol_public_links') || '[]'),
         
+        // Accordion state - closed by default, persisted in localStorage
+        exportAccordionOpen: JSON.parse(localStorage.getItem('webropol_export_accordion_open') ?? 'false'),
+        
         // One-time migration: remove old question text from any persisted link names
         migrateOldData() {
           const badSuffix = " - Can you describe your overall experience during your recent doctor's appointment?";
           let changed = false;
-          // Clean current report name if somehow persisted elsewhere
+          // Clean current dashboard name if somehow persisted elsewhere
           if (typeof this.reportName === 'string' && this.reportName.includes(badSuffix)) {
             this.reportName = 'Basic Text analysis dashboard';
           }
@@ -1699,12 +1752,12 @@
           });
         },
         
-        // Method to create a new report link
+        // Method to create a new dashboard link
         createReportLink() {
           const key = this.generateReportKey();
           const newLink = {
             id: Date.now(),
-            name: this.reportName || 'Untitled Report Link',
+            name: this.reportName || 'Untitled Dashboard Link',
             created: new Date().toLocaleDateString('en-GB'),
             url: 'https://staging-v3reporting.webropol.com/short/' + key,
             hasPassword: this.reportPassword.length > 0,
@@ -1730,7 +1783,7 @@
           this.deleteConfirmationOpen = true;
         },
         
-        // Method to delete a report link
+        // Method to delete a dashboard link
         deleteLink(linkId) {
           const index = this.publicLinks.findIndex(link => link.id === linkId);
           if (index !== -1) {
@@ -1760,7 +1813,7 @@
         
         // Method to attach link to email program
         attachToEmail() {
-          const url = this.selectedLink?.url || 'https://staging-v3reporting.webropol.com/Report/ViewReport?key=87451856-b479-41dc-94d3-7766bb932860';
+          const url = this.selectedLink?.url || 'https://staging-v3reporting.webropol.com/Dashboard/ViewReport?key=87451856-b479-41dc-94d3-7766bb932860';
           const subject = 'Dashboard Link';
           const body = `Here is your dashboard link: ${url}`;
           window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -1803,6 +1856,12 @@
           // In a real implementation, this would trigger the PDF generation
           // For now, we'll just show a success message
           alert(`PDF export started in ${this.pdfOrientation} orientation. The download will begin shortly.`);
+        },
+        
+        // Method to toggle export accordion and persist state
+        toggleExportAccordion() {
+          this.exportAccordionOpen = !this.exportAccordionOpen;
+          localStorage.setItem('webropol_export_accordion_open', JSON.stringify(this.exportAccordionOpen));
         }
       };
     }
