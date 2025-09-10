@@ -1024,41 +1024,112 @@
                             </div>
                         </div>
                         <!-- Activity List -->
-                        <div class="space-y-3 px-0 pb-6">
+                        <div class="space-y-4 px-0 pb-6">
                             <template x-for="activity in filteredActivities()" :key="activity.id">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white/80 border border-webropol-primary-50 rounded-xl px-4 sm:px-6 py-4 transition-shadow duration-200 hover:shadow-xl gap-3 sm:gap-0">
-                                    <template x-if="activity.type === 'surveys'">
-                                        <a :href="activity.editUrl || 'surveys/edit.html'" class="font-medium text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer" x-text="activity.name"></a>
-                                    </template>
-                                    <template x-if="activity.type === 'events'">
-                                        <a :href="activity.editUrl || 'events/edit.html'" class="font-medium text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer" x-text="activity.name"></a>
-                                    </template>
-                                    <template x-if="activity.type !== 'surveys' && activity.type !== 'events'">
-                                        <span class="font-medium text-webropol-gray-900" x-text="activity.name"></span>
-                                    </template>
-                                    <div class="flex items-center justify-start sm:justify-end gap-2">
-                                        <!-- Type indicator -->
-                                        <template x-if="activity.type === 'surveys'">
-                                            <span class="bg-webropol-primary-100 text-webropol-primary-700 text-xs px-3 py-1 rounded-full">Survey</span>
-                                        </template>
-                                        <template x-if="activity.type === 'events'">
-                                            <span class="bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full">Event</span>
-                                        </template>
+                                <div class="bg-white border border-webropol-gray-200 rounded-xl p-4 sm:p-6 transition-all duration-200 hover:shadow-lg hover:border-webropol-primary-200 group">
+                                    <div class="flex items-start gap-4">
+                                        <!-- Icon -->
+                                        <div class="flex-shrink-0 mt-1">
+                                            <template x-if="activity.type === 'surveys'">
+                                                <div class="w-10 h-10 bg-webropol-primary-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fal fa-poll text-webropol-primary-600 text-lg"></i>
+                                                </div>
+                                            </template>
+                                            <template x-if="activity.type === 'events'">
+                                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                                    <i class="fal fa-calendar-alt text-purple-600 text-lg"></i>
+                                                </div>
+                                            </template>
+                                        </div>
                                         
-                                        <!-- Status indicator -->
-                                        <template x-if="activity.status === 'Open'">
-                                            <span class="bg-webropol-green-100 text-webropol-green-700 text-xs px-3 py-1 rounded-full">Open</span>
-                                        </template>
-                                        <template x-if="activity.status === 'Draft'">
-                                            <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">Draft</span>
-                                        </template>
-                                        <template x-if="activity.status === 'Answered'">
-                                            <span class="flex items-center space-x-2">
-                                                <i class="fal fa-paper-plane text-webropol-primary-600"></i>
-                                                <span class="text-webropol-gray-700 text-xs" x-text="activity.answers + ' answers'"></span>
-                                                <span class="bg-webropol-green-100 text-webropol-green-700 text-xs px-3 py-1 rounded-full ml-2">Open</span>
-                                            </span>
-                                        </template>
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <!-- Title -->
+                                                    <template x-if="activity.type === 'surveys'">
+                                                        <a :href="activity.editUrl || 'surveys/edit.html'" class="text-lg font-semibold text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer block truncate" x-text="activity.name"></a>
+                                                    </template>
+                                                    <template x-if="activity.type === 'events'">
+                                                        <a :href="activity.editUrl || 'events/edit.html'" class="text-lg font-semibold text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors cursor-pointer block truncate" x-text="activity.name"></a>
+                                                    </template>
+                                                    <template x-if="activity.type !== 'surveys' && activity.type !== 'events'">
+                                                        <h3 class="text-lg font-semibold text-webropol-gray-900 truncate" x-text="activity.name"></h3>
+                                                    </template>
+                                                    
+                                                    <!-- Meta info row -->
+                                                    <div class="flex items-center gap-3 mt-2 text-sm text-webropol-gray-600">
+                                                        <!-- Type badge -->
+                                                        <template x-if="activity.type === 'surveys'">
+                                                            <span class="inline-flex items-center gap-1 bg-webropol-primary-50 text-webropol-primary-700 px-2 py-1 rounded-md font-medium">
+                                                                <i class="fal fa-poll text-xs"></i>
+                                                                Survey
+                                                            </span>
+                                                        </template>
+                                                        <template x-if="activity.type === 'events'">
+                                                            <span class="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-1 rounded-md font-medium">
+                                                                <i class="fal fa-calendar text-xs"></i>
+                                                                Event
+                                                            </span>
+                                                        </template>
+                                                        
+                                                        <!-- Answers info for surveys -->
+                                                        <template x-if="activity.answers !== undefined && activity.answers > 0">
+                                                            <span class="inline-flex items-center gap-1 text-webropol-gray-600">
+                                                                <i class="fal fa-users text-xs"></i>
+                                                                <span x-text="activity.answers + ' responses'"></span>
+                                                            </span>
+                                                        </template>
+                                                        
+                                                        <!-- Last updated -->
+                                                        <span class="inline-flex items-center gap-1 text-webropol-gray-500">
+                                                            <i class="fal fa-clock text-xs"></i>
+                                                            Updated 2 days ago
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Status and actions -->
+                                                <div class="flex flex-col items-end gap-2 flex-shrink-0">
+                                                    <!-- Status badge -->
+                                                    <template x-if="activity.status === 'Open'">
+                                                        <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                            <i class="fal fa-circle text-xs text-green-500"></i>
+                                                            Open
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="activity.status === 'Draft'">
+                                                        <span class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                            <i class="fal fa-edit text-xs"></i>
+                                                            Draft
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="activity.status === 'Answered'">
+                                                        <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full font-medium">
+                                                            <i class="fal fa-check-circle text-xs"></i>
+                                                            Complete
+                                                        </span>
+                                                    </template>
+                                                    
+                                                    <!-- Quick actions -->
+                                                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <template x-if="activity.type === 'surveys'">
+                                                            <button @click="window.location.href = (activity.editUrl || 'surveys/edit.html') + '#/surveys/report'" class="w-8 h-8 bg-webropol-primary-50 hover:bg-webropol-primary-100 text-webropol-primary-600 hover:text-webropol-primary-700 rounded-lg flex items-center justify-center transition-colors" title="View Reports">
+                                                                <i class="fal fa-chart-line text-sm"></i>
+                                                            </button>
+                                                        </template>
+                                                        <template x-if="activity.type === 'surveys'">
+                                                            <button @click="window.location.href = (activity.editUrl || 'surveys/edit.html').replace('edit.html', 'aita.html')" class="w-8 h-8 bg-orange-50 hover:bg-orange-100 text-orange-600 hover:text-orange-700 rounded-lg flex items-center justify-center transition-colors" title="View AI Text Analysis">
+                                                                <i class="fal fa-magnifying-glass-chart text-sm"></i>
+                                                            </button>
+                                                        </template>
+                                                        <button class="w-8 h-8 bg-webropol-gray-50 hover:bg-webropol-gray-100 text-webropol-gray-500 hover:text-webropol-gray-700 rounded-lg flex items-center justify-center transition-colors" title="More Options">
+                                                            <i class="fal fa-ellipsis-h text-sm"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </template>
