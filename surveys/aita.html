@@ -625,10 +625,10 @@
             </div>
           </div>
 
-          <!-- Single Password Field -->
+          <!-- Password Field -->
           <div class="bg-webropol-gray-50 rounded-lg p-4">
             <div class="flex items-center justify-between mb-3">
-              <span class="text-sm font-medium text-webropol-gray-700" x-text="selectedLink?.hasPassword ? 'Change password' : 'Add password'"></span>
+              <span class="text-sm font-medium text-webropol-gray-700" x-text="selectedLink?.hasPassword ? 'Password' : 'Add password'"></span>
               <span x-show="selectedLink?.hasPassword" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 <i class="fal fa-shield-check mr-1"></i>
                 Protected
@@ -638,8 +638,10 @@
               <input 
                 :type="showPassword ? 'text' : 'password'" 
                 x-model="linkPassword"
-                :placeholder="selectedLink?.hasPassword ? 'Enter new password' : 'Enter password'"
+                :value="selectedLink?.hasPassword && !linkPassword ? selectedLink.password : linkPassword"
+                :placeholder="selectedLink?.hasPassword ? 'Enter new password or leave current' : 'Enter password'"
                 class="w-full px-4 py-2.5 pr-10 border border-webropol-gray-300 rounded-lg bg-white text-base font-mono focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none"
+                @input="linkPassword = $event.target.value"
               >
               <i 
                 class="fal fa-eye absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-pointer" 
@@ -652,7 +654,7 @@
                 @click="showPassword = !showPassword"
               ></i>
             </div>
-            <p x-show="selectedLink?.hasPassword" class="text-xs text-webropol-gray-500 mt-2">Leave empty to keep current password</p>
+            <p x-show="selectedLink?.hasPassword" class="text-xs text-webropol-gray-500 mt-2">Shows current password. Edit to change or leave empty to keep current</p>
           </div>
 
           <!-- Actions -->
