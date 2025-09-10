@@ -38,6 +38,7 @@
     }
   </script>
   <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <link href="../design-system/styles/tokens.css" rel="stylesheet">
   
   <style>
     /* Custom animations for the redesigned shop */
@@ -213,7 +214,7 @@
         0 8px 25px rgba(6, 182, 212, 0.15);
     }
     
-    /* Module category icons */
+    /* Module category icons - unified with product page icon tiles */
     .category-icon {
       width: 48px;
       height: 48px;
@@ -222,14 +223,12 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
+      /* Soft sky gradient same as product pages (bg-sky-to-br) */
+      background-image: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff);
     }
-    
-  .analytics-icon { background: #f0fdfa; color: #64748b; }
-  .ai-icon { background: #f0fdfa; color: #64748b; }
-  .assessment-icon { background: #f0fdfa; color: #64748b; }
-  .mobile-icon { background: #f0fdfa; color: #64748b; }
-  .case-icon { background: #f0fdfa; color: #64748b; }
-  .bi-icon { background: #f0fdfa; color: #64748b; }
+    .dark .category-icon {
+      background-image: linear-gradient(135deg, rgba(20,24,27,0.85), rgba(22,26,30,0.85));
+    }
     
     /* Mobile responsive adjustments */
     @media (max-width: 768px) {
@@ -322,10 +321,9 @@
                   <!-- Icon -->
                   <div class="flex justify-center mb-6">
                     <div 
-                      class="category-icon icon-glow"
-                      :class="getIconClass(module.category)"
+                      class="category-icon icon-glow bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100"
                     >
-                      <i :class="module.icon" class="text-2xl" style="color: inherit;"></i>
+                      <i :class="module.icon" class="text-2xl text-webropol-primary-600"></i>
                     </div>
                   </div>
                   
@@ -562,16 +560,7 @@
           return filtered;
         },
         
-        getIconClass(category) {
-          const classes = {
-            'analytics': 'analytics-icon',
-            'ai': 'ai-icon',
-            'assessment': 'assessment-icon',
-            'mobile': 'mobile-icon',
-            'case': 'case-icon'
-          };
-          return classes[category] || 'bi-icon';
-        },
+  // getIconClass removed – unified icon background now static gradient
         
         openModule(module) {
           // Prefer SPA navigation when available to avoid full-page reloads
