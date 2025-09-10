@@ -119,6 +119,113 @@
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
   .survey-action-btn { width:40px; height:40px; flex-shrink:0; }
+
+    /* Collection Methods Enhanced Styles */
+    .collection-method-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .collection-method-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .collection-method-card:hover::before {
+      left: 100%;
+    }
+
+    .feature-list li {
+      opacity: 0;
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .feature-list li:nth-child(1) { animation-delay: 0.1s; }
+    .feature-list li:nth-child(2) { animation-delay: 0.2s; }
+    .feature-list li:nth-child(3) { animation-delay: 0.3s; }
+    .feature-list li:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Icon hover animations */
+    .method-icon {
+      background: linear-gradient(135deg, var(--bg-from), var(--bg-to));
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .method-icon:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px) scale(1.05);
+    }
+
+    /* Pulse animation for important notes */
+    .note-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    /* Enhanced gradient text */
+    .gradient-title {
+      background: linear-gradient(135deg, var(--neutral-900) 0%, var(--primary-600) 50%, var(--neutral-900) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 200%;
+      animation: gradientShift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Button enhancement */
+    .collection-btn {
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+      border: none;
+      box-shadow: 0 4px 15px rgba(29, 128, 157, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .collection-btn:hover {
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+      box-shadow: 0 6px 20px rgba(29, 128, 157, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Card grid responsive adjustments */
+    @media (max-width: 768px) {
+      .collection-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .collection-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -206,9 +313,243 @@
           <br>
           </div>
 
-          <!-- Survey Editor Layout -->
-          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Content removed as requested -->
+          <!-- Collection Methods Section -->
+          <div class="max-w-6xl mx-auto">
+            <!-- Section Header -->
+            <div class="text-center mb-12">
+              <h1 class="text-4xl lg:text-5xl font-bold mb-4 gradient-title">
+                Select a collecting method
+              </h1>
+              <p class="text-lg text-webropol-gray-600 max-w-2xl mx-auto">
+                You can also choose other data collection methods later.
+              </p>
+            </div>
+
+            <!-- Collection Methods Grid -->
+            <div class="collection-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              
+              <!-- Email Survey - Private Links -->
+              <div class="collection-method-card group relative bg-white rounded-2xl border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative p-8 text-center">
+                  <!-- Icon -->
+                  <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fal fa-envelope text-5xl text-webropol-gray-400"></i>
+                  </div>
+                  
+                  <!-- Title -->
+                  <h3 class="text-xl font-bold text-webropol-gray-900 mb-4">Email survey - Private links</h3>
+                  
+                  <!-- Features -->
+                  <div class="text-left mb-6 space-y-2">
+                    <p class="text-sm text-webropol-gray-700 font-medium">Use this method if you need to:</p>
+                    <ul class="feature-list space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Identify your respondents later</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Send reminders</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Send messages to respondents after responding</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <button class="collection-btn btn btn-primary w-full group-hover:scale-105 transition-transform duration-200">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Setup Email Campaign
+                  </button>
+                </div>
+              </div>
+
+              <!-- Weblink - Public Link -->
+              <div class="collection-method-card group relative bg-white rounded-2xl border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative p-8 text-center">
+                  <!-- Icon -->
+                  <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fal fa-link text-5xl text-webropol-gray-400"></i>
+                  </div>
+                  
+                  <!-- Title -->
+                  <h3 class="text-xl font-bold text-webropol-gray-900 mb-4">Weblink - Public link</h3>
+                  
+                  <!-- Features -->
+                  <div class="text-left mb-6 space-y-2">
+                    <p class="text-sm text-webropol-gray-700 font-medium">Use this method if you need to:</p>
+                    <ul class="feature-list space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Collect feedback from visitors on website, intranet, social media and QR-code</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Collect answers by using same survey link for all respondents</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Special Note -->
+                  <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-left">
+                    <p class="text-xs text-amber-700 font-medium">
+                      <i class="fas fa-info-circle mr-1"></i>
+                      Please note! This collecting method is automatically anonymous:
+                    </p>
+                    <p class="text-xs text-amber-600 mt-1">
+                      You can identify respondents only if the survey contains a contact form
+                    </p>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <button class="collection-btn btn btn-primary w-full group-hover:scale-105 transition-transform duration-200">
+                    <i class="fas fa-globe mr-2"></i>
+                    Generate Public Link
+                  </button>
+                </div>
+              </div>
+
+              <!-- SMS Survey - Private Links -->
+              <div class="collection-method-card group relative bg-white rounded-2xl border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative p-8 text-center">
+                  <!-- Icon -->
+                  <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fal fa-sms text-5xl text-webropol-gray-400"></i>
+                  </div>
+                  
+                  <!-- Title -->
+                  <h3 class="text-xl font-bold text-webropol-gray-900 mb-4">SMS survey - Private links</h3>
+                  
+                  <!-- Features -->
+                  <div class="text-left mb-6 space-y-2">
+                    <p class="text-sm text-webropol-gray-700 font-medium">Use this method if you need to:</p>
+                    <ul class="feature-list space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Identify your respondents later</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Send reminders</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Send messages to respondents after responding</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Special Note -->
+                  <div class="note-pulse bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4 text-left">
+                    <p class="text-xs text-orange-700 font-medium">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>
+                      Please note! To use this method you need to buy SMS credits from W-store
+                    </p>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <button class="collection-btn btn btn-primary w-full group-hover:scale-105 transition-transform duration-200">
+                    <i class="fas fa-mobile-alt mr-2"></i>
+                    Setup SMS Campaign
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hierarchy -->
+              <div class="collection-method-card group relative bg-white rounded-2xl border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative p-8 text-center">
+                  <!-- Icon -->
+                  <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fal fa-sitemap text-5xl text-webropol-gray-400"></i>
+                  </div>
+                  
+                  <!-- Title -->
+                  <h3 class="text-xl font-bold text-webropol-gray-900 mb-4">Hierarchy</h3>
+                  
+                  <!-- Features -->
+                  <div class="text-left mb-6 space-y-2">
+                    <p class="text-sm text-webropol-gray-700 font-medium">Use this method if you need to:</p>
+                    <ul class="feature-list space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Create Your Own Respondent Hierarchy</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Perform stage wise actions</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Check reports based on hierarchy</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <button class="collection-btn btn btn-primary w-full group-hover:scale-105 transition-transform duration-200">
+                    <i class="fas fa-project-diagram mr-2"></i>
+                    Setup Hierarchy
+                  </button>
+                </div>
+              </div>
+
+              <!-- Mobile Connector Survey -->
+              <div class="collection-method-card group relative bg-white rounded-2xl border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 overflow-hidden md:col-span-2 lg:col-span-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative p-8 text-center">
+                  <!-- Icon -->
+                  <div class="w-24 h-24 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <i class="fal fa-mobile-alt text-5xl text-webropol-gray-400"></i>
+                  </div>
+                  
+                  <!-- Title -->
+                  <h3 class="text-xl font-bold text-webropol-gray-900 mb-4">Mobile Connector survey</h3>
+                  
+                  <!-- Features -->
+                  <div class="text-left mb-6 space-y-2">
+                    <p class="text-sm text-webropol-gray-700 font-medium">Use this method if you need to:</p>
+                    <ul class="feature-list space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Send automatically SMS survey after phone calls</span>
+                      </li>
+                      <li class="flex items-start gap-2">
+                        <span class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>Gather feedback from e.g. call center customers</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- App Download Section -->
+                  <div class="bg-gradient-to-r from-webropol-primary-50 to-blue-50 border border-webropol-primary-200 rounded-lg p-4 mb-4 text-left">
+                    <p class="text-sm text-webropol-primary-700 font-semibold mb-2">
+                      <i class="fas fa-download mr-2"></i>
+                      Download Webropol Mobile Connector app on an Android mobile device from Google play app store
+                    </p>
+                  </div>
+
+                  <!-- Special Note -->
+                  <div class="note-pulse bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4 text-left">
+                    <p class="text-xs text-orange-700 font-medium">
+                      <i class="fas fa-exclamation-triangle mr-1"></i>
+                      Please note! To use this method you need to buy SMS credits from W-store
+                    </p>
+                  </div>
+                  
+                  <!-- Action Button -->
+                  <button class="collection-btn btn btn-primary w-full group-hover:scale-105 transition-transform duration-200">
+                    <i class="fas fa-phone mr-2"></i>
+                    Setup Mobile Connector
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
