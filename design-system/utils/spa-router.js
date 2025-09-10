@@ -24,6 +24,9 @@ class WebropolSPA {
       ['/surveys', 'surveys/index.html'],
       ['/surveys/list', 'surveys/list.html'],
       ['/surveys/edit', 'surveys/edit.html'],
+  // Added explicit routes for survey report & AI text analysis views so SPA can navigate without reload
+  ['/surveys/report', 'surveys/report.html'],
+  ['/surveys/aita', 'surveys/aita.html'],
       ['/events', 'events/index.html'],
       ['/events/list', 'events/list.html'],
       ['/sms', 'sms/index.html'],
