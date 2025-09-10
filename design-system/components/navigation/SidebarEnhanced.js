@@ -19,6 +19,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     this.checkViewport = this.checkViewport.bind(this);
     this.closeMobileMenu = this.closeMobileMenu.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+  // Centralized sidebar version label (update in one place)
+  this.version = 'v3.2.1';
   // Body-level mobile layer nodes
   this._mobileLayer = null; // wrapper div
   this._backdropEl = null;  // backdrop div
@@ -210,6 +212,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     }
 
     this.addEventListeners();
+  // Ensure footer contact text isn't hidden by external/global CSS
+  this.enforceFooterVisibility();
 
     // Watch for header insertion/removal to keep launcher hidden when header is present
     this.ensureHeaderObserver();
@@ -244,6 +248,11 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       // Ensure open mobile drawer updates highlight too
       const navItems = this.generateNavigationItems(active, (p) => p);
       this.syncBodyLayer(navItems, true);
+    } else {
+      // Force a re-render for desktop/tablet even if the mapped active id didn't change
+      // (e.g., navigating between different sub-routes under /surveys). This ensures
+      // footer/version elements use the latest template and remain visible.
+      try { this.render(); } catch (_) {}
     }
   }
 
@@ -408,7 +417,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         <!-- Version info -->
         <div class="mt-3 text-center">
           <div class="text-xs text-webropol-gray-400">
-            Webropol Devlopment v3.2.1
+            Webropol Development ${this.version}
           </div>
         </div>
       </div>
@@ -554,15 +563,19 @@ export class WebropolSidebarEnhanced extends BaseComponent {
               </div>
               
               <!-- Text content (appears on hover) -->
-              <div class="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden group-hover:w-auto w-0">
-                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+              <div class="ml-3 transition-all duration-300 overflow-hidden">
+                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap footer-contact-title">
                   Contact Us
                 </div>
-                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap">
+                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap footer-contact-subtitle">
                   Gain Insight & Get Support
                 </div>
               </div>
             </a>
+          </div>
+          <!-- Version info (added for tablet) -->
+          <div class="mt-3 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development ${this.version}</div>
           </div>
         </div>
       </aside>
@@ -629,14 +642,11 @@ export class WebropolSidebarEnhanced extends BaseComponent {
               </div>
               
               <!-- Text content -->
-              <div class="ml-4 overflow-hidden transition-all duration-300
-                          xl:opacity-100 xl:w-auto xl:block
-                          opacity-0 w-0 hidden
-                          group-hover:opacity-100 group-hover:w-auto group-hover:block">
-                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap">
+              <div class="ml-4 overflow-hidden transition-all duration-300 xl:w-auto xl:block w-auto block">
+                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap footer-contact-title">
                   Contact Us
                 </div>
-                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap">
+                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap footer-contact-subtitle">
                   Gain Insight & Get Support
                 </div>
               </div>
@@ -644,12 +654,9 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           </div>
           
           <!-- Version info -->
-          <div class="mt-3 text-center overflow-hidden transition-all duration-300
-                      xl:opacity-100 xl:block
-                      opacity-0 hidden
-                      group-hover:opacity-100 group-hover:block">
+          <div class="mt-3 text-center overflow-hidden transition-all duration-300">
             <div class="text-xs text-webropol-gray-400 whitespace-nowrap">
-              Webropol Development v3.2.1
+              Webropol Development ${this.version}
             </div>
           </div>
         </div>
@@ -891,6 +898,21 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       }
 
     }
+  }
+
+  enforceFooterVisibility() {
+    try {
+      const titles = this.querySelectorAll('.footer-contact-title');
+      const subtitles = this.querySelectorAll('.footer-contact-subtitle');
+      [...titles, ...subtitles].forEach(el => {
+        if (!el) return;
+        el.style.opacity = '1';
+        el.style.display = 'block';
+        el.style.visibility = 'visible';
+        // Remove classes that might re-hide via Tailwind utilities
+        el.classList.remove('opacity-0', 'hidden', 'w-0');
+      });
+    } catch (_) {}
   }
 }
 
