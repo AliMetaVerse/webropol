@@ -88,8 +88,8 @@ export class WebropolHeader extends BaseComponent {
           ${title ? `
             <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
           ` : ''}
-          <!-- Desktop sidebar toggle (hidden on small screens) -->
-          <button class="ml-2 hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
+          <!-- Desktop sidebar toggle: removed 'hidden md:flex' so it doesn't disappear on some pages -->
+          <button class="ml-2 flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
             <i class="fal fa-columns"></i>
           </button>
           <slot name="title"></slot>
