@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Calculation - Webropol</title>
+    
+    <!-- Design System Styles -->
+    <link rel="stylesheet" href="../design-system/styles/tokens.css">
+    <link rel="stylesheet" href="../design-system/styles/button-classes.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom styles for this component -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, var(--neutral-50) 0%, var(--primary-50) 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .calculation-modal {
+            background: var(--neutral-0);
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--neutral-0) 0%, var(--primary-50) 50%, var(--neutral-50) 100%);
+            color: var(--neutral-900);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--primary-200);
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgb(32,159,186)" opacity="0.08"/><circle cx="80" cy="30" r="1" fill="rgb(32,159,186)" opacity="0.12"/><circle cx="40" cy="70" r="1.5" fill="rgb(32,159,186)" opacity="0.06"/><circle cx="90" cy="80" r="1" fill="rgb(32,159,186)" opacity="0.15"/><circle cx="10" cy="90" r="1" fill="rgb(32,159,186)" opacity="0.08"/></svg>');
+            pointer-events: none;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-title i {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: var(--neutral-0);
+            padding: 0.75rem;
+            border-radius: var(--border-radius-lg);
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--neutral-0);
+            border: 1px solid var(--neutral-300);
+            color: var(--neutral-700);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            z-index: 2;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .close-btn:hover {
+            background: var(--error-50);
+            color: var(--error-600);
+            border-color: var(--error-300);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-card);
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-full);
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .step.completed {
+            background: var(--success-100);
+            color: var(--success-800);
+            border: 1px solid var(--success-300);
+        }
+
+        .step.active {
+            background: var(--success-600);
+            color: var(--neutral-0);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--success-700);
+        }
+
+        .step.inactive {
+            background: var(--neutral-200);
+            color: var(--neutral-600);
+            border: 1px solid var(--neutral-300);
+        }
+
+        .step-number {
+            background: currentColor;
+            color: var(--neutral-0);
+            width: 24px;
+            height: 24px;
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .step.active .step-number {
+            background: var(--neutral-0);
+            color: var(--success-700);
+        }
+
+        .step.completed .step-number {
+            background: var(--success-600);
+            color: var(--neutral-0);
+        }
+
+        .step.inactive .step-number {
+            background: var(--neutral-500);
+            color: var(--neutral-0);
+        }
+
+        .modal-content {
+            padding: 2rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            color: var(--neutral-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--border-radius-xl);
+            background: var(--neutral-0);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary-300);
+            background: var(--primary-50);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-card);
+        }
+
+        .action-btn-icon {
+            background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%);
+            color: var(--primary-700);
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all var(--transition-normal);
+        }
+
+        .action-btn:hover .action-btn-icon {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: var(--neutral-0);
+            transform: scale(1.1);
+        }
+
+        .action-btn-label {
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-800);
+            text-align: center;
+        }
+
+        /* New Question Selector Styles */
+        .question-selector-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .question-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--border-radius-xl);
+            background: linear-gradient(135deg, var(--neutral-0) 0%, var(--neutral-50) 100%);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            color: inherit;
+            font-family: var(--font-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(32, 159, 186, 0.05), transparent);
+            transition: left var(--transition-slow);
+        }
+
+        .question-btn:hover {
+            border-color: var(--primary-300);
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .question-btn:hover::before {
+            left: 100%;
+        }
+
+        .question-btn.active {
+            border-color: var(--primary-500);
+            background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%);
+            box-shadow: var(--shadow-card);
+        }
+
+        .question-btn-icon {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: var(--neutral-0);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: all var(--transition-normal);
+        }
+
+        .question-btn:hover .question-btn-icon {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-card);
+        }
+
+        .question-btn-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .question-btn-label {
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-800);
+            font-size: var(--font-size-lg);
+            margin-bottom: 0.25rem;
+        }
+
+        .question-btn-description {
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+            line-height: 1.4;
+        }
+
+        .question-btn-arrow {
+            color: var(--neutral-600);
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .question-btn.active .question-btn-arrow {
+            transform: rotate(180deg);
+            color: var(--primary-600);
+        }
+
+        .question-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background: var(--neutral-0);
+            border: 2px solid var(--primary-200);
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-xl);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all var(--transition-normal);
+            max-height: 400px;
+            overflow: hidden;
+        }
+
+        .question-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .question-dropdown-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
+            background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+        }
+
+        .dropdown-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: var(--font-weight-semibold);
+            color: var(--primary-800);
+            margin-bottom: 0.75rem;
+        }
+
+        .dropdown-search {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-right: 2.5rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: var(--border-radius-lg);
+            font-size: var(--font-size-sm);
+            background: var(--neutral-0);
+            transition: all var(--transition-normal);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(32, 159, 186, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-500);
+            pointer-events: none;
+        }
+
+        .question-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .question-item {
+            padding: 1rem;
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            background: var(--neutral-0);
+        }
+
+        .question-item:hover {
+            border-color: var(--primary-300);
+            background: var(--primary-50);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .question-item:active {
+            transform: translateX(2px);
+            background: var(--primary-100);
+        }
+
+        .question-code {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-700);
+            background: var(--primary-100);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-weight: var(--font-weight-medium);
+            color: var(--neutral-800);
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .question-type {
+            font-size: var(--font-size-xs);
+            color: var(--neutral-600);
+            background: var(--neutral-100);
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+            display: inline-block;
+        }
+
+        .operators-section {
+            margin-bottom: 2rem;
+        }
+
+        .operators-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-800);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .operators-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--primary-500), var(--primary-600));
+            border-radius: 2px;
+        }
+
+        .operators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .operator-group {
+            background: var(--neutral-0);
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            padding: 0.8rem;
+            transition: all var(--transition-normal);
+        }
+
+        .operator-group:hover {
+            border-color: var(--primary-300);
+            box-shadow: var(--shadow-card);
+        }
+
+        .operator-group-title {
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            color: var(--neutral-700);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .operator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.4rem;
+        }
+
+        .operator-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.5rem 0.3rem;
+            background: var(--neutral-50);
+            border: 1px solid var(--neutral-200);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: var(--font-primary);
+            position: relative;
+            overflow: hidden;
+            min-height: 50px;
+        }
+
+        .operator-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(32, 159, 186, 0.1), transparent);
+            transition: left var(--transition-normal);
+        }
+
+        .operator-btn:hover {
+            background: var(--primary-50);
+            border-color: var(--primary-300);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .operator-btn:hover::before {
+            left: 100%;
+        }
+
+        .operator-btn:active {
+            transform: translateY(0);
+            background: var(--primary-100);
+        }
+
+        .operator-symbol {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-700);
+            line-height: 1;
+        }
+
+        .operator-label {
+            font-size: 10px;
+            color: var(--neutral-600);
+            font-weight: var(--font-weight-medium);
+            line-height: 1;
+        }
+
+        .operator-btn:hover .operator-symbol {
+            color: var(--primary-800);
+        }
+
+        .operator-btn:hover .operator-label {
+            color: var(--neutral-700);
+        }
+
+        .formula-section {
+            background: var(--neutral-50);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            border: 1px solid var(--neutral-200);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: var(--font-weight-medium);
+            color: var(--neutral-800);
+            margin-bottom: 0.5rem;
+            font-size: var(--font-size-sm);
+        }
+
+        .required-indicator {
+            color: var(--error-500);
+            margin-left: 0.25rem;
+        }
+
+        .formula-editor {
+            background: var(--neutral-0);
+            border: 2px solid var(--neutral-200);
+            border-radius: var(--border-radius-lg);
+            min-height: 120px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: var(--font-size-md);
+            color: var(--neutral-900);
+            resize: vertical;
+            transition: all var(--transition-normal);
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .formula-editor:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px rgba(32, 159, 186, 0.15);
+        }
+
+        .formula-editor::placeholder {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .formula-highlight {
+            background: var(--primary-100);
+            color: var(--primary-800);
+            padding: 0.2rem 0.4rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .help-text {
+            font-size: var(--font-size-sm);
+            color: var(--neutral-600);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .help-icon {
+            color: var(--primary-500);
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        .modal-footer {
+            background: var(--neutral-50);
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--neutral-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .calculation-modal {
+                margin: 1rem;
+                max-width: none;
+            }
+
+            .modal-header {
+                padding: 1.5rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .question-btn {
+                padding: 1rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+
+            .question-btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .question-btn-content {
+                text-align: center;
+            }
+
+            .question-btn-label {
+                font-size: var(--font-size-md);
+            }
+
+            .question-btn-description {
+                font-size: var(--font-size-xs);
+            }
+
+            .question-dropdown {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                right: auto;
+                transform: translate(-50%, -50%) scale(0.9);
+                width: 90vw;
+                max-width: 400px;
+                max-height: 80vh;
+            }
+
+            .question-dropdown.active {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            .question-item {
+                padding: 0.75rem;
+            }
+
+            .step-indicator {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .step {
+                font-size: var(--font-size-xs);
+                padding: 0.4rem 0.8rem;
+            }
+
+            .operators-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .operator-buttons {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.3rem;
+            }
+
+            .operator-btn {
+                padding: 0.4rem 0.2rem;
+                min-height: 45px;
+            }
+
+            .operator-symbol {
+                font-size: var(--font-size-sm);
+            }
+
+            .operator-label {
+                font-size: 9px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .calculation-modal {
+                background: var(--neutral-100);
+            }
+
+            .formula-section {
+                background: var(--neutral-200);
+                border-color: var(--neutral-300);
+            }
+
+            .formula-editor {
+                background: var(--neutral-50);
+                color: var(--neutral-900);
+                border-color: var(--neutral-300);
+            }
+
+            .modal-footer {
+                background: var(--neutral-200);
+                border-color: var(--neutral-300);
+            }
+
+            .action-btn {
+                background: var(--neutral-50);
+                border-color: var(--neutral-300);
+            }
+
+            .action-btn:hover {
+                background: var(--primary-100);
+            }
+
+            .operator-group {
+                background: var(--neutral-50);
+                border-color: var(--neutral-300);
+            }
+
+            .operator-btn {
+                background: var(--neutral-100);
+                border-color: var(--neutral-300);
+            }
+
+            .operator-btn:hover {
+                background: var(--primary-100);
+                border-color: var(--primary-400);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay">
+        <div class="calculation-modal">
+            <!-- Header -->
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="modal-title">
+                    <i class="fas fa-calculator"></i>
+                    Create Calculation
+                </div>
+                
+                <div class="step-indicator">
+                    <div class="step completed">
+                        <div class="step-number">
+                            <i class="fas fa-check" style="font-size: 10px;"></i>
+                        </div>
+                        <span>Name</span>
+                    </div>
+                    <div class="step active">
+                        <div class="step-number">2</div>
+                        <span>Build Formula</span>
+                    </div>
+                    <div class="step inactive">
+                        <div class="step-number">3</div>
+                        <span>Settings</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="modal-content">
+                <h2 class="section-title">Build your calculation</h2>
+                <p class="section-description">
+                    Use the buttons below to add survey questions and math operations, or type directly in the formula field.
+                </p>
+
+                <div class="action-buttons">
+                    <div class="question-selector-container">
+                        <button class="question-btn" id="questionBtn" onclick="toggleQuestionDropdown()">
+                            <div class="question-btn-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div class="question-btn-content">
+                                <div class="question-btn-label">Add Question</div>
+                                <div class="question-btn-description">Click to select survey questions</div>
+                            </div>
+                            <div class="question-btn-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </button>
+                        
+                        <!-- Question Dropdown -->
+                        <div class="question-dropdown" id="questionDropdown">
+                            <div class="question-dropdown-header">
+                                <div class="dropdown-title">
+                                    <i class="fas fa-list-ul"></i>
+                                    Select Survey Questions
+                                </div>
+                                <div class="dropdown-search">
+                                    <input type="text" placeholder="Search questions..." class="search-input" id="questionSearch">
+                                    <i class="fas fa-search search-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="question-list">
+                                <!-- Sample questions - in real app, these would be dynamic -->
+                                <div class="question-item" data-question="Q1_1" onclick="selectQuestion('Q1_1', 'How satisfied are you with our service?')">
+                                    <div class="question-code">Q1_1</div>
+                                    <div class="question-text">How satisfied are you with our service?</div>
+                                    <div class="question-type">Rating Scale</div>
+                                </div>
+                                
+                                <div class="question-item" data-question="Q1_2" onclick="selectQuestion('Q1_2', 'How likely are you to recommend us?')">
+                                    <div class="question-code">Q1_2</div>
+                                    <div class="question-text">How likely are you to recommend us?</div>
+                                    <div class="question-type">NPS Scale</div>
+                                </div>
+                                
+                                <div class="question-item" data-question="Q2_1" onclick="selectQuestion('Q2_1', 'What is your age?')">
+                                    <div class="question-code">Q2_1</div>
+                                    <div class="question-text">What is your age?</div>
+                                    <div class="question-type">Number Input</div>
+                                </div>
+                                
+                                <div class="question-item" data-question="Q2_2" onclick="selectQuestion('Q2_2', 'Annual income range')">
+                                    <div class="question-code">Q2_2</div>
+                                    <div class="question-text">Annual income range</div>
+                                    <div class="question-type">Multiple Choice</div>
+                                </div>
+                                
+                                <div class="question-item" data-question="Q3_1" onclick="selectQuestion('Q3_1', 'Overall rating of experience')">
+                                    <div class="question-code">Q3_1</div>
+                                    <div class="question-text">Overall rating of experience</div>
+                                    <div class="question-type">Star Rating</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operators Section -->
+                <div class="operators-section">
+                    <h3 class="operators-title">Quick Operators</h3>
+                    <div class="operators-grid">
+                        <!-- Basic Math Operators -->
+                        <div class="operator-group">
+                            <div class="operator-group-title">Basic Math</div>
+                            <div class="operator-buttons">
+                                <button class="operator-btn" onclick="insertOperator(' + ')" title="Addition">
+                                    <span class="operator-symbol">+</span>
+                                    <span class="operator-label">Add</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' - ')" title="Subtraction">
+                                    <span class="operator-symbol">−</span>
+                                    <span class="operator-label">Subtract</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' * ')" title="Multiplication">
+                                    <span class="operator-symbol">×</span>
+                                    <span class="operator-label">Multiply</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' / ')" title="Division">
+                                    <span class="operator-symbol">÷</span>
+                                    <span class="operator-label">Divide</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Operators -->
+                        <div class="operator-group">
+                            <div class="operator-group-title">Comparison</div>
+                            <div class="operator-buttons">
+                                <button class="operator-btn" onclick="insertOperator(' = ')" title="Equals">
+                                    <span class="operator-symbol">=</span>
+                                    <span class="operator-label">Equal</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' > ')" title="Greater than">
+                                    <span class="operator-symbol">></span>
+                                    <span class="operator-label">Greater</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' < ')" title="Less than">
+                                    <span class="operator-symbol"><</span>
+                                    <span class="operator-label">Less</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(' >= ')" title="Greater than or equal">
+                                    <span class="operator-symbol">≥</span>
+                                    <span class="operator-label">≥</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Grouping & Functions -->
+                        <div class="operator-group">
+                            <div class="operator-group-title">Grouping</div>
+                            <div class="operator-buttons">
+                                <button class="operator-btn" onclick="insertOperator('(')" title="Open parenthesis">
+                                    <span class="operator-symbol">(</span>
+                                    <span class="operator-label">Open</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator(')')" title="Close parenthesis">
+                                    <span class="operator-symbol">)</span>
+                                    <span class="operator-label">Close</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator('AVG(')" title="Average function">
+                                    <span class="operator-symbol">AVG</span>
+                                    <span class="operator-label">Average</span>
+                                </button>
+                                <button class="operator-btn" onclick="insertOperator('SUM(')" title="Sum function">
+                                    <span class="operator-symbol">SUM</span>
+                                    <span class="operator-label">Sum</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formula-section">
+                    <div class="form-group">
+                        <label for="formula" class="form-label">
+                            Formula <span class="required-indicator">*</span>
+                        </label>
+                        <textarea 
+                            id="formula" 
+                            class="formula-editor"
+                            placeholder="Enter your formula here, e.g., (Q1_1 + Q1_2) / Q1_2"
+                            rows="4"
+                        >(Q1_1+Q1_2)/Q1_2</textarea>
+                        <div class="help-text">
+                            <i class="fas fa-lightbulb help-icon"></i>
+                            <span>Use the dropdown menus above to build your formula, or edit directly in this field. Questions are referenced as <span class="formula-highlight">Q1_1</span>, <span class="formula-highlight">Q1_2</span>, etc.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="previousStep()">
+                    <i class="fas fa-arrow-left"></i>
+                    Previous
+                </button>
+                
+                <div class="footer-buttons">
+                    <button class="btn btn-tertiary" onclick="saveAsDraft()">
+                        <i class="fas fa-save"></i>
+                        Save as Draft
+                    </button>
+                    <button class="btn btn-primary" onclick="nextStep()">
+                        Next
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function closeModal() {
+            const modal = document.querySelector('.modal-overlay');
+            modal.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('questionDropdown');
+            const button = document.getElementById('questionBtn');
+            const container = document.querySelector('.question-selector-container');
+            
+            if (dropdown && !container.contains(e.target)) {
+                dropdown.classList.remove('active');
+                button.classList.remove('active');
+            }
+        });
+
+        // Search functionality
+        function initializeQuestionSearch() {
+            const searchInput = document.getElementById('questionSearch');
+            const questionItems = document.querySelectorAll('.question-item');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                questionItems.forEach(item => {
+                    const questionCode = item.querySelector('.question-code').textContent.toLowerCase();
+                    const questionText = item.querySelector('.question-text').textContent.toLowerCase();
+                    const questionType = item.querySelector('.question-type').textContent.toLowerCase();
+                    
+                    const isVisible = questionCode.includes(searchTerm) || 
+                                    questionText.includes(searchTerm) || 
+                                    questionType.includes(searchTerm);
+                    
+                    item.style.display = isVisible ? 'block' : 'none';
+                });
+            });
+        }
+
+        function nextStep() {
+            // Validate formula
+            const formula = document.getElementById('formula').value.trim();
+            if (!formula) {
+                alert('Please enter a formula before proceeding.');
+                return;
+            }
+            
+            // Here you would navigate to the next step
+            console.log('Proceeding to Settings step...');
+            alert('Proceeding to Settings step (demo)');
+        }
+
+        function previousStep() {
+            // Navigate back to Name step
+            console.log('Going back to Name step...');
+            alert('Going back to Name step (demo)');
+        }
+
+        function saveAsDraft() {
+            const formula = document.getElementById('formula').value.trim();
+            console.log('Saving draft with formula:', formula);
+            alert('Draft saved successfully (demo)');
+        }
+
+        function showQuestionSelector() {
+            // Legacy function - now handled by toggleQuestionDropdown
+            toggleQuestionDropdown();
+        }
+
+        function toggleQuestionDropdown() {
+            const dropdown = document.getElementById('questionDropdown');
+            const button = document.getElementById('questionBtn');
+            
+            dropdown.classList.toggle('active');
+            button.classList.toggle('active');
+        }
+
+        function selectQuestion(questionCode, questionText) {
+            const formulaEditor = document.getElementById('formula');
+            const currentValue = formulaEditor.value;
+            const cursorPosition = formulaEditor.selectionStart;
+            
+            // Insert the question code at cursor position
+            const newValue = currentValue.slice(0, cursorPosition) + questionCode + currentValue.slice(cursorPosition);
+            formulaEditor.value = newValue;
+            
+            // Set cursor position after inserted text
+            formulaEditor.focus();
+            formulaEditor.setSelectionRange(cursorPosition + questionCode.length, cursorPosition + questionCode.length);
+            
+            // Close the dropdown
+            const dropdown = document.getElementById('questionDropdown');
+            const button = document.getElementById('questionBtn');
+            dropdown.classList.remove('active');
+            button.classList.remove('active');
+            
+            // Trigger input event for any listeners
+            formulaEditor.dispatchEvent(new Event('input'));
+            
+            // Show success feedback
+            showQuestionSelectedFeedback(questionCode, questionText);
+        }
+
+        function showQuestionSelectedFeedback(questionCode, questionText) {
+            // Create a temporary feedback element
+            const feedback = document.createElement('div');
+            feedback.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--success-500), var(--success-600));
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: var(--border-radius-lg);
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            feedback.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <div style="font-weight: bold;">${questionCode} added</div>
+                        <div style="font-size: 0.875rem; opacity: 0.9;">${questionText}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            // Animate in
+            setTimeout(() => {
+                feedback.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after delay
+            setTimeout(() => {
+                feedback.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(feedback);
+                }, 300);
+            }, 3000);
+        }
+
+        function showMathSelector() {
+            // Show math operations selector
+            console.log('Showing math selector...');
+            
+            // Demo: Add a math operation
+            const formulaEditor = document.getElementById('formula');
+            const currentValue = formulaEditor.value;
+            const cursorPosition = formulaEditor.selectionStart;
+            
+            const mathOp = ' + ';
+            const newValue = currentValue.slice(0, cursorPosition) + mathOp + currentValue.slice(cursorPosition);
+            formulaEditor.value = newValue;
+            
+            // Set cursor position after inserted text
+            formulaEditor.focus();
+            formulaEditor.setSelectionRange(cursorPosition + mathOp.length, cursorPosition + mathOp.length);
+        }
+
+        function insertOperator(operator) {
+            const formulaEditor = document.getElementById('formula');
+            const currentValue = formulaEditor.value;
+            const cursorPosition = formulaEditor.selectionStart;
+            
+            // Insert the operator at cursor position
+            const newValue = currentValue.slice(0, cursorPosition) + operator + currentValue.slice(cursorPosition);
+            formulaEditor.value = newValue;
+            
+            // Set cursor position after inserted text
+            formulaEditor.focus();
+            formulaEditor.setSelectionRange(cursorPosition + operator.length, cursorPosition + operator.length);
+            
+            // Add visual feedback
+            const button = event.target.closest('.operator-btn');
+            if (button) {
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = '';
+                }, 100);
+            }
+            
+            // Trigger input event for any listeners
+            formulaEditor.dispatchEvent(new Event('input'));
+        }
+
+        // Formula editor enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            const formulaEditor = document.getElementById('formula');
+            
+            // Initialize question search
+            initializeQuestionSearch();
+            
+            // Add syntax highlighting simulation
+            formulaEditor.addEventListener('input', function() {
+                // In a real implementation, you'd use a proper syntax highlighting library
+                console.log('Formula updated:', this.value);
+            });
+
+            // Add keyboard shortcuts
+            formulaEditor.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + Enter to proceed to next step
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    nextStep();
+                }
+                
+                // Escape to close modal
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeModal();
+                }
+                
+                // Quick operator shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case '=':
+                            e.preventDefault();
+                            insertOperator(' = ');
+                            break;
+                        case '9': // Ctrl+9 for parentheses
+                            e.preventDefault();
+                            insertOperator('()');
+                            // Move cursor inside parentheses
+                            const pos = this.selectionStart;
+                            this.setSelectionRange(pos - 1, pos - 1);
+                            break;
+                    }
+                }
+            });
+        });
+
+        // Add CSS animation for fade out
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.9);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
