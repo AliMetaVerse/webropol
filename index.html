@@ -657,10 +657,10 @@
                             <div class="webropol-tabs-unified webropol-tabs-rounded-container" role="tablist" aria-label="Interface modes">
                                 <button
                                     class="webropol-unified-tab webropol-tab-rounded size-md"
-                                    :class="[interfaceMode === 'classic' ? 'active' : '', isTransitioning ? 'pointer-events-none' : '']"
+                                    :class="isTransitioning ? 'pointer-events-none' : ''"
+                                    data-tab="classic"
                                     @click="switchInterface('classic')"
                                     role="tab"
-                                    :aria-selected="interfaceMode === 'classic'"
                                     tabindex="0"
                                     @keydown.enter="switchInterface('classic')"
                                     @keydown.space.prevent="switchInterface('classic')"
@@ -670,10 +670,10 @@
                                 </button>
                                 <button
                                     class="webropol-unified-tab webropol-tab-rounded size-md"
-                                    :class="[interfaceMode === 'prompt' ? 'active' : '', isTransitioning ? 'pointer-events-none' : '']"
+                                    :class="isTransitioning ? 'pointer-events-none' : ''"
+                                    data-tab="prompt"
                                     @click="switchInterface('prompt')"
                                     role="tab"
-                                    :aria-selected="interfaceMode === 'prompt'"
                                     tabindex="0"
                                     @keydown.enter="switchInterface('prompt')"
                                     @keydown.space.prevent="switchInterface('prompt')"
@@ -687,6 +687,7 @@
 
                     <!-- Classic Interface Content -->
                     <div x-show="interfaceMode === 'classic'" 
+                         data-tab-panel="classic"
                          x-transition:enter="transition ease-out duration-500"
                          x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
                          x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
@@ -813,6 +814,7 @@
 
                     <!-- AI Prompt Interface Content -->
                     <div x-show="interfaceMode === 'prompt'" 
+                         data-tab-panel="prompt"
                          x-transition:enter="transition ease-out duration-500"
                          x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
                          x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"

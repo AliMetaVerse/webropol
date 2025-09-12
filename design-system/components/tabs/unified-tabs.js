@@ -38,13 +38,16 @@
         next.classList.add('active');
         setAriaSelected(next, true);
 
-        // Panels toggle (optional)
+        // Panels toggle (optional) - skip if panel has Alpine.js directives
         const panels = getPanels();
         if(panels.length){
           const targetPanel = findPanelFor(next);
           panels.forEach(p => {
             const isTarget = p === targetPanel;
-            p.hidden = !isTarget;
+            // Don't set hidden if panel has Alpine.js x-show or x-if directives
+            if(!p.hasAttribute('x-show') && !p.hasAttribute('x-if')) {
+              p.hidden = !isTarget;
+            }
             if(p.getAttribute('role') !== 'tabpanel') {
               p.setAttribute('role','tabpanel');
             }
@@ -75,7 +78,17 @@
           t.id = `${base || 'tab'}-${i+1}`;
         }
       });
-      activateTab(initial);
+      
+      // Only activate tab if panels don't have Alpine.js directives
+      const panels = getPanels();
+      const hasAlpinePanels = panels.some(p => p.hasAttribute('x-show') || p.hasAttribute('x-if'));
+      if(!hasAlpinePanels) {
+        activateTab(initial);
+      } else {
+        // For Alpine.js panels, just set the active class and ARIA attributes
+        initial.classList.add('active');
+        setAriaSelected(initial, true);
+      }
 
       // Click handler
       tablist.addEventListener('click', (e)=>{
@@ -98,6 +111,10 @@
         const next = tabs[idx];
         next.focus();
         activateTab(next);
+        // For Alpine.js compatibility, also trigger click to ensure interface switching
+        if(next.closest('[x-data]')) {
+          next.click();
+        }
       });
     });
   }
