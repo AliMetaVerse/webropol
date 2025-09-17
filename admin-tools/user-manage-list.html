@@ -79,11 +79,11 @@
                 <p class="mt-2 text-sm text-webropol-gray-600">Manage your team members and their account settings.</p>
               </div>
               <div class="flex items-center gap-3">
-                <button @click="exportUsers()" class="inline-flex items-center px-4 py-2 border border-webropol-gray-300 rounded-lg text-sm font-medium text-webropol-gray-700 bg-white hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500">
+                <button @click="exportUsers()" class="inline-flex items-center px-4 py-2 border border-webropol-gray-300 rounded-full text-sm font-medium text-webropol-gray-700 bg-white hover:bg-webropol-gray-50 hover:border-webropol-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500 transition-colors">
                   <i class="fal fa-download mr-2"></i>
                   Export
                 </button>
-                <a href="./user-management.html" class="inline-flex items-center px-4 py-2 bg-webropol-primary-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-webropol-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500">
+                <a href="./user-management.html" class="inline-flex items-center px-4 py-2 bg-webropol-primary-600 border border-transparent rounded-full text-sm font-medium text-white hover:bg-webropol-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500 shadow-sm transition-colors">
                   <i class="fal fa-plus mr-2"></i>
                   Add member
                 </a>
@@ -113,7 +113,7 @@
                     <option value="email">Email</option>
                     <option value="status">Status</option>
                   </select>
-                  <button @click="resetFilters()" class="px-4 py-2.5 text-sm text-webropol-gray-500 hover:text-webropol-gray-700">
+                  <button @click="resetFilters()" class="px-4 py-2.5 text-sm text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 rounded-full transition-colors">
                     Clear
                   </button>
                 </div>
@@ -133,7 +133,11 @@
                     <span class="ml-3 text-sm text-webropol-gray-700" x-text="`${selected.size} selected`"></span>
                   </div>
                   <button x-show="selected.size > 0" @click="bulkDelete()" 
-                          class="text-sm text-webropol-red-600 hover:text-webropol-red-900 font-medium">
+                          class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors shadow-sm"
+                          style="background-color: #dc2626; border: none;"
+                          onmouseover="this.style.backgroundColor='#b91c1c'"
+                          onmouseout="this.style.backgroundColor='#dc2626'">
+                    <i class="fal fa-trash mr-1"></i>
                     Delete selected
                   </button>
                 </div>
@@ -225,13 +229,35 @@
                       </td>
                       <td class="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-webropol-gray-500" x-text="u.surveysCreated"></td>
                       <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div class="flex items-center justify-end gap-2">
-                          <button @click="sendValidation(u)" class="text-webropol-primary-600 hover:text-webropol-primary-900 text-xs">
-                            Send link
+                        <div class="relative" x-data="{ open: false }">
+                          <button @click="open = !open" @click.away="open = false"
+                                  class="inline-flex items-center justify-center w-8 h-8 rounded-full text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-webropol-primary-500 transition-colors">
+                            <i class="fal fa-ellipsis-v"></i>
                           </button>
-                          <button @click="resetPassword(u)" class="text-webropol-gray-600 hover:text-webropol-gray-900 text-xs">
-                            Reset
-                          </button>
+                          <div x-show="open" x-transition
+                               class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-webropol-gray-200 py-1 z-50">
+                            <button @click="sendValidation(u); open = false" 
+                                    class="w-full text-left px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center whitespace-nowrap">
+                              <i class="fal fa-envelope w-4 mr-3 text-webropol-gray-400 flex-shrink-0"></i>
+                              <span>Send validation link</span>
+                            </button>
+                            <button @click="resetPassword(u); open = false" 
+                                    class="w-full text-left px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center whitespace-nowrap">
+                              <i class="fal fa-key w-4 mr-3 text-webropol-gray-400 flex-shrink-0"></i>
+                              <span>Reset password</span>
+                            </button>
+                            <hr class="my-1 border-webropol-gray-100">
+                            <button @click="manageAccessRights(u); open = false" 
+                                    class="w-full text-left px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center whitespace-nowrap">
+                              <i class="fal fa-shield-alt w-4 mr-3 text-webropol-gray-400 flex-shrink-0"></i>
+                              <span>Access rights for user</span>
+                            </button>
+                            <button @click="manageUserGroups(u); open = false" 
+                                    class="w-full text-left px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center whitespace-nowrap">
+                              <i class="fal fa-users w-4 mr-3 text-webropol-gray-400 flex-shrink-0"></i>
+                              <span>User group membership</span>
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -244,7 +270,7 @@
                 <div class="flex items-center gap-4">
                   <div class="flex items-center gap-2 text-sm text-webropol-gray-700">
                     <span>Rows per page:</span>
-                    <select x-model="pageSize" @change="page = 1" class="border border-webropol-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-webropol-primary-500">
+                    <select x-model="pageSize" @change="page = 1" class="border border-webropol-gray-300 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
                       <option value="20">20</option>
                       <option value="50">50</option>
                       <option value="100">100</option>
@@ -255,11 +281,11 @@
                   <span class="text-sm text-webropol-gray-700" x-text="rangeText"></span>
                   <div class="flex items-center gap-1">
                     <button @click="prevPage()" :disabled="page === 1" 
-                            class="p-2 rounded-lg border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="p-2 rounded-full border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 hover:border-webropol-gray-400 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-webropol-primary-500 transition-colors">
                       <i class="fal fa-chevron-left"></i>
                     </button>
                     <button @click="nextPage()" :disabled="page === totalPages"
-                            class="p-2 rounded-lg border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                            class="p-2 rounded-full border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 hover:border-webropol-gray-400 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-webropol-primary-500 transition-colors">
                       <i class="fal fa-chevron-right"></i>
                     </button>
                   </div>
@@ -272,20 +298,258 @@
     </div>
   </div>
 
+  <!-- Access Rights Modal -->
+  <div x-show="accessRightsModal.show" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div x-show="accessRightsModal.show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity bg-webropol-gray-500 bg-opacity-75" @click="accessRightsModal.show = false"></div>
+      
+      <div x-show="accessRightsModal.show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
+        
+        <!-- Modal Header -->
+        <div class="bg-white px-6 pt-6 pb-4 border-b border-webropol-gray-200">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-medium text-webropol-gray-900">
+              Survey and Folder access rights: 
+              <span class="text-webropol-primary-600" x-text="accessRightsModal.user?.userName || ''"></span>
+            </h3>
+            <button @click="accessRightsModal.show = false" class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+              <i class="fal fa-times text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="bg-white px-6 py-4">
+          <!-- Top Controls -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div class="flex items-center gap-4">
+              <select x-model="accessRightsModal.selectedType" class="border border-webropol-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                <option value="Survey&Reporting">Survey&Reporting</option>
+                <option value="BI">BI</option>
+                <option value="Community">Community</option>
+              </select>
+              <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                <i class="fal fa-question-circle"></i>
+              </button>
+            </div>
+            
+            <div class="flex items-center gap-4">
+              <div class="relative">
+                <input type="text" x-model="accessRightsModal.searchQuery" placeholder="Search for surveys" class="pl-10 pr-4 py-2 border border-webropol-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 w-80">
+                <i class="fal fa-search absolute left-3 top-3 text-webropol-gray-400"></i>
+              </div>
+              <label class="flex items-center gap-2 text-sm text-webropol-gray-700">
+                <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                Filter to show only surveys and folders with assigned rights for user
+              </label>
+              <button class="px-4 py-2 bg-webropol-gray-100 text-webropol-gray-700 text-sm rounded-md hover:bg-webropol-gray-200 transition-colors">
+                Filter
+              </button>
+            </div>
+          </div>
+
+          <!-- Access Rights Table -->
+          <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-webropol-gray-200">
+              <thead class="bg-webropol-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider w-1/2">
+                    Folders and surveys.
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider w-1/6">
+                    Survey ID
+                  </th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-webropol-gray-500 uppercase tracking-wider w-1/6">
+                    <div class="flex items-center justify-center gap-1">
+                      Read
+                      <span class="inline-flex items-center justify-center w-5 h-5 bg-webropol-primary-500 text-white text-xs rounded-full">1</span>
+                    </div>
+                  </th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-webropol-gray-500 uppercase tracking-wider w-1/6">
+                    <div class="flex items-center justify-center gap-1">
+                      Write
+                      <span class="inline-flex items-center justify-center w-5 h-5 bg-webropol-primary-500 text-white text-xs rounded-full">1</span>
+                    </div>
+                  </th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-webropol-gray-500 uppercase tracking-wider w-1/6">
+                    <div class="flex items-center justify-center gap-1">
+                      Manage
+                      <span class="inline-flex items-center justify-center w-5 h-5 bg-webropol-primary-500 text-white text-xs rounded-full">1</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-webropol-gray-200">
+                <!-- Folder: Janne EXW -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center">
+                      <i class="fal fa-folder text-webropol-gray-400 mr-2"></i>
+                      <span class="font-medium text-webropol-gray-900">Janne EXW</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500"></td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+                
+                <!-- Survey: texw rule -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center pl-8">
+                      <span class="text-webropol-gray-700">texw rule</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500">Fin345690</td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+
+                <!-- Survey: exw library rule test -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center pl-8">
+                      <span class="text-webropol-gray-700">exw library rule test</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500">Fin345692</td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+
+                <!-- Survey: exw test -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center pl-8">
+                      <span class="text-webropol-gray-700">exw test</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500">Fin324234</td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+
+                <!-- Folder: Mika EXW -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center">
+                      <i class="fal fa-folder text-webropol-gray-400 mr-2"></i>
+                      <span class="font-medium text-webropol-gray-900">Mika EXW</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500"></td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+
+                <!-- More surveys... -->
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-6 py-4 text-sm">
+                    <div class="flex items-center pl-8">
+                      <span class="text-webropol-gray-700">test_exw</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-webropol-gray-500">Fin330895</td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                  <td class="px-6 py-4 text-center">
+                    <input type="checkbox" class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-webropol-gray-50 px-6 py-4 border-t border-webropol-gray-200">
+          <div class="flex justify-end gap-3">
+            <button @click="accessRightsModal.show = false" class="px-4 py-2 text-sm font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-full hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500 transition-colors">
+              Cancel
+            </button>
+            <button class="px-4 py-2 text-sm font-medium text-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors"
+                    style="background-color: #ff8c00; border: none;"
+                    onmouseover="this.style.backgroundColor='#e67c00'"
+                    onmouseout="this.style.backgroundColor='#ff8c00'">
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <webropol-floating-button></webropol-floating-button>
 
   <script>
     function userListApp(){
       function mockUsers(count=150){
-        const firstNames = ['Hanna','Juho','Marika','Adrian','Mahfuzul','Teppo','Janne','Elenore','Anna','Mika','Ayan','Sara','Olli','Veera','Lauri','Kalle','Noora','Matti','Sanna','Ville','Timo','Elina','Iida','Paula','Petri','Katja'];
-        const lastNames = ['Björklund','Jokinen','Poghosyan','Varmenus','Haque','Marin','Laukkanen','Klinga','Gotkowicz','Textila','Das','Korhonen','Salmi','Virtanen','Nieminen','Heikkinen','Lehtonen','Savolainen','Laine','Hämäläinen','Koski','Mäkinen','Kinnunen','Tuominen','Mustonen','Ojala'];
+        const firstNames = ['Hanna','Juho','Marika','Adrian','Mahfuzul','Teppo','Janne','Elenore','Anna','Mika','Ayan','Sara','Olli','Veera','Lauri','Kalle','Noora','Matti','Sanna','Ville','Timo','Elina','Iida','Paula','Petri','Katja','Emma','Oskari','Aino','Eetu','Helmi','Onni','Ella','Oliver','Sofia','Leo','Aada','Elias','Livia','Väinö','Alina','Eino','Luna','Niilo','Aura','Leevi','Isla','Hugo','Elli','Aapo','Pihla'];
+        const lastNames = ['Björklund','Jokinen','Poghosyan','Varmenus','Haque','Marin','Laukkanen','Klinga','Gotkowicz','Textila','Das','Korhonen','Salmi','Virtanen','Nieminen','Heikkinen','Lehtonen','Savolainen','Laine','Hämäläinen','Koski','Mäkinen','Kinnunen','Tuominen','Mustonen','Ojala','Peltonen','Rantanen','Laaksonen','Hakkarainen','Salo','Huhtala','Manninen','Rautio','Karjalainen','Niemi','Snellman','Westerberg','Lindqvist','Aaltonen','Saarinen','Moilanen','Rajala','Kallio','Nykänen','Hiltunen','Sorsa','Järvinen'];
         const roles = ['Admin','User','Viewer'];
         const biRoles = ['-','BI VIEW user','BI VIEW Admin'];
         const pad = n => String(n).padStart(2,'0');
         const users = [];
-        for(let i=0;i<count;i++){
-          const fn = firstNames[i % firstNames.length];
-          const ln = lastNames[(i*5) % lastNames.length];
+        const usedCombinations = new Set();
+        
+        for(let i=0; i<count && users.length < count; i++){
+          let fn, ln, combination;
+          let attempts = 0;
+          
+          // Try to find a unique name combination
+          do {
+            const fnIndex = (i + attempts) % firstNames.length;
+            const lnIndex = (i * 7 + attempts * 3) % lastNames.length;
+            fn = firstNames[fnIndex];
+            ln = lastNames[lnIndex];
+            combination = `${fn}-${ln}`;
+            attempts++;
+          } while (usedCombinations.has(combination) && attempts < 100);
+          
+          // If we couldn't find a unique combination, skip this iteration
+          if (usedCombinations.has(combination)) continue;
+          
+          usedCombinations.add(combination);
+          
           const uname = `${fn}.${ln}`.toLowerCase().replace(/[^a-z]/g,'');
           const email = `${fn}.${ln}@example.com`.toLowerCase();
           const userClass = roles[i % roles.length];
@@ -297,7 +561,7 @@
           const day = pad((i*3 % 28)+1);
           const created = `${day}.${month}.${year}`;
           const lastLogin = i % 9 === 0 ? 'Never' : `${pad((i*5 % 28)+1)}.${pad(((i+2)%12)+1)}.${2020+(i%6)}`;
-          users.push({id:i+1,userName:uname,firstName:fn,lastName:ln,email,userClass,biViewClass,lastLogin,status,surveysCreated,created});
+          users.push({id:users.length+1,userName:uname,firstName:fn,lastName:ln,email,userClass,biViewClass,lastLogin,status,surveysCreated,created});
         }
         return users;
       }
@@ -310,6 +574,7 @@
         selected: new Set(),
         page: 1,
         pageSize: 20,
+        accessRightsModal: { show: false, user: null, searchQuery: '', selectedType: 'Survey&Reporting' },
 
         // computed
         get filtered(){
@@ -380,6 +645,11 @@
   openUser(u){ window.location.href = this.detailHref(u); },
         sendValidation(u){ this.toast(`Validation link sent to ${u.email}`); },
         resetPassword(u){ this.toast(`Password reset requested for ${u.userName}`); },
+        manageAccessRights(u){ 
+          this.accessRightsModal.user = u;
+          this.accessRightsModal.show = true;
+        },
+        manageUserGroups(u){ this.toast(`Opening user group membership for ${u.userName}`); },
         bulkDelete(){ this.toast(`${this.selected.size} user(s) queued for deletion`); this.selected.clear(); },
         toast(msg){
           const el = document.createElement('div');
