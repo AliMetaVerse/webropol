@@ -68,125 +68,202 @@
         </div>
       </div>
 
-      <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 pb-16" role="main">
-        <div class="max-w-none mx-auto">
+      <main class="flex-1 overflow-y-auto" role="main">
+        <div class="max-w-7xl mx-auto">
 
-          <!-- Header: title + actions -->
-          <div class="mb-4 flex items-center justify-between">
-            <h1 class="page-title">User management and new user creation</h1>
-            <div class="flex items-center gap-2">
-              <a href="./user-management.html" class="btn btn-primary"><i class="fal fa-plus mr-2"></i>Create new user</a>
+          <!-- Modern Header -->
+          <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 class="text-3xl font-bold text-webropol-gray-900">Team Members</h1>
+                <p class="mt-2 text-sm text-webropol-gray-600">Manage your team members and their account settings.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button @click="exportUsers()" class="inline-flex items-center px-4 py-2 border border-webropol-gray-300 rounded-lg text-sm font-medium text-webropol-gray-700 bg-white hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500">
+                  <i class="fal fa-download mr-2"></i>
+                  Export
+                </button>
+                <a href="./user-management.html" class="inline-flex items-center px-4 py-2 bg-webropol-primary-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-webropol-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-webropol-primary-500">
+                  <i class="fal fa-plus mr-2"></i>
+                  Add member
+                </a>
+              </div>
             </div>
           </div>
 
-          <!-- Filters Row -->
-          <div class="mb-4 bg-white/90 rounded-2xl border border-webropol-gray-100 p-4 shadow-card">
-            <div class="flex flex-col lg:flex-row lg:items-end gap-3">
-              <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label class="block text-xs text-webropol-gray-600 mb-1">Search by</label>
-                  <select x-model="filters.field" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg">
+          <!-- Modern Search & Filters -->
+          <div class="mb-6">
+            <div class="bg-white rounded-xl border border-webropol-gray-200 p-6 shadow-sm">
+              <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fal fa-search text-webropol-gray-400"></i>
+                    </div>
+                    <input x-model.trim.debounce.300ms="filters.query" type="text" 
+                           class="block w-full pl-10 pr-3 py-2.5 border border-webropol-gray-300 rounded-lg leading-5 bg-white placeholder-webropol-gray-500 focus:outline-none focus:placeholder-webropol-gray-400 focus:ring-1 focus:ring-webropol-primary-500 focus:border-webropol-primary-500"
+                           placeholder="Search team members...">
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <select x-model="filters.field" class="px-3 py-2.5 border border-webropol-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
                     <option value="all">All fields</option>
                     <option value="userName">Username</option>
                     <option value="name">Name</option>
                     <option value="email">Email</option>
                     <option value="status">Status</option>
                   </select>
+                  <button @click="resetFilters()" class="px-4 py-2.5 text-sm text-webropol-gray-500 hover:text-webropol-gray-700">
+                    Clear
+                  </button>
                 </div>
-                <div>
-                  <label class="block text-xs text-webropol-gray-600 mb-1">Match</label>
-                  <select x-model="filters.match" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg">
-                    <option>Contains</option>
-                    <option>Equals</option>
-                    <option>Starts with</option>
-                    <option>Ends with</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs text-webropol-gray-600 mb-1">Query</label>
-                  <input x-model.trim.debounce.300ms="filters.query" type="text" placeholder="Type to search..." class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg" />
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <button @click="applyFilters()" class="btn btn-primary"><i class="fal fa-search mr-2"></i>Search</button>
-                <button @click="resetFilters()" class="btn btn-secondary">Show all</button>
               </div>
             </div>
           </div>
 
-          <!-- Table Card -->
-          <div class="bg-white/90 rounded-2xl border border-webropol-gray-100 shadow-card overflow-hidden">
-            <div class="overflow-auto">
-              <table class="min-w-full text-sm table-sticky">
-                <thead class="border-b border-webropol-gray-200">
-                  <tr class="text-left text-webropol-gray-700">
-                    <th class="w-10 px-4 py-3"><input type="checkbox" @change="toggleAll($event)" :checked="allVisibleSelected" /></th>
-                    <th class="px-4 py-3 table-sort min-w-[12rem]" @click="toggleSort('userName')">Username <i :class="sortIcon('userName')"></i></th>
-                    <th class="px-4 py-3 table-sort min-w-[14rem]" @click="toggleSort('name')">Name <i :class="sortIcon('name')"></i></th>
-                    <th class="px-4 py-3 table-sort min-w-[16rem]" @click="toggleSort('email')">Email <i :class="sortIcon('email')"></i></th>
-                    <th class="px-4 py-3">Role</th>
-                    <th class="px-4 py-3">BI view role</th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('lastLogin')">Last login <i :class="sortIcon('lastLogin')"></i></th>
-                    <th class="px-4 py-3">Status</th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('surveysCreated')">Surveys created <i :class="sortIcon('surveysCreated')"></i></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('created')">Created <i :class="sortIcon('created')"></i></th>
-                    <th class="px-4 py-3 w-56">Actions</th>
+          <!-- Modern Table Card -->
+          <div class="bg-white rounded-xl border border-webropol-gray-200 shadow-sm overflow-hidden">
+            <!-- Table Header with Stats -->
+            <div class="px-6 py-4 border-b border-webropol-gray-200 bg-webropol-gray-50">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center">
+                    <input type="checkbox" @change="toggleAll($event)" :checked="allVisibleSelected" 
+                           class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
+                    <span class="ml-3 text-sm text-webropol-gray-700" x-text="`${selected.size} selected`"></span>
+                  </div>
+                  <button x-show="selected.size > 0" @click="bulkDelete()" 
+                          class="text-sm text-webropol-red-600 hover:text-webropol-red-900 font-medium">
+                    Delete selected
+                  </button>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-webropol-gray-600">
+                  <span x-text="rangeText"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Responsive Table -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-webropol-gray-200">
+                <thead class="bg-webropol-gray-50">
+                  <tr>
+                    <th scope="col" class="w-4 px-6 py-3"></th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider cursor-pointer hover:bg-webropol-gray-100" @click="toggleSort('userName')">
+                      <div class="flex items-center gap-2">
+                        Username
+                        <i :class="sortIcon('userName')" class="text-webropol-gray-400"></i>
+                      </div>
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider cursor-pointer hover:bg-webropol-gray-100" @click="toggleSort('name')">
+                      <div class="flex items-center gap-2">
+                        Name
+                        <i :class="sortIcon('name')" class="text-webropol-gray-400"></i>
+                      </div>
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" class="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th scope="col" class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                      Last login
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" class="hidden xl:table-cell px-6 py-3 text-left text-xs font-medium text-webropol-gray-500 uppercase tracking-wider cursor-pointer hover:bg-webropol-gray-100" @click="toggleSort('surveysCreated')">
+                      <div class="flex items-center gap-2">
+                        Surveys
+                        <i :class="sortIcon('surveysCreated')" class="text-webropol-gray-400"></i>
+                      </div>
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody class="bg-white divide-y divide-webropol-gray-200">
                   <template x-for="u in pagedUsers" :key="u.id">
-                    <tr class="border-b border-webropol-gray-100 hover:bg-webropol-primary-50/30">
-                      <td class="px-4 py-3"><input type="checkbox" :value="u.id" @change="toggleSelect(u.id)" :checked="selected.has(u.id)" /></td>
-                      <td class="px-4 py-3 text-webropol-primary-700 hover:underline"><a :href="detailHref(u)" x-text="u.userName"></a></td>
-                      <td class="px-4 py-3">
-                <a :href="detailHref(u)" class="font-medium text-webropol-primary-700 hover:underline"
-                           x-text="`${u.firstName ?? ''} ${u.lastName ?? ''}`.trim()"></a>
-                        <div class="text-xs text-webropol-gray-500" x-text="u.firstName && u.lastName ? '' : '—'"></div>
+                    <tr class="hover:bg-webropol-gray-50 transition-colors duration-150">
+                      <td class="px-6 py-4">
+                        <input type="checkbox" :value="u.id" @change="toggleSelect(u.id)" :checked="selected.has(u.id)"
+                               class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded">
                       </td>
-                      <td class="px-4 py-3 whitespace-nowrap">
-                        <span class="truncate inline-block max-w-[22ch] xl:max-w-[36ch]" :title="u.email" x-text="u.email"></span>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <a :href="detailHref(u)" class="text-sm font-medium text-webropol-primary-600 hover:text-webropol-primary-900" x-text="u.userName"></a>
                       </td>
-                      <td class="px-4 py-3" x-text="u.userClass"></td>
-                      <td class="px-4 py-3" x-text="u.biViewClass || '-' "></td>
-                      <td class="px-4 py-3" x-text="u.lastLogin || 'Never'"></td>
-                      <td class="px-4 py-3">
-                        <span :class="u.status === 'Active' ? 'bg-webropol-green-100 text-webropol-green-700' : 'bg-webropol-red-50 text-webropol-red-600'" class="px-2 py-1 rounded-full text-xs" x-text="u.status"></span>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-webropol-gray-200 flex items-center justify-center">
+                              <span class="text-sm font-medium text-webropol-gray-700" x-text="(u.firstName?.[0] || '') + (u.lastName?.[0] || '')"></span>
+                            </div>
+                          </div>
+                          <div class="ml-4">
+                            <a :href="detailHref(u)" class="text-sm font-medium text-webropol-gray-900 hover:text-webropol-primary-600" 
+                               x-text="`${u.firstName || ''} ${u.lastName || ''}`.trim()"></a>
+                          </div>
+                        </div>
                       </td>
-                      <td class="px-4 py-3" x-text="u.surveysCreated"></td>
-                      <td class="px-4 py-3" x-text="u.created"></td>
-                      <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
-                          <button class="btn btn-secondary !px-3 !py-1.5 text-xs" @click="sendValidation(u)">Send validation link</button>
-                          <button class="btn btn-secondary !px-3 !py-1.5 text-xs" @click="resetPassword(u)">Reset password</button>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-webropol-gray-900" x-text="u.email"></div>
+                      </td>
+                      <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                              :class="u.userClass === 'Admin' ? 'bg-webropol-purple-100 text-webropol-purple-800' : 
+                                      u.userClass === 'User' ? 'bg-webropol-blue-100 text-webropol-blue-800' : 
+                                      'bg-webropol-gray-100 text-webropol-gray-800'"
+                              x-text="u.userClass"></span>
+                      </td>
+                      <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-webropol-gray-500" x-text="u.lastLogin || 'Never'"></td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                              :class="u.status === 'Active' ? 'bg-webropol-green-100 text-webropol-green-800' : 'bg-webropol-red-100 text-webropol-red-800'"
+                              x-text="u.status"></span>
+                      </td>
+                      <td class="hidden xl:table-cell px-6 py-4 whitespace-nowrap text-sm text-webropol-gray-500" x-text="u.surveysCreated"></td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end gap-2">
+                          <button @click="sendValidation(u)" class="text-webropol-primary-600 hover:text-webropol-primary-900 text-xs">
+                            Send link
+                          </button>
+                          <button @click="resetPassword(u)" class="text-webropol-gray-600 hover:text-webropol-gray-900 text-xs">
+                            Reset
+                          </button>
                         </div>
                       </td>
                     </tr>
                   </template>
                 </tbody>
               </table>
-            </div>
-
-            <!-- Bulk actions + pagination -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 border-t border-webropol-gray-200 bg-white/80">
-              <div class="text-sm text-webropol-gray-700">
-                <button class="btn btn-secondary !px-3 !py-1.5 text-xs" :disabled="selected.size === 0" @click="bulkDelete()">Delete</button>
-                <span class="ml-3" x-text="selected.size + ' selected'"></span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-webropol-gray-700">
-                <span x-text="rangeText"></span>
-              </div>
-              <div class="flex items-center gap-2 text-sm">
-                <span>Show on page</span>
-                <template x-for="opt in [20,50,100]" :key="opt">
-                  <button class="w-10 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50"
-                          :class="pageSize===opt ? 'bg-webropol-primary-600 text-white border-webropol-primary-600' : ''"
-                          @click="setPageSize(opt)" x-text="opt"></button>
-                </template>
-              </div>
-              <div class="flex items-center gap-2">
-                <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="prevPage()" :disabled="page===1"><i class="fal fa-angle-left"></i></button>
-                <span class="text-sm" x-text="`Page ${page} / ${totalPages}`"></span>
-                <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="nextPage()" :disabled="page===totalPages"><i class="fal fa-angle-right"></i></button>
+            </div>            <!-- Modern Pagination -->
+            <div class="px-6 py-4 bg-white border-t border-webropol-gray-200">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2 text-sm text-webropol-gray-700">
+                    <span>Rows per page:</span>
+                    <select x-model="pageSize" @change="page = 1" class="border border-webropol-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-webropol-primary-500">
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="text-sm text-webropol-gray-700" x-text="rangeText"></span>
+                  <div class="flex items-center gap-1">
+                    <button @click="prevPage()" :disabled="page === 1" 
+                            class="p-2 rounded-lg border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                      <i class="fal fa-chevron-left"></i>
+                    </button>
+                    <button @click="nextPage()" :disabled="page === totalPages"
+                            class="p-2 rounded-lg border border-webropol-gray-300 text-webropol-gray-500 hover:bg-webropol-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                      <i class="fal fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -296,6 +373,7 @@
           else { this.pagedUsers.forEach(u=>this.selected.delete(u.id)); }
         },
         setPageSize(n){ this.pageSize = n; this.page = 1; },
+        exportUsers(){ this.toast('Export feature coming soon!'); },
         nextPage(){ if(this.page < this.totalPages) this.page++; },
         prevPage(){ if(this.page > 1) this.page--; },
   detailHref(u){ return `./admin-tools/user-management.html?user=${encodeURIComponent(u.userName)}`; },
