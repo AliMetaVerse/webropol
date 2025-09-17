@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · User Management List</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
+            'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/tokens.css" rel="stylesheet" />
+  <link href="../design-system/styles/animations.css" rel="stylesheet" />
+  <link href="royal-gradient.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../design-system/styles/tabs.css">
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/components/tabs/unified-tabs.js" type="module"></script>
+  <script src="../design-system/utils/theme-manager.js" type="module"></script>
+  <style>
+    [x-cloak]{display:none!important}
+    .table-sticky thead th{position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:blur(6px)}
+    .table-sort{cursor:pointer}
+  </style>
+</head>
+<body x-data="userListApp()" class="">
+  <div class="flex h-screen">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="Admin" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
+
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Admin Tools","url":"index.html"},{"label":"User Management","url":"#"}]'></webropol-breadcrumbs>
+      </div>
+
+      <!-- Tabs wrapper to match Admin tools -->
+      <div class="bg-white/70 backdrop-blur border-b border-webropol-gray-200">
+        <div class="px-6 lg:px-12">
+          <div class="webropol-tabs-unified webropol-tabs-rounded-container bg-white rounded-xl p-1 shadow-sm border border-webropol-gray-200" role="tablist" aria-label="User Management Tabs">
+            <a href="user-manage-list.html" class="webropol-unified-tab webropol-tab-rounded size-sm active" role="tab" aria-selected="true">User Management and New User Creation</a>
+            <a href="#" class="webropol-unified-tab webropol-tab-rounded size-sm" role="tab" aria-selected="false">Survey and Folder Rights</a>
+            <a href="#" class="webropol-unified-tab webropol-tab-rounded size-sm" role="tab" aria-selected="false">User Group Management</a>
+            <a href="#" class="webropol-unified-tab webropol-tab-rounded size-sm" role="tab" aria-selected="false">Access Requests <span class="ml-1 text-xs bg-webropol-gray-100 text-webropol-gray-600 px-2 py-0.5 rounded-full">(0)</span></a>
+          </div>
+        </div>
+      </div>
+
+      <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 pb-16" role="main">
+        <div class="max-w-7xl mx-auto">
+
+          <!-- Header: title + actions -->
+          <div class="mb-4 flex items-center justify-between">
+            <h1 class="page-title">User management and new user creation</h1>
+            <div class="flex items-center gap-2">
+              <a href="user-management.html" class="btn btn-primary"><i class="fal fa-plus mr-2"></i>Create new user</a>
+            </div>
+          </div>
+
+          <!-- Filters Row -->
+          <div class="mb-4 bg-white/90 rounded-2xl border border-webropol-gray-100 p-4 shadow-card">
+            <div class="flex flex-col lg:flex-row lg:items-end gap-3">
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs text-webropol-gray-600 mb-1">Search by</label>
+                  <select x-model="filters.field" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg">
+                    <option value="userName">User name</option>
+                    <option value="firstName">First name</option>
+                    <option value="lastName">Last name</option>
+                    <option value="email">Email</option>
+                    <option value="status">Status</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs text-webropol-gray-600 mb-1">Match</label>
+                  <select x-model="filters.match" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg">
+                    <option>Contains</option>
+                    <option>Equals</option>
+                    <option>Starts with</option>
+                    <option>Ends with</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs text-webropol-gray-600 mb-1">Query</label>
+                  <input x-model.trim.debounce.300ms="filters.query" type="text" placeholder="Type to search..." class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg" />
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button @click="applyFilters()" class="btn btn-primary"><i class="fal fa-search mr-2"></i>Search</button>
+                <button @click="resetFilters()" class="btn btn-secondary">Show all</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Card -->
+          <div class="bg-white/90 rounded-2xl border border-webropol-gray-100 shadow-card overflow-hidden">
+            <div class="overflow-auto">
+              <table class="min-w-full text-sm table-sticky">
+                <thead class="border-b border-webropol-gray-200">
+                  <tr class="text-left text-webropol-gray-700">
+                    <th class="w-10 px-4 py-3"><input type="checkbox" @change="toggleAll($event)" :checked="allVisibleSelected" /></th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('userName')">User name <i :class="sortIcon('userName')"></i></th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('firstName')">First name <i :class="sortIcon('firstName')"></i></th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('lastName')">Last name <i :class="sortIcon('lastName')"></i></th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('email')">Email <i :class="sortIcon('email')"></i></th>
+                    <th class="px-4 py-3">User class</th>
+                    <th class="px-4 py-3">BI VIEW user class</th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('lastLogin')">Last login <i :class="sortIcon('lastLogin')"></i></th>
+                    <th class="px-4 py-3">Status</th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('surveysCreated')">Surveys created <i :class="sortIcon('surveysCreated')"></i></th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('created')">User created <i :class="sortIcon('created')"></i></th>
+                    <th class="px-4 py-3 w-48">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="u in pagedUsers" :key="u.id">
+                    <tr class="border-b border-webropol-gray-100 hover:bg-webropol-primary-50/30">
+                      <td class="px-4 py-3"><input type="checkbox" :value="u.id" @change="toggleSelect(u.id)" :checked="selected.has(u.id)" /></td>
+                      <td class="px-4 py-3 text-webropol-primary-700 hover:underline"><a href="#" @click.prevent="openUser(u)">{{ u.userName }}</a></td>
+                      <td class="px-4 py-3">{{ u.firstName }}</td>
+                      <td class="px-4 py-3">{{ u.lastName }}</td>
+                      <td class="px-4 py-3">{{ u.email }}</td>
+                      <td class="px-4 py-3">{{ u.userClass }}</td>
+                      <td class="px-4 py-3">{{ u.biViewClass || '-' }}</td>
+                      <td class="px-4 py-3">{{ u.lastLogin || 'Never' }}</td>
+                      <td class="px-4 py-3">
+                        <span :class="u.status === 'Active' ? 'bg-webropol-green-100 text-webropol-green-700' : 'bg-webropol-red-50 text-webropol-red-600'" class="px-2 py-1 rounded-full text-xs">{{ u.status }}</span>
+                      </td>
+                      <td class="px-4 py-3">{{ u.surveysCreated }}</td>
+                      <td class="px-4 py-3">{{ u.created }}</td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                          <button class="btn btn-secondary !px-3 !py-1.5 text-xs" @click="sendValidation(u)">Send validation link</button>
+                          <button class="btn btn-secondary !px-3 !py-1.5 text-xs" @click="resetPassword(u)">Reset password</button>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Bulk actions + pagination -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 border-t border-webropol-gray-200 bg-white/80">
+              <div class="text-sm text-webropol-gray-700">
+                <button class="btn btn-secondary !px-3 !py-1.5 text-xs" :disabled="selected.size === 0" @click="bulkDelete()">Delete</button>
+                <span class="ml-3" x-text="selected.size + ' selected'"></span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span>Show on page</span>
+                <template x-for="opt in [20,50,100]" :key="opt">
+                  <button class="w-10 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50"
+                          :class="pageSize===opt ? 'bg-webropol-primary-600 text-white border-webropol-primary-600' : ''"
+                          @click="setPageSize(opt)">{{ opt }}</button>
+                </template>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="prevPage()" :disabled="page===1"><i class="fal fa-angle-left"></i></button>
+                <span class="text-sm">Page {{ page }} / {{ totalPages }}</span>
+                <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="nextPage()" :disabled="page===totalPages"><i class="fal fa-angle-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <webropol-floating-button></webropol-floating-button>
+
+  <script>
+    function userListApp(){
+      const sample = [
+        {id:1,userName:'aktiivinen_kayttaja',firstName:'Olen',lastName:'Aktiivinen',email:'markus+233@webropol.com',userClass:'User',biViewClass:'-',lastLogin:'Never',status:'Active',surveysCreated:0,created:'19.08.2025'},
+        {id:2,userName:'janne-normaluser',firstName:'janne',lastName:'laukkanen',email:'janne+user@webropol.com',userClass:'Admin',biViewClass:'BI VIEW Admin',lastLogin:'22.10.2024',status:'Active',surveysCreated:3,created:'07.03.2024'},
+        {id:3,userName:'markus@wapup.com',firstName:'wapu',lastName:'pekka',email:'markus@wapup.com',userClass:'User',biViewClass:'-',lastLogin:'30.04.2025',status:'Active',surveysCreated:0,created:'30.04.2025'},
+        {id:4,userName:'juho.admin@webropol.local',firstName:'Juho',lastName:'Admin',email:'juho.admin@webropol.local',userClass:'User',biViewClass:'-',lastLogin:'13.02.2023',status:'Active',surveysCreated:0,created:'08.02.2023'},
+        {id:5,userName:'janne-nps',firstName:'Nps',lastName:'Test',email:'janne+nps@webropol.com',userClass:'User',biViewClass:'BI VIEW user',lastLogin:'09.09.2025',status:'Active',surveysCreated:2,created:'31.05.2024'}
+      ];
+      return {
+        // data
+        users: sample,
+        filters: { field:'userName', match:'Contains', query:'' },
+        sort: { key:'userName', dir:'asc' },
+        selected: new Set(),
+        page: 1,
+        pageSize: 20,
+
+        // computed
+        get filtered(){
+          const q = this.filters.query?.toLowerCase() || '';
+          if(!q) return this.users.slice();
+          return this.users.filter(u=>{
+            const v = String(u[this.filters.field] ?? '').toLowerCase();
+            if(this.filters.match==='Contains') return v.includes(q);
+            if(this.filters.match==='Equals') return v===q;
+            if(this.filters.match==='Starts with') return v.startsWith(q);
+            if(this.filters.match==='Ends with') return v.endsWith(q);
+            return true;
+          });
+        },
+        get sorted(){
+          return this.filtered.slice().sort((a,b)=>{
+            const ak = a[this.sort.key] ?? ''; const bk = b[this.sort.key] ?? '';
+            return (ak>bk?1:ak<bk?-1:0) * (this.sort.dir==='asc'?1:-1);
+          });
+        },
+        get totalPages(){ return Math.max(1, Math.ceil(this.sorted.length / this.pageSize)); },
+        get pagedUsers(){
+          const start=(this.page-1)*this.pageSize; return this.sorted.slice(start, start+this.pageSize);
+        },
+        get allVisibleSelected(){
+          return this.pagedUsers.length>0 && this.pagedUsers.every(u=>this.selected.has(u.id));
+        },
+
+        // methods
+        toggleSort(key){
+          if(this.sort.key===key){ this.sort.dir = this.sort.dir==='asc'?'desc':'asc'; }
+          else { this.sort.key = key; this.sort.dir='asc'; }
+        },
+        sortIcon(key){
+          if(this.sort.key!==key) return 'fal fa-sort text-webropol-gray-400 ml-1';
+          return this.sort.dir==='asc' ? 'fal fa-sort-up text-webropol-primary-600 ml-1' : 'fal fa-sort-down text-webropol-primary-600 ml-1';
+        },
+        applyFilters(){ this.page = 1; },
+        resetFilters(){ this.filters = { field:'userName', match:'Contains', query:'' }; this.page = 1; },
+        toggleSelect(id){ this.selected.has(id) ? this.selected.delete(id) : this.selected.add(id); },
+        toggleAll(e){
+          if(e.target.checked){ this.pagedUsers.forEach(u=>this.selected.add(u.id)); }
+          else { this.pagedUsers.forEach(u=>this.selected.delete(u.id)); }
+        },
+        setPageSize(n){ this.pageSize = n; this.page = 1; },
+        nextPage(){ if(this.page < this.totalPages) this.page++; },
+        prevPage(){ if(this.page > 1) this.page--; },
+        openUser(u){ window.location.href = 'user-management.html'; },
+        sendValidation(u){ this.toast(`Validation link sent to ${u.email}`); },
+        resetPassword(u){ this.toast(`Password reset requested for ${u.userName}`); },
+        bulkDelete(){ this.toast(`${this.selected.size} user(s) queued for deletion`); this.selected.clear(); },
+        toast(msg){
+          const el = document.createElement('div');
+          el.className = 'fixed bottom-6 right-6 bg-webropol-gray-900 text-white px-4 py-3 rounded-xl shadow-soft z-50';
+          el.textContent = msg; document.body.appendChild(el); setTimeout(()=>el.remove(), 2200);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
