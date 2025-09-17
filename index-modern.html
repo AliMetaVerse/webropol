@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webropol - Royal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            // Ensure utilities used by dynamically-loaded pages (SPA) are always available
+            safelist: [
+                // Backdrop/filter and glass effects
+                'backdrop-blur-sm',
+                // Common translucent backgrounds
+                'bg-white/70','bg-white/80','bg-white/90',
+                // Gradients used on cards
+                'bg-gradient-to-br',
+        'from-webropol-primary-500','to-webropol-primary-600',
+        // Primary gradients/utilities used by SPA components (e.g., shop-sidebar)
+        'from-primary-500','to-primary-600',
+                'from-purple-500','to-indigo-600',
+                'from-orange-500','to-red-500',
+                'from-emerald-500','to-primary-600',
+                'from-pink-500','to-rose-600',
+                'from-cyan-500','to-blue-600',
+                // Light brand tile stops used with bg-sky-to-br
+        'from-webropol-primary-100','to-webropol-primary-100',
+        // Unified tile helper
+        'bg-sky-to-br',
+                // Rounding/shadows frequently used across pages
+        'rounded-3xl','rounded-2xl','rounded-xl','rounded-lg','rounded-full',
+                'shadow-2xl','shadow-lg','shadow-medium','shadow-soft','shadow-card',
+                // Arbitrary values and sizing used in injected pages
+                'min-w-[60px]','max-h-[90vh]','scale-[1.02]','translate-y-8','translate-y-0',
+                // Hover/group variants
+        'hover:transform','hover:scale-[1.02]','group-hover:scale-110',
+        // Common primary utilities that appear dynamically
+    'text-primary-600','text-primary-700','hover:text-primary-600',
+    'bg-primary-50','bg-primary-100','border-primary-500',
+        // Webropol primary aliases used widely in injected UI
+        'text-webropol-primary-600','text-webropol-primary-700','hover:text-webropol-primary-700',
+        'bg-webropol-primary-50','bg-webropol-primary-100','border-webropol-primary-500',
+        'focus:ring-webropol-primary-500','focus:ring-webropol-primary-600',
+                // Typography/color tokens
+                'text-webropol-gray-900','text-webropol-gray-700','text-webropol-gray-600','text-webropol-gray-500',
+                'text-white/90','text-white/80',
+                // Borders using token colors with opacity
+                'border-webropol-gray-200/50',
+            ],
+            theme: {
+                extend: {
+                    colors: {
+            // Global primary palette used across the SPA (aliases Webropol brand cyan)
+            primary: { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+                        'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                        'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
+                        'webropol-royalViolet': {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#6d28d9',
+                            700: '#5b21b6',
+                            800: '#4c1d95',
+                            900: '#321065'
+                        },
+                        'webropol-royalBlue': {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81'
+                        },
+                        'webropol-royalTurquoise': {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="design-system/styles/animations.css" rel="stylesheet">
+    <link href="design-system/styles/shop-shared.css" rel="stylesheet">
+    <link href="design-system/styles/mobile-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="design-system/styles/tokens.css">
+    <link rel="stylesheet" href="design-system/styles/tabs.css">
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #f8fafc, #ffffff);
+        }
+
+        body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 6px;
+        }
+
+        /* Clean hover animations */
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Focus states for accessibility */
+        .focus-ring:focus-visible {
+            outline: 2px solid #06b6d4;
+            outline-offset: 2px;
+        }
+
+        /* Interface transition animations */
+        .interface-transition-enter {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+        }
+
+        .interface-transition-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Hide sidebar in AI mode */
+        body.mode-prompt webropol-sidebar,
+        body.mode-prompt webropol-sidebar-enhanced {
+            display: none !important;
+        }
+
+        /* Smooth transitions for mode switching */
+        .mode-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Text truncation utility */
+        .line-clamp-2 {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+
+        /* Page title styling */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .hover-lift {
+                transition: none;
+            }
+            
+            .interface-transition-enter-active {
+                transition: opacity 0.2s ease;
+            }
+            
+            .mode-transition {
+                transition: none;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .border-webropol-gray-200 {
+                border-color: #475569 !important;
+            }
+            
+            .text-webropol-gray-600 {
+                color: #1e293b !important;
+            }
+        }
+
+        /* Card grid responsive improvements */
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+        }
+    </style>
+    <script src="design-system/components/navigation/SidebarEnhanced.js" type="module"></script>
+    <script src="design-system/components/navigation/Header.js" type="module"></script>
+    <script src="design-system/components/navigation/HeaderEnhanced.js" type="module"></script>
+    <script src="design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <script src="design-system/components/interactive/FloatingButton.js" type="module"></script>
+    <script src="design-system/components/forms/Toggle.js" type="module"></script>
+    <script src="design-system/components/modals/Modal.js" type="module"></script>
+    <script src="design-system/components/modals/SettingsModal.js" type="module"></script>
+    <script src="design-system/components/feedback/PromoToast.js" type="module"></script>
+    <script src="design-system/utils/theme-manager.js" type="module"></script>
+    <script src="design-system/utils/global-settings-manager.js" type="module"></script>
+    <script src="design-system/utils/spa-router.js?v=20250903-1" type="module"></script>
+    <script src="scripts/contact-modals.js"></script>
+    <script defer src="design-system/components/tabs/unified-tabs.js"></script>
+</head>
+
+<body x-data="libraryApp()" @click="showContextMenu = null">
+
+    <div class="flex h-screen mobile-responsive-container">
+        <webropol-sidebar-enhanced x-show="interfaceMode === 'classic'" 
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform -translate-x-full scale-95"
+                         x-transition:enter-end="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-x-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform -translate-x-full scale-95"
+                         class="sidebar-transition"
+                         active="home" base=""></webropol-sidebar-enhanced>
+        <div class="flex-1 flex flex-col overflow-hidden main-content-transition mobile-main-content" 
+             :class="interfaceMode === 'prompt' ? 'w-full' : ''">
+            <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
+          <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4 relative mobile-breadcrumbs"
+              :class="interfaceMode === 'prompt' ? 'px-4 sm:px-8' : ''">
+                <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
+                    '[{\"label\":\"Home\",\"url\":\"index.html\"},{\"label\":\"Magic\",\"url\":\"#\"}]' : 
+                    '[{\"label\":\"Home\",\"url\":\"index.html\"}]'"></webropol-breadcrumbs>
+            </div>
+        <!-- Page Content -->
+                <main class="flex-1 overflow-y-auto py-8 min-h-screen pb-24 mobile-main-content"
+                  role="main">
+                    <div id="app-content" class="mx-auto w-full rounded-2xl mobile-app-content" :class="interfaceMode === 'prompt' ? 'max-w-3xl sm:max-w-5xl px-4 sm:px-6 lg:px-12' : 'px-4 lg:px-8'">
+                    
+                    
+                    <!-- Clean Page Header -->
+                    <div class="mb-10">
+                        <div class="text-center mb-8">
+                            <h1 class="text-4xl font-bold text-webropol-gray-900 mb-3">Welcome back, Ali!</h1>
+                            <p class="text-lg text-webropol-gray-600 max-w-2xl mx-auto">Create surveys, manage events, and analyze data with ease using our powerful tools.</p>
+                        </div>
+                        
+                        <!-- Simplified Interface Mode Toggle -->
+                        <div class="flex justify-center mb-8">
+                            <div class="inline-flex bg-white border border-webropol-gray-200 rounded-2xl p-2 shadow-sm">
+                                <button
+                                    @click="switchInterface('classic')"
+                                    :class="interfaceMode === 'classic' ? 'bg-webropol-primary-600 text-white shadow-md' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                    class="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200"
+                                    :disabled="isTransitioning"
+                                >
+                                    <i class="fal fa-grid-2 mr-2"></i>
+                                    Dashboard
+                                </button>
+                                <button
+                                    @click="switchInterface('prompt')"
+                                    :class="interfaceMode === 'prompt' ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                    class="inline-flex items-center px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 relative"
+                                    :disabled="isTransitioning"
+                                >
+                                    <i class="fal fa-sparkles mr-2"></i>
+                                    AI Assistant
+                                    <span class="absolute -top-1 -right-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">New</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classic Interface Content -->
+                    <div x-show="interfaceMode === 'classic'" 
+                         data-tab-panel="classic"
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
+                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
+                         role="tabpanel"
+                         aria-labelledby="classic-tab">
+                        
+                        <!-- Quick Actions Section -->
+                        <div class="mb-16">
+                            <div class="text-center mb-10">
+                                <h2 class="text-2xl font-bold text-webropol-gray-900 mb-3">What would you like to create?</h2>
+                                <p class="text-webropol-gray-600">Choose from our most popular options to get started quickly</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                                <!-- Survey Card -->
+                                <div class="group bg-white rounded-3xl p-8 border border-webropol-gray-200 hover:border-webropol-primary-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                            <i class="fal fa-poll text-white text-2xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">Survey</h3>
+                                        <p class="text-webropol-gray-600 text-sm mb-6 leading-relaxed">Collect valuable insights from your audience with customizable surveys</p>
+                                        <button class="w-full bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm">
+                                            Create Survey
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Event Card -->
+                                <div class="group bg-white rounded-3xl p-8 border border-webropol-gray-200 hover:border-purple-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                            <i class="fal fa-calendar-check text-white text-2xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">Event</h3>
+                                        <p class="text-webropol-gray-600 text-sm mb-6 leading-relaxed">Organize and manage successful events with registration and feedback tools</p>
+                                        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-sm">
+                                            Create Event
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- AI Analysis Card -->
+                                <div class="group bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 border border-amber-200 hover:border-amber-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                                    <div class="absolute top-4 right-4">
+                                        <span class="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Popular</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                            <i class="fal fa-brain text-white text-2xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">AI Analysis</h3>
+                                        <p class="text-webropol-gray-600 text-sm mb-6 leading-relaxed">Get instant insights from text data using advanced AI analysis</p>
+                                        <button class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-sm">
+                                            Try AI Analysis
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 360 Feedback Card -->
+                                <div class="group bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-200 hover:border-emerald-300 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                                    <div class="absolute top-4 right-4">
+                                        <span class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Featured</span>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                            <i class="fal fa-users text-white text-2xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">360 Feedback</h3>
+                                        <p class="text-webropol-gray-600 text-sm mb-6 leading-relaxed">Comprehensive performance reviews with multi-source feedback</p>
+                                        <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-sm">
+                                            Start 360 Review
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- AI Assistant Interface Content -->
+                    <div x-show="interfaceMode === 'prompt'" 
+                         data-tab-panel="prompt"
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
+                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave="transition ease-in duration-300"
+                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
+                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
+                         role="tabpanel"
+                         aria-labelledby="prompt-tab">
+                        
+                        <!-- AI Assistant Hero Section -->
+                        <div class="max-w-4xl mx-auto">
+                            <div class="text-center mb-12">
+                                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-violet-500 via-indigo-600 to-purple-700 rounded-3xl mb-6 shadow-lg">
+                                    <i class="fal fa-sparkles text-white text-3xl"></i>
+                                </div>
+                                <h2 class="text-3xl font-bold text-webropol-gray-900 mb-4">AI Assistant</h2>
+                                <p class="text-xl text-webropol-gray-600 max-w-2xl mx-auto leading-relaxed">
+                                    Describe what you want to create in plain English, and I'll build it for you instantly.
+                                </p>
+                            </div>
+
+                            <!-- Main Creation Interface -->
+                            <div class="bg-white rounded-3xl border border-webropol-gray-200 shadow-lg p-8 mb-12">
+                                <!-- Content Type Selector -->
+                                <div class="mb-8">
+                                    <label class="block text-sm font-semibold text-webropol-gray-900 mb-4">What would you like to create?</label>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <template x-for="type in surveyTypes.slice(0, 4)" :key="type.id">
+                                            <button @click="selectedSurveyType = type.id"
+                                                :class="selectedSurveyType === type.id ? 'bg-gradient-to-r from-violet-500 to-indigo-600 text-white border-transparent' : 'bg-white text-webropol-gray-700 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50'"
+                                                class="flex items-center justify-center p-4 rounded-2xl border-2 font-medium text-sm transition-all duration-200">
+                                                <i :class="type.icon" class="mr-2"></i>
+                                                <span x-text="type.name"></span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- AI Input Area -->
+                                <div class="mb-8">
+                                    <label for="ai-prompt" class="block text-sm font-semibold text-webropol-gray-900 mb-4">Describe what you want to create</label>
+                                    <div class="relative">
+                                        <textarea 
+                                            id="ai-prompt" 
+                                            x-model="aiPrompt" 
+                                            rows="4" 
+                                            placeholder="For example: 'Create a customer satisfaction survey for our restaurant with questions about food quality, service, and overall experience. Keep it under 5 minutes.'"
+                                            class="w-full p-6 text-lg border-2 border-webropol-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-500 resize-none text-webropol-gray-900 placeholder-webropol-gray-400 leading-relaxed"
+                                            @input="updateCharCount()">
+                                        </textarea>
+                                        
+                                        <!-- Character Counter and Actions -->
+                                        <div class="flex items-center justify-between mt-3">
+                                            <button @click="showPromptHelp = !showPromptHelp" 
+                                                class="flex items-center text-sm text-webropol-gray-500 hover:text-violet-600 transition-colors">
+                                                <i class="fal fa-lightbulb mr-2"></i>
+                                                <span x-text="showPromptHelp ? 'Hide tips' : 'Need help writing?'"></span>
+                                            </button>
+                                            <div class="flex items-center space-x-4 text-sm text-webropol-gray-500">
+                                                <span x-text="aiPrompt.length + ' characters'"></span>
+                                                <button @click="clearPrompt()" 
+                                                    x-show="aiPrompt.length > 0"
+                                                    class="hover:text-webropol-gray-700 transition-colors">
+                                                    Clear
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Writing Tips -->
+                                        <div x-show="showPromptHelp" 
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 transform translate-y-2"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="mt-6 p-6 bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl">
+                                            <h4 class="font-bold text-violet-900 mb-4 flex items-center">
+                                                <i class="fal fa-magic mr-2"></i>
+                                                Tips for better results
+                                            </h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-violet-800">
+                                                <div class="flex items-start">
+                                                    <div class="w-2 h-2 bg-violet-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                                    <span>Be specific about your target audience</span>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <div class="w-2 h-2 bg-violet-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                                    <span>Mention preferred question types</span>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <div class="w-2 h-2 bg-violet-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                                    <span>Include topics you want to cover</span>
+                                                </div>
+                                                <div class="flex items-start">
+                                                    <div class="w-2 h-2 bg-violet-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                                    <span>Specify desired length or time</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                    <button @click="generateSurvey()" 
+                                        :disabled="!aiPrompt.trim() || isGenerating"
+                                        :class="(!aiPrompt.trim() || isGenerating) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 hover:shadow-xl'"
+                                        class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold rounded-2xl transition-all duration-300 flex items-center justify-center text-lg shadow-lg">
+                                        <i :class="isGenerating ? 'fal fa-spinner fa-spin' : 'fal fa-sparkles'" class="mr-3 text-xl"></i>
+                                        <span x-text="isGenerating ? 'Creating...' : 'Generate with AI'"></span>
+                                    </button>
+                                    
+                                    <button @click="previewPrompt()" 
+                                        :disabled="!aiPrompt.trim()"
+                                        :class="!aiPrompt.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-webropol-gray-50 hover:border-webropol-gray-300'"
+                                        class="w-full sm:w-auto px-8 py-4 bg-white border border-webropol-gray-200 text-webropol-gray-700 font-semibold rounded-2xl transition-all duration-200 flex items-center justify-center">
+                                        <i class="fal fa-eye mr-2"></i>
+                                        Preview
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Templates -->
+                            <div class="mb-12">
+                                <h3 class="text-xl font-bold text-webropol-gray-900 mb-6 text-center">
+                                    Or start with a template
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <template x-for="template in promptTemplates.slice(0, 3)" :key="template.id">
+                                        <button @click="useTemplate(template.prompt)"
+                                            class="p-6 text-left bg-white border border-webropol-gray-200 rounded-2xl hover:border-violet-300 hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-start">
+                                                <div class="w-12 h-12 bg-gradient-to-br from-violet-100 to-indigo-100 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                                    <i :class="template.icon" class="text-violet-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h4 class="font-bold text-webropol-gray-900 mb-2" x-text="template.title"></h4>
+                                                    <p class="text-sm text-webropol-gray-600 leading-relaxed" x-text="template.description"></p>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Recent Prompts -->
+                            <div x-show="recentPrompts.length > 0" 
+                                 class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-bold text-webropol-gray-900 flex items-center">
+                                        <i class="fal fa-history mr-2 text-webropol-primary-600"></i>
+                                        Recent Prompts
+                                    </h4>
+                                    <button @click="clearRecentPrompts()" 
+                                        class="text-sm text-webropol-gray-500 hover:text-webropol-gray-700 transition-colors">
+                                        Clear all
+                                    </button>
+                                </div>
+                                <div class="space-y-3">
+                                    <template x-for="prompt in recentPrompts.slice(0, 2)" :key="prompt.id">
+                                        <button @click="useRecentPrompt(prompt.text)"
+                                            class="w-full p-4 text-left bg-webropol-gray-50 border border-webropol-gray-200 rounded-xl hover:border-violet-300 hover:bg-violet-50 transition-all duration-200 group">
+                                            <p class="text-sm text-webropol-gray-900 line-clamp-2 group-hover:text-violet-700" x-text="prompt.text"></p>
+                                            <span class="text-xs text-webropol-gray-500 mt-1 block" x-text="prompt.date"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Section -->
+                    <div class="max-w-6xl mx-auto">
+                        <div class="text-center mb-10">
+                            <h2 class="text-2xl font-bold text-webropol-gray-900 mb-3">Recent Activity</h2>
+                            <p class="text-webropol-gray-600">Keep track of your latest surveys, events, and projects</p>
+                        </div>
+                        
+                        <!-- Activity Filter Tabs -->
+                        <div class="flex justify-center mb-8">
+                            <div class="inline-flex bg-white border border-webropol-gray-200 rounded-2xl p-1 shadow-sm">
+                                <button
+                                    @click="selectedActivityTab = 'all'"
+                                    :class="selectedActivityTab === 'all' ? 'bg-webropol-primary-600 text-white shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                    class="px-6 py-2 rounded-xl font-semibold text-sm transition-all duration-200"
+                                >
+                                    All Activity
+                                </button>
+                                <button
+                                    @click="selectedActivityTab = 'surveys'"
+                                    :class="selectedActivityTab === 'surveys' ? 'bg-webropol-primary-600 text-white shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                    class="px-6 py-2 rounded-xl font-semibold text-sm transition-all duration-200"
+                                >
+                                    Surveys
+                                </button>
+                                <button
+                                    @click="selectedActivityTab = 'events'"
+                                    :class="selectedActivityTab === 'events' ? 'bg-webropol-primary-600 text-white shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                                    class="px-6 py-2 rounded-xl font-semibold text-sm transition-all duration-200"
+                                >
+                                    Events
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Activity List -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <template x-for="activity in filteredActivities().slice(0, 6)" :key="activity.id">
+                                <div class="bg-white rounded-2xl border border-webropol-gray-200 p-6 hover:shadow-lg hover:border-webropol-primary-300 transition-all duration-200 group">
+                                    <div class="flex items-start justify-between">
+                                        <!-- Content -->
+                                        <div class="flex-1 min-w-0">
+                                            <!-- Type Icon and Title -->
+                                            <div class="flex items-center mb-3">
+                                                <template x-if="activity.type === 'surveys'">
+                                                    <div class="w-10 h-10 bg-webropol-primary-100 rounded-xl flex items-center justify-center mr-3">
+                                                        <i class="fal fa-poll text-webropol-primary-600 text-lg"></i>
+                                                    </div>
+                                                </template>
+                                                <template x-if="activity.type === 'events'">
+                                                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                                                        <i class="fal fa-calendar-check text-purple-600 text-lg"></i>
+                                                    </div>
+                                                </template>
+                                                <div class="flex-1 min-w-0">
+                                                    <h3 class="font-bold text-lg text-webropol-gray-900 truncate group-hover:text-webropol-primary-600 transition-colors cursor-pointer" 
+                                                        @click="activity.type === 'surveys' ? (setCurrentSurvey(activity), location.href = activity.editUrl) : location.href = activity.editUrl"
+                                                        x-text="activity.name">
+                                                    </h3>
+                                                    <div class="flex items-center space-x-3 mt-1">
+                                                        <span class="text-sm text-webropol-gray-500">Updated 2 days ago</span>
+                                                        <template x-if="activity.answers !== undefined && activity.answers > 0">
+                                                            <span class="text-sm text-webropol-gray-500">
+                                                                <i class="fal fa-users text-xs mr-1"></i>
+                                                                <span x-text="activity.answers + ' responses'"></span>
+                                                            </span>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Status Badge -->
+                                        <div class="flex flex-col items-end space-y-2">
+                                            <template x-if="activity.status === 'Open'">
+                                                <span class="inline-flex items-center px-3 py-1 bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-full">
+                                                    <div class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></div>
+                                                    Active
+                                                </span>
+                                            </template>
+                                            <template x-if="activity.status === 'Draft'">
+                                                <span class="inline-flex items-center px-3 py-1 bg-amber-100 text-amber-700 text-sm font-semibold rounded-full">
+                                                    <i class="fal fa-edit text-xs mr-1"></i>
+                                                    Draft
+                                                </span>
+                                            </template>
+                                            <template x-if="activity.status === 'Answered'">
+                                                <span class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
+                                                    <i class="fal fa-check-circle text-xs mr-1"></i>
+                                                    Complete
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quick Actions -->
+                                    <div class="flex items-center justify-between pt-4 border-t border-webropol-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div class="flex items-center space-x-3">
+                                            <template x-if="activity.type === 'surveys'">
+                                                <button @click="setCurrentSurvey(activity); location.hash = '#/surveys/report'" 
+                                                    class="flex items-center px-3 py-1.5 text-sm font-medium text-webropol-primary-600 bg-webropol-primary-50 hover:bg-webropol-primary-100 rounded-lg transition-colors"
+                                                    title="View Reports">
+                                                    <i class="fal fa-chart-line mr-1"></i>
+                                                    Reports
+                                                </button>
+                                            </template>
+                                            <template x-if="activity.type === 'surveys'">
+                                                <button @click="setCurrentSurvey(activity); location.hash = '#/surveys/aita'" 
+                                                    class="flex items-center px-3 py-1.5 text-sm font-medium text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors"
+                                                    title="AI Analysis">
+                                                    <i class="fal fa-brain mr-1"></i>
+                                                    AI Analysis
+                                                </button>
+                                            </template>
+                                        </div>
+                                        
+                                        <button @click="activity.type === 'surveys' ? (setCurrentSurvey(activity), location.href = activity.editUrl) : location.href = activity.editUrl"
+                                            class="text-sm font-medium text-webropol-gray-500 hover:text-webropol-primary-600 transition-colors">
+                                            <i class="fal fa-external-link mr-1"></i>
+                                            Open
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- View All Activities Button -->
+                        <div class="text-center mt-8">
+                            <button class="px-8 py-3 bg-white border border-webropol-gray-300 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 text-webropol-gray-700 hover:text-webropol-primary-600 font-semibold rounded-2xl transition-all duration-200">
+                                View All Activities
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Floating Create Button Component -->
+    <!-- Visibility is controlled by GlobalSettingsManager; only gate by interface mode here -->
+    <webropol-floating-button x-show="interfaceMode === 'classic'" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform scale-90"
+                             x-transition:enter-end="opacity-100 transform scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100 transform scale-100"
+                             x-transition:leave-end="opacity-0 transform scale-90"></webropol-floating-button>
+
+    <!-- Create Folder Modal -->
+    <div x-show="showCreateFolder" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showCreateFolder = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <div class="p-6 border-b border-webropol-gray-200">
+                <h3 class="text-xl font-bold text-webropol-gray-900">Create New Folder</h3>
+                <p class="text-webropol-gray-600 mt-1">Organize your questions and surveys</p>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder Name</label>
+                        <input x-model="newFolderName" type="text" placeholder="Enter folder name..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description
+                            (Optional)</label>
+                        <textarea x-model="newFolderDescription" rows="3"
+                            placeholder="Describe what this folder contains..."
+                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end space-x-3">
+                <button @click="showCreateFolder = false"
+                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
+                    Cancel
+                </button>
+                <button @click="createFolder()"
+                    class="px-6 py-2 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white font-semibold rounded-lg transition-all">
+                    Create Folder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move to Folder Modal -->
+    <div x-show="showMoveToFolder !== null" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showMoveToFolder = null"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <div class="p-6 border-b border-webropol-gray-200">
+                <h3 class="text-xl font-bold text-webropol-gray-900">Move to Folder</h3>
+                <p class="text-webropol-gray-600 mt-1">Select a folder for this item</p>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-3">
+                    <template x-for="folder in folders" :key="folder.id">
+                        <button @click="moveToFolder(showMoveToFolder, folder.id)"
+                            class="w-full flex items-center p-3 rounded-xl hover:bg-webropol-primary-50 transition-all text-left">
+                            <div class="w-8 h-8 bg-webropol-primary-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fal fa-folder text-webropol-primary-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-webropol-gray-900" x-text="folder.name"></div>
+                                <div class="text-sm text-webropol-gray-500"
+                                    x-text="folder.description || 'No description'"></div>
+                            </div>
+                        </button>
+                    </template>
+
+                    <div x-show="folders.length === 0" class="text-center py-8 text-webropol-gray-500">
+                        <i class="fal fa-folder-open text-2xl mb-2"></i>
+                        <p>No folders available. Create one first.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-webropol-gray-200 flex items-center justify-end">
+                <button @click="showMoveToFolder = null"
+                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Preview Modal -->
+    <div x-show="showPreviewModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showPreviewModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div
+                class="flex items-center justify-between p-8 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-primary-50/30">
+                <div class="flex items-center">
+                    <div
+                        class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fal fa-eye text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-webropol-gray-900">Survey Preview</h2>
+                        <p class="text-webropol-gray-600">360 Performance Evaluation</p>
+                    </div>
+                </div>
+                <button @click="showPreviewModal = false"
+                    class="w-10 h-10 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-xl transition-all">
+                    <i class="fal fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-3xl mx-auto space-y-8">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold text-webropol-gray-900 mb-2">360</h3>
+                        <p class="text-webropol-gray-600">Please complete this performance evaluation survey</p>
+                    </div>
+
+                    <!-- Question 1: Gender -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-primary-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-4">1. Gender</h4>
+                        <div class="space-y-3">
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-webropol-primary-50 transition-colors cursor-pointer">
+                                <input type="radio" name="gender"
+                                    class="form-radio h-5 w-5 text-webropol-primary-600 mr-4">
+                                <span class="text-webropol-gray-700 font-medium">Male</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-webropol-primary-50 transition-colors cursor-pointer">
+                                <input type="radio" name="gender"
+                                    class="form-radio h-5 w-5 text-webropol-primary-600 mr-4">
+                                <span class="text-webropol-gray-700 font-medium">Female</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Rate -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-primary-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">2. Rate</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-webropol-gray-200">
+                                        <th class="text-left py-3 px-4 font-medium text-webropol-gray-700"></th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            1</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            2</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            3</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            4</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            5</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-webropol-gray-100">
+                                    <tr class="hover:bg-webropol-primary-50/50 transition-colors">
+                                        <td class="py-4 px-4 font-medium text-webropol-gray-900">A</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_a"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-webropol-primary-50/50 transition-colors">
+                                        <td class="py-4 px-4 font-medium text-webropol-gray-900">B</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="rate_b"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Recommend -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-primary-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">3. Recommend</h4>
+                        <div class="flex flex-col space-y-4">
+                            <div class="flex items-center justify-between text-sm text-webropol-gray-600 font-medium">
+                                <span>Not at all likely</span>
+                                <span>Extremely likely</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">0</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">1</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">2</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">3</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">4</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">5</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">6</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">7</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">8</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">9</button>
+                                <button
+                                    class="w-12 h-12 border-2 border-webropol-gray-300 rounded-lg hover:border-webropol-primary-500 hover:bg-webropol-primary-50 transition-all font-semibold text-webropol-gray-700">10</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 4: Leadership -->
+                    <div
+                        class="bg-white border border-webropol-gray-200 rounded-xl p-6 hover:border-webropol-primary-300 transition-colors">
+                        <h4 class="text-lg font-semibold text-webropol-gray-900 mb-6">4. Leadership and charisma</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-webropol-gray-200">
+                                        <th
+                                            class="text-left py-3 px-4 font-medium text-webropol-gray-700 min-w-[200px]">
+                                        </th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            1</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            2</th>
+                                        <th
+                                           
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            3</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            4</th>
+                                        <th
+                                            class="text-center py-3 px-2 font-medium text-webropol-gray-700 min-w-[60px]">
+                                            5</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-webropol-gray-100">
+                                    <tr class="hover:bg-webropol-primary-50/50 transition-colors">
+                                        <td class="py-4 px-4 text-webropol-gray-900">Possesses dignity and authority
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_1"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-webropol-primary-50/50 transition-colors">
+                                        <td class="py-4 px-4 text-webropol-gray-900">Sets clear goals</td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                        <td class="text-center py-4 px-2">
+                                            <input type="radio" name="lead_2"
+                                                class="form-radio h-5 w-5 text-webropol-primary-600">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-8 border-t border-webropol-gray-200 bg-webropol-gray-50/50 flex items-center justify-end space-x-4">
+                <button @click="showPreviewModal = false"
+                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
+                    Close Preview
+                </button>
+                <button
+                    class="hidden px-6 py-3 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white font-semibold rounded-xl shadow-medium transition-all">
+                    Use This Survey
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create New Modal -->
+    <div x-show="showCreateModal" x-cloak
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        <div @click.away="showCreateModal = false"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+            <!-- Modal Header -->
+            <div
+                class="p-8 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-gray-50 to-webropol-primary-50/30">
+                <h3 class="text-2xl font-bold text-webropol-gray-900 mb-2">Create New Survey or Question Library</h3>
+                <p class="text-webropol-gray-600">Choose what you want to create. This will take to create new page of
+                    each survey</p>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Surveys -->
+                    <button @click="createItem('surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-chart-bar text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Create custom surveys</span>
+                    </button>
+
+                    <!-- Events -->
+                    <button @click="createItem('events')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-calendar-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Events</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Event management</span>
+                    </button>
+
+                    <!-- EXW Surveys -->
+                    <button @click="createItem('exw-surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-chart-line text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">EXW Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Employee experience</span>
+                    </button>
+
+                    <!-- Case Management -->
+                    <button @click="createItem('case-management')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-briefcase text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Case Management</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Manage cases</span>
+                    </button>
+
+                    <!-- eTests -->
+                    <button @click="createItem('etests')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-clipboard-check text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">eTests</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Online testing</span>
+                    </button>
+
+                    <!-- Assessments -->
+                    <button @click="createItem('assessments')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-tasks text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Assessments</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Performance review</span>
+                    </button>
+
+                    <!-- Touch Tablets -->
+                    <button @click="createItem('touch-tablets')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-tablet-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Touch Tablets</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Tablet surveys</span>
+                    </button>
+
+                    <!-- Direct Mobile Surveys -->
+                    <button @click="createItem('mobile-surveys')"
+                        class="group flex flex-col items-center p-6 rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200">
+                        <div
+                            class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fal fa-mobile-alt text-white text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-webropol-gray-900 text-center">Direct Mobile Surveys</span>
+                        <span class="text-xs text-webropol-gray-500 text-center mt-1">Mobile optimized</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-8 border-t border-webropol-gray-200 bg-webropol-gray-50/50 flex items-center justify-end">
+                <button @click="showCreateModal = false"
+                    class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global function to open settings modal
+        function openGlobalSettings() {
+            let settingsModal = document.querySelector('webropol-settings-modal');
+            if (!settingsModal) {
+                settingsModal = document.createElement('webropol-settings-modal');
+                document.body.appendChild(settingsModal);
+            }
+            
+            // Wait a moment for the element to be ready, then open
+            setTimeout(() => {
+                if (settingsModal.open) {
+                    settingsModal.open();
+                } else {
+                    settingsModal.setAttribute('open', '');
+                }
+            }, 10);
+        }
+        
+        // Make it globally available
+        window.openGlobalSettings = openGlobalSettings;
+        
+        function libraryApp() {
+            return {
+                // Interface mode state
+                interfaceMode: localStorage.getItem('webropol_interface_mode') || 'classic', // 'classic' or 'prompt'
+                // removed: page-scoped dark mode state
+                isTransitioning: false,
+                
+                // AI Prompt Interface state
+                aiPrompt: '',
+                selectedSurveyType: 'survey',
+                isGenerating: false,
+                showPromptHelp: false,
+                recentPrompts: JSON.parse(localStorage.getItem('recentPrompts') || '[]'),
+                
+                // Survey types for AI prompt interface
+                surveyTypes: [
+                    { id: 'survey', name: 'Survey', icon: 'fal fa-chart-bar' },
+                    { id: 'event', name: 'Event', icon: 'fal fa-calendar-alt' },
+                    { id: 'feedback', name: '360', icon: 'fal fa-comment-dots' },
+                    { id: 'assessment', name: 'eTest', icon: 'fal fa-clipboard-check' },
+                    { id: 'quiz', name: 'SMS Survey', icon: 'fal fa-question-circle' },
+                    { id: 'poll', name: 'EXW', icon: 'fal fa-chart-bar' },
+                    { id: 'form', name: 'WOTT', icon: 'fal fa-tablet' },
+                    { id: 'research', name: 'Research', icon: 'fal fa-search' }
+                ],
+                
+                // Prompt templates
+                promptTemplates: [
+                    {
+                        id: 1,
+                        title: 'Customer Satisfaction',
+                        description: 'Measure customer satisfaction and experience',
+                        icon: 'fal fa-heart',
+                        prompt: 'Create a customer satisfaction survey for our service. Include questions about overall satisfaction, likelihood to recommend, service quality, and areas for improvement. Keep it under 5 minutes.'
+                    },
+                    {
+                        id: 2,
+                        title: 'Employee Feedback',
+                        description: 'Gather employee insights and engagement',
+                        icon: 'fal fa-users',
+                        prompt: 'Design an employee engagement survey covering job satisfaction, work-life balance, management effectiveness, and career development opportunities. Include both rating scales and open-ended questions.'
+                    },
+                    {
+                        id: 3,
+                        title: 'Product Feedback',
+                        description: 'Collect feedback on products or features',
+                        icon: 'fal fa-box',
+                        prompt: 'Create a product feedback survey for our new mobile app feature. Ask about usability, usefulness, frequency of use, and suggestions for improvements. Target tech-savvy users.'
+                    },
+                    {
+                        id: 4,
+                        title: 'Event Evaluation',
+                        description: 'Evaluate events and gatherings',
+                        icon: 'fal fa-calendar-check',
+                        prompt: 'Design an event evaluation survey for our quarterly team meeting. Include questions about content quality, speaker effectiveness, venue, logistics, and overall satisfaction.'
+                    },
+                    {
+                        id: 5,
+                        title: 'Market Research',
+                        description: 'Understand market trends and preferences',
+                        icon: 'fal fa-chart-line',
+                        prompt: 'Create a market research survey to understand consumer preferences for eco-friendly products. Include demographic questions, purchasing behavior, and environmental consciousness factors.'
+                    },
+                    {
+                        id: 6,
+                        title: 'Training Assessment',
+                        description: 'Evaluate training effectiveness',
+                        icon: 'fal fa-graduation-cap',
+                        prompt: 'Design a training evaluation survey for our cybersecurity awareness program. Assess knowledge retention, training quality, applicability to daily work, and confidence levels.'
+                    }
+                ],
+                
+                // Original state properties
+                currentView: 'questions',
+                selectedLanguage: 'en',
+                searchTerm: '',
+                showPreviewModal: false,
+                showCreateFolder: false,
+                showCreateModal: false,
+                showMoveToFolder: null,
+                showAddToFolder: null,
+                newFolderName: '',
+                newFolderDescription: '',
+                expandedFolders: [],
+                showOnlyTitles: false,
+                selectedActivityTab: 'all',
+                
+                // Settings state (mirror of GlobalSettingsManager)
+                // Initialize from global manager if available; fallback to stored global/local keys
+                settings: (window.globalSettingsManager && typeof window.globalSettingsManager.getAllSettings === 'function'
+                    ? window.globalSettingsManager.getAllSettings()
+                    : JSON.parse(
+                        localStorage.getItem('webropol_global_settings')
+                        || localStorage.getItem('webropol_settings')
+                        || JSON.stringify({ showFloatingButton: false, autoSave: true })
+                      )
+                  ),
+                
+                // Selection state
+                selectedQuestions: [],
+                selectedSurveys: [],
+                selectAllQuestions: false,
+                selectAllSurveys: false,
+                showContextMenu: null,
+
+                // AI Prompt Interface Methods
+                switchInterface(mode) {
+                    if (this.isTransitioning || this.interfaceMode === mode) return;
+                    
+                    this.isTransitioning = true;
+                    
+                    // Add a slight delay to allow for smooth animations
+                    setTimeout(() => {
+                        this.interfaceMode = mode;
+                        
+                        // Save interface mode to localStorage
+                        localStorage.setItem('webropol_interface_mode', mode);
+                        // Toggle body class so layout can react (e.g., hide sidebar)
+                        document.body.classList.toggle('mode-prompt', mode === 'prompt');
+                        document.body.classList.toggle('mode-classic', mode === 'classic');
+                        
+                        // Reset transition state after animation completes
+                        setTimeout(() => {
+                            this.isTransitioning = false;
+                        }, 500);
+                    }, 50);
+                },
+
+                // removed: local toggleTheme()
+
+                // Settings methods
+                saveSettings() {
+                    // Route saves through the GlobalSettingsManager when present
+                    if (window.globalSettingsManager && typeof window.globalSettingsManager.importSettings === 'function') {
+                        window.globalSettingsManager.importSettings(this.settings);
+                        // settings will be reapplied and events dispatched by the manager
+                    } else {
+                        // Fallback to legacy local storage key
+                        localStorage.setItem('webropol_settings', JSON.stringify(this.settings));
+                        this.applySettings();
+                    }
+                },
+
+                resetSettings() {
+                    if (!confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) return;
+                    if (window.globalSettingsManager && typeof window.globalSettingsManager.resetSettings === 'function') {
+                        window.globalSettingsManager.resetSettings();
+                        this.settings = window.globalSettingsManager.getAllSettings();
+                    } else {
+                        this.settings = { showFloatingButton: false, autoSave: true };
+                        localStorage.setItem('webropol_settings', JSON.stringify(this.settings));
+                        this.applySettings();
+                    }
+                },
+
+                applySettings() {
+                    // removed: applying .dark on document here; theming handled globally
+                    
+                    // Apply other settings here as needed
+                    // For example, if autoSave setting affects some behavior
+                },
+
+                // Keyboard shortcuts
+                init() {
+                    // Apply settings on initialization
+                    this.applySettings();
+                    // Ensure body has the correct interface mode class on load
+                    document.body.classList.toggle('mode-prompt', this.interfaceMode === 'prompt');
+                    document.body.classList.toggle('mode-classic', this.interfaceMode === 'classic');
+                    
+                    // Add keyboard listener for interface switching
+                    document.addEventListener('keydown', (e) => {
+                        // Ctrl/Cmd + Shift + I to toggle interface mode
+                        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+                            e.preventDefault();
+                            this.switchInterface(this.interfaceMode === 'classic' ? 'prompt' : 'classic');
+                        }
+                        // Escape key to go back to classic interface from AI prompt
+                        if (e.key === 'Escape' && this.interfaceMode === 'prompt') {
+                            this.switchInterface('classic');
+                        }
+                    });
+                    
+                    // removed: local theme change listener; global ThemeManager dispatches are handled in components
+                    
+                    // Listen for header settings open event
+                    document.addEventListener('settings-open', () => {
+                        openGlobalSettings();
+                    });
+                    
+                    // Listen for global settings changes
+                    document.addEventListener('webropol-settings-applied', (e) => {
+                        if (e.detail && e.detail.settings) {
+                            // Mirror global settings into Alpine state so UI can react if needed
+                            this.settings = e.detail.settings;
+                            this.applySettings();
+                        }
+                    });
+                    
+                    // Add global settings keyboard shortcut
+                    document.addEventListener('keydown', (e) => {
+                        if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+                            e.preventDefault();
+                            openGlobalSettings();
+                        }
+                    });
+                },
+                
+                updateCharCount() {
+                    // Character count is handled by x-text in template
+                },
+                
+                clearPrompt() {
+                    this.aiPrompt = '';
+                },
+                
+                useTemplate(prompt) {
+                    this.aiPrompt = prompt;
+                },
+                
+                useRecentPrompt(prompt) {
+                    this.aiPrompt = prompt;
+                },
+                
+                clearRecentPrompts() {
+                    this.recentPrompts = [];
+                    localStorage.removeItem('recentPrompts');
+                },
+                
+                saveRecentPrompt(prompt) {
+                    const newPrompt = {
+                        id: Date.now(),
+                        text: prompt,
+                        date: new Date().toLocaleDateString(),
+                        timestamp: Date.now()
+                    };
+                    
+                    // Remove if already exists
+                    this.recentPrompts = this.recentPrompts.filter(p => p.text !== prompt);
+                    
+                    // Add to beginning
+                    this.recentPrompts.unshift(newPrompt);
+                    
+                    // Keep only last 10
+                    this.recentPrompts = this.recentPrompts.slice(0, 10);
+                    
+                    // Save to localStorage
+                    localStorage.setItem('recentPrompts', JSON.stringify(this.recentPrompts));
+                },
+                
+                async generateSurvey() {
+                    if (!this.aiPrompt.trim()) return;
+                    
+                    this.isGenerating = true;
+                    
+                    try {
+                        // Save the prompt to recent prompts
+                        this.saveRecentPrompt(this.aiPrompt.trim());
+                        
+                        // Simulate AI generation (replace with actual API call)
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        // Here you would integrate with your AI service
+                        console.log('Generating survey with prompt:', this.aiPrompt);
+                        console.log('Survey type:', this.selectedSurveyType);
+                        
+                        // For demo purposes, show a success message
+                        alert('Survey generated successfully! (This is a demo - integrate with your AI service)');
+                        
+                        // Switch back to classic interface to show the result
+                        this.interfaceMode = 'classic';
+                        
+                    } catch (error) {
+                        console.error('Error generating survey:', error);
+                        alert('Error generating survey. Please try again.');
+                    } finally {
+                        this.isGenerating = false;
+                    }
+                },
+                
+                previewPrompt() {
+                    if (!this.aiPrompt.trim()) return;
+                    
+                    // Show a preview of what the AI will generate
+                    alert(`Preview:\n\nSurvey Type: ${this.selectedSurveyType}\nPrompt: ${this.aiPrompt}\n\nThis would generate a ${this.selectedSurveyType} based on your description.`);
+                },
+
+                // Sample data
+                folders: [
+                    { id: 1, name: 'Customer Feedback', description: 'Questions and surveys for customer satisfaction' },
+                    { id: 2, name: 'Employee Evaluation', description: '360 degree feedback surveys' },
+                    { id: 3, name: 'Market Research', description: 'Market analysis questions' }
+                ],
+
+                activities: [
+                    { id: 1, name: 'Customer Satisfaction Survey', type: 'surveys', status: 'Open', answers: 25, editUrl: 'surveys/edit.html?id=1' },
+                    { id: 2, name: 'Product Launch Event', type: 'events', status: 'Draft', editUrl: 'events/events.html?id=2' },
+                    { id: 3, name: 'Employee Engagement Survey 2024', type: 'surveys', status: 'Answered', answers: 142, editUrl: 'surveys/edit.html?id=3' },
+                    { id: 4, name: 'Q4 Review Meeting', type: 'events', status: 'Open', editUrl: 'events/events.html?id=4' },
+                    { id: 5, name: 'Market Research Study', type: 'surveys', status: 'Answered', answers: 78, editUrl: 'surveys/edit.html?id=5' },
+                    { id: 6, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8, editUrl: 'surveys/aita.html' },
+                    { id: 7, name: 'Product Feedback - Mobile App', type: 'surveys', status: 'Draft', answers: 0, editUrl: 'surveys/edit.html?id=7' },
+                    { id: 8, name: 'Annual Conference 2024', type: 'events', status: 'Open', editUrl: 'events/events.html?id=8' }
+                ],
+
+                questions: [
+                    { 
+                        id: 1, 
+                        name: 'Valintakysymys', 
+                        type: 'selection', 
+                        language: 'fi', 
+                        folderId: null,
+                        questionType: 'Selection',
+                        options: ['Vaihtoehto 1', 'Vaihtoehto 2', 'Vaihtoehto 3', 'Vaihtoehto 4']
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Avoin kysymys', 
+                        type: 'text', 
+                        language: 'fi', 
+                        folderId: 1,
+                        questionType: 'Text Question',
+                        options: []
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Selection Question', 
+                        type: 'selection', 
+                        language: 'en', 
+                        folderId: null,
+                        questionType: 'Selection',
+                        options: ['Option A', 'Option B', 'Option C', 'Option D']
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Rating Question', 
+                        type: 'rating', 
+                        language: 'en', 
+                        folderId: 2,
+                        questionType: 'Rating',
+                        options: ['1 - Poor', '2 - Fair', '3 - Good', '4 - Very Good', '5 - Excellent']
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Multiple Choice', 
+                        type: 'multiple', 
+                        language: 'en', 
+                        folderId: 1,
+                        questionType: 'Multiple Choice',
+                        options: ['Choice 1', 'Choice 2', 'Choice 3', 'Choice 4', 'Choice 5']
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Tekstikysymys', 
+                        type: 'text', 
+                        language: 'fi', 
+                        folderId: 3,
+                        questionType: 'Text Question',
+                        options: []
+                    }
+                ],
+
+                surveys: [
+                    { id: 1, name: '360', type: 'survey', language: 'en', folderId: 2 },
+                    { id: 2, name: 'Revalidation Sample', type: 'survey', language: 'en', folderId: null },
+                    { id: 3, name: 'Asiakastyytyväisyys', type: 'survey', language: 'fi', folderId: 1 },
+                    { id: 4, name: 'Employee Satisfaction', type: 'survey', language: 'en', folderId: 2 }
+                ],
+
+                setView(view) {
+                    this.currentView = view;
+                },
+
+                toggleFolder(folderId) {
+                    if (this.expandedFolders.includes(folderId)) {
+                        this.expandedFolders = this.expandedFolders.filter(id => id !== folderId);
+                    } else {
+                        this.expandedFolders.push(folderId);
+                    }
+                },
+
+                createFolder() {
+                    if (!this.newFolderName.trim()) return;
+
+                    const newFolder = {
+                        id: Date.now(),
+                        name: this.newFolderName.trim(),
+                        description: this.newFolderDescription.trim()
+                    };
+
+                    this.folders.push(newFolder);
+                    this.newFolderName = '';
+                    this.newFolderDescription = '';
+                    this.showCreateFolder = false;
+                },
+
+                moveToFolder(itemId, folderId) {
+                    const allItems = [...this.questions, ...this.surveys];
+                    const item = allItems.find(item => item.id === itemId);
+                    if (item) {
+                        item.folderId = folderId;
+                    }
+                    this.showMoveToFolder = null;
+                },
+
+                removeFromFolder(itemId, folderId) {
+                    const allItems = [...this.questions, ...this.surveys];
+                    const item = allItems.find(item => item.id === itemId);
+                    if (item && item.folderId === folderId) {
+                        item.folderId = null;
+                    }
+                },
+
+                getFilteredFolders() {
+                    return this.folders.filter(folder => {
+                        const folderItems = this.getFolderItems(folder.id);
+                        return folderItems.length > 0;
+                    });
+                },
+
+                getFolderItems(folderId) {
+                    const currentItems = this.currentView === 'questions' ? this.questions : this.surveys;
+                    return currentItems.filter(item => {
+                        const matchesFolder = item.folderId === folderId;
+                        const matchesLanguage = item.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesFolder && matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFolderItemCount(folderId) {
+                    return this.getFolderItems(folderId).length;
+                },
+
+                getUngroupedItems() {
+                    const currentItems = this.currentView === 'questions' ? this.questions : this.surveys;
+                    return currentItems.filter(item => {
+                        const isUngrouped = item.folderId === null;
+                        const matchesLanguage = item.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return isUngrouped && matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFilteredQuestions() {
+                    return this.questions.filter(question => {
+                        const matchesLanguage = question.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || question.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesLanguage && matchesSearch;
+                    });
+                },
+
+                getFilteredSurveys() {
+                    return this.surveys.filter(survey => {
+                        const matchesLanguage = survey.language === this.selectedLanguage;
+                        const matchesSearch = !this.searchTerm || survey.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                        return matchesLanguage && matchesSearch;
+                    });
+                },
+
+                createItem(type) {
+                    // Close the modal first
+                    this.showCreateModal = false;
+
+                    // Handle the creation logic based on type
+                    this.handleItemCreation(type);
+                },
+
+
+
+                handleItemCreation(type) {
+                    switch (type) {
+                        case 'surveys':
+                            console.log('Creating new survey...');
+                            // Add your survey creation logic here
+                            break;
+                        case 'events':
+                            console.log('Creating new event...');
+                            // Add your event creation logic here
+                            break;
+                        case 'exw-surveys':
+                            console.log('Creating new EXW survey...');
+                            // Add your EXW survey creation logic here
+                            break;
+                        case 'case-management':
+                            console.log('Creating new case management...');
+                            // Add your case management creation logic here
+                            break;
+                        case 'etests':
+                            console.log('Creating new eTest...');
+                            // Add your eTest creation logic here
+                            break;
+                        case 'assessments':
+                            console.log('Creating new assessment...');
+                            // Add your assessment creation logic here
+                            break;
+                        case 'touch-tablets':
+                            console.log('Creating new touch tablet survey...');
+                            // Add your touch tablet creation logic here
+                            break;
+                        case 'mobile-surveys':
+                            console.log('Creating new mobile survey...');
+                            // Add your mobile survey creation logic here
+                            break;
+                        default:
+                            console.log('Unknown item type:', type);
+                    }
+                },
+
+                editFolder(folderId) {
+                    // Implement folder editing functionality
+                    console.log('Edit folder:', folderId);
+                },
+
+                // Checkbox selection methods
+                toggleQuestionSelection(questionId) {
+                    if (this.selectedQuestions.includes(questionId)) {
+                        this.selectedQuestions = this.selectedQuestions.filter(id => id !== questionId);
+                    } else {
+                        this.selectedQuestions.push(questionId);
+                    }
+                    this.updateSelectAllQuestions();
+                },
+
+                toggleSurveySelection(surveyId) {
+                    if (this.selectedSurveys.includes(surveyId)) {
+                        this.selectedSurveys = this.selectedSurveys.filter(id => id !== surveyId);
+                    } else {
+                        this.selectedSurveys.push(surveyId);
+                    }
+                    this.updateSelectAllSurveys();
+                },
+
+                toggleSelectAllQuestions() {
+                    if (this.selectAllQuestions) {
+                        this.selectedQuestions = this.getFilteredQuestions().map(q => q.id);
+                    } else {
+                        this.selectedQuestions = [];
+                    }
+                },
+
+                toggleSelectAllSurveys() {
+                    if (this.selectAllSurveys) {
+                        this.selectedSurveys = this.getFilteredSurveys().map(s => s.id);
+                    } else {
+                        this.selectedSurveys = [];
+                    }
+                },
+
+                updateSelectAllQuestions() {
+                    const filteredQuestions = this.getFilteredQuestions();
+                    this.selectAllQuestions = filteredQuestions.length > 0 && 
+                        filteredQuestions.every(q => this.selectedQuestions.includes(q.id));
+                },
+
+                updateSelectAllSurveys() {
+                    const filteredSurveys = this.getFilteredSurveys();
+                    this.selectAllSurveys = filteredSurveys.length > 0 && 
+                        filteredSurveys.every(s => this.selectedSurveys.includes(s.id));
+                },
+
+                // Action methods
+                deleteSelectedItems() {
+                    if (this.currentView === 'questions') {
+                        this.questions = this.questions.filter(q => !this.selectedQuestions.includes(q.id));
+                        this.selectedQuestions = [];
+                        this.selectAllQuestions = false;
+                    } else {
+                        this.surveys = this.surveys.filter(s => !this.selectedSurveys.includes(s.id));
+                        this.selectedSurveys = [];
+                        this.selectAllSurveys = false;
+                    }
+                },
+
+                freezeSelectedItems() {
+                    // Implement freeze functionality
+                    const selectedIds = this.currentView === 'questions' ? this.selectedQuestions : this.selectedSurveys;
+                    console.log('Freezing items:', selectedIds);
+                    // Clear selection after action
+                    if (this.currentView === 'questions') {
+                        this.selectedQuestions = [];
+                        this.selectAllQuestions = false;
+                    } else {
+                        this.selectedSurveys = [];
+                        this.selectAllSurveys = false;
+                    }
+                },
+
+                // Context menu methods
+                toggleContextMenu(itemId, itemType) {
+                    if (this.showContextMenu === itemId) {
+                        this.showContextMenu = null;
+                    } else {
+                        this.showContextMenu = itemId;
+                    }
+                },
+
+                deleteItem(itemId, itemType) {
+                    if (itemType === 'question') {
+                        this.questions = this.questions.filter(q => q.id !== itemId);
+                    } else if (itemType === 'survey') {
+                        this.surveys = this.surveys.filter(s => s.id !== itemId);
+                    }
+                    this.showContextMenu = null;
+                },
+
+                freezeItem(itemId, itemType) {
+                    console.log('Freezing item:', itemId, itemType);
+                    this.showContextMenu = null;
+                },
+
+                hasSelectedItems() {
+                    return this.currentView === 'questions' 
+                        ? this.selectedQuestions.length > 0 
+                        : this.selectedSurveys.length > 0;
+                },
+
+                // Activity tracking
+                selectedActivityTab: 'all',
+                activities: [
+                    { id: 1, name: 'Customer Satisfaction Survey', type: 'surveys', status: 'Open', editUrl: 'surveys/edit.html?id=1' },
+                    { id: 2, name: 'Employee Engagement Survey 2024', type: 'surveys', status: 'Draft', editUrl: 'surveys/edit.html?id=2' },
+                    { id: 3, name: 'Product Feedback - Mobile App', type: 'surveys', status: 'Open', editUrl: 'surveys/edit.html?id=3' },
+                    { id: 4, name: 'AI Text Analysis Survey', type: 'surveys', status: 'Answered', answers: 8, editUrl: 'surveys/aita.html' },
+                    { id: 5, name: 'Website Usability Survey', type: 'surveys', status: 'Answered', answers: 2, editUrl: 'surveys/edit.html?id=5' },
+                    { id: 6, name: 'Annual Conference 2024', type: 'events', status: 'Answered', answers: 1, editUrl: 'events/events.html?id=6' },
+                    { id: 7, name: 'Product Launch Event', type: 'events', status: 'Draft', editUrl: 'events/events.html?id=7' },
+                    { id: 8, name: 'Market Research Study', type: 'surveys', status: 'Open', answers: 45, editUrl: 'surveys/edit.html?id=8' }
+                ],
+                setCurrentSurvey(activity) {
+                    if (!activity || activity.type !== 'surveys') return;
+                    try {
+                        localStorage.setItem('currentSurveyName', activity.name);
+                        if (activity.id) localStorage.setItem('currentSurveyId', activity.id);
+                        // Maintain id->name map
+                        const key = 'surveyNameMap';
+                        let map = {};
+                        try { map = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+                        if (activity.id) {
+                            map[activity.id] = activity.name;
+                            localStorage.setItem(key, JSON.stringify(map));
+                        }
+                        window.dispatchEvent(new CustomEvent('survey-selected', { detail: { id: activity.id, name: activity.name }}));
+                    } catch (e) { console.warn('Unable to persist survey selection', e); }
+                },
+                filteredActivities() {
+                    if (this.selectedActivityTab === 'all') return this.activities;
+                    return this.activities.filter(a => a.type === this.selectedActivityTab);
+                },
+            }
+        }
+    </script>
+
+</body>
+
+</html>
