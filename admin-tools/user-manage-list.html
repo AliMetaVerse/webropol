@@ -69,13 +69,13 @@
       </div>
 
       <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 pb-16" role="main">
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-none mx-auto">
 
           <!-- Header: title + actions -->
           <div class="mb-4 flex items-center justify-between">
             <h1 class="page-title">User management and new user creation</h1>
             <div class="flex items-center gap-2">
-              <a href="user-management.html" class="btn btn-primary"><i class="fal fa-plus mr-2"></i>Create new user</a>
+              <a href="./user-management.html" class="btn btn-primary"><i class="fal fa-plus mr-2"></i>Create new user</a>
             </div>
           </div>
 
@@ -86,9 +86,9 @@
                 <div>
                   <label class="block text-xs text-webropol-gray-600 mb-1">Search by</label>
                   <select x-model="filters.field" class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg">
-                    <option value="userName">User name</option>
-                    <option value="firstName">First name</option>
-                    <option value="lastName">Last name</option>
+                    <option value="all">All fields</option>
+                    <option value="userName">Username</option>
+                    <option value="name">Name</option>
                     <option value="email">Email</option>
                     <option value="status">Status</option>
                   </select>
@@ -121,35 +121,39 @@
                 <thead class="border-b border-webropol-gray-200">
                   <tr class="text-left text-webropol-gray-700">
                     <th class="w-10 px-4 py-3"><input type="checkbox" @change="toggleAll($event)" :checked="allVisibleSelected" /></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('userName')">User name <i :class="sortIcon('userName')"></i></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('firstName')">First name <i :class="sortIcon('firstName')"></i></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('lastName')">Last name <i :class="sortIcon('lastName')"></i></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('email')">Email <i :class="sortIcon('email')"></i></th>
-                    <th class="px-4 py-3">User class</th>
-                    <th class="px-4 py-3">BI VIEW user class</th>
+                    <th class="px-4 py-3 table-sort min-w-[12rem]" @click="toggleSort('userName')">Username <i :class="sortIcon('userName')"></i></th>
+                    <th class="px-4 py-3 table-sort min-w-[14rem]" @click="toggleSort('name')">Name <i :class="sortIcon('name')"></i></th>
+                    <th class="px-4 py-3 table-sort min-w-[16rem]" @click="toggleSort('email')">Email <i :class="sortIcon('email')"></i></th>
+                    <th class="px-4 py-3">Role</th>
+                    <th class="px-4 py-3">BI view role</th>
                     <th class="px-4 py-3 table-sort" @click="toggleSort('lastLogin')">Last login <i :class="sortIcon('lastLogin')"></i></th>
                     <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3 table-sort" @click="toggleSort('surveysCreated')">Surveys created <i :class="sortIcon('surveysCreated')"></i></th>
-                    <th class="px-4 py-3 table-sort" @click="toggleSort('created')">User created <i :class="sortIcon('created')"></i></th>
-                    <th class="px-4 py-3 w-48">Actions</th>
+                    <th class="px-4 py-3 table-sort" @click="toggleSort('created')">Created <i :class="sortIcon('created')"></i></th>
+                    <th class="px-4 py-3 w-56">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template x-for="u in pagedUsers" :key="u.id">
                     <tr class="border-b border-webropol-gray-100 hover:bg-webropol-primary-50/30">
                       <td class="px-4 py-3"><input type="checkbox" :value="u.id" @change="toggleSelect(u.id)" :checked="selected.has(u.id)" /></td>
-                      <td class="px-4 py-3 text-webropol-primary-700 hover:underline"><a href="#" @click.prevent="openUser(u)">{{ u.userName }}</a></td>
-                      <td class="px-4 py-3">{{ u.firstName }}</td>
-                      <td class="px-4 py-3">{{ u.lastName }}</td>
-                      <td class="px-4 py-3">{{ u.email }}</td>
-                      <td class="px-4 py-3">{{ u.userClass }}</td>
-                      <td class="px-4 py-3">{{ u.biViewClass || '-' }}</td>
-                      <td class="px-4 py-3">{{ u.lastLogin || 'Never' }}</td>
+                      <td class="px-4 py-3 text-webropol-primary-700 hover:underline"><a :href="detailHref(u)" x-text="u.userName"></a></td>
                       <td class="px-4 py-3">
-                        <span :class="u.status === 'Active' ? 'bg-webropol-green-100 text-webropol-green-700' : 'bg-webropol-red-50 text-webropol-red-600'" class="px-2 py-1 rounded-full text-xs">{{ u.status }}</span>
+                <a :href="detailHref(u)" class="font-medium text-webropol-primary-700 hover:underline"
+                           x-text="`${u.firstName ?? ''} ${u.lastName ?? ''}`.trim()"></a>
+                        <div class="text-xs text-webropol-gray-500" x-text="u.firstName && u.lastName ? '' : '—'"></div>
                       </td>
-                      <td class="px-4 py-3">{{ u.surveysCreated }}</td>
-                      <td class="px-4 py-3">{{ u.created }}</td>
+                      <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="truncate inline-block max-w-[22ch] xl:max-w-[36ch]" :title="u.email" x-text="u.email"></span>
+                      </td>
+                      <td class="px-4 py-3" x-text="u.userClass"></td>
+                      <td class="px-4 py-3" x-text="u.biViewClass || '-' "></td>
+                      <td class="px-4 py-3" x-text="u.lastLogin || 'Never'"></td>
+                      <td class="px-4 py-3">
+                        <span :class="u.status === 'Active' ? 'bg-webropol-green-100 text-webropol-green-700' : 'bg-webropol-red-50 text-webropol-red-600'" class="px-2 py-1 rounded-full text-xs" x-text="u.status"></span>
+                      </td>
+                      <td class="px-4 py-3" x-text="u.surveysCreated"></td>
+                      <td class="px-4 py-3" x-text="u.created"></td>
                       <td class="px-4 py-3">
                         <div class="flex items-center gap-2">
                           <button class="btn btn-secondary !px-3 !py-1.5 text-xs" @click="sendValidation(u)">Send validation link</button>
@@ -168,17 +172,20 @@
                 <button class="btn btn-secondary !px-3 !py-1.5 text-xs" :disabled="selected.size === 0" @click="bulkDelete()">Delete</button>
                 <span class="ml-3" x-text="selected.size + ' selected'"></span>
               </div>
+              <div class="flex items-center gap-3 text-sm text-webropol-gray-700">
+                <span x-text="rangeText"></span>
+              </div>
               <div class="flex items-center gap-2 text-sm">
                 <span>Show on page</span>
                 <template x-for="opt in [20,50,100]" :key="opt">
                   <button class="w-10 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50"
                           :class="pageSize===opt ? 'bg-webropol-primary-600 text-white border-webropol-primary-600' : ''"
-                          @click="setPageSize(opt)">{{ opt }}</button>
+                          @click="setPageSize(opt)" x-text="opt"></button>
                 </template>
               </div>
               <div class="flex items-center gap-2">
                 <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="prevPage()" :disabled="page===1"><i class="fal fa-angle-left"></i></button>
-                <span class="text-sm">Page {{ page }} / {{ totalPages }}</span>
+                <span class="text-sm" x-text="`Page ${page} / ${totalPages}`"></span>
                 <button class="w-8 h-8 rounded-full border border-webropol-gray-300 hover:bg-webropol-gray-50" @click="nextPage()" :disabled="page===totalPages"><i class="fal fa-angle-right"></i></button>
               </div>
             </div>
@@ -192,17 +199,36 @@
 
   <script>
     function userListApp(){
-      const sample = [
-        {id:1,userName:'aktiivinen_kayttaja',firstName:'Olen',lastName:'Aktiivinen',email:'markus+233@webropol.com',userClass:'User',biViewClass:'-',lastLogin:'Never',status:'Active',surveysCreated:0,created:'19.08.2025'},
-        {id:2,userName:'janne-normaluser',firstName:'janne',lastName:'laukkanen',email:'janne+user@webropol.com',userClass:'Admin',biViewClass:'BI VIEW Admin',lastLogin:'22.10.2024',status:'Active',surveysCreated:3,created:'07.03.2024'},
-        {id:3,userName:'markus@wapup.com',firstName:'wapu',lastName:'pekka',email:'markus@wapup.com',userClass:'User',biViewClass:'-',lastLogin:'30.04.2025',status:'Active',surveysCreated:0,created:'30.04.2025'},
-        {id:4,userName:'juho.admin@webropol.local',firstName:'Juho',lastName:'Admin',email:'juho.admin@webropol.local',userClass:'User',biViewClass:'-',lastLogin:'13.02.2023',status:'Active',surveysCreated:0,created:'08.02.2023'},
-        {id:5,userName:'janne-nps',firstName:'Nps',lastName:'Test',email:'janne+nps@webropol.com',userClass:'User',biViewClass:'BI VIEW user',lastLogin:'09.09.2025',status:'Active',surveysCreated:2,created:'31.05.2024'}
-      ];
+      function mockUsers(count=150){
+        const firstNames = ['Hanna','Juho','Marika','Adrian','Mahfuzul','Teppo','Janne','Elenore','Anna','Mika','Ayan','Sara','Olli','Veera','Lauri','Kalle','Noora','Matti','Sanna','Ville','Timo','Elina','Iida','Paula','Petri','Katja'];
+        const lastNames = ['Björklund','Jokinen','Poghosyan','Varmenus','Haque','Marin','Laukkanen','Klinga','Gotkowicz','Textila','Das','Korhonen','Salmi','Virtanen','Nieminen','Heikkinen','Lehtonen','Savolainen','Laine','Hämäläinen','Koski','Mäkinen','Kinnunen','Tuominen','Mustonen','Ojala'];
+        const roles = ['Admin','User','Viewer'];
+        const biRoles = ['-','BI VIEW user','BI VIEW Admin'];
+        const pad = n => String(n).padStart(2,'0');
+        const users = [];
+        for(let i=0;i<count;i++){
+          const fn = firstNames[i % firstNames.length];
+          const ln = lastNames[(i*5) % lastNames.length];
+          const uname = `${fn}.${ln}`.toLowerCase().replace(/[^a-z]/g,'');
+          const email = `${fn}.${ln}@example.com`.toLowerCase();
+          const userClass = roles[i % roles.length];
+          const biViewClass = biRoles[(i+1) % biRoles.length];
+          const status = i % 17 === 0 ? 'Disabled' : 'Active';
+          const surveysCreated = (i * 13) % 250;
+          const year = 2019 + (i % 7);
+          const month = pad((i % 12)+1);
+          const day = pad((i*3 % 28)+1);
+          const created = `${day}.${month}.${year}`;
+          const lastLogin = i % 9 === 0 ? 'Never' : `${pad((i*5 % 28)+1)}.${pad(((i+2)%12)+1)}.${2020+(i%6)}`;
+          users.push({id:i+1,userName:uname,firstName:fn,lastName:ln,email,userClass,biViewClass,lastLogin,status,surveysCreated,created});
+        }
+        return users;
+      }
+      const sample = mockUsers(180);
       return {
         // data
         users: sample,
-        filters: { field:'userName', match:'Contains', query:'' },
+        filters: { field:'all', match:'Contains', query:'' },
         sort: { key:'userName', dir:'asc' },
         selected: new Set(),
         page: 1,
@@ -213,7 +239,14 @@
           const q = this.filters.query?.toLowerCase() || '';
           if(!q) return this.users.slice();
           return this.users.filter(u=>{
-            const v = String(u[this.filters.field] ?? '').toLowerCase();
+            let v = '';
+            if(this.filters.field==='all') {
+              v = [u.userName, u.firstName, u.lastName, u.email, u.userClass, u.biViewClass, u.status].filter(Boolean).join(' ').toLowerCase();
+            } else if(this.filters.field==='name') {
+              v = `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim().toLowerCase();
+            } else {
+              v = String(u[this.filters.field] ?? '').toLowerCase();
+            }
             if(this.filters.match==='Contains') return v.includes(q);
             if(this.filters.match==='Equals') return v===q;
             if(this.filters.match==='Starts with') return v.startsWith(q);
@@ -223,7 +256,14 @@
         },
         get sorted(){
           return this.filtered.slice().sort((a,b)=>{
-            const ak = a[this.sort.key] ?? ''; const bk = b[this.sort.key] ?? '';
+            let ak,bk;
+            if(this.sort.key==='name') {
+              ak = `${a.lastName ?? ''} ${a.firstName ?? ''}`.toLowerCase();
+              bk = `${b.lastName ?? ''} ${b.firstName ?? ''}`.toLowerCase();
+            } else {
+              ak = String(a[this.sort.key] ?? '').toLowerCase();
+              bk = String(b[this.sort.key] ?? '').toLowerCase();
+            }
             return (ak>bk?1:ak<bk?-1:0) * (this.sort.dir==='asc'?1:-1);
           });
         },
@@ -233,6 +273,10 @@
         },
         get allVisibleSelected(){
           return this.pagedUsers.length>0 && this.pagedUsers.every(u=>this.selected.has(u.id));
+        },
+        get rangeText(){
+          const total = this.sorted.length; const from = (this.page-1)*this.pageSize + 1; const to = Math.min(this.page*this.pageSize, total);
+          return `Showing ${from}-${to} of ${total}`;
         },
 
         // methods
@@ -245,7 +289,7 @@
           return this.sort.dir==='asc' ? 'fal fa-sort-up text-webropol-primary-600 ml-1' : 'fal fa-sort-down text-webropol-primary-600 ml-1';
         },
         applyFilters(){ this.page = 1; },
-        resetFilters(){ this.filters = { field:'userName', match:'Contains', query:'' }; this.page = 1; },
+        resetFilters(){ this.filters = { field:'all', match:'Contains', query:'' }; this.page = 1; },
         toggleSelect(id){ this.selected.has(id) ? this.selected.delete(id) : this.selected.add(id); },
         toggleAll(e){
           if(e.target.checked){ this.pagedUsers.forEach(u=>this.selected.add(u.id)); }
@@ -254,7 +298,8 @@
         setPageSize(n){ this.pageSize = n; this.page = 1; },
         nextPage(){ if(this.page < this.totalPages) this.page++; },
         prevPage(){ if(this.page > 1) this.page--; },
-        openUser(u){ window.location.href = 'user-management.html'; },
+  detailHref(u){ return `./admin-tools/user-management.html?user=${encodeURIComponent(u.userName)}`; },
+  openUser(u){ window.location.href = this.detailHref(u); },
         sendValidation(u){ this.toast(`Validation link sent to ${u.email}`); },
         resetPassword(u){ this.toast(`Password reset requested for ${u.userName}`); },
         bulkDelete(){ this.toast(`${this.selected.size} user(s) queued for deletion`); this.selected.clear(); },
