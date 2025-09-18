@@ -14,18 +14,23 @@
           colors: {
             'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
             'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
           },
           boxShadow: {
             'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
           }
         }
       }
     }
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../design-system/styles/tokens.css">
+  <link href="../../design-system/styles/animations.css" rel="stylesheet">
   <style>
     [x-cloak] {
       display: none !important;
@@ -33,7 +38,11 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #f8fafc;
+    }
+
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .template-card {
@@ -96,15 +105,18 @@
     .tab-button {
       transition: all 0.2s ease;
       border-bottom: 2px solid transparent;
+      padding: 12px 16px;
     }
 
     .tab-button.active {
       border-bottom-color: #06b6d4;
       color: #06b6d4;
+      font-weight: 600;
     }
 
-    .tab-button:hover {
-      background: #f1f5f9;
+    .tab-button:hover:not(.active) {
+      color: #0891b2;
+      background: rgba(6, 182, 212, 0.05);
     }
 
     .pagination-dot {
@@ -113,23 +125,42 @@
       border-radius: 50%;
       background: #cbd5e1;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .pagination-dot.active {
       background: #06b6d4;
       transform: scale(1.2);
     }
+
+    .hover-lift {
+      transition: all 0.2s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
+    }
   </style>
   <script src="../../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../../design-system/components/modals/Modal.js" type="module"></script>
+  <script src="../../design-system/components/modals/SettingsModal.js" type="module"></script>
+  <script src="../../design-system/utils/theme-manager.js" type="module"></script>
+  <script src="../../design-system/utils/global-settings-manager.js" type="module"></script>
 </head>
-<body>
+<body x-data="createSurveyApp()">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
-      <webropol-header title="Create new survey"></webropol-header>
+      <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../../index.html"},{"label":"Surveys","url":"../index.html"},{"label":"Create New Survey","url":"create-legacy-new.html"}]'></webropol-breadcrumbs>
+      </div>
       
-      <main class="flex-1 overflow-y-auto p-6 bg-webropol-gray-50" x-data="createSurveyApp()">
+      <main class="flex-1 overflow-y-auto px-6 py-12 lg:px-12 pb-24" role="main">
         <div class="max-w-4xl mx-auto">
           <!-- Survey Details Card -->
           <div class="bg-white rounded-2xl shadow-soft p-8 mb-6">
@@ -194,12 +225,12 @@
             </div>
 
             <!-- Template Tabs -->
-            <div class="flex space-x-8 mb-8 border-b border-webropol-gray-200">
+            <div class="flex space-x-0 mb-8 border-b border-webropol-gray-200">
               <template x-for="tab in templateTabs" :key="tab.id">
                 <button 
-                  @click="activeTab = tab.id"
+                  @click="activeTab = tab.id; currentPage = 0"
                   :class="activeTab === tab.id ? 'active' : ''"
-                  class="tab-button pb-4 px-2 text-sm font-medium text-webropol-gray-700"
+                  class="tab-button text-sm font-medium text-webropol-gray-700"
                   x-text="tab.name + ' (' + tab.count + ')'"
                 ></button>
               </template>
@@ -234,6 +265,7 @@
             <div class="flex justify-center space-x-2">
               <template x-for="(dot, index) in paginationDots" :key="index">
                 <div 
+                  @click="currentPage = index"
                   :class="currentPage === index ? 'active' : ''"
                   class="pagination-dot"
                 ></div>
@@ -343,9 +375,24 @@
           const futureDate = new Date();
           futureDate.setFullYear(futureDate.getFullYear() + 1);
           this.deletionDate = futureDate.toISOString().split('T')[0];
+        },
+
+        createSurvey() {
+          if (!this.surveyTitle || !this.selectedTemplate) {
+            return;
+          }
+          
+          // Simulate survey creation
+          alert('Survey created successfully! Redirecting to survey editor...');
+          
+          // In a real app, this would redirect to the survey editor
+          // window.location.href = `/surveys/edit/${surveyId}`;
         }
       }
     }
   </script>
+
+  <!-- Floating Button -->
+  <webropol-floating-button></webropol-floating-button>
 </body>
 </html>
