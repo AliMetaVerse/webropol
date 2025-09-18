@@ -8,20 +8,13 @@
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
-    tailw                    <!-- White semi-transparent content area -->
-                    <div class="flex-1 bg-white/80 rounded-lg flex items-center justify-center m-4 mb-2">
-                      <!-- Content lines centered and thicker -->
-                      <div class="w-3/4">
-                        <div class="w-4/5 h-1 bg-black rounded-sm mb-2 mx-auto"></div>
-                        <div class="w-3/5 h-1 bg-black rounded-sm mb-2 mx-auto"></div>
-                        <div class="w-2/5 h-1 bg-black rounded-sm mx-auto"></div>
-                      </div>
-                    </div>g = {
+    tailwind.config = {
       theme: {
         extend: {
           colors: {
             'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
             'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
             'webropol-green': { 50: '#f0fdf4', 500: '#22c55e', 700: '#15803d' },
             'webropol-red': { 50: '#fef2f2', 500: '#ef4444', 700: '#dc2626' }
           },
@@ -63,168 +56,6 @@
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
-    .template-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border: 2px solid #e2e8f0;
-      background: #ffffff;
-    }
-
-    /* Default state - clean, subtle appearance */
-    .template-card:not(.selected):not(:hover):not(:focus-within) {
-      transform: translateY(0);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border-color: #e2e8f0;
-      background: #ffffff;
-    }
-
-    /* Hover state - subtle lift and shadow enhancement */
-    .template-card:hover:not(.selected) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      border-color: #cbd5e1;
-      background: #fefefe;
-    }
-
-    /* Focus state - clear focus ring like the image */
-    .template-card:focus-within:not(.selected) {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 3px rgba(6, 182, 212, 0.3);
-      border-color: #06b6d4;
-      outline: none;
-      background: #ffffff;
-    }
-
-    /* Active/pressed state */
-    .template-card:active:not(.selected) {
-      transform: translateY(0);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      border-color: #06b6d4;
-      transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Selected state - matches the image with checkmark */
-    .template-card.selected {
-      border-color: #06b6d4;
-      box-shadow: 0 4px 25px -5px rgba(6, 182, 212, 0.25), 0 10px 10px -5px rgba(6, 182, 212, 0.08);
-      transform: translateY(-1px);
-      background: #ffffff;
-    }
-
-    /* Selected hover state */
-    .template-card.selected:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px -5px rgba(6, 182, 212, 0.3), 0 15px 15px -5px rgba(6, 182, 212, 0.1);
-      border-color: #0891b2;
-    }
-
-    /* Selected focus state */
-    .template-card.selected:focus-within {
-      box-shadow: 0 8px 30px -5px rgba(6, 182, 212, 0.3), 0 15px 15px -5px rgba(6, 182, 212, 0.1), 0 0 0 3px rgba(6, 182, 212, 0.3);
-      outline: none;
-    }
-
-    /* Disabled state (if needed) */
-    .template-card.disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-      filter: grayscale(0.3);
-      pointer-events: none;
-      transform: none !important;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
-    }
-
-    /* Loading state overlay */
-    .template-card.loading::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(2px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      z-index: 10;
-    }
-
-    /* Selection indicator - blue circle background */
-    .template-card.selected::before {
-      content: '';
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 20px;
-      height: 20px;
-      background: #06b6d4;
-      border-radius: 50%;
-      z-index: 5;
-      opacity: 1;
-      transform: scale(1);
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Checkmark icon */
-    .template-card.selected::after {
-      content: '✓';
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-size: 11px;
-      font-weight: 700;
-      z-index: 6;
-      opacity: 1;
-      transform: scale(1);
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      line-height: 1;
-    }
-
-    /* Dark mode states */
-    .dark .template-card {
-      background: #1e293b;
-      border-color: #334155;
-      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.3), 0 1px 2px 0 rgba(0,0,0,0.2);
-    }
-
-    .dark .template-card:hover:not(.selected) {
-      border-color: #475569;
-      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-      background: #334155;
-    }
-
-    .dark .template-card:focus-within:not(.selected) {
-      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(6, 182, 212, 0.4);
-      border-color: #06b6d4;
-    }
-
-    .dark .template-card.selected {
-      border-color: #06b6d4;
-      background: #1e293b;
-      box-shadow: 0 4px 25px -5px rgba(6, 182, 212, 0.3), 0 10px 10px -5px rgba(6, 182, 212, 0.1);
-    }
-
-    .dark .template-card.selected:hover {
-      box-shadow: 0 8px 30px -5px rgba(6, 182, 212, 0.4), 0 15px 15px -5px rgba(6, 182, 212, 0.15);
-      border-color: #22d3ee;
-    }
-
-
-
-
-
-
-
     .carousel-container {
       scroll-behavior: smooth;
       scrollbar-width: none;
@@ -254,6 +85,10 @@
   <script src="../../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../../design-system/components/cards/ThumbnailCard.js" type="module"></script>
+  <script src="../../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../../design-system/components/modals/Modal.js" type="module"></script>
+  <script src="../../design-system/components/modals/SettingsModal.js" type="module"></script>
   <script src="../../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../../design-system/utils/global-settings-manager.js" type="module"></script>
 </head>
@@ -268,7 +103,12 @@
       <main class="flex-1 overflow-y-auto px-6 py-8 pb-24" role="main">
         <div class="max-w-5xl mx-auto">
           <div class="mb-8">
-            <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Create new survey</h1>
+            <div class="text-center lg:text-left">
+              <h1 class="page-title">Create new survey</h1>
+              <p class="text-xl text-webropol-gray-600 max-w-2xl lg:mx-0 mx-auto leading-relaxed">
+                Build engaging surveys with our intuitive tools and templates
+              </p>
+            </div>
           </div>
 
           <!-- Survey Details Form -->
@@ -436,32 +276,14 @@
                 aria-orientation="horizontal"
               >
                 <template x-for="template in currentTemplates" :key="template.id">
-                  <div 
-                    class="template-card flex-shrink-0 w-48 h-40 rounded-xl overflow-hidden flex flex-col"
-                    :class="selectedTemplate === template.id ? 'selected' : ''"
-                    :style="'background-image: url(' + template.image + ')'"
-                    @click="selectTemplate(template)"
-                    @keydown="(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectTemplate(template); } }"
-                    tabindex="0"
-                    :aria-label="'Select template: ' + template.name"
-                    :aria-selected="selectedTemplate === template.id"
-                    role="option"
-                  >
-                    <!-- White semi-transparent content area -->
-                    <div class="flex-1 bg-white/80 rounded-lg flex items-center justify-start pl-4 m-4 mb-2">
-                      <!-- Content lines vertically centered, left aligned -->
-                      <div class="w-3/4">
-                        <div class="w-4/5 h-2 bg-black rounded-lg mb-2"></div>
-                        <div class="w-3/5 h-2 bg-black rounded-lg mb-2"></div>
-                        <div class="w-2/5 h-2 bg-black rounded-lg"></div>
-                      </div>
-                    </div>
-                    
-                    <!-- Template name footer - full width with bottom rounded corners -->
-                    <div class="bg-white px-4 py-3 text-center rounded-b-xl">
-                      <div class="text-gray-700 text-sm font-medium" x-text="template.name"></div>
-                    </div>
-                  </div>
+                  <webropol-thumbnail-card
+                    class="flex-shrink-0 w-48"
+                    :title="template.name"
+                    :image="template.image"
+                    :selected="selectedTemplate === template.id"
+                    :preview-bars="template.previewBars || '60,40,50'"
+                    @webropol-thumbnail-select="selectTemplate(template)"
+                  ></webropol-thumbnail-card>
                 </template>
               </div>
 
@@ -540,23 +362,23 @@
         // Templates data
         templates: {
           webropol: [
-            { id: 1, name: 'Default template', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRTJFOEYwIi8+Cjwvc3ZnPg==' },
-            { id: 2, name: 'A Default Dark', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjQ0JENUUxIi8+Cjwvc3ZnPg==' },
-            { id: 3, name: 'A Default Light Blue', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==' },
-            { id: 4, name: 'AI: Happy', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==' },
-            { id: 5, name: 'AI: Mountain Summer', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==' },
-            { id: 6, name: 'AI: Mountain Winter', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRUZGNkZGIi8+Cjwvc3ZnPg==' },
-            { id: 7, name: 'AI: Sea', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==' }
+            { id: 1, name: 'Default template', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRTJFOEYwIi8+Cjwvc3ZnPg==', previewBars: '70,50,60' },
+            { id: 2, name: 'A Default Dark', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjQ0JENUUxIi8+Cjwvc3ZnPg==', previewBars: '60,40,50' },
+            { id: 3, name: 'A Default Light Blue', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==', previewBars: '50,70,45' },
+            { id: 4, name: 'AI: Happy', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==', previewBars: '80,55,65' },
+            { id: 5, name: 'AI: Mountain Summer', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '65,45,70' },
+            { id: 6, name: 'AI: Mountain Winter', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRUZGNkZGIi8+Cjwvc3ZnPg==', previewBars: '75,35,55' },
+            { id: 7, name: 'AI: Sea', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==', previewBars: '60,65,40' }
           ],
           my: [
-            { id: 101, name: 'Forest Shadow 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjFGNUY5Ii8+Cjwvc3ZnPg==' },
-            { id: 102, name: 'Party 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjhGQUZDIi8+Cjwvc3ZnPg==' },
-            { id: 103, name: 'Pet Time 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==' },
-            { id: 104, name: 'The Beach 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRURGNEZGIi8+Cjwvc3ZnPg==' }
+            { id: 101, name: 'Forest Shadow 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjFGNUY5Ii8+Cjwvc3ZnPg==', previewBars: '55,75,45' },
+            { id: 102, name: 'Party 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjhGQUZDIi8+Cjwvc3ZnPg==', previewBars: '85,50,70' },
+            { id: 103, name: 'Pet Time 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '45,60,80' },
+            { id: 104, name: 'The Beach 1', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRURGNEZGIi8+Cjwvc3ZnPg==', previewBars: '70,40,90' }
           ],
           shared: [
-            { id: 201, name: 'Corporate Blue', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==' },
-            { id: 202, name: 'Modern Green', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==' }
+            { id: 201, name: 'Corporate Blue', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==', previewBars: '60,50,55' },
+            { id: 202, name: 'Modern Green', image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '75,45,65' }
           ]
         },
 
@@ -616,6 +438,10 @@
 
         selectTemplate(template) {
           this.selectedTemplate = template.id;
+          // Dispatch custom event for the ThumbnailCard component
+          document.dispatchEvent(new CustomEvent('template-selected', {
+            detail: { selectedId: template.id }
+          }));
         },
 
         scrollCarousel(direction) {
