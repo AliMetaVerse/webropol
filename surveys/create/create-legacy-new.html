@@ -45,63 +45,6 @@
       background: rgba(255, 255, 255, 0.9);
     }
 
-    .template-card {
-      transition: all 0.2s ease;
-      border: 2px solid transparent;
-    }
-
-    .template-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    .template-card.selected {
-      border-color: #06b6d4;
-      box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.1);
-    }
-
-    .template-preview {
-      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .template-bars {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      opacity: 0.6;
-    }
-
-    .template-bar {
-      height: 4px;
-      border-radius: 2px;
-      background: #334155;
-    }
-
-    .check-circle {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: #06b6d4;
-      color: white;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .template-card.selected .check-circle {
-      opacity: 1;
-    }
-
     .tab-button {
       transition: all 0.2s ease;
       border-bottom: 2px solid transparent;
@@ -148,6 +91,7 @@
   <script src="../../design-system/components/interactive/FloatingButton.js" type="module"></script>
   <script src="../../design-system/components/modals/Modal.js" type="module"></script>
   <script src="../../design-system/components/modals/SettingsModal.js" type="module"></script>
+  <script src="../../design-system/components/cards/ThumbnailCard.js" type="module"></script>
   <script src="../../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../../design-system/utils/global-settings-manager.js" type="module"></script>
 </head>
@@ -239,25 +183,13 @@
             <!-- Template Grid -->
             <div class="grid grid-cols-5 gap-4 mb-6">
               <template x-for="template in visibleTemplates" :key="template.id">
-                <div 
-                  @click="selectedTemplate = template.id"
-                  :class="selectedTemplate === template.id ? 'selected' : ''"
-                  class="template-card bg-white border border-webropol-gray-200 rounded-xl overflow-hidden cursor-pointer relative"
-                >
-                  <div class="template-preview h-24 relative">
-                    <div class="template-bars">
-                      <div class="template-bar" :style="`width: ${template.bars[0]}%`"></div>
-                      <div class="template-bar" :style="`width: ${template.bars[1]}%`"></div>
-                      <div class="template-bar" :style="`width: ${template.bars[2]}%`"></div>
-                    </div>
-                    <div class="check-circle">
-                      <i class="fas fa-check"></i>
-                    </div>
-                  </div>
-                  <div class="p-3 text-center">
-                    <p class="text-sm font-medium text-webropol-gray-900" x-text="template.name"></p>
-                  </div>
-                </div>
+                <webropol-thumbnail-card
+                  :title="template.name"
+                  :image="template.image"
+                  :preview-bars="template.previewBars"
+                  :selected="selectedTemplate === template.id"
+                  @webropol-thumbnail-select="selectTemplate(template)"
+                ></webropol-thumbnail-card>
               </template>
             </div>
 
@@ -335,26 +267,26 @@
 
         templates: {
           webropol: [
-            { id: 'default', name: 'Default template', bars: [60, 40, 50] },
-            { id: 'dark', name: 'A Default Dark', bars: [70, 30, 60] },
-            { id: 'light-blue', name: 'A Default Light Blue', bars: [50, 60, 40] },
-            { id: 'happy', name: 'AI: Happy', bars: [80, 45, 65] },
-            { id: 'modern', name: 'AI: Modern', bars: [45, 70, 35] },
-            { id: 'minimal', name: 'Minimal', bars: [65, 35, 55] },
-            { id: 'corporate', name: 'Corporate', bars: [55, 50, 45] },
-            { id: 'colorful', name: 'Colorful', bars: [75, 55, 70] },
-            { id: 'professional', name: 'Professional', bars: [60, 40, 50] },
-            { id: 'creative', name: 'Creative', bars: [85, 60, 75] }
+            { id: 'default', name: 'Default template', bars: [60, 40, 50], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRTJFOEYwIi8+Cjwvc3ZnPg==', previewBars: '60,40,50' },
+            { id: 'dark', name: 'A Default Dark', bars: [70, 30, 60], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjQ0JENUUxIi8+Cjwvc3ZnPg==', previewBars: '70,30,60' },
+            { id: 'light-blue', name: 'A Default Light Blue', bars: [50, 60, 40], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==', previewBars: '50,60,40' },
+            { id: 'happy', name: 'AI: Happy', bars: [80, 45, 65], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==', previewBars: '80,45,65' },
+            { id: 'modern', name: 'AI: Modern', bars: [45, 70, 35], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '45,70,35' },
+            { id: 'minimal', name: 'Minimal', bars: [65, 35, 55], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRUZGNkZGIi8+Cjwvc3ZnPg==', previewBars: '65,35,55' },
+            { id: 'corporate', name: 'Corporate', bars: [55, 50, 45], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGREZGIi8+Cjwvc3ZnPg==', previewBars: '55,50,45' },
+            { id: 'colorful', name: 'Colorful', bars: [75, 55, 70], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjhGQUZDIi8+Cjwvc3ZnPg==', previewBars: '75,55,70' },
+            { id: 'professional', name: 'Professional', bars: [60, 40, 50], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '60,40,50' },
+            { id: 'creative', name: 'Creative', bars: [85, 60, 75], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRURGNEZGIi8+Cjwvc3ZnPg==', previewBars: '85,60,75' }
           ],
           my: [
-            { id: 'my-template-1', name: 'My Custom Template', bars: [70, 50, 60] },
-            { id: 'my-template-2', name: 'Team Survey', bars: [60, 45, 55] },
-            { id: 'my-template-3', name: 'Feedback Form', bars: [80, 40, 70] },
-            { id: 'my-template-4', name: 'Event Survey', bars: [55, 65, 45] }
+            { id: 'my-template-1', name: 'My Custom Template', bars: [70, 50, 60], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjFGNUY5Ii8+Cjwvc3ZnPg==', previewBars: '70,50,60' },
+            { id: 'my-template-2', name: 'Team Survey', bars: [60, 45, 55], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjhGQUZDIi8+Cjwvc3ZnPg==', previewBars: '60,45,55' },
+            { id: 'my-template-3', name: 'Feedback Form', bars: [80, 40, 70], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '80,40,70' },
+            { id: 'my-template-4', name: 'Event Survey', bars: [55, 65, 45], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRURGNEZGIi8+Cjwvc3ZnPg==', previewBars: '55,65,45' }
           ],
           shared: [
-            { id: 'shared-1', name: 'Company Template', bars: [65, 55, 60] },
-            { id: 'shared-2', name: 'Department Survey', bars: [75, 45, 65] }
+            { id: 'shared-1', name: 'Company Template', bars: [65, 55, 60], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRERGNEZGIi8+Cjwvc3ZnPg==', previewBars: '65,55,60' },
+            { id: 'shared-2', name: 'Department Survey', bars: [75, 45, 65], image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDE5MiAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjBGOUZGIi8+Cjwvc3ZnPg==', previewBars: '75,45,65' }
           ]
         },
 
@@ -375,6 +307,14 @@
           const futureDate = new Date();
           futureDate.setFullYear(futureDate.getFullYear() + 1);
           this.deletionDate = futureDate.toISOString().split('T')[0];
+        },
+
+        selectTemplate(template) {
+          this.selectedTemplate = template.id;
+          // Dispatch custom event for the ThumbnailCard component
+          document.dispatchEvent(new CustomEvent('template-selected', {
+            detail: { selectedId: template.id }
+          }));
         },
 
         createSurvey() {
