@@ -110,7 +110,7 @@
               <span class="text-[11px] text-webropol-gray-500">Guide your journey</span>
             </div>
             <div class="overflow-x-auto">
-              <ol class="min-w-[700px] grid grid-cols-7 gap-2 sm:gap-3">
+              <ol class="min-w-[840px] grid grid-cols-8 gap-2 sm:gap-3">
                 <!-- 1. Give a Name -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'name' ? 'step' : null">
@@ -141,7 +141,22 @@
                     </div>
                   </div>
                 </li>
-                <!-- 3. Design -->
+                <!-- 3. Create -->
+                <li>
+                  <div class="w-full" :aria-current="getWizardCurrentStep() === 'create' ? 'step' : null">
+                    <div class="flex items-center">
+                      <div :class="{'bg-webropol-primary-600 text-white': stepStatus('create')==='current','bg-webropol-primary-500 text-white': stepStatus('create')==='done','bg-webropol-gray-200 text-webropol-gray-600': stepStatus('create')==='upcoming'}" class="flex h-8 w-8 items-center justify-center rounded-full shrink-0 transition-colors">
+                        <i class="fal fa-plus"></i>
+                      </div>
+                      <div class="mx-2 h-px flex-1" :class="stepStatus('create')==='done' ? 'bg-webropol-primary-500' : 'bg-webropol-gray-200'" aria-hidden="true"></div>
+                    </div>
+                    <div class="mt-2">
+                      <span class="block text-xs font-semibold" :class="stepStatus('create')!=='upcoming' ? 'text-webropol-gray-900' : 'text-webropol-gray-500'">Create</span>
+                      <span class="block text-[11px] text-webropol-gray-500"></span>
+                    </div>
+                  </div>
+                </li>
+                <!-- 4. Design -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'design' ? 'step' : null">
                     <div class="flex items-center">
@@ -156,7 +171,7 @@
                     </div>
                   </div>
                 </li>
-                <!-- 4. Publish -->
+                <!-- 5. Publish -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'publish' ? 'step' : null">
                     <div class="flex items-center">
@@ -171,7 +186,7 @@
                     </div>
                   </div>
                 </li>
-                <!-- 5. Follow up -->
+                <!-- 6. Follow up -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'follow' ? 'step' : null">
                     <div class="flex items-center">
@@ -186,7 +201,7 @@
                     </div>
                   </div>
                 </li>
-                <!-- 6. Get Report -->
+                <!-- 7. Get Report -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'report' ? 'step' : null">
                     <div class="flex items-center">
@@ -201,14 +216,14 @@
                     </div>
                   </div>
                 </li>
-                <!-- 7. AI Text Analysis -->
+                <!-- 8. AI Text Analysis -->
                 <li>
                   <div class="w-full" :aria-current="getWizardCurrentStep() === 'ai' ? 'step' : null">
                     <div class="flex items-center">
                       <div :class="{'bg-webropol-primary-600 text-white': stepStatus('ai')==='current','bg-webropol-primary-500 text-white': stepStatus('ai')==='done','bg-webropol-gray-200 text-webropol-gray-600': stepStatus('ai')==='upcoming'}" class="flex h-8 w-8 items-center justify-center rounded-full shrink-0 transition-colors">
                         <i class="fal fa-robot"></i>
                       </div>
-                      <div class="mx-2 h-px flex-1" aria-hidden="true"></div>
+                      <div class="mx-2 h-px flex-1 hidden" aria-hidden="true"></div>
                     </div>
                     <div class="mt-2">
                       <span class="block text-xs font-semibold" :class="stepStatus('ai')!=='upcoming' ? 'text-webropol-gray-900' : 'text-webropol-gray-500'">AI Text Analysis</span>
@@ -630,7 +645,8 @@
         selectedTemplate: 'default',
         showFolderModal: false,
         currentPage: 0,
-        wizardOrder: ['name','template','design','publish','follow','report','ai'],
+  wizardOrder: ['name','template','create','design','publish','follow','report','ai'],
+  isCreated: false,
 
         templateTabs: [
           { id: 'webropol', name: 'Webropol templates', count: 43 },
@@ -693,7 +709,7 @@
         getWizardCurrentStep() {
           if (!this.surveyTitle.trim()) return 'name';
           if (!this.selectedTemplate) return 'template';
-          // We consider preview/design present by default on this page
+          if (!this.isCreated) return 'create';
           return 'design';
         },
 
@@ -805,6 +821,7 @@
           
           // Simulate survey creation
           alert('Survey created successfully! Redirecting to survey editor...');
+          this.isCreated = true;
           
           // In a real app, this would redirect to the survey editor
           // window.location.href = `/surveys/edit/${surveyId}`;
