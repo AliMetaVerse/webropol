@@ -25,17 +25,58 @@
     .step-card { 
       transition: all 0.3s ease; 
       position: relative;
+      overflow: hidden;
     }
     .step-card:hover { 
-      transform: translateY(-4px); 
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transform: translateY(-8px); 
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     }
     .step-number {
       background: linear-gradient(135deg, #06b6d4, #0891b2);
-      box-shadow: 0 4px 8px rgba(6, 182, 212, 0.3);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
     }
     .step-connector {
-      background: linear-gradient(90deg, #06b6d4 0%, #e2e8f0 100%);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 60px;
+      background: linear-gradient(180deg, #06b6d4, #e2e8f0);
+      top: 100%;
+      z-index: 10;
+    }
+    .step-connector:last-child {
+      display: none;
+    }
+    .mockup-browser {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      position: relative;
+    }
+    .mockup-browser-toolbar {
+      background: #f8fafc;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .mockup-browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #eab308; }
+    .dot-green { background: #22c55e; }
+    .animate-pulse-slow {
+      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
   </style>
 </head>
@@ -64,196 +105,490 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-6xl mx-auto px-6 pb-12">
-
-    <!-- Main Content -->
-    <div class="max-w-6xl mx-auto px-6 pb-12">
+    <div class="max-w-5xl mx-auto px-6 pb-12">
       <!-- Tutorial Steps -->
-      <div class="space-y-8">
+      <div class="relative">
         <!-- Step 1: Give a Name -->
-        <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-          <div class="flex items-start gap-4">
-            <div class="step-number w-12 h-12 rounded-full text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-              <span>1</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <h2 class="text-xl font-bold text-webropol-gray-900">Give a Name</h2>
-                <div class="px-2 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-xs font-medium">Start Here</div>
-              </div>
-              <p class="text-webropol-gray-600 mb-4">Create a clear, descriptive title for your survey and organize it in the right folder for easy management.</p>
-              <div class="bg-webropol-gray-50 rounded-lg p-4">
-                <h4 class="font-medium text-webropol-gray-900 mb-2">What you'll do:</h4>
-                <ul class="space-y-1 text-sm text-webropol-gray-600">
-                  <li class="flex items-center gap-2"><i class="fal fa-check-circle text-webropol-primary-600"></i>Enter a descriptive survey title</li>
-                  <li class="flex items-center gap-2"><i class="fal fa-check-circle text-webropol-primary-600"></i>Select or create a folder for organization</li>
-                  <li class="flex items-center gap-2"><i class="fal fa-check-circle text-webropol-primary-600"></i>Optionally set an automatic deletion date</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 2: Add Template -->
-        <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-          <div class="flex items-start gap-4">
-            <div class="step-number w-12 h-12 rounded-full text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-              <span>2</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <h2 class="text-xl font-bold text-webropol-gray-900">Choose a Template</h2>
-                <div class="px-2 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-xs font-medium">Design</div>
-              </div>
-              <p class="text-webropol-gray-600 mb-4">Select a professional layout template that matches your survey's purpose and visual style.</p>
-              <div class="bg-webropol-gray-50 rounded-lg p-4">
-                <h4 class="font-medium text-webropol-gray-900 mb-2">Template categories:</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                  <div class="flex items-center gap-2">
-                    <i class="fal fa-th-large text-webropol-primary-600"></i>
-                    <span><strong>Webropol:</strong> Pre-built templates</span>
+        <div class="relative mb-16">
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-8 shadow-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <!-- Content -->
+              <div>
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="step-number w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold">
+                    <span>1</span>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <i class="fal fa-user text-webropol-primary-600"></i>
-                    <span><strong>My Templates:</strong> Your saved designs</span>
+                  <div>
+                    <h2 class="text-2xl font-bold text-webropol-gray-900">Give a Name</h2>
+                    <div class="px-3 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-sm font-medium mt-1 inline-block">Start Here</div>
                   </div>
-                  <div class="flex items-center gap-2">
-                    <i class="fal fa-users text-webropol-primary-600"></i>
-                    <span><strong>Shared:</strong> Team templates</span>
+                </div>
+                <p class="text-webropol-gray-600 mb-6 text-lg">Create a clear, descriptive title for your survey and organize it in the right folder for easy management.</p>
+                <div class="bg-gradient-to-br from-webropol-gray-50 to-webropol-primary-50/30 rounded-xl p-6">
+                  <h4 class="font-semibold text-webropol-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fal fa-clipboard-list text-webropol-primary-600"></i>
+                    What you'll do:
+                  </h4>
+                  <ul class="space-y-3">
+                    <li class="flex items-center gap-3"><i class="fal fa-check-circle text-webropol-primary-600 text-lg"></i><span>Enter a descriptive survey title</span></li>
+                    <li class="flex items-center gap-3"><i class="fal fa-check-circle text-webropol-primary-600 text-lg"></i><span>Select or create a folder for organization</span></li>
+                    <li class="flex items-center gap-3"><i class="fal fa-check-circle text-webropol-primary-600 text-lg"></i><span>Optionally set an automatic deletion date</span></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <!-- Visual Mockup -->
+              <div class="order-first lg:order-last">
+                <div class="mockup-browser">
+                  <div class="mockup-browser-toolbar">
+                    <div class="mockup-browser-dots">
+                      <div class="mockup-dot dot-red"></div>
+                      <div class="mockup-dot dot-yellow"></div>
+                      <div class="mockup-dot dot-green"></div>
+                    </div>
+                    <div class="ml-4 text-xs text-webropol-gray-500">webropol.com/create</div>
+                  </div>
+                  <div class="p-6 bg-gradient-to-br from-white to-webropol-gray-50">
+                    <div class="space-y-4">
+                      <div class="bg-white rounded-lg p-4 border border-webropol-gray-200">
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Survey Name</label>
+                        <div class="w-full h-10 bg-webropol-primary-50 border border-webropol-primary-200 rounded-lg flex items-center px-3">
+                          <span class="text-webropol-gray-600 animate-pulse-slow">Customer Satisfaction Survey 2025</span>
+                        </div>
+                      </div>
+                      <div class="bg-white rounded-lg p-4 border border-webropol-gray-200">
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder</label>
+                        <div class="w-full h-10 bg-webropol-gray-50 border border-webropol-gray-200 rounded-lg flex items-center px-3">
+                          <i class="fal fa-folder text-webropol-primary-600 mr-2"></i>
+                          <span class="text-webropol-gray-600">Marketing Surveys</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="step-connector"></div>
+        </div>
+
+        <!-- Step 2: Choose Template -->
+        <div class="relative mb-16">
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-8 shadow-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <!-- Content -->
+              <div>
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="step-number w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold">
+                    <span>2</span>
+                  </div>
+                  <div>
+                    <h2 class="text-2xl font-bold text-webropol-gray-900">Choose a Template</h2>
+                    <div class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mt-1 inline-block">Design</div>
+                  </div>
+                </div>
+                <p class="text-webropol-gray-600 mb-6 text-lg">Select a professional layout template that matches your survey's purpose and visual style.</p>
+                <div class="bg-gradient-to-br from-blue-50 to-webropol-primary-50/30 rounded-xl p-6">
+                  <h4 class="font-semibold text-webropol-gray-900 mb-4">Template categories:</h4>
+                  <div class="grid grid-cols-1 gap-3">
+                    <div class="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <i class="fal fa-th-large text-webropol-primary-600 text-lg"></i>
+                      <span><strong>Webropol:</strong> Professional pre-built templates</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <i class="fal fa-user text-webropol-primary-600 text-lg"></i>
+                      <span><strong>My Templates:</strong> Your custom saved designs</span>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-white/70 rounded-lg">
+                      <i class="fal fa-users text-webropol-primary-600 text-lg"></i>
+                      <span><strong>Shared:</strong> Team collaboration templates</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Visual Mockup -->
+              <div class="order-first lg:order-last">
+                <div class="mockup-browser">
+                  <div class="mockup-browser-toolbar">
+                    <div class="mockup-browser-dots">
+                      <div class="mockup-dot dot-red"></div>
+                      <div class="mockup-dot dot-yellow"></div>
+                      <div class="mockup-dot dot-green"></div>
+                    </div>
+                    <div class="ml-4 text-xs text-webropol-gray-500">Choose Template</div>
+                  </div>
+                  <div class="p-6 bg-gradient-to-br from-white to-blue-50">
+                    <div class="grid grid-cols-3 gap-3">
+                      <div class="bg-white rounded-lg p-3 border-2 border-webropol-primary-300 shadow-md">
+                        <div class="w-full h-20 bg-gradient-to-br from-webropol-primary-100 to-webropol-primary-200 rounded mb-2 flex items-center justify-center">
+                          <i class="fal fa-star text-webropol-primary-600 text-xl"></i>
+                        </div>
+                        <div class="text-xs font-medium text-center">Modern</div>
+                      </div>
+                      <div class="bg-white rounded-lg p-3 border border-webropol-gray-200">
+                        <div class="w-full h-20 bg-gradient-to-br from-green-100 to-green-200 rounded mb-2 flex items-center justify-center">
+                          <i class="fal fa-leaf text-green-600 text-xl"></i>
+                        </div>
+                        <div class="text-xs text-center">Clean</div>
+                      </div>
+                      <div class="bg-white rounded-lg p-3 border border-webropol-gray-200">
+                        <div class="w-full h-20 bg-gradient-to-br from-purple-100 to-purple-200 rounded mb-2 flex items-center justify-center">
+                          <i class="fal fa-palette text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="text-xs text-center">Creative</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
         </div>
 
         <!-- Step 3: Create -->
-        <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-          <div class="flex items-start gap-4">
-            <div class="step-number w-12 h-12 rounded-full text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-              <span>3</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <h2 class="text-xl font-bold text-webropol-gray-900">Create Survey</h2>
-                <div class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Action</div>
-              </div>
-              <p class="text-webropol-gray-600 mb-4">Click the Create button to generate your survey foundation using your chosen template and settings.</p>
-              <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-                <div class="flex items-center gap-2 mb-2">
-                  <i class="fal fa-info-circle text-green-600"></i>
-                  <h4 class="font-medium text-green-800">What happens next</h4>
+        <div class="relative mb-16">
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-8 shadow-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <!-- Content -->
+              <div>
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="step-number w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold">
+                    <span>3</span>
+                  </div>
+                  <div>
+                    <h2 class="text-2xl font-bold text-webropol-gray-900">Create Survey</h2>
+                    <div class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium mt-1 inline-block">Action</div>
+                  </div>
                 </div>
-                <p class="text-sm text-green-700">Your survey will be created and you'll be taken to the design editor where you can customize questions and appearance.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 4: Design -->
-        <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-          <div class="flex items-start gap-4">
-            <div class="step-number w-12 h-12 rounded-full text-white flex items-center justify-center text-lg font-bold flex-shrink-0">
-              <span>4</span>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-3">
-                <h2 class="text-xl font-bold text-webropol-gray-900">Design & Build</h2>
-                <div class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Core Work</div>
-              </div>
-              <p class="text-webropol-gray-600 mb-4">This is where you build your survey content and customize its appearance to match your brand.</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-webropol-gray-50 rounded-lg p-4">
-                  <h4 class="font-medium text-webropol-gray-900 mb-2 flex items-center gap-2">
-                    <i class="fal fa-edit text-webropol-primary-600"></i>
-                    Content Creation
-                  </h4>
-                  <ul class="space-y-1 text-sm text-webropol-gray-600">
-                    <li>• Add questions and answer options</li>
-                    <li>• Create sections and question groups</li>
-                    <li>• Set validation rules</li>
-                    <li>• Configure required fields</li>
-                  </ul>
+                <p class="text-webropol-gray-600 mb-6 text-lg">Click the Create button to generate your survey foundation using your chosen template and settings.</p>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-1">
+                      <i class="fal fa-magic text-green-600"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-semibold text-green-800 mb-2">What happens next</h4>
+                      <p class="text-green-700">Your survey will be instantly created and you'll be taken to the design editor where you can customize questions and appearance.</p>
+                    </div>
+                  </div>
                 </div>
-                <div class="bg-webropol-gray-50 rounded-lg p-4">
-                  <h4 class="font-medium text-webropol-gray-900 mb-2 flex items-center gap-2">
-                    <i class="fal fa-sitemap text-webropol-primary-600"></i>
-                    Logic & Flow
-                  </h4>
-                  <ul class="space-y-1 text-sm text-webropol-gray-600">
-                    <li>• Set up branching logic</li>
-                    <li>• Create skip patterns</li>
-                    <li>• Add display conditions</li>
-                    <li>• Configure page breaks</li>
-                  </ul>
+              </div>
+              
+              <!-- Visual Mockup -->
+              <div class="order-first lg:order-last">
+                <div class="mockup-browser">
+                  <div class="mockup-browser-toolbar">
+                    <div class="mockup-browser-dots">
+                      <div class="mockup-dot dot-red"></div>
+                      <div class="mockup-dot dot-yellow"></div>
+                      <div class="mockup-dot dot-green"></div>
+                    </div>
+                    <div class="ml-4 text-xs text-webropol-gray-500">Create Survey</div>
+                  </div>
+                  <div class="p-6 bg-gradient-to-br from-white to-green-50 flex items-center justify-center">
+                    <div class="text-center">
+                      <div class="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
+                        <i class="fal fa-plus text-white text-3xl"></i>
+                      </div>
+                      <button class="bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                        Create Survey
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="step-connector"></div>
         </div>
 
-        <!-- Remaining steps with similar enhanced format -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Step 4: Design & Build -->
+        <div class="relative mb-16">
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-8 shadow-lg">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              <!-- Content -->
+              <div>
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="step-number w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold">
+                    <span>4</span>
+                  </div>
+                  <div>
+                    <h2 class="text-2xl font-bold text-webropol-gray-900">Design & Build</h2>
+                    <div class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mt-1 inline-block">Core Work</div>
+                  </div>
+                </div>
+                <p class="text-webropol-gray-600 mb-6 text-lg">This is where you build your survey content and customize its appearance to match your brand.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-5">
+                    <h4 class="font-semibold text-webropol-gray-900 mb-3 flex items-center gap-2">
+                      <i class="fal fa-edit text-purple-600 text-lg"></i>
+                      Content Creation
+                    </h4>
+                    <ul class="space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500"></i>Add questions and answer options</li>
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500"></i>Create sections and groups</li>
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500"></i>Set validation rules</li>
+                    </ul>
+                  </div>
+                  <div class="bg-gradient-to-br from-indigo-50 to-cyan-50 rounded-xl p-5">
+                    <h4 class="font-semibold text-webropol-gray-900 mb-3 flex items-center gap-2">
+                      <i class="fal fa-sitemap text-indigo-600 text-lg"></i>
+                      Logic & Flow
+                    </h4>
+                    <ul class="space-y-2 text-sm text-webropol-gray-600">
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Set up branching logic</li>
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Create skip patterns</li>
+                      <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Add display conditions</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Visual Mockup -->
+              <div class="order-first lg:order-last">
+                <div class="mockup-browser">
+                  <div class="mockup-browser-toolbar">
+                    <div class="mockup-browser-dots">
+                      <div class="mockup-dot dot-red"></div>
+                      <div class="mockup-dot dot-yellow"></div>
+                      <div class="mockup-dot dot-green"></div>
+                    </div>
+                    <div class="ml-4 text-xs text-webropol-gray-500">Survey Designer</div>
+                  </div>
+                  <div class="p-6 bg-gradient-to-br from-white to-purple-50">
+                    <div class="space-y-4">
+                      <div class="bg-white rounded-lg p-4 border border-webropol-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-sm font-medium">Question 1</span>
+                          <i class="fal fa-grip-vertical text-webropol-gray-400"></i>
+                        </div>
+                        <div class="w-full h-8 bg-webropol-gray-100 rounded mb-2"></div>
+                        <div class="space-y-1">
+                          <div class="w-3/4 h-4 bg-webropol-primary-100 rounded"></div>
+                          <div class="w-2/3 h-4 bg-webropol-primary-100 rounded"></div>
+                          <div class="w-1/2 h-4 bg-webropol-primary-100 rounded"></div>
+                        </div>
+                      </div>
+                      <div class="bg-white rounded-lg p-4 border border-webropol-gray-200 opacity-60">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-sm font-medium">Question 2</span>
+                          <i class="fal fa-grip-vertical text-webropol-gray-400"></i>
+                        </div>
+                        <div class="w-full h-8 bg-webropol-gray-100 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step-connector"></div>
+        </div>
+
+        <!-- Remaining Steps in Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <!-- Step 5: Publish -->
-          <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-            <div class="step-number w-10 h-10 rounded-full text-white flex items-center justify-center font-bold mb-4">5</div>
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-2">Publish</h3>
-            <p class="text-sm text-webropol-gray-600 mb-3">Share your survey with your target audience through multiple channels.</p>
-            <div class="text-xs text-webropol-gray-500 space-y-1">
-              <div>• Generate shareable links</div>
-              <div>• Send via email campaigns</div>
-              <div>• Create QR codes</div>
-              <div>• Embed on websites</div>
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-6 shadow-lg">
+            <div class="text-center mb-6">
+              <div class="step-number w-14 h-14 rounded-full text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">5</div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-2">Publish</h3>
+              <div class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium inline-block mb-4">Share</div>
+            </div>
+            
+            <div class="mockup-browser mb-4">
+              <div class="mockup-browser-toolbar">
+                <div class="mockup-browser-dots">
+                  <div class="mockup-dot dot-red"></div>
+                  <div class="mockup-dot dot-yellow"></div>
+                  <div class="mockup-dot dot-green"></div>
+                </div>
+              </div>
+              <div class="p-4 bg-gradient-to-br from-white to-orange-50">
+                <div class="text-center space-y-3">
+                  <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fal fa-link text-orange-600 text-xl"></i>
+                  </div>
+                  <div class="bg-orange-50 rounded-lg p-2">
+                    <div class="w-full h-6 bg-orange-200 rounded"></div>
+                  </div>
+                  <div class="flex justify-center gap-2">
+                    <i class="fal fa-envelope text-webropol-gray-400"></i>
+                    <i class="fal fa-qrcode text-webropol-gray-400"></i>
+                    <i class="fal fa-share-alt text-webropol-gray-400"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-webropol-gray-600 mb-4">Share your survey through multiple channels and reach your target audience effectively.</p>
+            <div class="space-y-2 text-sm text-webropol-gray-500">
+              <div class="flex items-center gap-2"><i class="fal fa-check text-orange-500"></i>Generate shareable links</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-orange-500"></i>Send via email campaigns</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-orange-500"></i>Create QR codes</div>
             </div>
           </div>
 
           <!-- Step 6: Follow up -->
-          <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-            <div class="step-number w-10 h-10 rounded-full text-white flex items-center justify-center font-bold mb-4">6</div>
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-2">Follow up</h3>
-            <p class="text-sm text-webropol-gray-600 mb-3">Maximize response rates with automated reminder campaigns.</p>
-            <div class="text-xs text-webropol-gray-500 space-y-1">
-              <div>• Schedule reminder emails</div>
-              <div>• Set follow-up sequences</div>
-              <div>• Track response rates</div>
-              <div>• Optimize timing</div>
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-6 shadow-lg">
+            <div class="text-center mb-6">
+              <div class="step-number w-14 h-14 rounded-full text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">6</div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-2">Follow up</h3>
+              <div class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium inline-block mb-4">Engage</div>
+            </div>
+            
+            <div class="mockup-browser mb-4">
+              <div class="mockup-browser-toolbar">
+                <div class="mockup-browser-dots">
+                  <div class="mockup-dot dot-red"></div>
+                  <div class="mockup-dot dot-yellow"></div>
+                  <div class="mockup-dot dot-green"></div>
+                </div>
+              </div>
+              <div class="p-4 bg-gradient-to-br from-white to-yellow-50">
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center">
+                      <i class="fal fa-clock text-yellow-600"></i>
+                    </div>
+                    <div class="flex-1 h-3 bg-yellow-100 rounded"></div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center">
+                      <i class="fal fa-bell text-yellow-600"></i>
+                    </div>
+                    <div class="flex-1 h-3 bg-yellow-100 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-webropol-gray-600 mb-4">Maximize response rates with automated reminder campaigns and smart follow-up sequences.</p>
+            <div class="space-y-2 text-sm text-webropol-gray-500">
+              <div class="flex items-center gap-2"><i class="fal fa-check text-yellow-500"></i>Schedule reminder emails</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-yellow-500"></i>Track response rates</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-yellow-500"></i>Optimize timing</div>
             </div>
           </div>
 
           <!-- Step 7: Get Report -->
-          <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-            <div class="step-number w-10 h-10 rounded-full text-white flex items-center justify-center font-bold mb-4">7</div>
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-2">Get Report</h3>
-            <p class="text-sm text-webropol-gray-600 mb-3">Monitor responses and generate comprehensive reports and visualizations.</p>
-            <div class="text-xs text-webropol-gray-500 space-y-1">
-              <div>• Real-time response tracking</div>
-              <div>• Interactive charts and graphs</div>
-              <div>• Export to multiple formats</div>
-              <div>• Share insights with teams</div>
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-6 shadow-lg">
+            <div class="text-center mb-6">
+              <div class="step-number w-14 h-14 rounded-full text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">7</div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-2">Get Report</h3>
+              <div class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium inline-block mb-4">Analyze</div>
+            </div>
+            
+            <div class="mockup-browser mb-4">
+              <div class="mockup-browser-toolbar">
+                <div class="mockup-browser-dots">
+                  <div class="mockup-dot dot-red"></div>
+                  <div class="mockup-dot dot-yellow"></div>
+                  <div class="mockup-dot dot-green"></div>
+                </div>
+              </div>
+              <div class="p-4 bg-gradient-to-br from-white to-teal-50">
+                <div class="space-y-3">
+                  <div class="bg-teal-100 rounded-lg p-2 text-center">
+                    <div class="w-full h-16 bg-teal-200 rounded relative overflow-hidden">
+                      <div class="absolute inset-0 flex items-end justify-around p-2">
+                        <div class="w-3 h-8 bg-teal-500 rounded-t"></div>
+                        <div class="w-3 h-12 bg-teal-600 rounded-t"></div>
+                        <div class="w-3 h-6 bg-teal-400 rounded-t"></div>
+                        <div class="w-3 h-10 bg-teal-500 rounded-t"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex justify-between">
+                    <div class="w-12 h-3 bg-teal-200 rounded"></div>
+                    <div class="w-16 h-3 bg-teal-200 rounded"></div>
+                    <div class="w-10 h-3 bg-teal-200 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-webropol-gray-600 mb-4">Monitor responses in real-time and generate comprehensive reports with interactive visualizations.</p>
+            <div class="space-y-2 text-sm text-webropol-gray-500">
+              <div class="flex items-center gap-2"><i class="fal fa-check text-teal-500"></i>Real-time response tracking</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-teal-500"></i>Interactive charts</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-teal-500"></i>Export insights</div>
             </div>
           </div>
 
           <!-- Step 8: AI Text Analysis -->
-          <div class="step-card bg-white rounded-2xl border border-webropol-gray-200 p-6 shadow-sm hover:shadow-lg">
-            <div class="step-number w-10 h-10 rounded-full text-white flex items-center justify-center font-bold mb-4">8</div>
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-2">AI Text Analysis</h3>
-            <p class="text-sm text-webropol-gray-600 mb-3">Unlock deeper insights from open-ended responses using artificial intelligence.</p>
-            <div class="text-xs text-webropol-gray-500 space-y-1">
-              <div>• Sentiment analysis</div>
-              <div>• Theme detection</div>
-              <div>• Response categorization</div>
-              <div>• Trend identification</div>
+          <div class="step-card bg-white rounded-3xl border border-webropol-gray-200 p-6 shadow-lg">
+            <div class="text-center mb-6">
+              <div class="step-number w-14 h-14 rounded-full text-white flex items-center justify-center text-lg font-bold mx-auto mb-4">8</div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-2">AI Analysis</h3>
+              <div class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium inline-block mb-4">AI-Powered</div>
+            </div>
+            
+            <div class="mockup-browser mb-4">
+              <div class="mockup-browser-toolbar">
+                <div class="mockup-browser-dots">
+                  <div class="mockup-dot dot-red"></div>
+                  <div class="mockup-dot dot-yellow"></div>
+                  <div class="mockup-dot dot-green"></div>
+                </div>
+              </div>
+              <div class="p-4 bg-gradient-to-br from-white to-indigo-50">
+                <div class="space-y-3">
+                  <div class="bg-indigo-100 rounded-lg p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div class="w-4 h-4 bg-indigo-500 rounded-full animate-pulse-slow"></div>
+                      <span class="text-xs text-indigo-700">Analyzing responses...</span>
+                    </div>
+                    <div class="space-y-1">
+                      <div class="flex justify-between items-center">
+                        <span class="text-xs text-indigo-600">Positive</span>
+                        <div class="w-12 h-2 bg-green-200 rounded-full overflow-hidden">
+                          <div class="w-3/4 h-full bg-green-500 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-xs text-indigo-600">Neutral</span>
+                        <div class="w-12 h-2 bg-yellow-200 rounded-full overflow-hidden">
+                          <div class="w-1/2 h-full bg-yellow-500 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-xs text-indigo-600">Negative</span>
+                        <div class="w-12 h-2 bg-red-200 rounded-full overflow-hidden">
+                          <div class="w-1/4 h-full bg-red-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-webropol-gray-600 mb-4">Unlock deeper insights from open-ended responses using advanced artificial intelligence.</p>
+            <div class="space-y-2 text-sm text-webropol-gray-500">
+              <div class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Sentiment analysis</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Theme detection</div>
+              <div class="flex items-center gap-2"><i class="fal fa-check text-indigo-500"></i>Smart categorization</div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Call to Action -->
-      <div class="mt-12 text-center">
-        <div class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white rounded-2xl p-8">
-          <h3 class="text-2xl font-bold mb-3">Ready to Create Your Survey?</h3>
-          <p class="text-webropol-primary-100 mb-6">You now have everything you need to create professional surveys that drive results.</p>
-          <p class="text-sm text-webropol-primary-200">Close this guide and start with Step 1: Give your survey a name.</p>
+      <div class="text-center">
+        <div class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white rounded-3xl p-10 shadow-2xl">
+          <div class="max-w-2xl mx-auto">
+            <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i class="fal fa-rocket text-white text-3xl"></i>
+            </div>
+            <h3 class="text-3xl font-bold mb-4">Ready to Create Your Survey?</h3>
+            <p class="text-xl text-webropol-primary-100 mb-8">You now have everything you need to create professional surveys that drive results.</p>
+            <div class="bg-white/10 rounded-2xl p-6 backdrop-blur-sm">
+              <p class="text-webropol-primary-200 mb-4">Close this guide and start with Step 1:</p>
+              <p class="text-white font-semibold text-lg">Give your survey a name</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
