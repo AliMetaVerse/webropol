@@ -70,6 +70,117 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
+
+    /* Wizard Styles */
+    .wizard-step {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .wizard-step.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .wizard-step.prev {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    
+    .step-progress {
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .step-indicator {
+      transition: all 0.4s ease;
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    
+    .step-indicator.active {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+    
+    .step-indicator.completed {
+      transform: scale(1);
+      opacity: 1;
+    }
+    
+    .wizard-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    
+    .mockup-browser {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mockup-browser-toolbar {
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      height: 28px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .mockup-browser-dots {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #eab308; }
+    .dot-green { background: #22c55e; }
+    
+    .pulse-animation {
+      animation: gentle-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes gentle-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+    
+    .slide-up {
+      animation: slideUp 0.6s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .nav-button {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .nav-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .nav-button:active {
+      transform: translateY(0);
+    }
+    
+    .progress-bar {
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
   </style>
   <script src="../../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../../design-system/components/navigation/Header.js" type="module"></script>
@@ -744,19 +855,447 @@
         openHowItWorks() {
           const modal = document.getElementById('howitworksModal');
           if (!modal) return;
-          // Open first (render happens on open), then inject content
+          
+          // Open modal first
           if (typeof modal.open === 'function') {
             modal.open();
           } else {
             modal.setAttribute('open','');
           }
-          // Defer content injection until after render
+          
+          // Inject wizard content directly
           setTimeout(() => {
             const body = modal.querySelector('.modal-body');
             if (body) {
-              body.innerHTML = '<div class="h-[75vh]"><iframe src="howitworks.html" title="How it works guide" class="w-full h-full rounded-lg border border-webropol-gray-200"></iframe></div>';
+              // Clear and configure modal body
+              body.classList.remove('p-6');
+              body.classList.add('p-0', 'overflow-hidden');
+              body.style.maxHeight = 'none';
+              
+              // Insert wizard content directly
+              body.innerHTML = this.getWizardHTML();
+              
+              // Initialize Alpine.js on the wizard container
+              setTimeout(() => {
+                const wizardContainer = body.querySelector('[x-data="wizardApp()"]');
+                if (wizardContainer && window.Alpine) {
+                  console.log('Initializing Alpine for wizard...');
+                  window.Alpine.initTree(wizardContainer);
+                  console.log('Alpine initialization complete');
+                }
+              }, 50);
             }
-          }, 0);
+            
+            // Adjust modal content container
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+              modalContent.style.maxHeight = '95vh';
+              modalContent.style.overflow = 'hidden';
+            }
+          }, 100);
+        },
+
+        getWizardHTML() {
+          return `
+            <div class="min-h-full flex flex-col py-2" x-data="wizardApp()">
+              
+              <!-- Progress Header -->
+              <div class="bg-white/80 backdrop-blur-md border-b border-webropol-gray-200 sticky top-0 z-50">
+                <div class="max-w-4xl mx-auto px-4 py-3">
+                  <!-- Progress Bar -->
+                  <div class="mb-3">
+                    <div class="flex justify-between items-center mb-2">
+                      <h1 class="text-lg font-semibold text-webropol-gray-900">Survey Creation Wizard</h1>
+                      <span class="text-sm text-webropol-gray-500" x-text="\`Step \${currentStep + 1} of \${totalSteps}\`"></span>
+                    </div>
+                    <div class="w-full bg-webropol-gray-200 rounded-full h-2">
+                      <div class="progress-bar bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 h-2 rounded-full" 
+                           :style="\`width: \${((currentStep + 1) / totalSteps) * 100}%\`"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- Step Indicators -->
+                  <div class="flex justify-between items-center">
+                    <template x-for="(step, index) in steps" :key="index">
+                      <div class="flex items-center" :class="{ 'flex-1': index < steps.length - 1 }">
+                        <div class="step-indicator flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-all duration-300"
+                             :class="{
+                               'bg-webropol-primary-600 text-white active': index === currentStep,
+                               'bg-webropol-primary-100 text-webropol-primary-600 completed': index < currentStep,
+                               'bg-webropol-gray-200 text-webropol-gray-500': index > currentStep
+                             }">
+                          <template x-if="index < currentStep">
+                            <i class="fal fa-check text-xs"></i>
+                          </template>
+                          <template x-if="index >= currentStep">
+                            <span x-text="index + 1"></span>
+                          </template>
+                        </div>
+                        <div class="flex-1 h-0.5 mx-3 bg-webropol-gray-200" x-show="index < steps.length - 1"
+                             :class="{ 'bg-webropol-primary-300': index < currentStep }"></div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Wizard Content -->
+              <div class="flex-1 flex items-start justify-center px-4 py-2">
+                <div class="max-w-4xl mx-auto w-full">
+                  
+                  <!-- Step 1: Give a Name -->
+                  <div class="wizard-step" :class="{ 'active': currentStep === 0 }" x-show="currentStep === 0">
+                    <div class="wizard-card rounded-xl p-4 shadow-xl">
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+                        <div class="slide-up">
+                          <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center text-white font-bold">
+                              1
+                            </div>
+                            <div>
+                              <h2 class="text-xl font-bold text-webropol-gray-900">Give a Name</h2>
+                              <div class="px-2 py-0.5 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-xs font-medium inline-block">Start Here</div>
+                            </div>
+                          </div>
+                          
+                          <p class="text-sm text-webropol-gray-600 mb-4">Create a clear, descriptive title for your survey and organize it properly.</p>
+                          
+                          <div class="bg-gradient-to-br from-webropol-primary-50 to-blue-50 rounded-lg p-3 space-y-2">
+                            <h4 class="font-semibold text-webropol-gray-900 flex items-center gap-2 text-sm">
+                              <i class="fal fa-clipboard-list text-webropol-primary-600"></i>
+                              What you'll do:
+                            </h4>
+                            <div class="space-y-1">
+                              <div class="flex items-center gap-2 p-2 bg-white/70 rounded">
+                                <i class="fal fa-check-circle text-webropol-primary-600 text-sm"></i>
+                                <span class="text-xs">Enter a descriptive survey title</span>
+                              </div>
+                              <div class="flex items-center gap-2 p-2 bg-white/70 rounded">
+                                <i class="fal fa-check-circle text-webropol-primary-600 text-sm"></i>
+                                <span class="text-xs">Select or create a folder</span>
+                              </div>
+                              <div class="flex items-center gap-2 p-2 bg-white/70 rounded">
+                                <i class="fal fa-check-circle text-webropol-primary-600 text-sm"></i>
+                                <span class="text-xs">Set deletion date (optional)</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="slide-up">
+                          <div class="mockup-browser">
+                            <div class="mockup-browser-toolbar">
+                              <div class="mockup-browser-dots">
+                                <div class="mockup-dot dot-red"></div>
+                                <div class="mockup-dot dot-yellow"></div>
+                                <div class="mockup-dot dot-green"></div>
+                              </div>
+                              <div class="ml-4 text-sm text-webropol-gray-500">Create New Survey</div>
+                            </div>
+                            <div class="p-3 bg-gradient-to-br from-white to-webropol-gray-50">
+                              <div class="space-y-3">
+                                <div class="bg-white rounded p-2 border border-webropol-gray-200 shadow-sm">
+                                  <label class="block text-xs font-medium text-webropol-gray-700 mb-1">Survey Name</label>
+                                  <div class="w-full h-8 bg-webropol-primary-50 border-2 border-webropol-primary-200 rounded flex items-center px-2 pulse-animation">
+                                    <span class="text-webropol-gray-700 font-medium text-xs">Customer Satisfaction Survey 2025</span>
+                                  </div>
+                                </div>
+                                <div class="bg-white rounded p-2 border border-webropol-gray-200 shadow-sm">
+                                  <label class="block text-xs font-medium text-webropol-gray-700 mb-1">Folder</label>
+                                  <div class="w-full h-8 bg-webropol-gray-50 border border-webropol-gray-300 rounded flex items-center px-2">
+                                    <i class="fal fa-folder text-webropol-primary-600 mr-1 text-xs"></i>
+                                    <span class="text-webropol-gray-600 text-xs">Marketing Surveys</span>
+                                    <i class="fal fa-chevron-down text-webropol-gray-400 ml-auto text-xs"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Step 2: Choose Template -->
+                  <div class="wizard-step" :class="{ 'active': currentStep === 1 }" x-show="currentStep === 1">
+                    <div class="wizard-card rounded-xl p-4 shadow-xl">
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+                        <div class="slide-up">
+                          <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                              2
+                            </div>
+                            <div>
+                              <h2 class="text-xl font-bold text-webropol-gray-900">Choose Template</h2>
+                              <div class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium inline-block">Design</div>
+                            </div>
+                          </div>
+                          
+                          <p class="text-sm text-webropol-gray-600 mb-4">Select a professional template that matches your survey's purpose.</p>
+                          
+                          <div class="space-y-2">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-2 border border-blue-200">
+                              <div class="flex items-center gap-2">
+                                <i class="fal fa-th-large text-blue-600"></i>
+                                <span class="text-xs"><strong>Webropol Templates:</strong> Professional pre-built designs</span>
+                              </div>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-2 border border-purple-200">
+                              <div class="flex items-center gap-2">
+                                <i class="fal fa-user text-purple-600"></i>
+                                <span class="text-xs"><strong>My Templates:</strong> Your custom saved designs</span>
+                              </div>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-2 border border-green-200">
+                              <div class="flex items-center gap-2">
+                                <i class="fal fa-users text-green-600"></i>
+                                <span class="text-xs"><strong>Shared Templates:</strong> Team collaboration</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="slide-up">
+                          <div class="mockup-browser">
+                            <div class="mockup-browser-toolbar">
+                              <div class="mockup-browser-dots">
+                                <div class="mockup-dot dot-red"></div>
+                                <div class="mockup-dot dot-yellow"></div>
+                                <div class="mockup-dot dot-green"></div>
+                              </div>
+                              <div class="ml-4 text-sm text-webropol-gray-500">Choose Template</div>
+                            </div>
+                            <div class="p-3 bg-gradient-to-br from-white to-blue-50">
+                              <div class="grid grid-cols-3 gap-2">
+                                <div class="bg-white rounded p-2 border-2 border-webropol-primary-400 shadow-lg pulse-animation">
+                                  <div class="w-full h-12 bg-gradient-to-br from-webropol-primary-100 to-webropol-primary-200 rounded mb-2 flex items-center justify-center">
+                                    <i class="fal fa-star text-webropol-primary-600"></i>
+                                  </div>
+                                  <div class="text-xs font-semibold text-center">Modern</div>
+                                  <div class="w-1.5 h-1.5 bg-webropol-primary-500 rounded-full mx-auto mt-1"></div>
+                                </div>
+                                <div class="bg-white rounded p-2 border border-webropol-gray-200 opacity-60">
+                                  <div class="w-full h-12 bg-gradient-to-br from-green-100 to-green-200 rounded mb-2 flex items-center justify-center">
+                                    <i class="fal fa-leaf text-green-600"></i>
+                                  </div>
+                                  <div class="text-xs text-center">Clean</div>
+                                </div>
+                                <div class="bg-white rounded p-2 border border-webropol-gray-200 opacity-60">
+                                  <div class="w-full h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded mb-2 flex items-center justify-center">
+                                    <i class="fal fa-palette text-purple-600"></i>
+                                  </div>
+                                  <div class="text-xs text-center">Creative</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Step 3: Create Survey -->
+                  <div class="wizard-step" :class="{ 'active': currentStep === 2 }" x-show="currentStep === 2">
+                    <div class="wizard-card rounded-xl p-4 shadow-xl">
+                      <div class="text-center">
+                        <div class="slide-up">
+                          <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white text-lg font-bold mx-auto mb-3">
+                            3
+                          </div>
+                          <h2 class="text-xl font-bold text-webropol-gray-900 mb-2">Create Survey</h2>
+                          <div class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium mb-4 inline-block">Action</div>
+                          
+                          <p class="text-sm text-webropol-gray-600 mb-6 max-w-xl mx-auto">Click the Create button to generate your survey foundation using your chosen template and settings.</p>
+                          
+                          <div class="mockup-browser max-w-sm mx-auto mb-4">
+                            <div class="mockup-browser-toolbar">
+                              <div class="mockup-browser-dots">
+                                <div class="mockup-dot dot-red"></div>
+                                <div class="mockup-dot dot-yellow"></div>
+                                <div class="mockup-dot dot-green"></div>
+                              </div>
+                              <div class="ml-4 text-sm text-webropol-gray-500">Create Survey</div>
+                            </div>
+                            <div class="p-4 bg-gradient-to-br from-white to-green-50 flex flex-col items-center">
+                              <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 pulse-animation">
+                                <i class="fal fa-plus text-white text-xl"></i>
+                              </div>
+                              <button class="bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg text-sm">
+                                Create Survey
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200 max-w-xs mx-auto">
+                            <div class="flex items-center gap-2 mb-2">
+                              <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fal fa-magic text-green-600 text-xs"></i>
+                              </div>
+                              <h4 class="font-semibold text-green-800 text-sm">What happens next</h4>
+                            </div>
+                            <p class="text-green-700 text-xs text-left">Your survey will be instantly created and you'll be taken to the design editor.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Step 4: Design & Build -->
+                  <div class="wizard-step" :class="{ 'active': currentStep === 3 }" x-show="currentStep === 3">
+                    <div class="wizard-card rounded-xl p-4 shadow-xl">
+                      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
+                        <div class="slide-up">
+                          <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                              4
+                            </div>
+                            <div>
+                              <h2 class="text-xl font-bold text-webropol-gray-900">Design & Build</h2>
+                              <div class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium inline-block">Core Work</div>
+                            </div>
+                          </div>
+                          
+                          <p class="text-sm text-webropol-gray-600 mb-4">Build your survey content and customize its appearance.</p>
+                          
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg p-3 border border-purple-200">
+                              <h4 class="font-semibold text-webropol-gray-900 mb-2 flex items-center gap-2">
+                                <i class="fal fa-edit text-purple-600"></i>
+                                <span class="text-sm">Content Creation</span>
+                              </h4>
+                              <ul class="space-y-1 text-xs text-webropol-gray-600">
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500 text-xs"></i>Add questions</li>
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500 text-xs"></i>Create sections</li>
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-purple-500 text-xs"></i>Set validation</li>
+                              </ul>
+                            </div>
+                            <div class="bg-gradient-to-br from-indigo-50 to-cyan-50 rounded-lg p-3 border border-indigo-200">
+                              <h4 class="font-semibold text-webropol-gray-900 mb-2 flex items-center gap-2">
+                                <i class="fal fa-sitemap text-indigo-600"></i>
+                                <span class="text-sm">Logic & Flow</span>
+                              </h4>
+                              <ul class="space-y-1 text-xs text-webropol-gray-600">
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500 text-xs"></i>Branching logic</li>
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500 text-xs"></i>Skip patterns</li>
+                                <li class="flex items-center gap-2"><i class="fal fa-check text-indigo-500 text-xs"></i>Conditions</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="slide-up">
+                          <div class="mockup-browser">
+                            <div class="mockup-browser-toolbar">
+                              <div class="mockup-browser-dots">
+                                <div class="mockup-dot dot-red"></div>
+                                <div class="mockup-dot dot-yellow"></div>
+                                <div class="mockup-dot dot-green"></div>
+                              </div>
+                              <div class="ml-4 text-sm text-webropol-gray-500">Survey Designer</div>
+                            </div>
+                            <div class="p-3 bg-gradient-to-br from-white to-purple-50">
+                              <div class="space-y-2">
+                                <div class="bg-white rounded p-2 border-2 border-purple-300 shadow-sm pulse-animation">
+                                  <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-medium text-purple-700">Question 1 - Active</span>
+                                    <i class="fal fa-grip-vertical text-webropol-gray-400 text-xs"></i>
+                                  </div>
+                                  <div class="w-full h-4 bg-purple-100 rounded mb-1"></div>
+                                  <div class="space-y-1">
+                                    <div class="w-3/4 h-2 bg-purple-200 rounded"></div>
+                                    <div class="w-2/3 h-2 bg-purple-200 rounded"></div>
+                                    <div class="w-1/2 h-2 bg-purple-200 rounded"></div>
+                                  </div>
+                                </div>
+                                <div class="bg-white rounded p-2 border border-webropol-gray-200 opacity-50">
+                                  <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-medium">Question 2</span>
+                                    <i class="fal fa-grip-vertical text-webropol-gray-400 text-xs"></i>
+                                  </div>
+                                  <div class="w-full h-4 bg-webropol-gray-100 rounded"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Step 5: Ready to Start -->
+                  <div class="wizard-step" :class="{ 'active': currentStep === 4 }" x-show="currentStep === 4">
+                    <div class="wizard-card rounded-xl p-6 shadow-xl text-center">
+                      <div class="slide-up">
+                        <div class="w-16 h-16 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <i class="fal fa-rocket text-white text-xl"></i>
+                        </div>
+                        
+                        <h2 class="text-2xl font-bold text-webropol-gray-900 mb-3">You're Ready!</h2>
+                        <p class="text-sm text-webropol-gray-600 mb-4 max-w-lg mx-auto">
+                          You now understand the complete survey creation process. The remaining steps happen after you've built your survey.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 max-w-2xl mx-auto mb-6">
+                          <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded p-2 border border-orange-200">
+                            <i class="fal fa-bullhorn text-orange-600 mb-1"></i>
+                            <h4 class="font-semibold text-orange-800 text-xs">5. Publish</h4>
+                            <p class="text-xs text-orange-700">Share your survey</p>
+                          </div>
+                          <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded p-2 border border-yellow-200">
+                            <i class="fal fa-bell text-yellow-600 mb-1"></i>
+                            <h4 class="font-semibold text-yellow-800 text-xs">6. Follow up</h4>
+                            <p class="text-xs text-yellow-700">Send reminders</p>
+                          </div>
+                          <div class="bg-gradient-to-br from-teal-50 to-teal-100 rounded p-2 border border-teal-200">
+                            <i class="fal fa-chart-line text-teal-600 mb-1"></i>
+                            <h4 class="font-semibold text-teal-800 text-xs">7. Get Report</h4>
+                            <p class="text-xs text-teal-700">Analyze results</p>
+                          </div>
+                          <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded p-2 border border-indigo-200">
+                            <i class="fal fa-robot text-indigo-600 mb-1"></i>
+                            <h4 class="font-semibold text-indigo-800 text-xs">8. AI Analysis</h4>
+                            <p class="text-xs text-indigo-700">Deep insights</p>
+                          </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-webropol-primary-50 to-blue-50 rounded-lg p-4 border border-webropol-primary-200">
+                          <h3 class="text-lg font-bold text-webropol-gray-900 mb-2">Ready to Create Your Survey?</h3>
+                          <p class="text-webropol-primary-700 mb-3 text-sm">Close this wizard and start with Step 1: Give your survey a name.</p>
+                          <button class="bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-webropol-primary-600 hover:to-webropol-primary-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm"
+                                  @click="closeModal()">
+                            Start Creating
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Navigation Controls -->
+                  <div class="flex justify-between items-center mt-4">
+                    <button 
+                      class="nav-button px-4 py-2 bg-webropol-gray-100 text-webropol-gray-700 rounded-lg font-medium hover:bg-webropol-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm"
+                      @click="prevStep()" 
+                      :disabled="currentStep === 0">
+                      <i class="fal fa-chevron-left mr-1 text-sm"></i>Previous
+                    </button>
+                    
+                    <div class="text-center">
+                      <span class="text-xs text-webropol-gray-500" x-text="steps[currentStep]?.title || 'Loading...'"></span>
+                    </div>
+                    
+                    <button 
+                      class="nav-button px-4 py-2 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white rounded-lg font-medium hover:from-webropol-primary-600 hover:to-webropol-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm"
+                      @click="nextStep()" 
+                      :disabled="currentStep === totalSteps - 1">
+                      <span x-text="currentStep === totalSteps - 1 ? 'Get Started' : 'Next'"></span>
+                      <i class="fal fa-chevron-right ml-1 text-sm" x-show="currentStep !== totalSteps - 1"></i>
+                      <i class="fal fa-rocket ml-1 text-sm" x-show="currentStep === totalSteps - 1"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
         },
 
         selectTemplate(template) {
@@ -855,6 +1394,91 @@
         }
       }
     }
+
+    // Global wizard app function for the modal
+    function wizardApp() {
+      return {
+        currentStep: 0,
+        totalSteps: 5,
+        steps: [
+          { title: 'Give a Name', description: 'Name your survey and choose folder' },
+          { title: 'Choose Template', description: 'Select a professional template' },
+          { title: 'Create Survey', description: 'Generate your survey foundation' },
+          { title: 'Design & Build', description: 'Add questions and customize' },
+          { title: 'Ready to Start!', description: 'You are all set to create' }
+        ],
+        
+        nextStep() {
+          if (this.currentStep < this.totalSteps - 1) {
+            this.currentStep++;
+            this.animateStep();
+          } else {
+            // Close modal
+            this.closeModal();
+          }
+        },
+        
+        prevStep() {
+          if (this.currentStep > 0) {
+            this.currentStep--;
+            this.animateStep();
+          }
+        },
+        
+        animateStep() {
+          // Add smooth step transition animation
+          const steps = document.querySelectorAll('.wizard-step');
+          steps.forEach((step, index) => {
+            step.classList.remove('active', 'prev');
+            if (index === this.currentStep) {
+              setTimeout(() => step.classList.add('active'), 50);
+            } else if (index < this.currentStep) {
+              step.classList.add('prev');
+            }
+          });
+        },
+        
+        closeModal() {
+          const modal = document.getElementById('howitworksModal');
+          if (modal && typeof modal.close === 'function') {
+            modal.close();
+          } else if (modal) {
+            modal.removeAttribute('open');
+          }
+        },
+        
+        init() {
+          console.log('Wizard initialized');
+          // Initialize first step
+          setTimeout(() => {
+            this.animateStep();
+          }, 100);
+          
+          // Handle keyboard navigation
+          const keyHandler = (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+              e.preventDefault();
+              this.nextStep();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              this.prevStep();
+            } else if (e.key === 'Escape') {
+              this.closeModal();
+            }
+          };
+          
+          document.addEventListener('keydown', keyHandler);
+          
+          // Clean up event listener when modal closes
+          this.$el.addEventListener('destroyed', () => {
+            document.removeEventListener('keydown', keyHandler);
+          });
+        }
+      }
+    }
+
+    // Make wizardApp globally available for Alpine.js
+    window.wizardApp = wizardApp;
   </script>
 
   <!-- Floating Button -->
