@@ -107,7 +107,14 @@
           <div class="bg-white/80 backdrop-blur rounded-xl border border-webropol-gray-200 px-3 sm:px-4 py-3 shadow-card">
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-sm font-semibold text-webropol-gray-800">How it works</h3>
-              <span class="text-[11px] text-webropol-gray-500">Guide your journey</span>
+              <div class="flex items-center gap-3">
+                <span class="text-[11px] text-webropol-gray-500">Guide your journey</span>
+                <button type="button"
+                        @click="openHowItWorks()"
+                        class="px-2.5 py-1.5 text-xs font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-50 hover:border-webropol-gray-400 transition-colors">
+                  <i class="fal fa-question-circle mr-1"></i> See How
+                </button>
+              </div>
             </div>
             <div class="overflow-x-auto">
               <ol class="min-w-[840px] grid grid-cols-8 gap-2 sm:gap-3">
@@ -630,6 +637,8 @@
           </div>
         </div>
       </main>
+      <!-- How it works Modal -->
+      <webropol-modal id="howitworksModal" size="xl" title="How it works" backdrop-close="true" closable="true"></webropol-modal>
     </div>
   </div>
 
@@ -730,6 +739,24 @@
           if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
+        },
+
+        openHowItWorks() {
+          const modal = document.getElementById('howitworksModal');
+          if (!modal) return;
+          // Open first (render happens on open), then inject content
+          if (typeof modal.open === 'function') {
+            modal.open();
+          } else {
+            modal.setAttribute('open','');
+          }
+          // Defer content injection until after render
+          setTimeout(() => {
+            const body = modal.querySelector('.modal-body');
+            if (body) {
+              body.innerHTML = '<div class="h-[75vh]"><iframe src="howitworks.html" title="How it works guide" class="w-full h-full rounded-lg border border-webropol-gray-200"></iframe></div>';
+            }
+          }, 0);
         },
 
         selectTemplate(template) {
