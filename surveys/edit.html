@@ -118,6 +118,176 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
+    
+    /* Custom range slider styles */
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(to right, #06b6d4 0%, #06b6d4 var(--value, 20%), #e2e8f0 var(--value, 20%), #e2e8f0 100%);
+      outline: none;
+      border-radius: 6px;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #06b6d4;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #06b6d4;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Survey styles preview effects */
+    .survey-preview-container {
+      transition: all 0.3s ease;
+    }
+    
+    /* Hide default radio button appearance for custom styled buttons */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    
+    /* Color picker preview hover effect */
+    .color-preview {
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid #d1d5db;
+    }
+    
+    .color-preview:hover {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+    }
+    
+    /* Survey page background container */
+    .survey-page-background {
+      pointer-events: none; /* Don't interfere with page interactions */
+      overflow: hidden; /* Prevent blur edges from showing */
+    }
+    
+    /* Survey Background Wrapper */
+    .survey-background-wrapper {
+      background: #f8fafc; /* Default light background */
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    /* Ensure survey content stays above background */
+    main.flex-1 > * {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Color Picker Styles */
+    .color-picker-canvas {
+      display: flex;
+      justify-content: center;
+    }
+    
+    #colorCanvas, #hueCanvas {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    
+    .active-color-type {
+      background: linear-gradient(to right, #0891b2, #0e7490) !important;
+      color: white !important;
+    }
+    
+    .active-gradient-type {
+      background: linear-gradient(to right, #0891b2, #0e7490) !important;
+      color: white !important;
+    }
+    
+    .active-radial-shape {
+      background: linear-gradient(to right, #0891b2, #0e7490) !important;
+      color: white !important;
+    }
+    
+    .gradient-direction-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      color: #6b7280;
+      transition: all 0.2s ease;
+    }
+    
+    .gradient-direction-btn:hover {
+      border-color: #06b6d4;
+      color: #06b6d4;
+    }
+    
+    .gradient-direction-btn.active {
+      background: #06b6d4;
+      border-color: #06b6d4;
+      color: white;
+    }
+    
+    .color-stop {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+    }
+    
+    .color-stop-preview {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    .color-stop-position {
+      width: 80px;
+    }
+    
+    .remove-color-stop {
+      padding: 4px 8px;
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .remove-color-stop:hover {
+      background: #fecaca;
+    }
   .survey-action-btn { width:40px; height:40px; flex-shrink:0; }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
@@ -375,121 +545,211 @@
                 </div>
                 
                 <!-- Styles Tab Content -->
-                <div x-show="activeTab === 'styles'" class="space-y-3 mb-6">
-                  <!-- Overall survey background color or image -->
-                  <div class="p-3 bg-webropol-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between mb-3">
-                      <span class="text-sm font-medium text-webropol-gray-700">Overall survey background color or image</span>
-                    </div>
-                    <p class="text-xs text-webropol-gray-500 mb-3">Choose or background image of the whole survey</p>
+                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-4 mb-6">
+                  <!-- Survey pages (colour and transparency) -->
+                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Survey pages (colour and transparency)</h4>
                     
-                    <!-- Color Picker Preview -->
-                    <div class="mb-3">
-                      <div class="w-16 h-12 bg-gradient-to-br from-orange-200 via-pink-200 to-blue-200 rounded border-2 border-white shadow-sm"></div>
-                    </div>
-                  </div>
-                  
-                  <!-- Survey bg checkbox -->
-                  <div class="flex items-center space-x-3 p-3 bg-webropol-gray-50 rounded-lg">
-                    <input type="checkbox" class="w-4 h-4 text-webropol-primary-600 rounded" checked>
-                    <span class="text-sm font-medium text-webropol-gray-700">Survey bg</span>
-                  </div>
-                  <p class="text-xs text-webropol-gray-500 -mt-2 ml-7">Default colour when unchecked</p>
-                  
-                  <!-- Survey Background -->
-                  <div class="p-3 bg-webropol-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between mb-3">
-                      <span class="text-sm font-medium text-webropol-gray-700">Survey Background</span>
-                    </div>
-                    <p class="text-xs text-webropol-gray-500 mb-3">Override background colour</p>
-                  </div>
-                  
-                  <!-- Properties Section -->
-                  <div class="space-y-3">
-                    <h4 class="text-sm font-medium text-webropol-gray-700">Properties</h4>
-                    
-                    <!-- Background Image Repeat -->
-                    <div class="flex items-center justify-between p-3 bg-webropol-gray-50 rounded-lg">
-                      <div class="flex items-center space-x-2">
-                        <i class="fal fa-repeat text-webropol-primary-600"></i>
-                        <span class="text-sm text-webropol-gray-700">Background Image Repeat</span>
+                    <!-- Color selection with transparency -->
+                    <div class="mb-4">
+                      <div class="flex items-center gap-3 mb-3">
+                        <label class="flex items-center gap-2">
+                          <input type="radio" name="surveyColorMode" value="color" class="w-4 h-4 text-webropol-primary-600" checked x-model="surveyColorMode">
+                          <span class="text-sm text-webropol-gray-700">Colour</span>
+                        </label>
+                        <!-- Color preview square -->
+                        <div class="w-8 h-6 rounded border border-webropol-gray-300 color-preview" 
+                             :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${surveyTransparency / 100})`"
+                             @click="openColorPicker('survey')">
+                        </div>
                       </div>
-                      <select class="text-xs bg-white border border-webropol-gray-300 rounded px-2 py-1 min-w-20">
-                        <option value="fit">fit</option>
-                        <option value="repeat">repeat</option>
-                        <option value="no-repeat">no-repeat</option>
-                      </select>
+                      
+                      <!-- Transparency slider -->
+                      <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs text-webropol-gray-600 min-w-[90px]">Set transparency</span>
+                        <input type="range" min="0" max="100" 
+                               x-model="surveyTransparency" 
+                               class="flex-1 h-2 bg-webropol-gray-200 rounded-lg appearance-none slider">
+                        <div class="flex items-center border border-webropol-gray-300 rounded px-2 py-1 w-16">
+                          <input type="number" x-model="surveyTransparency" min="0" max="100" 
+                                 class="w-full text-xs border-none outline-none bg-transparent">
+                        </div>
+                        <span class="text-xs text-webropol-gray-600">Percent (%)</span>
+                      </div>
+                      
+                      <!-- No color option -->
+                      <label class="flex items-center gap-2 mb-3">
+                        <input type="radio" name="surveyColorMode" value="transparent" class="w-4 h-4 text-webropol-primary-600" x-model="surveyColorMode">
+                        <span class="text-sm text-webropol-gray-700">No colour (transparent)</span>
+                      </label>
+                      
+                      <!-- Blur survey page when color is used -->
+                      <label class="flex items-center gap-2 mb-3">
+                        <input type="checkbox" x-model="surveyBlur" class="w-4 h-4 text-webropol-primary-600 rounded">
+                        <span class="text-sm text-webropol-gray-700">Blur survey page bg</span>
+                      </label>
+                      
+                      <!-- Note: survey pages don't control background image -->
+                      <p class="text-xs text-webropol-gray-500">Tip: Background images are set in "Survey background" below.</p>
+                    </div>
+                  </div>
+
+                  <!-- Survey background (around pages) -->
+                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Survey background</h4>
+                    
+                    <!-- Page color selection -->
+                    <div class="mb-4">
+                      <div class="flex items-center gap-3 mb-3">
+                        <span class="text-sm text-webropol-gray-700">Colour</span>
+                        <div class="w-8 h-6 rounded border border-webropol-gray-300 color-preview" 
+                             :style="`background-color: rgb(${pageColor.r}, ${pageColor.g}, ${pageColor.b})`"
+                             @click="openColorPicker('page')">
+                        </div>
+                      </div>
+                      
+                      <!-- Use survey background image checkbox -->
+                      <label class="flex items-center gap-2 mb-3">
+                        <input type="checkbox" x-model="usePageBackground" class="w-4 h-4 text-webropol-primary-600 rounded">
+                        <span class="text-sm text-webropol-gray-700">Use <strong>survey background</strong> image</span>
+                      </label>
+                      
+                      <!-- Browse Gallery button and Image preview -->
+                      <div class="flex items-center gap-4 mb-3">
+                        <input type="file" id="backgroundImageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
+                        <button @click="$refs.imageInput.click()" class="btn btn-secondary">
+                          <i class="fal fa-upload mr-2"></i>
+                          Browse Local Device
+                        </button>
+                        <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
+                        <div class="text-sm text-webropol-gray-600">Image preview</div>
+                      </div>
+                      
+                      <!-- Image preview area -->
+                      <div class="w-full h-32 rounded border border-webropol-gray-300 mb-3 overflow-hidden bg-gradient-to-br from-blue-200 via-orange-200 to-blue-300 relative">
+                        <img x-show="selectedImage" :src="selectedImage" class="w-full h-full object-cover" alt="Selected background image">
+                        <div x-show="!selectedImage" class="flex items-center justify-center h-full text-webropol-gray-500">
+                          <div class="text-center">
+                            <i class="fal fa-image text-2xl mb-2"></i>
+                            <div class="text-sm">No image selected</div>
+                          </div>
+                        </div>
+                        <!-- Remove image button -->
+                        <button x-show="selectedImage" @click="removeSelectedImage()" 
+                                class="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors">
+                          <i class="fal fa-times"></i>
+                        </button>
+                      </div>
+                      
+                      <!-- Removed blur control from background section as requested -->
+                    </div>
+                  </div>
+
+                  <!-- Repeat background image -->
+                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Repeat background image</h4>
+                    
+                    <div class="flex flex-wrap gap-2">
+                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
+                             :class="backgroundRepeat === 'no-repeat' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
+                        <input type="radio" name="backgroundRepeat" value="no-repeat" x-model="backgroundRepeat" class="sr-only">
+                        <span class="text-sm">No repeat</span>
+                      </label>
+                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
+                             :class="backgroundRepeat === 'repeat' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
+                        <input type="radio" name="backgroundRepeat" value="repeat" x-model="backgroundRepeat" class="sr-only">
+                        <span class="text-sm">Vertically and horizontally</span>
+                      </label>
+                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
+                             :class="backgroundRepeat === 'repeat-x' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
+                        <input type="radio" name="backgroundRepeat" value="repeat-x" x-model="backgroundRepeat" class="sr-only">
+                        <span class="text-sm">Horizontally</span>
+                      </label>
+                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
+                             :class="backgroundRepeat === 'repeat-y' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
+                        <input type="radio" name="backgroundRepeat" value="repeat-y" x-model="backgroundRepeat" class="sr-only">
+                        <span class="text-sm">Vertically</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Scaling -->
+                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Scaling</h4>
+                    
+                    <div class="space-y-3">
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="radio" name="backgroundScale" value="fit-width" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
+                        <div class="flex-1">
+                          <span class="text-sm font-medium text-webropol-gray-900">Make background always fit the width of survey page background (recommended)</span>
+                          <div class="w-4 h-4 bg-blue-100 rounded-full inline-flex items-center justify-center ml-2">
+                            <i class="fas fa-question text-blue-600 text-xs"></i>
+                          </div>
+                        </div>
+                      </label>
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="radio" name="backgroundScale" value="fixed" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
+                        <div class="flex-1">
+                          <span class="text-sm text-webropol-gray-900">Fixed background image (recommended)</span>
+                        </div>
+                      </label>
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="radio" name="backgroundScale" value="scrolling" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
+                        <div class="flex-1">
+                          <span class="text-sm text-webropol-gray-900">Scrolling background image</span>
+                        </div>
+                      </label>
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="radio" name="backgroundScale" value="original" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
+                        <div class="flex-1">
+                          <span class="text-sm text-webropol-gray-900">No scaling - always keep image's original size on all screen sizes</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Placement of background image -->
+                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
+                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Placement of background image</h4>
+                    
+                    <!-- Vertical position -->
+                    <div class="mb-4">
+                      <div class="flex gap-1 justify-center">
+                        <button @click="setImagePosition('top', imagePositionHorizontal)" 
+                                :class="imagePositionVertical === 'top' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Top
+                        </button>
+                        <button @click="setImagePosition('center', imagePositionHorizontal)" 
+                                :class="imagePositionVertical === 'center' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Center
+                        </button>
+                        <button @click="setImagePosition('bottom', imagePositionHorizontal)" 
+                                :class="imagePositionVertical === 'bottom' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Bottom
+                        </button>
+                      </div>
                     </div>
                     
-                    <!-- Background image alignment -->
-                    <div class="p-3 bg-webropol-gray-50 rounded-lg">
-                      <div class="flex items-center space-x-2 mb-3">
-                        <i class="fal fa-align-center text-webropol-primary-600"></i>
-                        <span class="text-sm text-webropol-gray-700">Background image alignment</span>
-                      </div>
-                      <div class="grid grid-cols-3 gap-1">
-                        <!-- Top Left -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Top Left">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute top-0.5 left-0.5"></i>
-                          </span>
+                    <!-- Horizontal position -->
+                    <div>
+                      <div class="flex gap-1 justify-center">
+                        <button @click="setImagePosition(imagePositionVertical, 'left')" 
+                                :class="imagePositionHorizontal === 'left' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Left
                         </button>
-                        <!-- Top Center (selected) -->
-                        <button class="w-8 h-8 bg-webropol-primary-100 border border-webropol-primary-300 rounded flex items-center justify-center" title="Top Center">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-700 text-[8px] absolute top-0.5 left-1/2 -translate-x-1/2"></i>
-                          </span>
+                        <button @click="setImagePosition(imagePositionVertical, 'center')" 
+                                :class="imagePositionHorizontal === 'center' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Center
                         </button>
-                        <!-- Top Right -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Top Right">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute top-0.5 right-0.5"></i>
-                          </span>
-                        </button>
-                        <!-- Middle Left -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Middle Left">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute top-1/2 -translate-y-1/2 left-0.5"></i>
-                          </span>
-                        </button>
-                        <!-- Middle Center -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Middle Center">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i>
-                          </span>
-                        </button>
-                        <!-- Middle Right -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Middle Right">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute top-1/2 -translate-y-1/2 right-0.5"></i>
-                          </span>
-                        </button>
-                        <!-- Bottom Left -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Bottom Left">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute bottom-0.5 left-0.5"></i>
-                          </span>
-                        </button>
-                        <!-- Bottom Center -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Bottom Center">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute bottom-0.5 left-1/2 -translate-x-1/2"></i>
-                          </span>
-                        </button>
-                        <!-- Bottom Right -->
-                        <button class="w-8 h-8 bg-white border border-webropol-gray-300 rounded flex items-center justify-center hover:bg-webropol-primary-50 transition-colors" title="Bottom Right">
-                          <span class="relative inline-block w-5 h-5">
-                            <i class="fal fa-square text-webropol-gray-400 text-sm"></i>
-                            <i class="fas fa-circle text-webropol-primary-600 text-[8px] absolute bottom-0.5 right-0.5"></i>
-                          </span>
+                        <button @click="setImagePosition(imagePositionVertical, 'right')" 
+                                :class="imagePositionHorizontal === 'right' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
+                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
+                          Right
                         </button>
                       </div>
                     </div>
@@ -518,7 +778,12 @@
             
             <!-- Main Canvas Area -->
             <div class="lg:col-span-3">
-              <div class="space-y-8">
+              <!-- Survey Background Wrapper -->
+              <div id="surveyBackgroundWrapper" class="survey-background-wrapper min-h-screen relative p-6">
+                <!-- Page Background Layer (placed above wrapper background) -->
+                <div id="pageBackground" class="absolute inset-0 z-0 pointer-events-none"></div>
+                
+                <div class="space-y-8 relative z-10">
                 <!-- Page Title -->
                 <!-- Title moved inside the page card below -->
                 
@@ -708,7 +973,7 @@
                 </div>
                 
                 <!-- Thank You Page Preview -->
-                <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 p-8 text-center hover-lift">
+                <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 p-8 text-center hover-lift relative z-10">
                   <div class="mb-4">
                     <div class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-4">
                       <i class="fal fa-heart mr-2"></i>
@@ -727,6 +992,7 @@
                       <img src="../img/logo/W-logo-dark.svg" alt="Webropol" class="w-12 h-6 object-contain" />
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
             </div>
@@ -1094,6 +1360,163 @@
           <button class="btn btn-secondary" onclick="closeQuestionSettingsModal()">Cancel</button>
           <button class="btn btn-primary">
             Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Picker Modal -->
+  <div id="colorPickerModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <h2 class="modal-title">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+              <i class="fal fa-palette text-blue-600 text-lg"></i>
+            </div>
+            Color Picker
+          </h2>
+        </div>
+        <button class="modal-close" onclick="closeColorPickerModal()" aria-label="Close modal">
+          <i class="fal fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Color Type Selector -->
+        <div class="settings-section">
+          <div class="flex gap-2 mb-4">
+            <button id="solidColorBtn" class="btn btn-primary active-color-type" onclick="setColorType('solid')">
+              <i class="fal fa-circle"></i>
+              Solid Color
+            </button>
+            <button id="gradientColorBtn" class="btn btn-secondary" onclick="setColorType('gradient')">
+              <i class="fal fa-adjust"></i>
+              Gradient
+            </button>
+          </div>
+        </div>
+        
+        <!-- Solid Color Section -->
+        <div id="solidColorSection" class="settings-section">
+          <!-- Color Canvas -->
+          <div class="color-picker-canvas mb-4">
+            <div class="relative">
+              <canvas id="colorCanvas" width="300" height="200" class="rounded-lg border border-webropol-gray-300 cursor-crosshair"></canvas>
+              <div id="colorMarker" class="absolute w-4 h-4 border-2 border-white rounded-full shadow-md pointer-events-none transform -translate-x-2 -translate-y-2"></div>
+            </div>
+          </div>
+          
+          <!-- Hue Slider -->
+          <div class="mb-4">
+            <label class="form-label mb-2">Hue</label>
+            <div class="relative">
+              <canvas id="hueCanvas" width="300" height="20" class="rounded cursor-pointer w-full"></canvas>
+              <div id="hueMarker" class="absolute w-4 h-6 border-2 border-white rounded shadow-md pointer-events-none transform -translate-x-2"></div>
+            </div>
+          </div>
+          
+          <!-- Color Values -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="form-label">Hex</label>
+              <input type="text" id="hexInput" class="form-input" placeholder="#ffffff" maxlength="7">
+            </div>
+            <div>
+              <label class="form-label">Alpha</label>
+              <input type="range" id="alphaSlider" min="0" max="100" value="100" class="slider w-full">
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="form-label">Red</label>
+              <input type="number" id="redInput" class="form-input" min="0" max="255" value="255">
+            </div>
+            <div>
+              <label class="form-label">Green</label>
+              <input type="number" id="greenInput" class="form-input" min="0" max="255" value="255">
+            </div>
+            <div>
+              <label class="form-label">Blue</label>
+              <input type="number" id="blueInput" class="form-input" min="0" max="255" value="255">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Gradient Section -->
+        <div id="gradientSection" class="settings-section" style="display: none;">
+          <!-- Gradient Type -->
+          <div class="mb-4">
+            <label class="form-label mb-2">Gradient Type</label>
+            <div class="flex gap-2">
+              <button id="linearBtn" class="btn btn-primary active-gradient-type" onclick="setGradientType('linear')">Linear</button>
+              <button id="radialBtn" class="btn btn-secondary" onclick="setGradientType('radial')">Radial</button>
+            </div>
+          </div>
+          
+          <!-- Direction/Position (for linear) -->
+          <div id="linearControls" class="mb-4">
+            <label class="form-label mb-2">Direction</label>
+            <div class="grid grid-cols-4 gap-2">
+              <button class="gradient-direction-btn" data-direction="to right" onclick="setGradientDirection(this)">→</button>
+              <button class="gradient-direction-btn" data-direction="to bottom right" onclick="setGradientDirection(this)">↘</button>
+              <button class="gradient-direction-btn" data-direction="to bottom" onclick="setGradientDirection(this)">↓</button>
+              <button class="gradient-direction-btn" data-direction="to bottom left" onclick="setGradientDirection(this)">↙</button>
+            </div>
+            <div class="grid grid-cols-4 gap-2 mt-2">
+              <button class="gradient-direction-btn" data-direction="to left" onclick="setGradientDirection(this)">←</button>
+              <button class="gradient-direction-btn" data-direction="to top left" onclick="setGradientDirection(this)">↖</button>
+              <button class="gradient-direction-btn" data-direction="to top" onclick="setGradientDirection(this)">↑</button>
+              <button class="gradient-direction-btn active" data-direction="to top right" onclick="setGradientDirection(this)">↗</button>
+            </div>
+          </div>
+          
+          <!-- Radial Controls -->
+          <div id="radialControls" class="mb-4" style="display: none;">
+            <label class="form-label mb-2">Shape</label>
+            <div class="flex gap-2">
+              <button id="circleBtn" class="btn btn-primary active-radial-shape" onclick="setRadialShape('circle')">Circle</button>
+              <button id="ellipseBtn" class="btn btn-secondary" onclick="setRadialShape('ellipse')">Ellipse</button>
+            </div>
+          </div>
+          
+          <!-- Gradient Preview -->
+          <div class="mb-4">
+            <label class="form-label mb-2">Preview</label>
+            <div id="gradientPreview" class="w-full h-20 rounded-lg border border-webropol-gray-300"></div>
+          </div>
+          
+          <!-- Color Stops -->
+          <div class="mb-4">
+            <label class="form-label mb-2">Color Stops</label>
+            <div id="colorStops" class="space-y-2">
+              <!-- Color stops will be added dynamically -->
+            </div>
+            <button id="addColorStop" class="btn btn-secondary w-full mt-2" onclick="addColorStop()">
+              <i class="fal fa-plus"></i>
+              Add Color Stop
+            </button>
+          </div>
+        </div>
+        
+        <!-- Color Preview -->
+        <div class="settings-section">
+          <label class="form-label mb-2">Preview</label>
+          <div class="flex gap-4">
+            <div id="colorPreview" class="w-16 h-16 rounded-lg border-2 border-webropol-gray-300 bg-white"></div>
+            <div id="colorInfo" class="flex-1 text-sm text-webropol-gray-600">
+              <div>Current Color</div>
+              <div id="colorCode">#ffffff</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-actions">
+          <button class="btn btn-secondary" onclick="closeColorPickerModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="applyColor()">
+            Apply Color
           </button>
         </div>
       </div>
@@ -1922,11 +2345,15 @@
 
     function surveyStructureApp() {
       return {
-        activeTab: 'pages',
+        activeTab: (function(){ try{ return localStorage.getItem('edit-left-activeTab') || 'pages'; }catch(e){ return 'pages'; } })(),
         selectedStyle: null,
         
         init() {
           console.log('Survey Structure initialized');
+          // Persist tab changes
+          this.$watch('activeTab', (v) => {
+            try { localStorage.setItem('edit-left-activeTab', v); } catch(e) {}
+          });
         },
         
         applySelectedStyle() {
@@ -1956,6 +2383,548 @@
         }
       }
     }
+    
+    function surveyStylesApp() {
+      return {
+  // Survey Pages (colour & transparency)
+  surveyColorMode: 'color',
+  surveyColor: { r: 134, g: 239, b: 172 }, // Default light green
+  surveyTransparency: 20,
+  surveyBlur: false,
+        
+        // Page Background
+        pageColor: { r: 229, g: 231, b: 235 }, // Default light gray
+        usePageBackground: true,
+        selectedImage: null,
+        
+        // Background Image Properties
+        backgroundRepeat: 'no-repeat',
+        backgroundScale: 'fit-width',
+        imagePositionVertical: 'center',
+        imagePositionHorizontal: 'center',
+        
+        init() {
+          console.log('Survey Styles initialized');
+          // Expose instance for external helpers (color picker)
+          try { window.__surveyStyles = this; } catch(e) {}
+          
+          // Set up watchers for automatic style application
+          this.$watch('surveyColorMode', () => this.applyStyles());
+          this.$watch('surveyTransparency', () => this.applyStyles());
+          this.$watch('surveyBlur', () => this.applyStyles());
+          // pages do not control background image, only colour/transparency
+          this.$watch('usePageBackground', () => this.applyStyles());
+          this.$watch('backgroundRepeat', () => this.applyStyles());
+          this.$watch('backgroundScale', () => this.applyStyles());
+          this.$watch('selectedImage', () => this.applyStyles());
+          // Re-apply when colors change via color picker
+          this.$watch('surveyColor', () => this.applyStyles());
+          this.$watch('pageColor', () => this.applyStyles());
+          
+          // Apply initial styles
+          this.applyStyles();
+        },
+        
+        openColorPicker(target) {
+          console.log('Opening color picker for:', target);
+          window.colorPickerTarget = target;
+          const modal = document.getElementById('colorPickerModal');
+          modal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+          
+          // Initialize color picker components
+          setTimeout(() => {
+            initColorPicker();
+          }, 100);
+        },
+        
+        openImageGallery() {
+          console.log('Opening local device file picker');
+          // Trigger the hidden file input
+          const fileInput = document.querySelector('input[x-ref="imageInput"]');
+          if (fileInput) {
+            fileInput.click();
+          }
+        },
+        
+        handleImageUpload(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          
+          // Validate file type
+          if (!file.type.startsWith('image/')) {
+            alert('Please select a valid image file');
+            return;
+          }
+          
+          // Validate file size (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must be less than 5MB');
+            return;
+          }
+          
+          // Create URL for preview
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.selectedImage = e.target.result;
+            console.log('Image uploaded successfully');
+            this.applyStyles();
+          };
+          reader.readAsDataURL(file);
+        },
+        
+        removeSelectedImage() {
+          this.selectedImage = null;
+          // Clear the file input
+          const fileInput = document.querySelector('input[x-ref="imageInput"]');
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          // Clean up only survey background layer
+          const pageBackground = document.getElementById('pageBackground');
+          
+          if (pageBackground) {
+            pageBackground.style.backgroundImage = 'none';
+            pageBackground.style.filter = 'none';
+            pageBackground.style.transform = 'none';
+            pageBackground.style.backgroundAttachment = 'initial';
+          }
+          
+          this.applyStyles();
+          console.log('Image removed');
+        },
+        
+        setImagePosition(vertical, horizontal) {
+          this.imagePositionVertical = vertical;
+          this.imagePositionHorizontal = horizontal;
+          console.log('Image position set to:', vertical, horizontal);
+          this.applyStyles();
+        },
+        
+        applyStyles() {
+          // Apply the styles to the actual survey preview
+          this.applySurveyStyles();
+          this.applyPageStyles();
+          this.applyBackgroundStyles();
+        },
+        
+        applySurveyStyles() {
+          // Apply to individual survey pages (white cards)
+          const pages = document.querySelectorAll('section.relative.bg-white');
+          pages.forEach(page => {
+            if (this.surveyColorMode === 'color') {
+              const alpha = this.surveyTransparency / 100;
+              page.style.backgroundColor = `rgba(${this.surveyColor.r}, ${this.surveyColor.g}, ${this.surveyColor.b}, ${alpha})`;
+              // Apply blur if requested (only when color is used)
+              page.style.backdropFilter = this.surveyBlur ? 'blur(10px)' : 'none';
+              page.style.webkitBackdropFilter = this.surveyBlur ? 'blur(10px)' : 'none';
+            } else {
+              page.style.backgroundColor = 'transparent';
+              page.style.backdropFilter = 'none';
+              page.style.webkitBackdropFilter = 'none';
+            }
+            // Pages do not receive background image or blur from this section
+            page.style.backgroundImage = 'none';
+            page.style.filter = 'none';
+          });
+        },
+        
+        applyPageStyles() {
+          // Apply to the page background layer (behind survey)
+          const pageBackground = document.getElementById('pageBackground');
+          
+          if (!pageBackground) return;
+          
+          // Always apply background color independently of image
+          pageBackground.style.backgroundColor = `rgb(${this.pageColor.r}, ${this.pageColor.g}, ${this.pageColor.b})`;
+          
+          // Apply survey background image if selected (background behind pages)
+          if (this.usePageBackground && this.selectedImage) {
+            // Keep any solid color; layer the image via background-image
+            pageBackground.style.backgroundImage = `url(${this.selectedImage})`;
+            pageBackground.style.backgroundRepeat = this.backgroundRepeat;
+            pageBackground.style.backgroundPosition = `${this.imagePositionHorizontal} ${this.imagePositionVertical}`;
+            
+            // Apply scaling
+            switch (this.backgroundScale) {
+              case 'fit-width':
+                pageBackground.style.backgroundSize = '100% auto';
+                break;
+              case 'fixed':
+                pageBackground.style.backgroundAttachment = 'fixed';
+                pageBackground.style.backgroundSize = 'cover';
+                break;
+              case 'scrolling':
+                pageBackground.style.backgroundAttachment = 'scroll';
+                pageBackground.style.backgroundSize = 'cover';
+                break;
+              case 'original':
+                pageBackground.style.backgroundSize = 'auto';
+                break;
+            }
+            
+            // Background no longer has its own blur control
+            pageBackground.style.filter = 'none';
+            pageBackground.style.transform = 'none';
+          } else {
+            pageBackground.style.backgroundImage = 'none';
+            pageBackground.style.filter = 'none';
+            pageBackground.style.transform = 'none';
+            pageBackground.style.backgroundAttachment = 'initial';
+            // Ensure any background override from gradient is cleared
+            pageBackground.style.backgroundSize = '';
+            pageBackground.style.backgroundPosition = '';
+          }
+        },
+        
+        applyBackgroundStyles() {
+          // This method can be used to apply additional background styling
+          console.log('Applying background styles', {
+            repeat: this.backgroundRepeat,
+            scale: this.backgroundScale,
+            position: `${this.imagePositionVertical} ${this.imagePositionHorizontal}`
+          });
+        }
+      }
+    }
+    
+    // Initialize slider styling on page load
+    document.addEventListener('alpine:init', () => {
+      // Set up slider initial state
+      setTimeout(() => {
+        const slider = document.querySelector('.slider');
+        if (slider) {
+          slider.style.setProperty('--value', '20%');
+        }
+      }, 100);
+    });
+
+    // Keep slider fill in sync when user drags it
+    document.addEventListener('input', (e) => {
+      if (e.target && e.target.classList && e.target.classList.contains('slider')) {
+        const v = (parseInt(e.target.value, 10) || 0) + '%';
+        e.target.style.setProperty('--value', v);
+      }
+    });
+
+    // Color Picker Functionality
+    let colorPickerState = {
+      currentColor: { r: 255, g: 255, b: 255, a: 1 },
+      colorType: 'solid',
+      gradientType: 'linear',
+      gradientDirection: 'to top right',
+      radialShape: 'circle',
+      colorStops: [
+        { color: { r: 255, g: 0, b: 0, a: 1 }, position: 0 },
+        { color: { r: 0, g: 0, b: 255, a: 1 }, position: 100 }
+      ]
+    };
+
+    function initColorPicker() {
+      drawColorCanvas();
+      drawHueCanvas();
+      updateColorInputs();
+      updateGradientPreview();
+    }
+
+    function drawColorCanvas() {
+      const canvas = document.getElementById('colorCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Create saturation/lightness gradient
+      const gradient1 = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      gradient1.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      gradient1.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      
+      const gradient2 = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient2.addColorStop(0, 'rgba(0, 0, 0, 0)');
+      gradient2.addColorStop(1, 'rgba(0, 0, 0, 1)');
+      
+      ctx.fillStyle = `hsl(${colorPickerState.currentHue || 0}, 100%, 50%)`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = gradient1;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = gradient2;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add click handler
+      canvas.onclick = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const saturation = (x / canvas.width) * 100;
+        const lightness = 100 - (y / canvas.height) * 100;
+        const hue = colorPickerState.currentHue || 0;
+        
+        colorPickerState.currentColor = hslToRgb(hue, saturation, lightness);
+        updateColorInputs();
+        updateColorPreview();
+      };
+    }
+
+    function drawHueCanvas() {
+      const canvas = document.getElementById('hueCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      for (let i = 0; i <= 360; i += 60) {
+        gradient.addColorStop(i / 360, `hsl(${i}, 100%, 50%)`);
+      }
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add click handler
+      canvas.onclick = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        colorPickerState.currentHue = (x / canvas.width) * 360;
+        drawColorCanvas();
+        updateColorPreview();
+      };
+    }
+
+    function hslToRgb(h, s, l) {
+      h /= 360;
+      s /= 100;
+      l /= 100;
+      
+      const a = s * Math.min(l, 1 - l);
+      const f = n => {
+        const k = (n + h * 12) % 12;
+        return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      };
+      
+      return {
+        r: Math.round(f(0) * 255),
+        g: Math.round(f(8) * 255),
+        b: Math.round(f(4) * 255),
+        a: 1
+      };
+    }
+
+    function updateColorInputs() {
+      const color = colorPickerState.currentColor;
+      document.getElementById('redInput').value = color.r;
+      document.getElementById('greenInput').value = color.g;
+      document.getElementById('blueInput').value = color.b;
+      document.getElementById('hexInput').value = rgbToHex(color.r, color.g, color.b);
+      document.getElementById('alphaSlider').value = color.a * 100;
+      updateColorPreview();
+    }
+
+    function updateColorPreview() {
+      const color = colorPickerState.currentColor;
+      const preview = document.getElementById('colorPreview');
+      const info = document.getElementById('colorCode');
+      
+      if (colorPickerState.colorType === 'solid') {
+        const rgba = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        preview.style.background = rgba;
+        info.textContent = document.getElementById('hexInput').value;
+      } else {
+        const gradient = generateGradientCSS();
+        preview.style.background = gradient;
+        info.textContent = 'Custom Gradient';
+      }
+    }
+
+    function rgbToHex(r, g, b) {
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    function setColorType(type) {
+      colorPickerState.colorType = type;
+      
+      // Update button states
+      document.getElementById('solidColorBtn').className = type === 'solid' ? 'btn btn-primary active-color-type' : 'btn btn-secondary';
+      document.getElementById('gradientColorBtn').className = type === 'gradient' ? 'btn btn-primary active-color-type' : 'btn btn-secondary';
+      
+      // Show/hide sections
+      document.getElementById('solidColorSection').style.display = type === 'solid' ? 'block' : 'none';
+      document.getElementById('gradientSection').style.display = type === 'gradient' ? 'block' : 'none';
+      
+      if (type === 'gradient') {
+        updateGradientPreview();
+      }
+      updateColorPreview();
+    }
+
+    function setGradientType(type) {
+      colorPickerState.gradientType = type;
+      
+      // Update button states
+      document.getElementById('linearBtn').className = type === 'linear' ? 'btn btn-primary active-gradient-type' : 'btn btn-secondary';
+      document.getElementById('radialBtn').className = type === 'radial' ? 'btn btn-primary active-gradient-type' : 'btn btn-secondary';
+      
+      // Show/hide controls
+      document.getElementById('linearControls').style.display = type === 'linear' ? 'block' : 'none';
+      document.getElementById('radialControls').style.display = type === 'radial' ? 'block' : 'none';
+      
+      updateGradientPreview();
+    }
+
+    function setGradientDirection(btn) {
+      // Remove active class from all direction buttons
+      document.querySelectorAll('.gradient-direction-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      colorPickerState.gradientDirection = btn.dataset.direction;
+      updateGradientPreview();
+    }
+
+    function setRadialShape(shape) {
+      colorPickerState.radialShape = shape;
+      
+      // Update button states
+      document.getElementById('circleBtn').className = shape === 'circle' ? 'btn btn-primary active-radial-shape' : 'btn btn-secondary';
+      document.getElementById('ellipseBtn').className = shape === 'ellipse' ? 'btn btn-primary active-radial-shape' : 'btn btn-secondary';
+      
+      updateGradientPreview();
+    }
+
+    function generateGradientCSS() {
+      const stops = colorPickerState.colorStops.map(stop => 
+        `rgba(${stop.color.r}, ${stop.color.g}, ${stop.color.b}, ${stop.color.a}) ${stop.position}%`
+      ).join(', ');
+      
+      if (colorPickerState.gradientType === 'linear') {
+        return `linear-gradient(${colorPickerState.gradientDirection}, ${stops})`;
+      } else {
+        return `radial-gradient(${colorPickerState.radialShape}, ${stops})`;
+      }
+    }
+
+    function updateGradientPreview() {
+      const preview = document.getElementById('gradientPreview');
+      if (preview) {
+        preview.style.background = generateGradientCSS();
+      }
+      updateColorPreview();
+    }
+
+    function addColorStop() {
+      const newStop = {
+        color: { ...colorPickerState.currentColor },
+        position: 50
+      };
+      
+      colorPickerState.colorStops.push(newStop);
+      renderColorStops();
+      updateGradientPreview();
+    }
+
+    function renderColorStops() {
+      const container = document.getElementById('colorStops');
+      container.innerHTML = '';
+      
+      colorPickerState.colorStops.forEach((stop, index) => {
+        const stopEl = document.createElement('div');
+        stopEl.className = 'color-stop';
+        stopEl.innerHTML = `
+          <div class="color-stop-preview" style="background: rgba(${stop.color.r}, ${stop.color.g}, ${stop.color.b}, ${stop.color.a})" onclick="editColorStop(${index})"></div>
+          <input type="range" min="0" max="100" value="${stop.position}" class="flex-1" onchange="updateColorStopPosition(${index}, this.value)">
+          <input type="number" min="0" max="100" value="${stop.position}" class="color-stop-position form-input" onchange="updateColorStopPosition(${index}, this.value)">
+          <span>%</span>
+          ${colorPickerState.colorStops.length > 2 ? `<button class="remove-color-stop" onclick="removeColorStop(${index})">×</button>` : ''}
+        `;
+        container.appendChild(stopEl);
+      });
+    }
+
+    function editColorStop(index) {
+      colorPickerState.currentColor = { ...colorPickerState.colorStops[index].color };
+      colorPickerState.currentStopIndex = index;
+      updateColorInputs();
+      
+      // Switch to solid color mode to edit the color
+      setColorType('solid');
+    }
+
+    function updateColorStopPosition(index, value) {
+      colorPickerState.colorStops[index].position = parseInt(value);
+      updateGradientPreview();
+    }
+
+    function removeColorStop(index) {
+      colorPickerState.colorStops.splice(index, 1);
+      renderColorStops();
+      updateGradientPreview();
+    }
+
+    function closeColorPickerModal() {
+      const modal = document.getElementById('colorPickerModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function applyColor() {
+      const target = window.colorPickerTarget;
+      const api = window.__surveyStyles;
+      if (!target || !api) { closeColorPickerModal(); return; }
+
+      if (colorPickerState.colorType === 'solid') {
+        const { r, g, b } = colorPickerState.currentColor;
+        if (target === 'survey') {
+          api.surveyColor = { r, g, b };
+        } else if (target === 'page') {
+          api.pageColor = { r, g, b };
+        }
+      } else {
+        // Optional: gradient to survey background layer
+        const gradientCSS = generateGradientCSS();
+        const pageBackground = document.getElementById('pageBackground');
+        if (target === 'page' && pageBackground) {
+          pageBackground.style.background = gradientCSS;
+        }
+      }
+      // Re-apply after change
+      try { api.applyStyles(); } catch(e) {}
+      closeColorPickerModal();
+    }
+
+    // Add event listeners for color input changes
+    document.addEventListener('DOMContentLoaded', () => {
+      // RGB inputs
+      ['redInput', 'greenInput', 'blueInput'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener('input', () => {
+            colorPickerState.currentColor.r = parseInt(document.getElementById('redInput').value) || 0;
+            colorPickerState.currentColor.g = parseInt(document.getElementById('greenInput').value) || 0;
+            colorPickerState.currentColor.b = parseInt(document.getElementById('blueInput').value) || 0;
+            updateColorPreview();
+          });
+        }
+      });
+      
+      // Hex input
+      const hexInput = document.getElementById('hexInput');
+      if (hexInput) {
+        hexInput.addEventListener('input', () => {
+          const hex = hexInput.value;
+          if (/^#[0-9A-F]{6}$/i.test(hex)) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            colorPickerState.currentColor = { r, g, b, a: colorPickerState.currentColor.a };
+            updateColorInputs();
+          }
+        });
+      }
+      
+      // Alpha slider
+      const alphaSlider = document.getElementById('alphaSlider');
+      if (alphaSlider) {
+        alphaSlider.addEventListener('input', () => {
+          colorPickerState.currentColor.a = alphaSlider.value / 100;
+          updateColorPreview();
+        });
+      }
+    });
 
     // Modal functionality
     function openUploadModal() {
@@ -2303,6 +3272,14 @@
         // Listen for theme changes
         document.addEventListener('theme-changed', function(e) {
           console.log('Theme changed to:', e.detail.theme);
+        });
+        
+        // Update slider background on input
+        document.addEventListener('input', function(e) {
+          if (e.target.classList.contains('slider')) {
+            const value = e.target.value;
+            e.target.style.setProperty('--value', value + '%');
+          }
         });
       }
 
