@@ -469,7 +469,7 @@
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Left Sidebar - Survey Structure -->
             <div class="lg:col-span-1" x-data="surveyStructureApp()">
-              <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover-lift">
+              <div class="rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 hover-lift">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-semibold text-webropol-gray-900">Survey structure</h3>
                   <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
@@ -824,7 +824,7 @@
 
                   <!-- Question Container (selected/unselected states) -->
          <div x-data="{ selected: localStorage.getItem('autosuggestEditorOpen') === 'true' }" x-init="$watch('selected', value => localStorage.setItem('autosuggestEditorOpen', value ? 'true' : 'false'))"
-           class="relative rounded-2xl overflow-hidden bg-white border border-webropol-gray-200 transition-shadow"
+           class="relative rounded-2xl overflow-hidden border border-webropol-gray-200 transition-shadow"
            :class="selected ? 'shadow-card hover-lift' : 'shadow-none'">
                   <!-- Expanded header and toolbar (selected) -->
                   <div x-show="selected" class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white p-4 flex items-center justify-between">
@@ -2408,38 +2408,85 @@
     
         function surveyStylesApp() {
           return {
-      // Survey Pages (colour & transparency)
-      surveyColorMode: 'color',
-      surveyColor: { r: 255, g: 255, b: 255 }, // Default white for survey pages
-      surveyTransparency: 20,
-      surveyBlur: false,
+      // Survey Pages (colour & transparency) - Load from localStorage or use defaults
+      surveyColorMode: (function(){ try{ return localStorage.getItem('survey-colorMode') || 'color'; }catch(e){ return 'color'; } })(),
+      surveyColor: (function(){ 
+        try{ 
+          const saved = localStorage.getItem('survey-color');
+          return saved ? JSON.parse(saved) : { r: 255, g: 255, b: 255 };
+        }catch(e){ 
+          return { r: 255, g: 255, b: 255 }; 
+        } 
+      })(),
+      surveyTransparency: (function(){ try{ return parseInt(localStorage.getItem('survey-transparency')) || 20; }catch(e){ return 20; } })(),
+      surveyBlur: (function(){ try{ return localStorage.getItem('survey-blur') === 'true'; }catch(e){ return false; } })(),
         
-        // Page Background
-        pageColor: { r: 235, g: 244, b: 247 }, // Default light blue-gray background (#ebf4f7)
-        usePageBackground: true,
-        selectedImage: null,        // Background Image Properties
-        backgroundRepeat: 'no-repeat',
-        backgroundScale: 'fit-width',
-        imagePositionVertical: 'center',
-        imagePositionHorizontal: 'center',
+        // Page Background - Load from localStorage or use defaults
+        pageColor: (function(){ 
+          try{ 
+            const saved = localStorage.getItem('page-color');
+            return saved ? JSON.parse(saved) : { r: 235, g: 244, b: 247 };
+          }catch(e){ 
+            return { r: 235, g: 244, b: 247 }; 
+          } 
+        })(),
+        usePageBackground: (function(){ try{ return localStorage.getItem('use-page-background') !== 'false'; }catch(e){ return true; } })(),
+        selectedImage: (function(){ try{ return localStorage.getItem('selected-image') || null; }catch(e){ return null; } })(),        // Background Image Properties - Load from localStorage or use defaults
+        backgroundRepeat: (function(){ try{ return localStorage.getItem('background-repeat') || 'no-repeat'; }catch(e){ return 'no-repeat'; } })(),
+        backgroundScale: (function(){ try{ return localStorage.getItem('background-scale') || 'fit-width'; }catch(e){ return 'fit-width'; } })(),
+        imagePositionVertical: (function(){ try{ return localStorage.getItem('image-position-vertical') || 'center'; }catch(e){ return 'center'; } })(),
+        imagePositionHorizontal: (function(){ try{ return localStorage.getItem('image-position-horizontal') || 'center'; }catch(e){ return 'center'; } })(),
         
         init() {
           console.log('Survey Styles initialized');
           // Expose instance for external helpers (color picker)
           try { window.__surveyStyles = this; } catch(e) {}
           
-          // Set up watchers for automatic style application
-          this.$watch('surveyColorMode', () => this.applyStyles());
-          this.$watch('surveyTransparency', () => this.applyStyles());
-          this.$watch('surveyBlur', () => this.applyStyles());
-          // pages do not control background image, only colour/transparency
-          this.$watch('usePageBackground', () => this.applyStyles());
-          this.$watch('backgroundRepeat', () => this.applyStyles());
-          this.$watch('backgroundScale', () => this.applyStyles());
-          this.$watch('selectedImage', () => this.applyStyles());
-          // Re-apply when colors change via color picker
-          this.$watch('surveyColor', () => this.applyStyles());
-          this.$watch('pageColor', () => this.applyStyles());
+          // Set up watchers for automatic style application AND persistence
+          this.$watch('surveyColorMode', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('survey-colorMode', v); } catch(e) {}
+          });
+          this.$watch('surveyTransparency', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('survey-transparency', v); } catch(e) {}
+          });
+          this.$watch('surveyBlur', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('survey-blur', v); } catch(e) {}
+          });
+          this.$watch('surveyColor', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('survey-color', JSON.stringify(v)); } catch(e) {}
+          });
+          this.$watch('pageColor', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('page-color', JSON.stringify(v)); } catch(e) {}
+          });
+          this.$watch('usePageBackground', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('use-page-background', v); } catch(e) {}
+          });
+          this.$watch('selectedImage', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('selected-image', v || ''); } catch(e) {}
+          });
+          this.$watch('backgroundRepeat', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('background-repeat', v); } catch(e) {}
+          });
+          this.$watch('backgroundScale', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('background-scale', v); } catch(e) {}
+          });
+          this.$watch('imagePositionVertical', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('image-position-vertical', v); } catch(e) {}
+          });
+          this.$watch('imagePositionHorizontal', (v) => { 
+            this.applyStyles(); 
+            try { localStorage.setItem('image-position-horizontal', v); } catch(e) {}
+          });
           
           // Apply initial styles
           this.applyStyles();
@@ -2547,6 +2594,25 @@
             page.style.backgroundImage = 'none';
             page.style.filter = 'none';
           });
+          
+          // Apply same styling to thank you page
+          const thankYouPage = document.querySelector('.bg-white\\/90.backdrop-blur-lg.rounded-3xl');
+          if (thankYouPage) {
+            if (this.surveyColorMode === 'color') {
+              const alpha = this.surveyTransparency / 100;
+              thankYouPage.style.backgroundColor = `rgba(${this.surveyColor.r}, ${this.surveyColor.g}, ${this.surveyColor.b}, ${alpha})`;
+              // Apply blur if requested (only when color is used)
+              thankYouPage.style.backdropFilter = this.surveyBlur ? 'blur(10px)' : 'none';
+              thankYouPage.style.webkitBackdropFilter = this.surveyBlur ? 'blur(10px)' : 'none';
+            } else {
+              thankYouPage.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'; // Restore original bg-white/90
+              thankYouPage.style.backdropFilter = 'blur(16px)'; // Restore original backdrop-blur-lg
+              thankYouPage.style.webkitBackdropFilter = 'blur(16px)';
+            }
+            // Thank you page does not receive background image
+            thankYouPage.style.backgroundImage = 'none';
+            thankYouPage.style.filter = 'none';
+          }
         },
         
         applyPageStyles() {
