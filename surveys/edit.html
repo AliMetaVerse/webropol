@@ -545,212 +545,238 @@
                 </div>
                 
                 <!-- Styles Tab Content -->
-                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-4 mb-6">
-                  <!-- Survey pages (colour and transparency) -->
-                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
-                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Survey pages (colour and transparency)</h4>
+                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-6 mb-6">
+                  <!-- Survey Pages Section -->
+                  <div class="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-200/60 overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3">
+                      <h4 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fal fa-file-alt"></i>
+                        Survey Pages
+                      </h4>
+                      <p class="text-blue-100 text-xs mt-1">Customize the appearance of your survey page cards</p>
+                    </div>
                     
-                    <!-- Color selection with transparency -->
-                    <div class="mb-4">
-                      <div class="flex items-center gap-3 mb-3">
-                        <label class="flex items-center gap-2">
-                          <input type="radio" name="surveyColorMode" value="color" class="w-4 h-4 text-webropol-primary-600" checked x-model="surveyColorMode">
-                          <span class="text-sm text-webropol-gray-700">Colour</span>
+                    <div class="p-4 space-y-4">
+                      <!-- Color Mode Selection -->
+                      <div class="grid grid-cols-2 gap-3">
+                        <label class="group cursor-pointer">
+                          <input type="radio" name="surveyColorMode" value="color" x-model="surveyColorMode" class="sr-only">
+                          <div :class="surveyColorMode === 'color' ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'"
+                               class="p-3 rounded-lg border-2 transition-all group-hover:shadow-md">
+                            <div class="flex items-center gap-2 mb-2">
+                              <div class="w-3 h-3 rounded-full" :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${surveyTransparency / 100})`"></div>
+                              <span class="font-medium text-sm">Color Mode</span>
+                            </div>
+                            <p class="text-xs opacity-75">Apply color with transparency</p>
+                          </div>
                         </label>
-                        <!-- Color preview square -->
-                        <div class="w-8 h-6 rounded border border-webropol-gray-300 color-preview" 
-                             :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${surveyTransparency / 100})`"
-                             @click="openColorPicker('survey')">
-                        </div>
+                        
+                        <label class="group cursor-pointer">
+                          <input type="radio" name="surveyColorMode" value="transparent" x-model="surveyColorMode" class="sr-only">
+                          <div :class="surveyColorMode === 'transparent' ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'"
+                               class="p-3 rounded-lg border-2 transition-all group-hover:shadow-md">
+                            <div class="flex items-center gap-2 mb-2">
+                              <div class="w-3 h-3 rounded-full border-2 border-dashed border-current"></div>
+                              <span class="font-medium text-sm">Transparent</span>
+                            </div>
+                            <p class="text-xs opacity-75">No background color</p>
+                          </div>
+                        </label>
                       </div>
                       
-                      <!-- Transparency slider -->
-                      <div class="flex items-center gap-3 mb-2">
-                        <span class="text-xs text-webropol-gray-600 min-w-[90px]">Set transparency</span>
-                        <input type="range" min="0" max="100" 
-                               x-model="surveyTransparency" 
-                               class="flex-1 h-2 bg-webropol-gray-200 rounded-lg appearance-none slider">
-                        <div class="flex items-center border border-webropol-gray-300 rounded px-2 py-1 w-16">
-                          <input type="number" x-model="surveyTransparency" min="0" max="100" 
-                                 class="w-full text-xs border-none outline-none bg-transparent">
-                        </div>
-                        <span class="text-xs text-webropol-gray-600">Percent (%)</span>
-                      </div>
-                      
-                      <!-- No color option -->
-                      <label class="flex items-center gap-2 mb-3">
-                        <input type="radio" name="surveyColorMode" value="transparent" class="w-4 h-4 text-webropol-primary-600" x-model="surveyColorMode">
-                        <span class="text-sm text-webropol-gray-700">No colour (transparent)</span>
-                      </label>
-                      
-                      <!-- Blur survey page when color is used -->
-                      <label class="flex items-center gap-2 mb-3">
-                        <input type="checkbox" x-model="surveyBlur" class="w-4 h-4 text-webropol-primary-600 rounded">
-                        <span class="text-sm text-webropol-gray-700">Blur survey page bg</span>
-                      </label>
-                      
-                      <!-- Note: survey pages don't control background image -->
-                      <p class="text-xs text-webropol-gray-500">Tip: Background images are set in "Survey background" below.</p>
-                    </div>
-                  </div>
-
-                  <!-- Survey background (around pages) -->
-                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
-                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Survey background</h4>
-                    
-                    <!-- Page color selection -->
-                    <div class="mb-4">
-                      <div class="flex items-center gap-3 mb-3">
-                        <span class="text-sm text-webropol-gray-700">Colour</span>
-                        <div class="w-8 h-6 rounded border border-webropol-gray-300 color-preview" 
-                             :style="`background-color: rgb(${pageColor.r}, ${pageColor.g}, ${pageColor.b})`"
-                             @click="openColorPicker('page')">
-                        </div>
-                      </div>
-                      
-                      <!-- Use survey background image checkbox -->
-                      <label class="flex items-center gap-2 mb-3">
-                        <input type="checkbox" x-model="usePageBackground" class="w-4 h-4 text-webropol-primary-600 rounded">
-                        <span class="text-sm text-webropol-gray-700">Use <strong>survey background</strong> image</span>
-                      </label>
-                      
-                      <!-- Browse Gallery button and Image preview -->
-                      <div class="flex items-center gap-4 mb-3">
-                        <input type="file" id="backgroundImageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
-                        <button @click="$refs.imageInput.click()" class="btn btn-secondary">
-                          <i class="fal fa-upload mr-2"></i>
-                          Browse Local Device
-                        </button>
-                        <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
-                        <div class="text-sm text-webropol-gray-600">Image preview</div>
-                      </div>
-                      
-                      <!-- Image preview area -->
-                      <div class="w-full h-32 rounded border border-webropol-gray-300 mb-3 overflow-hidden bg-gradient-to-br from-blue-200 via-orange-200 to-blue-300 relative">
-                        <img x-show="selectedImage" :src="selectedImage" class="w-full h-full object-cover" alt="Selected background image">
-                        <div x-show="!selectedImage" class="flex items-center justify-center h-full text-webropol-gray-500">
-                          <div class="text-center">
-                            <i class="fal fa-image text-2xl mb-2"></i>
-                            <div class="text-sm">No image selected</div>
+                      <!-- Color Picker & Transparency (only when color mode) -->
+                      <div x-show="surveyColorMode === 'color'" class="bg-white/70 rounded-lg p-3 space-y-3">
+                        <div class="flex items-center gap-3">
+                          <span class="text-sm font-medium text-gray-700 min-w-[60px]">Color</span>
+                          <div class="w-10 h-8 rounded-lg border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition-transform" 
+                               :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${surveyTransparency / 100})`"
+                               @click="openColorPicker('survey')">
                           </div>
                         </div>
-                        <!-- Remove image button -->
-                        <button x-show="selectedImage" @click="removeSelectedImage()" 
-                                class="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors">
-                          <i class="fal fa-times"></i>
-                        </button>
+                        
+                        <div class="flex items-center gap-3">
+                          <span class="text-sm font-medium text-gray-700 min-w-[60px]">Opacity</span>
+                          <input type="range" min="0" max="100" x-model="surveyTransparency" 
+                                 class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none slider">
+                          <div class="bg-white rounded px-2 py-1 border border-gray-200 min-w-[50px] text-center">
+                            <input type="number" x-model="surveyTransparency" min="0" max="100" 
+                                   class="w-full text-xs border-none outline-none bg-transparent text-center">
+                          </div>
+                          <span class="text-xs text-gray-500">%</span>
+                        </div>
+                        
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" x-model="surveyBlur" class="w-4 h-4 text-blue-600 rounded">
+                          <span class="text-sm text-gray-700">Apply blur effect</span>
+                        </label>
                       </div>
-                      
-                      <!-- Removed blur control from background section as requested -->
                     </div>
                   </div>
 
-                  <!-- Repeat background image -->
-                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
-                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Repeat background image</h4>
-                    
-                    <div class="flex flex-wrap gap-2">
-                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
-                             :class="backgroundRepeat === 'no-repeat' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
-                        <input type="radio" name="backgroundRepeat" value="no-repeat" x-model="backgroundRepeat" class="sr-only">
-                        <span class="text-sm">No repeat</span>
-                      </label>
-                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
-                             :class="backgroundRepeat === 'repeat' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
-                        <input type="radio" name="backgroundRepeat" value="repeat" x-model="backgroundRepeat" class="sr-only">
-                        <span class="text-sm">Vertically and horizontally</span>
-                      </label>
-                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
-                             :class="backgroundRepeat === 'repeat-x' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
-                        <input type="radio" name="backgroundRepeat" value="repeat-x" x-model="backgroundRepeat" class="sr-only">
-                        <span class="text-sm">Horizontally</span>
-                      </label>
-                      <label class="flex items-center gap-2 px-3 py-2 rounded-full border border-webropol-gray-300 cursor-pointer hover:bg-webropol-gray-50 transition-colors"
-                             :class="backgroundRepeat === 'repeat-y' ? 'bg-webropol-primary-100 border-webropol-primary-300 text-webropol-primary-700' : ''">
-                        <input type="radio" name="backgroundRepeat" value="repeat-y" x-model="backgroundRepeat" class="sr-only">
-                        <span class="text-sm">Vertically</span>
-                      </label>
+                  <!-- Background Section -->
+                  <div class="bg-gradient-to-br from-emerald-50/50 to-teal-50/50 rounded-xl border border-emerald-200/60 overflow-hidden">
+                    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3">
+                      <h4 class="text-white font-semibold flex items-center gap-2">
+                        <i class="fal fa-image"></i>
+                        Survey Background
+                      </h4>
+                      <p class="text-emerald-100 text-xs mt-1">Set the background color and image behind your survey</p>
                     </div>
-                  </div>
-
-                  <!-- Scaling -->
-                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
-                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Scaling</h4>
                     
-                    <div class="space-y-3">
-                      <label class="flex items-start gap-3 cursor-pointer">
-                        <input type="radio" name="backgroundScale" value="fit-width" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
-                        <div class="flex-1">
-                          <span class="text-sm font-medium text-webropol-gray-900">Make background always fit the width of survey page background (recommended)</span>
-                          <div class="w-4 h-4 bg-blue-100 rounded-full inline-flex items-center justify-center ml-2">
-                            <i class="fas fa-question text-blue-600 text-xs"></i>
+                    <div class="p-4 space-y-4">
+                      <!-- Background Color -->
+                      <div class="bg-white/70 rounded-lg p-3">
+                        <div class="flex items-center gap-3 mb-3">
+                          <span class="text-sm font-medium text-gray-700">Background Color</span>
+                          <div class="w-10 h-8 rounded-lg border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition-transform" 
+                               :style="`background-color: rgb(${pageColor.r}, ${pageColor.g}, ${pageColor.b})`"
+                               @click="openColorPicker('page')">
                           </div>
                         </div>
-                      </label>
-                      <label class="flex items-start gap-3 cursor-pointer">
-                        <input type="radio" name="backgroundScale" value="fixed" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
-                        <div class="flex-1">
-                          <span class="text-sm text-webropol-gray-900">Fixed background image (recommended)</span>
-                        </div>
-                      </label>
-                      <label class="flex items-start gap-3 cursor-pointer">
-                        <input type="radio" name="backgroundScale" value="scrolling" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
-                        <div class="flex-1">
-                          <span class="text-sm text-webropol-gray-900">Scrolling background image</span>
-                        </div>
-                      </label>
-                      <label class="flex items-start gap-3 cursor-pointer">
-                        <input type="radio" name="backgroundScale" value="original" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 mt-0.5">
-                        <div class="flex-1">
-                          <span class="text-sm text-webropol-gray-900">No scaling - always keep image's original size on all screen sizes</span>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  <!-- Placement of background image -->
-                  <div class="bg-white rounded-lg border border-webropol-gray-200 p-4">
-                    <h4 class="text-sm font-semibold text-webropol-gray-900 mb-4">Placement of background image</h4>
-                    
-                    <!-- Vertical position -->
-                    <div class="mb-4">
-                      <div class="flex gap-1 justify-center">
-                        <button @click="setImagePosition('top', imagePositionHorizontal)" 
-                                :class="imagePositionVertical === 'top' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Top
-                        </button>
-                        <button @click="setImagePosition('center', imagePositionHorizontal)" 
-                                :class="imagePositionVertical === 'center' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Center
-                        </button>
-                        <button @click="setImagePosition('bottom', imagePositionHorizontal)" 
-                                :class="imagePositionVertical === 'bottom' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Bottom
-                        </button>
                       </div>
-                    </div>
-                    
-                    <!-- Horizontal position -->
-                    <div>
-                      <div class="flex gap-1 justify-center">
-                        <button @click="setImagePosition(imagePositionVertical, 'left')" 
-                                :class="imagePositionHorizontal === 'left' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Left
-                        </button>
-                        <button @click="setImagePosition(imagePositionVertical, 'center')" 
-                                :class="imagePositionHorizontal === 'center' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Center
-                        </button>
-                        <button @click="setImagePosition(imagePositionVertical, 'right')" 
-                                :class="imagePositionHorizontal === 'right' ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 hover:bg-webropol-gray-200'"
-                                class="px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Right
-                        </button>
+                      
+                      <!-- Background Image -->
+                      <div class="bg-white/70 rounded-lg p-3 space-y-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" x-model="usePageBackground" class="w-4 h-4 text-emerald-600 rounded">
+                          <span class="text-sm font-medium text-gray-700">Use background image</span>
+                        </label>
+                        
+                        <div x-show="usePageBackground" class="space-y-3 border-l-2 border-emerald-200 pl-3">
+                          <!-- Image Upload -->
+                          <div class="flex items-center gap-3">
+                            <button @click="$refs.imageInput.click()" class="btn btn-secondary text-sm">
+                              <i class="fal fa-upload mr-2"></i>
+                              Choose Image
+                            </button>
+                            <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
+                            <span x-show="selectedImage" class="text-xs text-gray-600">Image selected</span>
+                          </div>
+                          
+                          <!-- Image Preview -->
+                          <div class="w-full h-24 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 relative">
+                            <img x-show="selectedImage" :src="selectedImage" class="w-full h-full object-cover" alt="Background preview">
+                            <div x-show="!selectedImage" class="flex items-center justify-center h-full text-gray-400">
+                              <div class="text-center">
+                                <i class="fal fa-image text-lg mb-1"></i>
+                                <div class="text-xs">No image</div>
+                              </div>
+                            </div>
+                            <button x-show="selectedImage" @click="removeSelectedImage()" 
+                                    class="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors">
+                              <i class="fal fa-times"></i>
+                            </button>
+                          </div>
+                          
+                          <!-- Image Controls -->
+                          <div x-show="selectedImage" class="grid grid-cols-2 gap-4">
+                            <!-- Repeat Options -->
+                            <div>
+                              <label class="text-xs font-medium text-gray-600 mb-2 block">Repeat</label>
+                              <div class="grid grid-cols-2 gap-1">
+                                <label class="cursor-pointer">
+                                  <input type="radio" name="backgroundRepeat" value="no-repeat" x-model="backgroundRepeat" class="sr-only">
+                                  <div :class="backgroundRepeat === 'no-repeat' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-300'"
+                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
+                                    None
+                                  </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                  <input type="radio" name="backgroundRepeat" value="repeat" x-model="backgroundRepeat" class="sr-only">
+                                  <div :class="backgroundRepeat === 'repeat' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-300'"
+                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
+                                    Both
+                                  </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                  <input type="radio" name="backgroundRepeat" value="repeat-x" x-model="backgroundRepeat" class="sr-only">
+                                  <div :class="backgroundRepeat === 'repeat-x' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-300'"
+                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
+                                    Horizontal
+                                  </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                  <input type="radio" name="backgroundRepeat" value="repeat-y" x-model="backgroundRepeat" class="sr-only">
+                                  <div :class="backgroundRepeat === 'repeat-y' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-300'"
+                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
+                                    Vertical
+                                  </div>
+                                </label>
+                              </div>
+                            </div>
+                            
+                            <!-- Scale Options -->
+                            <div>
+                              <label class="text-xs font-medium text-gray-600 mb-2 block">Scale</label>
+                              <div class="space-y-1">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                  <input type="radio" name="backgroundScale" value="fit-width" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
+                                  <span class="text-xs text-gray-700">Fit Width</span>
+                                </label>
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                  <input type="radio" name="backgroundScale" value="fixed" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
+                                  <span class="text-xs text-gray-700">Fixed</span>
+                                </label>
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                  <input type="radio" name="backgroundScale" value="original" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
+                                  <span class="text-xs text-gray-700">Original</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <!-- Position Grid -->
+                          <div x-show="selectedImage">
+                            <label class="text-xs font-medium text-gray-600 mb-2 block">Position</label>
+                            <div class="grid grid-cols-3 gap-1 w-fit mx-auto">
+                              <button @click="setImagePosition('top', 'left')" 
+                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↖
+                              </button>
+                              <button @click="setImagePosition('top', 'center')" 
+                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↑
+                              </button>
+                              <button @click="setImagePosition('top', 'right')" 
+                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↗
+                              </button>
+                              <button @click="setImagePosition('center', 'left')" 
+                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ←
+                              </button>
+                              <button @click="setImagePosition('center', 'center')" 
+                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                •
+                              </button>
+                              <button @click="setImagePosition('center', 'right')" 
+                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                →
+                              </button>
+                              <button @click="setImagePosition('bottom', 'left')" 
+                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↙
+                              </button>
+                              <button @click="setImagePosition('bottom', 'center')" 
+                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↓
+                              </button>
+                              <button @click="setImagePosition('bottom', 'right')" 
+                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
+                                      class="w-8 h-8 rounded text-xs transition-colors">
+                                ↘
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
