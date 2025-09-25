@@ -7,7 +7,7 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolModal extends BaseComponent {
   static get observedAttributes() {
-    return ['open', 'size', 'title', 'closable', 'backdrop-close'];
+    return ['open', 'size', 'title', 'closable', 'backdrop-close', 'z-index'];
   }
 
   constructor() {
@@ -44,9 +44,19 @@ export class WebropolModal extends BaseComponent {
       full: 'max-w-[95vw] max-h-[95vh]'
     };
 
+    // NOTE: Elevated z-index to ensure the modal layers above the header (which uses z-40 and
+    // some dropdowns that may reach higher values). Also, by portaling the component to <body>
+    // (implemented in show()), we escape any transformed stacking contexts that previously
+    // caused the header to visually cover the modal.
+    // Allow consumer to override z-index via attribute or CSS variable.
+    // Priority: attribute z-index > CSS var(--webropol-modal-z) > default 12000 (covers header dropdowns z-[9999]).
+    const attrZ = this.getAttribute('z-index');
+    const cssVarZ = getComputedStyle(this).getPropertyValue('--webropol-modal-z').trim();
+    const resolvedZ = parseInt(attrZ || cssVarZ || '12000', 10) || 12000;
+
     const modalHtml = `
-      <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
-           style="transition: opacity 300ms ease-out">
+      <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
+           style="z-index:${resolvedZ};transition: opacity 300ms ease-out">
         
         <div class="modal-content bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]} max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
              style="transition: all 300ms ease-out"
@@ -124,6 +134,21 @@ export class WebropolModal extends BaseComponent {
   }
 
   show() {
+    // Portal to body to avoid being trapped in a lower stacking context (e.g., parent with transform)
+    if (!this._portaled) {
+      this._originalParent = this.parentElement;
+      try {
+        document.body.appendChild(this);
+        this._portaled = true;
+      } catch (e) {
+        console.warn('[WebropolModal] Failed to portal modal to body:', e);
+      }
+    }
+    // Ensure host itself is not constrained by ancestor positioning (some SPA wrappers may set transform or perspective).
+    // We apply a fixed positioning layer only while open so any internal absolute elements align to viewport.
+    this._prevHostStyle = this._prevHostStyle || this.getAttribute('style') || '';
+    const currentInline = this._prevHostStyle.replace(/position:\s*fixed;?/,'').replace(/top:\s*0;?/,'').replace(/left:\s*0;?/,'').replace(/width:\s*100vw;?/,'').replace(/height:\s*100vh;?/,'');
+    this.setAttribute('style', `position:fixed;top:0;left:0;width:100vw;height:100vh;${currentInline}`.trim());
     // Store previously focused element
     this.previouslyFocused = document.activeElement;
     
@@ -149,6 +174,22 @@ export class WebropolModal extends BaseComponent {
     if (this.previouslyFocused) {
       this.previouslyFocused.focus();
       this.previouslyFocused = null;
+    }
+
+    // (Optional) restore original DOM position if it existed and parent is still in document
+    if (this._portaled && this._originalParent && document.contains(this._originalParent)) {
+      try {
+        this._originalParent.appendChild(this);
+      } catch (e) {
+        console.warn('[WebropolModal] Failed to restore modal to original parent:', e);
+      }
+      this._portaled = false;
+    }
+
+    // Restore host inline style
+    if (this._prevHostStyle !== undefined) {
+      if (this._prevHostStyle) this.setAttribute('style', this._prevHostStyle);
+      else this.removeAttribute('style');
     }
 
     this.emit('webropol-modal-close');

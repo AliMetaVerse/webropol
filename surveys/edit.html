@@ -393,7 +393,7 @@
               </style>
               <div class="survey-edit-toolbar flex items-center flex-wrap gap-3 sm:gap-4">
                 <!-- Reusable item template -->
-                <div class="tool-item flex flex-col items-center justify-center cursor-pointer p-2 transition-all duration-200 group">
+                <div class="tool-item flex flex-col items-center justify-center cursor-pointer p-2 transition-all duration-200 group" onclick="openAddQuestionModal()">
                   <div class="w-12 h-12 flex items-center justify-center">
                     <i class="fal fa-plus text-webropol-gray-600 text-2xl"></i>
                   </div>
@@ -516,19 +516,48 @@
                 </div>
                 
                 <!-- Survey Structure Tree - Pages Tab -->
-                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6">
+                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6" x-data="{ expandedPages: { page1: true }, selectedItems: { page1: false } }">
                   <!-- Page 1 -->
-                  <div class="flex items-center space-x-3 p-3 bg-webropol-primary-50 rounded-lg border border-webropol-primary-200">
-                    <i class="fal fa-chevron-down text-webropol-primary-600"></i>
-                    <i class="fal fa-file-alt text-webropol-primary-600"></i>
-                    <span class="font-medium text-webropol-primary-900">PAGE 1</span>
-                  </div>
-                  
-                  <!-- Auto Suggest Question -->
-                  <div class="ml-6 flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors">
-                    <i class="fal fa-grip-vertical text-blue-400"></i>
-                    <i class="fal fa-list-ul text-blue-600"></i>
-                    <span class="text-blue-900 font-medium">Auto Suggest</span>
+                  <div class="bg-webropol-primary-50 rounded-lg border border-webropol-primary-200">
+                    <div class="flex items-center space-x-3 p-3 cursor-pointer" @click="expandedPages.page1 = !expandedPages.page1">
+                      <input type="checkbox" x-model="selectedItems.page1" @click.stop class="w-4 h-4 text-webropol-primary-600 border-webropol-primary-300 rounded focus:ring-webropol-primary-500" id="page1-checkbox">
+                      <label for="page1-checkbox" class="flex-1 flex items-center space-x-3 cursor-pointer" @click.stop="selectedItems.page1 = !selectedItems.page1">
+                        <span class="font-medium text-webropol-primary-900">PAGE 1</span>
+                      </label>
+                      <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 text-xs bg-webropol-primary-100 text-webropol-primary-700 rounded-full">1 question</span>
+                        <i class="fal transition-transform duration-200" :class="expandedPages.page1 ? 'fa-chevron-down text-webropol-primary-600' : 'fa-chevron-right text-webropol-primary-600'"></i>
+                      </div>
+                    </div>
+                    
+                    <!-- Page 1 Questions (Collapsible) -->
+                    <div x-show="expandedPages.page1" x-transition class="pl-6 pb-3 pr-3 space-y-2" x-data="{ selectedQuestions: { autosuggest: false } }">
+                      <!-- Auto Suggest Question -->
+                      <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors group">
+                        <input type="checkbox" x-model="selectedQuestions.autosuggest" @click.stop class="w-4 h-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500" id="autosuggest-checkbox">
+                        <label for="autosuggest-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.autosuggest = !selectedQuestions.autosuggest">
+                          <div>
+                            <span class="text-blue-900 font-medium text-sm">Auto Suggest</span>
+                          </div>
+                        </label>
+                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="w-6 h-6 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition-colors" onclick="openQuestionSettingsModal()" title="Settings">
+                            <i class="fal fa-cog"></i>
+                          </button>
+                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
+                            <i class="fal fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <!-- Add Question Button (appears when expanded) -->
+                      <div class="flex items-center justify-center">
+                        <button class="flex items-center space-x-2 px-4 py-2 text-sm text-webropol-primary-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-lg transition-colors" onclick="openAddQuestionModal()">
+                          <i class="fal fa-plus"></i>
+                          <span>Add Question</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
                   <!-- Thank you page -->
@@ -825,12 +854,14 @@
 
                   <!-- Question Container (selected/unselected states) -->
          <div x-data="{ selected: localStorage.getItem('autosuggestEditorOpen') === 'true' }" x-init="$watch('selected', value => localStorage.setItem('autosuggestEditorOpen', value ? 'true' : 'false'))"
-           class="relative rounded-2xl overflow-hidden border border-webropol-gray-200 transition-shadow"
-           :class="selected ? 'shadow-card hover-lift' : 'shadow-none'">
+           class="relative rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-lg"
+           :class="selected ? 'border-webropol-primary-300 shadow-xl bg-white' : 'border-webropol-gray-200 bg-white/80 hover:border-webropol-gray-300'">
                   <!-- Expanded header and toolbar (selected) -->
-                  <div x-show="selected" class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white p-4 flex items-center justify-between">
+                  <div x-show="selected" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white p-4 flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                      <span class="bg-white/20 px-2 py-1 rounded text-sm font-medium">Autosuggest text field</span>
+                      <i class="fal fa-search"></i>
+                      <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Autosuggest text field</span>
+                      <span class="text-webropol-primary-100 text-sm">Question 1</span>
                     </div>
                     <div class="flex items-center space-x-2">
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="AI Suggest">
@@ -851,6 +882,7 @@
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Delete">
                         <i class="fal fa-trash text-white"></i>
                       </button>
+                      <div class="w-px h-6 bg-white/20 mx-2"></div>
                       <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Close editor" aria-label="Close editor" @click="selected = false">
                         <i class="fal fa-times text-white"></i>
                       </button>
@@ -858,17 +890,29 @@
                   </div>
 
                   <!-- Collapsed (unselected) content preview -->
-                  <div x-show="!selected" class="p-6 cursor-pointer" @click="selected = true">
-                    <label class="block text-lg font-semibold text-webropol-gray-900 mb-4">
-                      1. Auto Suggest
-                    </label>
+                  <div x-show="!selected" class="p-6 cursor-pointer group hover:bg-webropol-gray-50/50 transition-colors" @click="selected = true">
+                    <div class="flex items-start justify-between mb-4">
+                      <label class="block text-lg font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
+                        1. Auto Suggest
+                      </label>
+                      <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium">Autosuggest</span>
+                        <i class="fal fa-edit text-webropol-primary-600"></i>
+                      </div>
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
                       <span class="text-sm text-webropol-gray-600">Option</span>
                       <div class="sm:col-span-2">
-                        <input type="text" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg" disabled placeholder="">
+                        <input type="text" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg bg-webropol-gray-50" disabled placeholder="Type to see suggestions...">
                       </div>
                     </div>
-                    <!-- Quick actions moved outside card -->
+                    <div class="mt-3 text-xs text-webropol-gray-500 flex items-center space-x-4">
+                      <span>Click to expand and edit</span>
+                      <span class="flex items-center space-x-1">
+                        <i class="fal fa-database"></i>
+                        <span>Auto-suggest enabled</span>
+                      </span>
+                    </div>
                   </div>
 
                   <!-- Expanded (selected) content -->
@@ -970,7 +1014,7 @@
 
                   <!-- Quick actions (outside bordered card) -->
                   <div class="mt-4 flex items-center gap-2">
-                    <button type="button" class="btn btn-primary rounded-full">
+                    <button type="button" class="btn btn-primary rounded-full" onclick="openAddQuestionModal()">
                       <i class="fal fa-play"></i>
                       <span>Add question</span>
                     </button>
@@ -1546,6 +1590,406 @@
     </div>
   </div>
 
+  <!-- Add Question Modal -->
+  <div id="addQuestionModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <h2 class="modal-title">
+            <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-100 rounded-full flex items-center justify-center">
+              <i class="fal fa-plus text-orange-600 text-lg"></i>
+            </div>
+            Add question
+          </h2>
+        </div>
+        <button class="modal-close" onclick="closeAddQuestionModal()" aria-label="Close modal">
+          <i class="fal fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Search Bar -->
+        <div class="settings-section" style="margin-bottom: 1.5rem;">
+          <div class="relative">
+            <input type="text" id="questionTypeSearch" placeholder="Search question types" class="w-full pl-10 pr-4 py-3 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 transition-all" oninput="filterQuestionTypes(this.value)">
+            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400">
+              <i class="fal fa-search"></i>
+            </div>
+            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600" onclick="clearSearch()" style="display: none;" id="clearSearchBtn">
+              <i class="fal fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Categories -->
+        <div id="questionTypesContainer">
+          <!-- Text Category -->
+          <div class="question-category" data-category="text">
+            <h3 class="category-title">Text</h3>
+            <div class="question-types-list">
+              <button class="question-type-item" onclick="selectQuestionType('open-ended')" data-type="open-ended" data-keywords="text input free response">
+                <div class="question-type-icon bg-orange-100 text-orange-600">
+                  <i class="fal fa-align-left"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Open ended</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'open-ended')" aria-label="More info about Open ended">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('contact-form')" data-type="contact-form" data-keywords="contact form name email phone">
+                <div class="question-type-icon bg-orange-100 text-orange-600">
+                  <i class="fal fa-address-card"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Contact form</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'contact-form')" aria-label="More info about Contact form">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('text-field')" data-type="text-field" data-keywords="text field single line input">
+                <div class="question-type-icon bg-orange-100 text-orange-600">
+                  <i class="fal fa-font"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Text field</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'text-field')" aria-label="More info about Text field">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('numeric-field')" data-type="numeric-field" data-keywords="number numeric input calculation">
+                <div class="question-type-icon bg-orange-100 text-orange-600">
+                  <i class="fal fa-hashtag"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Numeric field</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'numeric-field')" aria-label="More info about Numeric field">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+            </div>
+          </div>
+
+          <!-- Selection Category -->
+          <div class="question-category" data-category="selection">
+            <h3 class="category-title">Selection</h3>
+            <div class="question-types-list">
+              <button class="question-type-item" onclick="selectQuestionType('selection')" data-type="selection" data-keywords="radio button single choice select">
+                <div class="question-type-icon bg-blue-100 text-blue-600">
+                  <i class="fal fa-list"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Selection</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'selection')" aria-label="More info about Selection">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('multiselection')" data-type="multiselection" data-keywords="checkbox multiple choice multi select">
+                <div class="question-type-icon bg-blue-100 text-blue-600">
+                  <i class="fal fa-check-square"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Multiselection</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'multiselection')" aria-label="More info about Multiselection">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('dropdown')" data-type="dropdown" data-keywords="dropdown select menu list">
+                <div class="question-type-icon bg-blue-100 text-blue-600">
+                  <i class="fal fa-chevron-down"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Dropdown</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'dropdown')" aria-label="More info about Dropdown">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('picture-selection')" data-type="picture-selection" data-keywords="image picture visual selection">
+                <div class="question-type-icon bg-blue-100 text-blue-600">
+                  <i class="fal fa-images"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Picture selection</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'picture-selection')" aria-label="More info about Picture selection">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('picture-multiselection')" data-type="picture-multiselection" data-keywords="image picture visual multiple choice">
+                <div class="question-type-icon bg-blue-100 text-blue-600">
+                  <i class="fal fa-photo-video"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Picture multiselection</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'picture-multiselection')" aria-label="More info about Picture multiselection">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+            </div>
+          </div>
+
+          <!-- Matrix Category -->
+          <div class="question-category" data-category="matrix">
+            <h3 class="category-title">Matrix</h3>
+            <div class="question-types-list">
+              <button class="question-type-item" onclick="selectQuestionType('matrix-scale')" data-type="matrix-scale" data-keywords="matrix scale grid rating">
+                <div class="question-type-icon bg-green-100 text-green-600">
+                  <i class="fal fa-th"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Matrix (Scale selection)</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'matrix-scale')" aria-label="More info about Matrix Scale selection">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('multiselection-matrix')" data-type="multiselection-matrix" data-keywords="matrix multiple selection grid">
+                <div class="question-type-icon bg-green-100 text-green-600">
+                  <i class="fal fa-border-all"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Multiselection matrix</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'multiselection-matrix')" aria-label="More info about Multiselection matrix">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('position')" data-type="position" data-keywords="position ranking order priority">
+                <div class="question-type-icon bg-green-100 text-green-600">
+                  <i class="fal fa-arrows-alt-v"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Position</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'position')" aria-label="More info about Position">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+            </div>
+          </div>
+
+          <!-- Experience & Loyalty Category -->
+          <div class="question-category" data-category="experience">
+            <h3 class="category-title">Experience & Loyalty</h3>
+            <div class="question-types-list">
+              <button class="question-type-item" onclick="selectQuestionType('nps')" data-type="nps" data-keywords="net promoter score nps loyalty">
+                <div class="question-type-icon bg-purple-100 text-purple-600">
+                  <i class="fal fa-chart-line"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">NPS</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'nps')" aria-label="More info about NPS">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('ces')" data-type="ces" data-keywords="customer effort score ces experience">
+                <div class="question-type-icon bg-purple-100 text-purple-600">
+                  <i class="fal fa-tachometer-alt"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">CES</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'ces')" aria-label="More info about CES">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('csat')" data-type="csat" data-keywords="customer satisfaction csat rating">
+                <div class="question-type-icon bg-purple-100 text-purple-600">
+                  <i class="fal fa-heart"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">CSAT</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'csat')" aria-label="More info about CSAT">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+            </div>
+          </div>
+
+          <!-- Other Category -->
+          <div class="question-category" data-category="other">
+            <h3 class="category-title">Other</h3>
+            <div class="question-types-list">
+              <button class="question-type-item" onclick="selectQuestionType('attach-file')" data-type="attach-file" data-keywords="file upload attachment document">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-paperclip"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Attach file to response</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'attach-file')" aria-label="More info about Attach file">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('fourfold')" data-type="fourfold" data-keywords="fourfold quad four options">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-th-large"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Fourfold</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'fourfold')" aria-label="More info about Fourfold">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('calendar')" data-type="calendar" data-keywords="calendar date time appointment">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-calendar-alt"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Calendar</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'calendar')" aria-label="More info about Calendar">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('question-table')" data-type="question-table" data-keywords="table data grid structured">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-table"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Question table</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'question-table')" aria-label="More info about Question table">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('hierarchical')" data-type="hierarchical" data-keywords="hierarchical tree nested structure">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-sitemap"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Hierarchical</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'hierarchical')" aria-label="More info about Hierarchical">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('ranking')" data-type="ranking" data-keywords="ranking order priority sort">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-sort-amount-down"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Ranking</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'ranking')" aria-label="More info about Ranking">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('numeric-slider')" data-type="numeric-slider" data-keywords="slider numeric range scale">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-sliders-h"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Numeric slider</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'numeric-slider')" aria-label="More info about Numeric slider">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+
+              <button class="question-type-item" onclick="selectQuestionType('autosuggest')" data-type="autosuggest" data-keywords="autosuggest autocomplete search typeahead">
+                <div class="question-type-icon bg-gray-100 text-gray-600">
+                  <i class="fal fa-search"></i>
+                </div>
+                <div class="question-type-content">
+                  <span class="question-type-name">Autosuggest text field</span>
+                </div>
+                <button class="question-type-info" onclick="showQuestionInfo(event, 'autosuggest')" aria-label="More info about Autosuggest text field">
+                  <i class="fal fa-question-circle"></i>
+                </button>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResultsMessage" class="text-center py-8" style="display: none;">
+          <div class="text-webropol-gray-400 mb-2">
+            <i class="fal fa-search text-2xl"></i>
+          </div>
+          <p class="text-webropol-gray-600 font-medium">No question types match your search</p>
+          <p class="text-webropol-gray-500 text-sm mt-1">Try different keywords or browse all categories</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-actions">
+          <button class="btn btn-secondary" onclick="closeAddQuestionModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Modal utility for this page (legacy bespoke modals).
+    (function(){
+      const MODAL_IDS = ['addQuestionModal','uploadModal','questionSettingsModal','colorPickerModal'];
+      function portal(el){
+        if(!el) return; 
+        // Always keep at end of body to outrank siblings with higher stacking contexts.
+        document.body.appendChild(el);
+      }
+      function refreshBodyState(){
+        const anyActive = MODAL_IDS.some(id => {
+          const m = document.getElementById(id); return m && m.classList.contains('active');
+        });
+        document.body.classList.toggle('modal-open', anyActive);
+        if(anyActive){ document.body.style.overflow='hidden'; } else { document.body.style.overflow=''; }
+      }
+      function openModal(id){
+        const m = document.getElementById(id); if(!m) return;
+        portal(m);
+        requestAnimationFrame(()=>{ m.classList.add('active'); refreshBodyState(); });
+      }
+      function closeModal(id){
+        const m = document.getElementById(id); if(!m) return; m.classList.remove('active'); refreshBodyState(); }
+      // Expose specific functions already referenced inline
+      window.openAddQuestionModal = () => openModal('addQuestionModal');
+      window.closeAddQuestionModal = () => closeModal('addQuestionModal');
+      window.openUploadModal = () => openModal('uploadModal');
+      window.closeUploadModal = () => closeModal('uploadModal');
+      window.openQuestionSettingsModal = () => openModal('questionSettingsModal');
+      window.closeQuestionSettingsModal = () => closeModal('questionSettingsModal');
+      window.openColorPickerModal = () => openModal('colorPickerModal');
+      window.closeColorPickerModal = () => closeModal('colorPickerModal');
+      // Initial portal (in case HTML loaded before script runs)
+      MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
+      // Close when clicking outside content
+      document.addEventListener('click', (e)=>{
+        const overlay = e.target.closest('.modal-overlay.active');
+        if(overlay && !e.target.closest('.modal-content')){
+          overlay.classList.remove('active'); refreshBodyState();
+        }
+      });
+    })();
+  </script>
+
   <style>
     /* Modal Styles */
     .modal-overlay {
@@ -1559,7 +2003,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      /* Use CSS variable with fallback so we can centrally tune layering. */
+      z-index: var(--webropol-page-modal-z, 16000) !important;
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s ease;
@@ -1571,13 +2016,41 @@
       visibility: visible;
     }
 
+    /* Force all modal overlays to appear above everything */
+    #addQuestionModal.modal-overlay,
+    #uploadModal.modal-overlay,
+    #questionSettingsModal.modal-overlay,
+    #colorPickerModal.modal-overlay {
+      z-index: 99999 !important;
+    }
+
+    /* Ensure header stays behind modals when they're active */
+    /* Primary (modern) :has selector */
+    body:has(.modal-overlay.active) webropol-header { z-index: 10 !important; }
+    /* Fallback when JS toggles .modal-open on body */
+    body.modal-open webropol-header { z-index: 10 !important; }
+
     /* Ensure Upload modal can appear above Question Settings modal */
     #uploadModal {
-      z-index: 1000;
+      z-index: 99999 !important;
     }
 
     #uploadModal.above-settings {
-      z-index: 1001;
+      z-index: 100000 !important;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Ensure Upload modal can appear above Question Settings modal */
+    #uploadModal {
+      z-index: 9999;
+    }
+
+    #uploadModal.above-settings {
+      z-index: 10000;
     }
 
     /* Button Styles from auto-suggest.html */
@@ -1810,7 +2283,7 @@
 
     .tooltip-panel {
       position: absolute;
-      z-index: 1100;
+      z-index: 10001;
       max-width: 320px;
       width: max-content;
       background: #111827;
@@ -2272,6 +2745,141 @@
       gap: 0.5rem;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    /* Add Question Modal Styles */
+    .question-category {
+      margin-bottom: 2rem;
+    }
+
+    .question-category:last-child {
+      margin-bottom: 0;
+    }
+
+    .category-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 1rem;
+      text-transform: none;
+    }
+
+    .question-types-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .question-type-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+      min-height: 60px;
+    }
+
+    .question-type-item:hover {
+      border-color: #0891b2;
+      background: #f0fdff;
+      box-shadow: 0 2px 8px rgba(8, 145, 178, 0.1);
+    }
+
+    .question-type-item:focus {
+      outline: none;
+      border-color: #0891b2;
+      box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+    }
+
+    .question-type-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+
+    .question-type-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .question-type-name {
+      font-weight: 500;
+      color: #1f2937;
+      font-size: 0.9375rem;
+    }
+
+    .question-type-info {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      margin-left: auto;
+    }
+
+    .question-type-info:hover {
+      border-color: #0891b2;
+      color: #0891b2;
+      background: #f0fdff;
+    }
+
+    .question-type-info:focus {
+      outline: none;
+      border-color: #0891b2;
+      box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2);
+    }
+
+    /* Search input styling */
+    #questionTypeSearch::placeholder {
+      color: #9ca3af;
+    }
+
+    /* Hide categories and questions during search */
+    .question-category.hidden {
+      display: none;
+    }
+
+    .question-type-item.hidden {
+      display: none;
+    }
+
+    /* Modal footer without actions on left */
+    #addQuestionModal .modal-footer {
+      justify-content: flex-end;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .question-type-item {
+        padding: 0.75rem;
+        min-height: 56px;
+      }
+
+      .question-type-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1rem;
+      }
     }
 
     .keyword-chip {
@@ -3020,6 +3628,7 @@
       
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
       
       // If Question Settings modal is open, make Upload modal appear above it
       if (questionSettingsModal && questionSettingsModal.classList.contains('active')) {
@@ -3039,9 +3648,10 @@
       modal.classList.remove('active');
       modal.classList.remove('above-settings'); // Reset z-index class
       
-      // Only restore body overflow if Question Settings modal is not open
+      // Only restore body overflow and remove class if Question Settings modal is not open
       if (!questionSettingsModal || !questionSettingsModal.classList.contains('active')) {
         document.body.style.overflow = '';
+        document.body.classList.remove('modal-open');
       }
       
       // Reset modal state
@@ -3142,12 +3752,14 @@
       const modal = document.getElementById('questionSettingsModal');
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
     }
 
     function closeQuestionSettingsModal() {
       const modal = document.getElementById('questionSettingsModal');
       modal.classList.remove('active');
       document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
     }
 
     // File input change handler and modal event listeners (SPA-friendly init)
@@ -3175,6 +3787,16 @@
           uploadModal.addEventListener('click', function(e) {
             if (e.target === this) {
               closeUploadModal();
+            }
+          });
+        }
+
+        // Add Question Modal event listeners
+        const addQuestionModal = document.getElementById('addQuestionModal');
+        if (addQuestionModal) {
+          addQuestionModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+              closeAddQuestionModal();
             }
           });
         }
@@ -3354,6 +3976,33 @@
 
           window.addEventListener('resize', hideTip);
           window.addEventListener('scroll', hideTip, true);
+          
+          // Add keyboard shortcuts
+          document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Q to open Add Question modal
+            if ((e.ctrlKey || e.metaKey) && e.key === 'q') {
+              e.preventDefault();
+              openAddQuestionModal();
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+              const addQuestionModal = document.getElementById('addQuestionModal');
+              const questionSettingsModal = document.getElementById('questionSettingsModal');
+              const uploadModal = document.getElementById('uploadModal');
+              const colorPickerModal = document.getElementById('colorPickerModal');
+              
+              if (addQuestionModal && addQuestionModal.classList.contains('active')) {
+                closeAddQuestionModal();
+              } else if (questionSettingsModal && questionSettingsModal.classList.contains('active')) {
+                closeQuestionSettingsModal();
+              } else if (uploadModal && uploadModal.classList.contains('active')) {
+                closeUploadModal();
+              } else if (colorPickerModal && colorPickerModal.classList.contains('active')) {
+                closeColorPickerModal();
+              }
+            }
+          });
         }
 
         // Listen for theme changes
@@ -3465,6 +4114,202 @@
       } else {
         // Leave visibility to sync function after upload completes
       }
+    }
+
+    // ---- Add Question Modal Functions ----
+    function openAddQuestionModal() {
+      const modal = document.getElementById('addQuestionModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
+      
+      // Clear search when opening modal
+      clearSearch();
+      
+      // Focus on search input for better UX
+      setTimeout(() => {
+        const searchInput = document.getElementById('questionTypeSearch');
+        if (searchInput) searchInput.focus();
+      }, 100);
+    }
+
+    function closeAddQuestionModal() {
+      const modal = document.getElementById('addQuestionModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
+      
+      // Clear search when closing
+      clearSearch();
+    }
+
+    function selectQuestionType(type) {
+      console.log('Selected question type:', type);
+      
+      // Here you would typically create the question and add it to the survey
+      // For now, we'll just close the modal and show a success message
+      closeAddQuestionModal();
+      
+      // You could dispatch an event or call a method to add the question
+      if (window.surveyEditApp && typeof window.surveyEditApp.addQuestion === 'function') {
+        window.surveyEditApp.addQuestion(type);
+      }
+      
+      // Show temporary feedback
+      showQuestionAddedFeedback(type);
+    }
+
+    function showQuestionAddedFeedback(type) {
+      // Create a temporary notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9998] transition-all transform translate-x-full';
+      notification.innerHTML = `
+        <div class="flex items-center gap-2">
+          <i class="fal fa-check-circle"></i>
+          <span>Question "${type}" added successfully!</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Animate in
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+      
+      // Animate out and remove
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 3000);
+    }
+
+    function filterQuestionTypes(searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase().trim();
+      const categories = document.querySelectorAll('.question-category');
+      const questionItems = document.querySelectorAll('.question-type-item');
+      const noResultsMessage = document.getElementById('noResultsMessage');
+      const clearBtn = document.getElementById('clearSearchBtn');
+      
+      // Show/hide clear button
+      if (searchTerm.trim()) {
+        clearBtn.style.display = 'block';
+      } else {
+        clearBtn.style.display = 'none';
+      }
+      
+      let hasVisibleResults = false;
+      
+      if (!searchTermLower) {
+        // Show all if search is empty
+        categories.forEach(cat => cat.classList.remove('hidden'));
+        questionItems.forEach(item => item.classList.remove('hidden'));
+        noResultsMessage.style.display = 'none';
+        return;
+      }
+      
+      // Filter question items
+      questionItems.forEach(item => {
+        const keywords = item.getAttribute('data-keywords') || '';
+        const name = item.querySelector('.question-type-name').textContent;
+        const type = item.getAttribute('data-type') || '';
+        
+        const searchIn = `${name} ${keywords} ${type}`.toLowerCase();
+        
+        if (searchIn.includes(searchTermLower)) {
+          item.classList.remove('hidden');
+          hasVisibleResults = true;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+      
+      // Hide/show categories based on whether they have visible items
+      categories.forEach(category => {
+        const visibleItems = category.querySelectorAll('.question-type-item:not(.hidden)');
+        if (visibleItems.length > 0) {
+          category.classList.remove('hidden');
+        } else {
+          category.classList.add('hidden');
+        }
+      });
+      
+      // Show no results message if needed
+      if (!hasVisibleResults) {
+        noResultsMessage.style.display = 'block';
+      } else {
+        noResultsMessage.style.display = 'none';
+      }
+    }
+
+    function clearSearch() {
+      const searchInput = document.getElementById('questionTypeSearch');
+      const clearBtn = document.getElementById('clearSearchBtn');
+      
+      if (searchInput) {
+        searchInput.value = '';
+        filterQuestionTypes('');
+      }
+      
+      if (clearBtn) {
+        clearBtn.style.display = 'none';
+      }
+    }
+
+    function showQuestionInfo(event, questionType) {
+      // Prevent the parent button click
+      event.stopPropagation();
+      
+      // Question type information
+      const questionInfo = {
+        'open-ended': 'Allows respondents to enter free text responses with no length restrictions. Perfect for detailed feedback and qualitative data collection.',
+        'contact-form': 'Pre-built form with fields for name, email, phone, and address. Automatically validates email format and phone numbers.',
+        'text-field': 'Single-line text input with character limits. Ideal for short responses like names, titles, or brief comments.',
+        'numeric-field': 'Accepts only numeric input with optional validation rules. Supports calculations and statistical analysis.',
+        'selection': 'Single-choice question with radio buttons. Respondents can select only one option from the list.',
+        'multiselection': 'Multiple-choice question with checkboxes. Respondents can select multiple options from the list.',
+        'dropdown': 'Space-saving selection with dropdown menu. Good for long lists of options.',
+        'picture-selection': 'Visual single-choice question using images instead of text options. Great for product selection or visual preferences.',
+        'picture-multiselection': 'Visual multiple-choice question using images. Allows selecting multiple images from the collection.',
+        'matrix-scale': 'Grid format with multiple questions sharing the same scale. Efficient for rating multiple items.',
+        'multiselection-matrix': 'Matrix format allowing multiple selections per row. Complex but comprehensive data collection.',
+        'position': 'Allows ranking or positioning items in order. Great for priority and preference studies.',
+        'nps': 'Net Promoter Score question with 0-10 scale. Standard metric for measuring customer loyalty and satisfaction.',
+        'ces': 'Customer Effort Score with 1-7 scale. Measures how easy it was for customers to accomplish their goal.',
+        'csat': 'Customer Satisfaction with customizable scale. Traditional satisfaction measurement tool.',
+        'attach-file': 'Allows respondents to upload files as part of their response. Supports various file types and sizes.',
+        'fourfold': 'Four-quadrant response format. Useful for categorizing responses into four distinct groups.',
+        'calendar': 'Date and time picker for scheduling and appointment questions. Includes validation and format options.',
+        'question-table': 'Structured table format for collecting organized data. Supports multiple columns and data types.',
+        'hierarchical': 'Tree-structured selection for nested categories. Good for organizational or categorical data.',
+        'ranking': 'Drag-and-drop ranking of items. Provides ordinal data about preferences and priorities.',
+        'numeric-slider': 'Visual slider input for numeric ranges. More engaging than traditional numeric fields.',
+        'autosuggest': 'Text field with autocomplete suggestions from a predefined list. Reduces typos and standardizes responses.'
+      };
+      
+      const description = questionInfo[questionType] || 'Information about this question type is not available.';
+      
+      // Create and show a tooltip-style popup
+      const popup = document.createElement('div');
+      popup.className = 'fixed bg-gray-900 text-white p-4 rounded-lg shadow-xl max-w-sm z-[9998] text-sm leading-relaxed';
+      popup.style.pointerEvents = 'none';
+      popup.textContent = description;
+      
+      // Position near the info button
+      const rect = event.target.getBoundingClientRect();
+      popup.style.left = Math.min(rect.right + 10, window.innerWidth - 350) + 'px';
+      popup.style.top = Math.max(rect.top - 10, 10) + 'px';
+      
+      document.body.appendChild(popup);
+      
+      // Remove after 4 seconds
+      setTimeout(() => {
+        if (document.body.contains(popup)) {
+          document.body.removeChild(popup);
+        }
+      }, 4000);
     }
   </script>
 </body>
