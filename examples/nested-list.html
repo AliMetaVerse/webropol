@@ -97,8 +97,9 @@
                     <div class="bg-webropol-gray-50 px-6 py-4 border-b border-webropol-gray-200">
                         <div class="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-webropol-gray-700">
                             <div class="col-span-1 flex items-center">
+                                <i class="fa-light fa-diagram-nested text-webropol-gray-400 w-4 flex-shrink-0"></i>
                                 <input type="checkbox" 
-                                       class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded"
+                                       class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded ml-2"
                                        :checked="selectedItems.length === items.length"
                                        @change="toggleSelectAll()">
                             </div>
@@ -147,19 +148,19 @@
                                      :class="{ 'bg-webropol-primary-50': selectedItems.includes(item.id) }">
                                     <div class="grid grid-cols-12 gap-4 items-center">
                                         <!-- Expand Button + Checkbox -->
-                                        <div class="col-span-1 flex items-center space-x-2">
+                                        <div class="col-span-1 flex items-center">
                                             <!-- Expand/Collapse Button (only for items with children) -->
                                             <button x-show="item.hasChildren && item.children && item.children.length > 0" 
                                                     @click.stop="toggleExpand(item.id)"
-                                                    class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-all duration-200">
+                                                    class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-all duration-200 w-4 flex-shrink-0">
                                                 <i class="fas fa-chevron-right text-sm transition-transform duration-200"
                                                    :class="{ 'rotate-90': expandedItems.includes(item.id) }"></i>
                                             </button>
                                             <!-- Spacer for items without children -->
-                                            <div x-show="!item.hasChildren || !item.children || item.children.length === 0" class="w-4"></div>
+                                            <div x-show="!item.hasChildren || !item.children || item.children.length === 0" class="w-4 flex-shrink-0"></div>
                                             <!-- Checkbox -->
                                             <input type="checkbox" 
-                                                   class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded"
+                                                   class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded ml-2"
                                                    :checked="selectedItems.includes(item.id)"
                                                    @click.stop
                                                    @change="toggleSelection(item.id)">
@@ -269,14 +270,12 @@
                                             <div class="grid grid-cols-12 gap-4 items-center">
                                                 <!-- Child Checkbox - aligned with parent -->
                                                 <div class="col-span-1 flex items-center">
-                                                    <div class="flex items-center space-x-2">
-                                                        <div class="w-4"></div> <!-- Spacer for no expand button -->
-                                                        <input type="checkbox" 
-                                                               class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded"
-                                                               :checked="selectedItems.includes(child.id)"
-                                                               @click.stop
-                                                               @change="toggleSelection(child.id)">
-                                                    </div>
+                                                    <div class="w-4 flex-shrink-0"></div> <!-- Spacer for no expand button -->
+                                                    <input type="checkbox" 
+                                                           class="h-4 w-4 text-webropol-primary-600 focus:ring-webropol-primary-500 border-webropol-gray-300 rounded ml-2"
+                                                           :checked="selectedItems.includes(child.id)"
+                                                           @click.stop
+                                                           @change="toggleSelection(child.id)">
                                                 </div>
                                                 
                                                 <!-- Child Response Link - aligned with parent -->
