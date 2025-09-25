@@ -1014,9 +1014,15 @@
 
                   <!-- Quick actions (outside bordered card) -->
                   <div class="mt-4 flex items-center gap-2">
-                    <button type="button" class="btn btn-primary rounded-full" onclick="openAddQuestionModal()">
-                      <i class="fal fa-play"></i>
-                      <span>Add question</span>
+                    <button type="button" class="btn btn-primary rounded-full group" onclick="openAddQuestionModal()" aria-label="Add a new question">
+                      <span class="inline-flex items-center gap-2">
+                        <span class="relative inline-flex items-center justify-center w-7 h-7">
+                          <i class="fal fa-plus text-base transition-transform duration-200 group-hover:scale-110"></i>
+                          <!-- Question badge now positioned fully inside container -->
+                          <i class="fal fa-question-circle absolute bottom-0 right-0 text-[10px] bg-webropol-primary-600/90 rounded-full px-[2px] py-[1px] text-white shadow-sm" style="line-height:1; transform:translate(15%,15%);"></i>
+                        </span>
+                        <span class="font-medium">Add question</span>
+                      </span>
                     </button>
                     <button type="button" class="btn btn-secondary rounded-full">
                       <i class="fal fa-text"></i>
@@ -1593,35 +1599,34 @@
   <!-- Add Question Modal -->
   <div id="addQuestionModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 900px;">
-      <div class="modal-header">
-        <div class="modal-title-section">
-          <h2 class="modal-title">
-            <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-100 rounded-full flex items-center justify-center">
-              <i class="fal fa-plus text-orange-600 text-lg"></i>
-            </div>
-            Add question
-          </h2>
-        </div>
-        <button class="modal-close" onclick="closeAddQuestionModal()" aria-label="Close modal">
-          <i class="fal fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Search Bar -->
-        <div class="settings-section" style="margin-bottom: 1.5rem;">
-          <div class="relative">
-            <input type="text" id="questionTypeSearch" placeholder="Search question types" class="w-full pl-10 pr-4 py-3 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 transition-all" oninput="filterQuestionTypes(this.value)">
-            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400">
+      <div class="modal-header add-question-modal-header flex flex-col gap-3">
+        <div class="flex items-center gap-4 w-full">
+          <div class="modal-title-section flex items-center">
+            <h2 class="modal-title flex items-center gap-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-100 rounded-full flex items-center justify-center">
+                <i class="fal fa-plus text-orange-600 text-lg"></i>
+              </div>
+              <span>Add question</span>
+            </h2>
+          </div>
+          <!-- Integrated Search (moved from body) -->
+          <div class="relative ml-auto flex-1 max-w-sm add-question-search">
+            <input type="text" id="questionTypeSearch" placeholder="Search question types" class="w-full pl-10 pr-10 py-2.5 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 transition-all text-sm" oninput="filterQuestionTypes(this.value)">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none">
               <i class="fal fa-search"></i>
             </div>
-            <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600" onclick="clearSearch()" style="display: none;" id="clearSearchBtn">
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600" onclick="clearSearch()" style="display: none;" id="clearSearchBtn" aria-label="Clear search">
               <i class="fal fa-times"></i>
             </button>
           </div>
+          <button class="modal-close relative" onclick="closeAddQuestionModal()" aria-label="Close modal">
+            <i class="fal fa-times"></i>
+          </button>
         </div>
-
-        <!-- Question Categories -->
-        <div id="questionTypesContainer">
+      </div>
+      <div class="modal-body">
+        <!-- Question Categories Grid -->
+        <div id="questionTypesContainer" class="question-types-grid">
           <!-- Text Category -->
           <div class="question-category" data-category="text">
             <h3 class="category-title">Text</h3>
@@ -1633,9 +1638,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Open ended</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'open-ended')" aria-label="More info about Open ended">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('contact-form')" data-type="contact-form" data-keywords="contact form name email phone">
@@ -1645,9 +1647,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Contact form</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'contact-form')" aria-label="More info about Contact form">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('text-field')" data-type="text-field" data-keywords="text field single line input">
@@ -1657,9 +1656,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Text field</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'text-field')" aria-label="More info about Text field">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('numeric-field')" data-type="numeric-field" data-keywords="number numeric input calculation">
@@ -1669,9 +1665,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Numeric field</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'numeric-field')" aria-label="More info about Numeric field">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
             </div>
           </div>
@@ -1687,9 +1680,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Selection</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'selection')" aria-label="More info about Selection">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('multiselection')" data-type="multiselection" data-keywords="checkbox multiple choice multi select">
@@ -1699,9 +1689,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Multiselection</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'multiselection')" aria-label="More info about Multiselection">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('dropdown')" data-type="dropdown" data-keywords="dropdown select menu list">
@@ -1711,9 +1698,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Dropdown</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'dropdown')" aria-label="More info about Dropdown">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('picture-selection')" data-type="picture-selection" data-keywords="image picture visual selection">
@@ -1723,9 +1707,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Picture selection</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'picture-selection')" aria-label="More info about Picture selection">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('picture-multiselection')" data-type="picture-multiselection" data-keywords="image picture visual multiple choice">
@@ -1735,9 +1716,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Picture multiselection</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'picture-multiselection')" aria-label="More info about Picture multiselection">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
             </div>
           </div>
@@ -1753,9 +1731,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Matrix (Scale selection)</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'matrix-scale')" aria-label="More info about Matrix Scale selection">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('multiselection-matrix')" data-type="multiselection-matrix" data-keywords="matrix multiple selection grid">
@@ -1765,9 +1740,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Multiselection matrix</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'multiselection-matrix')" aria-label="More info about Multiselection matrix">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('position')" data-type="position" data-keywords="position ranking order priority">
@@ -1777,9 +1749,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Position</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'position')" aria-label="More info about Position">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
             </div>
           </div>
@@ -1795,9 +1764,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">NPS</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'nps')" aria-label="More info about NPS">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('ces')" data-type="ces" data-keywords="customer effort score ces experience">
@@ -1807,9 +1773,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">CES</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'ces')" aria-label="More info about CES">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('csat')" data-type="csat" data-keywords="customer satisfaction csat rating">
@@ -1819,9 +1782,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">CSAT</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'csat')" aria-label="More info about CSAT">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
             </div>
           </div>
@@ -1837,9 +1797,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Attach file to response</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'attach-file')" aria-label="More info about Attach file">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('fourfold')" data-type="fourfold" data-keywords="fourfold quad four options">
@@ -1849,9 +1806,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Fourfold</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'fourfold')" aria-label="More info about Fourfold">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('calendar')" data-type="calendar" data-keywords="calendar date time appointment">
@@ -1861,9 +1815,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Calendar</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'calendar')" aria-label="More info about Calendar">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('question-table')" data-type="question-table" data-keywords="table data grid structured">
@@ -1873,9 +1824,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Question table</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'question-table')" aria-label="More info about Question table">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('hierarchical')" data-type="hierarchical" data-keywords="hierarchical tree nested structure">
@@ -1885,9 +1833,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Hierarchical</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'hierarchical')" aria-label="More info about Hierarchical">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('ranking')" data-type="ranking" data-keywords="ranking order priority sort">
@@ -1897,9 +1842,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Ranking</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'ranking')" aria-label="More info about Ranking">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('numeric-slider')" data-type="numeric-slider" data-keywords="slider numeric range scale">
@@ -1909,9 +1851,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Numeric slider</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'numeric-slider')" aria-label="More info about Numeric slider">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
 
               <button class="question-type-item" onclick="selectQuestionType('autosuggest')" data-type="autosuggest" data-keywords="autosuggest autocomplete search typeahead">
@@ -1921,9 +1860,6 @@
                 <div class="question-type-content">
                   <span class="question-type-name">Autosuggest text field</span>
                 </div>
-                <button class="question-type-info" onclick="showQuestionInfo(event, 'autosuggest')" aria-label="More info about Autosuggest text field">
-                  <i class="fal fa-question-circle"></i>
-                </button>
               </button>
             </div>
           </div>
@@ -2861,6 +2797,57 @@
 
     .question-type-item.hidden {
       display: none;
+    }
+
+    /* Redesigned Add Question Modal */
+    .add-question-modal-header { padding-bottom: .25rem; }
+    .add-question-search input { background: #fff; }
+    .question-types-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(230px,1fr));
+      gap: 2.25rem 2rem; /* row gap larger to separate category blocks */
+      align-items: start;
+    }
+    .question-types-grid .question-category { margin:0; display:flex; flex-direction:column; gap:.75rem; }
+    .question-types-grid .category-title { font-size:.85rem; letter-spacing:.02em; text-transform:none; font-weight:600; padding-left:.25rem; color:#0f172a; display:flex; align-items:center; gap:.4rem; }
+    .question-types-grid .category-title:before { content:""; width:6px; height:6px; border-radius:50%; background:linear-gradient(to bottom right,#06b6d4,#0e7490); box-shadow:0 0 0 3px #f0fdff; }
+    .question-types-grid .question-types-list { gap:.4rem; }
+
+    .question-type-item { position:relative; border-radius:14px; border:1px solid #e2e8f0; padding:.75rem .75rem .75rem .75rem; min-height:64px; background:linear-gradient(#ffffff,#ffffff); box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .question-type-item:hover { background:linear-gradient(#f8feff,#f0fdff); border-color:#0ea5e9; box-shadow:0 4px 14px -4px rgba(14,165,233,.35),0 2px 4px rgba(14,165,233,.15); transform:translateY(-2px); }
+    .question-type-item:active { transform:translateY(0); }
+    .question-type-item:focus-visible { outline:3px solid rgba(6,182,212,.4); outline-offset:2px; }
+    .question-type-item .question-type-icon { width:44px; height:44px; font-size:18px; border-radius:12px; box-shadow:inset 0 0 0 1px rgba(0,0,0,.04); }
+    .question-type-item .question-type-name { font-size:.8rem; font-weight:600; color:#0f172a; line-height:1.2; }
+    .question-type-item .question-type-info { position:absolute; top:6px; right:6px; width:22px; height:22px; border-radius:8px; border:1px solid #dbe3ea; font-size:11px; background:#fff; display:flex; align-items:center; justify-content:center; transition:.18s; }
+    .question-type-item .question-type-info:hover { background:#f0fdff; border-color:#0ea5e9; color:#0e7490; }
+    .question-type-item .question-type-info:focus-visible { outline:2px solid #06b6d4; outline-offset:2px; }
+    .question-type-content { align-items:flex-start; }
+    .question-type-content span { display:block; }
+    /* Category color grouping indicators (optional subtle background) */
+    .question-category[data-category="text"]   .question-type-icon { background:#fff7ed; color:#ea580c; }
+    .question-category[data-category="selection"] .question-type-icon { background:#eff6ff; color:#0d74d4; }
+    .question-category[data-category="matrix"] .question-type-icon { background:#ecfdf5; color:#059669; }
+    .question-category[data-category="experience"] .question-type-icon { background:#f5f3ff; color:#7c3aed; }
+    .question-category[data-category="other"] .question-type-icon { background:#f1f5f9; color:#334155; }
+
+    /* Compact scroll area if needed */
+    #addQuestionModal .modal-body { max-height:calc(70vh); overflow-y:auto; }
+    @media (min-height:900px){ #addQuestionModal .modal-body { max-height:calc(75vh); } }
+    #addQuestionModal .modal-body::-webkit-scrollbar { width:8px; }
+    #addQuestionModal .modal-body::-webkit-scrollbar-track { background:transparent; }
+    #addQuestionModal .modal-body::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+
+    @media (max-width: 900px){
+      .question-types-grid { grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:1.5rem 1rem; }
+      .question-type-item { min-height:60px; }
+      .question-type-item .question-type-icon { width:40px; height:40px; }
+    }
+
+    @media (max-width:640px){
+      .add-question-modal-header { flex-direction:column; align-items:flex-start; }
+      .add-question-search { width:100%; max-width:none; }
+      .question-types-grid { grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); }
     }
 
     /* Modal footer without actions on left */
