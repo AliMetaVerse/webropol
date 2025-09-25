@@ -118,6 +118,14 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
+    /* Unified question card styling */
+    .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
+    .question-card:hover{border-color:#d5dde6}
+    .question-card.selected{border-color:#06b6d4;background:#f0fdff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
+    .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+    .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
+    .question-card-toolbar button{padding:.35rem .55rem;border-radius:.6rem}
+    .question-card-collapsed:hover{background:#f8fafc}
     
     /* Custom range slider styles */
     .slider {
@@ -541,7 +549,7 @@
                           </div>
                         </label>
                         <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button class="w-6 h-6 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition-colors" onclick="openQuestionSettingsModal()" title="Settings">
+                          <button class="w-6 h-6 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition-colors" onclick="openQuestionSettingsModal('autosuggest')" title="Settings">
                             <i class="fal fa-cog"></i>
                           </button>
                           <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
@@ -561,6 +569,49 @@
                   </div>
                   
                   <!-- Thank you page -->
+                  <!-- Page 2 -->
+                  <div class="bg-webropol-primary-50 rounded-lg border border-webropol-primary-200 mt-3">
+                    <div class="flex items-center space-x-3 p-3 cursor-pointer" @click="expandedPages.page2 = !expandedPages.page2">
+                      <input type="checkbox" x-model="selectedItems.page2" @click.stop class="w-4 h-4 text-webropol-primary-600 border-webropol-primary-300 rounded focus:ring-webropol-primary-500" id="page2-checkbox">
+                      <label for="page2-checkbox" class="flex-1 flex items-center space-x-3 cursor-pointer" @click.stop="selectedItems.page2 = !selectedItems.page2">
+                        <span class="font-medium text-webropol-primary-900">PAGE 2</span>
+                      </label>
+                      <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 text-xs bg-webropol-primary-100 text-webropol-primary-700 rounded-full">1 question</span>
+                        <i class="fal transition-transform duration-200" :class="expandedPages.page2 ? 'fa-chevron-down text-webropol-primary-600' : 'fa-chevron-right text-webropol-primary-600'"></i>
+                      </div>
+                    </div>
+
+                    <!-- Page 2 Questions (Collapsible) -->
+                    <div x-show="expandedPages.page2" x-transition class="pl-6 pb-3 pr-3 space-y-2" x-data="{ selectedQuestions: { nps: false } }">
+                      <!-- NPS Question -->
+                      <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200 cursor-pointer hover:bg-purple-100 transition-colors group">
+                        <input type="checkbox" x-model="selectedQuestions.nps" @click.stop class="w-4 h-4 text-purple-600 border-purple-300 rounded focus:ring-purple-500" id="nps-checkbox">
+                        <label for="nps-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.nps = !selectedQuestions.nps">
+                          <div>
+                            <span class="text-purple-900 font-medium text-sm">Net Promoter Score (NPS)</span>
+                          </div>
+                        </label>
+                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="w-6 h-6 rounded bg-purple-600 text-white text-xs hover:bg-purple-700 transition-colors" title="Settings" onclick="openQuestionSettingsModal('nps')">
+                            <i class="fal fa-cog"></i>
+                          </button>
+                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
+                            <i class="fal fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Add Question Button (appears when expanded) -->
+                      <div class="flex items-center justify-center">
+                        <button class="flex items-center space-x-2 px-4 py-2 text-sm text-webropol-primary-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-lg transition-colors" onclick="openAddQuestionModal()">
+                          <i class="fal fa-plus"></i>
+                          <span>Add Question</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Thank you page (moved below Page 2) -->
                   <div class="flex items-center space-x-3 p-3 hover:bg-webropol-gray-50 rounded-lg cursor-pointer transition-colors">
                     <i class="fal fa-heart text-green-600"></i>
                     <span class="text-webropol-gray-700">Thank you page</span>
@@ -853,44 +904,28 @@
                   </div>
 
                   <!-- Question Container (selected/unselected states) -->
-         <div x-data="{ selected: localStorage.getItem('autosuggestEditorOpen') === 'true' }" x-init="$watch('selected', value => localStorage.setItem('autosuggestEditorOpen', value ? 'true' : 'false'))"
-           class="relative rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-lg"
-           :class="selected ? 'border-webropol-primary-300 shadow-xl bg-white' : 'border-webropol-gray-200 bg-white/80 hover:border-webropol-gray-300'">
+         <div x-data="{ selected: localStorage.getItem('autosuggestEditorOpen') === 'true' }" x-init="$watch('selected', value => localStorage.setItem('autosuggestEditorOpen', value ? 'true' : 'false'))" class="question-card" :class="selected ? 'selected' : ''">
                   <!-- Expanded header and toolbar (selected) -->
-                  <div x-show="selected" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white p-4 flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                      <i class="fal fa-search"></i>
-                      <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">Autosuggest text field</span>
-                      <span class="text-webropol-primary-100 text-sm">Question 1</span>
+                  <div x-show="selected" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="question-card-header">
+                    <div class="flex items-center gap-3">
+                      <i class="fal fa-search text-webropol-primary-600"></i>
+                      <span class="px-3 py-1 rounded-full text-xs font-medium bg-webropol-primary-100 text-webropol-primary-700">Autosuggest text field</span>
+                      <span class="text-webropol-gray-500 text-xs">Question 1</span>
                     </div>
-                    <div class="flex items-center space-x-2">
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="AI Suggest">
-                        <i class="fal fa-magic text-white"></i>
-                      </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Translations">
-                        <i class="fal fa-language text-white"></i>
-                      </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Upload Image">
-                        <i class="fal fa-image text-white"></i>
-                      </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Settings" onclick="openQuestionSettingsModal()">
-                        <i class="fal fa-cog text-white"></i>
-                      </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Copy">
-                        <i class="fal fa-copy text-white"></i>
-                      </button>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Delete">
-                        <i class="fal fa-trash text-white"></i>
-                      </button>
-                      <div class="w-px h-6 bg-white/20 mx-2"></div>
-                      <button class="p-2 rounded-lg hover:bg-white/20 transition-colors" title="Close editor" aria-label="Close editor" @click="selected = false">
-                        <i class="fal fa-times text-white"></i>
-                      </button>
+                    <div class="flex items-center gap-1 question-card-toolbar">
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="AI Suggest"><i class="fal fa-magic"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Translations"><i class="fal fa-language"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Upload Image"><i class="fal fa-image"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('autosuggest')"><i class="fal fa-cog"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy"><i class="fal fa-copy"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-red-600" title="Delete"><i class="fal fa-trash"></i></button>
+                      <div class="w-px h-5 bg-webropol-gray-300 mx-1"></div>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="selected = false"><i class="fal fa-times"></i></button>
                     </div>
                   </div>
 
                   <!-- Collapsed (unselected) content preview -->
-                  <div x-show="!selected" class="p-6 cursor-pointer group hover:bg-webropol-gray-50/50 transition-colors" @click="selected = true">
+                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors" @click="selected = true">
                     <div class="flex items-start justify-between mb-4">
                       <label class="block text-lg font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
                         1. Auto Suggest
@@ -1018,8 +1053,6 @@
                       <span class="inline-flex items-center gap-2">
                         <span class="relative inline-flex items-center justify-center w-7 h-7">
                           <i class="fal fa-plus text-base transition-transform duration-200 group-hover:scale-110"></i>
-                          <!-- Question badge now positioned fully inside container -->
-                          <i class="fal fa-question-circle absolute bottom-0 right-0 text-[10px] bg-webropol-primary-600/90 rounded-full px-[2px] py-[1px] text-white shadow-sm" style="line-height:1; transform:translate(15%,15%);"></i>
                         </span>
                         <span class="font-medium">Add question</span>
                       </span>
@@ -1042,11 +1075,139 @@
                   </div>
                 </section>
                 
+                <!-- PAGE 2 SECTION: NPS Question -->
+                <section class="relative bg-white rounded-3xl shadow-xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 pt-12 space-y-8 mb-8">
+                  <!-- Top page badge -->
+                  <div class="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center px-3 py-1 bg-webropol-primary-100 text-webropol-primary-800 rounded-full text-xs font-medium shadow">
+                    <i class="fal fa-file-alt mr-2"></i>
+                    PAGE 2
+                  </div>
+
+                  <!-- Page title inside card -->
+                  <div class="text-center">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-webropol-gray-900">Customer Loyalty</h2>
+                  </div>
+
+                  <!-- NPS Question Card -->
+                  <div id="npsQuestionCard" class="relative rounded-2xl overflow-hidden border border-webropol-gray-200 bg-white/80 hover:border-webropol-gray-300 transition-all duration-300 p-6" data-nps-style="radiobuttons">
+                    <div class="mb-6">
+                      <label class="block text-lg font-semibold text-webropol-gray-900 mb-2">
+                        2. How likely are you to recommend our product to a friend or colleague?
+                      </label>
+                      <p id="npsQuestionDescription" class="text-sm text-webropol-gray-600 mb-4">Please rate on a scale from 0 (Not at all likely) to 10 (Extremely likely).</p>
+
+                      <!-- Dynamic NPS Render Container -->
+                      <div id="npsRenderContainer">
+                        <!-- Default radiobuttons appearance - ensures never empty -->
+                        <fieldset>
+                          <legend class="sr-only">Net Promoter Score Scale</legend>
+                          <div class="flex flex-wrap gap-2 items-center" role="radiogroup" aria-label="NPS Scale 0 to 10">
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="0" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">0</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="1" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">1</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="2" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">2</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="3" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">3</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="4" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">4</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="5" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">5</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="6" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">6</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="7" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">7</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="8" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">8</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="9" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">9</div></label>
+                            <label class="cursor-pointer"><input type="radio" name="npsScore" value="10" class="sr-only peer"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow">10</div></label>
+                          </div>
+                          <div class="flex justify-between text-xs text-webropol-gray-500 mt-3 px-1">
+                            <span>Not at all likely</span>
+                            <span>Extremely likely</span>
+                          </div>
+                        </fieldset>
+                      </div>
+                      <script>
+                        // EMERGENCY: Ensure NPS container is NEVER empty - immediate initialization
+                        (function() {
+                          const container = document.getElementById('npsRenderContainer');
+                          if (container) {
+                            // This runs immediately when HTML is parsed, ensuring container has content
+                            const savedStyle = (function(){ try{return localStorage.getItem('nps-appearance')||'radiobuttons';}catch(e){return'radiobuttons';}})();
+                            if (savedStyle !== 'radiobuttons' && container.children.length > 0) {
+                              // Only replace if we need a different style
+                              window.__npsEmergencyRender = function() {
+                                if (window.setNPSAppearance) {
+                                  window.setNPSAppearance(savedStyle);
+                                } else {
+                                  // Fallback if main system not ready
+                                  setTimeout(() => {
+                                    if (window.setNPSAppearance) window.setNPSAppearance(savedStyle);
+                                  }, 100);
+                                }
+                              };
+                              // Run when DOM is ready
+                              if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', window.__npsEmergencyRender);
+                              } else {
+                                window.__npsEmergencyRender();
+                              }
+                            }
+                          }
+                        })();
+                      </script>
+                      <template id="npsTemplateRadiobuttons">
+                        <fieldset>
+                          <legend class="sr-only">Net Promoter Score Scale</legend>
+                          <div class="flex flex-wrap gap-2 items-center" role="radiogroup" aria-label="NPS Scale 0 to 10">
+                          <script>/* placeholder to preserve order */</script>
+                          </div>
+                          <div class="flex justify-between text-xs text-webropol-gray-500 mt-3 px-1">
+                            <span>Not at all likely</span>
+                            <span>Extremely likely</span>
+                          </div>
+                        </fieldset>
+                      </template>
+                      <template id="npsTemplateSlider">
+                        <div class="space-y-3" aria-label="NPS Slider" role="group">
+                          <input id="npsSlider" type="range" min="0" max="10" value="0" class="w-full h-2 rounded-lg appearance-none slider bg-webropol-gray-200">
+                          <div class="flex justify-between text-[11px] text-webropol-gray-500">
+                            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                          </div>
+                          <div class="text-xs text-webropol-primary-700 font-medium"><span id="npsSliderValue">Selected: 0</span></div>
+                        </div>
+                      </template>
+                      <template id="npsTemplateSmileys">
+                        <div class="flex justify-center gap-4" role="radiogroup" aria-label="NPS Smileys">
+                          <button type="button" data-nps-smiley="detractor" class="nps-smiley" aria-pressed="false" title="Detractor (0-6)">😞</button>
+                          <button type="button" data-nps-smiley="passive" class="nps-smiley" aria-pressed="false" title="Passive (7-8)">😐</button>
+                          <button type="button" data-nps-smiley="promoter" class="nps-smiley" aria-pressed="false" title="Promoter (9-10)">😊</button>
+                        </div>
+                        <div class="text-center mt-3 text-xs text-webropol-gray-500" id="npsSmileyHint">Select a mood</div>
+                      </template>
+                    </div>
+                    <!-- Follow-up removed per requirement (no text field for NPS) -->
+                  </div>
+
+                  <!-- Quick actions -->
+                  <div class="mt-4 flex items-center gap-2">
+                    <button type="button" class="btn btn-primary rounded-full group" onclick="openAddQuestionModal()" aria-label="Add a new question to page 2">
+                      <span class="inline-flex items-center gap-2">
+                        <span class="relative inline-flex items-center justify-center w-7 h-7">
+                          <i class="fal fa-plus text-base transition-transform duration-200 group-hover:scale-110"></i>
+                        </span>
+                        <span class="font-medium">Add question</span>
+                      </span>
+                    </button>
+                    <button type="button" class="btn btn-secondary rounded-full">
+                      <i class="fal fa-text"></i>
+                      <span>Add free text/media</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary rounded-full">
+                      <i class="fal fa-cut"></i>
+                      <span>Add page break</span>
+                    </button>
+                  </div>
+                </section>
+                
 
                 </div>
                 
                 <!-- Thank You Page Preview -->
-                <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 p-8 text-center hover-lift relative z-10">
+                <div class="mt-8 backdrop-blur-lg rounded-3xl shadow-xl border border-webropol-gray-100/80 p-8 text-center hover-lift relative z-10">
                   <div class="mb-4">
                     <div class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-4">
                       <i class="fal fa-heart mr-2"></i>
@@ -1181,6 +1342,8 @@
         </button>
       </div>
       <div class="modal-body">
+        <!-- Panel switcher wrappers -->
+        <div id="qs-panel-autosuggest" class="qs-panel" data-type="autosuggest">
         <!-- Option Orientation Section -->
         <div class="settings-section">
           <h3 class="section-title">
@@ -1215,8 +1378,106 @@
           </div>
         </div>
         <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
-        <!-- Column Configuration Section -->
-        <div class="settings-section">
+        </div> <!-- end autosuggest panel -->
+
+        <!-- NPS PANEL -->
+        <div id="qs-panel-nps" class="qs-panel" data-type="nps" style="display:none;">
+          <div class="settings-section">
+            <h3 class="section-title">Appearance of NPS question</h3>
+            <div class="form-group">
+              <div class="nps-appearance-grid" id="npsAppearanceChoices">
+                <button type="button" data-style="radiobuttons" class="nps-appearance-card active" aria-pressed="true">
+                  <div class="nps-appearance-preview">
+                    <div class="flex gap-1 flex-wrap justify-center">
+                      <span class="nps-mini-pill">0</span>
+                      <span class="nps-mini-pill">1</span>
+                      <span class="nps-mini-pill">2</span>
+                      <span class="nps-mini-pill">…</span>
+                      <span class="nps-mini-pill">10</span>
+                    </div>
+                  </div>
+                  <span class="nps-appearance-label">Radiobuttons</span>
+                </button>
+                <button type="button" data-style="slider" class="nps-appearance-card" aria-pressed="false">
+                  <div class="nps-appearance-preview">
+                    <div class="w-full h-2 rounded bg-gradient-to-r from-webropol-primary-200 to-webropol-primary-500 relative">
+                      <div class="absolute -top-1 -ml-2 left-1/3 h-4 w-4 rounded-full bg-webropol-primary-600 shadow"></div>
+                    </div>
+                  </div>
+                  <span class="nps-appearance-label">Slider</span>
+                </button>
+                <button type="button" data-style="smileys" class="nps-appearance-card" aria-pressed="false">
+                  <div class="nps-appearance-preview">
+                    <div class="flex gap-2 justify-center text-lg">
+                      <span>😞</span><span>😐</span><span>😊</span>
+                    </div>
+                  </div>
+                  <span class="nps-appearance-label">Smileys</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+          <div class="settings-section">
+            <h3 class="section-title">NPS Scale</h3>
+            <div class="form-group">
+              <div class="radio-group" style="flex-direction: column; gap:.4rem;">
+                <label class="radio-item active"><input type="radio" name="nps-scale-order" value="0-10" class="radio-input" checked><div class="radio-content"><div class="radio-title">0-10</div></div></label>
+                <label class="radio-item"><input type="radio" name="nps-scale-order" value="10-0" class="radio-input"><div class="radio-content"><div class="radio-title">10-0</div></div></label>
+                <label class="radio-item"><input type="radio" name="nps-scale-order" value="1-10" class="radio-input"><div class="radio-content"><div class="radio-title">1-10</div></div></label>
+                <label class="radio-item"><input type="radio" name="nps-scale-order" value="10-1" class="radio-input"><div class="radio-content"><div class="radio-title">10-1</div></div></label>
+              </div>
+            </div>
+          </div>
+          <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+          <div class="settings-section">
+            <div class="form-group" style="display:flex;align-items:center; gap:1rem;">
+              <label class="checkbox-item" style="margin:0;">
+                <input type="checkbox" id="nps-show-idk" class="checkbox-input">
+                <div class="checkbox-content">
+                  <span class="checkbox-title">Show "I don't know" option for respondent</span>
+                </div>
+              </label>
+              <input type="text" id="nps-idk-label" value="I don't know" class="form-input" style="max-width:170px;">
+            </div>
+          </div>
+          <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+          <div class="settings-section">
+            <h3 class="section-title">Show question description <span class="info-tooltip" data-tooltip="Provide more context for respondents"><i class="fal fa-question-circle"></i></span></h3>
+            <div class="form-group">
+              <label class="checkbox-item" style="margin:0;">
+                <input type="checkbox" id="nps-show-description" class="checkbox-input">
+                <div class="checkbox-content">
+                  <span class="checkbox-title">Enable description</span>
+                  <div id="nps-description-placement" style="display:none; margin-top:.65rem;">
+                    <label class="form-label" style="font-size:.7rem; text-transform:uppercase; letter-spacing:.05em;">Placement:</label>
+                    <div class="radio-group" style="flex-direction:column; gap:.35rem; margin-top:.35rem;">
+                      <label class="radio-item active" style="margin:0;">
+                        <input type="radio" name="nps-desc-placement" value="below" class="radio-input" checked>
+                        <div class="radio-content"><div class="radio-title">Show below question title</div></div>
+                      </label>
+                      <label class="radio-item" style="margin:0;">
+                        <input type="radio" name="nps-desc-placement" value="above" class="radio-input">
+                        <div class="radio-content"><div class="radio-title">Show above question title</div></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+          <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+          <div class="settings-section visibility-row">
+            <h3 class="section-title">Visibility</h3>
+            <div class="visibility-options ml-8">
+              <label class="visibility-item visibility-visible"><input type="radio" name="nps-visibility" value="visible" checked><div class="visibility-icon"><i class="fal fa-eye"></i></div><span>Visible</span></label>
+              <label class="visibility-item visibility-hidden"><input type="radio" name="nps-visibility" value="hidden"><div class="visibility-icon"><i class="fal fa-eye-slash"></i></div><span>Hidden</span></label>
+              <label class="visibility-item visibility-disabled"><input type="radio" name="nps-visibility" value="disabled"><div class="visibility-icon"><i class="fal fa-ban"></i></div><span>Disabled</span></label>
+            </div>
+          </div>
+        </div> <!-- end nps panel -->
+  <!-- Column Configuration Section (Autosuggest only) -->
+  <div class="settings-section qs-autosuggest-only">
           <h3 class="section-title">
             Number of options per column
           </h3>
@@ -1259,8 +1520,8 @@
             </div>
           </div>
         </div>
-        <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
-        <div style="display: flex; gap: 2rem;">
+  <hr class="qs-autosuggest-only" style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+  <div class="qs-autosuggest-only" style="display: flex; gap: 2rem;">
           <!-- Option Placement Section -->
           <div class="settings-section" style="flex: 1; margin-bottom: 0;">
             <h3 class="section-title">
@@ -1298,9 +1559,9 @@
             </div>
           </div>
         </div>
-        <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+  <hr class="qs-autosuggest-only" style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
         <!-- Question Description Section -->
-        <div class="settings-section">
+  <div class="settings-section qs-autosuggest-only">
           <h3 class="section-title">
             Question description
             <span class="info-tooltip" data-tooltip="Additional information to help users understand the question">
@@ -1340,9 +1601,9 @@
             </div>
           </div>
         </div>
-        <hr style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+  <hr class="qs-autosuggest-only" style="border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
         <!-- Auto-Suggest Section -->
-        <div class="settings-section" style="display: none;">
+  <div class="settings-section qs-autosuggest-only" style="display: none;">
           <h3 class="section-title">
             Auto-suggest File
             <span class="tooltip-container" style="display: inline-flex;">
@@ -1368,9 +1629,9 @@
             </p>
           </div>
         </div>
-        <hr style="display: none; border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
+  <hr class="qs-autosuggest-only" style="display: none; border: none; height: 1px; background: #e2e8f0; margin: 1.5rem 0;">
         <!-- Visibility Section -->
-        <div class="settings-section visibility-row">
+  <div class="settings-section visibility-row qs-autosuggest-only">
           <h3 class="section-title">
             Visibility
           </h3>
@@ -1431,7 +1692,7 @@
       <div class="modal-footer">
         <div class="footer-actions">
           <button class="btn btn-secondary" onclick="closeQuestionSettingsModal()">Cancel</button>
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" onclick="applyQuestionSettings()">
             Apply
           </button>
         </div>
@@ -2916,6 +3177,17 @@
       }
     }
   </style>
+  <style>
+    /* NPS appearance selection */
+    .nps-appearance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-top:.5rem}
+    .nps-appearance-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:.6rem;padding:.85rem .9rem;border:2px solid #e2e8f0;background:#fff;border-radius:1rem;cursor:pointer;transition:.18s background,.18s border-color,.18s box-shadow;font-size:.75rem;line-height:1.1}
+    .nps-appearance-card:hover{border-color:#cbd5e1;background:#f8fafc}
+    .nps-appearance-card.active{border-color:#06b6d4;background:#f0fdff;box-shadow:0 4px 16px -4px rgba(6,182,212,.25)}
+    .nps-appearance-preview{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center}
+    .nps-mini-pill{display:inline-flex;align-items:center;justify-content:center;padding:2px 6px;font-size:10px;font-weight:600;border-radius:.5rem;background:#fff;border:1px solid #cbd5e1;color:#334155;min-width:22px}
+    .nps-smiley{font-size:2.1rem;line-height:1;background:transparent;transition:transform .15s,border-color .15s,background-color .15s;cursor:pointer;border:2px solid transparent;border-radius:1rem;padding:.25rem .45rem}
+    .nps-smiley[aria-pressed="true"],.nps-smiley:hover{transform:scale(1.1);background:#f0fdff;border-color:#06b6d4}
+  </style>
 
   <script>
     function surveyEditApp() {
@@ -2990,8 +3262,12 @@
         resetStyles() {
           console.log('Resetting styles to default');
           this.selectedStyle = null;
-          // Implementation for resetting styles
+          // Dispatch event so style panel instance can listen (optional)
           this.$dispatch('styles-reset');
+          // If surveyStylesApp is mounted, invoke its internal reset
+          if (window.__surveyStyles && typeof window.__surveyStyles.resetToDefaults === 'function') {
+            window.__surveyStyles.resetToDefaults();
+          }
         },
         
         previewStyle() {
@@ -3266,6 +3542,65 @@
             scale: this.backgroundScale,
             position: `${this.imagePositionVertical} ${this.imagePositionHorizontal}`
           });
+        },
+
+        // Hard reset to original defaults and clear persistence
+        resetToDefaults() {
+          console.log('surveyStylesApp.resetToDefaults invoked');
+          // Define defaults (single source of truth)
+          const defaults = {
+            surveyColorMode: 'color',
+            surveyColor: { r: 255, g: 255, b: 255 },
+            surveyTransparency: 20,
+            surveyBlur: false,
+            pageColor: { r: 235, g: 244, b: 247 },
+            usePageBackground: true,
+            selectedImage: null,
+            backgroundRepeat: 'no-repeat',
+            backgroundScale: 'fit-width',
+            imagePositionVertical: 'center',
+            imagePositionHorizontal: 'center'
+          };
+
+          // Assign Alpine reactive props
+          this.surveyColorMode = defaults.surveyColorMode;
+          this.surveyColor = defaults.surveyColor;
+            try { localStorage.setItem('survey-color', JSON.stringify(this.surveyColor)); } catch(e) {}
+          this.surveyTransparency = defaults.surveyTransparency;
+          this.surveyBlur = defaults.surveyBlur;
+          this.pageColor = defaults.pageColor;
+            try { localStorage.setItem('page-color', JSON.stringify(this.pageColor)); } catch(e) {}
+          this.usePageBackground = defaults.usePageBackground;
+          this.selectedImage = defaults.selectedImage;
+          this.backgroundRepeat = defaults.backgroundRepeat;
+          this.backgroundScale = defaults.backgroundScale;
+          this.imagePositionVertical = defaults.imagePositionVertical;
+          this.imagePositionHorizontal = defaults.imagePositionHorizontal;
+
+          // Clear related localStorage keys to avoid stale future loads
+          const keys = [
+            'survey-colorMode','survey-color','survey-transparency','survey-blur',
+            'page-color','use-page-background','selected-image','background-repeat',
+            'background-scale','image-position-vertical','image-position-horizontal'
+          ];
+          keys.forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
+
+          // Remove any applied background image or gradient
+          const pageBackground = document.getElementById('pageBackground');
+          if (pageBackground) {
+            pageBackground.style.backgroundImage = 'none';
+            pageBackground.style.background = '';
+            pageBackground.style.filter = 'none';
+            pageBackground.style.transform = 'none';
+            pageBackground.style.backgroundAttachment = 'initial';
+          }
+
+          // Reset slider visual fill if present
+          const slider = document.querySelector('.slider');
+          if (slider) slider.style.setProperty('--value', defaults.surveyTransparency + '%');
+
+          // Re-apply styles using defaults
+          this.$nextTick(() => this.applyStyles());
         }
       }
     }
@@ -3735,11 +4070,36 @@
     }
 
     // Question Settings Modal functionality
-    function openQuestionSettingsModal() {
+    function openQuestionSettingsModal(type) {
       const modal = document.getElementById('questionSettingsModal');
+      if(!modal) return;
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
+      // Panel switching
+      const panels = modal.querySelectorAll('.qs-panel');
+      panels.forEach(p => { p.style.display = (p.dataset.type === type) ? '' : 'none'; });
+      // Default fallback to autosuggest if unknown
+      if(![...panels].some(p=>p.dataset.type===type)){
+        const autoPanel = modal.querySelector('#qs-panel-autosuggest');
+        if(autoPanel) autoPanel.style.display='';
+      }
+      // Toggle autosuggest-only sections outside panels
+      const autoOnly = modal.querySelectorAll('.qs-autosuggest-only');
+      autoOnly.forEach(el => { el.style.display = (type === 'autosuggest') ? (el.tagName === 'HR' ? 'block' : '') : 'none'; });
+      if(type === 'nps') { 
+        initNPSAppearance();
+        // Sync modal appearance cards with current question state
+        if(window.__npsAppearanceBound && window.syncNPSModal) {
+          window.syncNPSModal();
+        }
+      }
+    }
+
+    // Apply question settings and close modal
+    function applyQuestionSettings() {
+      // Settings are already applied in real-time, just close modal
+      closeQuestionSettingsModal();
     }
 
     function closeQuestionSettingsModal() {
@@ -3794,6 +4154,26 @@
           questionSettingsModal.addEventListener('click', function(e) {
             if (e.target === this) {
               closeQuestionSettingsModal();
+            }
+          });
+          // Delegate radio-item active state inside modal (works for dynamic panels)
+          questionSettingsModal.addEventListener('click', function(e){
+            const item = e.target.closest('.radio-item');
+            if(item && item.querySelector('input[type="radio"]')){
+              const group = item.closest('.radio-group');
+              if(group){
+                group.querySelectorAll('.radio-item').forEach(r=>r.classList.remove('active'));
+              }
+              item.classList.add('active');
+              const input = item.querySelector('input[type="radio"]');
+              if(input) input.checked = true;
+            }
+          });
+          // NPS description toggle
+          questionSettingsModal.addEventListener('change', function(e){
+            if(e.target && e.target.id === 'nps-show-description'){
+              const box = questionSettingsModal.querySelector('#nps-description-placement');
+              if(box) box.style.display = e.target.checked ? 'block' : 'none';
             }
           });
         }
@@ -4119,6 +4499,128 @@
         if (searchInput) searchInput.focus();
       }, 100);
     }
+
+    // ---------- NPS Dynamic Rendering ----------
+    function initNPSAppearance(){
+      // Avoid duplicate binding
+      if(window.__npsAppearanceBound) return; window.__npsAppearanceBound = true;
+      const container = document.getElementById('npsAppearanceChoices');
+      if(!container) return;
+      const questionCard = document.getElementById('npsQuestionCard');
+      const renderTarget = document.getElementById('npsRenderContainer');
+      const stored = (function(){ try{return localStorage.getItem('nps-appearance')||'radiobuttons';}catch(e){return'radiobuttons';}})();
+      function setActive(style){
+        container.querySelectorAll('.nps-appearance-card').forEach(btn=>{
+          const active = btn.dataset.style===style;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-pressed', active?'true':'false');
+        });
+        questionCard && questionCard.setAttribute('data-nps-style', style);
+        render(style);
+        try{localStorage.setItem('nps-appearance', style);}catch(e){}
+        // Dispatch a custom event for other modules to hook into
+        document.dispatchEvent(new CustomEvent('nps-appearance-changed',{detail:{style}}));
+      }
+      function syncModalWithCurrent(){
+        // Sync modal cards with current question state
+        const currentStyle = (function(){ try{return localStorage.getItem('nps-appearance')||'radiobuttons';}catch(e){return'radiobuttons';}})();
+        setActive(currentStyle);
+      }
+      function buildRadioScale(){
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-wrap gap-2';
+        for(let i=0;i<=10;i++){
+          const label = document.createElement('label');
+          label.className='cursor-pointer';
+          label.innerHTML=`<input type="radio" name="npsScore" value="${i}" class="sr-only peer"><div class='w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow'>${i}</div>`;
+          wrap.appendChild(label);
+        }
+        const legendRow = document.createElement('div');
+        legendRow.className='flex justify-between text-xs text-webropol-gray-500 mt-3 px-1 w-full';
+        legendRow.innerHTML='<span>Not at all likely</span><span>Extremely likely</span>';
+        const fieldset = document.createElement('fieldset');
+        fieldset.appendChild(wrap);
+        fieldset.appendChild(legendRow);
+        return fieldset;
+      }
+      function buildSlider(){
+        const frag = document.createElement('div');
+        frag.className='space-y-3';
+        frag.innerHTML=`<input id='npsSlider' type='range' min='0' max='10' value='0' class='w-full h-2 rounded-lg appearance-none slider bg-webropol-gray-200'><div class='flex justify-between text-[11px] text-webropol-gray-500'>${Array.from({length:11},(_,i)=>`<span>${i}</span>`).join('')}</div><div class='text-xs text-webropol-primary-700 font-medium'><span id='npsSliderValue'>Selected: 0</span></div>`;
+        return frag;
+      }
+      function buildSmileys(){
+        const frag = document.createElement('div');
+        frag.innerHTML=`<div class='flex justify-center gap-4' role='radiogroup' aria-label='NPS Smileys'><button type='button' data-nps-smiley='detractor' class='nps-smiley' aria-pressed='false' title='Detractor (0-6)'>😞</button><button type='button' data-nps-smiley='passive' class='nps-smiley' aria-pressed='false' title='Passive (7-8)'>😐</button><button type='button' data-nps-smiley='promoter' class='nps-smiley' aria-pressed='false' title='Promoter (9-10)'>😊</button></div><div class='text-center mt-3 text-xs text-webropol-gray-500' id='npsSmileyHint'>Select a mood</div>`;
+        return frag;
+      }
+      function render(style){
+        if(!renderTarget) return; renderTarget.innerHTML='';
+        let node;
+        if(style==='radiobuttons') node = buildRadioScale();
+        else if(style==='slider') node = buildSlider();
+        else node = buildSmileys();
+        renderTarget.appendChild(node);
+        // Follow-up appears only for radiobuttons & slider (example logic)
+        // Follow-up intentionally removed; no text field for NPS.
+        // Add handlers
+        const slider = document.getElementById('npsSlider');
+        if(slider){ slider.addEventListener('input', ()=>{ const v=slider.value; const out=document.getElementById('npsSliderValue'); if(out) out.textContent='Selected: '+v; }); }
+        renderTarget.querySelectorAll('.nps-smiley').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            renderTarget.querySelectorAll('.nps-smiley').forEach(b=>b.setAttribute('aria-pressed','false'));
+            btn.setAttribute('aria-pressed','true');
+            const hint=document.getElementById('npsSmileyHint'); if(hint){
+              const map={detractor:'Detractor (0-6)',passive:'Passive (7-8)',promoter:'Promoter (9-10)'}; hint.textContent=map[btn.dataset.npsSmiley]||'Selected';
+            }
+          });
+        });
+      }
+      container.addEventListener('click', (e)=>{
+        const btn = e.target.closest('.nps-appearance-card');
+        if(!btn) return; setActive(btn.dataset.style);
+      });
+      // Expose global setter for programmatic changes and modal sync
+      window.setNPSAppearance = setActive;
+      window.syncNPSModal = syncModalWithCurrent;
+      setActive(stored);
+      
+      // BULLETPROOF FALLBACKS: Multiple layers to ensure NPS container is NEVER empty
+      
+      // Fallback #1: Immediate check
+      setTimeout(()=>{
+        if(renderTarget && (!renderTarget.children.length || renderTarget.innerHTML.trim() === '')){
+          console.warn('NPS container empty - applying emergency fallback #1');
+          setActive('radiobuttons');
+        }
+      }, 10);
+      
+      // Fallback #2: Short delay check  
+      setTimeout(()=>{
+        if(renderTarget && (!renderTarget.children.length || renderTarget.innerHTML.trim() === '')){
+          console.warn('NPS container empty - applying emergency fallback #2');
+          setActive('radiobuttons');
+        }
+      }, 50);
+      
+      // Fallback #3: Medium delay check
+      setTimeout(()=>{
+        if(renderTarget && (!renderTarget.children.length || renderTarget.innerHTML.trim() === '')){
+          console.warn('NPS container empty - applying emergency fallback #3');
+          setActive('radiobuttons');
+        }
+      }, 200);
+      
+      // Fallback #4: Long delay check
+      setTimeout(()=>{
+        if(renderTarget && (!renderTarget.children.length || renderTarget.innerHTML.trim() === '')){
+          console.warn('NPS container empty - applying emergency fallback #4 (FINAL)');
+          setActive('radiobuttons');
+        }
+      }, 1000);
+    }
+    // Render NPS appearance on first load so question reflects saved style
+    document.addEventListener('DOMContentLoaded', ()=>{ try { initNPSAppearance(); } catch(e) { console.warn('NPS init failed', e); } });
 
     function closeAddQuestionModal() {
       const modal = document.getElementById('addQuestionModal');
