@@ -123,65 +123,29 @@
 			<webropol-header title="Email Campaign Management" subtitle="Private Distribution Lists"></webropol-header>
 
 			<main class="flex-1 overflow-y-auto px-4 py-6 lg:px-8">
-				<div class="max-w-7xl mx-auto space-y-8">
+				<div class="max-w-7xl mx-auto space-y-6">
 
-					<!-- Enhanced Breadcrumb with Actions -->
-					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-						<nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
-							<a href="../collect.html" class="inline-flex items-center text-webropol-primary-700 hover:text-webropol-primary-800 transition-colors">
-								<i class="fa-regular fa-arrow-left mr-2"></i>Collection Methods
-							</a>
-							<i class="fa-regular fa-chevron-right text-webropol-gray-400"></i>
-							<span class="text-webropol-gray-900 font-medium">Private Distribution</span>
-						</nav>
-						<div class="flex items-center gap-3 mobile-stack">
-							<webropol-button variant="secondary" size="sm" @click="exportRecipients()">
-								<i class="fa-regular fa-download mr-2"></i>Export Data
-							</webropol-button>
-							<webropol-button variant="secondary" size="sm" @click="showAuditLog()">
-								<i class="fa-regular fa-clock-rotate-left mr-2"></i>Activity Log
-							</webropol-button>
-							<webropol-button variant="primary" size="sm" @click="showQuickSend()">
-								<i class="fa-regular fa-paper-plane mr-2"></i>Quick Send
-							</webropol-button>
-						</div>
-					</div>
-
-					<!-- Campaign Status Overview -->
-					<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-						<div class="bg-white border border-webropol-gray-200 rounded-xl p-4 shadow-sm">
-							<div class="flex items-center justify-between mb-2">
-								<h3 class="text-sm font-medium text-webropol-gray-600">Total Recipients</h3>
-								<i class="fa-regular fa-users text-webropol-primary-600"></i>
+					<!-- Navigation Header -->
+					<div class="bg-white rounded-xl border border-webropol-gray-200 px-6 py-4 shadow-sm">
+						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+							<nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+								<a href="../collect.html" class="inline-flex items-center text-webropol-primary-700 hover:text-webropol-primary-800 transition-colors">
+									<i class="fa-regular fa-arrow-left mr-2"></i>Collection Methods
+								</a>
+								<i class="fa-regular fa-chevron-right text-webropol-gray-400"></i>
+								<span class="text-webropol-gray-900 font-medium">Private Distribution</span>
+							</nav>
+							<div class="flex items-center gap-3 mobile-stack">
+								<webropol-button variant="secondary" size="sm" @click="exportRecipients()">
+									<i class="fa-regular fa-download mr-2"></i>Export Data
+								</webropol-button>
+								<webropol-button variant="secondary" size="sm" @click="showAuditLog()">
+									<i class="fa-regular fa-clock-rotate-left mr-2"></i>Activity Log
+								</webropol-button>
+								<webropol-button variant="primary" size="sm" @click="showQuickSend()">
+									<i class="fa-regular fa-paper-plane mr-2"></i>Quick Send
+								</webropol-button>
 							</div>
-							<div class="text-2xl font-bold text-webropol-gray-900" x-text="recipients.length"></div>
-							<div class="text-xs text-webropol-gray-500 mt-1">
-								<span x-text="selectedCount()"></span> selected
-							</div>
-						</div>
-						<div class="bg-white border border-webropol-gray-200 rounded-xl p-4 shadow-sm">
-							<div class="flex items-center justify-between mb-2">
-								<h3 class="text-sm font-medium text-webropol-gray-600">Delivery Rate</h3>
-								<i class="fa-regular fa-paper-plane text-emerald-600"></i>
-							</div>
-							<div class="text-2xl font-bold text-webropol-gray-900">94.2%</div>
-							<div class="text-xs text-emerald-600 mt-1">+2.1% vs last campaign</div>
-						</div>
-						<div class="bg-white border border-webropol-gray-200 rounded-xl p-4 shadow-sm">
-							<div class="flex items-center justify-between mb-2">
-								<h3 class="text-sm font-medium text-webropol-gray-600">Response Rate</h3>
-								<i class="fa-regular fa-chart-line text-webropol-primary-600"></i>
-							</div>
-							<div class="text-2xl font-bold text-webropol-gray-900">28.7%</div>
-							<div class="text-xs text-webropol-gray-500 mt-1">Industry avg: 21.3%</div>
-						</div>
-						<div class="bg-white border border-webropol-gray-200 rounded-xl p-4 shadow-sm">
-							<div class="flex items-center justify-between mb-2">
-								<h3 class="text-sm font-medium text-webropol-gray-600">Bounce Rate</h3>
-								<i class="fa-regular fa-triangle-exclamation text-amber-600"></i>
-							</div>
-							<div class="text-2xl font-bold text-webropol-gray-900">2.1%</div>
-							<div class="text-xs text-emerald-600 mt-1">-0.8% vs last month</div>
 						</div>
 					</div>
 
@@ -211,142 +175,149 @@
 							</div>
 						</div>
 
-						<!-- Enhanced Search and Filtering -->
-						<div class="px-6 py-4 bg-webropol-gray-50 border-b border-webropol-gray-200">
-							<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end">
-								<!-- Search Controls -->
-								<div class="space-y-2">
-									<label class="block text-xs font-medium text-webropol-gray-700 uppercase tracking-wider">Search & Filter</label>
-									<div class="flex items-center gap-2">
-										<select class="enterprise-input text-sm px-3 py-2 rounded-lg flex-shrink-0" x-model="searchField">
-											<option value="firstName">Name</option>
-											<option value="email">Email</option>
-											<option value="department">Department</option>
-											<option value="role">Role</option>
-										</select>
-										<select class="enterprise-input text-sm px-3 py-2 rounded-lg flex-shrink-0" x-model="searchOp">
-											<option value="contains">Contains</option>
-											<option value="starts">Starts with</option>
-											<option value="exact">Exact match</option>
-										</select>
+						<!-- Search and Filter Controls -->
+						<div x-data="{ showAdvanced: false }" class="px-6 py-4 bg-webropol-gray-50 border-b border-webropol-gray-200">
+							<!-- Simple Search Bar -->
+							<div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between mb-3">
+								<div class="flex-1 flex items-center gap-3">
+									<div class="relative flex-1 max-w-md">
+										<i class="fa-regular fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400"></i>
 										<input type="text" 
-											   placeholder="Enter search term..." 
-											   class="enterprise-input flex-1 text-sm px-3 py-2 rounded-lg" 
+											   placeholder="Search recipients by name or email..." 
+											   class="w-full pl-10 pr-4 py-2 border border-webropol-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500" 
 											   x-model="searchText" 
 											   @input.debounce.300ms="performSearch()" />
 									</div>
+									<select class="px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-webropol-primary-500" x-model="statusFilter">
+										<option value="">All Recipients</option>
+										<option value="responded">Responded</option>
+										<option value="sent">Sent</option>
+										<option value="unsent">Not Sent</option>
+										<option value="valid">Valid Email</option>
+										<option value="invalid">Invalid Email</option>
+									</select>
+								</div>
+								<div class="flex items-center gap-2">
+									<button @click="showAdvanced = !showAdvanced" 
+											class="flex items-center gap-2 px-3 py-2 text-sm text-webropol-gray-600 hover:text-webropol-gray-800 hover:bg-webropol-gray-100 rounded-lg transition-colors">
+										<i class="fa-regular fa-sliders-h"></i>
+										<span x-text="showAdvanced ? 'Hide Advanced' : 'Advanced Filters'"></span>
+										<i class="fa-regular fa-chevron-down text-xs transition-transform" :class="showAdvanced ? 'rotate-180' : ''"></i>
+									</button>
+									<button @click="clearAllFilters()" 
+											x-show="searchText || statusFilter"
+											class="px-3 py-2 text-sm text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 rounded-lg transition-colors">
+										<i class="fa-regular fa-times mr-1"></i>Clear
+									</button>
+								</div>
+							</div>
+
+							<!-- Advanced Filters (Collapsible) -->
+							<div x-show="showAdvanced" 
+								 x-transition:enter="transition ease-out duration-200"
+								 x-transition:enter-start="opacity-0 transform -translate-y-2"
+								 x-transition:enter-end="opacity-100 transform translate-y-0"
+								 x-transition:leave="transition ease-in duration-150"
+								 x-transition:leave-start="opacity-100"
+								 x-transition:leave-end="opacity-0"
+								 class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white rounded-lg border border-webropol-gray-200">
+								
+								<div>
+									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Search Field</label>
+									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm" x-model="searchField">
+										<option value="firstName">Name</option>
+										<option value="email">Email</option>
+										<option value="department">Department</option>
+										<option value="role">Role</option>
+									</select>
 								</div>
 
-								<!-- Status Filter -->
-								<div class="space-y-2">
-									<label class="block text-xs font-medium text-webropol-gray-700 uppercase tracking-wider">Status Filter</label>
-									<div class="flex items-center gap-2">
-										<select class="enterprise-input text-sm px-3 py-2 rounded-lg" x-model="statusFilter">
-											<option value="">All Statuses</option>
-											<option value="valid">Valid Only</option>
-											<option value="invalid">Invalid Only</option>
-											<option value="unsent">Not Sent</option>
-											<option value="sent">Sent</option>
-											<option value="responded">Responded</option>
-										</select>
-										<webropol-button variant="secondary" size="sm" @click="clearAllFilters()">
-											<i class="fa-regular fa-filter-circle-xmark mr-1"></i>Clear
-										</webropol-button>
-									</div>
+								<div>
+									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Search Type</label>
+									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm" x-model="searchOp">
+										<option value="contains">Contains</option>
+										<option value="starts">Starts with</option>
+										<option value="exact">Exact match</option>
+									</select>
 								</div>
 
-								<!-- Actions and Pagination -->
-								<div class="space-y-2">
-									<label class="block text-xs font-medium text-webropol-gray-700 uppercase tracking-wider">Actions</label>
-									<div class="flex items-center justify-between gap-2">
-										<select class="enterprise-input text-sm px-3 py-2 rounded-lg" x-model.number="pageSize">
-											<option value="10">10 per page</option>
-											<option value="25">25 per page</option>
-											<option value="50">50 per page</option>
-											<option value="100">100 per page</option>
-										</select>
-										<div class="text-xs text-webropol-gray-500 whitespace-nowrap">
-											<span x-text="((page-1) * pageSize + 1)"></span>-<span x-text="Math.min(page * pageSize, filtered().length)"></span> 
-											of <span x-text="filtered().length"></span>
-										</div>
-									</div>
+								<div>
+									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Results Per Page</label>
+									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm" x-model.number="pageSize">
+										<option value="10">10 per page</option>
+										<option value="25">25 per page</option>
+										<option value="50">50 per page</option>
+										<option value="100">100 per page</option>
+									</select>
 								</div>
 							</div>
 						</div>
 
-						<!-- Enterprise Data Table -->
+						<!-- Recipients Data Table -->
 						<div class="overflow-hidden">
 							<!-- Bulk Actions Bar -->
 							<div x-show="selectedCount() > 0" 
 								 x-transition:enter="transition ease-out duration-200"
 								 x-transition:enter-start="opacity-0 transform -translate-y-2"
 								 x-transition:enter-end="opacity-100 transform translate-y-0"
-								 class="px-6 py-3 bg-webropol-primary-50 border-b border-webropol-primary-200">
+								 class="px-6 py-3 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 border-b border-webropol-primary-200">
 								<div class="flex items-center justify-between">
-									<div class="flex items-center gap-4">
-										<span class="text-sm font-medium text-webropol-primary-800">
-											<span x-text="selectedCount()"></span> recipient(s) selected
-										</span>
+									<div class="flex items-center gap-3">
 										<div class="flex items-center gap-2">
-											<webropol-button variant="primary" size="sm" @click="sendToSelected()">
-												<i class="fa-regular fa-paper-plane mr-2"></i>Send Campaign
-											</webropol-button>
-											<webropol-button variant="secondary" size="sm" @click="exportSelected()">
-												<i class="fa-regular fa-download mr-2"></i>Export Selected
-											</webropol-button>
-											<webropol-button variant="danger" size="sm" @click="removeSelected()">
-												<i class="fa-regular fa-trash mr-2"></i>Remove Selected
-											</webropol-button>
-										</div>
+											<div class="w-5 h-5 bg-webropol-primary-600 rounded-full flex items-center justify-center">
+												<i class="fa-solid fa-check text-white text-xs"></i>
+											</div>
+											<span class="text-sm font-medium text-webropol-primary-800">
+												<span x-text="selectedCount()"></span> recipient(s) selected
+											</span>
 									</div>
-									<webropol-button variant="ghost" size="sm" @click="clearSelection()">
-										<i class="fa-regular fa-xmark mr-1"></i>Clear Selection
+									<div class="flex items-center gap-2">
+										<button @click="selectAll()" class="text-sm text-webropol-primary-700 hover:text-webropol-primary-800 font-medium">
+											Select All
+										</button>
+										<span class="text-webropol-gray-400">•</span>
+										<button @click="clearSelection()" class="text-sm text-webropol-gray-600 hover:text-webropol-gray-800">
+											Clear
+										</button>
+									</div>
+								</div>
+								<div class="flex items-center gap-2">
+									<webropol-button variant="primary" size="sm" @click="sendToSelected()">
+										<i class="fa-regular fa-paper-plane mr-1"></i>Send Campaign
+									</webropol-button>
+									<webropol-button variant="secondary" size="sm" @click="exportSelected()">
+										<i class="fa-regular fa-download mr-1"></i>Export
+									</webropol-button>
+									<webropol-button variant="destructive" size="sm" @click="removeSelected()">
+										<i class="fa-regular fa-trash mr-1"></i>Remove
 									</webropol-button>
 								</div>
 							</div>
-
-							<!-- Desktop Table View -->
+						</div>							<!-- Desktop Table View -->
 							<div class="overflow-x-auto mobile-hide-table">
-								<table class="min-w-full enterprise-table text-sm">
-									<thead>
+								<table class="min-w-full text-sm">
+									<thead class="bg-webropol-gray-50 border-b border-webropol-gray-200">
 										<tr>
-											<th class="px-4 py-3 w-10">
+											<th class="px-4 py-4 w-10">
 												<input type="checkbox" 
 													   class="rounded border-2 text-webropol-primary-600" 
 													   aria-label="Select all recipients" 
 													   x-model="selectAll" 
 													   @change="toggleSelectAll" />
 											</th>
-											<th class="px-4 py-3 text-left cursor-pointer hover:bg-webropol-gray-100 transition-colors" @click="sortBy('email')">
-												<div class="flex items-center gap-2">
-													Email Address
-													<i class="fa-regular fa-sort text-webropol-gray-400" 
+											<th class="px-4 py-4 text-left font-medium text-webropol-gray-700">
+												<div class="group cursor-pointer flex items-center gap-2" @click="sortBy('email')">
+													<span>Contact Information</span>
+													<i class="fa-regular fa-sort text-webropol-gray-400 group-hover:text-webropol-primary-600 transition-colors" 
 													   :class="sortField === 'email' ? (sortDirection === 'asc' ? 'fa-sort-up text-webropol-primary-600' : 'fa-sort-down text-webropol-primary-600') : 'fa-sort'"></i>
 												</div>
 											</th>
-											<th class="px-4 py-3 text-left cursor-pointer hover:bg-webropol-gray-100 transition-colors" @click="sortBy('firstName')">
-												<div class="flex items-center gap-2">
-													Contact Name
-													<i class="fa-regular fa-sort text-webropol-gray-400" 
-													   :class="sortField === 'firstName' ? (sortDirection === 'asc' ? 'fa-sort-up text-webropol-primary-600' : 'fa-sort-down text-webropol-primary-600') : 'fa-sort'"></i>
-												</div>
-											</th>
-											<th class="px-4 py-3 text-left">Department</th>
-											<th class="px-4 py-3 text-left">Role</th>
-											<th class="px-4 py-3 text-center cursor-pointer hover:bg-webropol-gray-100 transition-colors" @click="sortBy('sent')">
-												<div class="flex items-center justify-center gap-1">
-													<i class="fa-regular fa-paper-plane text-xs"></i>
-													Sent
-													<i class="fa-regular fa-sort text-webropol-gray-400 text-xs" 
+											<th class="px-4 py-4 text-left font-medium text-webropol-gray-700">Organization</th>
+											<th class="px-4 py-4 text-center font-medium text-webropol-gray-700">
+												<div class="group cursor-pointer flex items-center justify-center gap-2" @click="sortBy('sent')">
+													<span>Campaign Stats</span>
+													<i class="fa-regular fa-sort text-webropol-gray-400 group-hover:text-webropol-primary-600 transition-colors" 
 													   :class="sortField === 'sent' ? (sortDirection === 'asc' ? 'fa-sort-up text-webropol-primary-600' : 'fa-sort-down text-webropol-primary-600') : 'fa-sort'"></i>
-												</div>
-											</th>
-											<th class="px-4 py-3 text-center cursor-pointer hover:bg-webropol-gray-100 transition-colors" @click="sortBy('responses')">
-												<div class="flex items-center justify-center gap-1">
-													<i class="fa-regular fa-chart-bar text-xs"></i>
-													Responses
-													<i class="fa-regular fa-sort text-webropol-gray-400 text-xs" 
-													   :class="sortField === 'responses' ? (sortDirection === 'asc' ? 'fa-sort-up text-webropol-primary-600' : 'fa-sort-down text-webropol-primary-600') : 'fa-sort'"></i>
 												</div>
 											</th>
 											<th class="px-4 py-3 text-center">Status</th>
@@ -514,171 +485,224 @@
 					<!-- Email Campaign Management -->
 					<section class="bg-white border border-webropol-gray-200 rounded-xl shadow-sm">
 						<div class="px-6 py-4 border-b border-webropol-gray-200">
-							<h2 class="text-lg font-semibold text-webropol-gray-800 mb-4">Campaign Configuration</h2>
-							<div class="flex items-center">
-								<button class="px-6 py-3 font-semibold transition-all duration-200 border-b-2 text-sm" 
-										:class="tab==='now' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:border-webropol-gray-300'" 
+							<div class="flex items-center justify-between">
+								<h2 class="text-lg font-semibold text-webropol-gray-800">Campaign Configuration</h2>
+								<div class="flex items-center gap-3">
+									<webropol-button variant="ghost" size="sm" @click="quickFillCampaign()">
+										<i class="fa-regular fa-wand-magic-sparkles mr-1"></i>Quick Fill
+									</webropol-button>
+									<webropol-button variant="ghost" size="sm" @click="previewCampaign()">
+										<i class="fa-regular fa-eye mr-1"></i>Preview
+									</webropol-button>
+								</div>
+							</div>
+							
+							<!-- Delivery Method Selection -->
+							<div class="flex items-center mt-4">
+								<button class="px-4 py-2 font-medium transition-all duration-200 border-b-2 text-sm rounded-t-lg" 
+										:class="tab==='now' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-50'" 
 										@click="tab='now'">
-									<i class="fa-regular fa-paper-plane mr-2"></i>Immediate Delivery
+									<i class="fa-regular fa-paper-plane mr-2"></i>Send Now
 								</button>
-								<button class="px-6 py-3 font-semibold transition-all duration-200 border-b-2 text-sm" 
-										:class="tab==='schedule' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:border-webropol-gray-300'" 
+								<button class="px-4 py-2 font-medium transition-all duration-200 border-b-2 text-sm rounded-t-lg" 
+										:class="tab==='schedule' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-50'" 
 										@click="tab='schedule'">
-									<i class="fa-regular fa-calendar-clock mr-2"></i>Scheduled Delivery
+									<i class="fa-regular fa-calendar-clock mr-2"></i>Schedule
 									<webropol-badge variant="info" size="sm" class="ml-2">0 Pending</webropol-badge>
 								</button>
-								<button class="px-6 py-3 font-semibold transition-all duration-200 border-b-2 text-sm" 
-										:class="tab==='ab' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:border-webropol-gray-300'" 
+								<button class="px-4 py-2 font-medium transition-all duration-200 border-b-2 text-sm rounded-t-lg" 
+										:class="tab==='ab' ? 'border-webropol-primary-600 text-webropol-primary-700 bg-webropol-primary-50' : 'border-transparent text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-50'" 
 										@click="tab='ab'">
-									<i class="fa-regular fa-flask mr-2"></i>A/B Testing
+									<i class="fa-regular fa-flask mr-2"></i>A/B Test
 									<webropol-badge variant="warning" size="sm" class="ml-2">Beta</webropol-badge>
 								</button>
 							</div>
 						</div>
 
-						<div class="p-6 space-y-8">
-							<!-- Email Configuration -->
-							<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-								<!-- Sender Configuration -->
-								<div class="space-y-6">
-									<div>
-										<h3 class="text-base font-semibold text-webropol-gray-800 mb-4 flex items-center">
-											<i class="fa-regular fa-envelope mr-2 text-webropol-primary-600"></i>
-											Sender Configuration
-										</h3>
-										<div class="space-y-4">
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													From Address <span class="text-red-500">*</span>
-												</label>
-												<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.fromType" @change="updateFromAddress()">
-													<option value="noreply">No-Reply (Recommended)</option>
-													<option value="custom">Custom Address</option>
-													<option value="user">Your Email Address</option>
-												</select>
-												<input x-show="form.fromType === 'custom'" 
-													   type="email" 
-													   class="enterprise-input w-full px-4 py-3 rounded-lg mt-2" 
-													   placeholder="Enter custom email address" 
-													   x-model="form.customFromEmail" 
-													   required />
-												<p class="text-xs text-webropol-gray-500 mt-2">
-													<i class="fa-regular fa-info-circle mr-1"></i>
-													No-reply addresses improve deliverability and reduce spam complaints
-												</p>
+						<div class="p-6 space-y-6">
+							<!-- Essential Campaign Settings -->
+							<div class="space-y-4">
+								<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+									<!-- Email Template & Subject -->
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Email Template <span class="text-red-500">*</span>
+											</label>
+											<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.template">
+												<option value="">Select a template...</option>
+												<option value="corporate">Corporate Standard</option>
+												<option value="nps">NPS Survey</option>
+												<option value="feedback">Feedback Request</option>
+												<option value="reminder">Follow-up Reminder</option>
+												<option value="custom">Custom Template</option>
+											</select>
+											<div class="mt-2 flex items-center gap-2">
+												<webropol-button variant="ghost" size="sm" @click="previewTemplate()">
+													<i class="fa-regular fa-eye mr-1"></i>Preview
+												</webropol-button>
+												<webropol-button variant="ghost" size="sm" @click="editTemplate()">
+													<i class="fa-regular fa-pen mr-1"></i>Customize
+												</webropol-button>
 											</div>
-											
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													Sender Name
-												</label>
-												<input type="text" 
-													   class="enterprise-input w-full px-4 py-3 rounded-lg" 
-													   placeholder="e.g., Survey Team, Customer Success" 
-													   x-model="form.senderName" />
-												<p class="text-xs text-webropol-gray-500 mt-2">
-													Personalizes the sender name in recipient's inbox
-												</p>
-											</div>
+										</div>
 
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													Reply-To Address
-												</label>
-												<input type="email" 
-													   class="enterprise-input w-full px-4 py-3 rounded-lg" 
-													   placeholder="support@yourcompany.com" 
-													   x-model="form.replyTo" />
-												<p class="text-xs text-webropol-gray-500 mt-2">
-													Where replies will be sent (leave blank to disable replies)
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Subject Line <span class="text-red-500">*</span>
+											</label>
+											<input type="text" 
+												   class="enterprise-input w-full px-4 py-3 rounded-lg" 
+												   placeholder="Your feedback is important to us" 
+												   x-model="form.subject" 
+												   maxlength="150"
+												   required />
+											<div class="flex items-center justify-between mt-2">
+												<p class="text-xs text-webropol-gray-500">
+													<span :class="form.subject.length > 50 ? 'text-amber-600' : ''">
+														<span x-text="form.subject.length"></span>/150 characters
+													</span>
+													<span x-show="form.subject.length > 50" class="text-amber-600">
+														(Long subjects may be truncated)
+													</span>
 												</p>
+												<webropol-button variant="ghost" size="sm" @click="generateSubjectAI()">
+													<i class="fa-regular fa-wand-magic-sparkles mr-1"></i>AI Suggest
+												</webropol-button>
 											</div>
 										</div>
 									</div>
-								</div>
 
-								<!-- Campaign Settings -->
-								<div class="space-y-6">
-									<div>
-										<h3 class="text-base font-semibold text-webropol-gray-800 mb-4 flex items-center">
-											<i class="fa-regular fa-gear mr-2 text-webropol-primary-600"></i>
-											Campaign Settings
-										</h3>
-										<div class="space-y-4">
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													Email Template <span class="text-red-500">*</span>
-												</label>
-												<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.template">
-													<option value="">Select a template...</option>
-													<option value="corporate">Corporate Standard</option>
-													<option value="nps">NPS Survey</option>
-													<option value="feedback">Feedback Request</option>
-													<option value="reminder">Follow-up Reminder</option>
-													<option value="custom">Custom Template</option>
-												</select>
-												<div class="mt-2 flex items-center gap-2">
-													<webropol-button variant="ghost" size="sm" @click="previewTemplate()">
-														<i class="fa-regular fa-eye mr-1"></i>Preview
-													</webropol-button>
-													<webropol-button variant="ghost" size="sm" @click="editTemplate()">
-														<i class="fa-regular fa-pen mr-1"></i>Customize
-													</webropol-button>
-												</div>
-											</div>
-
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													Subject Line <span class="text-red-500">*</span>
-												</label>
-												<input type="text" 
-													   class="enterprise-input w-full px-4 py-3 rounded-lg" 
-													   placeholder="Your feedback is important to us" 
-													   x-model="form.subject" 
-													   maxlength="150"
-													   required />
-												<div class="flex items-center justify-between mt-2">
-													<p class="text-xs text-webropol-gray-500">
-														<span :class="form.subject.length > 50 ? 'text-amber-600' : ''">
-															<span x-text="form.subject.length"></span>/150 characters
-														</span>
-														<span x-show="form.subject.length > 50" class="text-amber-600">
-															(Long subjects may be truncated)
-														</span>
-													</p>
-													<webropol-button variant="ghost" size="sm" @click="generateSubjectAI()">
-														<i class="fa-regular fa-wand-magic-sparkles mr-1"></i>AI Suggest
-													</webropol-button>
-												</div>
-											</div>
-
-											<div>
-												<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
-													Priority Level
-												</label>
-												<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.priority">
-													<option value="normal">Normal Priority</option>
-													<option value="high">High Priority</option>
-													<option value="urgent">Urgent</option>
-												</select>
-												<p class="text-xs text-webropol-gray-500 mt-2">
-													High priority emails may be filtered by some email clients
-												</p>
-											</div>
+									<!-- Sender Information -->
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												From Address <span class="text-red-500">*</span>
+											</label>
+											<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.fromType" @change="updateFromAddress()">
+												<option value="noreply">No-Reply (Recommended)</option>
+												<option value="custom">Custom Address</option>
+												<option value="user">Your Email Address</option>
+											</select>
+											<input x-show="form.fromType === 'custom'" 
+												   type="email" 
+												   class="enterprise-input w-full px-4 py-3 rounded-lg mt-2" 
+												   placeholder="Enter custom email address" 
+												   x-model="form.customFromEmail" 
+												   required />
+											<p class="text-xs text-webropol-gray-500 mt-2">
+												<i class="fa-regular fa-info-circle mr-1"></i>
+												No-reply addresses improve deliverability
+											</p>
+										</div>
+										
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Sender Name
+											</label>
+											<input type="text" 
+												   class="enterprise-input w-full px-4 py-3 rounded-lg" 
+												   placeholder="e.g., Survey Team, Customer Success" 
+												   x-model="form.senderName" />
 										</div>
 									</div>
 								</div>
 							</div>
 
-							<!-- Enhanced Message Editor -->
-							<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-								<!-- Message Content -->
-								<div class="xl:col-span-2 space-y-6">
-									<div>
-										<h3 class="text-base font-semibold text-webropol-gray-800 mb-4 flex items-center">
-											<i class="fa-regular fa-envelope-open mr-2 text-webropol-primary-600"></i>
-											Message Content
-										</h3>
+							<!-- Advanced Settings (Collapsible) -->
+							<div class="border-t border-webropol-gray-200 pt-6" x-data="{ advancedOpen: false }">
+								<button @click="advancedOpen = !advancedOpen" 
+										class="w-full flex items-center justify-between p-4 text-left bg-webropol-gray-50 hover:bg-webropol-gray-100 rounded-lg transition-colors">
+									<div class="flex items-center">
+										<i class="fa-regular fa-gear mr-2 text-webropol-primary-600"></i>
+										<span class="font-medium text-webropol-gray-800">Advanced Settings</span>
+										<span class="text-sm text-webropol-gray-500 ml-2">(Reply-to, Priority, Delivery options)</span>
+									</div>
+									<i class="fa-regular fa-chevron-down text-webropol-gray-400 transition-transform" 
+									   :class="advancedOpen ? 'rotate-180' : ''"></i>
+								</button>
+
+								<div x-show="advancedOpen" x-transition class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+									<div class="space-y-4">
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Reply-To Address
+											</label>
+											<input type="email" 
+												   class="enterprise-input w-full px-4 py-3 rounded-lg" 
+												   placeholder="support@yourcompany.com" 
+												   x-model="form.replyTo" />
+											<p class="text-xs text-webropol-gray-500 mt-2">
+												Where replies will be sent (leave blank to disable)
+											</p>
+										</div>
+
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Priority Level
+											</label>
+											<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.priority">
+												<option value="normal">Normal Priority</option>
+												<option value="high">High Priority</option>
+												<option value="urgent">Urgent</option>
+											</select>
+											<p class="text-xs text-webropol-gray-500 mt-2">
+												High priority may be filtered by email clients
+											</p>
+										</div>
+									</div>
+
+									<div class="space-y-4">
+										<h4 class="text-sm font-semibold text-webropol-gray-700 flex items-center">
+											<i class="fa-regular fa-clock mr-2"></i>Delivery Options
+										</h4>
+										
+										<div>
+											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+												Send Rate Limit
+											</label>
+											<select class="enterprise-input w-full px-4 py-3 rounded-lg" x-model="form.rateLimit">
+												<option value="normal">Normal (100/hour)</option>
+												<option value="fast">Fast (500/hour)</option>
+												<option value="slow">Slow (50/hour)</option>
+											</select>
+										</div>
+
+										<div>
+											<label class="flex items-center">
+												<input type="checkbox" class="rounded border-2 text-webropol-primary-600 mr-3" x-model="form.trackOpens" />
+												<span class="text-sm font-medium text-webropol-gray-700">Track email opens</span>
+											</label>
+										</div>
+
+										<div>
+											<label class="flex items-center">
+												<input type="checkbox" class="rounded border-2 text-webropol-primary-600 mr-3" x-model="form.trackClicks" />
+												<span class="text-sm font-medium text-webropol-gray-700">Track link clicks</span>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Message Content Editor -->
+							<div class="border-t border-webropol-gray-200 pt-6">
+								<div class="flex items-center justify-between mb-6">
+									<h3 class="text-base font-semibold text-webropol-gray-800 flex items-center">
+										<i class="fa-regular fa-envelope-open mr-2 text-webropol-primary-600"></i>
+										Message Content
+									</h3>
+									<div class="flex items-center gap-2">
+										<webropol-badge variant="info" size="sm">AI Powered</webropol-badge>
+										<webropol-button variant="ghost" size="sm" @click="insertMergeFields()">
+											<i class="fa-regular fa-code mr-1"></i>Merge Fields
+										</webropol-button>
+									</div>
+								</div>
+
+								<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+									<!-- Message Editor -->
+									<div class="xl:col-span-2 space-y-6">
 										
 										<div class="space-y-4">
 											<!-- AI-Powered Content Tools -->
