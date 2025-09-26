@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Email survey - Private links | Webropol</title>
+	<!-- Standard Tailwind + FontAwesome + Alpine.js stack -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+	<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+	<!-- Webropol design tokens and components -->
+	<link href="../../design-system/styles/tokens.css" rel="stylesheet" />
+	<script src="../../design-system/components/navigation/Sidebar.js" type="module"></script>
+	<script src="../../design-system/components/navigation/Header.js" type="module"></script>
+
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						'webropol-primary': {
+							50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63'
+						},
+						'webropol-gray': {
+							50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a'
+						}
+					},
+					fontFamily: { 'sans': ['Inter','system-ui','sans-serif'] }
+				}
+			}
+		}
+	</script>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+	<style>
+		[x-cloak] { display: none !important; }
+		.wysiwyg-toolbar button { color: #334155; }
+		.wysiwyg-toolbar button[aria-pressed="true"] { color: #0e7490; }
+	</style>
+</head>
+<body class="" x-data="privateLinksPage()" x-init="init()">
+	<div class="flex h-screen">
+		<webropol-sidebar active="surveys" base="../../"></webropol-sidebar>
+
+		<div class="flex-1 overflow-hidden flex flex-col">
+			<webropol-header title="Email survey - Private links"></webropol-header>
+
+			<main class="flex-1 overflow-y-auto px-4 py-6 lg:px-8">
+				<div class="max-w-7xl mx-auto space-y-6">
+
+					<!-- Breadcrumb / Back -->
+					<div class="flex items-center gap-3 text-sm">
+						<a href="../collect.html" class="inline-flex items-center text-webropol-primary-700 hover:text-webropol-primary-800">
+							<i class="fa-regular fa-arrow-left mr-2"></i>Back to Collect methods
+						</a>
+						<span class="text-webropol-gray-400">/</span>
+						<span class="text-webropol-gray-700">Email survey - Private links</span>
+					</div>
+
+					<!-- Add recipients panel -->
+					<section class="bg-white border border-webropol-gray-200 rounded-xl shadow-sm">
+						<div class="px-4 py-3 border-b border-webropol-gray-200 flex items-center justify-between">
+							<div class="font-semibold text-webropol-gray-800">Add recipients <span class="ml-2 text-webropol-gray-500 text-sm">(<span x-text="recipients.length"></span>)</span></div>
+							<div class="flex items-center gap-2">
+								<button class="px-3 py-2 rounded-lg bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white text-sm" @click="addRecipientSample()">
+									<i class="fa-regular fa-user-plus mr-2"></i>Add recipients
+								</button>
+								<button class="px-3 py-2 rounded-lg border border-webropol-gray-200 text-webropol-gray-700 hover:bg-webropol-gray-50 text-sm" @click="toggleDemographics">
+									<i class="fa-regular fa-table-list mr-2"></i>Demographic information
+								</button>
+							</div>
+						</div>
+
+						<div class="px-4 pt-4">
+							<div class="flex items-center justify-between gap-4 flex-wrap mb-3">
+								<div class="flex items-center gap-2">
+									<label class="text-sm text-webropol-gray-600">Filter:</label>
+									<select class="text-sm border border-webropol-gray-300 rounded-md px-2 py-1" x-model="searchField">
+										<option value="firstName">First name</option>
+										<option value="email">Email</option>
+									</select>
+									<select class="text-sm border border-webropol-gray-300 rounded-md px-2 py-1" x-model="searchOp">
+										<option value="contains">Contains</option>
+										<option value="starts">Starts with</option>
+									</select>
+									<input type="text" placeholder="Search" class="text-sm border border-webropol-gray-300 rounded-md px-2 py-1 w-48" x-model="searchText" />
+									<button class="text-sm px-3 py-1.5 rounded-md bg-webropol-gray-100 text-webropol-gray-700 border border-webropol-gray-300" @click="clearSearch()">Clear</button>
+								</div>
+								<div class="text-xs text-webropol-gray-500">Show on page
+									<select class="ml-1 border border-webropol-gray-300 rounded px-1.5 py-1" x-model.number="pageSize">
+										<option>5</option><option>10</option><option>25</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<!-- Recipients table -->
+						<div class="px-4 pb-4">
+							<div class="overflow-x-auto border border-webropol-gray-200 rounded-lg">
+								<table class="min-w-full text-sm">
+									<thead class="bg-webropol-gray-100/70 text-webropol-gray-700">
+										<tr>
+											<th class="p-2 text-left w-10"><input type="checkbox" aria-label="Select all" x-model="selectAll" @change="toggleSelectAll" /></th>
+											<th class="p-2 text-left">Email</th>
+											<th class="p-2 text-left">First name</th>
+											<th class="p-2 text-right">Sent</th>
+											<th class="p-2 text-right">Responses</th>
+											<th class="p-2 text-right">Updated</th>
+											<th class="p-2 text-center">Valid</th>
+											<th class="p-2 text-center w-12">Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<template x-for="(r, idx) in pagedRecipients()" :key="r.id">
+											<tr class="border-t border-webropol-gray-200">
+												<td class="p-2"><input type="checkbox" x-model="r.selected" /></td>
+												<td class="p-2 text-webropol-gray-900" x-text="r.email"></td>
+												<td class="p-2" x-text="r.firstName"></td>
+												<td class="p-2 text-right" x-text="r.sent"></td>
+												<td class="p-2 text-right" x-text="r.responses"></td>
+												<td class="p-2 text-right" x-text="r.updated"></td>
+												<td class="p-2 text-center">
+													<i class="fa-regular fa-check text-emerald-600" x-show="r.valid" aria-label="valid"></i>
+													<i class="fa-regular fa-xmark text-rose-600" x-show="!r.valid" aria-label="invalid"></i>
+												</td>
+												<td class="p-2 text-center">
+													<button class="text-webropol-gray-500 hover:text-webropol-primary-700" title="Edit" @click="editRecipient(r)"><i class="fa-regular fa-pen"></i></button>
+												</td>
+											</tr>
+										</template>
+										<tr x-show="pagedRecipients().length === 0">
+											<td colspan="8" class="p-4 text-center text-webropol-gray-500">No recipients found</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<!-- Pagination -->
+							<div class="flex items-center justify-between mt-3 text-sm">
+								<div class="text-webropol-gray-600">Selected: <span x-text="selectedCount()"></span></div>
+								<div class="flex items-center gap-2">
+									<button class="px-2 py-1 border rounded disabled:opacity-40" :disabled="page === 1" @click="page--">Prev</button>
+									<span class="text-webropol-gray-600">Page <span x-text="page"></span> / <span x-text="totalPages()"></span></span>
+									<button class="px-2 py-1 border rounded disabled:opacity-40" :disabled="page >= totalPages()" @click="page++">Next</button>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<!-- Send email panel -->
+					<section class="bg-white border border-webropol-gray-200 rounded-xl shadow-sm">
+						<div class="px-4 pt-4 border-b border-webropol-gray-200">
+							<div class="flex items-center">
+								<button class="px-4 py-2 font-semibold text-webropol-gray-800 border-b-2" :class="tab==='now' ? 'border-webropol-primary-600' : 'border-transparent text-webropol-gray-500'" @click="tab='now'">Send email now</button>
+								<button class="px-4 py-2 font-semibold text-webropol-gray-800 border-b-2" :class="tab==='schedule' ? 'border-webropol-primary-600' : 'border-transparent text-webropol-gray-500'" @click="tab='schedule'">Schedule <span class="text-xs text-webropol-gray-500">(Forthcoming Schedules: No)</span></button>
+							</div>
+						</div>
+
+						<div class="p-4 lg:p-6 space-y-4">
+							<!-- Basic fields -->
+							<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+								<div class="space-y-3">
+									<div class="flex items-center gap-3">
+										<label class="w-28 text-sm text-webropol-gray-600">From:</label>
+										<input class="flex-1 px-3 py-2 border rounded-md text-sm" placeholder="messages-noreply@webropolsurveys.com (recommended)" x-model="form.from" />
+									</div>
+									<div class="flex items-center gap-3">
+										<label class="w-28 text-sm text-webropol-gray-600">Custom from:</label>
+										<input class="flex-1 px-3 py-2 border rounded-md text-sm" placeholder="Enter a name to personalize the sender's email address (optional)" x-model="form.customFrom" />
+									</div>
+									<div class="flex items-center gap-3">
+										<label class="w-28 text-sm text-webropol-gray-600">Reply-To:</label>
+										<input class="flex-1 px-3 py-2 border rounded-md text-sm" placeholder="Select email address" x-model="form.replyTo" />
+									</div>
+								</div>
+								<div class="space-y-3">
+									<div class="flex items-center gap-3">
+										<label class="w-32 text-sm text-webropol-gray-600">Email template:</label>
+										<select class="flex-1 px-3 py-2 border rounded-md text-sm" x-model="form.template">
+											<option value="nps">NPS</option>
+											<option value="simple">Simple</option>
+											<option value="reminder">Reminder</option>
+										</select>
+									</div>
+									<div class="flex items-center gap-3">
+										<label class="w-32 text-sm text-webropol-gray-600">Subject:</label>
+										<input class="flex-1 px-3 py-2 border rounded-md text-sm" placeholder="Subject" x-model="form.subject" />
+									</div>
+								</div>
+							</div>
+
+							<!-- Message editor -->
+							<div class="space-y-2">
+								<div class="flex items-center gap-2">
+									<label class="text-sm text-webropol-gray-600 w-28">Message:</label>
+									<div class="flex-1 flex gap-2">
+										<button class="px-3 py-1.5 rounded-md border text-sm hover:bg-webropol-gray-50" @click="generateAI()"><i class="fa-regular fa-wand-magic-sparkles mr-2"></i>Generate email via AI</button>
+										<button class="px-3 py-1.5 rounded-md border text-sm hover:bg-webropol-gray-50"><i class="fa-regular fa-square-poll-horizontal mr-2"></i>Show question in email</button>
+										<button class="px-3 py-1.5 rounded-md border text-sm hover:bg-webropol-gray-50"><i class="fa-regular fa-tag mr-2"></i>Add Tag</button>
+										<button class="px-3 py-1.5 rounded-md border text-sm hover:bg-webropol-gray-50"><i class="fa-regular fa-link mr-2"></i>Customized links</button>
+									</div>
+								</div>
+
+								<!-- Basic pseudo-WYSIWYG -->
+								<div class="ml-28 border rounded-lg overflow-hidden bg-white">
+									<div class="wysiwyg-toolbar flex items-center gap-1 p-2 border-b bg-webropol-gray-50">
+										<button class="px-2 py-1 rounded hover:bg-white" :aria-pressed="toolbar.bold" @click="toolbar.bold = !toolbar.bold"><i class="fa-solid fa-bold"></i></button>
+										<button class="px-2 py-1 rounded hover:bg-white" :aria-pressed="toolbar.italic" @click="toolbar.italic = !toolbar.italic"><i class="fa-solid fa-italic"></i></button>
+										<button class="px-2 py-1 rounded hover:bg-white" :aria-pressed="toolbar.ul" @click="toolbar.ul = !toolbar.ul"><i class="fa-regular fa-list"></i></button>
+									</div>
+									<div class="p-4">
+										<!-- Template preview area -->
+										<div class="border rounded-md overflow-hidden">
+											<div class="bg-webropol-primary-700 text-white px-4 py-3 font-semibold">Webropol Update</div>
+											<div class="p-4 space-y-3 text-sm text-webropol-gray-800">
+												<p>Hello <span class="font-semibold">[Respondent_name]</span>,</p>
+												<p x-text="form.body"></p>
+												<p class="text-webropol-gray-600">Thanks,<br/>Webropol Team</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Attachments -->
+							<div class="flex items-center gap-3 ml-28">
+								<label class="text-sm text-webropol-gray-600">Attachments:</label>
+								<input type="file" class="text-sm" @change="handleFile($event)" />
+								<span class="text-xs text-webropol-gray-500">The maximum file upload size is 40 MB.</span>
+							</div>
+
+							<!-- Options -->
+							<div class="ml-28 space-y-2 pt-2">
+								<label class="flex items-start gap-2 text-sm text-webropol-gray-700">
+									<input type="checkbox" class="mt-1" x-model="options.includeSurveyLink" />
+									<span>Include link to survey. If the [SurveyLink] tag is not used, a survey link will be displayed at the end of the email.</span>
+								</label>
+								<label class="flex items-center gap-2 text-sm text-webropol-gray-700">
+									<input type="checkbox" x-model="options.includeUnsub" /> Include unsubscribe link
+								</label>
+								<label class="flex items-center gap-2 text-sm text-webropol-gray-700">
+									<input type="checkbox" x-model="options.includeUnsubOrg" /> Include unsubscribe link from organisation
+								</label>
+								<label class="flex items-center gap-2 text-sm text-webropol-gray-700">
+									<input type="checkbox" x-model="options.includeRespondentUnsub" /> Include link for unsubscribing from respondent panel
+								</label>
+								<details class="mt-2">
+									<summary class="text-sm text-webropol-gray-700 cursor-pointer">Advanced settings</summary>
+									<div class="mt-2 text-sm text-webropol-gray-600">Advanced email settings can be placed here.</div>
+								</details>
+							</div>
+
+							<!-- Sending summary + actions -->
+							<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4">
+								<div class="lg:col-span-2"></div>
+								<div class="bg-white border border-webropol-gray-200 rounded-lg p-4">
+									<div class="font-semibold text-webropol-gray-800 mb-2">Sending summary</div>
+									<dl class="text-sm text-webropol-gray-700 space-y-1">
+										<div class="flex justify-between"><dt>Email sent to:</dt><dd class="text-right" x-text="selectedCount() + ' selected' "></dd></div>
+										<div class="flex justify-between"><dt>Email message set from:</dt><dd class="text-right" x-text="form.from || 'noreply@webropol.com'"></dd></div>
+										<div class="flex justify-between"><dt>Email template:</dt><dd class="text-right uppercase" x-text="form.template"></dd></div>
+										<div class="flex justify-between"><dt>Subject:</dt><dd class="text-right" x-text="form.subject"></dd></div>
+										<div class="flex justify-between"><dt>Unsubscribe option:</dt><dd class="text-right" x-text="options.includeUnsub ? 'Yes' : 'No'"></dd></div>
+										<div class="flex justify-between"><dt>Survey preview:</dt><dd class="text-right"><a href="#" class="text-webropol-primary-700 hover:underline">Preview</a></dd></div>
+									</dl>
+									<div class="flex items-center gap-3 mt-3">
+										<button class="px-4 py-2 rounded-full border border-webropol-gray-300 text-webropol-gray-800 hover:bg-webropol-gray-50 text-sm">
+											<i class="fa-regular fa-eye mr-2"></i>Preview email message
+										</button>
+										<button class="px-4 py-2 rounded-full bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white text-sm disabled:opacity-50" :disabled="selectedCount()===0" @click="send()">
+											<i class="fa-regular fa-paper-plane mr-2"></i>Send survey
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+				</div>
+			</main>
+		</div>
+	</div>
+
+	<script>
+		function privateLinksPage() {
+			return {
+				recipients: [],
+				selectAll: false,
+				page: 1,
+				pageSize: 10,
+				searchField: 'firstName',
+				searchOp: 'contains',
+				searchText: '',
+				tab: 'now',
+				form: {
+					from: 'messages-noreply@webropolsurveys.com',
+					customFrom: '',
+					replyTo: '',
+					template: 'nps',
+					subject: 'Webropol Update – Help us improve your experience',
+					body: 'We would appreciate your feedback. Please take a moment to complete our short survey.'
+				},
+				toolbar: { bold: true, italic: false, ul: false },
+				options: { includeSurveyLink: true, includeUnsub: true, includeUnsubOrg: false, includeRespondentUnsub: false },
+
+				init() {
+					// Seed demo recipients
+					this.recipients = [
+						{ id: 1, email: 'all@webropol.com', firstName: 'All', sent: 12, responses: 1, updated: 9, valid: true, selected: true },
+						{ id: 2, email: 'henrik.romar@webropol.com', firstName: 'Henrik', sent: 1, responses: 0, updated: 0, valid: true, selected: false },
+						{ id: 3, email: 'marko.poopchev@webropol.com', firstName: 'Marko', sent: 1, responses: 0, updated: 0, valid: true, selected: false }
+					];
+				},
+
+				filtered() {
+					let t = this.searchText.trim().toLowerCase();
+					if (!t) return this.recipients;
+					return this.recipients.filter(r => {
+						let v = (this.searchField === 'email' ? r.email : r.firstName).toLowerCase();
+						return this.searchOp === 'starts' ? v.startsWith(t) : v.includes(t);
+					});
+				},
+
+				totalPages() { return Math.max(1, Math.ceil(this.filtered().length / this.pageSize)); },
+				pagedRecipients() {
+					const start = (this.page - 1) * this.pageSize;
+					return this.filtered().slice(start, start + this.pageSize);
+				},
+				selectedCount() { return this.recipients.filter(r => r.selected).length; },
+				toggleSelectAll() { this.pagedRecipients().forEach(r => r.selected = this.selectAll); },
+				clearSearch() { this.searchText = ''; this.page = 1; },
+				addRecipientSample() {
+					const id = this.recipients.length + 1;
+					this.recipients.push({ id, email: `user${id}@example.com`, firstName: `User${id}`, sent: 0, responses: 0, updated: 0, valid: true, selected: false });
+				},
+				editRecipient(r) { alert('Edit recipient: ' + r.email); },
+				toggleDemographics() { alert('Demographic information panel coming soon'); },
+				handleFile(e) { const f = e.target.files?.[0]; if (f) alert('Attached: ' + f.name); },
+				generateAI() { this.form.body = 'Here is a personalized invitation to share your feedback in our quick survey. Your input helps us improve!'; },
+				send() { alert(`Sending to ${this.selectedCount()} recipients with subject: ${this.form.subject}`); }
+			}
+		}
+	</script>
+</body>
+</html>
