@@ -21,6 +21,13 @@ export class WebropolSidebar extends BaseComponent {
   render() {
     const active = this.getAttr('active', 'home');
     const base = this.getAttr('base', '');
+
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.setAttribute('data-module-id', active);
+      if (window.globalSettingsManager && typeof window.globalSettingsManager.applyModuleBranding === 'function') {
+        window.globalSettingsManager.applyModuleBranding();
+      }
+    }
     
     // Helper to prefix base to links - ensure proper path concatenation
     const link = (path) => {

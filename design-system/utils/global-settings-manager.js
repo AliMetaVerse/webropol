@@ -110,6 +110,19 @@ export class GlobalSettingsManager {
     
     this.settings = this.loadSettings();
     this.listeners = new Set();
+    this.moduleGroupMap = new Map([
+      ['surveys', 'survey'],
+      ['survey', 'survey'],
+      ['sms', 'survey'],
+      ['2-way sms', 'survey'],
+      ['two-way sms', 'survey'],
+      ['exw', 'survey'],
+      ['case-management', 'survey'],
+      ['case management', 'survey'],
+      ['case_management', 'survey'],
+      ['events', 'events']
+    ]);
+    this.moduleBrandingObserver = null;
     this.setupAutoLogout();
   }
 
@@ -214,6 +227,9 @@ export class GlobalSettingsManager {
 
   // Apply AI assistant visibility rules across headers
   this.applyAIAssistantVisibility();
+
+  // Apply module-specific branding tokens
+  this.applyModuleBranding();
 
     // Update auto-logout timer
     this.setupAutoLogout();
@@ -468,6 +484,14 @@ export class GlobalSettingsManager {
         this.setupAutoLogout();
       }
     });
+
+    // Ensure module branding stays in sync with navigation state
+    this.observeModuleBranding();
+
+    // Listen for SPA navigation events to refresh module branding immediately
+    window.addEventListener('spa-route-change', () => {
+      this.applyModuleBranding();
+    });
   }
 
   /**
@@ -487,8 +511,62 @@ export class GlobalSettingsManager {
       });
     }
 
+    if (this.moduleBrandingObserver) {
+      this.moduleBrandingObserver.disconnect();
+      this.moduleBrandingObserver = null;
+    }
+
     // Clear listeners
     this.listeners.clear();
+  }
+
+  resolveModuleGroup(moduleKey) {
+    if (!moduleKey) return null;
+    const normalized = moduleKey.toString().toLowerCase().trim();
+    return this.moduleGroupMap.get(normalized) || null;
+  }
+
+  applyModuleBranding() {
+    const body = document.body;
+    if (!body) return;
+
+    const manualOverride = body.getAttribute('data-module-group-manual') || body.dataset.moduleGroupManual;
+    if (manualOverride) {
+      body.setAttribute('data-module-group', manualOverride);
+      return;
+    }
+
+    const sidebar = document.querySelector('webropol-sidebar');
+    const activeModule = sidebar?.getAttribute('active');
+    const fallbackModule = body.getAttribute('data-module-id') || body.dataset.moduleId;
+
+    const moduleGroup = this.resolveModuleGroup(activeModule) || this.resolveModuleGroup(fallbackModule);
+
+    if (moduleGroup) {
+      body.setAttribute('data-module-group', moduleGroup);
+    } else {
+      body.removeAttribute('data-module-group');
+    }
+  }
+
+  observeModuleBranding(retryCount = 0) {
+    const MAX_RETRIES = 5;
+    if (this.moduleBrandingObserver) {
+      return;
+    }
+
+    const sidebar = document.querySelector('webropol-sidebar');
+
+    if (sidebar) {
+      this.moduleBrandingObserver = new MutationObserver(() => this.applyModuleBranding());
+      this.moduleBrandingObserver.observe(sidebar, { attributes: true, attributeFilter: ['active'] });
+      this.applyModuleBranding();
+      return;
+    }
+
+    if (retryCount < MAX_RETRIES) {
+      setTimeout(() => this.observeModuleBranding(retryCount + 1), 300);
+    }
   }
 }
 

@@ -124,12 +124,24 @@
   --transition-fast: 150ms;
   --transition-normal: 200ms;
   --transition-slow: 300ms;
+
+  /* ===== MODULE AVATAR DEFAULTS ===== */
+  --module-avatar-bg: linear-gradient(135deg, #ebf4f7, #ddf0f7);
+  --module-avatar-border-color: transparent;
+  --module-avatar-border-width: 0px;
+  --module-avatar-icon-color: var(--primary-600);
+  --module-avatar-shadow: none;
 }
 
 /* ===== DARK THEME OVERRIDES ===== */
 /* Apply when html has .dark class; overrides light variables and base UI colors */
 .dark {
   /* Core palette remap for dark mode surfaces and text */
+  --module-avatar-bg: linear-gradient(135deg, rgba(20, 24, 27, 0.9), rgba(22, 26, 30, 0.9));
+  --module-avatar-border-color: rgba(63, 188, 213, 0.18);
+  --module-avatar-border-width: 0px;
+  --module-avatar-icon-color: var(--primary-400);
+  --module-avatar-shadow: none;
   --neutral-0:   #0b0c0d;   /* darkest bg */
   --neutral-50:  #111315;
   --neutral-100: #16191c;
@@ -158,6 +170,72 @@
 
   /* Global element colors in dark */
   color-scheme: dark;
+}
+
+body[data-module-group="survey"] {
+  --module-avatar-bg: #FFE4E7;
+  --module-avatar-border-color: #FFFFFF;
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #BE1241;
+  --module-avatar-shadow: 0 18px 36px -20px rgba(190, 18, 65, 0.45);
+}
+
+.dark body[data-module-group="survey"] {
+  --module-avatar-bg: rgba(255, 228, 231, 0.92);
+  --module-avatar-border-color: rgba(255, 255, 255, 0.95);
+  --module-avatar-shadow: 0 18px 36px -18px rgba(190, 18, 65, 0.55);
+  --module-avatar-icon-color: #BE1241;
+}
+
+body[data-module-group="events"] {
+  --module-avatar-bg: linear-gradient(135deg, #faf5ff, #e9d5ff);
+  --module-avatar-border-color: #ffffff;
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #7e22ce;
+  --module-avatar-shadow: 0 18px 36px -20px rgba(126, 34, 206, 0.45);
+}
+
+.dark body[data-module-group="events"] {
+  --module-avatar-bg: linear-gradient(135deg, rgba(250, 245, 255, 0.9), rgba(233, 213, 255, 0.9));
+  --module-avatar-border-color: rgba(255, 255, 255, 0.95);
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #c084fc;
+  --module-avatar-shadow: 0 18px 36px -18px rgba(126, 34, 206, 0.5);
+}
+
+.module-avatar[data-avatar="survey"],
+[data-avatar="survey"].module-avatar {
+  --module-avatar-bg: #FFE4E7;
+  --module-avatar-border-color: #FFFFFF;
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #BE1241;
+  --module-avatar-shadow: 0 18px 36px -20px rgba(190, 18, 65, 0.45);
+}
+
+.dark .module-avatar[data-avatar="survey"],
+.dark [data-avatar="survey"].module-avatar {
+  --module-avatar-bg: rgba(255, 228, 231, 0.92);
+  --module-avatar-border-color: rgba(255, 255, 255, 0.95);
+  --module-avatar-icon-color: #BE1241;
+  --module-avatar-shadow: 0 18px 36px -18px rgba(190, 18, 65, 0.55);
+}
+
+.module-avatar[data-avatar="events"],
+[data-avatar="events"].module-avatar {
+  --module-avatar-bg: linear-gradient(135deg, #faf5ff, #e9d5ff);
+  --module-avatar-border-color: #ffffff;
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #7e22ce;
+  --module-avatar-shadow: 0 18px 36px -20px rgba(126, 34, 206, 0.45);
+}
+
+.dark .module-avatar[data-avatar="events"],
+.dark [data-avatar="events"].module-avatar {
+  --module-avatar-bg: linear-gradient(135deg, rgba(250, 245, 255, 0.9), rgba(233, 213, 255, 0.9));
+  --module-avatar-border-color: rgba(255, 255, 255, 0.95);
+  --module-avatar-border-width: 2px;
+  --module-avatar-icon-color: #c084fc;
+  --module-avatar-shadow: 0 18px 36px -18px rgba(126, 34, 206, 0.5);
 }
 
 /* Base document surfaces in dark mode */
@@ -314,31 +392,37 @@ html.dark, html.dark body {
   box-shadow: var(--shadow-soft) !important;
 }
 
-/* Icon tiles (square 48px) with bright gradients -> muted dark */
-.dark .w-12.h-12.bg-sky-to-br, .dark .w-10.h-10.bg-sun-to-br { 
-  background-image: linear-gradient(135deg, rgba(20,24,27,0.85), rgba(22,26,30,0.85)) !important; 
+/* Icon tiles (square 48px) with bright gradients -> muted dark for non-survey modules */
+.dark body:not([data-module-group="survey"]) .w-12.h-12.bg-sky-to-br,
+.dark body:not([data-module-group="survey"]) .w-10.h-10.bg-sun-to-br { 
+  background: linear-gradient(135deg, rgba(20, 24, 27, 0.85), rgba(22, 26, 30, 0.85)) !important; 
 }
 
-/* ===== Unified icon tiles (map legacy strong primary tiles to Admin Tools style) ===== */
-/* Light mode: replace strong brand gradient tiles with soft sky gradient and brand-colored icon */
+/* ===== Unified avatar tiles (module icons & reusable avatar helper) ===== */
+.module-avatar,
 .w-12.h-12.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600,
-.w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 {
-  background-image: linear-gradient(to bottom right, #ebf4f7, #ddf0f7ff) !important; /* same as bg-sky-to-br */
-}
-.w-12.h-12.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i,
-.w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i {
-  color: var(--primary-600) !important; /* make icon context-aware via tokens */
+.w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600,
+.w-12.h-12.bg-sun-to-br.from-webropol-primary-500.to-webropol-primary-600,
+.w-16.h-16.bg-sun-to-br.from-webropol-primary-500.to-webropol-primary-600 {
+  background: var(--module-avatar-bg) !important;
+  border: var(--module-avatar-border-width, 0px) solid var(--module-avatar-border-color, transparent);
+  color: var(--module-avatar-icon-color, var(--primary-600));
+  box-shadow: var(--module-avatar-shadow, none);
+  transition: transform var(--transition-normal, 200ms) ease,
+              box-shadow var(--transition-normal, 200ms) ease,
+              background-color var(--transition-normal, 200ms) ease,
+              border-color var(--transition-normal, 200ms) ease;
 }
 
-/* Dark mode: use muted gradient and lighter primary tone for icon */
-.dark .w-12.h-12.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600,
-.dark .w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 {
-  background-image: linear-gradient(135deg, rgba(20,24,27,0.85), rgba(22,26,30,0.85)) !important; /* consistent with .bg-sky-to-br in dark */
+.module-avatar > i,
+.module-avatar > svg,
+.w-12.h-12.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i,
+.w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i,
+.w-12.h-12.bg-sun-to-br.from-webropol-primary-500.to-webropol-primary-600 i,
+.w-16.h-16.bg-sun-to-br.from-webropol-primary-500.to-webropol-primary-600 i {
+  color: var(--module-avatar-icon-color, var(--primary-600)) !important;
 }
-.dark .w-12.h-12.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i,
-.dark .w-16.h-16.bg-gradient-to-br.from-webropol-primary-500.to-webropol-primary-600 i {
-  color: var(--primary-400) !important; /* align with .dark .text-webropol-primary-600 mapping */
-}
+
 
 /* ===== Unified icon tile color consistency (bg-sky-to-br) ===== */
 /* Light mode mappings based on contextual stop tokens */
