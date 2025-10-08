@@ -1,0 +1,65 @@
+{
+	"inputs": [
+		{
+			"id": "github_token",
+			"type": "promptString",
+			"description": "Optional: GitHub token for testing models for free with rate limits.",
+			"password": true
+		},
+		{
+			"id": "eval_data_dir",
+			"type": "promptString",
+			"description": "Path to JSONL datasets for evaluation tools.",
+			"password": false
+		},
+		{
+			"id": "env_file_path",
+			"type": "promptString",
+			"description": "Path to a .env file to load (e.g., ${workspaceFolder}/.env).",
+			"password": false
+		},
+		{
+			"id": "atlassian_api_token",
+			"type": "promptString",
+			"description": "Atlassian API Token for authentication (create at https://id.atlassian.com/manage-profile/security/api-tokens).",
+			"password": true
+		},
+		{
+			"id": "atlassian_email",
+			"type": "promptString",
+			"description": "ali.al-zuhairi@webropol.com",
+			"password": false
+		},
+		{
+			"id": "atlassian_site_url",
+			"type": "promptString",
+			"description": "Your Atlassian site URL (e.g., https://webropol-team.atlassian.net).",
+			"password": false
+		},
+		{
+			"id": "api_key",
+			"type": "promptString",
+			"description": "Your API key for the service",
+			"password": true
+		}
+	],
+	"servers": {
+		"atlassian/atlassian-mcp-server": {
+			"type": "http",
+			"url": "https://mcp.atlassian.com/v1/sse",
+			"headers": {
+				"Authorization": "Bearer ${input:atlassian_api_token}",
+				"X-Atlassian-Site": "${input:atlassian_site_url}",
+				"X-User-Email": "${input:atlassian_email}"
+			},
+			"gallery": "https://api.mcp.github.com/v0/servers/28c650c6-5e61-4ab7-9eb2-505be6350476",
+			"version": "1.0.0"
+		},
+		"github/github-mcp-server": {
+			"type": "http",
+			"url": "https://api.githubcopilot.com/mcp/",
+			"gallery": "https://api.mcp.github.com/v0/servers/ab12cd34-5678-90ef-1234-567890abcdef",
+			"version": "0.13.0"
+		}
+	}
+}
