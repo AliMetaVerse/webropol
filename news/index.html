@@ -153,7 +153,7 @@
                     <!-- Main News Feed -->
                     <div class="lg:col-span-2 space-y-4">
                         <!-- Featured News Item -->
-                        <article class="news-article bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 rounded-2xl p-8 shadow-xl cursor-pointer group">
+                        <article x-data="{ expanded: false }" class="news-article bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 rounded-2xl p-8 shadow-xl group">
                             <div class="flex items-start justify-between mb-4">
                                 <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
                                     <i class="fas fa-star mr-1"></i>
@@ -161,12 +161,28 @@
                                 </span>
                                 <span class="text-webropol-primary-100 text-sm font-medium">May 14, 2025</span>
                             </div>
-                            <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-webropol-primary-50 transition-colors">
+                            <h2 class="text-2xl font-bold text-white mb-3">
                                 New Survey Scheduling Feature Released
                             </h2>
-                            <p class="text-webropol-primary-50 mb-6 leading-relaxed">
+                            <p class="text-webropol-primary-50 mb-4 leading-relaxed">
                                 Introducing enhanced survey scheduling options with flexible timing controls, automated distribution settings, and timezone support for global surveys.
                             </p>
+                            
+                            <!-- Expandable Content -->
+                            <div x-show="expanded" x-collapse x-cloak class="mb-4">
+                                <div class="text-webropol-primary-50 leading-relaxed space-y-3">
+                                    <p>This comprehensive update brings powerful scheduling capabilities to your survey workflow:</p>
+                                    <ul class="list-disc list-inside space-y-2 ml-2">
+                                        <li><strong class="text-white">Flexible Timing Controls:</strong> Set precise start and end dates with customizable time slots</li>
+                                        <li><strong class="text-white">Automated Distribution:</strong> Schedule recurring surveys and automated reminder sequences</li>
+                                        <li><strong class="text-white">Global Timezone Support:</strong> Automatically adjust delivery times based on respondent locations</li>
+                                        <li><strong class="text-white">Smart Notifications:</strong> Get alerts when surveys launch or need attention</li>
+                                        <li><strong class="text-white">Calendar Integration:</strong> Sync with your existing calendars for better planning</li>
+                                    </ul>
+                                    <p>These features are designed to streamline your survey management and ensure perfect timing for your audience, regardless of where they're located in the world.</p>
+                                </div>
+                            </div>
+
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-4 text-webropol-primary-100 text-sm">
                                     <span class="flex items-center gap-1">
@@ -178,17 +194,22 @@
                                         8 comments
                                     </span>
                                 </div>
-                                <div class="flex items-center text-white font-medium group-hover:gap-2 transition-all">
-                                    Read more
-                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                                </div>
+                                <button 
+                                    @click="expanded = !expanded"
+                                    class="flex items-center text-white font-medium hover:gap-2 transition-all"
+                                >
+                                    <span x-text="expanded ? 'Show less' : 'Read more'"></span>
+                                    <i class="fas ml-2 transition-transform" 
+                                       :class="expanded ? 'fa-arrow-up' : 'fa-arrow-right'"
+                                       :style="expanded ? '' : 'transform: translateX(0)'"></i>
+                                </button>
                             </div>
                         </article>
 
                         <!-- Recent Articles -->
                         <div class="space-y-3">
                             <template x-for="article in recentArticles" :key="article.id">
-                                <article class="news-article bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100 hover:shadow-md hover:border-webropol-primary-200 cursor-pointer group">
+                                <article x-data="{ expanded: false }" class="news-article bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100 hover:shadow-md hover:border-webropol-primary-200 group">
                                     <div class="flex items-start gap-4">
                                         <!-- Date Badge -->
                                         <div class="flex-shrink-0 w-16 text-center">
@@ -214,7 +235,14 @@
                                             </div>
                                             
                                             <h3 class="text-lg font-semibold text-webropol-gray-900 mb-2 group-hover:text-webropol-primary-600 transition-colors" x-text="article.title"></h3>
-                                            <p class="text-sm text-webropol-gray-600 mb-3 line-clamp-2" x-text="article.excerpt"></p>
+                                            <p class="text-sm text-webropol-gray-600 mb-3" x-text="article.excerpt"></p>
+                                            
+                                            <!-- Expandable Content -->
+                                            <div x-show="expanded" x-collapse x-cloak class="mb-3">
+                                                <div class="text-sm text-webropol-gray-700 leading-relaxed space-y-2 pt-2 border-t border-webropol-gray-100">
+                                                    <div x-html="article.fullContent"></div>
+                                                </div>
+                                            </div>
                                             
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center gap-4 text-xs text-webropol-gray-500">
@@ -227,9 +255,14 @@
                                                         <span x-text="article.comments"></span>
                                                     </span>
                                                 </div>
-                                                <div class="text-webropol-primary-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    Read more →
-                                                </div>
+                                                <button 
+                                                    @click="expanded = !expanded"
+                                                    class="text-webropol-primary-600 text-sm font-medium hover:text-webropol-primary-700 transition-colors flex items-center gap-1"
+                                                >
+                                                    <span x-text="expanded ? 'Show less' : 'Read more'"></span>
+                                                    <i class="fas text-xs transition-transform" 
+                                                       :class="expanded ? 'fa-chevron-up' : 'fa-arrow-right'"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -367,6 +400,17 @@
                         categoryLabel: 'New Feature',
                         title: 'Global Timezone Support Enhancement',
                         excerpt: 'Improved timezone handling for international surveys with automatic daylight saving time adjustments and regional calendar support.',
+                        fullContent: `
+                            <p class="mb-2">We're excited to announce significant improvements to our global timezone support system. This update ensures your surveys are delivered at the perfect time, regardless of where your respondents are located.</p>
+                            <p class="mb-2"><strong>Key improvements include:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 mb-2 ml-2">
+                                <li>Automatic daylight saving time adjustments</li>
+                                <li>Support for 400+ timezones worldwide</li>
+                                <li>Regional calendar integration (Gregorian, Islamic, etc.)</li>
+                                <li>Smart scheduling recommendations based on time zones</li>
+                            </ul>
+                            <p>These enhancements make it easier than ever to reach a global audience with perfectly timed surveys.</p>
+                        `,
                         views: 89,
                         comments: 5,
                         readTime: '3 min read'
@@ -380,6 +424,18 @@
                         categoryLabel: 'Update',
                         title: 'Advanced Survey Distribution Options Now Available',
                         excerpt: 'New distribution features including automated reminders, segmented audience targeting, and historical data integration.',
+                        fullContent: `
+                            <p class="mb-2">Take control of your survey distribution with our new advanced options that give you more flexibility and automation capabilities.</p>
+                            <p class="mb-2"><strong>What's new:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 mb-2 ml-2">
+                                <li><strong>Automated Reminders:</strong> Set up reminder sequences with customizable timing</li>
+                                <li><strong>Audience Segmentation:</strong> Target specific groups with tailored messaging</li>
+                                <li><strong>Historical Data:</strong> Leverage past response patterns for better targeting</li>
+                                <li><strong>A/B Testing:</strong> Test different distribution strategies</li>
+                                <li><strong>Performance Analytics:</strong> Track delivery and open rates in real-time</li>
+                            </ul>
+                            <p>These tools help you maximize response rates and reach the right people at the right time.</p>
+                        `,
                         views: 156,
                         comments: 12,
                         readTime: '5 min read'
@@ -393,6 +449,18 @@
                         categoryLabel: 'Update',
                         title: 'Weekly Platform Updates and Feature Releases',
                         excerpt: 'Regular Tuesday updates bringing new functionality, bug fixes, and performance improvements to enhance your survey experience.',
+                        fullContent: `
+                            <p class="mb-2">This week's updates include several important improvements and fixes based on user feedback.</p>
+                            <p class="mb-2"><strong>Updates this week:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 mb-2 ml-2">
+                                <li>Improved report loading speed (up to 40% faster)</li>
+                                <li>New matrix question type with enhanced customization</li>
+                                <li>Fixed issue with email template preview on mobile devices</li>
+                                <li>Added support for custom fonts in survey themes</li>
+                                <li>Enhanced accessibility features for screen readers</li>
+                            </ul>
+                            <p>We're committed to continuous improvement and releasing updates every Tuesday to keep your platform running smoothly.</p>
+                        `,
                         views: 203,
                         comments: 8,
                         readTime: '4 min read'
@@ -406,6 +474,24 @@
                         categoryLabel: 'Maintenance',
                         title: 'Reporting Performance Improvement - Service Break Saturday March 22',
                         excerpt: 'A software update to improve reporting will be implemented on Saturday March 22, 2025, from 2 pm to 8 pm.',
+                        fullContent: `
+                            <p class="mb-2">We're implementing a critical infrastructure upgrade to significantly improve reporting performance across the platform.</p>
+                            <p class="mb-2"><strong>Maintenance Details:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 mb-2 ml-2">
+                                <li><strong>Date:</strong> Saturday, March 22, 2025</li>
+                                <li><strong>Time:</strong> 2:00 PM - 8:00 PM (EST)</li>
+                                <li><strong>Duration:</strong> Up to 6 hours</li>
+                                <li><strong>Impact:</strong> Platform will be unavailable during this window</li>
+                            </ul>
+                            <p class="mb-2"><strong>Expected Improvements:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 mb-2 ml-2">
+                                <li>Up to 60% faster report generation</li>
+                                <li>Improved handling of large datasets (10M+ responses)</li>
+                                <li>Enhanced real-time analytics performance</li>
+                                <li>Better stability during peak usage periods</li>
+                            </ul>
+                            <p>We apologize for any inconvenience and appreciate your understanding as we work to improve your experience.</p>
+                        `,
                         views: 1456,
                         comments: 24,
                         readTime: '2 min read'
