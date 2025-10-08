@@ -232,6 +232,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     if (h.startsWith('#/sms')) return 'sms';
     if (h.startsWith('#/exw')) return 'exw';
     if (h.startsWith('#/case-management')) return 'case-management';
+    if (h.startsWith('#/news')) return 'news';
     if (h.startsWith('#/mywebropol')) return 'mywebropol';
     if (h.startsWith('#/admin-tools')) return 'admin-tools';
     if (h.startsWith('#/training-videos')) return 'training-videos';
@@ -321,6 +322,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       },
       // Divider
       { type: 'divider' },
+      {
+        id: 'news',
+        href: '#/news',
+        icon: 'fal fa-newspaper',
+        label: 'News',
+        active: active === 'news',
+        moduleKey: 'newsEnabled'
+      },
       {
         id: 'mywebropol',
         href: '#/mywebropol',

@@ -199,6 +199,7 @@ export class WebropolHeader extends BaseComponent {
   this.addSidebarToggleListener();
   this.addCollapsedHamburgerListener();
   this.addAIAssistantListener();
+  this.addNotificationsListener();
     
     // Initialize settings animation scheduler
     this.initializeSettingsAnimationScheduler();
@@ -237,6 +238,22 @@ export class WebropolHeader extends BaseComponent {
         panel.style.height = `calc(100% - ${headerHeight}px)`;
       } catch {}
       if (typeof panel.open === 'function') panel.open(); else panel.setAttribute('open','');
+    });
+  }
+
+  addNotificationsListener() {
+    const btn = this.querySelector('button:has(.fa-bell)');
+    if (!btn) return;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // Navigate to news page using SPA router
+      if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+        window.WebropolSPA.navigate('/news');
+      } else {
+        // Fallback: direct hash change
+        window.location.hash = '#/news';
+      }
     });
   }
 

@@ -33,6 +33,7 @@ class WebropolSPA {
       ['/exw', 'exw/index.html'],
       ['/case-management', 'case-management/index.html'],
       ['/mywebropol', 'mywebropol/index.html'],
+      ['/news', 'news/index.html'],
       ['/admin-tools', 'admin-tools/index.html'],
       ['/admin-tools/user-management', 'admin-tools/user-management.html'],
       ['/training-videos', 'training-videos/index.html'],
@@ -61,6 +62,7 @@ class WebropolSPA {
       exw: 'EXW',
       'case-management': 'Case Management',
       'mywebropol': 'MyWebropol',
+      news: 'News',
       'admin-tools': 'Admin Tools',
   'user-management': 'User Management and Rights',
       'training-videos': 'Training Videos',
@@ -763,6 +765,7 @@ class WebropolSPA {
       exw: 'exw',
       'case-management': 'case-management',
       'mywebropol': 'mywebropol',
+      news: 'news',
       'admin-tools': 'admin-tools',
       'training-videos': 'training-videos',
       shop: 'shop'
