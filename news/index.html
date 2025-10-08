@@ -8,6 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Webropol Design System Components -->
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/cards/Card.js" type="module"></script>
+    <script src="../design-system/components/buttons/Button.js" type="module"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -15,17 +22,12 @@
                     colors: {
                         'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
                         'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-                        'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
                         'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
-                        'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' }
+                        'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' },
+                        'webropol-amber': { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309', 800: '#92400e', 900: '#78350f' }
                     },
                     fontFamily: {
                         'sans': ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-                        'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
                     }
                 }
             }
@@ -37,389 +39,381 @@
             display: none !important;
         }
 
-        body {
-            scrollbar-width: thin;
-            scrollbar-color: #cbd5e1 #f8fafc;
-            font-family: 'Inter', sans-serif;
+        .news-article {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        body::-webkit-scrollbar-track {
-            background: #f8fafc;
-        }
-
-        body::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        .news-item {
-            transition: all 0.2s ease;
-        }
-
-        .news-item:hover {
+        .news-article:hover {
             transform: translateY(-2px);
         }
 
-        .news-date {
-            min-width: 120px;
+        .category-badge {
+            transition: all 0.2s ease;
         }
 
-        .breadcrumb-item::after {
-            content: '/';
-            margin: 0 8px;
-            color: #94a3b8;
-        }
-
-        .breadcrumb-item:last-child::after {
-            content: '';
+        .archive-link:hover {
+            padding-left: 0.5rem;
         }
     </style>
 </head>
 
-<body class="from-webropol-gray-50 to-webropol-primary-50 min-h-screen">
-    <main class="p-8">
-                <!-- Page Header -->
-                <div class="mb-8">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="page-title">News Archive</h1>
-                            <p class="text-webropol-gray-600">Browse through all news posts and announcements</p>
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <!-- Search -->
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <i class="fal fa-search text-webropol-gray-400"></i>
-                                </div>
-                                <input type="text" class="w-64 pl-10 pr-4 py-2 border border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent" placeholder="Search news...">
+<body class="bg-gradient-to-br from-webropol-gray-50 via-white to-webropol-primary-50/30 min-h-screen" x-data="newsArchive()">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <webropol-sidebar active="news" base="../"></webropol-sidebar>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-hidden">
+            <!-- Header -->
+            <webropol-header title="News Archive"></webropol-header>
+
+            <!-- Content Area -->
+            <main class="h-[calc(100vh-4rem)] overflow-y-auto p-8">
+                <!-- Top Actions Bar -->
+                <div class="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Latest News & Updates</h1>
+                        <p class="text-webropol-gray-600">Stay informed about new features, improvements, and announcements</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <!-- Search -->
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-webropol-gray-400"></i>
                             </div>
-                            <!-- Filter -->
-                            <button class="px-4 py-2 border border-webropol-gray-300 rounded-xl text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors flex items-center space-x-2">
-                                <i class="fal fa-filter text-sm"></i>
+                            <input 
+                                type="text" 
+                                x-model="searchQuery"
+                                class="w-80 pl-10 pr-4 py-2.5 bg-white border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all shadow-sm"
+                                placeholder="Search news articles..."
+                            >
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button 
+                                @click="open = !open"
+                                class="px-4 py-2.5 bg-white border border-webropol-gray-200 rounded-xl text-webropol-gray-700 hover:bg-webropol-gray-50 transition-all flex items-center gap-2 shadow-sm"
+                            >
+                                <i class="fas fa-filter text-sm"></i>
                                 <span>Filter</span>
+                                <i class="fas fa-chevron-down text-xs" :class="{ 'rotate-180': open }"></i>
                             </button>
+                            <div 
+                                x-show="open" 
+                                @click.away="open = false"
+                                x-transition
+                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 z-10"
+                            >
+                                <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">All News</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Features</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Updates</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Maintenance</a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-12 gap-8">
-                    <!-- Main Content Area -->
-                    <div class="col-span-8">
-                        <!-- Latest Posts Section -->
-                        <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 mb-8">
-                            <h2 class="text-xl font-semibold text-webropol-gray-900 mb-6 flex items-center">
-                                <div class="w-6 h-6 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center mr-3">
-                                    <i class="fal fa-star text-white text-xs"></i>
-                                </div>
-                                Latest Posts
+                <!-- Category Pills -->
+                <div class="mb-6 flex items-center gap-2">
+                    <button 
+                        @click="selectedCategory = 'all'"
+                        :class="selectedCategory === 'all' ? 'bg-webropol-primary-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
+                    >
+                        All News
+                    </button>
+                    <button 
+                        @click="selectedCategory = 'features'"
+                        :class="selectedCategory === 'features' ? 'bg-webropol-primary-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
+                    >
+                        <i class="fas fa-sparkles text-xs mr-1"></i>
+                        New Features
+                    </button>
+                    <button 
+                        @click="selectedCategory = 'updates'"
+                        :class="selectedCategory === 'updates' ? 'bg-webropol-primary-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
+                    >
+                        <i class="fas fa-sync text-xs mr-1"></i>
+                        Updates
+                    </button>
+                    <button 
+                        @click="selectedCategory = 'maintenance'"
+                        :class="selectedCategory === 'maintenance' ? 'bg-webropol-red-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
+                    >
+                        <i class="fas fa-tools text-xs mr-1"></i>
+                        Maintenance
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main News Feed -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- Featured News Item -->
+                        <article class="news-article bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 rounded-2xl p-8 shadow-xl cursor-pointer group">
+                            <div class="flex items-start justify-between mb-4">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
+                                    <i class="fas fa-star mr-1"></i>
+                                    Featured
+                                </span>
+                                <span class="text-webropol-primary-100 text-sm font-medium">May 14, 2025</span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-webropol-primary-50 transition-colors">
+                                New Survey Scheduling Feature Released
                             </h2>
-                            
-                            <div class="space-y-4">
-                                <!-- News Item -->
-                                <article class="news-item group flex items-start p-4 rounded-xl border border-webropol-gray-200/50 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/30 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-4">
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-webropol-gray-500">May 14</div>
-                                            <div class="text-xs text-webropol-gray-400">2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors mb-1">New Survey Scheduling Feature Released</h3>
-                                        <p class="text-sm text-webropol-gray-600 mb-2">Introducing enhanced survey scheduling options with flexible timing controls and automated distribution settings.</p>
-                                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
-                                            <span class="flex items-center">
-                                                <i class="fal fa-clock mr-1"></i>
-                                                Posted May 14, 2025
-                                            </span>
-                                            <span class="flex items-center">
-                                                <i class="fal fa-eye mr-1"></i>
-                                                124 views
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all">
-                                        <i class="fal fa-chevron-right text-sm"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-4 rounded-xl border border-webropol-gray-200/50 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/30 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-4">
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-webropol-gray-500">May 14</div>
-                                            <div class="text-xs text-webropol-gray-400">2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors mb-1">Global Timezone Support Enhancement</h3>
-                                        <p class="text-sm text-webropol-gray-600 mb-2">Improved timezone handling for international surveys with automatic daylight saving time adjustments and regional calendar support.</p>
-                                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
-                                            <span class="flex items-center">
-                                                <i class="fal fa-clock mr-1"></i>
-                                                Posted May 14, 2025
-                                            </span>
-                                            <span class="flex items-center">
-                                                <i class="fal fa-eye mr-1"></i>
-                                                89 views
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all">
-                                        <i class="fal fa-chevron-right text-sm"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-4 rounded-xl border border-webropol-gray-200/50 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/30 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-4">
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-webropol-gray-500">May 14</div>
-                                            <div class="text-xs text-webropol-gray-400">2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors mb-1">Advanced Survey Distribution Options Now Available</h3>
-                                        <p class="text-sm text-webropol-gray-600 mb-2">New distribution features including automated reminders, segmented audience targeting, and historical data integration for improved response rates.</p>
-                                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
-                                            <span class="flex items-center">
-                                                <i class="fal fa-clock mr-1"></i>
-                                                Posted May 14, 2025
-                                            </span>
-                                            <span class="flex items-center">
-                                                <i class="fal fa-eye mr-1"></i>
-                                                156 views
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all">
-                                        <i class="fal fa-chevron-right text-sm"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-4 rounded-xl border border-webropol-gray-200/50 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/30 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-4">
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-webropol-gray-500">May 12</div>
-                                            <div class="text-xs text-webropol-gray-400">2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors mb-1">Weekly Platform Updates and Feature Releases</h3>
-                                        <p class="text-sm text-webropol-gray-600 mb-2">Regular Tuesday updates bringing new functionality, bug fixes, and performance improvements to enhance your survey experience.</p>
-                                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
-                                            <span class="flex items-center">
-                                                <i class="fal fa-clock mr-1"></i>
-                                                Posted May 12, 2025
-                                            </span>
-                                            <span class="flex items-center">
-                                                <i class="fal fa-eye mr-1"></i>
-                                                203 views
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all">
-                                        <i class="fal fa-chevron-right text-sm"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-4 rounded-xl border border-webropol-gray-200/50 hover:border-webropol-red-300/50 hover:bg-webropol-red-50/30 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-4">
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-webropol-gray-500">Mar 22</div>
-                                            <div class="text-xs text-webropol-gray-400">2025</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h3 class="font-semibold text-webropol-gray-900 group-hover:text-webropol-red-700 transition-colors mb-1 flex items-center">
-                                            <i class="fal fa-exclamation-triangle text-webropol-red-500 mr-2 text-sm"></i>
-                                            Reporting performance is being improved, service break on Saturday March 22, 2025, starting at 2 pm
-                                        </h3>
-                                        <p class="text-sm text-webropol-gray-600 mb-2">A software update to improve reporting will be implemented on Saturday March 22, 2025, from 2 pm to 8 pm. Webropol Reporting and report links will not be available during this time.</p>
-                                        <div class="flex items-center space-x-4 text-xs text-webropol-gray-500">
-                                            <span class="flex items-center">
-                                                <i class="fal fa-clock mr-1"></i>
-                                                Posted March 20, 2025
-                                            </span>
-                                            <span class="flex items-center">
-                                                <i class="fal fa-eye mr-1"></i>
-                                                1,456 views
-                                            </span>
-                                            <span class="bg-webropol-red-100 text-webropol-red-800 px-2 py-1 rounded-full text-xs font-medium">
-                                                Service Notice
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-400 group-hover:text-webropol-red-600 group-hover:translate-x-1 transition-all">
-                                        <i class="fal fa-chevron-right text-sm"></i>
-                                    </div>
-                                </article>
+                            <p class="text-webropol-primary-50 mb-6 leading-relaxed">
+                                Introducing enhanced survey scheduling options with flexible timing controls, automated distribution settings, and timezone support for global surveys.
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4 text-webropol-primary-100 text-sm">
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-eye"></i>
+                                        124 views
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-comments"></i>
+                                        8 comments
+                                    </span>
+                                </div>
+                                <div class="flex items-center text-white font-medium group-hover:gap-2 transition-all">
+                                    Read more
+                                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                                </div>
                             </div>
+                        </article>
 
-                            <!-- Load More Button -->
-                            <div class="text-center mt-6">
-                                <button class="px-6 py-3 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-medium rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-200">
-                                    <i class="fal fa-plus mr-2"></i>
-                                    Load More Posts
-                                </button>
-                            </div>
+                        <!-- Recent Articles -->
+                        <div class="space-y-3">
+                            <template x-for="article in recentArticles" :key="article.id">
+                                <article class="news-article bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100 hover:shadow-md hover:border-webropol-primary-200 cursor-pointer group">
+                                    <div class="flex items-start gap-4">
+                                        <!-- Date Badge -->
+                                        <div class="flex-shrink-0 w-16 text-center">
+                                            <div class="text-2xl font-bold text-webropol-primary-600" x-text="article.day"></div>
+                                            <div class="text-xs text-webropol-gray-500 uppercase" x-text="article.month"></div>
+                                            <div class="text-xs text-webropol-gray-400" x-text="article.year"></div>
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span 
+                                                    class="category-badge px-2.5 py-1 text-xs font-semibold rounded-full"
+                                                    :class="{
+                                                        'bg-webropol-primary-100 text-webropol-primary-700': article.category === 'feature',
+                                                        'bg-webropol-green-100 text-webropol-green-700': article.category === 'update',
+                                                        'bg-webropol-red-100 text-webropol-red-700': article.category === 'maintenance'
+                                                    }"
+                                                    x-text="article.categoryLabel"
+                                                >
+                                                </span>
+                                                <span class="text-xs text-webropol-gray-500" x-text="article.readTime"></span>
+                                            </div>
+                                            
+                                            <h3 class="text-lg font-semibold text-webropol-gray-900 mb-2 group-hover:text-webropol-primary-600 transition-colors" x-text="article.title"></h3>
+                                            <p class="text-sm text-webropol-gray-600 mb-3 line-clamp-2" x-text="article.excerpt"></p>
+                                            
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-4 text-xs text-webropol-gray-500">
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fas fa-eye"></i>
+                                                        <span x-text="article.views"></span>
+                                                    </span>
+                                                    <span class="flex items-center gap-1">
+                                                        <i class="fas fa-comments"></i>
+                                                        <span x-text="article.comments"></span>
+                                                    </span>
+                                                </div>
+                                                <div class="text-webropol-primary-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    Read more →
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </template>
                         </div>
 
-                        <!-- Older Posts Section -->
-                        <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80">
-                            <h2 class="text-xl font-semibold text-webropol-gray-900 mb-6 flex items-center">
-                                <div class="w-6 h-6 bg-sun-to-br from-webropol-gray-500 to-webropol-gray-600 rounded-lg flex items-center justify-center mr-3">
-                                    <i class="fal fa-archive text-white text-xs"></i>
-                                </div>
-                                Archive
-                            </h2>
-                            
-                            <div class="space-y-3">
-                                <article class="news-item group flex items-start p-3 rounded-lg border border-webropol-gray-200/30 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/20 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-3">
-                                        <div class="text-center">
-                                            <div class="text-xs font-medium text-webropol-gray-500">Dec 09</div>
-                                            <div class="text-xs text-webropol-gray-400">2024</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="text-sm font-medium text-webropol-gray-800 group-hover:text-webropol-primary-700 transition-colors">Multi-Language Survey Support Update</h4>
-                                        <p class="text-xs text-webropol-gray-500 mt-1">Enhanced language detection and automatic UI localization for improved global accessibility...</p>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-300 group-hover:text-webropol-primary-500 transition-colors">
-                                        <i class="fal fa-chevron-right text-xs"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-3 rounded-lg border border-webropol-gray-200/30 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/20 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-3">
-                                        <div class="text-center">
-                                            <div class="text-xs font-medium text-webropol-gray-500">Oct 30</div>
-                                            <div class="text-xs text-webropol-gray-400">2024</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="text-sm font-medium text-webropol-gray-800 group-hover:text-webropol-primary-700 transition-colors">User Experience Research Platform Launch</h4>
-                                        <p class="text-xs text-webropol-gray-500 mt-1">New research tools for continuous user feedback collection and experience optimization...</p>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-300 group-hover:text-webropol-primary-500 transition-colors">
-                                        <i class="fal fa-chevron-right text-xs"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-3 rounded-lg border border-webropol-gray-200/30 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/20 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-3">
-                                        <div class="text-center">
-                                            <div class="text-xs font-medium text-webropol-gray-500">Oct 10</div>
-                                            <div class="text-xs text-webropol-gray-400">2024</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="text-sm font-medium text-webropol-gray-800 group-hover:text-webropol-primary-700 transition-colors">Enhanced Dashboard Analytics Released</h4>
-                                        <p class="text-xs text-webropol-gray-500 mt-1">New real-time analytics dashboard with advanced filtering and custom reporting capabilities</p>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-300 group-hover:text-webropol-primary-500 transition-colors">
-                                        <i class="fal fa-chevron-right text-xs"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-3 rounded-lg border border-webropol-gray-200/30 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/20 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-3">
-                                        <div class="text-center">
-                                            <div class="text-xs font-medium text-webropol-gray-500">Oct 10</div>
-                                            <div class="text-xs text-webropol-gray-400">2024</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="text-sm font-medium text-webropol-gray-800 group-hover:text-webropol-primary-700 transition-colors">Archive Migration and Data Backup Improvements</h4>
-                                        <p class="text-xs text-webropol-gray-500 mt-1">Enhanced data archival system with improved backup security and faster retrieval options</p>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-300 group-hover:text-webropol-primary-500 transition-colors">
-                                        <i class="fal fa-chevron-right text-xs"></i>
-                                    </div>
-                                </article>
-
-                                <article class="news-item group flex items-start p-3 rounded-lg border border-webropol-gray-200/30 hover:border-webropol-primary-300/50 hover:bg-webropol-primary-50/20 transition-all duration-200 cursor-pointer">
-                                    <div class="news-date flex-shrink-0 mr-3">
-                                        <div class="text-center">
-                                            <div class="text-xs font-medium text-webropol-gray-500">Oct 08</div>
-                                            <div class="text-xs text-webropol-gray-400">2024</div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow">
-                                        <h4 class="text-sm font-medium text-webropol-gray-800 group-hover:text-webropol-primary-700 transition-colors">API Integration Testing Framework Launch</h4>
-                                        <p class="text-xs text-webropol-gray-500 mt-1">New comprehensive testing tools for API integrations and third-party service connections</p>
-                                    </div>
-                                    <div class="flex-shrink-0 text-webropol-gray-300 group-hover:text-webropol-primary-500 transition-colors">
-                                        <i class="fal fa-chevron-right text-xs"></i>
-                                    </div>
-                                </article>
-                            </div>
+                        <!-- Load More -->
+                        <div class="text-center py-6">
+                            <webropol-button variant="outline" size="lg">
+                                <i class="fas fa-plus mr-2"></i>
+                                Load More Articles
+                            </webropol-button>
                         </div>
                     </div>
 
                     <!-- Sidebar -->
-                    <div class="col-span-4">
-                        <!-- Archive by Year -->
-                        <div class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80">
-                            <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4 flex items-center">
-                                <div class="w-5 h-5 bg-sun-to-br from-webropol-gray-500 to-webropol-gray-600 rounded-md flex items-center justify-center mr-2">
-                                    <i class="fal fa-calendar text-white text-xs"></i>
+                    <div class="space-y-6">
+                        <!-- Categories -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100">
+                            <h3 class="text-lg font-bold text-webropol-gray-900 mb-4 flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center mr-2">
+                                    <i class="fas fa-folder text-white text-sm"></i>
                                 </div>
-                                Browse by Year
+                                Categories
                             </h3>
                             <div class="space-y-2">
-                                <div class="group cursor-pointer" x-data="{ open: true }">
-                                    <div @click="open = !open" class="flex items-center justify-between p-2 rounded-lg hover:bg-webropol-gray-50 transition-colors">
-                                        <span class="font-medium text-webropol-gray-800">2025</span>
-                                        <div class="flex items-center">
-                                            <span class="text-xs text-webropol-gray-500 mr-2">12 posts</span>
-                                            <i class="fal fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+                                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-primary-50 transition-all group">
+                                    <span class="text-webropol-gray-700 group-hover:text-webropol-primary-700 font-medium">New Features</span>
+                                    <span class="text-xs bg-webropol-primary-100 text-webropol-primary-700 px-2 py-1 rounded-full font-semibold">12</span>
+                                </a>
+                                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-primary-50 transition-all group">
+                                    <span class="text-webropol-gray-700 group-hover:text-webropol-primary-700 font-medium">Platform Updates</span>
+                                    <span class="text-xs bg-webropol-primary-100 text-webropol-primary-700 px-2 py-1 rounded-full font-semibold">24</span>
+                                </a>
+                                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-primary-50 transition-all group">
+                                    <span class="text-webropol-gray-700 group-hover:text-webropol-primary-700 font-medium">Bug Fixes</span>
+                                    <span class="text-xs bg-webropol-primary-100 text-webropol-primary-700 px-2 py-1 rounded-full font-semibold">8</span>
+                                </a>
+                                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-red-50 transition-all group">
+                                    <span class="text-webropol-gray-700 group-hover:text-webropol-red-700 font-medium">Maintenance</span>
+                                    <span class="text-xs bg-webropol-red-100 text-webropol-red-700 px-2 py-1 rounded-full font-semibold">3</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Archive by Year -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100">
+                            <h3 class="text-lg font-bold text-webropol-gray-900 mb-4 flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-br from-webropol-gray-600 to-webropol-gray-700 rounded-lg flex items-center justify-center mr-2">
+                                    <i class="fas fa-calendar text-white text-sm"></i>
+                                </div>
+                                Archive
+                            </h3>
+                            <div class="space-y-1" x-data="{ openYear: '2025' }">
+                                <div>
+                                    <button 
+                                        @click="openYear = openYear === '2025' ? '' : '2025'"
+                                        class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all"
+                                    >
+                                        <span class="font-semibold text-webropol-gray-800">2025</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-webropol-gray-500">12 posts</span>
+                                            <i class="fas fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': openYear === '2025' }"></i>
                                         </div>
-                                    </div>
-                                    <div x-show="open" x-transition class="ml-4 space-y-1 mt-2">
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">May 2025 (5)</a>
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">April 2025 (4)</a>
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">March 2025 (3)</a>
+                                    </button>
+                                    <div x-show="openYear === '2025'" x-transition class="ml-4 space-y-1 mt-1">
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">May (5)</a>
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">April (4)</a>
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">March (3)</a>
                                     </div>
                                 </div>
                                 
-                                <div class="group cursor-pointer" x-data="{ open: false }">
-                                    <div @click="open = !open" class="flex items-center justify-between p-2 rounded-lg hover:bg-webropol-gray-50 transition-colors">
-                                        <span class="font-medium text-webropol-gray-800">2024</span>
-                                        <div class="flex items-center">
-                                            <span class="text-xs text-webropol-gray-500 mr-2">24 posts</span>
-                                            <i class="fal fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+                                <div>
+                                    <button 
+                                        @click="openYear = openYear === '2024' ? '' : '2024'"
+                                        class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all"
+                                    >
+                                        <span class="font-semibold text-webropol-gray-800">2024</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-webropol-gray-500">36 posts</span>
+                                            <i class="fas fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': openYear === '2024' }"></i>
                                         </div>
-                                    </div>
-                                    <div x-show="open" x-transition class="ml-4 space-y-1 mt-2">
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">December 2024 (8)</a>
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">November 2024 (6)</a>
-                                        <a href="#" class="block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-colors">October 2024 (10)</a>
+                                    </button>
+                                    <div x-show="openYear === '2024'" x-transition class="ml-4 space-y-1 mt-1">
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">December (8)</a>
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">November (10)</a>
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">October (12)</a>
+                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">September (6)</a>
                                     </div>
                                 </div>
 
-                                <div class="group cursor-pointer" x-data="{ open: false }">
-                                    <div @click="open = !open" class="flex items-center justify-between p-2 rounded-lg hover:bg-webropol-gray-50 transition-colors">
-                                        <span class="font-medium text-webropol-gray-800">2023</span>
-                                        <div class="flex items-center">
-                                            <span class="text-xs text-webropol-gray-500 mr-2">18 posts</span>
-                                            <i class="fal fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
-                                        </div>
+                                <button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all">
+                                    <span class="font-semibold text-webropol-gray-800">2023</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-webropol-gray-500">24 posts</span>
+                                        <i class="fas fa-chevron-down text-webropol-gray-400 text-xs"></i>
                                     </div>
-                                </div>
+                                </button>
                             </div>
+                        </div>
+
+                        <!-- Newsletter Signup -->
+                        <div class="bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl p-6 shadow-lg text-white">
+                            <div class="text-center mb-4">
+                                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <i class="fas fa-bell text-2xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold mb-2">Stay Updated</h3>
+                                <p class="text-webropol-primary-50 text-sm">Subscribe to get notified about the latest updates</p>
+                            </div>
+                            <webropol-button variant="secondary" size="md" class="w-full">
+                                <i class="fas fa-envelope mr-2"></i>
+                                Subscribe
+                            </webropol-button>
                         </div>
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <script>
+        function newsArchive() {
+            return {
+                searchQuery: '',
+                selectedCategory: 'all',
+                recentArticles: [
+                    {
+                        id: 1,
+                        day: '14',
+                        month: 'May',
+                        year: '2025',
+                        category: 'feature',
+                        categoryLabel: 'New Feature',
+                        title: 'Global Timezone Support Enhancement',
+                        excerpt: 'Improved timezone handling for international surveys with automatic daylight saving time adjustments and regional calendar support.',
+                        views: 89,
+                        comments: 5,
+                        readTime: '3 min read'
+                    },
+                    {
+                        id: 2,
+                        day: '14',
+                        month: 'May',
+                        year: '2025',
+                        category: 'update',
+                        categoryLabel: 'Update',
+                        title: 'Advanced Survey Distribution Options Now Available',
+                        excerpt: 'New distribution features including automated reminders, segmented audience targeting, and historical data integration.',
+                        views: 156,
+                        comments: 12,
+                        readTime: '5 min read'
+                    },
+                    {
+                        id: 3,
+                        day: '12',
+                        month: 'May',
+                        year: '2025',
+                        category: 'update',
+                        categoryLabel: 'Update',
+                        title: 'Weekly Platform Updates and Feature Releases',
+                        excerpt: 'Regular Tuesday updates bringing new functionality, bug fixes, and performance improvements to enhance your survey experience.',
+                        views: 203,
+                        comments: 8,
+                        readTime: '4 min read'
+                    },
+                    {
+                        id: 4,
+                        day: '22',
+                        month: 'Mar',
+                        year: '2025',
+                        category: 'maintenance',
+                        categoryLabel: 'Maintenance',
+                        title: 'Reporting Performance Improvement - Service Break Saturday March 22',
+                        excerpt: 'A software update to improve reporting will be implemented on Saturday March 22, 2025, from 2 pm to 8 pm.',
+                        views: 1456,
+                        comments: 24,
+                        readTime: '2 min read'
+                    }
+                ]
+            }
+        }
+    </script>
 </body>
 
 </html>
