@@ -108,6 +108,7 @@
                                 <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">All News</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Features</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Updates</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Blog</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-primary-50">Maintenance</a>
                             </div>
                         </div>
@@ -140,6 +141,14 @@
                         Updates
                     </button>
                     <button 
+                        @click="selectedCategory = 'blog'"
+                        :class="selectedCategory === 'blog' ? 'bg-webropol-amber-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                        class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
+                    >
+                        <i class="fas fa-pen-nib text-xs mr-1"></i>
+                        Blog
+                    </button>
+                    <button 
                         @click="selectedCategory = 'maintenance'"
                         :class="selectedCategory === 'maintenance' ? 'bg-webropol-red-500 text-white' : 'bg-white text-webropol-gray-700 hover:bg-webropol-gray-100'"
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
@@ -152,51 +161,73 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Main News Feed -->
                     <div class="lg:col-span-2 space-y-4">
-                        <!-- Featured News Item -->
-                        <article x-data="{ expanded: false }" class="news-article bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 rounded-2xl p-8 shadow-xl group">
+                        <!-- Featured Blog Post -->
+                        <article x-data="{ expanded: false }" class="news-article bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl p-8 shadow-xl group">
                             <div class="flex items-start justify-between mb-4">
-                                <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
-                                    <i class="fas fa-star mr-1"></i>
-                                    Featured
+                                <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-amber-800 text-xs font-semibold rounded-full">
+                                    <i class="fas fa-pen-nib mr-1"></i>
+                                    Featured Blog
                                 </span>
-                                <span class="text-webropol-primary-100 text-sm font-medium">May 14, 2025</span>
+                                <span class="text-amber-900 text-sm font-semibold">May 14, 2025</span>
                             </div>
-                            <h2 class="text-2xl font-bold text-white mb-3">
-                                New Survey Scheduling Feature Released
+                            <h2 class="text-2xl font-bold text-gray-900 mb-3">
+                                The Art of Survey Timing: Why Scheduling Matters More Than You Think
                             </h2>
-                            <p class="text-webropol-primary-50 mb-4 leading-relaxed">
-                                Introducing enhanced survey scheduling options with flexible timing controls, automated distribution settings, and timezone support for global surveys.
+                            <p class="text-gray-800 mb-4 leading-relaxed">
+                                In the world of data collection, timing isn't just everything—it's the difference between a 20% and an 80% response rate. Let's explore why scheduling your surveys strategically can transform your research outcomes.
                             </p>
                             
                             <!-- Expandable Content -->
                             <div x-show="expanded" x-collapse x-cloak class="mb-4">
-                                <div class="text-webropol-primary-50 leading-relaxed space-y-3">
-                                    <p>This comprehensive update brings powerful scheduling capabilities to your survey workflow:</p>
+                                <div class="text-gray-800 leading-relaxed space-y-3">
+                                    <p>After analyzing millions of survey responses across different industries and time zones, we've discovered some fascinating patterns that challenge conventional wisdom about when to send surveys.</p>
+                                    
+                                    <h3 class="text-gray-900 font-bold text-lg mt-4">The Tuesday Myth</h3>
+                                    <p>For years, marketers have sworn by "Tuesday at 10 AM" as the golden hour for email campaigns. But our data tells a different story for surveys. Response rates actually peak on:</p>
                                     <ul class="list-disc list-inside space-y-2 ml-2">
-                                        <li><strong class="text-white">Flexible Timing Controls:</strong> Set precise start and end dates with customizable time slots</li>
-                                        <li><strong class="text-white">Automated Distribution:</strong> Schedule recurring surveys and automated reminder sequences</li>
-                                        <li><strong class="text-white">Global Timezone Support:</strong> Automatically adjust delivery times based on respondent locations</li>
-                                        <li><strong class="text-white">Smart Notifications:</strong> Get alerts when surveys launch or need attention</li>
-                                        <li><strong class="text-white">Calendar Integration:</strong> Sync with your existing calendars for better planning</li>
+                                        <li><strong class="text-gray-900">B2B Surveys:</strong> Wednesday afternoons (2-4 PM local time) show 34% higher completion rates</li>
+                                        <li><strong class="text-gray-900">Consumer Surveys:</strong> Sunday evenings surprisingly outperform weekday mornings by 28%</li>
+                                        <li><strong class="text-gray-900">Employee Feedback:</strong> Thursday mornings capture the most thoughtful responses</li>
                                     </ul>
-                                    <p>These features are designed to streamline your survey management and ensure perfect timing for your audience, regardless of where they're located in the world.</p>
+                                    
+                                    <h3 class="text-gray-900 font-bold text-lg mt-4">The Global Challenge</h3>
+                                    <p>Here's where it gets interesting. If your audience spans multiple time zones, you're essentially playing a game of survey roulette. Send too early, and your Asian respondents are asleep. Send too late, and you've missed the European window entirely.</p>
+                                    <p>This is why we built intelligent timezone detection into our scheduling system. It automatically adjusts delivery times so that everyone receives your survey during their optimal engagement window—no manual calculations required.</p>
+                                    
+                                    <h3 class="text-gray-900 font-bold text-lg mt-4">The Reminder Paradox</h3>
+                                    <p>One reminder increases response rates by an average of 42%. Two reminders? Another 18%. But here's the catch: the third reminder actually decreases quality of responses by 15%. People start rushing through just to make it stop.</p>
+                                    <p>The sweet spot? Two well-timed reminders, spaced 3-4 days apart, sent at different times of day than your original invitation.</p>
+                                    
+                                    <h3 class="text-gray-900 font-bold text-lg mt-4">Seasonal Patterns Nobody Talks About</h3>
+                                    <p>December surveys have a bad reputation, but our data shows that B2B surveys sent between December 10-15 actually have above-average completion rates. Why? Decision makers are wrapping up year-end tasks and are surprisingly receptive to quick surveys.</p>
+                                    <p>Conversely, the first two weeks of September see the lowest response rates of the year as people return from summer vacations and are drowning in catch-up work.</p>
+                                    
+                                    <h3 class="text-gray-900 font-bold text-lg mt-4">Putting It All Together</h3>
+                                    <p>Smart scheduling isn't just about picking a day and time. It's about understanding your audience's rhythm, respecting their time zones, and timing your reminders with precision. The new scheduling features we've launched make all of this automatic, using AI to suggest optimal send times based on your audience profile and historical data.</p>
+                                    <p>The result? Our beta testers saw an average 37% increase in completion rates just by letting the system optimize their timing.</p>
+                                    
+                                    <p class="text-gray-900 font-semibold mt-4">Remember: A survey sent at the right time is worth two sent at the wrong time.</p>
                                 </div>
                             </div>
 
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-4 text-webropol-primary-100 text-sm">
+                                <div class="flex items-center gap-4 text-gray-800 text-sm">
                                     <span class="flex items-center gap-1">
                                         <i class="fas fa-eye"></i>
-                                        124 views
+                                        342 views
                                     </span>
                                     <span class="flex items-center gap-1">
                                         <i class="fas fa-comments"></i>
-                                        8 comments
+                                        15 comments
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <i class="fas fa-clock"></i>
+                                        8 min read
                                     </span>
                                 </div>
                                 <button 
                                     @click="expanded = !expanded"
-                                    class="flex items-center text-white font-medium hover:gap-2 transition-all"
+                                    class="flex items-center text-gray-900 font-semibold hover:gap-2 transition-all"
                                 >
                                     <span x-text="expanded ? 'Show less' : 'Read more'"></span>
                                     <i class="fas ml-2 transition-transform" 
@@ -296,6 +327,10 @@
                                 <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-primary-50 transition-all group">
                                     <span class="text-webropol-gray-700 group-hover:text-webropol-primary-700 font-medium">Platform Updates</span>
                                     <span class="text-xs bg-webropol-primary-100 text-webropol-primary-700 px-2 py-1 rounded-full font-semibold">24</span>
+                                </a>
+                                <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-amber-50 transition-all group">
+                                    <span class="text-webropol-gray-700 group-hover:text-webropol-amber-700 font-medium">Blog Posts</span>
+                                    <span class="text-xs bg-webropol-amber-100 text-webropol-amber-700 px-2 py-1 rounded-full font-semibold">18</span>
                                 </a>
                                 <a href="#" class="flex items-center justify-between p-3 rounded-lg hover:bg-webropol-primary-50 transition-all group">
                                     <span class="text-webropol-gray-700 group-hover:text-webropol-primary-700 font-medium">Bug Fixes</span>
