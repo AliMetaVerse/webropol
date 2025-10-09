@@ -25,7 +25,7 @@ export function renderCreateMenu() {
         <button data-type="surveys"
           class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
           <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fal fa-chart-bar text-white text-lg group-hover:animate-pulse"></i>
+            <i class="fa-light fa-user-magnifying-glass text-white text-lg group-hover:animate-pulse"></i>
           </div>
           <div class="ml-4 flex-1">
             <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">Surveys</span>

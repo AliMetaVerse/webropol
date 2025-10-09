@@ -101,7 +101,7 @@ export class WebropolHeader extends BaseComponent {
           <!-- Mobile Logo -->
           <div class="flex items-center">
             <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
-              <i class="fal fa-chart-bar text-white text-sm"></i>
+              <i class="fa-light fa-user-magnifying-glass text-white text-sm"></i>
             </div>
             ${title ? `<span class="ml-2 font-semibold text-webropol-gray-900 text-sm truncate max-w-[120px]">${title}</span>` : ''}
           </div>

@@ -283,7 +283,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'surveys',
         href: '#/surveys/list',
-        icon: 'fal fa-chart-bar',
+        icon: 'fa-light fa-user-magnifying-glass',
         label: 'Surveys',
         active: active === 'surveys',
         moduleKey: 'surveysEnabled'
