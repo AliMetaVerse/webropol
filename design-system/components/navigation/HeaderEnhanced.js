@@ -95,7 +95,7 @@ export class WebropolHeader extends BaseComponent {
           <!-- Mobile Menu Toggle -->
           <button class="mobile-menu-toggle w-10 h-10 flex items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200"
                   aria-label="Toggle navigation menu">
-            <i class="fal fa-bars text-lg"></i>
+            <i class="fa-duotone fa-thin fa-bars text-lg"></i>
           </button>
           
           <!-- Mobile Logo -->
@@ -111,27 +111,27 @@ export class WebropolHeader extends BaseComponent {
         <div class="flex items-center space-x-2">
           ${showFeedback ? `
             <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200" aria-label="Feedback">
-              <i class="fal fa-star text-lg"></i>
+              <i class="fa-duotone fa-thin fa-star text-lg"></i>
             </button>
           ` : ''}
           ${showNotifications ? `
             <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
-              <i class="fal fa-bell text-lg"></i>
+              <i class="fa-duotone fa-thin fa-bell text-lg"></i>
             </button>
           ` : ''}
           
           ${showHelp ? `
             <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
-              <i class="fal fa-question-circle text-lg"></i>
+              <i class="fa-duotone fa-thin fa-question-circle text-lg"></i>
             </button>
           ` : ''}
           
           ${showUserMenu !== false ? `
             <button class="mobile-user-menu flex items-center px-3 py-2 text-webropol-gray-700 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
               <div class="w-6 h-6 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-2">
-                <i class="fal fa-user text-white text-xs"></i>
+                <i class="fa-duotone fa-thin fa-user text-white text-xs"></i>
               </div>
-              <i class="fal fa-chevron-down text-xs"></i>
+              <i class="fa-duotone fa-thin fa-chevron-down text-xs"></i>
             </button>
           ` : ''}
           
@@ -158,14 +158,14 @@ export class WebropolHeader extends BaseComponent {
           <div class="flex items-center space-x-3">
             ${showNotifications ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200 relative">
-                <i class="fal fa-bell text-lg"></i>
+                <i class="fa-duotone fa-thin fa-bell text-lg"></i>
                 <span class="absolute -top-1 -right-1 w-3 h-3 bg-webropol-red-500 rounded-full opacity-0 animate-pulse"></span>
               </button>
             ` : ''}
             
             ${showHelp ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200">
-                <i class="fal fa-question-circle text-lg"></i>
+                <i class="fa-duotone fa-thin fa-question-circle text-lg"></i>
               </button>
             ` : ''}
             
@@ -175,10 +175,10 @@ export class WebropolHeader extends BaseComponent {
               <div class="relative">
                 <button class="desktop-user-menu flex items-center px-4 py-2 text-webropol-gray-700 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all duration-200 group">
                   <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-200">
-                    <i class="fal fa-user text-white text-sm"></i>
+                    <i class="fa-duotone fa-thin fa-user text-white text-sm"></i>
                   </div>
                   <span class="mr-2 font-medium truncate max-w-[120px]">${username}</span>
-                  <i class="fal fa-chevron-down text-xs group-hover:rotate-180 transition-transform duration-200"></i>
+                  <i class="fa-duotone fa-thin fa-chevron-down text-xs group-hover:rotate-180 transition-transform duration-200"></i>
                 </button>
               </div>
             ` : ''}

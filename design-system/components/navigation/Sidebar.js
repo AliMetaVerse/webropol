@@ -53,7 +53,7 @@ export class WebropolSidebar extends BaseComponent {
                     group-hover:px-8
                     transition-all duration-300">
           <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i class="fa-light fa-user-magnifying-glass text-white text-lg"></i>
+            <i class="fa-duotone fa-thin fa-user-magnifying-glass text-white text-lg"></i>
           </div>
           <div class="ml-3 overflow-hidden transition-all duration-300
                       xl:opacity-100 xl:w-auto
@@ -76,7 +76,7 @@ export class WebropolSidebar extends BaseComponent {
                                                   group-hover:px-4
                                                   py-3
                                                   ${active==='home' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fal fa-home w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-home w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
@@ -90,7 +90,7 @@ export class WebropolSidebar extends BaseComponent {
                                                           group-hover:px-4
                                                           py-3
                                                           ${active==='surveys' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fa-light fa-user-magnifying-glass w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-user-magnifying-glass w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="overflow-hidden transition-all duration-300
@@ -104,7 +104,7 @@ export class WebropolSidebar extends BaseComponent {
                                                         group-hover:px-4
                                                         py-3
                                                         ${active==='events' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fal fa-calendar-alt w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-calendar-alt w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
@@ -118,7 +118,7 @@ export class WebropolSidebar extends BaseComponent {
                                                     group-hover:px-4
                                                     py-3
                                                     ${active==='sms' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fal fa-sms w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-sms w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
@@ -132,7 +132,7 @@ export class WebropolSidebar extends BaseComponent {
                                                      group-hover:px-4
                                                      py-3
                                                      ${active==='exw' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fal fa-user-chart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-user-chart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
@@ -146,7 +146,7 @@ export class WebropolSidebar extends BaseComponent {
                                                                group-hover:px-4
                                                                py-3
                                                                ${active==='case-management' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-            <i class="fal fa-briefcase w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+            <i class="fa-duotone fa-thin fa-briefcase w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                      xl:mr-4 mr-0
                      group-hover:mr-4"></i>
             <span class="font-medium overflow-hidden transition-all duration-300
@@ -161,7 +161,7 @@ export class WebropolSidebar extends BaseComponent {
                                                               group-hover:px-4
                                                               py-3
                                                               ${active==='mywebropol' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-              <i class="fal fa-book-open w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+              <i class="fa-duotone fa-thin fa-book-open w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
               <span class="font-medium overflow-hidden transition-all duration-300
@@ -175,7 +175,7 @@ export class WebropolSidebar extends BaseComponent {
                                                               group-hover:px-4
                                                               py-3
                                                               ${active==='admin-tools' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-              <i class="fal fa-tools w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+              <i class="fa-duotone fa-thin fa-tools w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
               <span class="font-medium overflow-hidden transition-all duration-300
@@ -189,7 +189,7 @@ export class WebropolSidebar extends BaseComponent {
                                                                   group-hover:px-4
                                                                   py-3
                                                                   ${active==='training-videos' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-              <i class="fal fa-video w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+              <i class="fa-duotone fa-thin fa-video w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
               <span class="font-medium overflow-hidden transition-all duration-300
@@ -203,7 +203,7 @@ export class WebropolSidebar extends BaseComponent {
                                                         group-hover:px-4
                                                         py-3
                                                         ${active==='shop' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-              <i class="fal fa-shopping-cart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+              <i class="fa-duotone fa-thin fa-shopping-cart w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
               <span class="font-medium overflow-hidden transition-all duration-300
@@ -225,7 +225,7 @@ export class WebropolSidebar extends BaseComponent {
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
                 <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
+                  <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
                 </div>
                 <!-- Pulse animation on hover -->
                 <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>

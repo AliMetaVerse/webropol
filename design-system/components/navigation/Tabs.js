@@ -75,7 +75,7 @@ export class WebropolTabs extends BaseComponent {
               aria-selected="${isActive}"
               aria-controls="panel-${tab.id}"
               id="tab-${tab.id}">
-              ${tab.icon ? `<i class="fal fa-${tab.icon} ${sizeClasses.icon}"></i>` : ''}
+              ${tab.icon ? `<i class="fa-duotone fa-thin fa-${tab.icon} ${sizeClasses.icon}"></i>` : ''}
               ${tab.label}
               ${tab.badge ? `<span class="webropol-tab-badge ${sizeClasses.badge}">${tab.badge}</span>` : ''}
             </button>

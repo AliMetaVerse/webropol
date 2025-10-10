@@ -51,7 +51,7 @@ export class WebropolHeader extends BaseComponent {
       <!-- Hamburger visible only when main sidebar is collapsed (desktop only) -->
       <button class="collapsed-hamburger hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all"
       title="Open menu" aria-label="Open menu">
-    <i class="fal fa-bars"></i>
+    <i class="fa-duotone fa-thin fa-bars"></i>
       </button>
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
@@ -68,7 +68,7 @@ export class WebropolHeader extends BaseComponent {
                 <!-- Content -->
                 <div class="relative flex items-center space-x-2">
                   <div class="create-icon-container relative">
-                    <i class="fal fa-plus text-lg transform group-hover:rotate-180 transition-transform duration-300"></i>
+                    <i class="fa-duotone fa-thin fa-plus text-lg transform group-hover:rotate-180 transition-transform duration-300"></i>
                     <!-- Sparkle effects -->
                     <div class="absolute -top-1 -right-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-100"></div>
                     <div class="absolute -bottom-1 -left-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-200"></div>
@@ -90,7 +90,7 @@ export class WebropolHeader extends BaseComponent {
           ` : ''}
           <!-- Desktop sidebar toggle: removed 'hidden md:flex' so it doesn't disappear on some pages -->
           <button class="ml-2 flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
-            <i class="fal fa-columns"></i>
+            <i class="fa-duotone fa-thin fa-columns"></i>
           </button>
           <slot name="title"></slot>
           <slot name="left"></slot>
@@ -101,16 +101,16 @@ export class WebropolHeader extends BaseComponent {
             ${showThemeSelector ? `
               <div class="relative">
                 <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all theme-selector-btn">
-                  <i class="fal ${ThemeManager.getThemeConfig(currentTheme)?.icon || 'fa-palette'}"></i>
+                  <i class="fa-duotone fa-thin ${ThemeManager.getThemeConfig(currentTheme)?.icon || 'fa-palette'}"></i>
                 </button>
                 
                 <!-- Theme dropdown -->
                 <div class="absolute right-0 top-full mt-2 w-40 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 theme-dropdown z-[9999]">
                   ${allThemes.map(theme => `
                     <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 theme-option ${theme.key === currentTheme ? 'bg-webropol-primary-50 text-webropol-primary-700' : ''}" data-theme="${theme.key}">
-                      <i class="fal ${theme.icon} w-4 mr-3"></i>
+                      <i class="fa-duotone fa-thin ${theme.icon} w-4 mr-3"></i>
                       ${theme.name}
-                      ${theme.key === currentTheme ? '<i class="fal fa-check ml-auto"></i>' : ''}
+                      ${theme.key === currentTheme ? '<i class="fa-duotone fa-thin fa-check ml-auto"></i>' : ''}
                     </button>
                   `).join('')}
                 </div>
@@ -121,7 +121,7 @@ export class WebropolHeader extends BaseComponent {
               <div class="relative settings-animation-container">
                 <div class="settings-notification-badge"></div>
                 <button class="settings-button rating-selector-btn">
-                  <i class="fal fa-star"></i>
+                  <i class="fa-duotone fa-thin fa-star"></i>
                 </button>
                 
                 <!-- Settings dropdown -->
@@ -135,7 +135,7 @@ export class WebropolHeader extends BaseComponent {
               <div class="relative" data-ai-assistant>
                 <button class="ai-assistant-btn group relative overflow-hidden px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-sky-400 hover:from-indigo-600 hover:via-fuchsia-600 hover:to-sky-500 text-white font-semibold flex items-center gap-2" title="AI Assistant" aria-label="AI Assistant">
                   <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-white/15 group-hover:bg-white/20 transition-colors">
-                    <i class="fal fa-sparkles"></i>
+                    <i class="fa-duotone fa-thin fa-sparkles"></i>
                   </span>
                   <span class="text-sm">AI Assistant</span>
                 </button>
@@ -144,14 +144,14 @@ export class WebropolHeader extends BaseComponent {
             
             ${showNotifications ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all relative">
-                <i class="fal fa-bell"></i>
+                <i class="fa-duotone fa-thin fa-bell"></i>
                 <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
               </button>
             ` : ''}
             
             ${showHelp ? `
               <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all">
-                <i class="fal fa-question-circle"></i>
+                <i class="fa-duotone fa-thin fa-question-circle"></i>
               </button>
             ` : ''}
             
@@ -162,22 +162,22 @@ export class WebropolHeader extends BaseComponent {
                     <span class="text-webropol-primary-800 text-sm font-semibold">${username.charAt(0).toUpperCase()}</span>
                   </div>
                   <span class="mr-2 font-medium">${username}</span>
-                  <i class="fal fa-chevron-down text-xs group-hover:rotate-180 transition-transform"></i>
+                  <i class="fa-duotone fa-thin fa-chevron-down text-xs group-hover:rotate-180 transition-transform"></i>
                 </button>
                 
                 <!-- Dropdown menu (hidden by default) -->
                 <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown z-[9999]">
                   <a href="#" data-action="profile" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
-                    <i class="fal fa-user-circle w-4 mr-3"></i>
+                    <i class="fa-duotone fa-thin fa-user-circle w-4 mr-3"></i>
                     Profile
                   </a>
                   <a href="#" data-action="settings" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
-                    <i class="fal fa-cog w-4 mr-3"></i>
+                    <i class="fa-duotone fa-thin fa-cog w-4 mr-3"></i>
                     Settings
                   </a>
                   <hr class="my-2 border-webropol-gray-200">
                   <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                    <i class="fal fa-sign-out-alt w-4 mr-3"></i>
+                    <i class="fa-duotone fa-thin fa-sign-out-alt w-4 mr-3"></i>
                     Sign Out
                   </a>
                 </div>
@@ -301,7 +301,7 @@ export class WebropolHeader extends BaseComponent {
             ${[1,2,3,4,5].map((n) => `
               <button type="button" class="star group w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300" role="radio" aria-checked="false" aria-label="${n} star${n>1?'s':''}" data-value="${n}">
                 <span class="sr-only">${n}</span>
-                <i class="fal fa-star text-2xl text-gray-300 group-hover:scale-110 group-active:scale-95 transition-transform"></i>
+                <i class="fa-duotone fa-thin fa-star text-2xl text-gray-300 group-hover:scale-110 group-active:scale-95 transition-transform"></i>
               </button>
             `).join('')}
           </div>
@@ -347,7 +347,7 @@ export class WebropolHeader extends BaseComponent {
         <!-- Header Section with Icon -->
         <div class="flex items-center mb-4">
           <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-            <i class="fas fa-chart-line text-white text-lg"></i>
+            <i class="fa-duotone fa-thin fa-chart-line text-white text-lg"></i>
           </div>
           <div>
             <h4 class="text-lg font-bold text-gray-800 leading-tight">Net Promoter Score</h4>
@@ -416,7 +416,7 @@ export class WebropolHeader extends BaseComponent {
           <!-- Enhanced Textarea -->
           <div class="mb-5">
             <label class="block text-sm font-semibold text-gray-700 mb-2">
-              <i class="fas fa-comment-dots mr-2 text-indigo-500"></i>
+              <i class="fa-duotone fa-thin fa-comment-dots mr-2 text-indigo-500"></i>
               Tell us more (optional)
             </label>
             <textarea 
@@ -439,7 +439,7 @@ export class WebropolHeader extends BaseComponent {
               </div>
             </div>
             <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none" disabled>
-              <i class="fas fa-paper-plane mr-2"></i>
+              <i class="fa-duotone fa-thin fa-paper-plane mr-2"></i>
               Submit Feedback
             </button>
           </div>
@@ -449,7 +449,7 @@ export class WebropolHeader extends BaseComponent {
         <div class="nps-thank-you hidden px-6 py-8 text-center">
           <div class="mb-4">
             <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-              <i class="fas fa-check text-white text-2xl"></i>
+              <i class="fa-duotone fa-thin fa-check text-white text-2xl"></i>
             </div>
             <div class="text-4xl mb-2 animate-pulse">🎉</div>
             <h3 class="text-xl font-bold text-gray-800 mb-2">Thank you for your feedback!</h3>
@@ -462,7 +462,7 @@ export class WebropolHeader extends BaseComponent {
           
           <div class="space-y-2">
             <button class="nps-close-btn w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105">
-              <i class="fas fa-heart mr-2"></i>
+              <i class="fa-duotone fa-thin fa-heart mr-2"></i>
               Awesome, thanks!
             </button>
           </div>
@@ -917,7 +917,7 @@ export class WebropolHeader extends BaseComponent {
             form.innerHTML = `
               <div class="flex items-center justify-center py-4">
                 <div class="flex items-center space-x-2 text-webropol-primary-700 bg-webropol-primary-50 border border-webropol-primary-200 rounded-lg px-3 py-2">
-                  <i class="fas fa-check-circle"></i>
+                  <i class="fa-duotone fa-thin fa-check-circle"></i>
                   <span class="text-sm font-medium">Thanks for rating ${rating}/5!</span>
                 </div>
               </div>`;
@@ -1150,7 +1150,7 @@ export class WebropolHeader extends BaseComponent {
     const ratingButton = this.querySelector('.rating-selector-btn');
     if (ratingButton) {
       const originalContent = ratingButton.innerHTML;
-      ratingButton.innerHTML = '<i class="fal fa-check text-green-500"></i>';
+      ratingButton.innerHTML = '<i class="fa-duotone fa-thin fa-check text-green-500"></i>';
       
       setTimeout(() => {
         ratingButton.innerHTML = originalContent;

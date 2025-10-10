@@ -276,14 +276,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'home',
         href: '#/home',
-        icon: 'fal fa-home',
+        icon: 'fa-duotone fa-thin fa-home',
         label: 'Home',
         active: active === 'home'
       },
       {
         id: 'surveys',
         href: '#/surveys/list',
-        icon: 'fa-light fa-user-magnifying-glass',
+        icon: 'fa-duotone fa-thin fa-user-magnifying-glass',
         label: 'Surveys',
         active: active === 'surveys',
         moduleKey: 'surveysEnabled'
@@ -291,7 +291,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'events',
         href: '#/events/list',
-        icon: 'fal fa-calendar-alt',
+        icon: 'fa-duotone fa-thin fa-calendar-alt',
         label: 'Events',
         active: active === 'events',
         moduleKey: 'eventsEnabled'
@@ -299,7 +299,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'sms',
         href: '#/sms',
-        icon: 'fal fa-sms',
+        icon: 'fa-duotone fa-thin fa-sms',
         label: '2-Way SMS',
         active: active === 'sms',
         moduleKey: 'smsEnabled'
@@ -307,7 +307,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'exw',
         href: '#/exw',
-        icon: 'fal fa-user-chart',
+        icon: 'fa-duotone fa-thin fa-user-chart',
         label: 'EXW',
         active: active === 'exw',
         moduleKey: 'exwEnabled'
@@ -315,7 +315,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'case-management',
         href: '#/case-management',
-        icon: 'fal fa-briefcase',
+        icon: 'fa-duotone fa-thin fa-briefcase',
         label: 'Case Management',
         active: active === 'case-management',
         moduleKey: 'caseManagementEnabled'
@@ -325,7 +325,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'news',
         href: '#/news',
-        icon: 'fal fa-newspaper',
+        icon: 'fa-duotone fa-thin fa-newspaper',
         label: 'News',
         active: active === 'news',
         moduleKey: 'newsEnabled'
@@ -333,7 +333,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'mywebropol',
         href: '#/mywebropol',
-        icon: 'fal fa-book-open',
+        icon: 'fa-duotone fa-thin fa-book-open',
         label: 'MyWebropol',
         active: active === 'mywebropol',
         moduleKey: 'mywebropolEnabled'
@@ -341,7 +341,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'admin-tools',
         href: '#/admin-tools',
-        icon: 'fal fa-tools',
+        icon: 'fa-duotone fa-thin fa-tools',
         label: 'Admin Tools',
         active: active === 'admin-tools',
         moduleKey: 'adminToolsEnabled'
@@ -349,7 +349,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'training-videos',
         href: '#/training-videos',
-        icon: 'fal fa-video',
+        icon: 'fa-duotone fa-thin fa-video',
         label: 'Training Videos',
         active: active === 'training-videos',
         moduleKey: 'trainingEnabled'
@@ -357,7 +357,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'shop',
         href: '#/shop',
-        icon: 'fal fa-shopping-cart',
+        icon: 'fa-duotone fa-thin fa-shopping-cart',
         label: 'Shop',
         active: active === 'shop',
         moduleKey: 'shopEnabled'
@@ -388,7 +388,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         </div>
         <button class="mobile-close-btn w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 rounded-lg transition-all"
                 aria-label="Close navigation menu">
-          <i class="fal fa-times text-lg"></i>
+          <i class="fa-duotone fa-thin fa-times text-lg"></i>
         </button>
       </div>
       
@@ -405,7 +405,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <!-- Icon with animated background -->
             <div class="relative flex-shrink-0">
               <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
+                <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
               </div>
               <!-- Pulse animation on hover -->
               <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
@@ -565,7 +565,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
                 <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-lg flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-sm"></i>
+                  <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-sm"></i>
                 </div>
                 <!-- Pulse animation on hover -->
                 <div class="absolute inset-0 w-8 h-8 bg-webropol-primary-400 rounded-lg opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
@@ -621,7 +621,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             </div>
           </div>
           <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
-            <i class="fal fa-angle-double-left"></i>
+            <i class="fa-duotone fa-thin fa-angle-double-left"></i>
           </button>
         </div>
         
@@ -644,7 +644,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
               <!-- Icon with animated background -->
               <div class="relative flex-shrink-0">
                 <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fal fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
+                  <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
                 </div>
                 <!-- Pulse animation on hover -->
                 <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
@@ -844,7 +844,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       zIndex: '2147483646'
     });
     btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-webropol-gray-600 border border-webropol-gray-200 shadow-md hover:text-webropol-primary-600 hover:border-webropol-primary-300 hover:shadow-lg transition-all';
-    btn.innerHTML = '<i class="fal fa-bars"></i>';
+    btn.innerHTML = '<i class="fa-duotone fa-thin fa-bars"></i>';
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       this.openMobileMenu();
