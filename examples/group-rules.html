@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Group Details - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': {
+                            50: '#f0fdff',
+                            100: '#ccf7fe',
+                            200: '#99eefd',
+                            300: '#5ce0fa',
+                            400: '#22c9f0',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63'
+                        },
+                        'webropol-gray': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .rule-row {
+            transition: all 0.2s ease;
+        }
+        
+        .rule-row:hover {
+            background-color: #f8fafc;
+        }
+        
+        .condition-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+        
+        .dropdown-modern {
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .dropdown-modern:hover {
+            border-color: #06b6d4;
+        }
+        
+        .dropdown-modern:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        
+        .group-border {
+            border: 3px solid #06b6d4;
+            background: linear-gradient(to right, #f0fdff, #ffffff);
+        }
+        
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .selected-row {
+            background-color: #f0fdff;
+            border-color: #06b6d4;
+        }
+        
+        .group-indicator {
+            border-left: 4px solid #06b6d4;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-webropol-gray-50">
+    <div x-data="ruleGroupManager()" class="min-h-screen p-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Modal Card -->
+            <div class="bg-white rounded-lg shadow-lg">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 px-8 py-6 rounded-t-lg flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-layer-group text-white text-2xl"></i>
+                        <h1 class="text-2xl font-bold text-white">Rule Group Details</h1>
+                    </div>
+                    <button @click="closeModal()" class="text-white hover:bg-white/20 rounded-lg p-2 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-8">
+                    <!-- Group Name -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">
+                            Group Name
+                        </label>
+                        <input 
+                            type="text" 
+                            x-model="groupName"
+                            class="w-full px-4 py-3 border-2 border-webropol-gray-200 rounded-lg focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100 transition-all"
+                            placeholder="Enter group name..."
+                        />
+                    </div>
+                    
+                    <!-- Conditions Section -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
+                                <i class="fas fa-filter text-webropol-primary-500"></i>
+                                When These Conditions Are Met
+                            </h2>
+                            
+                            <!-- Selection Actions -->
+                            <div x-show="selectedConditions.length > 0" class="flex items-center gap-2">
+                                <span class="text-sm text-webropol-gray-600">
+                                    <span class="font-semibold" x-text="selectedConditions.length"></span> selected
+                                </span>
+                                <button 
+                                    @click="groupSelectedConditions()"
+                                    class="bg-webropol-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-webropol-primary-600 transition-colors flex items-center gap-2"
+                                >
+                                    <i class="fas fa-object-group"></i>
+                                    Group Selected
+                                </button>
+                                <button 
+                                    @click="ungroupSelected()"
+                                    class="bg-webropol-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-webropol-gray-600 transition-colors flex items-center gap-2"
+                                >
+                                    <i class="fas fa-object-ungroup"></i>
+                                    Ungroup
+                                </button>
+                                <button 
+                                    @click="clearSelection()"
+                                    class="text-webropol-gray-600 hover:bg-webropol-gray-100 px-3 py-2 rounded-lg text-sm"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Condition Rows -->
+                        <template x-for="(condition, index) in conditions" :key="index">
+                            <div>
+                                <!-- Group Header (if this is the start of a group) -->
+                                <template x-if="condition.groupId && (!conditions[index - 1] || conditions[index - 1].groupId !== condition.groupId)">
+                                    <div class="bg-webropol-primary-50 border-2 border-webropol-primary-300 rounded-lg p-3 mb-2 flex items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <i class="fas fa-layer-group text-webropol-primary-600"></i>
+                                            <span class="font-semibold text-webropol-primary-700">
+                                                Group: <span x-text="getGroupName(condition.groupId)"></span>
+                                            </span>
+                                            <select 
+                                                x-model="getGroup(condition.groupId).logic"
+                                                class="px-3 py-1 rounded bg-white border-2 border-webropol-primary-300 text-sm font-medium"
+                                            >
+                                                <option value="AND">All conditions must match (AND)</option>
+                                                <option value="OR">Any condition can match (OR)</option>
+                                            </select>
+                                        </div>
+                                        <button 
+                                            @click="ungroupConditions(condition.groupId)"
+                                            class="text-webropol-primary-600 hover:bg-webropol-primary-100 px-3 py-1 rounded text-sm"
+                                        >
+                                            <i class="fas fa-unlink mr-1"></i>
+                                            Ungroup
+                                        </button>
+                                    </div>
+                                </template>
+                                
+                                <div 
+                                    class="rule-row rounded-lg p-4 mb-3 border-2 transition-all"
+                                    :class="{
+                                        'selected-row': selectedConditions.includes(index),
+                                        'group-indicator': condition.groupId,
+                                        'border-webropol-gray-200': !selectedConditions.includes(index) && !condition.groupId,
+                                        'border-webropol-primary-300': condition.groupId
+                                    }"
+                                >
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <!-- Selection Checkbox -->
+                                        <input 
+                                            type="checkbox" 
+                                            :checked="selectedConditions.includes(index)"
+                                            @change="toggleConditionSelection(index)"
+                                            class="checkbox-custom text-webropol-primary-500 rounded focus:ring-webropol-primary-500"
+                                        />
+                                        
+                                        <!-- Logic Operator (First Dropdown) -->
+                                        <div class="w-32">
+                                            <select class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm font-medium bg-white">
+                                                <option value="all">Match All</option>
+                                                <option value="any">Match Any</option>
+                                                <option value="none">Match None</option>
+                                            </select>
+                                        </div>
+                                    
+                                    <!-- Condition Type (Second Dropdown) -->
+                                    <div class="w-48">
+                                        <select x-model="condition.type" class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="selected">When option is selected</option>
+                                            <option value="not_selected">When option is not selected</option>
+                                            <option value="contains">When response contains</option>
+                                            <option value="equals">When response equals</option>
+                                            <option value="greater">When value is greater than</option>
+                                            <option value="less">When value is less than</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Context Label -->
+                                    <span class="text-sm font-medium text-webropol-gray-600">in question</span>
+                                    
+                                    <!-- Question Selector (Third Dropdown) -->
+                                    <div class="flex-1">
+                                        <select x-model="condition.question" class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="q1">1. Where do you work?</option>
+                                            <option value="q2">2. What percentage do you work from home?</option>
+                                            <option value="q3">3. How do you like working from home?</option>
+                                            <option value="q4">4. Rate your work-life balance</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Answer Selector (Fourth Dropdown) -->
+                                    <div class="w-40">
+                                        <select x-model="condition.answer" class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="home">Home</option>
+                                            <option value="office">Office</option>
+                                            <option value="hybrid">Hybrid</option>
+                                            <option value="remote">Remote</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Additional Options (Fifth Dropdown) -->
+                                    <div class="w-32">
+                                        <select class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="exact">Exact match</option>
+                                            <option value="partial">Partial match</option>
+                                            <option value="case">Case sensitive</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Delete Button -->
+                                    <button 
+                                        @click="removeCondition(index)"
+                                        class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                        title="Remove condition"
+                                    >
+                                        <i class="fas fa-trash-alt text-lg"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- AND/OR Toggle (only show if not in a group or is last item in group) -->
+                                <div 
+                                    class="flex items-center gap-4 ml-36" 
+                                    x-show="index < conditions.length - 1 && (!condition.groupId || !conditions[index + 1] || conditions[index + 1].groupId !== condition.groupId)"
+                                >
+                                    <span class="text-xs font-semibold text-webropol-gray-500 uppercase">Combine with next:</span>
+                                    <div class="flex gap-2">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input 
+                                                type="radio" 
+                                                :name="'logic-' + index" 
+                                                x-model="condition.logic" 
+                                                value="AND"
+                                                class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
+                                            />
+                                            <span class="condition-badge px-3 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full">AND</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input 
+                                                type="radio" 
+                                                :name="'logic-' + index" 
+                                                x-model="condition.logic" 
+                                                value="OR"
+                                                class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
+                                            />
+                                            <span class="condition-badge px-3 py-1 bg-purple-100 text-purple-700 rounded-full">OR</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </template>
+                        
+                        <!-- Add Condition Button -->
+                        <button 
+                            @click="addCondition()"
+                            class="text-webropol-primary-600 hover:bg-webropol-primary-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                        >
+                            <i class="fas fa-plus"></i>
+                            Add new condition (AND/OR)
+                        </button>
+                    </div>
+                    
+                    <!-- Actions Section -->
+                    <div class="mt-8 pt-6 border-t-2 border-webropol-gray-200">
+                        <h2 class="text-lg font-semibold text-webropol-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-bolt text-amber-500"></i>
+                            Then Perform These Actions
+                        </h2>
+                        
+                        <!-- Action Rows -->
+                        <template x-for="(action, index) in actions" :key="index">
+                            <div class="rule-row rounded-lg p-4 mb-3 border border-webropol-gray-200">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm font-semibold text-webropol-gray-700">Action:</span>
+                                    
+                                    <!-- Action Type -->
+                                    <div class="w-56">
+                                        <select x-model="action.type" class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="show">Show Question(s)</option>
+                                            <option value="hide">Hide Question(s)</option>
+                                            <option value="require">Require Question(s)</option>
+                                            <option value="skip">Skip to Question</option>
+                                            <option value="end">End Survey</option>
+                                            <option value="branch">Branch to Section</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Target Questions -->
+                                    <div class="flex-1 flex items-center gap-2">
+                                        <template x-for="(question, qIndex) in action.targetQuestions" :key="qIndex">
+                                            <div class="inline-flex items-center gap-2 bg-webropol-primary-50 px-3 py-2 rounded-lg border border-webropol-primary-200">
+                                                <span class="text-sm font-medium text-webropol-primary-700" x-text="question"></span>
+                                                <button 
+                                                    @click="removeTargetQuestion(index, qIndex)"
+                                                    class="text-webropol-primary-600 hover:text-webropol-primary-800"
+                                                >
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        <button 
+                                            @click="addTargetQuestion(index)"
+                                            class="text-webropol-primary-600 hover:bg-webropol-primary-50 px-3 py-2 rounded-lg text-sm"
+                                        >
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Additional Options -->
+                                    <div class="w-32">
+                                        <select class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="immediate">Immediate</option>
+                                            <option value="next_page">Next page</option>
+                                            <option value="on_submit">On submit</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Delete Button -->
+                                    <button 
+                                        @click="removeAction(index)"
+                                        class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors"
+                                        title="Remove action"
+                                    >
+                                        <i class="fas fa-trash-alt text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <!-- Add Action Button -->
+                        <button 
+                            @click="addAction()"
+                            class="text-webropol-primary-600 hover:bg-webropol-primary-50 px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                        >
+                            <i class="fas fa-plus"></i>
+                            Add new action
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="bg-webropol-gray-50 px-8 py-6 rounded-b-lg flex justify-end gap-3">
+                    <button 
+                        @click="cancel()"
+                        class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-lg font-medium hover:bg-webropol-gray-100 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        @click="save()"
+                        class="px-6 py-3 bg-webropol-primary-600 text-white rounded-lg font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl"
+                    >
+                        <i class="fas fa-check mr-2"></i>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function ruleGroupManager() {
+            return {
+                groupName: 'Work from home',
+                selectedConditions: [],
+                groups: [],
+                nextGroupId: 1,
+                conditions: [
+                    {
+                        type: 'selected',
+                        question: 'q1',
+                        answer: 'home',
+                        logic: 'OR',
+                        groupId: null
+                    },
+                    {
+                        type: 'selected',
+                        question: 'q1',
+                        answer: 'hybrid',
+                        logic: 'AND',
+                        groupId: null
+                    },
+                    {
+                        type: 'selected',
+                        question: 'q2',
+                        answer: '51-75%',
+                        logic: 'OR',
+                        groupId: null
+                    },
+                    {
+                        type: 'selected',
+                        question: 'q2',
+                        answer: '76-100%',
+                        logic: 'AND',
+                        groupId: null
+                    }
+                ],
+                actions: [
+                    {
+                        type: 'show',
+                        targetQuestions: ['3. How do you like working from home?'],
+                        timing: 'immediate'
+                    }
+                ],
+                
+                toggleConditionSelection(index) {
+                    const idx = this.selectedConditions.indexOf(index);
+                    if (idx > -1) {
+                        this.selectedConditions.splice(idx, 1);
+                    } else {
+                        this.selectedConditions.push(index);
+                    }
+                    this.selectedConditions.sort((a, b) => a - b);
+                },
+                
+                clearSelection() {
+                    this.selectedConditions = [];
+                },
+                
+                groupSelectedConditions() {
+                    if (this.selectedConditions.length < 2) {
+                        alert('Please select at least 2 conditions to group');
+                        return;
+                    }
+                    
+                    // Check if selections are consecutive
+                    const sorted = [...this.selectedConditions].sort((a, b) => a - b);
+                    let isConsecutive = true;
+                    for (let i = 1; i < sorted.length; i++) {
+                        if (sorted[i] !== sorted[i-1] + 1) {
+                            isConsecutive = false;
+                            break;
+                        }
+                    }
+                    
+                    if (!isConsecutive) {
+                        if (!confirm('Selected conditions are not consecutive. Group them anyway?')) {
+                            return;
+                        }
+                    }
+                    
+                    const groupId = this.nextGroupId++;
+                    const groupName = prompt('Enter a name for this group:', `Group ${groupId}`);
+                    
+                    if (!groupName) return;
+                    
+                    this.groups.push({
+                        id: groupId,
+                        name: groupName,
+                        logic: 'AND'
+                    });
+                    
+                    this.selectedConditions.forEach(index => {
+                        this.conditions[index].groupId = groupId;
+                    });
+                    
+                    this.selectedConditions = [];
+                },
+                
+                ungroupSelected() {
+                    this.selectedConditions.forEach(index => {
+                        this.conditions[index].groupId = null;
+                    });
+                    this.selectedConditions = [];
+                },
+                
+                ungroupConditions(groupId) {
+                    this.conditions.forEach(condition => {
+                        if (condition.groupId === groupId) {
+                            condition.groupId = null;
+                        }
+                    });
+                    
+                    // Remove group from groups array
+                    this.groups = this.groups.filter(g => g.id !== groupId);
+                },
+                
+                getGroup(groupId) {
+                    return this.groups.find(g => g.id === groupId) || { logic: 'AND' };
+                },
+                
+                getGroupName(groupId) {
+                    const group = this.groups.find(g => g.id === groupId);
+                    return group ? group.name : `Group ${groupId}`;
+                },
+                
+                addCondition() {
+                    this.conditions.push({
+                        type: 'selected',
+                        question: 'q1',
+                        answer: '',
+                        logic: 'AND',
+                        groupId: null
+                    });
+                },
+                
+                removeCondition(index) {
+                    if (this.conditions.length > 1) {
+                        this.conditions.splice(index, 1);
+                    }
+                },
+                
+                addAction() {
+                    this.actions.push({
+                        type: 'show',
+                        targetQuestions: [],
+                        timing: 'immediate'
+                    });
+                },
+                
+                removeAction(index) {
+                    this.actions.splice(index, 1);
+                },
+                
+                addTargetQuestion(actionIndex) {
+                    // In a real app, this would open a question selector modal
+                    this.actions[actionIndex].targetQuestions.push('New Question');
+                },
+                
+                removeTargetQuestion(actionIndex, questionIndex) {
+                    this.actions[actionIndex].targetQuestions.splice(questionIndex, 1);
+                },
+                
+                save() {
+                    console.log('Saving rule group:', {
+                        groupName: this.groupName,
+                        conditions: this.conditions,
+                        actions: this.actions
+                    });
+                    alert('Rule group saved successfully!');
+                },
+                
+                cancel() {
+                    if (confirm('Discard changes?')) {
+                        this.closeModal();
+                    }
+                },
+                
+                closeModal() {
+                    console.log('Closing modal');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
