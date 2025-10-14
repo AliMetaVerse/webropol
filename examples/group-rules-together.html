@@ -258,18 +258,14 @@
                                                     <div class="bg-white/20 rounded-lg p-2">
                                                         <i class="fas fa-layer-group text-xl"></i>
                                                     </div>
-                                                    <div>
-                                                        <div class="font-bold text-lg" x-text="getGroupName(item.groupId)"></div>
-                                                        <div class="text-xs opacity-90">Grouped conditions - all wrapped together</div>
-                                                    </div>
                                                 </div>
                                                 <div class="flex items-center gap-3">
                                                     <select 
                                                         x-model="getGroup(item.groupId).logic"
                                                         class="px-4 py-2 bg-white text-webropol-primary-700 rounded-lg text-sm font-semibold border-2 border-white/30 hover:bg-webropol-primary-50 transition-colors cursor-pointer"
                                                     >
-                                                        <option value="AND">🔗 All must match (AND)</option>
-                                                        <option value="OR">🔀 Any can match (OR)</option>
+                                                        <option value="AND">All must match (AND)</option>
+                                                        <option value="OR">Any can match (OR)</option>
                                                     </select>
                                                     <button 
                                                         @click="ungroupConditions(item.groupId)"
@@ -343,38 +339,38 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                
-                                                <!-- Combine with next for grouped conditions -->
-                                                <div 
-                                                    class="flex items-center gap-4 ml-12 mb-3" 
-                                                    x-show="condIndex < item.conditions.length - 1"
-                                                >
-                                                    <span class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider">Combine with next:</span>
-                                                    <div class="flex gap-2">
-                                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                                            <input 
-                                                                type="radio" 
-                                                                :name="'group-logic-' + item.groupId + '-' + condIndex" 
-                                                                x-model="condItem.condition.logic" 
-                                                                value="AND"
-                                                                class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
-                                                            />
-                                                            <span class="condition-badge px-4 py-1.5 bg-webropol-primary-100 text-webropol-primary-700 rounded-full group-hover:bg-webropol-primary-200 transition-colors">AND</span>
-                                                        </label>
-                                                        <label class="flex items-center gap-2 cursor-pointer group">
-                                                            <input 
-                                                                type="radio" 
-                                                                :name="'group-logic-' + item.groupId + '-' + condIndex" 
-                                                                x-model="condItem.condition.logic" 
-                                                                value="OR"
-                                                                class="w-4 h-4 text-purple-500 focus:ring-purple-500"
-                                                            />
-                                                            <span class="condition-badge px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full group-hover:bg-purple-200 transition-colors">OR</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </template>
+                                    </div>
+                                    
+                                    <!-- AND/OR Toggle AFTER grouped conditions -->
+                                    <div 
+                                        class="flex items-center gap-4 ml-12 mb-3" 
+                                        x-show="itemIndex < organizedConditions.length - 1"
+                                    >
+                                        <span class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider">Combine with next:</span>
+                                        <div class="flex gap-2">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input 
+                                                    type="radio" 
+                                                    :name="'group-after-' + item.groupId" 
+                                                    x-model="getGroup(item.groupId).nextLogic" 
+                                                    value="AND"
+                                                    class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
+                                                />
+                                                <span class="condition-badge px-4 py-1.5 bg-webropol-primary-100 text-webropol-primary-700 rounded-full group-hover:bg-webropol-primary-200 transition-colors">AND</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <input 
+                                                    type="radio" 
+                                                    :name="'group-after-' + item.groupId" 
+                                                    x-model="getGroup(item.groupId).nextLogic" 
+                                                    value="OR"
+                                                    class="w-4 h-4 text-purple-500 focus:ring-purple-500"
+                                                />
+                                                <span class="condition-badge px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full group-hover:bg-purple-200 transition-colors">OR</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </template>
                                 
@@ -693,66 +689,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Group Name Modal -->
-        <div 
-            x-show="showGroupNameModal" 
-            x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            @click.self="closeGroupNameModal()"
-        >
-            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all" @click.stop>
-                <!-- Modal Header -->
-                <div class="bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 px-6 py-4 rounded-t-lg flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-layer-group text-white text-lg"></i>
-                        <h3 class="text-lg font-bold text-white">Name Your Group</h3>
-                    </div>
-                    <button @click="closeGroupNameModal()" class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <!-- Modal Content -->
-                <div class="p-6">
-                    <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">
-                        Group Name
-                    </label>
-                    <input 
-                        type="text" 
-                        x-model="tempGroupName"
-                        @keydown.enter="confirmGroupName()"
-                        @keydown.escape="closeGroupNameModal()"
-                        x-ref="groupNameInput"
-                        class="w-full px-4 py-3 border-2 border-webropol-gray-200 rounded-lg focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100 transition-all"
-                        placeholder="Enter a descriptive name..."
-                    />
-                    <p class="text-xs text-webropol-gray-500 mt-2">
-                        <i class="fas fa-info-circle"></i>
-                        Choose a name that describes what these conditions represent
-                    </p>
-                </div>
-                
-                <!-- Modal Footer -->
-                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
-                    <button 
-                        @click="closeGroupNameModal()"
-                        class="px-4 py-2 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        @click="confirmGroupName()"
-                        :disabled="!tempGroupName.trim()"
-                        class="px-4 py-2 rounded-full font-medium transition-colors"
-                        :class="tempGroupName.trim() ? 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700' : 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed'"
-                    >
-                        <i class="fas fa-check mr-2"></i>
-                        Create Group
-                    </button>
-                </div>
-            </div>
-        </div>
     </div>
     
     <script>
@@ -762,9 +698,6 @@
                 selectedConditions: [],
                 groups: [],
                 nextGroupId: 1,
-                showGroupNameModal: false,
-                tempGroupName: '',
-                pendingGroupId: null,
                 showConfirmModal: false,
                 confirmTitle: '',
                 confirmMessage: '',
@@ -891,56 +824,21 @@
                     this.showAlertModal = false;
                 },
                 
-                async groupSelectedConditions() {
+                groupSelectedConditions() {
                     if (this.selectedConditions.length < 2) {
                         this.showAlert('Selection Required', 'Please select at least 2 conditions to group.', 'fa-exclamation-triangle text-amber-500');
                         return;
                     }
                     
-                    // Check if selections are consecutive
-                    const sorted = [...this.selectedConditions].sort((a, b) => a - b);
-                    let isConsecutive = true;
-                    for (let i = 1; i < sorted.length; i++) {
-                        if (sorted[i] !== sorted[i-1] + 1) {
-                            isConsecutive = false;
-                            break;
-                        }
-                    }
-                    
-                    if (!isConsecutive) {
-                        const proceed = await this.showConfirm(
-                            'Non-consecutive Selection', 
-                            'Selected conditions are not consecutive. Group them anyway?',
-                            'Group Anyway',
-                            'Cancel'
-                        );
-                        if (!proceed) return;
-                    }
-                    
-                    // Open modal for group naming
-                    this.pendingGroupId = this.nextGroupId;
-                    this.tempGroupName = `Group ${this.pendingGroupId}`;
-                    this.showGroupNameModal = true;
-                    
-                    // Focus input after modal opens
-                    this.$nextTick(() => {
-                        this.$refs.groupNameInput?.focus();
-                        this.$refs.groupNameInput?.select();
-                    });
-                },
-                
-                confirmGroupName() {
-                    if (!this.tempGroupName.trim()) {
-                        return;
-                    }
-                    
-                    const groupId = this.pendingGroupId;
+                    // Create group immediately
+                    const groupId = this.nextGroupId;
                     this.nextGroupId++;
                     
                     this.groups.push({
                         id: groupId,
-                        name: this.tempGroupName.trim(),
-                        logic: 'AND'
+                        name: `Group ${groupId}`,
+                        logic: 'AND',
+                        nextLogic: 'AND'
                     });
                     
                     this.selectedConditions.forEach(index => {
@@ -948,13 +846,6 @@
                     });
                     
                     this.selectedConditions = [];
-                    this.closeGroupNameModal();
-                },
-                
-                closeGroupNameModal() {
-                    this.showGroupNameModal = false;
-                    this.tempGroupName = '';
-                    this.pendingGroupId = null;
                 },
                 
                 ungroupSelected() {
@@ -976,12 +867,7 @@
                 },
                 
                 getGroup(groupId) {
-                    return this.groups.find(g => g.id === groupId) || { logic: 'AND' };
-                },
-                
-                getGroupName(groupId) {
-                    const group = this.groups.find(g => g.id === groupId);
-                    return group ? group.name : `Group ${groupId}`;
+                    return this.groups.find(g => g.id === groupId) || { logic: 'AND', nextLogic: 'AND' };
                 },
                 
                 addCondition() {
