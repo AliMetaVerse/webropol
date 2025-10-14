@@ -144,27 +144,36 @@
                             </h2>
                             
                             <!-- Selection Actions -->
-                            <div x-show="selectedConditions.length > 0" class="flex items-center gap-2">
-                                <span class="text-sm text-webropol-gray-600">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-webropol-gray-600" x-show="selectedConditions.length > 0">
                                     <span class="font-semibold" x-text="selectedConditions.length"></span> selected
                                 </span>
                                 <button 
                                     @click="groupSelectedConditions()"
-                                    class="bg-webropol-primary-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-webropol-primary-600 transition-colors flex items-center gap-2"
+                                    :disabled="selectedConditions.length === 0"
+                                    :title="selectedConditions.length === 0 ? 'Please select at least 2 conditions first' : 'Group selected conditions together'"
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                    :class="selectedConditions.length === 0 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-500 text-white hover:bg-webropol-primary-600'"
                                 >
                                     <i class="fas fa-object-group"></i>
                                     Group Selected
                                 </button>
                                 <button 
                                     @click="ungroupSelected()"
-                                    class="bg-webropol-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-webropol-gray-600 transition-colors flex items-center gap-2"
+                                    :disabled="selectedConditions.length === 0"
+                                    :title="selectedConditions.length === 0 ? 'Please select conditions to ungroup first' : 'Remove grouping from selected conditions'"
+                                    class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                                    :class="selectedConditions.length === 0 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-gray-500 text-white hover:bg-webropol-gray-600'"
                                 >
                                     <i class="fas fa-object-ungroup"></i>
                                     Ungroup
                                 </button>
                                 <button 
                                     @click="clearSelection()"
-                                    class="text-webropol-gray-600 hover:bg-webropol-gray-100 px-3 py-2 rounded-lg text-sm"
+                                    :disabled="selectedConditions.length === 0"
+                                    :title="selectedConditions.length === 0 ? 'No selection to clear' : 'Clear current selection'"
+                                    class="px-3 py-2 rounded-lg text-sm transition-colors"
+                                    :class="selectedConditions.length === 0 ? 'text-webropol-gray-400 cursor-not-allowed' : 'text-webropol-gray-600 hover:bg-webropol-gray-100'"
                                 >
                                     Clear
                                 </button>
@@ -217,15 +226,6 @@
                                             @change="toggleConditionSelection(index)"
                                             class="checkbox-custom text-webropol-primary-500 rounded focus:ring-webropol-primary-500"
                                         />
-                                        
-                                        <!-- Logic Operator (First Dropdown) -->
-                                        <div class="w-32">
-                                            <select class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm font-medium bg-white">
-                                                <option value="all">Match All</option>
-                                                <option value="any">Match Any</option>
-                                                <option value="none">Match None</option>
-                                            </select>
-                                        </div>
                                     
                                     <!-- Condition Type (Second Dropdown) -->
                                     <div class="w-48">
