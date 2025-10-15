@@ -37,7 +37,7 @@ export class WebropolRadioSpecial extends BaseComponent {
 
     const sizeClasses = {
       sm: 'pl-2.5 pr-3 py-1 text-xs',
-      md: 'pl-3 pr-4 py-1.5 text-sm'
+      md: 'pl-2 pr-4 py-2 text-sm'
     };
 
     // Map variant to tokenized classes
