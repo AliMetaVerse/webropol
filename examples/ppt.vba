@@ -16,10 +16,10 @@ Const msoAnchorTop As Long = 1
 
 Const ppLayoutBlank As Long = 12
 Const ppLayoutText As Long = 2
-Const ppEffectFade As Long = 11
-Const ppEffectPush As Long = 23
-Const ppEffectFadeSmoothly As Long = 26
-Const ppEffectDissolve As Long = 12
+Const ppEffectFade As Long = 1017
+Const ppEffectPush As Long = 3017
+Const ppEffectFadeSmoothly As Long = 3914
+Const ppEffectDissolve As Long = 3073
 Const ppThemeColorAccent1 As Long = 5
 Const ppThemeColorAccent2 As Long = 6
 Const ppThemeColorAccent3 As Long = 7
@@ -34,7 +34,7 @@ Sub CreateProductSpecDeck()
     Dim productTagline As String: productTagline = "Reimagine how teams work"
     Dim logoPath As String: logoPath = "C:\Temp\logo.png"           ' leave blank if none
     Dim heroImagePath As String: heroImagePath = "C:\Temp\hero.jpg" ' leave blank if none
-    Dim mockupImagePath As String: mockupImagePath = "C:\Temp\mockup.png"
+    Dim mockupImagePath As String: mockupImagePath = "C:\Temp\mockup.jpg"
     Dim coreColor1 As Long: coreColor1 = RGB(10, 25, 77)   ' dark navy
     Dim coreColor2 As Long: coreColor2 = RGB(0, 150, 136)  ' accent teal
     Dim coreColor3 As Long: coreColor3 = RGB(255, 183, 77) ' warm accent
