@@ -566,17 +566,20 @@
                                         <select x-model="action.type"
                                             class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
                                             <option value="">-- Select action --</option>
-                                            <option value="show">Show question(s)</option>
-                                            <option value="hide">Hide question(s)</option>
-                                            <option value="require">Require question(s)</option>
-                                            <option value="skip">Skip to page</option>
                                             <option value="end">End survey</option>
+                                            <option value="forward">Forward respondent to</option>
+                                            <option value="show">Show Question(s)</option>
+                                            <option value="hide">Hide Question(s)</option>
+                                            <option value="disable">Disable Question(s)</option>
+                                            <option value="show_option">Show Option(s)</option>
+                                            <option value="hide_option">Hide Option(s)</option>
+                                            <option value="disable_option">Disable Option(s)</option>
                                         </select>
                                     </div>
 
                                     <!-- Questions Selector Dropdown -->
                                     <div class="flex-1 relative"
-                                        x-show="action.type && ['show', 'hide', 'require'].includes(action.type)"
+                                        x-show="action.type && ['show', 'hide', 'disable', 'show_option', 'hide_option', 'disable_option'].includes(action.type)"
                                         x-data="{ open: false }">
                                         <div @click="open = !open" @click.away="open = false"
                                             class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white cursor-pointer min-h-[42px] flex items-center justify-between">
@@ -627,6 +630,18 @@
                                             <option value="page4">Page 4: Contact</option>
                                             <option value="thankyou">Thank You Page</option>
                                         </select>
+                                    </div>
+
+                                    <!-- URL Input for Forward Action -->
+                                    <div class="flex-1" x-show="action.type === 'forward'">
+                                        <input type="url" x-model="action.forwardUrl"
+                                            class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white"
+                                            placeholder="Enter URL (e.g., https://example.com)">
+                                    </div>
+
+                                    <!-- Text for End Survey Action -->
+                                    <div class="flex-1" x-show="action.type === 'end'">
+                                        <span class="text-sm text-webropol-gray-600">and redirect respondent to thank you page</span>
                                     </div>
 
                                     <!-- Delete Button -->
@@ -1102,6 +1117,7 @@
                         type: '',
                         targetQuestions: [],
                         targetPage: '',
+                        forwardUrl: '',
                         timing: 'immediate'
                     });
                     this.persist();
@@ -1185,14 +1201,20 @@
                     const actionLabels = {
                         show: 'Show',
                         hide: 'Hide',
-                        require: 'Require',
+                        disable: 'Disable',
+                        show_option: 'Show Option(s) in',
+                        hide_option: 'Hide Option(s) in',
+                        disable_option: 'Disable Option(s) in',
                         skip: 'Skip to',
+                        forward: 'Forward respondent to',
                         end: 'End survey'
                     };
                     const actionLabel = actionLabels[action.type] || action.type;
                     
                     if (action.type === 'skip') {
                         return `${actionLabel} ${action.targetPage || 'page'}`;
+                    } else if (action.type === 'forward') {
+                        return `${actionLabel} ${action.forwardUrl || 'URL'}`;
                     } else if (action.type === 'end') {
                         return actionLabel;
                     } else if (action.targetQuestions.length > 0) {
