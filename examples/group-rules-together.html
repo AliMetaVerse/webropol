@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="../design-system/components/forms/RadioPill.js" type="module"></script>
     
     <script>
         tailwind.config = {
@@ -335,30 +336,24 @@
                                         <div class="mt-4 pt-3 border-t-2 border-webropol-primary-100" x-show="itemIndex < organizedConditions.length - 1">
                                             <div class="flex items-center gap-4 ml-6">
                                                 <div class="flex gap-2">
-                                                    <label class="cursor-pointer group">
-                                                        <span class="condition-badge inline-flex items-center gap-2 pl-3 pr-4 py-1.5 bg-webropol-primary-100 text-webropol-primary-700 rounded-full border border-white group-hover:bg-webropol-primary-200 transition-colors">
-                                                            <input 
-                                                                type="radio" 
-                                                                :name="'group-after-' + item.groupId" 
-                                                                x-model="getGroup(item.groupId).nextLogic" @change="persist()"
-                                                                value="AND"
-                                                                class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
-                                                            />
-                                                            <span>AND</span>
-                                                        </span>
-                                                    </label>
-                                                    <label class="cursor-pointer group">
-                                                        <span class="condition-badge inline-flex items-center gap-2 pl-3 pr-4 py-1.5 bg-purple-100 text-purple-700 rounded-full border border-white group-hover:bg-purple-200 transition-colors">
-                                                            <input 
-                                                                type="radio" 
-                                                                :name="'group-after-' + item.groupId" 
-                                                                x-model="getGroup(item.groupId).nextLogic" @change="persist()"
-                                                                value="OR"
-                                                                class="w-4 h-4 text-purple-500 focus:ring-purple-500"
-                                                            />
-                                                            <span>OR</span>
-                                                        </span>
-                                                    </label>
+                                                    <webropol-radio-pill 
+                                                        :name="'group-after-' + item.groupId"
+                                                        value="AND"
+                                                        label="AND"
+                                                        variant="primary"
+                                                        size="md"
+                                                        :checked="getGroup(item.groupId).nextLogic === 'AND'"
+                                                        @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'AND'; persist() }"
+                                                    ></webropol-radio-pill>
+                                                    <webropol-radio-pill 
+                                                        :name="'group-after-' + item.groupId"
+                                                        value="OR"
+                                                        label="OR"
+                                                        variant="accent"
+                                                        size="md"
+                                                        :checked="getGroup(item.groupId).nextLogic === 'OR'"
+                                                        @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'OR'; persist() }"
+                                                    ></webropol-radio-pill>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,30 +428,24 @@
                                             x-show="item.index < conditions.length - 1"
                                         >
                                             <div class="flex gap-2">
-                                                <label class="cursor-pointer group">
-                                                    <span class="condition-badge inline-flex items-center gap-2 pl-3 pr-4 py-1.5 bg-webropol-primary-100 text-webropol-primary-700 rounded-full border border-white group-hover:bg-webropol-primary-200 transition-colors">
-                                                        <input 
-                                                            type="radio" 
-                                                            :name="'logic-' + item.index" 
-                                                            x-model="item.condition.logic" @change="persist()"
-                                                            value="AND"
-                                                            class="w-4 h-4 text-webropol-primary-500 focus:ring-webropol-primary-500"
-                                                        />
-                                                        <span>AND</span>
-                                                    </span>
-                                                </label>
-                                                <label class="cursor-pointer group">
-                                                    <span class="condition-badge inline-flex items-center gap-2 pl-3 pr-4 py-1.5 bg-purple-100 text-purple-700 rounded-full border border-white group-hover:bg-purple-200 transition-colors">
-                                                        <input 
-                                                            type="radio" 
-                                                            :name="'logic-' + item.index" 
-                                                            x-model="item.condition.logic" @change="persist()"
-                                                            value="OR"
-                                                            class="w-4 h-4 text-purple-500 focus:ring-purple-500"
-                                                        />
-                                                        <span>OR</span>
-                                                    </span>
-                                                </label>
+                                                <webropol-radio-pill 
+                                                    :name="'logic-' + item.index"
+                                                    value="AND"
+                                                    label="AND"
+                                                    variant="primary"
+                                                    size="md"
+                                                    :checked="item.condition.logic === 'AND'"
+                                                    @webropol-change="if ($event.detail.checked) { item.condition.logic = 'AND'; persist() }"
+                                                ></webropol-radio-pill>
+                                                <webropol-radio-pill 
+                                                    :name="'logic-' + item.index"
+                                                    value="OR"
+                                                    label="OR"
+                                                    variant="accent"
+                                                    size="md"
+                                                    :checked="item.condition.logic === 'OR'"
+                                                    @webropol-change="if ($event.detail.checked) { item.condition.logic = 'OR'; persist() }"
+                                                ></webropol-radio-pill>
                                             </div>
                                         </div>
                                     </div>
