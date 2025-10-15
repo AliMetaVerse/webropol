@@ -5,4 +5,4 @@
 
 export { WebropolInput } from './Input.js';
 export { WebropolToggle } from './Toggle.js';
-export { WebropolRadioPill } from './RadioPill.js';
+export { WebropolRadioSpecial } from './RadioSpecial.js';

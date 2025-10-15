@@ -31,7 +31,7 @@ export { WebropolFloatingButton } from './interactive/FloatingButton.js';
 
 // Form components
 export { Input } from './forms/Input.js';
-export { WebropolRadioPill } from './forms/RadioPill.js';
+export { WebropolRadioSpecial } from './forms/RadioSpecial.js';
 
 // Feedback components
 export { Badge } from './feedback/Badge.js';
@@ -62,7 +62,7 @@ import './navigation/Tabs.js';
 import './navigation/Brand.js';
 import './interactive/FloatingButton.js';
 import './forms/Input.js';
-import './forms/RadioPill.js';
+import './forms/RadioSpecial.js';
 import './feedback/Badge.js';
 import './feedback/Loading.js';
 import './feedback/Tooltip.js';
