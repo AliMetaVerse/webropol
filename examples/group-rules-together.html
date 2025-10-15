@@ -731,6 +731,163 @@
                 </div>
             </div>
         </div>
+
+        <!-- Overview/Confirmation Modal -->
+        <div x-show="showOverviewModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+            @click.self="closeOverviewModal()">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-5 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 rounded-t-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-light fa-clipboard-check text-white text-2xl"></i>
+                        <h3 class="text-xl font-bold text-white">Review Your Rule Group</h3>
+                    </div>
+                    <button @click="closeOverviewModal()"
+                        class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content - Scrollable -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <!-- Group Name -->
+                    <div class="bg-webropol-primary-50 rounded-lg p-4 border-2 border-webropol-primary-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-light fa-tag text-webropol-primary-600"></i>
+                            <h4 class="text-sm font-bold text-webropol-gray-600 uppercase tracking-wide">Group Name</h4>
+                        </div>
+                        <p class="text-lg font-semibold text-webropol-gray-900" x-text="groupName || '(No name set)'"></p>
+                    </div>
+
+                    <!-- Conditions Overview -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-light fa-filter text-webropol-primary-500 text-xl"></i>
+                            <h4 class="text-lg font-bold text-webropol-gray-800">Conditions</h4>
+                            <span class="ml-auto px-3 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-sm font-semibold"
+                                x-text="conditions.length + ' total'"></span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <template x-for="(item, itemIndex) in organizedConditions" :key="itemIndex">
+                                <div>
+                                    <!-- Grouped Conditions -->
+                                    <template x-if="item.type === 'group'">
+                                        <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg p-4 border-2 border-webropol-primary-300">
+                                            <div class="flex items-center gap-2 mb-3">
+                                                <div class="bg-webropol-primary-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                                    <span x-text="getGroup(item.groupId).logic"></span> Group
+                                                </div>
+                                                <span class="text-xs text-webropol-gray-600" x-text="item.conditions.length + ' conditions'"></span>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
+                                                    <div class="bg-white rounded-md p-3 flex items-start gap-2 shadow-sm">
+                                                        <i class="fa-light fa-circle-check text-webropol-primary-500 mt-0.5"></i>
+                                                        <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(condItem.condition)"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <!-- Next Logic Indicator -->
+                                            <div class="mt-3 pt-3 border-t border-webropol-primary-300" x-show="itemIndex < organizedConditions.length - 1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-semibold text-webropol-gray-600">Then combine with next using:</span>
+                                                    <span class="bg-webropol-primary-600 text-white px-2 py-0.5 rounded text-xs font-bold"
+                                                        x-text="getGroup(item.groupId).nextLogic"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Single Condition -->
+                                    <template x-if="item.type === 'single'">
+                                        <div>
+                                            <div class="bg-white rounded-lg p-4 border-2 border-webropol-gray-200 flex items-start gap-3">
+                                                <i class="fa-light fa-circle-check text-webropol-primary-500 text-lg mt-0.5"></i>
+                                                <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(item.condition)"></span>
+                                            </div>
+                                            <!-- Logic Connector -->
+                                            <div class="flex items-center justify-center py-2" x-show="item.index < conditions.length - 1">
+                                                <span class="bg-webropol-gray-600 text-white px-3 py-1 rounded-full text-xs font-bold"
+                                                    x-text="item.condition.logic"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- No conditions message -->
+                            <template x-if="conditions.length === 0">
+                                <div class="bg-webropol-gray-50 rounded-lg p-4 text-center text-sm text-webropol-gray-500">
+                                    <i class="fa-light fa-info-circle mr-1"></i>
+                                    No conditions defined
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Actions Overview -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-light fa-bolt text-webropol-primary-500 text-xl"></i>
+                            <h4 class="text-lg font-bold text-webropol-gray-800">Actions</h4>
+                            <span class="ml-auto px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold"
+                                x-text="actions.length + ' total'"></span>
+                        </div>
+
+                        <div class="space-y-2">
+                            <template x-for="(action, actionIndex) in actions" :key="actionIndex">
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-2 border-green-200 flex items-start gap-3">
+                                    <i class="fa-light fa-play-circle text-green-600 text-lg mt-0.5"></i>
+                                    <div class="flex-1">
+                                        <span class="text-sm font-medium text-webropol-gray-700" x-text="getActionSummary(action)"></span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- No actions message -->
+                            <template x-if="actions.length === 0">
+                                <div class="bg-webropol-gray-50 rounded-lg p-4 text-center text-sm text-webropol-gray-500">
+                                    <i class="fa-light fa-info-circle mr-1"></i>
+                                    No actions defined
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Summary Statement -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border-2 border-blue-200">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-light fa-lightbulb text-blue-600 text-xl mt-0.5"></i>
+                            <div>
+                                <h5 class="font-bold text-blue-900 mb-1">Summary</h5>
+                                <p class="text-sm text-blue-800">
+                                    When <span class="font-semibold" x-text="conditions.length"></span> 
+                                    <span x-text="conditions.length === 1 ? 'condition is' : 'conditions are'"></span> met, 
+                                    <span class="font-semibold" x-text="actions.length"></span> 
+                                    <span x-text="actions.length === 1 ? 'action' : 'actions'"></span> will be performed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-xl flex justify-end gap-3 border-t border-webropol-gray-200">
+                    <button @click="closeOverviewModal()"
+                        class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        <i class="fa-light fa-times mr-2"></i>
+                        Cancel
+                    </button>
+                    <button @click="applyChanges()"
+                        class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl">
+                        <i class="fa-light fa-check mr-2"></i>
+                        Apply Changes
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -752,6 +909,7 @@
                 alertTitle: '',
                 alertMessage: '',
                 alertIcon: 'fa-info-circle text-webropol-primary-500',
+                showOverviewModal: false,
                 availableQuestions: [
                     { id: 'q1', label: '1. Where do you work?' },
                     { id: 'q2', label: '2. What percentage do you work from home?' },
@@ -1010,6 +1168,11 @@
                 },
 
                 save() {
+                    // Show overview modal instead of saving directly
+                    this.showOverviewModal = true;
+                },
+
+                applyChanges() {
                     const payload = {
                         version: 1,
                         groupName: this.groupName,
@@ -1021,7 +1184,47 @@
                     };
                     console.log('Saving rule group:', payload);
                     this.saveToStorage(payload);
+                    this.showOverviewModal = false;
                     this.showAlert('Success', 'Rule group saved locally.', 'fa-check-circle text-green-500');
+                },
+
+                closeOverviewModal() {
+                    this.showOverviewModal = false;
+                },
+
+                getConditionSummary(condition) {
+                    const typeLabels = {
+                        selected: 'is selected',
+                        not_selected: 'is not selected',
+                        contains: 'contains',
+                        equals: 'equals',
+                        greater: 'is greater than',
+                        less: 'is less than'
+                    };
+                    const questionLabel = this.getQuestionLabel(condition.question);
+                    const typeLabel = typeLabels[condition.type] || condition.type;
+                    return `${questionLabel} ${typeLabel} "${condition.answer}"`;
+                },
+
+                getActionSummary(action) {
+                    const actionLabels = {
+                        show: 'Show',
+                        hide: 'Hide',
+                        require: 'Require',
+                        skip: 'Skip to',
+                        end: 'End survey'
+                    };
+                    const actionLabel = actionLabels[action.type] || action.type;
+                    
+                    if (action.type === 'skip') {
+                        return `${actionLabel} ${action.targetPage || 'page'}`;
+                    } else if (action.type === 'end') {
+                        return actionLabel;
+                    } else if (action.targetQuestions.length > 0) {
+                        const questions = action.targetQuestions.map(qId => this.getQuestionLabel(qId)).join(', ');
+                        return `${actionLabel}: ${questions}`;
+                    }
+                    return `${actionLabel} (no target specified)`;
                 },
 
                 // Persistence helpers
