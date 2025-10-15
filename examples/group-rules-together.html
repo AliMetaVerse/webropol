@@ -83,35 +83,105 @@
             box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
         }
         
-        /* Unified Group Container */
+        /* Unified Group Container - Redesigned */
         .group-wrapper {
-            border: 3px solid #06b6d4;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #f0fdff 0%, #ffffff 100%);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2), 0 0 0 1px rgba(6, 182, 212, 0.1) inset;
+            border: none;
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 2rem;
+            background: linear-gradient(145deg, #ffffff 0%, #f0fdff 100%);
+            box-shadow: 
+                0 10px 40px rgba(6, 182, 212, 0.12),
+                0 2px 8px rgba(6, 182, 212, 0.08),
+                inset 0 -1px 0 rgba(6, 182, 212, 0.1);
             position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(6, 182, 212, 0.15);
+        }
+        
+        .group-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #06b6d4, #22c9f0, #5ce0fa, #22c9f0, #06b6d4);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 0%; }
         }
         
         .group-header {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+            padding: 1.5rem 1.75rem;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .group-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .group-icon-badge {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+            padding: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .group-logic-selector {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0e7490;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .group-logic-selector:hover {
+            background: #ffffff;
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .group-content {
+            padding: 1.75rem;
         }
         
         .group-condition-row {
-            background: white;
-            border: 2px solid #ccf7fe;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
+            background: #ffffff;
+            border: 2px solid #e0f7fa;
+            border-radius: 14px;
+            padding: 1.25rem;
+            padding-left: 1.75rem;
+            margin-bottom: 0.875rem;
+            box-shadow: 
+                0 2px 8px rgba(6, 182, 212, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            padding-left: 1.25rem;
+            overflow: hidden;
         }
         
         .group-condition-row::before {
@@ -120,19 +190,45 @@
             left: 0;
             top: 0;
             bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #06b6d4, #22c9f0);
-            border-radius: 10px 0 0 10px;
+            width: 5px;
+            background: linear-gradient(180deg, #06b6d4 0%, #22c9f0 50%, #5ce0fa 100%);
+            border-radius: 14px 0 0 14px;
+            transition: width 0.25s ease;
         }
         
         .group-condition-row:hover {
-            border-color: #06b6d4;
-            box-shadow: 0 4px 8px rgba(6, 182, 212, 0.2);
-            transform: translateX(4px);
+            border-color: #99eefd;
+            box-shadow: 
+                0 8px 24px rgba(6, 182, 212, 0.15),
+                0 2px 8px rgba(6, 182, 212, 0.1);
+            transform: translateX(6px);
+        }
+        
+        .group-condition-row:hover::before {
+            width: 8px;
         }
         
         .group-condition-row:last-child {
             margin-bottom: 0;
+        }
+        
+        .group-footer {
+            padding: 1.25rem 1.75rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(6, 182, 212, 0.1);
+            background: linear-gradient(to bottom, transparent 0%, rgba(6, 182, 212, 0.02) 100%);
+        }
+        
+        .group-count-badge {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.25) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #0e7490;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(6, 182, 212, 0.1);
         }
         
         .checkbox-custom {
@@ -167,11 +263,11 @@
                 <!-- Header -->
                 <div class="bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 px-8 py-6 rounded-t-lg flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <i class="fas fa-layer-group text-white text-2xl"></i>
+                        <i class="fa-lightfa-layer-group text-white text-2xl"></i>
                         <h1 class="text-2xl font-bold text-white">Rule Group Details</h1>
                     </div>
                     <button @click="closeModal()" class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
-                        <i class="fas fa-times text-xl"></i>
+                        <i class="fa-lightfa-times text-xl"></i>
                     </button>
                 </div>
                 
@@ -194,7 +290,7 @@
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
-                                <i class="fas fa-filter text-webropol-primary-500"></i>
+                                <i class="fa-lightfa-filter text-webropol-primary-500"></i>
                                 When These Conditions Are Met
                             </h2>
                             
@@ -210,7 +306,7 @@
                                     class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
                                     :class="selectedConditions.length === 0 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-500 text-white hover:bg-webropol-primary-600'"
                                 >
-                                    <i class="fas fa-object-group"></i>
+                                    <i class="fa-lightfa-object-group"></i>
                                     Group Selected
                                 </button>
                                 <button 
@@ -220,7 +316,7 @@
                                     class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
                                     :class="!hasGroupedConditionsSelected() ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-gray-500 text-white hover:bg-webropol-gray-600'"
                                 >
-                                    <i class="fas fa-object-ungroup"></i>
+                                    <i class="fa-lightfa-object-ungroup"></i>
                                     Ungroup
                                 </button>
                                 <button 
@@ -242,26 +338,37 @@
                                 <template x-if="item.type === 'group'">
                                     <div class="group-wrapper">
                                         <!-- Group Header -->
-                                        <div class="group-header text-white">
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="bg-white/20 rounded-lg p-2">
-                                                        <i class="fas fa-layer-group text-xl"></i>
+                                        <div class="group-header text-white relative z-10">
+                                            <div class="flex items-center justify-between relative z-10">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="group-icon-badge">
+                                                        <i class="fa-lightfa-layer-group text-2xl"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-bold text-lg tracking-wide">Condition Group</div>
+                                                        <div class="text-white text-sm font-medium mt-0.5 flex items-center gap-2">
+                                                            <span x-text="item.conditions.length + ' conditions'"></span>
+                                                            <span class="group-count-badge text-white">
+                                                                <i class="fa-lightfa-object-group text-xs mr-1"></i>
+                                                                <span x-text="getGroup(item.groupId).logic"></span>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center gap-3">
                                                     <select 
                                                         x-model="getGroup(item.groupId).logic" @change="persist()"
-                                                        class="px-4 py-2 bg-white text-webropol-primary-700 rounded-lg text-sm font-semibold border-2 border-white/30 hover:bg-webropol-primary-50 transition-colors cursor-pointer"
+                                                        class="group-logic-selector"
                                                     >
                                                         <option value="AND">All must match (AND)</option>
                                                         <option value="OR">Any can match (OR)</option>
                                                     </select>
                                                     <button 
                                                         @click="ungroupConditions(item.groupId)"
-                                                        class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                                                        class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 border border-white/30 hover:border-white/50"
+                                                        title="Break apart this group"
                                                     >
-                                                        <i class="fas fa-object-ungroup"></i>
+                                                        <i class="fa-lightfa-object-ungroup"></i>
                                                         Ungroup
                                                     </button>
                                                 </div>
@@ -269,6 +376,7 @@
                                         </div>
                                         
                                         <!-- All Grouped Conditions -->
+                                        <div class="group-content">
                                         <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
                                             <div>
                                                 <div 
@@ -325,15 +433,16 @@
                                                             class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                                                             title="Remove condition"
                                                         >
-                                                            <i class="fas fa-trash-alt text-lg"></i>
+                                                            <i class="fa-lightfa-trash-alt text-lg"></i>
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </template>
+                                        </div>
 
                                         <!-- Group Footer AND/OR Toggle (inside container) -->
-                                        <div class="mt-4 pt-3 border-t-2 border-webropol-primary-100" x-show="itemIndex < organizedConditions.length - 1">
+                                        <div class="group-footer" x-show="itemIndex < organizedConditions.length - 1">
                                             <div class="flex items-center gap-4 ml-6">
                                                 <div class="flex gap-2">
                                                     <webropol-radio-pill 
@@ -417,7 +526,7 @@
                                                     class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                                                     title="Remove condition"
                                                 >
-                                                    <i class="fas fa-trash-alt text-lg"></i>
+                                                    <i class="fa-lightfa-trash-alt text-lg"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -458,7 +567,7 @@
                             @click="addCondition()"
                             class="text-webropol-primary-600 mb-2 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium"
                         >
-                            <i class="fas fa-plus"></i>
+                            <i class="fa-lightfa-plus"></i>
                             Add new condition (AND/OR)
                         </button>
                     </div>
@@ -467,7 +576,7 @@
                     <div class="mb-6" x-show="actions.length > 0">
                         <div class="flex items-center mb-4">
                             <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
-                                <i class="fas fa-bolt text-webropol-primary-500"></i>
+                                <i class="fa-lightfa-bolt text-webropol-primary-500"></i>
                                 Then Perform These Actions
                             </h2>
                         </div>
@@ -509,12 +618,12 @@
                                                             @click.stop="removeQuestionFromAction(index, idx)"
                                                             class="hover:bg-webropol-primary-200 rounded-full w-4 h-4 flex items-center justify-center"
                                                         >
-                                                            <i class="fas fa-times text-xs"></i>
+                                                            <i class="fa-lightfa-times text-xs"></i>
                                                         </button>
                                                     </span>
                                                 </template>
                                             </div>
-                                            <i class="fas fa-chevron-down text-webropol-gray-400 ml-2" :class="{ 'rotate-180': open }"></i>
+                                            <i class="fa-lightfa-chevron-down text-webropol-gray-400 ml-2" :class="{ 'rotate-180': open }"></i>
                                         </div>
                                         
                                         <!-- Dropdown Menu -->
@@ -558,7 +667,7 @@
                                         class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                                         title="Remove action"
                                     >
-                                        <i class="fas fa-trash-alt text-lg"></i>
+                                        <i class="fa-lightfa-trash-alt text-lg"></i>
                                     </button>
                                 </div>
                             </div>
@@ -570,7 +679,7 @@
                         @click="addAction()"
                         class="text-webropol-primary-600 mb-6 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium"
                     >
-                        <i class="fas fa-plus"></i>
+                        <i class="fa-lightfa-plus"></i>
                         Add new action
                     </button>
 
@@ -588,7 +697,7 @@
                         @click="save()"
                         class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl"
                     >
-                        <i class="fas fa-check mr-2"></i>
+                        <i class="fa-lightfa-check mr-2"></i>
                         Save
                     </button>
                 </div>
@@ -606,11 +715,11 @@
                 <!-- Modal Header -->
                 <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-question-circle text-amber-500 text-xl"></i>
+                        <i class="fa-lightfa-question-circle text-amber-500 text-xl"></i>
                         <h3 class="text-lg font-bold text-webropol-gray-800" x-text="confirmTitle"></h3>
                     </div>
                     <button @click="closeConfirmModal(false)" class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-lightfa-times"></i>
                     </button>
                 </div>
                 
@@ -648,11 +757,11 @@
                 <!-- Modal Header -->
                 <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i class="fas text-xl" :class="alertIcon"></i>
+                        <i class="fa-lighttext-xl" :class="alertIcon"></i>
                         <h3 class="text-lg font-bold text-webropol-gray-800" x-text="alertTitle"></h3>
                     </div>
                     <button @click="closeAlertModal()" class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
-                        <i class="fas fa-times"></i>
+                        <i class="fa-lightfa-times"></i>
                     </button>
                 </div>
                 
