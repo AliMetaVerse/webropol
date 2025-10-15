@@ -215,10 +215,10 @@
                                 </button>
                                 <button 
                                     @click="ungroupSelected()"
-                                    :disabled="selectedConditions.length === 0"
-                                    :title="selectedConditions.length === 0 ? 'Please select conditions to ungroup first' : 'Remove grouping from selected conditions'"
+                                    :disabled="!hasGroupedConditionsSelected()"
+                                    :title="!hasGroupedConditionsSelected() ? 'Please select grouped conditions to ungroup first' : 'Remove grouping from selected conditions'"
                                     class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
-                                    :class="selectedConditions.length === 0 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-gray-500 text-white hover:bg-webropol-gray-600'"
+                                    :class="!hasGroupedConditionsSelected() ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-gray-500 text-white hover:bg-webropol-gray-600'"
                                 >
                                     <i class="fas fa-object-ungroup"></i>
                                     Ungroup
@@ -862,6 +862,13 @@
                     });
                     this.selectedConditions = [];
                     this.persist();
+                },
+                
+                hasGroupedConditionsSelected() {
+                    if (this.selectedConditions.length === 0) return false;
+                    return this.selectedConditions.some(index => 
+                        this.conditions[index] && this.conditions[index].groupId != null
+                    );
                 },
                 
                 ungroupConditions(groupId) {
