@@ -371,6 +371,7 @@
 		</style>
 		<script type="module" src="../design-system/utils/global-settings-manager.js"></script>
 		<script type="module" src="../design-system/components/navigation/Brand.js"></script>
+		<script src="../scripts/analytics-global-tracker.js"></script>
 	</head>
 	<body>
 
@@ -895,225 +896,73 @@
 			}
 
 			// ===== ANALYTICS TRACKING SYSTEM =====
+			// Note: Analytics tracking is now handled by the global analytics-global-tracker.js
+			// This section only handles reading and displaying the data
 			
-			// Analytics data structure
-			const analyticsStore = {
-				visitors: new Set(), // Unique visitor IDs
-				pages: {}, // { pageUrl: { uniqueVisitors: Set, totalViews: number, lastVisit: timestamp } }
-				spaSections: {}, // { sectionName: { uniqueVisitors: Set, totalViews: number, lastVisit: timestamp } }
-				sessionId: null,
-				
-				init() {
-					// Get or create session ID (represents unique visitor)
-					this.sessionId = sessionStorage.getItem('analyticsSessionId');
-					if (!this.sessionId) {
-						this.sessionId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-						sessionStorage.setItem('analyticsSessionId', this.sessionId);
-					}
+			// Helper to load analytics data from global tracker
+			function loadGlobalAnalytics() {
+				try {
+					const saved = localStorage.getItem('webropolGlobalAnalytics');
+					if (!saved) return null;
 					
-					// Load existing analytics data
-					this.loadData();
-					
-					// Track current page
-					this.trackPageView(window.location.pathname);
-					
-					// Set up auto-save
-					setInterval(() => this.saveData(), 5000); // Save every 5 seconds
-				},
-				
-				loadData() {
-					try {
-						const saved = localStorage.getItem('webropolAnalytics');
-						if (saved) {
-							const data = JSON.parse(saved);
-							this.visitors = new Set(data.visitors || []);
-							
-							// Reconstruct pages object
-							if (data.pages) {
-								Object.keys(data.pages).forEach(page => {
-									this.pages[page] = {
-										uniqueVisitors: new Set(data.pages[page].uniqueVisitors || []),
-										totalViews: data.pages[page].totalViews || 0,
-										lastVisit: data.pages[page].lastVisit || Date.now()
-									};
-								});
-							}
-							
-							// Reconstruct SPA sections object
-							if (data.spaSections) {
-								Object.keys(data.spaSections).forEach(section => {
-									this.spaSections[section] = {
-										uniqueVisitors: new Set(data.spaSections[section].uniqueVisitors || []),
-										totalViews: data.spaSections[section].totalViews || 0,
-										lastVisit: data.spaSections[section].lastVisit || Date.now()
-									};
-								});
-							}
-						}
-					} catch (e) {
-						console.error('Failed to load analytics data:', e);
-					}
-				},
-				
-				saveData() {
-					try {
-						const data = {
-							visitors: Array.from(this.visitors),
-							pages: {},
-							spaSections: {}
-						};
-						
-						// Convert pages
-						Object.keys(this.pages).forEach(page => {
-							data.pages[page] = {
-								uniqueVisitors: Array.from(this.pages[page].uniqueVisitors),
-								totalViews: this.pages[page].totalViews,
-								lastVisit: this.pages[page].lastVisit
-							};
-						});
-						
-						// Convert SPA sections
-						Object.keys(this.spaSections).forEach(section => {
-							data.spaSections[section] = {
-								uniqueVisitors: Array.from(this.spaSections[section].uniqueVisitors),
-								totalViews: this.spaSections[section].totalViews,
-								lastVisit: this.spaSections[section].lastVisit
-							};
-						});
-						
-						localStorage.setItem('webropolAnalytics', JSON.stringify(data));
-					} catch (e) {
-						console.error('Failed to save analytics data:', e);
-					}
-				},
-				
-				trackPageView(pageUrl) {
-					// Add visitor to global set
-					this.visitors.add(this.sessionId);
-					
-					// Initialize page if not exists
-					if (!this.pages[pageUrl]) {
-						this.pages[pageUrl] = {
-							uniqueVisitors: new Set(),
-							totalViews: 0,
-							lastVisit: Date.now()
-						};
-					}
-					
-					// Track page view
-					this.pages[pageUrl].uniqueVisitors.add(this.sessionId);
-					this.pages[pageUrl].totalViews++;
-					this.pages[pageUrl].lastVisit = Date.now();
-					
-					this.saveData();
-				},
-				
-				trackSPASection(sectionName) {
-					// Add visitor to global set
-					this.visitors.add(this.sessionId);
-					
-					// Initialize section if not exists
-					if (!this.spaSections[sectionName]) {
-						this.spaSections[sectionName] = {
-							uniqueVisitors: new Set(),
-							totalViews: 0,
-							lastVisit: Date.now()
-						};
-					}
-					
-					// Track section view
-					this.spaSections[sectionName].uniqueVisitors.add(this.sessionId);
-					this.spaSections[sectionName].totalViews++;
-					this.spaSections[sectionName].lastVisit = Date.now();
-					
-					this.saveData();
-				},
-				
-				clearData() {
-					this.visitors = new Set();
-					this.pages = {};
-					this.spaSections = {};
-					localStorage.removeItem('webropolAnalytics');
-				},
-				
-				exportData() {
-					const data = {
-						totalVisitors: this.visitors.size,
-						pages: {},
-						spaSections: {},
-						exportDate: new Date().toISOString()
-					};
-					
-					Object.keys(this.pages).forEach(page => {
-						data.pages[page] = {
-							uniqueVisitors: this.pages[page].uniqueVisitors.size,
-							totalViews: this.pages[page].totalViews,
-							lastVisit: new Date(this.pages[page].lastVisit).toISOString()
-						};
-					});
-					
-					Object.keys(this.spaSections).forEach(section => {
-						data.spaSections[section] = {
-							uniqueVisitors: this.spaSections[section].uniqueVisitors.size,
-							totalViews: this.spaSections[section].totalViews,
-							lastVisit: new Date(this.spaSections[section].lastVisit).toISOString()
-						};
-					});
-					
+					const data = JSON.parse(saved);
 					return data;
+				} catch (e) {
+					console.error('Failed to load global analytics data:', e);
+					return null;
 				}
-			};
-			
-			// Initialize analytics tracking
-			function initAnalyticsTracking() {
-				analyticsStore.init();
-				
-				// Track SPA navigation (hash changes)
-				window.addEventListener('hashchange', () => {
-					const hash = window.location.hash.replace('#', '') || 'home';
-					analyticsStore.trackSPASection(hash);
-				});
-				
-				// Track initial SPA section
-				const initialHash = window.location.hash.replace('#', '') || 'home';
-				analyticsStore.trackSPASection(initialHash);
 			}
+			
+			// No need for initAnalyticsTracking() - global tracker handles this automatically
 			
 			// Render analytics dashboard
 			function renderAnalyticsDashboard() {
+				const data = loadGlobalAnalytics();
+				
+				if (!data) {
+					// No data available
+					qs('#totalVisitors').textContent = '0';
+					qs('#totalPageViews').textContent = '0';
+					qs('#pagesTracked').textContent = '0';
+					qs('#spaSections').textContent = '0';
+					return;
+				}
+				
 				// Update summary cards
-				qs('#totalVisitors').textContent = analyticsStore.visitors.size;
+				qs('#totalVisitors').textContent = (data.visitors || []).length;
 				
 				let totalPageViews = 0;
-				Object.values(analyticsStore.pages).forEach(page => {
-					totalPageViews += page.totalViews;
+				Object.values(data.pages || {}).forEach(page => {
+					totalPageViews += page.totalViews || 0;
 				});
-				Object.values(analyticsStore.spaSections).forEach(section => {
-					totalPageViews += section.totalViews;
+				Object.values(data.spaSections || {}).forEach(section => {
+					totalPageViews += section.totalViews || 0;
 				});
 				qs('#totalPageViews').textContent = totalPageViews;
 				
-				qs('#pagesTracked').textContent = Object.keys(analyticsStore.pages).length;
-				qs('#spaSections').textContent = Object.keys(analyticsStore.spaSections).length;
+				qs('#pagesTracked').textContent = Object.keys(data.pages || {}).length;
+				qs('#spaSections').textContent = Object.keys(data.spaSections || {}).length;
 				
 				// Render top pages chart
-				renderTopPagesChart();
+				renderTopPagesChart(data);
 				
 				// Render SPA chart
-				renderSPAChart();
+				renderSPAChart(data);
 				
 				// Render tables
-				renderPageTable();
-				renderSPATable();
+				renderPageTable(data);
+				renderSPATable(data);
 			}
 			
-			function renderTopPagesChart() {
+			function renderTopPagesChart(data) {
 				const container = qs('#topPagesChart');
 				container.innerHTML = '';
 				
+				const pages = data.pages || {};
+				
 				// Sort pages by unique visitors
-				const sortedPages = Object.entries(analyticsStore.pages)
-					.sort((a, b) => b[1].uniqueVisitors.size - a[1].uniqueVisitors.size)
+				const sortedPages = Object.entries(pages)
+					.sort((a, b) => (b[1].uniqueVisitors || []).length - (a[1].uniqueVisitors || []).length)
 					.slice(0, 10); // Top 10
 				
 				if (sortedPages.length === 0) {
@@ -1121,12 +970,13 @@
 					return;
 				}
 				
-				const maxValue = Math.max(...sortedPages.map(([, data]) => data.uniqueVisitors.size));
+				const maxValue = Math.max(...sortedPages.map(([, pageData]) => (pageData.uniqueVisitors || []).length));
 				
-				sortedPages.forEach(([page, data]) => {
-					const percentage = maxValue > 0 ? (data.uniqueVisitors.size / maxValue) * 100 : 0;
+				sortedPages.forEach(([page, pageData]) => {
+					const uniqueVisitors = (pageData.uniqueVisitors || []).length;
+					const percentage = maxValue > 0 ? (uniqueVisitors / maxValue) * 100 : 0;
 					const barColor = percentage > 70 ? '#8b5cf6' : percentage > 40 ? '#06b6d4' : '#10b981';
-					const fileName = data.fileName || page.split('/').pop() || 'unknown';
+					const fileName = pageData.fileName || page.split('/').pop() || 'unknown';
 					
 					const bar = document.createElement('div');
 					bar.style.marginBottom = '12px';
@@ -1138,11 +988,11 @@
 									<i class="fas fa-file" style="margin-right: 4px;"></i>${fileName}
 								</span>
 							</div>
-							<span style="color: #8b5cf6; font-family: 'Orbitron', monospace; font-weight: 700;">${data.uniqueVisitors.size}</span>
+							<span style="color: #8b5cf6; font-family: 'Orbitron', monospace; font-weight: 700;">${uniqueVisitors}</span>
 						</div>
 						<div style="background: rgba(15, 23, 42, 0.6); border-radius: 8px; height: 24px; position: relative; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.2);">
 							<div style="background: linear-gradient(90deg, ${barColor}, ${barColor}aa); height: 100%; width: ${percentage}%; transition: width 0.5s ease; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;">
-								<span style="color: white; font-size: 10px; font-weight: 700; font-family: 'Orbitron', monospace;">${data.totalViews} views</span>
+								<span style="color: white; font-size: 10px; font-weight: 700; font-family: 'Orbitron', monospace;">${pageData.totalViews || 0} views</span>
 							</div>
 						</div>
 					`;
@@ -1150,37 +1000,40 @@
 				});
 			}
 			
-			function renderSPAChart() {
+			function renderSPAChart(data) {
 				const container = qs('#spaChart');
 				container.innerHTML = '';
 				
+				const spaSections = data.spaSections || {};
+				
 				// Sort SPA sections by unique visitors
-				const sortedSections = Object.entries(analyticsStore.spaSections)
-					.sort((a, b) => b[1].uniqueVisitors.size - a[1].uniqueVisitors.size);
+				const sortedSections = Object.entries(spaSections)
+					.sort((a, b) => (b[1].uniqueVisitors || []).length - (a[1].uniqueVisitors || []).length);
 				
 				if (sortedSections.length === 0) {
 					container.innerHTML = '<div style="padding: 40px; text-align: center; color: #94a3b8;">No SPA section data available yet</div>';
 					return;
 				}
 				
-				const maxValue = Math.max(...sortedSections.map(([, data]) => data.uniqueVisitors.size));
+				const maxValue = Math.max(...sortedSections.map(([, sectionData]) => (sectionData.uniqueVisitors || []).length));
 				
-				sortedSections.forEach(([sectionKey, data]) => {
-					const percentage = maxValue > 0 ? (data.uniqueVisitors.size / maxValue) * 100 : 0;
+				sortedSections.forEach(([sectionKey, sectionData]) => {
+					const uniqueVisitors = (sectionData.uniqueVisitors || []).length;
+					const percentage = maxValue > 0 ? (uniqueVisitors / maxValue) * 100 : 0;
 					const barColor = percentage > 70 ? '#f59e0b' : percentage > 40 ? '#06b6d4' : '#10b981';
 					
 					// Determine display label and file name based on whether it's a hash route
 					let displayLabel, fileName, iconClass;
 					
-					if (data.isHashRoute) {
-						// Hash route like #/home or #/surveys/list
+					if (sectionData.isHashRoute) {
+						// Hash route like /home or /surveys/list
 						displayLabel = sectionKey;
-						fileName = data.fileName || sectionKey.split('/').pop() || 'route';
+						fileName = sectionData.fileName || sectionKey.split('/').pop() || 'route';
 						iconClass = 'fa-route';
 					} else {
 						// Regular section
-						displayLabel = data.sectionName || sectionKey.split('#').pop() || sectionKey;
-						fileName = data.fileName || data.pagePath?.split('/').pop() || 'section';
+						displayLabel = sectionData.sectionName || sectionKey.split('#').pop() || sectionKey;
+						fileName = sectionData.fileName || sectionData.pagePath?.split('/').pop() || 'section';
 						iconClass = 'fa-hashtag';
 					}
 					
@@ -1196,11 +1049,11 @@
 									<i class="fas fa-file" style="margin-right: 4px;"></i>${fileName}
 								</span>
 							</div>
-							<span style="color: #f59e0b; font-family: 'Orbitron', monospace; font-weight: 700;">${data.uniqueVisitors.size}</span>
+							<span style="color: #f59e0b; font-family: 'Orbitron', monospace; font-weight: 700;">${uniqueVisitors}</span>
 						</div>
 						<div style="background: rgba(15, 23, 42, 0.6); border-radius: 8px; height: 24px; position: relative; overflow: hidden; border: 1px solid rgba(245, 158, 11, 0.2);">
 							<div style="background: linear-gradient(90deg, ${barColor}, ${barColor}aa); height: 100%; width: ${percentage}%; transition: width 0.5s ease; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;">
-								<span style="color: white; font-size: 10px; font-weight: 700; font-family: 'Orbitron', monospace;">${data.totalViews} views</span>
+								<span style="color: white; font-size: 10px; font-weight: 700; font-family: 'Orbitron', monospace;">${sectionData.totalViews || 0} views</span>
 							</div>
 						</div>
 					`;
@@ -1208,20 +1061,22 @@
 				});
 			}
 			
-			function renderPageTable() {
+			function renderPageTable(data) {
 				const tbody = qs('#pageTableBody');
 				tbody.innerHTML = '';
 				
-				const sortedPages = Object.entries(analyticsStore.pages)
-					.sort((a, b) => b[1].uniqueVisitors.size - a[1].uniqueVisitors.size);
+				const pages = data.pages || {};
+				
+				const sortedPages = Object.entries(pages)
+					.sort((a, b) => (b[1].uniqueVisitors || []).length - (a[1].uniqueVisitors || []).length);
 				
 				if (sortedPages.length === 0) {
-					tbody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #94a3b8;">No data available</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center; color: #94a3b8;">No data available</td></tr>';
 					return;
 				}
 				
-				sortedPages.forEach(([page, data]) => {
-					const fileName = data.fileName || page.split('/').pop() || 'unknown';
+				sortedPages.forEach(([page, pageData]) => {
+					const fileName = pageData.fileName || page.split('/').pop() || 'unknown';
 					const row = document.createElement('tr');
 					row.style.borderBottom = '1px solid rgba(139, 92, 246, 0.1)';
 					row.innerHTML = `
@@ -1233,43 +1088,45 @@
 						</td>
 						<td style="padding: 12px; text-align: center;">
 							<span style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; padding: 4px 12px; border-radius: 12px; font-weight: 700; font-family: 'Orbitron', monospace; font-size: 11px;">
-								${data.uniqueVisitors.size}
+								${(pageData.uniqueVisitors || []).length}
 							</span>
 						</td>
-						<td style="padding: 12px; text-align: center; color: #cbd5e1; font-weight: 600;">${data.totalViews}</td>
-						<td style="padding: 12px; text-align: center; color: #94a3b8; font-size: 11px;">${new Date(data.lastVisit).toLocaleString()}</td>
+						<td style="padding: 12px; text-align: center; color: #cbd5e1; font-weight: 600;">${pageData.totalViews || 0}</td>
+						<td style="padding: 12px; text-align: center; color: #94a3b8; font-size: 11px;">${new Date(pageData.lastVisit || Date.now()).toLocaleString()}</td>
 					`;
 					tbody.appendChild(row);
 				});
 			}
 			
-			function renderSPATable() {
+			function renderSPATable(data) {
 				const tbody = qs('#spaTableBody');
 				tbody.innerHTML = '';
 				
-				const sortedSections = Object.entries(analyticsStore.spaSections)
-					.sort((a, b) => b[1].uniqueVisitors.size - a[1].uniqueVisitors.size);
+				const spaSections = data.spaSections || {};
+				
+				const sortedSections = Object.entries(spaSections)
+					.sort((a, b) => (b[1].uniqueVisitors || []).length - (a[1].uniqueVisitors || []).length);
 				
 				if (sortedSections.length === 0) {
-					tbody.innerHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center; color: #94a3b8;">No data available</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center; color: #94a3b8;">No data available</td></tr>';
 					return;
 				}
 				
-				sortedSections.forEach(([sectionKey, data]) => {
+				sortedSections.forEach(([sectionKey, sectionData]) => {
 					// Determine display based on whether it's a hash route
 					let displayName, fileName, contextInfo, iconClass;
 					
-					if (data.isHashRoute) {
-						// Hash route like #/home or #/surveys/list
+					if (sectionData.isHashRoute) {
+						// Hash route like /home or /surveys/list
 						displayName = sectionKey;
-						fileName = data.fileName || sectionKey.split('/').pop() || 'route';
-						contextInfo = data.pagePath || 'Hash-based route';
+						fileName = sectionData.fileName || sectionKey.split('/').pop() || 'route';
+						contextInfo = sectionData.pagePath || 'Hash-based route';
 						iconClass = 'fa-route';
 					} else {
 						// Regular section
-						displayName = data.sectionName || sectionKey.split('#').pop() || sectionKey;
-						fileName = data.fileName || data.pagePath?.split('/').pop() || 'unknown';
-						contextInfo = data.pagePath || sectionKey.split('#')[0] || 'unknown';
+						displayName = sectionData.sectionName || sectionKey.split('#').pop() || sectionKey;
+						fileName = sectionData.fileName || sectionData.pagePath?.split('/').pop() || 'unknown';
+						contextInfo = sectionData.pagePath || sectionKey.split('#')[0] || 'unknown';
 						iconClass = 'fa-hashtag';
 					}
 					
@@ -1287,11 +1144,11 @@
 						</td>
 						<td style="padding: 12px; text-align: center;">
 							<span style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 4px 12px; border-radius: 12px; font-weight: 700; font-family: 'Orbitron', monospace; font-size: 11px;">
-								${data.uniqueVisitors.size}
+								${(sectionData.uniqueVisitors || []).length}
 							</span>
 						</td>
-						<td style="padding: 12px; text-align: center; color: #cbd5e1; font-weight: 600;">${data.totalViews}</td>
-						<td style="padding: 12px; text-align: center; color: #94a3b8; font-size: 11px;">${new Date(data.lastVisit).toLocaleString()}</td>
+						<td style="padding: 12px; text-align: center; color: #cbd5e1; font-weight: 600;">${sectionData.totalViews || 0}</td>
+						<td style="padding: 12px; text-align: center; color: #94a3b8; font-size: 11px;">${new Date(sectionData.lastVisit || Date.now()).toLocaleString()}</td>
 					`;
 					tbody.appendChild(row);
 				});
@@ -1319,8 +1176,38 @@
 				if (exportBtn && !exportBtn.hasAttribute('data-wired')) {
 					exportBtn.setAttribute('data-wired', 'true');
 					exportBtn.onclick = () => {
-						const data = analyticsStore.exportData();
-						const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+						const data = loadGlobalAnalytics();
+						if (!data) {
+							alert('No analytics data to export');
+							return;
+						}
+						
+						// Transform data for export
+						const exportData = {
+							totalVisitors: (data.visitors || []).length,
+							totalSessions: (data.sessions || []).length,
+							pages: {},
+							spaSections: {},
+							exportDate: new Date().toISOString()
+						};
+						
+						Object.entries(data.pages || {}).forEach(([page, pageData]) => {
+							exportData.pages[page] = {
+								uniqueVisitors: (pageData.uniqueVisitors || []).length,
+								totalViews: pageData.totalViews || 0,
+								lastVisit: new Date(pageData.lastVisit || Date.now()).toISOString()
+							};
+						});
+						
+						Object.entries(data.spaSections || {}).forEach(([section, sectionData]) => {
+							exportData.spaSections[section] = {
+								uniqueVisitors: (sectionData.uniqueVisitors || []).length,
+								totalViews: sectionData.totalViews || 0,
+								lastVisit: new Date(sectionData.lastVisit || Date.now()).toISOString()
+							};
+						});
+						
+						const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
 						const a = document.createElement('a');
 						a.href = URL.createObjectURL(blob);
 						a.download = `webropol-analytics-${new Date().toISOString().split('T')[0]}.json`;
@@ -1335,7 +1222,14 @@
 					clearBtn.setAttribute('data-wired', 'true');
 					clearBtn.onclick = () => {
 						if (confirm('Are you sure you want to clear all analytics data? This action cannot be undone.')) {
-							analyticsStore.clearData();
+							// Use the global tracker's clear method if available
+							if (window.webropolAnalytics && typeof window.webropolAnalytics.clearData === 'function') {
+								window.webropolAnalytics.clearData();
+							} else {
+								// Fallback: clear localStorage directly
+								localStorage.removeItem('webropolGlobalAnalytics');
+								sessionStorage.removeItem('webropolSessionId');
+							}
 							renderAnalyticsDashboard();
 						}
 					};
@@ -1354,9 +1248,6 @@
 				renderModules(); 
 				renderFeatures(); 
 				renderDump();
-				
-				// Initialize analytics tracking
-				initAnalyticsTracking();
 				
 				// Restore last viewed section
 				const lastSection = getLastViewedSection();
@@ -1408,104 +1299,6 @@
 
 			function boot() { 
 				mountApp(); 
-				
-				// Demo mode: Simulate some analytics data if none exists (for testing)
-				if (window.location.search.includes('demo=true')) {
-					simulateDemoData();
-				}
-			}
-			
-			// Simulate demo analytics data
-			function simulateDemoData() {
-				const demoPages = [
-					'/webropol/index.html',
-					'/webropol/surveys/index.html',
-					'/webropol/dashboards/index.html',
-					'/webropol/events/events.html',
-					'/webropol/shop/index.html',
-					'/webropol/mywebropol/index.html',
-					'/webropol/admin-tools/index.html',
-					'/webropol/training-videos/index.html'
-				];
-				
-				// Hash-based routes (SPA navigation)
-				const demoHashRoutes = [
-					{ route: '/home', basePage: '/webropol/index.html' },
-					{ route: '/surveys/list', basePage: '/webropol/index.html' },
-					{ route: '/surveys/create', basePage: '/webropol/index.html' },
-					{ route: '/surveys/edit', basePage: '/webropol/index.html' },
-					{ route: '/events/list', basePage: '/webropol/index.html' },
-					{ route: '/dashboards/analytics', basePage: '/webropol/index.html' },
-					{ route: '/settings', basePage: '/webropol/index.html' },
-					{ route: '/mywebropol', basePage: '/webropol/index.html' }
-				];
-				
-				const demoSPASections = [
-					{ name: 'home', page: '/webropol/index.html' },
-					{ name: 'overview', page: '/webropol/dashboards/index.html' },
-					{ name: 'create', page: '/webropol/surveys/index.html' },
-					{ name: 'edit', page: '/webropol/surveys/index.html' },
-					{ name: 'analytics', page: '/webropol/dashboards/index.html' },
-					{ name: 'settings', page: '/webropol/index.html' },
-					{ name: 'reports', page: '/webropol/dashboards/index.html' },
-					{ name: 'dashboard', page: '/webropol/dashboards/index.html' },
-					{ name: 'profile', page: '/webropol/mywebropol/index.html' }
-				];
-				
-				// Simulate 20-100 unique visitors for each page
-				demoPages.forEach(page => {
-					const uniqueVisitors = Math.floor(Math.random() * 80) + 20;
-					const totalViews = uniqueVisitors + Math.floor(Math.random() * 100);
-					const fileName = page.split('/').pop();
-					
-					analyticsStore.pages[page] = {
-						uniqueVisitors: new Set(Array(uniqueVisitors).fill(0).map((_, i) => `demo_visitor_${i}`)),
-						totalViews: totalViews,
-						lastVisit: Date.now() - Math.floor(Math.random() * 3600000), // Random time in last hour
-						fileName: fileName
-					};
-				});
-				
-				// Simulate hash-based routes
-				demoHashRoutes.forEach(({ route, basePage }) => {
-					const uniqueVisitors = Math.floor(Math.random() * 70) + 15;
-					const totalViews = uniqueVisitors + Math.floor(Math.random() * 90);
-					const fileName = route.split('/').pop() || 'route';
-					
-					analyticsStore.spaSections[route] = {
-						uniqueVisitors: new Set(Array(uniqueVisitors).fill(0).map((_, i) => `demo_visitor_${i}`)),
-						totalViews: totalViews,
-						lastVisit: Date.now() - Math.floor(Math.random() * 5400000), // Random time in last 1.5 hours
-						pagePath: basePage,
-						sectionName: route,
-						fileName: fileName,
-						isHashRoute: true
-					};
-				});
-				
-				// Simulate regular SPA sections with page context
-				demoSPASections.forEach(({ name, page }) => {
-					const uniqueVisitors = Math.floor(Math.random() * 60) + 10;
-					const totalViews = uniqueVisitors + Math.floor(Math.random() * 80);
-					const sectionKey = `${page}#${name}`;
-					const fileName = page.split('/').pop();
-					
-					analyticsStore.spaSections[sectionKey] = {
-						uniqueVisitors: new Set(Array(uniqueVisitors).fill(0).map((_, i) => `demo_visitor_${i}`)),
-						totalViews: totalViews,
-						lastVisit: Date.now() - Math.floor(Math.random() * 7200000), // Random time in last 2 hours
-						pagePath: page,
-						sectionName: name,
-						fileName: fileName,
-						isHashRoute: false
-					};
-				});
-				
-				// Update total visitors
-				analyticsStore.visitors = new Set(Array(150).fill(0).map((_, i) => `demo_visitor_${i}`));
-				
-				analyticsStore.saveData();
-				console.log('Demo analytics data generated! Refresh the Analytics panel to see it.');
 			}
 
 			// Enforce login: if no session token, try remember token or redirect
