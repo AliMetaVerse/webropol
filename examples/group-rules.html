@@ -760,7 +760,7 @@
 
                 <!-- Modal Content -->
                 <div class="p-6">
-                    <p class="text-webropol-gray-700" x-text="alertMessage"></p>
+                    <p class="text-webropol-gray-700 whitespace-pre-line" x-text="alertMessage"></p>
                 </div>
 
                 <!-- Modal Footer -->
@@ -1294,9 +1294,30 @@
                     console.log('Saving rule group:', payload);
                     this.saveToStorage(payload);
                     this.showOverviewModal = false;
-                    const notice = this.computeShowAutoHideNotice();
-                    const msg = notice ? 'Survey rules saved successfully. ' + notice : 'Survey rules saved successfully.';
-                    this.showAlert('Success', msg, 'fa-check-circle text-green-500');
+                    
+                    // Build informational message about actions
+                    let message = 'Survey rules saved successfully.';
+                    
+                    if (this.actions.length > 0) {
+                        message += '\n\nThe following actions will be applied:';
+                        this.actions.forEach((action, index) => {
+                            message += `\n• ${this.getActionSummary(action)}`;
+                        });
+                        
+                        // Check for specific action types that need special notices
+                        const hideActions = this.actions.filter(a => a.type === 'hide' || a.type === 'hide_option');
+                        const showActions = this.actions.filter(a => a.type === 'show' || a.type === 'show_option');
+                        
+                        if (showActions.length > 0) {
+                            message += '\n\nNote: Questions/options set to "Show" will be hidden by default and only shown when conditions are met.';
+                        }
+                        
+                        if (hideActions.length > 0) {
+                            message += '\n\nNote: Questions/options set to "Hide" will be visible by default and hidden when conditions are met.';
+                        }
+                    }
+                    
+                    this.showAlert('Success', message, 'fa-check-circle text-green-500');
                 },
 
                 closeOverviewModal() {
