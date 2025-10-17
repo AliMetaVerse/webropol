@@ -409,9 +409,10 @@ class WebropolSPA {
         detail: { path, queryString } 
       }));
 
-      // Update stateful UI parts
-      this.updateBreadcrumbs(path);
-      this.updateSidebarActive(path);
+  // Update stateful UI parts
+  this.updateBreadcrumbs(path);
+  this.updateSidebarActive(path);
+  this.updatePageTitle(path);
       this.scrollToTop();
     } catch (err) {
       console.error('[SPA] Failed to load route', path, err);
@@ -772,6 +773,43 @@ class WebropolSPA {
     };
     const active = map[first] || 'home';
     this.sidebar.setAttribute('active', active);
+  }
+
+  // Set document.title and header title based on current route
+  updatePageTitle(path) {
+    try {
+      const [purePath] = (path || '/').split('?');
+      // Determine label using configured labels map
+      const parts = purePath.replace(/^\//, '').split('/').filter(Boolean);
+      let label;
+      if (!parts.length) {
+        label = this.labels['home'] || 'Home';
+      } else if (parts.length === 1) {
+        label = this.labels[parts[0]] || this.cap(parts[0]);
+      } else {
+        // Prefer the deepest segment if it has a friendly label
+        const deep = parts[parts.length - 1];
+        label = this.labels[deep] || this.cap(deep);
+        // Prepend top-level section for context (e.g., "Surveys • Edit")
+        const top = this.labels[parts[0]] || this.cap(parts[0]);
+        if (top && deep && top !== label) {
+          label = `${top} • ${label}`;
+        }
+      }
+
+      // Apply to document title
+      if (label) {
+        document.title = `Webropol - ${label}`;
+      }
+
+      // Update header component title if present (enhanced or legacy)
+      const header = document.querySelector('webropol-header-enhanced, webropol-header');
+      if (header && label) {
+        header.setAttribute('title', label);
+      }
+    } catch (_) {
+      // ignore
+    }
   }
 
   setLoading(isLoading) {

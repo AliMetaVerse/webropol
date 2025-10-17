@@ -103,6 +103,12 @@
             // Track hash route if present
             if (pageData.hashRoute) {
                 this.trackHashRoute(pageData.hashRoute, pageData);
+            } else if (pageData.hash) {
+                // Track simple hash sections (e.g., #overview, #analytics) used by CP and other pages
+                const simple = pageData.hash.replace('#', '').trim();
+                if (simple) {
+                    this.trackSimpleSection(simple, pageData);
+                }
             }
             
             // Track navigation flow
@@ -254,6 +260,51 @@
                 views: this.data.spaSections[routeKey].totalViews
             });
         }
+
+        // Track simple in-page hash sections (without "/"), e.g., #overview on cp page
+        trackSimpleSection(sectionName, pageData) {
+            if (!sectionName) return;
+
+            const sectionKey = `${pageData.pathname}#${sectionName}`;
+            if (sectionKey === this.lastTracked) return; // Avoid duplicate
+
+            // Ensure visitor accounting
+            if (!this.data.visitors.includes(this.sessionId)) {
+                this.data.visitors.push(this.sessionId);
+            }
+
+            // Initialize section if not exists
+            if (!this.data.spaSections[sectionKey]) {
+                this.data.spaSections[sectionKey] = {
+                    uniqueVisitors: [],
+                    totalViews: 0,
+                    lastVisit: Date.now(),
+                    firstVisit: Date.now(),
+                    pagePath: pageData.pathname,
+                    sectionName,
+                    fileName: pageData.fileName,
+                    isHashRoute: false
+                };
+            }
+
+            // Track visitor and increment
+            const entry = this.data.spaSections[sectionKey];
+            if (!entry.uniqueVisitors.includes(this.sessionId)) {
+                entry.uniqueVisitors.push(this.sessionId);
+            }
+            entry.totalViews++;
+            entry.lastVisit = Date.now();
+
+            this.lastTracked = sectionKey;
+            this.scheduleSave();
+
+            this.log('Simple section tracked', {
+                section: sectionName,
+                page: pageData.pathname,
+                visitors: entry.uniqueVisitors.length,
+                views: entry.totalViews
+            });
+        }
         
         trackNavigation(pageData) {
             // Track navigation flow (from → to)
@@ -282,6 +333,9 @@
                     
                     if (pageData.hashRoute) {
                         this.trackHashRoute(pageData.hashRoute, pageData);
+                    } else if (pageData.hash) {
+                        const simple = pageData.hash.replace('#', '').trim();
+                        if (simple) this.trackSimpleSection(simple, pageData);
                     }
                     
                     this.trackNavigation(pageData);
