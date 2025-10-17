@@ -51,6 +51,34 @@
             this.loadData();
             this.init();
         }
+
+        // Resolve a SPA route (e.g., "/surveys/edit?id=1") to a source HTML file path (e.g., "surveys/edit.html")
+        resolveRouteToFile(route) {
+            try {
+                if (!route) return '';
+                // Strip query/hash from route and ensure it starts with '/'
+                const raw = route.split('#')[0];
+                const pure = (raw.split('?')[0] || '').trim();
+                const path = pure.startsWith('/') ? pure : `/${pure}`;
+
+                // Prefer SPA router's own resolver if available
+                try {
+                    if (window.WebropolSPA && typeof window.WebropolSPA.pathToFile === 'function') {
+                        const file = window.WebropolSPA.pathToFile(path);
+                        if (file && typeof file === 'string') return file.replace(/^\/+/, '');
+                    }
+                } catch (_) { /* ignore */ }
+
+                // Fallback heuristic similar to router: top-level maps to index.html, deeper maps to .html
+                if (path === '/' || path.toLowerCase() === '/home') return 'index.html';
+                const parts = path.split('/').filter(Boolean);
+                if (!parts.length) return 'index.html';
+                if (parts.length === 1) return `${parts[0]}/index.html`;
+                return `${parts.join('/')}.html`;
+            } catch (_) {
+                return '';
+            }
+        }
         
         getOrCreateSessionId() {
             let sessionId = sessionStorage.getItem(CONFIG.SESSION_KEY);
@@ -224,8 +252,24 @@
             if (!hashRoute || hashRoute === this.lastTracked) {
                 return; // Avoid duplicate tracking
             }
-            
+            // Normalize key and derive display file
             const routeKey = hashRoute;
+            const cleanRoute = (hashRoute || '').split('#')[0];
+            const resolvedFile = this.resolveRouteToFile(cleanRoute);
+            // If resolution fails, fallback to a reasonable guess
+            let displayFile = resolvedFile;
+            if (!displayFile) {
+                const noQuery = cleanRoute.split('?')[0] || '';
+                const ensured = noQuery.startsWith('/') ? noQuery : `/${noQuery}`;
+                const parts = ensured.split('/').filter(Boolean);
+                if (!parts.length) {
+                    displayFile = 'index.html';
+                } else if (parts.length === 1) {
+                    displayFile = `${parts[0]}/index.html`;
+                } else {
+                    displayFile = `${parts.join('/')}.html`;
+                }
+            }
             
             // Initialize route if not exists
             if (!this.data.spaSections[routeKey]) {
@@ -236,9 +280,15 @@
                     firstVisit: Date.now(),
                     pagePath: pageData.pathname,
                     sectionName: hashRoute,
-                    fileName: hashRoute.split('/').pop() || 'route',
+                    fileName: displayFile,
+                    targetFile: displayFile,
                     isHashRoute: true
                 };
+            }
+            // Keep file name updated if it was previously a route fragment
+            else {
+                this.data.spaSections[routeKey].fileName = displayFile;
+                this.data.spaSections[routeKey].targetFile = displayFile;
             }
             
             // Track visitor
@@ -273,6 +323,16 @@
                 this.data.visitors.push(this.sessionId);
             }
 
+            // If section looks like a query-style route (e.g., "create?type=survey"), try to resolve to a file
+            let resolvedDisplayFile = pageData.fileName;
+            try {
+                if (/[?]/.test(sectionName)) {
+                    const pseudoRoute = '/' + sectionName; // normalize to route style
+                    const mapped = this.resolveRouteToFile(pseudoRoute);
+                    if (mapped) resolvedDisplayFile = mapped;
+                }
+            } catch (_) { /* ignore */ }
+
             // Initialize section if not exists
             if (!this.data.spaSections[sectionKey]) {
                 this.data.spaSections[sectionKey] = {
@@ -282,13 +342,19 @@
                     firstVisit: Date.now(),
                     pagePath: pageData.pathname,
                     sectionName,
-                    fileName: pageData.fileName,
+                    fileName: resolvedDisplayFile,
+                    targetFile: resolvedDisplayFile,
                     isHashRoute: false
                 };
             }
 
             // Track visitor and increment
             const entry = this.data.spaSections[sectionKey];
+            // Keep file mapping updated if we learned a better resolution
+            if (entry && resolvedDisplayFile && entry.fileName !== resolvedDisplayFile) {
+                entry.fileName = resolvedDisplayFile;
+                entry.targetFile = resolvedDisplayFile;
+            }
             if (!entry.uniqueVisitors.includes(this.sessionId)) {
                 entry.uniqueVisitors.push(this.sessionId);
             }
