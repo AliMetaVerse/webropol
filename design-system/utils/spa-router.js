@@ -534,7 +534,12 @@ class WebropolSPA {
 
       if (src) {
         // Skip shared libs already in shell, but allow component scripts
-        const skip = /tailwindcss/.test(src) || /alpinejs/.test(src) || /kit\.fontawesome\.com/.test(src);
+        // Also skip analytics trackers to avoid double-counting when pages are injected into SPA
+        const skip = /tailwindcss/.test(src)
+          || /alpinejs/.test(src)
+          || /kit\.fontawesome\.com/.test(src)
+          || /analytics-global-tracker\.js/.test(src)
+          || /analytics-tracker\.js/.test(src);
         if (skip) continue;
         // Resolve relative to the fetched page's base (not the shell)
         let abs;
