@@ -100,6 +100,15 @@
             border: 1px solid rgba(6, 182, 212, 0.15);
         }
 
+        .group-wrapper.group-or {
+            background: linear-gradient(145deg, #ffffff 0%, #faf5ff 100%);
+            box-shadow:
+                0 10px 40px rgba(168, 85, 247, 0.12),
+                0 2px 8px rgba(168, 85, 247, 0.08),
+                inset 0 -1px 0 rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
         .group-wrapper::before {
             content: '';
             position: absolute;
@@ -110,6 +119,10 @@
             background: linear-gradient(90deg, #06b6d4, #22c9f0, #5ce0fa, #22c9f0, #06b6d4);
             background-size: 200% 100%;
             animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .group-wrapper.group-or::before {
+            background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff, #c084fc, #a855f7);
         }
 
         @keyframes shimmer {
@@ -130,6 +143,10 @@
             margin: 0;
             position: relative;
             overflow: hidden;
+        }
+
+        .group-header.group-or {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 50%, #7e22ce 100%);
         }
 
         .group-header::before {
@@ -192,6 +209,13 @@
             overflow: hidden;
         }
 
+        .group-condition-row.group-or {
+            border: 2px solid #f3e8ff;
+            box-shadow:
+                0 2px 8px rgba(168, 85, 247, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
         .group-condition-row::before {
             content: '';
             position: absolute;
@@ -201,6 +225,10 @@
             width: 5px;
             background: linear-gradient(180deg, #06b6d4 0%, #22c9f0 50%, #5ce0fa 100%);
             border-radius: 14px 0 0 14px;
+        }
+
+        .group-condition-row.group-or::before {
+            background: linear-gradient(180deg, #a855f7 0%, #c084fc 50%, #e9d5ff 100%);
         }
 
         .group-condition-row:hover {
@@ -351,9 +379,9 @@
                                 <!-- GROUPED CONDITIONS CONTAINER -->
                                 <template x-if="item.type === 'group'">
                                     <div>
-                                        <div class="group-wrapper">
+                                        <div class="group-wrapper" :class="{ 'group-or': getGroup(item.groupId).logic === 'OR' }">
                                             <!-- Group Header -->
-                                            <div class="group-header text-white relative z-10">
+                                            <div class="group-header text-white relative z-10" :class="{ 'group-or': getGroup(item.groupId).logic === 'OR' }">
                                                 <div class="flex items-center justify-between relative z-10">
                                                     <div class="flex items-center gap-4 text-center">
                                                         <div class="group-icon-badge px-4 py-2" style="width: 80px;">
@@ -392,7 +420,7 @@
                                                     :key="condIndex">
                                                     <div>
                                                         <div class="group-condition-row"
-                                                            :class="{ 'selected-row': selectedConditions.includes(condItem.index) }">
+                                                            :class="{ 'selected-row': selectedConditions.includes(condItem.index), 'group-or': getGroup(item.groupId).logic === 'OR' }">
                                                             <div class="flex items-center gap-3">
                                                                 <!-- Selection Checkbox -->
                                                                 <input type="checkbox"
@@ -885,9 +913,11 @@
                                     <!-- Grouped Conditions -->
                                     <template x-if="item.type === 'group'">
                                         <div>
-                                            <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg p-4 border-2 border-webropol-primary-300">
+                                            <div class="rounded-lg p-4 border-2"
+                                                :class="getGroup(item.groupId).logic === 'OR' ? 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300' : 'bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 border-webropol-primary-300'">
                                                 <div class="flex items-center gap-2 mb-3">
-                                                    <div class="bg-webropol-primary-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                                    <div class="text-white px-3 py-1 rounded-full text-xs font-bold uppercase"
+                                                        :class="getGroup(item.groupId).logic === 'OR' ? 'bg-purple-500' : 'bg-webropol-primary-500'">
                                                         <span x-text="getGroup(item.groupId).logic"></span> Group
                                                     </div>
                                                     <span class="text-xs text-webropol-gray-600" x-text="item.conditions.length + ' conditions'"></span>
@@ -895,7 +925,8 @@
                                                 <div class="space-y-2">
                                                     <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
                                                         <div class="bg-white rounded-md p-3 flex items-center gap-2 shadow-sm">
-                                                            <i class="fa-light fa-circle-check text-webropol-primary-500"></i>
+                                                            <i class="fa-light fa-circle-check"
+                                                                :class="getGroup(item.groupId).logic === 'OR' ? 'text-purple-500' : 'text-webropol-primary-500'"></i>
                                                             <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(condItem.condition)"></span>
                                                         </div>
                                                     </template>
