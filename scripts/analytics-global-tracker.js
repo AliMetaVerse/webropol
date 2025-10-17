@@ -33,6 +33,8 @@
             this.sessionId = this.getOrCreateSessionId();
             this.lastTracked = null;
             this.saveTimer = null;
+            this.geo = null; // { code: 'US', name: 'United States' }
+            this.geoPromise = null;
             
             // Initialize data structure
             this.data = {
@@ -107,7 +109,13 @@
                 hash: window.location.hash
             });
             
-            // Track initial page load
+            // Kick off geo lookup ASAP (non-blocking)
+            this.fetchGeo().finally(() => {
+                // After geo resolves, tag the most recent item if any
+                this.tagCountryOnLast();
+            });
+
+            // Track initial page load immediately (do not block on geo)
             this.trackPageLoad();
             
             // Setup event listeners
@@ -120,6 +128,90 @@
             window.webropolAnalytics = this;
             
             this.log('Ready to track!');
+        }
+
+        // Attempt to detect visitor country using public geolocation endpoints with graceful fallback
+        async fetchGeo() {
+            if (this.geoPromise) return this.geoPromise;
+            const setGeo = (code, name) => {
+                if (!code && !name) return;
+                try {
+                    // Normalize code to 2-letter upper if present
+                    const cc = (code || '').toString().trim().toUpperCase();
+                    const display = name || (cc && this.regionNameFromCode(cc)) || 'Unknown';
+                    this.geo = { code: cc || undefined, name: display };
+                    this.scheduleSave();
+                } catch(_) {}
+            };
+            const tryProviders = async () => {
+                // Provider 1: ipapi.co
+                try {
+                    const res = await fetch('https://ipapi.co/json/');
+                    if (res.ok) {
+                        const j = await res.json();
+                        if (j && (j.country || j.country_code)) {
+                            setGeo(j.country_code || j.country, j.country_name || j.country);
+                            return;
+                        }
+                    }
+                } catch(_) {}
+                // Provider 2: ipinfo.io (may require token in some environments)
+                try {
+                    const res = await fetch('https://ipinfo.io/json?token=');
+                    if (res.ok) {
+                        const j = await res.json();
+                        if (j && (j.country || j.countryCode)) {
+                            setGeo(j.country || j.countryCode, undefined);
+                            return;
+                        }
+                    }
+                } catch(_) {}
+                // Fallback: Infer from browser locale region if available
+                try {
+                    const lang = (navigator.language || navigator.userLanguage || '').toString();
+                    const maybeRegion = lang.split('-')[1];
+                    if (maybeRegion) {
+                        setGeo(maybeRegion.toUpperCase(), undefined);
+                        return;
+                    }
+                } catch(_) {}
+                // Fallback: Unknown
+                setGeo(undefined, 'Unknown');
+            };
+            this.geoPromise = tryProviders();
+            return this.geoPromise;
+        }
+
+        regionNameFromCode(code) {
+            try {
+                if (!code) return undefined;
+                if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
+                    const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+                    return dn.of(code);
+                }
+            } catch(_) {}
+            return undefined;
+        }
+
+        tagCountryOnLast() {
+            try {
+                if (!this.geo || !this.lastTracked) return;
+                // Determine whether lastTracked refers to a page or a route
+                if (this.data.pages[this.lastTracked]) {
+                    const entry = this.data.pages[this.lastTracked];
+                    entry.countries = entry.countries || {};
+                    const cc = this.geo.code || 'XX';
+                    entry.countries[cc] = (entry.countries[cc] || 0) + 1;
+                    entry.lastCountry = this.geo.name;
+                } else if (this.data.spaSections[this.lastTracked]) {
+                    const entry = this.data.spaSections[this.lastTracked];
+                    entry.countries = entry.countries || {};
+                    const cc = this.geo.code || 'XX';
+                    entry.countries[cc] = (entry.countries[cc] || 0) + 1;
+                    entry.lastCountry = this.geo.name;
+                }
+                this.scheduleSave();
+            } catch(_) {}
         }
         
         trackPageLoad() {
@@ -215,7 +307,8 @@
                     fileName: pageData.fileName,
                     directory: pageData.directory,
                     title: pageData.title,
-                    referrers: {}
+                    referrers: {},
+                    countries: {}
                 };
             }
             
@@ -228,6 +321,12 @@
             this.data.pages[pageKey].totalViews++;
             this.data.pages[pageKey].lastVisit = Date.now();
             this.data.pages[pageKey].title = pageData.title; // Update title if changed
+            // Add country if available
+            if (this.geo) {
+                const cc = this.geo.code || 'XX';
+                this.data.pages[pageKey].countries[cc] = (this.data.pages[pageKey].countries[cc] || 0) + 1;
+                this.data.pages[pageKey].lastCountry = this.geo.name;
+            }
             
             // Track referrer
             if (pageData.referrer !== window.location.href) {
@@ -282,13 +381,20 @@
                     sectionName: hashRoute,
                     fileName: displayFile,
                     targetFile: displayFile,
-                    isHashRoute: true
+                    isHashRoute: true,
+                    countries: {}
                 };
             }
             // Keep file name updated if it was previously a route fragment
             else {
                 this.data.spaSections[routeKey].fileName = displayFile;
                 this.data.spaSections[routeKey].targetFile = displayFile;
+            }
+            // Add country if available
+            if (this.geo) {
+                const cc = this.geo.code || 'XX';
+                this.data.spaSections[routeKey].countries[cc] = (this.data.spaSections[routeKey].countries[cc] || 0) + 1;
+                this.data.spaSections[routeKey].lastCountry = this.geo.name;
             }
             
             // Track visitor
@@ -344,7 +450,8 @@
                     sectionName,
                     fileName: resolvedDisplayFile,
                     targetFile: resolvedDisplayFile,
-                    isHashRoute: false
+                    isHashRoute: false,
+                    countries: {}
                 };
             }
 
@@ -360,6 +467,11 @@
             }
             entry.totalViews++;
             entry.lastVisit = Date.now();
+            if (this.geo) {
+                const cc = this.geo.code || 'XX';
+                entry.countries[cc] = (entry.countries[cc] || 0) + 1;
+                entry.lastCountry = this.geo.name;
+            }
 
             this.lastTracked = sectionKey;
             this.scheduleSave();

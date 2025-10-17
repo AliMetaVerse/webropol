@@ -115,11 +115,11 @@
 
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-3">
-                    <i class="fas fa-eye text-3xl text-green-500"></i>
-                    <span class="badge badge-green">VIEWS</span>
+                    <i class="fas fa-globe text-3xl text-green-500"></i>
+                    <span class="badge badge-green">COUNTRY</span>
                 </div>
-                <div class="text-3xl font-black orbitron mb-1" id="totalViews">0</div>
-                <div class="text-sm text-gray-400">Total Page Views</div>
+                <div class="text-2xl font-black orbitron mb-1" id="topCountry">-</div>
+                <div class="text-sm text-gray-400">Top Country</div>
             </div>
 
             <div class="stat-card">
@@ -167,7 +167,7 @@
                             <th class="text-left p-3 text-gray-400 font-semibold">Page</th>
                             <th class="text-left p-3 text-gray-400 font-semibold">Directory</th>
                             <th class="text-center p-3 text-gray-400 font-semibold">Visitors</th>
-                            <th class="text-center p-3 text-gray-400 font-semibold">Views</th>
+                            <th class="text-center p-3 text-gray-400 font-semibold">Country</th>
                             <th class="text-left p-3 text-gray-400 font-semibold">Last Visit</th>
                         </tr>
                     </thead>
@@ -191,7 +191,7 @@
                             <th class="text-left p-3 text-gray-400 font-semibold">Route</th>
                             <th class="text-left p-3 text-gray-400 font-semibold">Base Page</th>
                             <th class="text-center p-3 text-gray-400 font-semibold">Visitors</th>
-                            <th class="text-center p-3 text-gray-400 font-semibold">Views</th>
+                            <th class="text-center p-3 text-gray-400 font-semibold">Country</th>
                             <th class="text-left p-3 text-gray-400 font-semibold">Last Visit</th>
                         </tr>
                     </thead>
@@ -242,9 +242,8 @@
             document.getElementById('totalPages').textContent = Object.keys(data.pages || {}).length;
             document.getElementById('totalRoutes').textContent = Object.keys(data.spaSections || {}).length;
             
-            const totalPageViews = Object.values(data.pages || {}).reduce((sum, page) => sum + (page.totalViews || 0), 0);
-            const totalRouteViews = Object.values(data.spaSections || {}).reduce((sum, route) => sum + (route.totalViews || 0), 0);
-            document.getElementById('totalViews').textContent = totalPageViews + totalRouteViews;
+            const top = computeTopCountryGlobal(data);
+            document.getElementById('topCountry').textContent = top?.name || '-';
             
             document.getElementById('lastUpdated').textContent = new Date(data.metadata?.lastUpdated || Date.now()).toLocaleString();
 
@@ -264,7 +263,7 @@
             const tbody = document.getElementById('pagesTableBody');
             tbody.innerHTML = '';
 
-            const sortedPages = Object.entries(pages).sort((a, b) => b[1].totalViews - a[1].totalViews);
+            const sortedPages = Object.entries(pages).sort((a, b) => (b[1].totalViews||0) - (a[1].totalViews||0));
 
             if (sortedPages.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">No pages tracked yet</td></tr>';
@@ -274,6 +273,7 @@
             sortedPages.forEach(([pagePath, data]) => {
                 const row = document.createElement('tr');
                 row.className = 'data-row';
+                const topCountry = topCountryForEntry(data);
                 row.innerHTML = `
                     <td class="p-3">
                         <div class="font-semibold text-white">${data.fileName || pagePath.split('/').pop()}</div>
@@ -286,7 +286,7 @@
                     <td class="p-3 text-center">
                         <span class="badge badge-cyan">${data.uniqueVisitors?.length || 0}</span>
                     </td>
-                    <td class="p-3 text-center font-bold text-green-400">${data.totalViews || 0}</td>
+                    <td class="p-3 text-center font-bold text-green-400">${topCountry?.name || '-'}</td>
                     <td class="p-3 text-sm text-gray-400">${new Date(data.lastVisit).toLocaleString()}</td>
                 `;
                 tbody.appendChild(row);
@@ -297,7 +297,7 @@
             const tbody = document.getElementById('routesTableBody');
             tbody.innerHTML = '';
 
-            const sortedRoutes = Object.entries(routes).sort((a, b) => b[1].totalViews - a[1].totalViews);
+            const sortedRoutes = Object.entries(routes).sort((a, b) => (b[1].totalViews||0) - (a[1].totalViews||0));
 
             if (sortedRoutes.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">No routes tracked yet</td></tr>';
@@ -307,6 +307,7 @@
             sortedRoutes.forEach(([routePath, data]) => {
                 const row = document.createElement('tr');
                 row.className = 'data-row';
+                const topCountry = topCountryForEntry(data);
                 row.innerHTML = `
                     <td class="p-3">
                         <div class="font-semibold text-white flex items-center">
@@ -323,11 +324,58 @@
                     <td class="p-3 text-center">
                         <span class="badge badge-orange">${data.uniqueVisitors?.length || 0}</span>
                     </td>
-                    <td class="p-3 text-center font-bold text-green-400">${data.totalViews || 0}</td>
+                    <td class="p-3 text-center font-bold text-green-400">${topCountry?.name || '-'}</td>
                     <td class="p-3 text-sm text-gray-400">${new Date(data.lastVisit).toLocaleString()}</td>
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // Helpers: determine top country names
+        function countryNameFromCode(code) {
+            try {
+                if (!code) return undefined;
+                if (typeof Intl !== 'undefined' && Intl.DisplayNames) {
+                    const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+                    return dn.of(code);
+                }
+            } catch(_) {}
+            return code || undefined;
+        }
+
+        function topCountryForEntry(entry) {
+            try {
+                const counts = entry?.countries || {};
+                let bestCode = null, bestCount = -1;
+                for (const [cc, n] of Object.entries(counts)) {
+                    if (n > bestCount) { bestCode = cc; bestCount = n; }
+                }
+                if (!bestCode) {
+                    const name = entry?.lastCountry || null;
+                    return name ? { name } : null;
+                }
+                const name = countryNameFromCode(bestCode) || entry?.lastCountry || bestCode;
+                return { code: bestCode, count: bestCount, name };
+            } catch(_) { return null; }
+        }
+
+        function computeTopCountryGlobal(data) {
+            try {
+                const counts = {};
+                const add = (map) => {
+                    Object.entries(map || {}).forEach(([k, v]) => {
+                        counts[k] = (counts[k] || 0) + (v || 0);
+                    });
+                };
+                Object.values(data.pages || {}).forEach(p => add(p.countries || {}));
+                Object.values(data.spaSections || {}).forEach(r => add(r.countries || {}));
+                let bestCode = null, bestCount = -1;
+                for (const [cc, n] of Object.entries(counts)) {
+                    if (n > bestCount) { bestCode = cc; bestCount = n; }
+                }
+                if (!bestCode) return null;
+                return { code: bestCode, count: bestCount, name: countryNameFromCode(bestCode) || bestCode };
+            } catch(_) { return null; }
         }
 
         function renderSessions(sessions) {
