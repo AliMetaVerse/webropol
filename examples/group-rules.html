@@ -303,10 +303,10 @@
                                 <span class="text-sm text-webropol-gray-600" x-show="selectedConditions.length > 0">
                                     <span class="font-semibold" x-text="selectedConditions.length"></span> selected
                                 </span>
-                                <button @click="groupSelectedConditions()" :disabled="selectedConditions.length === 0"
-                                    :title="selectedConditions.length === 0 ? 'Please select at least 2 conditions first' : 'Group selected conditions together'"
+                                <button @click="groupSelectedConditions()" :disabled="selectedConditions.length < 2"
+                                    :title="selectedConditions.length < 2 ? 'Please select at least 2 conditions first' : 'Group selected conditions together'"
                                     class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
-                                    :class="selectedConditions.length === 0 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-500 text-white hover:bg-webropol-primary-600'">
+                                    :class="selectedConditions.length < 2 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-500 text-white hover:bg-webropol-primary-600'">
                                     <i class="fa-light fa-object-group"></i>
                                     Group Selected
                                 </button>
@@ -325,6 +325,25 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Empty State for Conditions -->
+                        <template x-if="conditions.length === 0">
+                            <div class="border-2 border-dashed border-webropol-gray-200 rounded-xl p-8 text-center mb-4 bg-webropol-gray-50">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-14 h-14 rounded-full bg-webropol-primary-100 flex items-center justify-center">
+                                        <i class="fa-light fa-filter-circle-xmark text-webropol-primary-600 text-2xl"></i>
+                                    </div>
+                                    <div class="max-w-xl">
+                                        <h3 class="text-lg font-semibold text-webropol-gray-800">No conditions yet</h3>
+                                        <p class="text-sm text-webropol-gray-600 mt-1">Start by adding your first condition. You can group conditions later using AND/OR to build complex rules.</p>
+                                    </div>
+                                    <button @click="addCondition()" class="px-5 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                                        <i class="fa-light fa-plus mr-2"></i>
+                                        Add first condition
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
 
                         <!-- Condition Rows with Grouping Support -->
                         <template x-for="(item, itemIndex) in organizedConditions" :key="itemIndex">
@@ -361,7 +380,7 @@
                                                             class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 border border-white/30 hover:border-white/50"
                                                             title="Break apart this group">
                                                             <i class="fa-light fa-object-ungroup"></i>
-                                                            Ungroup
+                                                            Ungroup all
                                                         </button>
                                                     </div>
                                                 </div>
@@ -443,10 +462,20 @@
                                                 </template>
                                             </div>
                                         </div>
-                                        <!-- Group Footer AND/OR Toggle (inside container) -->
-                                        <div class="group-footer" x-show="itemIndex < organizedConditions.length - 1">
-                                            <div class="flex items-center gap-4 ml-6">
-                                                <div class="flex gap-2">
+                                    </div>
+                                </template>
+
+                                <!-- Group Footer AND/OR Toggle (BETWEEN GROUPS) -->
+                                <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
+                                    <div class="flex items-center justify-center py-6 my-4">
+                                        <div class="bg-white rounded-xl shadow-lg px-8 py-4 border-3 border-webropol-primary-300 relative">
+                                            <!-- Visual connector lines -->
+                                            <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-webropol-gray-300"></div>
+                                            <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-webropol-gray-300"></div>
+                                            
+                                            <div class="flex items-center gap-4">
+                                                <span class="text-sm font-bold text-webropol-gray-700 uppercase tracking-wide">Then apply:</span>
+                                                <div class="flex gap-3">
                                                     <webropol-radio-special :name="'group-after-' + item.groupId"
                                                         value="AND" label="AND" variant="primary" size="md"
                                                         :checked="getGroup(item.groupId).nextLogic === 'AND'"
@@ -525,7 +554,7 @@
                                         </div>
 
                                         <!-- AND/OR Toggle for ungrouped conditions -->
-                                        <div class="flex items-center gap-4 ml-12 mb-3"
+                                        <div class="flex items-center justify-center gap-4 mb-3"
                                             x-show="item.index < conditions.length - 1">
                                             <div class="flex gap-2">
                                                 <webropol-radio-special :name="'logic-' + item.index" value="AND"
@@ -546,7 +575,7 @@
                         <button @click="addCondition()"
                             class="text-webropol-primary-600 mb-2 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium">
                             <i class="fa-light fa-plus"></i>
-                            Add new condition (AND/OR)
+                            Add new condition
                         </button>
                     </div>
 
@@ -751,6 +780,80 @@
             </div>
         </div>
 
+        <!-- Operator Selection Modal -->
+        <div x-show="showOperatorModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            @click.self="closeOperatorModal(false)">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-diagram-project text-webropol-primary-500 text-xl"></i>
+                        <h3 class="text-lg font-bold text-webropol-gray-800">Choose Group Operator</h3>
+                    </div>
+                    <button @click="closeOperatorModal(false)"
+                        class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6 space-y-4">
+                    <p class="text-sm text-webropol-gray-700">How should the conditions inside this group be evaluated?</p>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex-1">
+                            <div role="button" tabindex="0"
+                                 @click="operatorChoice = 'AND'"
+                                 @keydown.enter.prevent="operatorChoice = 'AND'"
+                                 @keydown.space.prevent="operatorChoice = 'AND'"
+                                 :aria-pressed="operatorChoice === 'AND' ? 'true' : 'false'"
+                                 :class="operatorChoice === 'AND' ? 'ring-2 ring-webropol-primary-500 bg-webropol-primary-50' : 'ring-1 ring-webropol-gray-200'"
+                                 class="cursor-pointer rounded-lg p-4 flex items-start gap-3">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center"
+                                     :class="operatorChoice === 'AND' ? 'bg-webropol-primary-600 text-white' : 'bg-webropol-gray-100 text-webropol-gray-600'">
+                                    <span class="font-bold">AND</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-webropol-gray-800">All must match (AND)</div>
+                                    <div class="text-sm text-webropol-gray-600">The group matches only if every condition inside is true.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div role="button" tabindex="0"
+                                 @click="operatorChoice = 'OR'"
+                                 @keydown.enter.prevent="operatorChoice = 'OR'"
+                                 @keydown.space.prevent="operatorChoice = 'OR'"
+                                 :aria-pressed="operatorChoice === 'OR' ? 'true' : 'false'"
+                                 :class="operatorChoice === 'OR' ? 'ring-2 ring-purple-500 bg-purple-50' : 'ring-1 ring-webropol-gray-200'"
+                                 class="cursor-pointer rounded-lg p-4 flex items-start gap-3">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center"
+                                     :class="operatorChoice === 'OR' ? 'bg-purple-600 text-white' : 'bg-webropol-gray-100 text-webropol-gray-600'">
+                                    <span class="font-bold">OR</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-webropol-gray-800">Any can match (OR)</div>
+                                    <div class="text-sm text-webropol-gray-600">The group matches if at least one condition inside is true.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
+                    <button @click="closeOperatorModal(false)"
+                        class="px-4 py-2 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        Cancel
+                    </button>
+                    <button @click="closeOperatorModal(true)"
+                        class="px-4 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Overview/Confirmation Modal -->
         <div x-show="showOverviewModal" x-cloak
             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
@@ -788,20 +891,35 @@
                                 <div>
                                     <!-- Grouped Conditions -->
                                     <template x-if="item.type === 'group'">
-                                        <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg p-4 border-2 border-webropol-primary-300">
-                                            <div class="flex items-center gap-2 mb-3">
-                                                <div class="bg-webropol-primary-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
-                                                    <span x-text="getGroup(item.groupId).logic"></span> Group
-                                                </div>
-                                                <span class="text-xs text-webropol-gray-600" x-text="item.conditions.length + ' conditions'"></span>
-                                            </div>
-                                            <div class="space-y-2">
-                                                <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
-                                                    <div class="bg-white rounded-md p-3 flex items-center gap-2 shadow-sm">
-                                                        <i class="fa-light fa-circle-check text-webropol-primary-500"></i>
-                                                        <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(condItem.condition)"></span>
+                                        <div>
+                                            <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-lg p-4 border-2 border-webropol-primary-300">
+                                                <div class="flex items-center gap-2 mb-3">
+                                                    <div class="bg-webropol-primary-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                                        <span x-text="getGroup(item.groupId).logic"></span> Group
                                                     </div>
-                                                </template>
+                                                    <span class="text-xs text-webropol-gray-600" x-text="item.conditions.length + ' conditions'"></span>
+                                                </div>
+                                                <div class="space-y-2">
+                                                    <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
+                                                        <div class="bg-white rounded-md p-3 flex items-center gap-2 shadow-sm">
+                                                            <i class="fa-light fa-circle-check text-webropol-primary-500"></i>
+                                                            <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(condItem.condition)"></span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    
+                                    <!-- Logic Connector Between Groups (Enhanced) -->
+                                    <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
+                                        <div class="flex items-center justify-center py-4 my-2">
+                                            <div class="bg-gradient-to-r from-webropol-gray-700 to-webropol-gray-600 text-white px-6 py-2.5 rounded-full shadow-md relative">
+                                                <!-- Visual connector lines -->
+                                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-webropol-gray-400"></div>
+                                                <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-webropol-gray-400"></div>
+                                                
+                                                <span class="text-sm font-bold uppercase tracking-wider" x-text="getGroup(item.groupId).nextLogic"></span>
                                             </div>
                                         </div>
                                     </template>
@@ -815,7 +933,7 @@
                                             </div>
                                             <!-- Logic Connector -->
                                             <div class="flex items-center justify-center py-2" x-show="item.index < conditions.length - 1">
-                                                <span class="bg-webropol-gray-600 text-white px-3 py-1 rounded-full text-xs font-bold"
+                                                <span class="bg-webropol-gray-600 text-white px-3 py-1 rounded text-xs font-bold"
                                                     x-text="item.condition.logic"></span>
                                             </div>
                                         </div>
@@ -892,7 +1010,7 @@
             return {
                 // Persistent storage key
                 storageKey: 'webropol.ruleGroupManager.state',
-                groupName: 'Work from home',
+                groupName: '',
                 selectedConditions: [],
                 groups: [],
                 nextGroupId: 1,
@@ -907,6 +1025,10 @@
                 alertMessage: '',
                 alertIcon: 'fa-info-circle text-webropol-primary-500',
                 showOverviewModal: false,
+                // Operator selection modal state
+                showOperatorModal: false,
+                operatorChoice: 'AND',
+                operatorResolve: null,
                 availableQuestions: [
                     { id: 'q1', label: '1. Where do you work?' },
                     { id: 'q2', label: '2. What percentage do you work from home?' },
@@ -914,36 +1036,7 @@
                     { id: 'q4', label: '4. Rate your work-life balance' },
                     { id: 'q5', label: '5. Would you recommend remote work?' }
                 ],
-                conditions: [
-                    {
-                        type: 'selected',
-                        question: 'q1',
-                        answer: 'home',
-                        logic: 'OR',
-                        groupId: null
-                    },
-                    {
-                        type: 'selected',
-                        question: 'q1',
-                        answer: 'hybrid',
-                        logic: 'AND',
-                        groupId: null
-                    },
-                    {
-                        type: 'selected',
-                        question: 'q2',
-                        answer: '51-75%',
-                        logic: 'OR',
-                        groupId: null
-                    },
-                    {
-                        type: 'selected',
-                        question: 'q2',
-                        answer: '76-100%',
-                        logic: 'AND',
-                        groupId: null
-                    }
-                ],
+                conditions: [],
                 actions: [],
                 // Alpine lifecycle
                 init() {
@@ -1050,24 +1143,29 @@
                         this.showAlert('Selection Required', 'Please select at least 2 conditions to group.', 'fa-exclamation-triangle text-amber-500');
                         return;
                     }
+                    // Ask for operator selection (AND/OR)
+                    this.selectGroupOperator().then((operator) => {
+                        if (!operator) return; // cancelled
 
-                    // Create group immediately
-                    const groupId = this.nextGroupId;
-                    this.nextGroupId++;
+                        const groupId = this.nextGroupId;
+                        this.nextGroupId++;
 
-                    this.groups.push({
-                        id: groupId,
-                        name: `Group ${groupId}`,
-                        logic: 'AND',
-                        nextLogic: 'AND'
+                        this.groups.push({
+                            id: groupId,
+                            name: `Group ${groupId}`,
+                            logic: operator || 'AND',
+                            nextLogic: 'AND'
+                        });
+
+                        this.selectedConditions.forEach(index => {
+                            this.conditions[index].groupId = groupId;
+                        });
+
+                        // Clear selection and cleanup any groups with < 2 items
+                        this.selectedConditions = [];
+                        this.cleanupGroups();
+                        this.persist();
                     });
-
-                    this.selectedConditions.forEach(index => {
-                        this.conditions[index].groupId = groupId;
-                    });
-
-                    this.selectedConditions = [];
-                    this.persist();
                 },
 
                 ungroupSelected() {
@@ -1075,6 +1173,7 @@
                         this.conditions[index].groupId = null;
                     });
                     this.selectedConditions = [];
+                    this.cleanupGroups();
                     this.persist();
                 },
 
@@ -1113,8 +1212,19 @@
                 },
 
                 removeCondition(index) {
-                    if (this.conditions.length > 1) {
+                    if (this.conditions.length > 0) {
+                        const removed = this.conditions[index];
                         this.conditions.splice(index, 1);
+                        // If removed belonged to a group, ensure that group still has >= 2; otherwise dissolve
+                        if (removed && removed.groupId != null) {
+                            const gid = removed.groupId;
+                            const remaining = this.conditions.filter(c => c.groupId === gid);
+                            if (remaining.length < 2) {
+                                remaining.forEach(c => c.groupId = null);
+                                this.groups = this.groups.filter(g => g.id !== gid);
+                            }
+                        }
+                        this.cleanupGroups();
                         this.persist();
                     }
                 },
@@ -1183,7 +1293,9 @@
                     console.log('Saving rule group:', payload);
                     this.saveToStorage(payload);
                     this.showOverviewModal = false;
-                    this.showAlert('Success', 'Rule group saved locally.', 'fa-check-circle text-green-500');
+                    const notice = this.computeShowAutoHideNotice();
+                    const msg = notice ? 'Survey rules saved successfully. ' + notice : 'Survey rules saved successfully.';
+                    this.showAlert('Success', msg, 'fa-check-circle text-green-500');
                 },
 
                 closeOverviewModal() {
@@ -1293,6 +1405,57 @@
                         // Persist repaired structure so subsequent loads are consistent
                         this.saveToStorage();
                     }
+                    // Ensure no group has fewer than 2 conditions
+                    this.cleanupGroups();
+                },
+
+                // Dissolve any groups with < 2 conditions; ensure single conditions remain ungrouped
+                cleanupGroups() {
+                    const counts = new Map();
+                    this.conditions.forEach(c => {
+                        if (c.groupId != null) {
+                            counts.set(c.groupId, (counts.get(c.groupId) || 0) + 1);
+                        }
+                    });
+                    const invalidIds = this.groups
+                        .filter(g => (counts.get(g.id) || 0) < 2)
+                        .map(g => g.id);
+                    if (invalidIds.length) {
+                        this.conditions.forEach(c => {
+                            if (c.groupId != null && invalidIds.includes(c.groupId)) {
+                                c.groupId = null;
+                            }
+                        });
+                        this.groups = this.groups.filter(g => !invalidIds.includes(g.id));
+                    }
+                },
+
+                // Open operator modal and resolve with 'AND' | 'OR' or null if cancelled
+                selectGroupOperator() {
+                    return new Promise((resolve) => {
+                        this.operatorChoice = 'AND';
+                        this.operatorResolve = resolve;
+                        this.showOperatorModal = true;
+                    });
+                },
+                closeOperatorModal(confirm) {
+                    this.showOperatorModal = false;
+                    if (this.operatorResolve) {
+                        this.operatorResolve(confirm ? this.operatorChoice : null);
+                        this.operatorResolve = null;
+                    }
+                },
+
+                // Compute conditional additional notice for success
+                computeShowAutoHideNotice() {
+                    // If exactly one question is targeted by any 'show' action, display the notice
+                    const totalShown = this.actions
+                        .filter(a => a.type === 'show')
+                        .reduce((sum, a) => sum + (Array.isArray(a.targetQuestions) ? a.targetQuestions.length : 0), 0);
+                    if (totalShown === 1) {
+                        return 'Please note: One question was automatically hidden because a "Show question(s)" rule was applied.';
+                    }
+                    return '';
                 },
 
                 async cancel() {
