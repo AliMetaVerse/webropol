@@ -468,22 +468,16 @@
                                 <!-- Group Footer AND/OR Toggle (BETWEEN GROUPS) -->
                                 <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
                                     <div class="flex items-center justify-center py-6 my-4">
-                                        <div class="bg-white rounded-xl shadow-lg px-8 py-4 border-3 border-webropol-primary-300 relative">
-                                            <!-- Visual connector lines -->
-                                            <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-webropol-gray-300"></div>
-                                            <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-webropol-gray-300"></div>
-                                            
-                                            <div class="flex items-center gap-4">
-                                                <div class="flex gap-3">
-                                                    <webropol-radio-special :name="'group-after-' + item.groupId"
-                                                        value="AND" label="AND" variant="primary" size="md"
-                                                        :checked="getGroup(item.groupId).nextLogic === 'AND'"
-                                                        @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'AND'; persist() }"></webropol-radio-special>
-                                                    <webropol-radio-special :name="'group-after-' + item.groupId"
-                                                        value="OR" label="OR" variant="accent" size="md"
-                                                        :checked="getGroup(item.groupId).nextLogic === 'OR'"
-                                                        @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'OR'; persist() }"></webropol-radio-special>
-                                                </div>
+                                        <div class="flex items-center gap-4">
+                                            <div class="flex gap-3">
+                                                <webropol-radio-special :name="'group-after-' + item.groupId"
+                                                    value="AND" label="AND" variant="primary" size="md"
+                                                    :checked="getGroup(item.groupId).nextLogic === 'AND'"
+                                                    @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'AND'; persist() }"></webropol-radio-special>
+                                                <webropol-radio-special :name="'group-after-' + item.groupId"
+                                                    value="OR" label="OR" variant="accent" size="md"
+                                                    :checked="getGroup(item.groupId).nextLogic === 'OR'"
+                                                    @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'OR'; persist() }"></webropol-radio-special>
                                             </div>
                                         </div>
                                     </div>
@@ -912,14 +906,20 @@
                                     
                                     <!-- Logic Connector Between Groups (Enhanced) -->
                                     <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
-                                        <div class="flex items-center justify-center py-4 my-2">
-                                            <div class="px-6 py-2.5 rounded-lg shadow-md relative"
-                                                :class="getGroup(item.groupId).nextLogic === 'AND' ? 'bg-webropol-primary-600 text-white' : 'bg-purple-600 text-white'">
-                                                <!-- Visual connector lines -->
-                                                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-webropol-gray-400"></div>
-                                                <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0.5 h-3 bg-webropol-gray-400"></div>
-                                                
-                                                <span class="text-sm font-bold uppercase tracking-wider" x-text="getGroup(item.groupId).nextLogic"></span>
+                                        <div class="flex items-center justify-center py-2 my-1">
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex gap-3">
+                                                    <div class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider"
+                                                        :class="getGroup(item.groupId).nextLogic === 'AND' ? 'bg-webropol-primary-100 text-webropol-primary-700 border-2 border-webropol-primary-300' : 'bg-webropol-gray-100 text-webropol-gray-500 border-2 border-webropol-gray-300'"
+                                                        x-show="getGroup(item.groupId).nextLogic === 'AND'"
+                                                        x-text="'AND'">
+                                                    </div>
+                                                    <div class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider"
+                                                        :class="getGroup(item.groupId).nextLogic === 'OR' ? 'bg-purple-100 text-purple-700 border-2 border-purple-300' : 'bg-webropol-gray-100 text-webropol-gray-500 border-2 border-webropol-gray-300'"
+                                                        x-show="getGroup(item.groupId).nextLogic === 'OR'"
+                                                        x-text="'OR'">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -933,8 +933,8 @@
                                             </div>
                                             <!-- Logic Connector -->
                                             <div class="flex items-center justify-center py-2" x-show="item.index < conditions.length - 1">
-                                                <span class="text-white px-4 py-1.5 rounded-lg text-xs font-bold"
-                                                    :class="item.condition.logic === 'AND' ? 'bg-webropol-primary-600' : 'bg-purple-600'"
+                                                <span class="px-3 py-1.5 rounded-lg text-xs font-bold border-2 uppercase tracking-wider"
+                                                    :class="item.condition.logic === 'AND' ? 'bg-webropol-primary-100 text-webropol-primary-700 border-webropol-primary-300' : 'bg-purple-100 text-purple-700 border-purple-300'"
                                                     x-text="item.condition.logic"></span>
                                             </div>
                                         </div>
