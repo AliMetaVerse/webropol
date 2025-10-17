@@ -46,7 +46,9 @@
                 metadata: {
                     firstTracked: Date.now(),
                     lastUpdated: Date.now(),
-                    version: '2.0.0'
+                    version: '2.0.0',
+                    env: (window.WebropolAnalyticsConfig && window.WebropolAnalyticsConfig.env) || undefined,
+                    baseUrl: (window.WebropolAnalyticsConfig && typeof window.WebropolAnalyticsConfig.baseUrl === 'function') ? window.WebropolAnalyticsConfig.baseUrl() : undefined
                 }
             };
             

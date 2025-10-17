@@ -16,6 +16,11 @@ Local:        analytics-monitor.html
 GitHub Pages: https://alimetaverse.github.io/webropol/analytics-monitor.html
 ```
 
+Environment config:
+- Production origin: https://alimetaverse.github.io (base path: /webropol/)
+- Local origin:      http://127.0.0.1:5500 (base path: /)
+- Config file:       scripts/analytics-config.js (loaded automatically by analytics-monitor.html)
+
 ---
 
 ## WHAT GETS TRACKED

@@ -272,9 +272,14 @@ class WebropolAnalyticsDashboard extends HTMLElement {
     }
     sorted.forEach(([path, v]) => {
       const tr = document.createElement('tr');
+      // Build absolute URL using env config if available
+      const buildUrl = (window.WebropolAnalyticsConfig && window.WebropolAnalyticsConfig.buildUrl) || ((p)=>p);
+      const absUrl = buildUrl(path);
+      const displayName = v.fileName || path.split('/').pop() || path;
+      const dir = v.directory || path.substring(0, path.lastIndexOf('/')) || '/';
       tr.innerHTML = `
-        <td class="py-2">${v.fileName || path.split('/').pop() || path}</td>
-        <td class="py-2">${v.directory || path.substring(0, path.lastIndexOf('/')) || '/'}</td>
+        <td class="py-2"><a href="${absUrl}" class="text-sky-300 hover:underline" target="_blank" rel="noopener">${displayName}</a></td>
+        <td class="py-2">${dir}</td>
         <td class="py-2">${(v.uniqueVisitors||[]).length}</td>
         <td class="py-2">${this.getEntryTopCountry(v) || '-'}</td>
         <td class="py-2">${this.formatTime(v.lastVisit)}</td>
@@ -296,7 +301,12 @@ class WebropolAnalyticsDashboard extends HTMLElement {
     sorted.forEach(([key, v]) => {
       const isHash = !!v.isHashRoute;
       const display = isHash ? key : (v.sectionName || key.split('#').pop() || key);
-      const base = v.pagePath || (isHash ? '(hash route)' : (key.split('#')[0] || ''));
+      const basePath = v.pagePath || (isHash ? '' : (key.split('#')[0] || ''));
+      const buildUrl = (window.WebropolAnalyticsConfig && window.WebropolAnalyticsConfig.buildUrl) || ((p)=>p);
+      const linkTarget = basePath ? buildUrl(basePath) + (isHash ? '#' + (display.startsWith('#') ? display.slice(1) : display) : '') : '';
+      const base = basePath
+        ? `<a href="${linkTarget}" class="text-sky-300 hover:underline" target="_blank" rel="noopener">${basePath || '(hash route)'}</a>`
+        : (isHash ? '(hash route)' : (basePath || ''));
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="py-2">${display}</td>
