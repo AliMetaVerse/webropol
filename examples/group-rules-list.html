@@ -1,0 +1,1534 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Group Details - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="../design-system/components/forms/RadioSpecial.js?v=2" type="module"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': {
+                            50: '#f0fdff',
+                            100: '#ccf7fe',
+                            200: '#99eefd',
+                            300: '#5ce0fa',
+                            400: '#22c9f0',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63'
+                        },
+                        'webropol-gray': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .rule-row {
+            transition: all 0.2s ease;
+        }
+
+        .rule-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .condition-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+        }
+
+        .dropdown-modern {
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+        }
+
+        .dropdown-modern:hover {
+            border-color: #06b6d4;
+        }
+
+        .dropdown-modern:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+
+        /* Unified Group Container - Redesigned */
+        .group-wrapper {
+            border: none;
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 2rem;
+            background: linear-gradient(145deg, #ffffff 0%, #f0fdff 100%);
+            box-shadow:
+                0 10px 40px rgba(6, 182, 212, 0.12),
+                0 2px 8px rgba(6, 182, 212, 0.08),
+                inset 0 -1px 0 rgba(6, 182, 212, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(6, 182, 212, 0.15);
+        }
+
+        .group-wrapper.group-or {
+            background: linear-gradient(145deg, #ffffff 0%, #faf5ff 100%);
+            box-shadow:
+                0 10px 40px rgba(168, 85, 247, 0.12),
+                0 2px 8px rgba(168, 85, 247, 0.08),
+                inset 0 -1px 0 rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+        }
+
+        .group-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #06b6d4, #22c9f0, #5ce0fa, #22c9f0, #06b6d4);
+            background-size: 200% 100%;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .group-wrapper.group-or::before {
+            background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff, #c084fc, #a855f7);
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .group-header {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+            padding: 1.5rem 1.75rem;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .group-header.group-or {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 50%, #7e22ce 100%);
+        }
+
+        .group-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .group-icon-badge {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .group-logic-selector {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0e7490;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .group-logic-selector:hover {
+            background: #ffffff;
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-content {
+            padding: 1.75rem;
+        }
+
+        .group-condition-row {
+            background: #ffffff;
+            border: 2px solid #e0f7fa;
+            border-radius: 14px;
+            padding: 1.25rem;
+            padding-left: 1.75rem;
+            margin-bottom: 0.875rem;
+            box-shadow:
+                0 2px 8px rgba(6, 182, 212, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .group-condition-row.group-or {
+            border: 2px solid #f3e8ff;
+            box-shadow:
+                0 2px 8px rgba(168, 85, 247, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .group-condition-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: linear-gradient(180deg, #06b6d4 0%, #22c9f0 50%, #5ce0fa 100%);
+            border-radius: 14px 0 0 14px;
+        }
+
+        .group-condition-row.group-or::before {
+            background: linear-gradient(180deg, #a855f7 0%, #c084fc 50%, #e9d5ff 100%);
+        }
+
+        .group-condition-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .group-condition-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .group-footer {
+            padding: 1.25rem 1.75rem;
+            padding-top: 0;
+            border-top: 0 solid rgba(6, 182, 212, 0.1);
+            background: linear-gradient(to bottom, transparent 0%, rgba(6, 182, 212, 0.02) 100%);
+        }
+
+        .group-count-badge {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.25) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #0e7490;
+            padding: 0.375rem 0.875rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(6, 182, 212, 0.1);
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .selected-row {
+            background-color: #f0fdff;
+            border-color: #06b6d4;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .fa-chevron-down {
+            transition: transform 0.2s ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+    </style>
+    
+    <!-- Global Analytics Tracker -->
+    <script src="../scripts/analytics-global-tracker.js"></script>
+</head>
+
+<body class="bg-webropol-gray-50 overflow-hidden">
+    <div x-data="ruleGroupManager()" class="h-screen flex flex-col p-8">
+        <div class="max-w-7xl mx-auto w-full flex flex-col h-full">
+            <!-- Modal Card -->
+            <div class="bg-white rounded-lg shadow-lg flex flex-col h-full overflow-hidden">
+                <!-- Header - Fixed -->
+                <div
+                    class="bg-white px-8 py-6 rounded-t-lg flex items-center justify-between flex-shrink-0 border-b-2 border-webropol-gray-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-webropol-primary-100 rounded-full flex items-center justify-center">
+                            <i class="fa-light fa-layer-group text-webropol-primary-600 text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-webropol-gray-800">Rule Group Details</h1>
+                    </div>
+                    <button @click="closeModal()"
+                        class="text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Content - Scrollable -->
+                <div class="p-8 overflow-y-auto flex-1 bg-white">
+                    <!-- Group Name -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">
+                            Group Name
+                        </label>
+                        <input type="text" x-model="groupName"
+                            class="w-full px-4 py-3 border-2 border-webropol-gray-200 rounded-lg focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100 transition-all bg-white"
+                            placeholder="Enter group name..." />
+                    </div>
+
+                    <!-- Conditions Section -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
+                                <i class="fa-light fa-filter text-webropol-primary-500"></i>
+                                When These Conditions Are Met
+                            </h2>
+
+                            <!-- Selection Actions -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-webropol-gray-600" x-show="selectedConditions.length > 0">
+                                    <span class="font-semibold" x-text="selectedConditions.length"></span> selected
+                                </span>
+                                <button @click="groupSelectedConditions()" :disabled="selectedConditions.length < 2"
+                                    :title="selectedConditions.length < 2 ? 'Please select at least 2 conditions first' : 'Group selected conditions together'"
+                                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                                    :class="selectedConditions.length < 2 ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-500 text-white hover:bg-webropol-primary-600'">
+                                    <i class="fa-light fa-object-group"></i>
+                                    Group Selected
+                                </button>
+                                <button @click="ungroupSelected()" :disabled="!hasGroupedConditionsSelected()"
+                                    :title="!hasGroupedConditionsSelected() ? 'Please select grouped conditions to ungroup first' : 'Remove grouping from selected conditions'"
+                                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                                    :class="!hasGroupedConditionsSelected() ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-gray-500 text-white hover:bg-webropol-gray-600'">
+                                    <i class="fa-light fa-object-ungroup"></i>
+                                    Ungroup
+                                </button>
+                                <button @click="clearSelection()" :disabled="selectedConditions.length === 0"
+                                    :title="selectedConditions.length === 0 ? 'No selection to clear' : 'Clear current selection'"
+                                    class="px-3 py-2 rounded-full text-sm transition-colors"
+                                    :class="selectedConditions.length === 0 ? 'text-webropol-gray-400 cursor-not-allowed' : 'text-webropol-gray-600 hover:bg-webropol-gray-100'">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Empty State for Conditions -->
+                        <template x-if="conditions.length === 0">
+                            <div class="border-2 border-dashed border-webropol-gray-200 rounded-xl p-8 text-center mb-4 bg-webropol-gray-50">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-14 h-14 rounded-full bg-webropol-primary-100 flex items-center justify-center">
+                                        <i class="fa-light fa-filter-circle-xmark text-webropol-primary-600 text-2xl"></i>
+                                    </div>
+                                    <div class="max-w-xl">
+                                        <h3 class="text-lg font-semibold text-webropol-gray-800">No conditions yet</h3>
+                                        <p class="text-sm text-webropol-gray-600 mt-1">Start by adding your first condition. You can group conditions later using AND/OR to build complex rules.</p>
+                                    </div>
+                                    <button @click="addCondition()" class="px-5 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                                        <i class="fa-light fa-plus mr-2"></i>
+                                        Add first condition
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Condition Rows with Grouping Support -->
+                        <template x-for="(item, itemIndex) in organizedConditions" :key="itemIndex">
+                            <div>
+                                <!-- GROUPED CONDITIONS CONTAINER -->
+                                <template x-if="item.type === 'group'">
+                                    <div>
+                                        <div class="group-wrapper" :class="{ 'group-or': getGroup(item.groupId).logic === 'OR' }">
+                                            <!-- Group Header -->
+                                            <div class="group-header text-white relative z-10" :class="{ 'group-or': getGroup(item.groupId).logic === 'OR' }">
+                                                <div class="flex items-center justify-between relative z-10">
+                                                    <div class="flex items-center gap-4 text-center">
+                                                        <div class="group-icon-badge px-4 py-2" style="width: 80px;">
+                                                            <div class="text-lg font-bold uppercase tracking-wider"
+                                                                x-text="getGroup(item.groupId).logic"></div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="font-bold text-lg tracking-wide">Condition Group
+                                                            </div>
+                                                            <div
+                                                                class="text-white text-sm font-medium mt-0.5 flex items-center gap-2">
+                                                                <span
+                                                                    x-text="item.conditions.length + ' conditions'"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-3">
+                                                        <select x-model="getGroup(item.groupId).logic"
+                                                            @change="persist()" class="group-logic-selector">
+                                                            <option value="AND">All must match (AND)</option>
+                                                            <option value="OR">Any can match (OR)</option>
+                                                        </select>
+                                                        <button @click="ungroupConditions(item.groupId)"
+                                                            class="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2.5 rounded-full text-sm font-semibold transition-all flex items-center gap-2 border border-white/30 hover:border-white/50"
+                                                            title="Break apart this group">
+                                                            <i class="fa-light fa-object-ungroup"></i>
+                                                            Ungroup all
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- All Grouped Conditions -->
+                                            <div class="group-content">
+                                                <template x-for="(condItem, condIndex) in item.conditions"
+                                                    :key="condIndex">
+                                                    <div>
+                                                        <div class="group-condition-row"
+                                                            :class="{ 'selected-row': selectedConditions.includes(condItem.index), 'group-or': getGroup(item.groupId).logic === 'OR' }">
+                                                            <div class="flex items-center gap-3">
+                                                                <!-- Selection Checkbox -->
+                                                                <input type="checkbox"
+                                                                    :checked="selectedConditions.includes(condItem.index)"
+                                                                    @change="toggleConditionSelection(condItem.index)"
+                                                                    class="checkbox-custom text-webropol-primary-500 rounded focus:ring-webropol-primary-500" />
+
+                                                                <!-- Condition Type -->
+                                                                <div class="w-48">
+                                                                    <select x-model="condItem.condition.type"
+                                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                                        <option value="selected">When option is selected
+                                                                        </option>
+                                                                        <option value="not_selected">When option is not
+                                                                            selected</option>
+                                                                        <option value="contains">When response contains
+                                                                        </option>
+                                                                        <option value="equals">When response equals
+                                                                        </option>
+                                                                        <option value="greater">When value is greater
+                                                                            than</option>
+                                                                        <option value="less">When value is less than
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Context Label -->
+                                                                <span
+                                                                    class="text-sm font-medium text-webropol-gray-600">in
+                                                                    question</span>
+
+                                                                <!-- Question Selector -->
+                                                                <div class="flex-1">
+                                                                    <select x-model="condItem.condition.question"
+                                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                                        <option value="q1">1. Where do you work?
+                                                                        </option>
+                                                                        <option value="q2">2. What percentage do you
+                                                                            work from home?</option>
+                                                                        <option value="q3">3. How do you like working
+                                                                            from home?</option>
+                                                                        <option value="q4">4. Rate your work-life
+                                                                            balance</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Answer Selector -->
+                                                                <div class="w-40">
+                                                                    <select x-model="condItem.condition.answer"
+                                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                                        <option value="home">Home</option>
+                                                                        <option value="office">Office</option>
+                                                                        <option value="hybrid">Hybrid</option>
+                                                                        <option value="remote">Remote</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <!-- Delete Button -->
+                                                                <button @click="removeCondition(condItem.index)"
+                                                                    class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                                                    title="Remove condition">
+                                                                    <i class="fa-light fa-trash-alt text-lg"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Group Footer AND/OR Toggle (BETWEEN GROUPS) -->
+                                <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
+                                    <div class="flex items-center justify-center py-6 my-4">
+                                        <div class="flex items-center gap-4">
+                                            <div class="flex gap-3">
+                                                <webropol-radio-special :name="'group-after-' + item.groupId"
+                                                    value="AND" label="AND" variant="primary" size="md"
+                                                    :checked="getGroup(item.groupId).nextLogic === 'AND'"
+                                                    @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'AND'; persist() }"></webropol-radio-special>
+                                                <webropol-radio-special :name="'group-after-' + item.groupId"
+                                                    value="OR" label="OR" variant="accent" size="md"
+                                                    :checked="getGroup(item.groupId).nextLogic === 'OR'"
+                                                    @webropol-change="if ($event.detail.checked) { getGroup(item.groupId).nextLogic = 'OR'; persist() }"></webropol-radio-special>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- SINGLE UNGROUPED CONDITION -->
+                                <template x-if="item.type === 'single'">
+                                    <div>
+                                        <div class="rule-row rounded-lg p-4 mb-3 border-2 border-webropol-gray-200 transition-all"
+                                            :class="{ 'selected-row': selectedConditions.includes(item.index) }">
+                                            <div class="flex items-center gap-3">
+                                                <!-- Selection Checkbox -->
+                                                <input type="checkbox"
+                                                    :checked="selectedConditions.includes(item.index)"
+                                                    @change="toggleConditionSelection(item.index)"
+                                                    class="checkbox-custom text-webropol-primary-500 rounded focus:ring-webropol-primary-500" />
+
+                                                <!-- Condition Type -->
+                                                <div class="w-48">
+                                                    <select x-model="item.condition.type"
+                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                        <option value="selected">When option is selected</option>
+                                                        <option value="not_selected">When option is not selected
+                                                        </option>
+                                                        <option value="contains">When response contains</option>
+                                                        <option value="equals">When response equals</option>
+                                                        <option value="greater">When value is greater than</option>
+                                                        <option value="less">When value is less than</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Context Label -->
+                                                <span class="text-sm font-medium text-webropol-gray-600">in
+                                                    question</span>
+
+                                                <!-- Question Selector -->
+                                                <div class="flex-1">
+                                                    <select x-model="item.condition.question"
+                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                        <option value="q1">1. Where do you work?</option>
+                                                        <option value="q2">2. What percentage do you work from home?
+                                                        </option>
+                                                        <option value="q3">3. How do you like working from home?
+                                                        </option>
+                                                        <option value="q4">4. Rate your work-life balance</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Answer Selector -->
+                                                <div class="w-40">
+                                                    <select x-model="item.condition.answer"
+                                                        class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                                        <option value="home">Home</option>
+                                                        <option value="office">Office</option>
+                                                        <option value="hybrid">Hybrid</option>
+                                                        <option value="remote">Remote</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Delete Button -->
+                                                <button @click="removeCondition(item.index)"
+                                                    class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                                    title="Remove condition">
+                                                    <i class="fa-light fa-trash-alt text-lg"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- AND/OR Toggle for ungrouped conditions -->
+                                        <div class="flex items-center justify-center gap-4 mb-3"
+                                            x-show="item.index < conditions.length - 1">
+                                            <div class="flex gap-2">
+                                                <webropol-radio-special :name="'logic-' + item.index" value="AND"
+                                                    label="AND" variant="primary" size="md"
+                                                    :checked="item.condition.logic === 'AND'"
+                                                    @webropol-change="if ($event.detail.checked) { item.condition.logic = 'AND'; persist() }"></webropol-radio-special>
+                                                <webropol-radio-special :name="'logic-' + item.index" value="OR" label="OR"
+                                                    variant="accent" size="md" :checked="item.condition.logic === 'OR'"
+                                                    @webropol-change="if ($event.detail.checked) { item.condition.logic = 'OR'; persist() }"></webropol-radio-special>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Add Condition Button -->
+                        <button @click="addCondition()"
+                            class="text-webropol-primary-600 mb-2 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium">
+                            <i class="fa-light fa-plus"></i>
+                            Add new condition
+                        </button>
+                    </div>
+
+                    <!-- Actions Section -->
+                    <div class="mb-6" x-show="actions.length > 0">
+                        <div class="flex items-center mb-4">
+                            <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
+                                <i class="fa-light fa-bolt text-webropol-primary-500"></i>
+                                Then Perform These Actions
+                            </h2>
+                        </div>
+
+                        <!-- Action Rows -->
+                        <template x-for="(action, index) in actions" :key="index">
+                            <div class="rule-row rounded-lg p-4 mb-3 border-2 border-webropol-gray-200">
+                                <div class="flex items-center gap-3">
+                                    <!-- Then Label -->
+                                    <span class="text-sm font-semibold text-webropol-gray-700 w-16">Then</span>
+
+                                    <!-- Action Type Dropdown -->
+                                    <div class="w-64">
+                                        <select x-model="action.type"
+                                            class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="">-- Select action --</option>
+                                            <option value="end">End survey</option>
+                                            <option value="forward">Forward respondent to</option>
+                                            <option value="show">Show Question(s)</option>
+                                            <option value="hide">Hide Question(s)</option>
+                                            <option value="disable">Disable Question(s)</option>
+                                            <option value="show_option">Show Option(s)</option>
+                                            <option value="hide_option">Hide Option(s)</option>
+                                            <option value="disable_option">Disable Option(s)</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Questions Selector Dropdown -->
+                                    <div class="flex-1 relative"
+                                        x-show="action.type && ['show', 'hide', 'disable', 'show_option', 'hide_option', 'disable_option'].includes(action.type)"
+                                        x-data="{ open: false }">
+                                        <div @click="open = !open" @click.away="open = false"
+                                            class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white cursor-pointer min-h-[42px] flex items-center justify-between">
+                                            <div class="flex-1 flex flex-wrap gap-1">
+                                                <template x-if="action.targetQuestions.length === 0">
+                                                    <span class="text-webropol-gray-400">-- Select questions --</span>
+                                                </template>
+                                                <template x-for="(qId, idx) in action.targetQuestions" :key="qId">
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 bg-webropol-primary-100 text-webropol-primary-700 rounded text-xs font-medium">
+                                                        <span x-text="getQuestionLabel(qId)"></span>
+                                                        <button @click.stop="removeQuestionFromAction(index, idx)"
+                                                            class="hover:bg-webropol-primary-200 rounded-full w-4 h-4 flex items-center justify-center">
+                                                            <i class="fa-light fa-times text-xs"></i>
+                                                        </button>
+                                                    </span>
+                                                </template>
+                                            </div>
+                                            <i class="fa-light fa-chevron-down text-webropol-gray-400 ml-2"
+                                                :class="{ 'rotate-180': open }"></i>
+                                        </div>
+
+                                        <!-- Dropdown Menu -->
+                                        <div x-show="open" x-cloak
+                                            class="absolute z-50 w-full mt-1 bg-white border-2 border-webropol-primary-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                            <template x-for="question in availableQuestions" :key="question.id">
+                                                <label
+                                                    class="flex items-center gap-2 px-3 py-2 hover:bg-webropol-primary-50 cursor-pointer transition-colors"
+                                                    @click.stop>
+                                                    <input type="checkbox" :value="question.id"
+                                                        :checked="action.targetQuestions.includes(question.id)"
+                                                        @change="toggleQuestion(index, question.id)"
+                                                        class="w-4 h-4 text-webropol-primary-500 rounded focus:ring-webropol-primary-500" />
+                                                    <span class="text-sm text-webropol-gray-700"
+                                                        x-text="question.label"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Page Selector for Skip Action -->
+                                    <div class="flex-1" x-show="action.type === 'skip'">
+                                        <select x-model="action.targetPage"
+                                            class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white">
+                                            <option value="">-- Select page --</option>
+                                            <option value="page2">Page 2: Demographics</option>
+                                            <option value="page3">Page 3: Feedback</option>
+                                            <option value="page4">Page 4: Contact</option>
+                                            <option value="thankyou">Thank You Page</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- URL Input for Forward Action -->
+                                    <div class="flex-1" x-show="action.type === 'forward'">
+                                        <input type="url" x-model="action.forwardUrl"
+                                            class="dropdown-modern w-full px-3 py-2 rounded-lg text-sm bg-white"
+                                            placeholder="Enter URL (e.g., https://example.com)">
+                                    </div>
+
+                                    <!-- Text for End Survey Action -->
+                                    <div class="flex-1" x-show="action.type === 'end'">
+                                        <span class="text-sm text-webropol-gray-600">and redirect respondent to thank you page</span>
+                                    </div>
+
+                                    <!-- Delete Button -->
+                                    <button @click="removeAction(index)"
+                                        class="text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                        title="Remove action">
+                                        <i class="fa-light fa-trash-alt text-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Add Action Button -->
+                    <button @click="addAction()"
+                        class="text-webropol-primary-600 mb-6 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-light fa-plus"></i>
+                        Add new action
+                    </button>
+
+                </div>
+
+                <!-- Footer - Fixed -->
+                <div class="bg-white px-8 py-6 rounded-b-lg flex justify-end gap-3 flex-shrink-0 border-t-2 border-webropol-gray-200">
+                    <button @click="cancel()"
+                        class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        Cancel
+                    </button>
+                    <button @click="save()"
+                        class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl">
+                        Save & Review
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div x-show="showConfirmModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            @click.self="closeConfirmModal(false)">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-question-circle text-amber-500 text-xl"></i>
+                        <h3 class="text-lg font-bold text-webropol-gray-800" x-text="confirmTitle"></h3>
+                    </div>
+                    <button @click="closeConfirmModal(false)"
+                        class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <p class="text-webropol-gray-700" x-text="confirmMessage"></p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
+                    <button @click="closeConfirmModal(false)"
+                        class="px-4 py-2 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        <span x-text="confirmCancelText"></span>
+                    </button>
+                    <button @click="closeConfirmModal(true)"
+                        class="px-4 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                        <span x-text="confirmOkText"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Modal -->
+        <div x-show="showAlertModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            @click.self="closeAlertModal()">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light text-xl" :class="alertIcon"></i>
+                        <h3 class="text-lg font-bold text-webropol-gray-800" x-text="alertTitle"></h3>
+                    </div>
+                    <button @click="closeAlertModal()"
+                        class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <p class="text-webropol-gray-700 whitespace-pre-line" x-text="alertMessage"></p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-lg flex justify-end">
+                    <button @click="closeAlertModal()"
+                        class="px-4 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operator Selection Modal -->
+        <div x-show="showOperatorModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            @click.self="closeOperatorModal(false)">
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-light fa-diagram-project text-webropol-primary-500 text-xl"></i>
+                        <h3 class="text-lg font-bold text-webropol-gray-800">Choose Group Operator</h3>
+                    </div>
+                    <button @click="closeOperatorModal(false)"
+                        class="text-webropol-gray-400 hover:text-webropol-gray-600 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6 space-y-4">
+                    <p class="text-sm text-webropol-gray-700">How should the conditions inside this group be evaluated?</p>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex-1">
+                            <div role="button" tabindex="0"
+                                 @click="operatorChoice = 'AND'"
+                                 @keydown.enter.prevent="operatorChoice = 'AND'"
+                                 @keydown.space.prevent="operatorChoice = 'AND'"
+                                 :aria-pressed="operatorChoice === 'AND' ? 'true' : 'false'"
+                                 :class="operatorChoice === 'AND' ? 'ring-2 ring-webropol-primary-500 bg-webropol-primary-50' : 'ring-1 ring-webropol-gray-200'"
+                                 class="cursor-pointer rounded-lg p-4 flex items-start gap-3">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center"
+                                     :class="operatorChoice === 'AND' ? 'bg-webropol-primary-600 text-white' : 'bg-webropol-gray-100 text-webropol-gray-600'">
+                                    <span class="font-bold">AND</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-webropol-gray-800">All must match (AND)</div>
+                                    <div class="text-sm text-webropol-gray-600">The group matches only if every condition inside is true.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div role="button" tabindex="0"
+                                 @click="operatorChoice = 'OR'"
+                                 @keydown.enter.prevent="operatorChoice = 'OR'"
+                                 @keydown.space.prevent="operatorChoice = 'OR'"
+                                 :aria-pressed="operatorChoice === 'OR' ? 'true' : 'false'"
+                                 :class="operatorChoice === 'OR' ? 'ring-2 ring-purple-500 bg-purple-50' : 'ring-1 ring-webropol-gray-200'"
+                                 class="cursor-pointer rounded-lg p-4 flex items-start gap-3">
+                                <div class="w-14 h-14 rounded-xl flex items-center justify-center"
+                                     :class="operatorChoice === 'OR' ? 'bg-purple-600 text-white' : 'bg-webropol-gray-100 text-webropol-gray-600'">
+                                    <span class="font-bold">OR</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-webropol-gray-800">Any can match (OR)</div>
+                                    <div class="text-sm text-webropol-gray-600">The group matches if at least one condition inside is true.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-webropol-gray-50 px-6 py-4 rounded-b-lg flex justify-end gap-3">
+                    <button @click="closeOperatorModal(false)"
+                        class="px-4 py-2 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        Cancel
+                    </button>
+                    <button @click="closeOperatorModal(true)"
+                        class="px-4 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview/Confirmation Modal -->
+        <div x-show="showOverviewModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+            @click.self="closeOverviewModal()">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all" @click.stop>
+                <!-- Modal Header -->
+                <div class="px-6 py-5 bg-white rounded-t-xl flex items-center justify-between border-b-2 border-webropol-gray-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-webropol-primary-100 rounded-full flex items-center justify-center">
+                            <i class="fa-light fa-clipboard-check text-webropol-primary-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-webropol-gray-800">
+                            Review: <span x-text="groupName || 'Untitled Group'"></span>
+                        </h3>
+                    </div>
+                    <button @click="closeOverviewModal()"
+                        class="text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-full p-2 transition-colors">
+                        <i class="fa-light fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Content - Scrollable -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+                    <!-- Conditions Overview -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-light fa-filter text-webropol-primary-500 text-xl"></i>
+                            <h4 class="text-lg font-bold text-webropol-gray-800">Conditions</h4>
+                            <span class="ml-auto px-3 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-sm font-semibold"
+                                x-text="conditions.length + ' total'"></span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <template x-for="(item, itemIndex) in organizedConditions" :key="itemIndex">
+                                <div>
+                                    <!-- Grouped Conditions -->
+                                    <template x-if="item.type === 'group'">
+                                        <div>
+                                            <div class="rounded-lg p-4 border-2"
+                                                :class="getGroup(item.groupId).logic === 'OR' ? 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-300' : 'bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 border-webropol-primary-300'">
+                                                <div class="flex items-center gap-2 mb-3">
+                                                    <div class="text-white px-3 py-1 rounded-full text-xs font-bold uppercase"
+                                                        :class="getGroup(item.groupId).logic === 'OR' ? 'bg-purple-500' : 'bg-webropol-primary-500'">
+                                                        <span x-text="getGroup(item.groupId).logic"></span> Group
+                                                    </div>
+                                                    <span class="text-xs text-webropol-gray-600" x-text="item.conditions.length + ' conditions'"></span>
+                                                </div>
+                                                <div class="space-y-2">
+                                                    <template x-for="(condItem, condIndex) in item.conditions" :key="condIndex">
+                                                        <div class="bg-white rounded-md p-3 flex items-center gap-2 shadow-sm">
+                                                            <i class="fa-light fa-circle-check"
+                                                                :class="getGroup(item.groupId).logic === 'OR' ? 'text-purple-500' : 'text-webropol-primary-500'"></i>
+                                                            <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(condItem.condition)"></span>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    
+                                    <!-- Logic Connector Between Groups (Enhanced) -->
+                                    <template x-if="item.type === 'group' && itemIndex < organizedConditions.length - 1">
+                                        <div class="flex items-center justify-center py-2 my-1">
+                                            <div class="flex items-center gap-4">
+                                                <div class="flex gap-3">
+                                                    <div class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider"
+                                                        :class="getGroup(item.groupId).nextLogic === 'AND' ? 'bg-webropol-primary-100 text-webropol-primary-700 border-2 border-webropol-primary-300' : 'bg-webropol-gray-100 text-webropol-gray-500 border-2 border-webropol-gray-300'"
+                                                        x-show="getGroup(item.groupId).nextLogic === 'AND'"
+                                                        x-text="'AND'">
+                                                    </div>
+                                                    <div class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider"
+                                                        :class="getGroup(item.groupId).nextLogic === 'OR' ? 'bg-purple-100 text-purple-700 border-2 border-purple-300' : 'bg-webropol-gray-100 text-webropol-gray-500 border-2 border-webropol-gray-300'"
+                                                        x-show="getGroup(item.groupId).nextLogic === 'OR'"
+                                                        x-text="'OR'">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Single Condition -->
+                                    <template x-if="item.type === 'single'">
+                                        <div>
+                                            <div class="bg-white rounded-lg p-4 border-2 border-webropol-gray-200 flex items-center gap-3">
+                                                <i class="fa-light fa-circle-check text-webropol-primary-500 text-lg"></i>
+                                                <span class="text-sm text-webropol-gray-700 flex-1" x-text="getConditionSummary(item.condition)"></span>
+                                            </div>
+                                            <!-- Logic Connector -->
+                                            <div class="flex items-center justify-center py-2" x-show="item.index < conditions.length - 1">
+                                                <span class="px-3 py-1.5 rounded-lg text-xs font-bold border-2 uppercase tracking-wider"
+                                                    :class="item.condition.logic === 'AND' ? 'bg-webropol-primary-100 text-webropol-primary-700 border-webropol-primary-300' : 'bg-purple-100 text-purple-700 border-purple-300'"
+                                                    x-text="item.condition.logic"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- No conditions message -->
+                            <template x-if="conditions.length === 0">
+                                <div class="bg-webropol-gray-50 rounded-lg p-4 text-center text-sm text-webropol-gray-500">
+                                    <i class="fa-light fa-info-circle mr-1"></i>
+                                    No conditions defined
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Actions Overview -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fa-light fa-bolt text-webropol-primary-500 text-xl"></i>
+                            <h4 class="text-lg font-bold text-webropol-gray-800">Actions</h4>
+                            <span class="ml-auto px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold"
+                                x-text="actions.length + ' total'"></span>
+                        </div>
+
+                        <div class="space-y-2">
+                            <template x-for="(action, actionIndex) in actions" :key="actionIndex">
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-2 border-green-200 flex items-center gap-3">
+                                    <i class="fa-light fa-play-circle text-green-600 text-lg"></i>
+                                    <div class="flex-1">
+                                        <span class="text-sm font-medium text-webropol-gray-700" x-text="getActionSummary(action)"></span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- No actions message -->
+                            <template x-if="actions.length === 0">
+                                <div class="bg-webropol-gray-50 rounded-lg p-4 text-center text-sm text-webropol-gray-500">
+                                    <i class="fa-light fa-info-circle mr-1"></i>
+                                    No actions defined
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-white px-6 py-4 rounded-b-xl flex justify-between items-center gap-3 border-t-2 border-webropol-gray-200">
+                    <button @click="closeOverviewModal()"
+                        class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                        <i class="fa-light fa-pencil mr-2"></i>
+                        Edit
+                    </button>
+                    <div class="flex gap-3">
+                        <button @click="closeOverviewModal()"
+                            class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
+                            <i class="fa-light fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                        <button @click="applyChanges()"
+                            class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-medium hover:from-green-600 hover:to-green-700 transition-all shadow-lg hover:shadow-xl">
+                            <i class="fa-light fa-check mr-2"></i>
+                            Apply Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function ruleGroupManager() {
+            return {
+                // Persistent storage key
+                storageKey: 'webropol.ruleGroupManager.state',
+                groupName: '',
+                selectedConditions: [],
+                groups: [],
+                nextGroupId: 1,
+                showConfirmModal: false,
+                confirmTitle: '',
+                confirmMessage: '',
+                confirmOkText: 'Yes',
+                confirmCancelText: 'No',
+                confirmCallback: null,
+                showAlertModal: false,
+                alertTitle: '',
+                alertMessage: '',
+                alertIcon: 'fa-info-circle text-webropol-primary-500',
+                showOverviewModal: false,
+                // Operator selection modal state
+                showOperatorModal: false,
+                operatorChoice: 'AND',
+                operatorResolve: null,
+                availableQuestions: [
+                    { id: 'q1', label: '1. Where do you work?' },
+                    { id: 'q2', label: '2. What percentage do you work from home?' },
+                    { id: 'q3', label: '3. How do you like working from home?' },
+                    { id: 'q4', label: '4. Rate your work-life balance' },
+                    { id: 'q5', label: '5. Would you recommend remote work?' }
+                ],
+                conditions: [],
+                actions: [],
+                // Alpine lifecycle
+                init() {
+                    this.loadFromStorage();
+                    // Auto-save on changes with a small debounce
+                    this.debouncedSave = this.debounce(() => this.saveToStorage(), 300);
+                    // Deep-ish watches via JSON snapshots
+                    this.$watch(() => JSON.stringify(this.conditions), () => this.debouncedSave());
+                    this.$watch(() => JSON.stringify(this.groups), () => this.debouncedSave());
+                    this.$watch('groupName', () => this.debouncedSave());
+                },
+                // Simple debounce helper
+                debounce(fn, delay = 300) {
+                    let t;
+                    return (...args) => {
+                        clearTimeout(t);
+                        t = setTimeout(() => fn.apply(this, args), delay);
+                    };
+                },
+                // Explicit persist trigger
+                persist() {
+                    this.saveToStorage();
+                },
+
+                // Helper to organize conditions into displayable structure
+                get organizedConditions() {
+                    const result = [];
+                    const processedGroups = new Set();
+
+                    this.conditions.forEach((condition, index) => {
+                        if (condition.groupId && !processedGroups.has(condition.groupId)) {
+                            // Start of a new group - collect all conditions with this groupId
+                            const groupConditions = this.conditions
+                                .map((c, i) => ({ condition: c, index: i }))
+                                .filter(item => item.condition.groupId === condition.groupId);
+
+                            result.push({
+                                type: 'group',
+                                groupId: condition.groupId,
+                                conditions: groupConditions
+                            });
+                            processedGroups.add(condition.groupId);
+                        } else if (!condition.groupId) {
+                            // Ungrouped condition
+                            result.push({
+                                type: 'single',
+                                condition: condition,
+                                index: index
+                            });
+                        }
+                    });
+
+                    return result;
+                },
+
+                toggleConditionSelection(index) {
+                    const idx = this.selectedConditions.indexOf(index);
+                    if (idx > -1) {
+                        this.selectedConditions.splice(idx, 1);
+                    } else {
+                        this.selectedConditions.push(index);
+                    }
+                    this.selectedConditions.sort((a, b) => a - b);
+                },
+
+                clearSelection() {
+                    this.selectedConditions = [];
+                },
+
+                // Custom confirm dialog
+                showConfirm(title, message, okText = 'Yes', cancelText = 'No') {
+                    return new Promise((resolve) => {
+                        this.confirmTitle = title;
+                        this.confirmMessage = message;
+                        this.confirmOkText = okText;
+                        this.confirmCancelText = cancelText;
+                        this.confirmCallback = resolve;
+                        this.showConfirmModal = true;
+                    });
+                },
+
+                closeConfirmModal(result) {
+                    this.showConfirmModal = false;
+                    if (this.confirmCallback) {
+                        this.confirmCallback(result);
+                        this.confirmCallback = null;
+                    }
+                },
+
+                // Custom alert dialog
+                showAlert(title, message, icon = 'fa-info-circle text-webropol-primary-500') {
+                    this.alertTitle = title;
+                    this.alertMessage = message;
+                    this.alertIcon = icon;
+                    this.showAlertModal = true;
+                },
+
+                closeAlertModal() {
+                    this.showAlertModal = false;
+                },
+
+                groupSelectedConditions() {
+                    if (this.selectedConditions.length < 2) {
+                        this.showAlert('Selection Required', 'Please select at least 2 conditions to group.', 'fa-exclamation-triangle text-amber-500');
+                        return;
+                    }
+                    // Ask for operator selection (AND/OR)
+                    this.selectGroupOperator().then((operator) => {
+                        if (!operator) return; // cancelled
+
+                        const groupId = this.nextGroupId;
+                        this.nextGroupId++;
+
+                        this.groups.push({
+                            id: groupId,
+                            name: `Group ${groupId}`,
+                            logic: operator || 'AND',
+                            nextLogic: 'AND'
+                        });
+
+                        this.selectedConditions.forEach(index => {
+                            this.conditions[index].groupId = groupId;
+                        });
+
+                        // Clear selection and cleanup any groups with < 2 items
+                        this.selectedConditions = [];
+                        this.cleanupGroups();
+                        this.persist();
+                    });
+                },
+
+                ungroupSelected() {
+                    this.selectedConditions.forEach(index => {
+                        this.conditions[index].groupId = null;
+                    });
+                    this.selectedConditions = [];
+                    this.cleanupGroups();
+                    this.persist();
+                },
+
+                hasGroupedConditionsSelected() {
+                    if (this.selectedConditions.length === 0) return false;
+                    return this.selectedConditions.some(index =>
+                        this.conditions[index] && this.conditions[index].groupId != null
+                    );
+                },
+
+                ungroupConditions(groupId) {
+                    this.conditions.forEach(condition => {
+                        if (condition.groupId === groupId) {
+                            condition.groupId = null;
+                        }
+                    });
+
+                    // Remove group from groups array
+                    this.groups = this.groups.filter(g => g.id !== groupId);
+                    this.persist();
+                },
+
+                getGroup(groupId) {
+                    return this.groups.find(g => g.id === groupId) || { logic: 'AND', nextLogic: 'AND' };
+                },
+
+                addCondition() {
+                    this.conditions.push({
+                        type: 'selected',
+                        question: 'q1',
+                        answer: '',
+                        logic: 'AND',
+                        groupId: null
+                    });
+                    this.persist();
+                },
+
+                removeCondition(index) {
+                    if (this.conditions.length > 0) {
+                        const removed = this.conditions[index];
+                        this.conditions.splice(index, 1);
+                        // If removed belonged to a group, ensure that group still has >= 2; otherwise dissolve
+                        if (removed && removed.groupId != null) {
+                            const gid = removed.groupId;
+                            const remaining = this.conditions.filter(c => c.groupId === gid);
+                            if (remaining.length < 2) {
+                                remaining.forEach(c => c.groupId = null);
+                                this.groups = this.groups.filter(g => g.id !== gid);
+                            }
+                        }
+                        this.cleanupGroups();
+                        this.persist();
+                    }
+                },
+
+                addAction() {
+                    this.actions.push({
+                        type: '',
+                        targetQuestions: [],
+                        targetPage: '',
+                        forwardUrl: '',
+                        timing: 'immediate'
+                    });
+                    this.persist();
+                },
+
+                removeAction(index) {
+                    this.actions.splice(index, 1);
+                    this.persist();
+                },
+
+                toggleQuestion(actionIndex, questionId) {
+                    const action = this.actions[actionIndex];
+                    const idx = action.targetQuestions.indexOf(questionId);
+                    if (idx > -1) {
+                        action.targetQuestions.splice(idx, 1);
+                    } else {
+                        action.targetQuestions.push(questionId);
+                    }
+                    this.persist();
+                },
+
+                removeQuestionFromAction(actionIndex, questionIdx) {
+                    this.actions[actionIndex].targetQuestions.splice(questionIdx, 1);
+                    this.persist();
+                },
+
+                getQuestionLabel(questionId) {
+                    const question = this.availableQuestions.find(q => q.id === questionId);
+                    return question ? question.label : questionId;
+                },
+
+                addTargetQuestion(actionIndex) {
+                    // In a real app, this would open a question selector modal
+                    this.actions[actionIndex].targetQuestions.push('New Question');
+                },
+
+                removeTargetQuestion(actionIndex, questionIndex) {
+                    this.actions[actionIndex].targetQuestions.splice(questionIndex, 1);
+                },
+
+                save() {
+                    // Show overview modal instead of saving directly
+                    this.showOverviewModal = true;
+                },
+
+                applyChanges() {
+                    const payload = {
+                        version: 1,
+                        groupName: this.groupName,
+                        conditions: this.conditions,
+                        groups: this.groups,
+                        actions: this.actions,
+                        nextGroupId: this.nextGroupId,
+                        savedAt: new Date().toISOString()
+                    };
+                    console.log('Saving rule group:', payload);
+                    this.saveToStorage(payload);
+                    this.showOverviewModal = false;
+                    
+                    // Build informational message about actions
+                    let message = 'Survey rules saved successfully.';
+                    
+                    if (this.actions.length > 0) {
+                        message += '\n\nThe following actions will be applied:';
+                        this.actions.forEach((action, index) => {
+                            message += `\n• ${this.getActionSummary(action)}`;
+                        });
+                        
+                        // Check for specific action types that need special notices
+                        const hideActions = this.actions.filter(a => a.type === 'hide' || a.type === 'hide_option');
+                        const showActions = this.actions.filter(a => a.type === 'show' || a.type === 'show_option');
+                        
+                        if (showActions.length > 0) {
+                            message += '\n\nNote: Questions/options set to "Show" will be hidden by default and only shown when conditions are met.';
+                        }
+                        
+                        if (hideActions.length > 0) {
+                            message += '\n\nNote: Questions/options set to "Hide" will be visible by default and hidden when conditions are met.';
+                        }
+                    }
+                    
+                    this.showAlert('Success', message, 'fa-check-circle text-green-500');
+                },
+
+                closeOverviewModal() {
+                    this.showOverviewModal = false;
+                },
+
+                getConditionSummary(condition) {
+                    const typeLabels = {
+                        selected: 'is selected',
+                        not_selected: 'is not selected',
+                        contains: 'contains',
+                        equals: 'equals',
+                        greater: 'is greater than',
+                        less: 'is less than'
+                    };
+                    const questionLabel = this.getQuestionLabel(condition.question);
+                    const typeLabel = typeLabels[condition.type] || condition.type;
+                    return `${questionLabel} ${typeLabel} "${condition.answer}"`;
+                },
+
+                getActionSummary(action) {
+                    const actionLabels = {
+                        show: 'Show',
+                        hide: 'Hide',
+                        disable: 'Disable',
+                        show_option: 'Show Option(s) in',
+                        hide_option: 'Hide Option(s) in',
+                        disable_option: 'Disable Option(s) in',
+                        skip: 'Skip to',
+                        forward: 'Forward respondent to',
+                        end: 'End survey'
+                    };
+                    const actionLabel = actionLabels[action.type] || action.type;
+                    
+                    if (action.type === 'skip') {
+                        return `${actionLabel} ${action.targetPage || 'page'}`;
+                    } else if (action.type === 'forward') {
+                        return `${actionLabel} ${action.forwardUrl || 'URL'}`;
+                    } else if (action.type === 'end') {
+                        return actionLabel;
+                    } else if (action.targetQuestions.length > 0) {
+                        const questions = action.targetQuestions.map(qId => this.getQuestionLabel(qId)).join(', ');
+                        return `${actionLabel}: ${questions}`;
+                    }
+                    return `${actionLabel} (no target specified)`;
+                },
+
+                // Persistence helpers
+                saveToStorage(payload) {
+                    try {
+                        const data = payload || {
+                            version: 1,
+                            groupName: this.groupName,
+                            conditions: this.conditions,
+                            groups: this.groups,
+                            actions: this.actions,
+                            nextGroupId: this.nextGroupId,
+                            savedAt: new Date().toISOString()
+                        };
+                        localStorage.setItem(this.storageKey, JSON.stringify(data));
+                    } catch (e) {
+                        console.error('Failed to save to localStorage', e);
+                        this.showAlert('Storage Error', 'Could not save rules to your browser storage.', 'fa-exclamation-triangle text-amber-500');
+                    }
+                },
+
+                loadFromStorage() {
+                    try {
+                        const raw = localStorage.getItem(this.storageKey);
+                        if (!raw) return;
+                        const data = JSON.parse(raw);
+                        // Basic shape guard
+                        if (data && typeof data === 'object') {
+                            this.groupName = data.groupName ?? this.groupName;
+                            this.conditions = Array.isArray(data.conditions) ? data.conditions : this.conditions;
+                            this.groups = Array.isArray(data.groups) ? data.groups : this.groups;
+                            this.actions = Array.isArray(data.actions) ? data.actions : this.actions;
+                            this.nextGroupId = Number.isInteger(data.nextGroupId) ? data.nextGroupId : this.nextGroupId;
+                            this.rebuildGroupsFromConditionsIfNeeded();
+                        }
+                    } catch (e) {
+                        console.warn('No valid saved state found or failed to parse. Proceeding with defaults.', e);
+                    }
+                },
+
+                // Ensure every condition.groupId has a corresponding group entry
+                rebuildGroupsFromConditionsIfNeeded() {
+                    const presentIds = new Set(this.groups.map(g => g.id));
+                    const idsFromConditions = new Set(
+                        this.conditions
+                            .filter(c => c.groupId != null)
+                            .map(c => c.groupId)
+                    );
+                    let added = false;
+                    idsFromConditions.forEach(id => {
+                        if (!presentIds.has(id)) {
+                            this.groups.push({ id, name: `Group ${id}`, logic: 'AND', nextLogic: 'AND' });
+                            added = true;
+                        }
+                    });
+                    // Sync nextGroupId to be above the max used id
+                    const maxId = Math.max(0, ...Array.from(idsFromConditions));
+                    if (this.nextGroupId <= maxId) {
+                        this.nextGroupId = maxId + 1;
+                    }
+                    if (added) {
+                        // Persist repaired structure so subsequent loads are consistent
+                        this.saveToStorage();
+                    }
+                    // Ensure no group has fewer than 2 conditions
+                    this.cleanupGroups();
+                },
+
+                // Dissolve any groups with < 2 conditions; ensure single conditions remain ungrouped
+                cleanupGroups() {
+                    const counts = new Map();
+                    this.conditions.forEach(c => {
+                        if (c.groupId != null) {
+                            counts.set(c.groupId, (counts.get(c.groupId) || 0) + 1);
+                        }
+                    });
+                    const invalidIds = this.groups
+                        .filter(g => (counts.get(g.id) || 0) < 2)
+                        .map(g => g.id);
+                    if (invalidIds.length) {
+                        this.conditions.forEach(c => {
+                            if (c.groupId != null && invalidIds.includes(c.groupId)) {
+                                c.groupId = null;
+                            }
+                        });
+                        this.groups = this.groups.filter(g => !invalidIds.includes(g.id));
+                    }
+                },
+
+                // Open operator modal and resolve with 'AND' | 'OR' or null if cancelled
+                selectGroupOperator() {
+                    return new Promise((resolve) => {
+                        this.operatorChoice = 'AND';
+                        this.operatorResolve = resolve;
+                        this.showOperatorModal = true;
+                    });
+                },
+                closeOperatorModal(confirm) {
+                    this.showOperatorModal = false;
+                    if (this.operatorResolve) {
+                        this.operatorResolve(confirm ? this.operatorChoice : null);
+                        this.operatorResolve = null;
+                    }
+                },
+
+                // Compute conditional additional notice for success
+                computeShowAutoHideNotice() {
+                    // If exactly one question is targeted by any 'show' action, display the notice
+                    const totalShown = this.actions
+                        .filter(a => a.type === 'show')
+                        .reduce((sum, a) => sum + (Array.isArray(a.targetQuestions) ? a.targetQuestions.length : 0), 0);
+                    if (totalShown === 1) {
+                        return 'Please note: One question was automatically hidden because a "Show question(s)" rule was applied.';
+                    }
+                    return '';
+                },
+
+                async cancel() {
+                    const discard = await this.showConfirm(
+                        'Discard Changes?',
+                        'Are you sure you want to discard all changes?',
+                        'Discard',
+                        'Keep Editing'
+                    );
+                    if (discard) {
+                        this.closeModal();
+                    }
+                },
+
+                closeModal() {
+                    console.log('Closing modal');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
