@@ -1066,8 +1066,8 @@
                         class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
                         Cancel
                     </button>
-                    <button @click="save()" :disabled="groupName.trim() === ''"
-                        :class="groupName.trim() === '' ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 shadow-lg hover:shadow-xl'"
+                    <button @click="save()" :disabled="groupName.trim() === '' || !hasChanges()"
+                        :class="(groupName.trim() === '' || !hasChanges()) ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 shadow-lg hover:shadow-xl'"
                         class="px-6 py-3 rounded-full font-medium transition-colors">
                         Save
                     </button>
@@ -1379,6 +1379,7 @@
                 storageKey: 'webropol.ruleGroupManager.state',
                 groupName: '',
                 originalGroupName: '', // Track original name for edits
+                initialState: null, // Store initial state for change detection
                 selectedConditions: [],
                 groups: [],
                 nextGroupId: 1,
@@ -1449,6 +1450,7 @@
                     this.selectedConditions = [];
                     this.nextGroupId = 1;
                     this.mode = 'edit';
+                    this.captureInitialState();
                 },
                 editGroupFromList(groupData) {
                     this.groupName = groupData.groupName;
@@ -1458,6 +1460,7 @@
                     this.actions = groupData.actions || [];
                     this.nextGroupId = groupData.nextGroupId || 1;
                     this.mode = 'edit';
+                    this.captureInitialState();
                 },
                 // Simple debounce helper
                 debounce(fn, delay = 300) {
@@ -1892,6 +1895,26 @@
                     return `${typeLabel}${answer}`;
                 },
                 
+                // Change detection helpers
+                captureInitialState() {
+                    this.initialState = JSON.stringify({
+                        groupName: this.groupName,
+                        conditions: this.conditions,
+                        groups: this.groups,
+                        actions: this.actions
+                    });
+                },
+                
+                hasChanges() {
+                    const currentState = JSON.stringify({
+                        groupName: this.groupName,
+                        conditions: this.conditions,
+                        groups: this.groups,
+                        actions: this.actions
+                    });
+                    return this.initialState !== currentState;
+                },
+                
                 // Organize conditions for list display respecting groups
                 getOrganizedConditionsForDisplay(group) {
                     const conditions = group.conditions || [];
@@ -2070,17 +2093,20 @@
                 },
 
                 async cancel() {
-                    const discard = await this.showConfirm(
-                        'Discard Changes?',
-                        'Are you sure you want to discard all changes?',
-                        'Discard',
-                        'Keep Editing'
-                    );
-                    if (discard) {
-                        // Return to list without saving
-                        this.mode = 'list';
-                        this.refreshSavedGroups();
+                    // Only show confirmation if there are changes
+                    if (this.hasChanges()) {
+                        const discard = await this.showConfirm(
+                            'Discard Changes?',
+                            'Are you sure you want to discard all changes?',
+                            'Discard',
+                            'Keep Editing'
+                        );
+                        if (!discard) return;
                     }
+                    
+                    // Return to list without saving
+                    this.mode = 'list';
+                    this.refreshSavedGroups();
                 },
 
                 closeModal() {
