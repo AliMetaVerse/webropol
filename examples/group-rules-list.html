@@ -280,6 +280,40 @@
         .rotate-180 {
             transform: rotate(180deg);
         }
+
+        /* List view redesign */
+        .ifthen-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            border: 1.5px solid #0ea5b7; /* ~ webropol-primary-500 */
+            color: #0e7490; /* webropol-primary-700 */
+            background: #ecfeff; /* very light cyan */
+            display: inline-block;
+        }
+
+        .summary-box {
+            background: #fff;
+            border: 2px solid #e2e8f0; /* webropol-gray-200 */
+            border-radius: 12px;
+            min-height: 48px;
+            padding: 0.75rem 1rem;
+            color: #334155; /* webropol-gray-700 */
+        }
+
+        .rulecard {
+            background: #f0fdff; /* webropol-primary-50 */
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 16px;
+            position: relative;
+            transition: border-color .2s, box-shadow .2s, transform .08s;
+        }
+        .rulecard:hover {
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 8px 18px rgba(6, 182, 212, 0.12);
+        }
     </style>
     
     <!-- Global Analytics Tracker -->
@@ -302,10 +336,9 @@
                             <p class="text-sm text-webropol-gray-600"><span x-text="savedGroups.length"></span> group<span x-show="savedGroups.length !== 1">s</span></p>
                         </div>
                     </div>
-                    <button @click="createNewGroup()"
-                        class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl">
-                        <i class="fa-light fa-plus mr-2"></i>
-                        Create New Group
+                    <button @click="window.history.length > 1 ? window.history.back() : null"
+                        class="text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-full p-2 transition-colors" title="Close">
+                        <i class="fa-light fa-times text-xl"></i>
                     </button>
                 </div>
 
@@ -324,108 +357,66 @@
                                 </div>
                                 <button @click="createNewGroup()" class="px-5 py-2 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">
                                     <i class="fa-light fa-plus mr-2"></i>
-                                    Create New Group
+                                    Add new rule group
                                 </button>
                             </div>
                         </div>
                     </template>
 
                     <!-- Groups List -->
-                    <div class="space-y-4" x-show="savedGroups.length > 0">
+                    <div class="space-y-5" x-show="savedGroups.length > 0">
                         <template x-for="(group, index) in savedGroups" :key="index">
-                            <div class="bg-white rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-300 transition-all shadow-sm hover:shadow-md">
-                                <!-- Group Card Header -->
-                                <div class="p-5 border-b border-webropol-gray-100">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div class="flex-1">
-                                            <div class="flex items-center gap-3 mb-2">
-                                                <h4 class="text-lg font-bold text-webropol-gray-800" x-text="group.groupName || 'Untitled Group'"></h4>
-                                                <span class="px-2 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-full text-xs font-semibold">Active</span>
-                                            </div>
-                                            <div class="flex items-center gap-4 text-sm text-webropol-gray-600">
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fa-light fa-filter"></i>
-                                                    <span x-text="(group.conditions || []).length"></span> conditions
-                                                </div>
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fa-light fa-bolt"></i>
-                                                    <span x-text="(group.actions || []).length"></span> actions
-                                                </div>
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fa-light fa-clock"></i>
-                                                    <span x-text="new Date(group.savedAt).toLocaleDateString()"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button @click="editGroupFromList(group)"
-                                                class="px-4 py-2 bg-webropol-primary-500 text-white rounded-lg hover:bg-webropol-primary-600 transition-colors text-sm font-medium flex items-center gap-2">
-                                                <i class="fa-light fa-pencil"></i>
-                                                Edit
-                                            </button>
-                                            <button @click="deleteGroup(group.groupName)"
-                                                class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium flex items-center gap-2">
-                                                <i class="fa-light fa-trash-alt"></i>
-                                                Delete
-                                            </button>
-                                        </div>
+                            <div class="rulecard p-5">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="text-webropol-gray-800 font-semibold">
+                                        <span x-text="group.groupName || 'Group Rule Name'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button @click="editGroupFromList(group)"
+                                            class="px-4 py-2 bg-webropol-primary-500 text-white rounded-lg hover:bg-webropol-primary-600 transition-colors text-sm font-medium flex items-center gap-2">
+                                            <i class="fa-light fa-pencil"></i>
+                                            Edit
+                                        </button>
+                                        <button @click="deleteGroup(group.groupName)"
+                                            class="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium flex items-center gap-2">
+                                            <i class="fa-light fa-trash-alt"></i>
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
-
-                                <!-- Group Card Content - Quick Preview -->
-                                <div class="p-5 bg-webropol-gray-50">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <!-- Conditions Preview -->
-                                        <div>
-                                            <h5 class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-wide mb-2">Conditions</h5>
-                                            <div class="space-y-1">
-                                                <template x-if="(group.conditions || []).length === 0">
-                                                    <p class="text-sm text-webropol-gray-500 italic">No conditions</p>
-                                                </template>
-                                                <template x-for="(condition, cIndex) in (group.conditions || []).slice(0, 3)" :key="cIndex">
-                                                    <div class="text-xs text-webropol-gray-600 flex items-start gap-2">
-                                                        <i class="fa-light fa-circle-check text-webropol-primary-500 mt-0.5"></i>
-                                                        <span x-text="condition.type + ' in ' + condition.question"></span>
-                                                    </div>
-                                                </template>
-                                                <template x-if="(group.conditions || []).length > 3">
-                                                    <p class="text-xs text-webropol-gray-500 italic">+<span x-text="(group.conditions || []).length - 3"></span> more...</p>
-                                                </template>
-                                            </div>
-                                        </div>
-
-                                        <!-- Actions Preview -->
-                                        <div>
-                                            <h5 class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-wide mb-2">Actions</h5>
-                                            <div class="space-y-1">
-                                                <template x-if="(group.actions || []).length === 0">
-                                                    <p class="text-sm text-webropol-gray-500 italic">No actions</p>
-                                                </template>
-                                                <template x-for="(action, aIndex) in (group.actions || []).slice(0, 3)" :key="aIndex">
-                                                    <div class="text-xs text-webropol-gray-600 flex items-start gap-2">
-                                                        <i class="fa-light fa-play-circle text-green-500 mt-0.5"></i>
-                                                        <span x-text="action.type || 'No action'"></span>
-                                                    </div>
-                                                </template>
-                                                <template x-if="(group.actions || []).length > 3">
-                                                    <p class="text-xs text-webropol-gray-500 italic">+<span x-text="(group.actions || []).length - 3"></span> more...</p>
-                                                </template>
-                                            </div>
-                                        </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <span class="ifthen-badge">IF...</span>
+                                        <div class="summary-box mt-2" x-text="summarizeConditions(group) || 'Summary Description'"></div>
+                                    </div>
+                                    <div>
+                                        <span class="ifthen-badge">THEN...</span>
+                                        <div class="summary-box mt-2" x-text="summarizeActions(group) || 'Summary Description'"></div>
                                     </div>
                                 </div>
                             </div>
                         </template>
+                        <div>
+                            <button @click="createNewGroup()" class="inline-flex items-center gap-2 px-5 py-3 bg-webropol-primary-600 text-white rounded-full font-semibold hover:bg-webropol-primary-700 transition-colors shadow">
+                                <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+                                    <i class="fa-light fa-plus"></i>
+                                </span>
+                                Add new rule group
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Footer -->
-                <div class="bg-white px-8 py-6 rounded-b-lg flex justify-end gap-3 flex-shrink-0 border-t-2 border-webropol-gray-200">
-                    <button @click="createNewGroup()"
-                        class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl">
-                        <i class="fa-light fa-plus mr-2"></i>
-                        Create New Group
+                <div class="bg-white px-8 py-6 rounded-b-lg flex items-center justify-between flex-shrink-0 border-t-2 border-webropol-gray-200">
+                    <button @click="deleteAllGroups()"
+                        class="px-6 py-3 bg-rose-600 text-white rounded-full font-medium hover:bg-rose-700 transition-colors">
+                        Delete all
                     </button>
+                    <div class="flex gap-3">
+                        <button class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">Label</button>
+                        <button class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors">Label</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1231,6 +1222,15 @@
                         this.savedGroups = [];
                     }
                 },
+                deleteAllGroups() {
+                    this.showConfirm('Delete all rule groups?', 'This will permanently remove all saved rule groups.', 'Delete all', 'Cancel')
+                        .then((ok) => {
+                            if (!ok) return;
+                            const listKey = 'webropol.savedRuleGroups';
+                            localStorage.removeItem(listKey);
+                            this.savedGroups = [];
+                        });
+                },
                 createNewGroup() {
                     this.groupName = '';
                     this.conditions = [];
@@ -1605,6 +1605,54 @@
                         return `${actionLabel}: ${questions}`;
                     }
                     return `${actionLabel} (no target specified)`;
+                },
+
+                // Summaries for list cards
+                summarizeConditions(group) {
+                    const conds = group.conditions || [];
+                    if (conds.length === 0) return '';
+                    const toText = (c) => {
+                        const typeMap = {
+                            selected: 'is selected',
+                            not_selected: 'is not selected',
+                            contains: 'contains',
+                            equals: 'equals',
+                            greater: 'is greater than',
+                            less: 'is less than'
+                        };
+                        const q = this.getQuestionLabel(c.question || '');
+                        const t = typeMap[c.type] || c.type || '';
+                        const ans = c.answer ? ` "${c.answer}"` : '';
+                        return `${q} ${t}${ans}`.trim();
+                    };
+                    // Try to respect grouping for a compact preview
+                    const groups = (group.groups || []);
+                    if (groups.length > 0) {
+                        const byId = new Map(groups.map(g => [g.id, g]));
+                        const grouped = new Map();
+                        conds.forEach(c => {
+                            if (c.groupId != null) {
+                                grouped.set(c.groupId, (grouped.get(c.groupId) || []).concat(c));
+                            }
+                        });
+                        const chunks = [];
+                        grouped.forEach((arr, gid) => {
+                            const g = byId.get(gid) || { logic: 'AND' };
+                            chunks.push('(' + arr.map(toText).join(` ${g.logic} `) + ')');
+                        });
+                        // Add ungrouped
+                        const ungrouped = conds.filter(c => c.groupId == null);
+                        if (ungrouped.length) chunks.push(ungrouped.map(toText).join(' AND '));
+                        return chunks.join(' AND ');
+                    }
+                    return conds.map(toText).join(' AND ');
+                },
+                summarizeActions(group) {
+                    const acts = group.actions || [];
+                    if (acts.length === 0) return '';
+                    const parts = acts.slice(0, 3).map(a => this.getActionSummary(a));
+                    const extra = acts.length > 3 ? ` and ${acts.length - 3} more` : '';
+                    return parts.join('; ') + extra;
                 },
 
                 // Persistence helpers
