@@ -458,7 +458,7 @@
 
                     <!-- Groups List -->
                     <div class="space-y-6" x-show="savedGroups.length > 0">
-                        <template x-for="(group, index) in savedGroups" :key="index">
+                        <template x-for="(group, index) in savedGroups.slice().reverse()" :key="index">
                             <div class="rulecard p-6" x-data="{ expanded: false }">
                                 <!-- Card Header -->
                                 <div class="flex items-start justify-between mb-5">
@@ -1739,12 +1739,12 @@
                         // Check if group already exists (update) or add new
                         const existingIndex = savedGroups.findIndex(g => g.groupName === groupData.groupName);
                         if (existingIndex > -1) {
-                            // Update existing
-                            savedGroups[existingIndex] = groupData;
-                        } else {
-                            // Add new
-                            savedGroups.push(groupData);
+                            // Remove existing entry from its current position
+                            savedGroups.splice(existingIndex, 1);
                         }
+                        
+                        // Add to the end (will appear at top when reversed in display)
+                        savedGroups.push(groupData);
                         
                         localStorage.setItem(listKey, JSON.stringify(savedGroups));
                     } catch (e) {
