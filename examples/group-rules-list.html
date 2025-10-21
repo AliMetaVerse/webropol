@@ -1386,6 +1386,7 @@
                 // Persistent storage key
                 storageKey: 'webropol.ruleGroupManager.state',
                 groupName: '',
+                originalGroupName: '', // Track original name for edits
                 selectedConditions: [],
                 groups: [],
                 nextGroupId: 1,
@@ -1449,6 +1450,7 @@
                 },
                 createNewGroup() {
                     this.groupName = '';
+                    this.originalGroupName = ''; // Clear original name for new group
                     this.conditions = [];
                     this.actions = [];
                     this.groups = [];
@@ -1458,6 +1460,7 @@
                 },
                 editGroupFromList(groupData) {
                     this.groupName = groupData.groupName;
+                    this.originalGroupName = groupData.groupName; // Store original name
                     this.conditions = groupData.conditions || [];
                     this.groups = groupData.groups || [];
                     this.actions = groupData.actions || [];
@@ -1736,10 +1739,12 @@
                         const existing = localStorage.getItem(listKey);
                         const savedGroups = existing ? JSON.parse(existing) : [];
                         
-                        // Check if group already exists (update) or add new
-                        const existingIndex = savedGroups.findIndex(g => g.groupName === groupData.groupName);
+                        // Use originalGroupName to find the group being edited
+                        const lookupName = this.originalGroupName || groupData.groupName;
+                        const existingIndex = savedGroups.findIndex(g => g.groupName === lookupName);
+                        
                         if (existingIndex > -1) {
-                            // Remove existing entry from its current position
+                            // Remove the old entry (handles both update and rename)
                             savedGroups.splice(existingIndex, 1);
                         }
                         
@@ -1747,6 +1752,9 @@
                         savedGroups.push(groupData);
                         
                         localStorage.setItem(listKey, JSON.stringify(savedGroups));
+                        
+                        // Update originalGroupName to the new name after save
+                        this.originalGroupName = groupData.groupName;
                     } catch (e) {
                         console.error('Failed to save to groups list', e);
                     }
