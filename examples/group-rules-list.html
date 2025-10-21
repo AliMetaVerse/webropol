@@ -666,7 +666,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
                                 <i class="fa-light fa-filter text-webropol-primary-500"></i>
-                                When These Conditions Are Met
+                                When These Conditions Are Met <span class="text-red-500">*</span>
                             </h2>
 
                             <!-- Selection Actions -->
@@ -922,6 +922,9 @@
                             <i class="fa-light fa-plus"></i>
                             Add new condition
                         </button>
+                        <p x-show="conditions.length === 0" class="text-xs text-red-500 mt-1">
+                            <i class="fa-light fa-exclamation-circle"></i> At least one condition is required
+                        </p>
                     </div>
 
                     <!-- Actions Section -->
@@ -929,7 +932,7 @@
                         <div class="flex items-center mb-4">
                             <h2 class="text-lg font-semibold text-webropol-gray-800 flex items-center gap-2">
                                 <i class="fa-light fa-bolt text-webropol-primary-500"></i>
-                                Then Perform These Actions
+                                Then Perform These Actions <span class="text-red-500">*</span>
                             </h2>
                         </div>
 
@@ -1040,6 +1043,9 @@
                         <i class="fa-light fa-plus"></i>
                         Add new action
                     </button>
+                    <p x-show="actions.length === 0" class="text-xs text-red-500 mt-1 mb-6">
+                        <i class="fa-light fa-exclamation-circle"></i> At least one action is required
+                    </p>
 
                 </div>
 
@@ -1049,8 +1055,9 @@
                         class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
                         Cancel
                     </button>
-                    <button @click="save()" :disabled="groupName.trim() === '' || !hasChanges()"
-                        :class="(groupName.trim() === '' || !hasChanges()) ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 shadow-lg hover:shadow-xl'"
+                    <button @click="save()" 
+                        :disabled="groupName.trim() === '' || conditions.length === 0 || actions.length === 0 || !hasChanges()"
+                        :class="(groupName.trim() === '' || conditions.length === 0 || actions.length === 0 || !hasChanges()) ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 shadow-lg hover:shadow-xl'"
                         class="px-6 py-3 rounded-full font-medium transition-colors">
                         Save
                     </button>
@@ -1676,6 +1683,18 @@
                     // Validate group name
                     if (!this.groupName || this.groupName.trim() === '') {
                         this.showAlert('Group Name Required', 'Please enter a name for this rule group before saving.', 'fa-exclamation-triangle text-amber-500');
+                        return;
+                    }
+                    
+                    // Validate conditions
+                    if (this.conditions.length === 0) {
+                        this.showAlert('Conditions Required', 'Please add at least one condition to the rule group.', 'fa-exclamation-triangle text-amber-500');
+                        return;
+                    }
+                    
+                    // Validate actions
+                    if (this.actions.length === 0) {
+                        this.showAlert('Actions Required', 'Please add at least one action to the rule group.', 'fa-exclamation-triangle text-amber-500');
                         return;
                     }
                     
