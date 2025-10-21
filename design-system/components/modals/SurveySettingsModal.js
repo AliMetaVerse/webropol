@@ -361,7 +361,24 @@ export class WebropolSurveySettingsModal extends BaseComponent {
   }
 
   bindEvents() {
-    // Setting action buttons
+    // Setting item clicks (for individual settings)
+    const settingItems = this.querySelectorAll('.setting-item');
+    settingItems.forEach(item => {
+      this.addListener(item, 'click', (e) => {
+        const section = item.getAttribute('data-section');
+        const key = item.getAttribute('data-key');
+        
+        // Special handling for Rule Groups
+        if (section === 'groupsActions' && key === 'ruleGroups') {
+          this.openRuleGroupModal();
+        } else {
+          // Emit generic setting action for other settings
+          this.emit('setting-action', { section, key });
+        }
+      });
+    });
+    
+    // Setting action buttons (legacy support)
     const actionButtons = this.querySelectorAll('.setting-action-btn');
     actionButtons.forEach(button => {
       this.addListener(button, 'click', (e) => {
@@ -399,6 +416,47 @@ export class WebropolSurveySettingsModal extends BaseComponent {
     
     // Keyboard events
     this.addListener(document, 'keydown', this.handleKeydown);
+  }
+
+  /**
+   * Open the Rule Group Modal
+   */
+  openRuleGroupModal() {
+    // Check if rule group modal exists, if not create it
+    let ruleGroupModal = document.querySelector('webropol-rule-group-modal');
+    
+    if (!ruleGroupModal) {
+      ruleGroupModal = document.createElement('webropol-rule-group-modal');
+      document.body.appendChild(ruleGroupModal);
+    }
+    
+    // Get available questions for the survey (can be customized)
+    const availableQuestions = this.getAvailableQuestions();
+    
+    // Open the modal
+    ruleGroupModal.open({
+      mode: 'list',
+      surveyId: this.surveyData?.surveyId,
+      availableQuestions: availableQuestions,
+      onSave: (ruleGroups) => {
+        console.log('Rule groups saved:', ruleGroups);
+        this.emit('rule-groups-updated', { ruleGroups });
+      }
+    });
+  }
+
+  /**
+   * Get available questions for the survey
+   * This should be customized based on actual survey questions
+   */
+  getAvailableQuestions() {
+    // Default questions - should be replaced with actual survey questions
+    return [
+      { id: 'q1', label: '1. Where do you work?' },
+      { id: 'q2', label: '2. What percentage do you work from home?' },
+      { id: 'q3', label: '3. How do you like working from home?' },
+      { id: 'q4', label: '4. Rate your work-life balance' },
+    ];
   }
 
   handleBackdropClick(e) {
