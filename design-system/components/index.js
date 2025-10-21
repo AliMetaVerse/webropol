@@ -44,6 +44,7 @@ export { WebropolAIAssistant } from './ai/AIAssistantPanel.js';
 // Modal components
 export { Modal } from './modals/Modal.js';
 export { WebropolSettingsModal } from './modals/SettingsModal.js';
+export { WebropolSurveySettingsModal } from './modals/SurveySettingsModal.js';
 
 // Auto-register all components when this module is imported
 import './buttons/Button.js';
@@ -69,6 +70,7 @@ import './feedback/Tooltip.js';
 import './feedback/PromoToast.js';
 import './modals/Modal.js';
 import './modals/SettingsModal.js';
+import './modals/SurveySettingsModal.js';
 import './ai/AIAssistantPanel.js';
 
 // Backward compatibility aliases
@@ -101,5 +103,6 @@ window.WebropolComponents = {
   Promo: 'webropol-promo',
   Modal: 'webropol-modal',
   SettingsModal: 'webropol-settings-modal',
+  SurveySettingsModal: 'webropol-survey-settings-modal',
   AIAssistant: 'webropol-ai-assistant'
 };

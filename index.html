@@ -592,7 +592,9 @@
     <script src="design-system/components/forms/Toggle.js" type="module"></script>
     <script src="design-system/components/modals/Modal.js" type="module"></script>
     <script src="design-system/components/modals/SettingsModal.js" type="module"></script>
+    <script src="design-system/components/modals/SurveySettingsModal.js" type="module"></script>
     <script src="design-system/components/feedback/PromoToast.js" type="module"></script>
+
     <script src="design-system/utils/theme-manager.js" type="module"></script>
     <script src="design-system/utils/global-settings-manager.js" type="module"></script>
     <script src="design-system/utils/spa-router.js?v=20250903-1" type="module"></script>
@@ -2401,7 +2403,58 @@
                 },
             }
         }
+        
+        // Global Survey Settings Modal Function (accessible from SPA-loaded pages)
+        window.openSurveySettingsModal = function(surveyId, surveyName) {
+            const modal = document.querySelector('webropol-survey-settings-modal');
+            if (modal) {
+                modal.open({
+                    surveyId: surveyId || localStorage.getItem('currentSurveyId') || 'survey-12345',
+                    surveyName: surveyName || localStorage.getItem('currentSurveyName') || 'Survey Name',
+                    settings: {
+                        surveyNotifications: {
+                            notificationEmails: false,
+                            limitRespondents: false,
+                            answerMode: 'once',
+                            saveContinueLater: false,
+                            summaryPage: false,
+                            mandatorySurvey: false,
+                            moveForwardOnly: false,
+                            voiceAnswering: false,
+                        },
+                        groupsActions: {
+                            questionGroups: null,
+                            forwarding: false,
+                            randomization: false,
+                            hierarchy: false,
+                            questionCategories: false,
+                            checkAnswers: false,
+                            ruleGroups: false,
+                            exportTags: false,
+                        },
+                        securityRules: {
+                            retentionTime: null,
+                            anonymity: false,
+                            suomiMessages: false,
+                            pinCode: false,
+                            strongAuth: false,
+                            ipRestrictions: false,
+                            caseManagement: false,
+                        }
+                    },
+                    onSave: (settings) => {
+                        console.log('Survey settings saved:', settings);
+                        // TODO: Implement backend save functionality
+                    }
+                });
+            } else {
+                console.warn('Survey Settings Modal not found in DOM');
+            }
+        };
     </script>
+
+    <!-- Survey Settings Modal (Global - accessible from all SPA routes) -->
+    <webropol-survey-settings-modal></webropol-survey-settings-modal>
 
 </body>
 

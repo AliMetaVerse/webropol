@@ -301,8 +301,8 @@ export class WebropolSurveySettingsModal extends BaseComponent {
       <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
            style="z-index: 12000; transition: opacity 300ms ease-out">
         
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
-             style="transition: all 300ms ease-out"
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
+             style="max-width: 1400px; transition: all 300ms ease-out"
              role="document"
              aria-labelledby="survey-settings-title">
           
