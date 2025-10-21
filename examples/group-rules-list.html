@@ -327,6 +327,86 @@
             box-shadow: 0 8px 24px rgba(6, 182, 212, 0.18);
             transform: translateY(-2px);
         }
+        
+        /* Collapsible card styles */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .chevron-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        /* Condition and action item styles */
+        .condition-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .condition-item:hover {
+            border-color: #0891b2;
+            box-shadow: 0 2px 6px rgba(6, 182, 212, 0.1);
+        }
+        
+        .condition-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .logic-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logic-badge.and {
+            background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            color: white;
+        }
+        
+        .logic-badge.or {
+            background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+            color: white;
+        }
+        
+        .action-item {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .action-item:hover {
+            border-color: #86efac;
+            box-shadow: 0 2px 6px rgba(34, 197, 94, 0.1);
+        }
+        
+        .action-item:last-child {
+            margin-bottom: 0;
+        }
     </style>
     
     <!-- Global Analytics Tracker -->
@@ -379,12 +459,19 @@
                     <!-- Groups List -->
                     <div class="space-y-6" x-show="savedGroups.length > 0">
                         <template x-for="(group, index) in savedGroups" :key="index">
-                            <div class="rulecard p-6">
+                            <div class="rulecard p-6" x-data="{ expanded: false }">
+                                <!-- Card Header -->
                                 <div class="flex items-start justify-between mb-5">
-                                    <div class="text-webropol-gray-900 font-bold text-lg tracking-tight">
-                                        <span x-text="group.groupName || 'Group Rule Name'"></span>
+                                    <div class="flex-1">
+                                        <div class="text-webropol-gray-900 font-bold text-lg tracking-tight">
+                                            <span x-text="group.groupName || 'Group Rule Name'"></span>
+                                        </div>
+                                        <div class="text-sm text-webropol-gray-600 mt-1">
+                                            <span x-text="(group.conditions || []).length"></span> condition<span x-show="(group.conditions || []).length !== 1">s</span> • 
+                                            <span x-text="(group.actions || []).length"></span> action<span x-show="(group.actions || []).length !== 1">s</span>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-3">
                                         <button @click="editGroupFromList(group)"
                                             class="px-5 py-2.5 bg-webropol-primary-600 text-white rounded-full hover:bg-webropol-primary-700 transition-all text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md">
                                             <i class="fa-light fa-pencil"></i>
@@ -395,20 +482,128 @@
                                             <i class="fa-light fa-trash-alt"></i>
                                             Delete
                                         </button>
+                                        <div class="w-px h-8 bg-webropol-gray-300 mx-1"></div>
+                                        <button @click="expanded = !expanded" 
+                                            class="text-webropol-primary-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 transition-colors p-2 rounded-lg"
+                                            :title="expanded ? 'Collapse details' : 'Expand details'">
+                                            <i class="fa-solid fa-chevron-down text-lg chevron-icon" :class="{ 'rotated': expanded }"></i>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <div>
-                                        <div class="mb-2.5">
-                                            <span class="ifthen-badge">IF</span>
+                                
+                                <!-- Collapsible Content -->
+                                <div class="collapsible-content" :class="{ 'expanded': expanded }">
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <!-- Conditions Column -->
+                                        <div>
+                                            <div class="mb-3">
+                                                <span class="ifthen-badge">IF</span>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <template x-if="!group.conditions || group.conditions.length === 0">
+                                                    <div class="text-sm text-webropol-gray-500 italic p-4 bg-webropol-gray-50 rounded-lg">
+                                                        No conditions defined
+                                                    </div>
+                                                </template>
+                                                <!-- Display organized conditions respecting groups -->
+                                                <template x-for="(item, itemIndex) in getOrganizedConditionsForDisplay(group)" :key="itemIndex">
+                                                    <div>
+                                                        <!-- Grouped Conditions -->
+                                                        <template x-if="item.type === 'group'">
+                                                            <div>
+                                                                <div class="border-2 rounded-lg p-3 mb-2" :class="item.logic === 'OR' ? 'border-purple-300 bg-purple-50' : 'border-webropol-primary-300 bg-webropol-primary-50'">
+                                                                    <div class="flex items-center gap-2 mb-2">
+                                                                        <span class="logic-badge text-xs" :class="item.logic === 'OR' ? 'or' : 'and'" x-text="item.logic + ' GROUP'"></span>
+                                                                        <span class="text-xs text-webropol-gray-600" x-text="'(' + item.conditions.length + ' conditions)'"></span>
+                                                                    </div>
+                                                                    <div class="space-y-2">
+                                                                        <template x-for="(condItem, condIdx) in item.conditions" :key="condIdx">
+                                                                            <div>
+                                                                                <div class="condition-item bg-white">
+                                                                                    <div class="flex items-start gap-2">
+                                                                                        <i class="fa-light fa-filter text-webropol-primary-500 mt-1"></i>
+                                                                                        <div class="flex-1">
+                                                                                            <div class="text-sm font-medium text-webropol-gray-800" x-text="getConditionDetailedText(condItem.condition)"></div>
+                                                                                            <div class="text-xs text-webropol-gray-500 mt-1">
+                                                                                                <span x-text="getQuestionLabel(condItem.condition.question)"></span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <!-- Logic badge within group -->
+                                                                                <template x-if="condIdx < item.conditions.length - 1">
+                                                                                    <div class="flex justify-center my-1">
+                                                                                        <span class="logic-badge text-xs" :class="item.logic === 'OR' ? 'or' : 'and'" x-text="item.logic"></span>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Logic badge after group -->
+                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
+                                                                    <div class="flex justify-center my-2">
+                                                                        <span class="logic-badge" :class="item.nextLogic === 'OR' ? 'or' : 'and'" x-text="item.nextLogic || 'AND'"></span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                        
+                                                        <!-- Single Ungrouped Condition -->
+                                                        <template x-if="item.type === 'single'">
+                                                            <div>
+                                                                <div class="condition-item">
+                                                                    <div class="flex items-start gap-2">
+                                                                        <i class="fa-light fa-filter text-webropol-primary-500 mt-1"></i>
+                                                                        <div class="flex-1">
+                                                                            <div class="text-sm font-medium text-webropol-gray-800" x-text="getConditionDetailedText(item.condition)"></div>
+                                                                            <div class="text-xs text-webropol-gray-500 mt-1">
+                                                                                <span x-text="getQuestionLabel(item.condition.question)"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Logic Badge Between Single Conditions -->
+                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
+                                                                    <div class="flex justify-center my-2">
+                                                                        <span class="logic-badge" :class="item.condition.logic === 'OR' ? 'or' : 'and'" x-text="item.condition.logic || 'AND'"></span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
-                                        <div class="summary-box" x-text="summarizeConditions(group) || 'Summary Description'"></div>
-                                    </div>
-                                    <div>
-                                        <div class="mb-2.5">
-                                            <span class="ifthen-badge">THEN</span>
+                                        
+                                        <!-- Actions Column -->
+                                        <div>
+                                            <div class="mb-3">
+                                                <span class="ifthen-badge">THEN</span>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <template x-if="!group.actions || group.actions.length === 0">
+                                                    <div class="text-sm text-webropol-gray-500 italic p-4 bg-webropol-gray-50 rounded-lg">
+                                                        No actions defined
+                                                    </div>
+                                                </template>
+                                                <template x-for="(action, aIndex) in (group.actions || [])" :key="aIndex">
+                                                    <div class="action-item">
+                                                        <div class="flex items-start gap-2">
+                                                            <i class="fa-light fa-bolt text-green-600 mt-1"></i>
+                                                            <div class="flex-1">
+                                                                <div class="text-sm font-medium text-webropol-gray-800" x-text="getActionDetailedText(action)"></div>
+                                                                <template x-if="action.targetQuestions && action.targetQuestions.length > 0">
+                                                                    <div class="text-xs text-webropol-gray-500 mt-1">
+                                                                        Targets: <span x-text="action.targetQuestions.map(qId => getQuestionLabel(qId)).join(', ')"></span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
-                                        <div class="summary-box" x-text="summarizeActions(group) || 'Summary Description'"></div>
                                     </div>
                                 </div>
                             </div>
@@ -461,11 +656,15 @@
                     <!-- Group Name -->
                     <div class="mb-8">
                         <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">
-                            Group Name
+                            Group Name <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" x-model="groupName"
-                            class="w-full px-4 py-3 border-2 border-webropol-gray-200 rounded-lg focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100 transition-all bg-white"
+                        <input type="text" x-model="groupName" required autofocus
+                            class="w-full px-4 py-3 border-2 rounded-lg focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100 transition-all bg-white"
+                            :class="groupName.trim() === '' ? 'border-red-300' : 'border-webropol-gray-200'"
                             placeholder="Enter group name..." />
+                        <p x-show="groupName.trim() === ''" class="text-xs text-red-500 mt-1">
+                            <i class="fa-light fa-exclamation-circle"></i> Group name is required
+                        </p>
                     </div>
 
                     <!-- Conditions Section -->
@@ -875,8 +1074,9 @@
                         class="px-6 py-3 border-2 border-webropol-gray-300 text-webropol-gray-700 rounded-full font-medium hover:bg-webropol-gray-100 transition-colors">
                         Cancel
                     </button>
-                    <button @click="save()"
-                        class="px-6 py-3 bg-webropol-primary-600 text-white rounded-full font-medium hover:bg-webropol-primary-700 transition-colors shadow-lg hover:shadow-xl">
+                    <button @click="save()" :disabled="groupName.trim() === ''"
+                        :class="groupName.trim() === '' ? 'bg-webropol-gray-300 text-webropol-gray-500 cursor-not-allowed' : 'bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 shadow-lg hover:shadow-xl'"
+                        class="px-6 py-3 rounded-full font-medium transition-colors">
                         Save
                     </button>
                 </div>
@@ -1492,6 +1692,12 @@
                 },
 
                 async save() {
+                    // Validate group name
+                    if (!this.groupName || this.groupName.trim() === '') {
+                        this.showAlert('Group Name Required', 'Please enter a name for this rule group before saving.', 'fa-exclamation-triangle text-amber-500');
+                        return;
+                    }
+                    
                     // Confirm when actions exist (similar to current implementation)
                     if (this.actions && this.actions.length > 0) {
                         const ok = await this.showConfirm(
@@ -1669,6 +1875,83 @@
                     const parts = acts.slice(0, 3).map(a => this.getActionSummary(a));
                     const extra = acts.length > 3 ? ` and ${acts.length - 3} more` : '';
                     return parts.join('; ') + extra;
+                },
+                
+                // Detailed text helpers for expandable list view
+                getConditionDetailedText(condition) {
+                    const typeLabels = {
+                        selected: 'Option is selected',
+                        not_selected: 'Option is not selected',
+                        contains: 'Response contains',
+                        equals: 'Response equals',
+                        greater: 'Value is greater than',
+                        less: 'Value is less than'
+                    };
+                    const typeLabel = typeLabels[condition.type] || condition.type || 'Condition';
+                    const answer = condition.answer ? `: "${condition.answer}"` : '';
+                    return `${typeLabel}${answer}`;
+                },
+                
+                // Organize conditions for list display respecting groups
+                getOrganizedConditionsForDisplay(group) {
+                    const conditions = group.conditions || [];
+                    const groups = group.groups || [];
+                    const result = [];
+                    const processedGroups = new Set();
+
+                    conditions.forEach((condition, index) => {
+                        if (condition.groupId && !processedGroups.has(condition.groupId)) {
+                            // Start of a new group - collect all conditions with this groupId
+                            const groupConditions = conditions
+                                .map((c, i) => ({ condition: c, index: i }))
+                                .filter(item => item.condition.groupId === condition.groupId);
+                            
+                            const groupInfo = groups.find(g => g.id === condition.groupId) || { logic: 'AND', nextLogic: 'AND' };
+                            
+                            result.push({
+                                type: 'group',
+                                groupId: condition.groupId,
+                                logic: groupInfo.logic || 'AND',
+                                nextLogic: groupInfo.nextLogic || 'AND',
+                                conditions: groupConditions
+                            });
+                            processedGroups.add(condition.groupId);
+                        } else if (!condition.groupId) {
+                            // Ungrouped condition
+                            result.push({
+                                type: 'single',
+                                condition: condition,
+                                index: index
+                            });
+                        }
+                    });
+
+                    return result;
+                },
+                
+                getActionDetailedText(action) {
+                    const actionLabels = {
+                        show: 'Show question(s)',
+                        hide: 'Hide question(s)',
+                        disable: 'Disable question(s)',
+                        show_option: 'Show option(s)',
+                        hide_option: 'Hide option(s)',
+                        disable_option: 'Disable option(s)',
+                        skip: 'Skip to page',
+                        forward: 'Forward respondent',
+                        end: 'End survey'
+                    };
+                    const actionLabel = actionLabels[action.type] || action.type || 'Action';
+                    
+                    if (action.type === 'skip' && action.targetPage) {
+                        return `${actionLabel}: ${action.targetPage}`;
+                    } else if (action.type === 'forward' && action.forwardUrl) {
+                        return `${actionLabel} to: ${action.forwardUrl}`;
+                    } else if (action.type === 'end') {
+                        return 'End survey and redirect to thank you page';
+                    }
+                    
+                    return actionLabel;
                 },
 
                 // Persistence helpers
