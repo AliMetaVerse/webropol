@@ -503,8 +503,15 @@
                                 
                                 <!-- Collapsible Content -->
                                 <div class="collapsible-content" :class="{ 'expanded': expanded }">
-                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        <!-- Conditions Column -->
+                                    <!-- Show Global Operator -->
+                                    <div class="mb-4 flex items-center gap-2">
+                                        <span class="text-sm font-medium text-webropol-gray-600">Global Operator:</span>
+                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
+                                    </div>
+                                    
+                                    <!-- Vertical Layout: IF first, then THEN -->
+                                    <div class="space-y-6">
+                                        <!-- Conditions Section -->
                                         <div>
                                             <div class="mb-3">
                                                 <span class="ifthen-badge">IF</span>
@@ -542,10 +549,10 @@
                                                                         </template>
                                                                     </div>
                                                                 </div>
-                                                                <!-- Logic badge after group -->
+                                                                <!-- Logic badge after group - use global operator -->
                                                                 <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
                                                                     <div class="flex justify-center my-2">
-                                                                        <span class="logic-badge" :class="item.nextLogic === 'OR' ? 'or' : 'and'" x-text="item.nextLogic || 'AND'"></span>
+                                                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -565,10 +572,10 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <!-- Logic Badge Between Single Conditions -->
+                                                                <!-- Logic Badge Between Single Conditions - use global operator -->
                                                                 <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
                                                                     <div class="flex justify-center my-2">
-                                                                        <span class="logic-badge" :class="item.condition.logic === 'OR' ? 'or' : 'and'" x-text="item.condition.logic || 'AND'"></span>
+                                                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -578,7 +585,7 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Actions Column -->
+                                        <!-- Actions Section -->
                                         <div>
                                             <div class="mb-3">
                                                 <span class="ifthen-badge">THEN</span>
