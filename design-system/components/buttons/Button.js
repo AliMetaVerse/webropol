@@ -7,7 +7,7 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolButton extends BaseComponent {
   static get observedAttributes() {
-    return ['variant', 'size', 'disabled', 'loading', 'icon', 'icon-position', 'full-width', 'href', 'target', 'type'];
+    return ['variant', 'size', 'disabled', 'loading', 'icon', 'icon-position', 'icon-only', 'full-width', 'roundness', 'href', 'target', 'type'];
   }
 
   init() {
@@ -28,6 +28,8 @@ export class WebropolButton extends BaseComponent {
     const disabled = this.getBoolAttr('disabled');
     const loading = this.getBoolAttr('loading');
     const fullWidth = this.getBoolAttr('full-width');
+    const iconOnly = this.getBoolAttr('icon-only');
+    const roundness = this.getAttr('roundness', 'full'); // 'full' (default) or 'lg' for rounded
     const icon = this.getAttr('icon');
     const iconPosition = this.getAttr('icon-position', 'left');
     const href = this.getAttr('href');
@@ -35,15 +37,19 @@ export class WebropolButton extends BaseComponent {
     // Get text content
     const text = this.textContent.trim();
     
+    // Determine actual size (use icon-size for icon-only buttons)
+    const actualSize = iconOnly ? `icon-${size}` : size;
+    
     // Base classes with enhanced styling from components version
     const baseClasses = this.classNames(
-      'inline-flex items-center justify-center font-semibold rounded-full font-sans',
+      'inline-flex items-center justify-center font-semibold font-sans',
+      this.getRoundnessClasses(roundness),
       'transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-offset-2',
       'transform hover:scale-105 active:scale-95',
       fullWidth ? 'w-full' : '',
       disabled || loading ? 'cursor-not-allowed opacity-60 transform-none hover:scale-100' : 'cursor-pointer',
       this.getVariantClasses('button', variant),
-      this.getSizeClasses('button', size)
+      this.getSizeClasses('button', actualSize)
     );
 
     // Create icon HTML if specified

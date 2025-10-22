@@ -181,7 +181,13 @@ export class BaseComponent extends HTMLElement {
         secondary: 'bg-white text-webropol-primary-700 border-2 border-webropol-primary-500 hover:bg-webropol-primary-50 hover:border-webropol-primary-600 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 active:border-webropol-primary-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
         tertiary: 'bg-transparent text-webropol-primary-700 border-2 border-transparent hover:bg-webropol-primary-50 hover:text-webropol-primary-800 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 disabled:text-webropol-gray-400 disabled:hover:bg-transparent',
         danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white border-2 border-transparent hover:from-red-600 hover:to-red-700 focus:ring-red-200 active:from-red-700 active:to-red-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white border-2 border-transparent hover:from-green-600 hover:to-green-700 focus:ring-green-200 active:from-green-700 active:to-green-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400'
+        'danger-outline': 'bg-white text-red-600 border-2 border-red-500 hover:bg-red-50 hover:border-red-600 focus:ring-red-200 active:bg-red-100 active:border-red-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
+        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white border-2 border-transparent hover:from-green-600 hover:to-green-700 focus:ring-green-200 active:from-green-700 active:to-green-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        // Royal gradient buttons (fully rounded with premium gradients)
+        royal: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 text-white border-2 border-transparent hover:from-webropol-royalViolet-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalViolet-200 active:from-webropol-royalViolet-700 active:to-webropol-royalBlue-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        royalViolet: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalViolet-600 text-white border-2 border-transparent hover:from-webropol-royalViolet-600 hover:to-webropol-royalViolet-700 focus:ring-webropol-royalViolet-200 active:from-webropol-royalViolet-700 active:to-webropol-royalViolet-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        royalBlue: 'bg-gradient-to-r from-webropol-royalBlue-500 to-webropol-royalBlue-600 text-white border-2 border-transparent hover:from-webropol-royalBlue-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalBlue-200 active:from-webropol-royalBlue-700 active:to-webropol-royalBlue-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        royalTurquoise: 'bg-gradient-to-r from-webropol-royalTurquoise-500 to-webropol-royalTurquoise-600 text-white border-2 border-transparent hover:from-webropol-royalTurquoise-600 hover:to-webropol-royalTurquoise-700 focus:ring-webropol-royalTurquoise-200 active:from-webropol-royalTurquoise-700 active:to-webropol-royalTurquoise-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400'
       },
       card: {
         default: 'bg-white border border-webropol-gray-200 shadow-card',
@@ -210,7 +216,12 @@ export class BaseComponent extends HTMLElement {
         sm: 'px-3 py-1.5 text-sm font-medium',
         md: 'px-6 py-2.5 text-sm font-semibold',
         lg: 'px-8 py-3 text-base font-semibold',
-        xl: 'px-10 py-4 text-lg font-semibold'
+        xl: 'px-10 py-4 text-lg font-semibold',
+        // Icon-only button sizes (square)
+        'icon-sm': 'p-2 text-sm',
+        'icon-md': 'p-3 text-base',
+        'icon-lg': 'p-4 text-lg',
+        'icon-xl': 'p-5 text-xl'
       },
       badge: {
         sm: 'px-2 py-1 text-xs',
@@ -226,6 +237,23 @@ export class BaseComponent extends HTMLElement {
     };
 
     return sizes[componentType]?.[size] || '';
+  }
+
+  /**
+   * Get border radius classes based on roundness level
+   */
+  getRoundnessClasses(roundness = 'full') {
+    const roundnessMap = {
+      'none': 'rounded-none',
+      'sm': 'rounded-sm',
+      'md': 'rounded-md',
+      'lg': 'rounded-lg',
+      'xl': 'rounded-xl',
+      '2xl': 'rounded-2xl',
+      'full': 'rounded-full' // Default for buttons (fully rounded)
+    };
+    
+    return roundnessMap[roundness] || 'rounded-full';
   }
 
   /**

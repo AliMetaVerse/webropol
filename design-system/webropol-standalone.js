@@ -105,7 +105,14 @@ class BaseComponent extends HTMLElement {
         primary: 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white hover:from-webropol-primary-600 hover:to-webropol-primary-700 focus:ring-webropol-primary-300 shadow-lg',
         secondary: 'bg-white text-webropol-gray-700 border-2 border-webropol-gray-300 hover:bg-webropol-gray-50 hover:border-webropol-primary-400 focus:ring-webropol-primary-300 shadow-md',
         tertiary: 'bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 focus:ring-webropol-primary-300',
-        danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300 shadow-lg'
+        danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300 shadow-lg',
+        'danger-outline': 'bg-white text-red-600 border-2 border-red-500 hover:bg-red-50 hover:border-red-600 focus:ring-red-200 shadow-md',
+        success: 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 focus:ring-green-300 shadow-lg',
+        // Royal gradient buttons (fully rounded with premium gradients)
+        royal: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 text-white hover:from-webropol-royalViolet-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalViolet-300 shadow-lg',
+        royalViolet: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalViolet-600 text-white hover:from-webropol-royalViolet-600 hover:to-webropol-royalViolet-700 focus:ring-webropol-royalViolet-300 shadow-lg',
+        royalBlue: 'bg-gradient-to-r from-webropol-royalBlue-500 to-webropol-royalBlue-600 text-white hover:from-webropol-royalBlue-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalBlue-300 shadow-lg',
+        royalTurquoise: 'bg-gradient-to-r from-webropol-royalTurquoise-500 to-webropol-royalTurquoise-600 text-white hover:from-webropol-royalTurquoise-600 hover:to-webropol-royalTurquoise-700 focus:ring-webropol-royalTurquoise-300 shadow-lg'
       },
       badge: {
         primary: 'bg-webropol-primary-100 text-webropol-primary-800 border border-webropol-primary-200',
@@ -125,7 +132,12 @@ class BaseComponent extends HTMLElement {
       button: {
         sm: 'px-4 py-2 text-sm',
         md: 'px-6 py-3 text-base',
-        lg: 'px-8 py-4 text-lg'
+        lg: 'px-8 py-4 text-lg',
+        // Icon-only button sizes (square)
+        'icon-sm': 'p-2 text-sm',
+        'icon-md': 'p-3 text-base',
+        'icon-lg': 'p-4 text-lg',
+        'icon-xl': 'p-5 text-xl'
       },
       badge: {
         sm: 'px-2 py-1 text-xs',
@@ -135,6 +147,20 @@ class BaseComponent extends HTMLElement {
     };
     
     return sizes[component]?.[size] || '';
+  }
+
+  getRoundnessClasses(roundness = 'full') {
+    const roundnessMap = {
+      'none': 'rounded-none',
+      'sm': 'rounded-sm',
+      'md': 'rounded-md',
+      'lg': 'rounded-lg',
+      'xl': 'rounded-xl',
+      '2xl': 'rounded-2xl',
+      'full': 'rounded-full'
+    };
+    
+    return roundnessMap[roundness] || 'rounded-full';
   }
 }
 

@@ -176,7 +176,7 @@ localStorage.setItem('webropol_surveys', JSON.stringify({ newSurvey: {...} }));
 
 ### Available Components (see `design-system/components/`)
 - **Navigation**: `Sidebar`, `Header`, `Breadcrumbs`
-- **Buttons**: `Button` (variants: primary, secondary, tertiary, danger)
+- **Buttons**: `Button` (9 variants: primary, secondary, tertiary, danger, success, royal, royalViolet, royalBlue, royalTurquoise)
 - **Cards**: `Card`, `ActionCard`, `ListCard`, `VideoCard`, `ConfigurableCard`
 - **Forms**: `Input`, `Badge`, `Tooltip`
 - **Modals**: `Modal`, `SettingsModal`

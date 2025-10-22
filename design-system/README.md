@@ -63,12 +63,7 @@ design-system/
 ## 🧩 Components
 
 ### Core Components
-- **Button** - Various styles and states
-- **Card** - Content containers with consistent styling
-- **Modal** - Overlay dialogs and popups
-- **Tooltip** - Contextual information display
-### Core Components
-- **Button** - Primary actions and interactions
+- **Button** - Premium buttons with 9 variants including royal gradients (primary, secondary, tertiary, success, danger, royal, royalViolet, royalBlue, royalTurquoise)
 - **Card** - Content containers with various layouts
 - **Modal** - Overlays and dialogs
 - **Badge** - Status indicators and labels
@@ -106,6 +101,26 @@ design-system/
 <!-- Basic Button -->
 <webropol-button variant="primary" size="md">
   Click me
+</webropol-button>
+
+<!-- Royal Gradient Button (NEW) -->
+<webropol-button variant="royal" size="md" icon="crown">
+  Premium Action
+</webropol-button>
+
+<!-- Royal Violet Button -->
+<webropol-button variant="royalViolet" size="lg" icon="magic">
+  Special Feature
+</webropol-button>
+
+<!-- Royal Blue Button -->
+<webropol-button variant="royalBlue" size="md" icon="gem">
+  Premium
+</webropol-button>
+
+<!-- Royal Turquoise Button -->
+<webropol-button variant="royalTurquoise" size="md" icon="sparkles">
+  Exclusive
 </webropol-button>
 
 <!-- Basic Card -->
