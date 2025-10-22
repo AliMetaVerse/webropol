@@ -348,6 +348,11 @@
             transform: rotate(180deg);
         }
         
+        /* Accordion body smooth transitions */
+        .accordion-body {
+            transition: max-height 0.3s ease-out, margin-top 0.3s ease-out;
+        }
+        
         /* Condition and action item styles */
         .condition-item {
             background: white;
@@ -469,44 +474,56 @@
                         </div>
                         
                         <template x-for="(group, index) in savedGroups.slice().reverse()" :key="index">
-                            <div class="rulecard p-6" x-data="{ expanded: false }">
-                                <!-- Card Header -->
-                                <div class="flex items-start justify-between mb-5">
-                                    <div class="flex-1">
-                                        <div class="text-webropol-gray-900 font-bold text-lg tracking-tight">
-                                            <span x-text="group.groupName || 'Group Rule Name'"></span>
+                            <div class="rounded-xl p-6 shadow-card hover:shadow-medium transition-all border border-webropol-gray-200" 
+                                 :class="expanded ? 'bg-white' : 'bg-webropol-gray-50'"
+                                 x-data="{ expanded: false, groupData: group }">
+                                <!-- Accordion Header -->
+                                <div class="accordion-header">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <!-- Left: Icon + Title/Subtitle -->
+                                        <div class="flex items-start gap-3 flex-1 min-w-0">
+                                            <div class="accordion-icon mt-1">
+                                                <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center flex-shrink-0">
+                                                    <i class="fa-light fa-layer-group text-webropol-primary-500"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h3 class="accordion-title text-webropol-gray-900 font-bold text-lg tracking-tight" x-text="groupData.groupName || 'Group Rule Name'"></h3>
+                                                <p class="accordion-subtitle text-sm text-webropol-gray-600 mt-1">
+                                                    <span x-text="(groupData.conditions || []).length"></span> condition<span x-show="(groupData.conditions || []).length !== 1">s</span> • 
+                                                    <span x-text="(groupData.actions || []).length"></span> action<span x-show="(groupData.actions || []).length !== 1">s</span>
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div class="text-sm text-webropol-gray-600 mt-1">
-                                            <span x-text="(group.conditions || []).length"></span> condition<span x-show="(group.conditions || []).length !== 1">s</span> • 
-                                            <span x-text="(group.actions || []).length"></span> action<span x-show="(group.actions || []).length !== 1">s</span>
+
+                                        <!-- Right: Action Buttons + Chevron -->
+                                        <div class="flex items-center gap-3 flex-shrink-0">
+                                            <button @click.stop="editGroupFromList(groupData)"
+                                                class="px-5 py-2.5 bg-white text-webropol-primary-600 border-2 border-webropol-primary-600 rounded-full hover:bg-webropol-primary-50 transition-all text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md">
+                                                <i class="fa-light fa-pencil"></i>
+                                                Edit
+                                            </button>
+                                            <button @click.stop="deleteGroup(groupData.groupName)"
+                                                class="px-5 py-2.5 bg-white text-red-600 border-2 border-red-600 rounded-full hover:bg-red-50 transition-all text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md">
+                                                <i class="fa-light fa-trash-alt"></i>
+                                                Delete
+                                            </button>
+                                            <div class="w-px h-8 bg-webropol-gray-300 mx-1"></div>
+                                            <button @click="expanded = !expanded" class="accordion-toggle flex items-center justify-center p-2 rounded-lg hover:bg-webropol-primary-50 transition-colors" aria-label="Toggle accordion">
+                                                <i class="fa-solid fa-chevron-down text-lg text-webropol-primary-600 transition-transform duration-200" :class="{ 'rotate-180': expanded }"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <button @click="editGroupFromList(group)"
-                                            class="px-5 py-2.5 bg-white text-webropol-primary-600 border-2 border-webropol-primary-600 rounded-full hover:bg-webropol-primary-50 transition-all text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md">
-                                            <i class="fa-light fa-pencil"></i>
-                                            Edit
-                                        </button>
-                                        <button @click="deleteGroup(group.groupName)"
-                                            class="px-5 py-2.5 bg-white text-red-600 border-2 border-red-600 rounded-full hover:bg-red-50 transition-all text-sm font-semibold flex items-center gap-2 shadow-sm hover:shadow-md">
-                                            <i class="fa-light fa-trash-alt"></i>
-                                            Delete
-                                        </button>
-                                        <div class="w-px h-8 bg-webropol-gray-300 mx-1"></div>
-                                        <button @click="expanded = !expanded" 
-                                            class="text-webropol-primary-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 transition-colors p-2 rounded-lg"
-                                            :title="expanded ? 'Collapse details' : 'Expand details'">
-                                            <i class="fa-solid fa-chevron-down text-lg chevron-icon" :class="{ 'rotated': expanded }"></i>
-                                        </button>
                                     </div>
                                 </div>
-                                
-                                <!-- Collapsible Content -->
-                                <div class="collapsible-content" :class="{ 'expanded': expanded }">
+
+                                <!-- Accordion Body -->
+                                <div class="accordion-body overflow-hidden transition-all duration-300" :class="expanded ? 'max-h-[2000px] mt-5' : 'max-h-0'">
+                                    <div class="accordion-body-content pt-5 border-t border-webropol-gray-200">
+                                    <!-- Accordion Body Content -->
                                     <!-- Show Global Operator -->
                                     <div class="mb-4 flex items-center gap-2">
                                         <span class="text-sm font-medium text-webropol-gray-600">Global Operator:</span>
-                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
+                                        <span class="logic-badge" :class="(groupData.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="groupData.globalConditionOperator || 'AND'"></span>
                                     </div>
                                     
                                     <!-- Vertical Layout: IF first, then THEN -->
@@ -517,13 +534,13 @@
                                                 <span class="ifthen-badge">IF</span>
                                             </div>
                                             <div class="space-y-3">
-                                                <template x-if="!group.conditions || group.conditions.length === 0">
+                                                <template x-if="!groupData.conditions || groupData.conditions.length === 0">
                                                     <div class="text-sm text-webropol-gray-500 italic p-4 bg-webropol-gray-50 rounded-lg">
                                                         No conditions defined
                                                     </div>
                                                 </template>
                                                 <!-- Display organized conditions respecting groups -->
-                                                <template x-for="(item, itemIndex) in getOrganizedConditionsForDisplay(group)" :key="itemIndex">
+                                                <template x-for="(item, itemIndex) in getOrganizedConditionsForDisplay(groupData)" :key="itemIndex">
                                                     <div>
                                                         <!-- Grouped Conditions -->
                                                         <template x-if="item.type === 'group'">
@@ -550,9 +567,9 @@
                                                                     </div>
                                                                 </div>
                                                                 <!-- Logic badge after group - use global operator -->
-                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
+                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(groupData).length - 1">
                                                                     <div class="flex justify-center my-2">
-                                                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
+                                                                        <span class="logic-badge" :class="(groupData.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="groupData.globalConditionOperator || 'AND'"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -573,9 +590,9 @@
                                                                     </div>
                                                                 </div>
                                                                 <!-- Logic Badge Between Single Conditions - use global operator -->
-                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(group).length - 1">
+                                                                <template x-if="itemIndex < getOrganizedConditionsForDisplay(groupData).length - 1">
                                                                     <div class="flex justify-center my-2">
-                                                                        <span class="logic-badge" :class="(group.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="group.globalConditionOperator || 'AND'"></span>
+                                                                        <span class="logic-badge" :class="(groupData.globalConditionOperator || 'AND') === 'OR' ? 'or' : 'and'" x-text="groupData.globalConditionOperator || 'AND'"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -591,12 +608,12 @@
                                                 <span class="ifthen-badge">THEN</span>
                                             </div>
                                             <div class="space-y-3">
-                                                <template x-if="!group.actions || group.actions.length === 0">
+                                                <template x-if="!groupData.actions || groupData.actions.length === 0">
                                                     <div class="text-sm text-webropol-gray-500 italic p-4 bg-webropol-gray-50 rounded-lg">
                                                         No actions defined
                                                     </div>
                                                 </template>
-                                                <template x-for="(action, aIndex) in (group.actions || [])" :key="aIndex">
+                                                <template x-for="(action, aIndex) in (groupData.actions || [])" :key="aIndex">
                                                     <div class="action-item">
                                                         <div class="flex items-start gap-2">
                                                             <i class="fa-light fa-bolt text-green-600 mt-1"></i>
@@ -613,6 +630,7 @@
                                                 </template>
                                             </div>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

@@ -28,6 +28,7 @@ export { WebropolBrand } from './navigation/Brand.js';
 
 // Interactive components
 export { WebropolFloatingButton } from './interactive/FloatingButton.js';
+export { WebropolAccordion } from './interactive/Accordion.js';
 
 // Form components
 export { Input } from './forms/Input.js';
@@ -62,6 +63,7 @@ import './navigation/Breadcrumbs.js';
 import './navigation/Tabs.js';
 import './navigation/Brand.js';
 import './interactive/FloatingButton.js';
+import './interactive/Accordion.js';
 import './forms/Input.js';
 import './forms/RadioSpecial.js';
 import './feedback/Badge.js';
@@ -96,6 +98,7 @@ window.WebropolComponents = {
   Breadcrumbs: 'webropol-breadcrumbs',
   Tabs: 'webropol-tabs',
   FloatingButton: 'webropol-floating-button',
+  Accordion: 'webropol-accordion',
   Input: 'webropol-input',
   Badge: 'webropol-badge',
   Loading: 'webropol-loading',
