@@ -2,215 +2,314 @@
 
 ## Project Overview
 
-Webropol is a comprehensive survey and event management platform built as a **multi-page application (MPA)** with:
-- **Frontend**: HTML5, CSS3 (Tailwind), JavaScript (vanilla ES6+ modules), Alpine.js for reactivity
-- **Design System**: Custom web components (`webropol-*`) based on ES6 classes extending HTMLElement
-- **Architecture**: Module-based with SPA navigation capabilities via `spa-router.js`
-- **AI Features**: Native AI models for survey/event optimization in `webroai/` module
-- **No Backend**: Pure frontend implementation with localStorage for data persistence
+Webropol is a **pure frontend survey/event platform** built as a multi-page application (MPA) with:
+- **Tech Stack**: Vanilla HTML5 + Tailwind CSS + Alpine.js + ES6 modules (NO frameworks, NO build tools, NO npm)
+- **Design System**: Custom Web Components (`webropol-*`) extending `HTMLElement` via `BaseComponent` base class
+- **Data Layer**: 100% localStorage persistence (key: `webropol_*` prefixes) - NEVER mutate without preserving existing structure
+- **AI Features**: Native JavaScript AI models in `webroai/ai-engine.js` (SurveyAI, EventAI, AnalyticsAI, DistributionAI)
+- **Icons**: FontAwesome Pro (`fal fa-*` class prefix) loaded via CDN
 
-## Core Architecture Patterns
+## Critical Architecture Rules
 
-### 1. Modular Page Structure
-```
-webropol/
-├── [module]/index.html          # Main module entry point  
-├── design-system/               # Reusable UI components
-│   ├── components/              # Web components organized by type
-│   ├── utils/                   # Base classes and utilities
-│   └── styles/                  # Consistent design tokens
-├── webroai/                     # AI-first survey/event platform
-└── docs/                        # Detailed specifications and guides
-```
-
-**Key Pattern**: Each module is self-contained with its own `index.html`, but shares the design system and follows consistent integration patterns.
-
-### 2. Design System Integration
-Every page MUST follow this standard pattern:
+### 1. Page Structure (MANDATORY Template)
+Every page follows this EXACT pattern with path-adjusted imports:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Standard Tailwind + FontAwesome + Alpine.js stack -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   
-  <!-- Webropol design tokens and components -->
+  <!-- Tailwind config with Webropol tokens -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 500: '#06b6d4', 700: '#0e7490', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 500: '#64748b', 900: '#0f172a' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Design system components (adjust ../paths for depth) -->
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
-  <!-- Additional components as needed -->
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
 </head>
-<body>
+<body x-data="moduleApp()">
   <div class="flex h-screen">
-    <webropol-sidebar active="[module-name]" base="../"></webropol-sidebar>
-    <div class="flex-1 overflow-hidden">
-      <webropol-header title="[Page Title]"></webropol-header>
-      <!-- Page content -->
+    <webropol-sidebar active="[module]" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"}]'></webropol-breadcrumbs>
+      </div>
+      <main class="flex-1 overflow-y-auto px-6 py-12" role="main">
+        <!-- Content here -->
+      </main>
     </div>
   </div>
+  
+  <webropol-floating-button position="bottom-center" theme="primary-blue" items='[...]'></webropol-floating-button>
 </body>
 </html>
 ```
 
-### 3. Component Architecture
-**Web Components Pattern**: All UI components extend `BaseComponent` (in `utils/base-component.js`):
+**Path Rules**:
+- Root level (`/index.html`): `base=""` + `src="design-system/..."`
+- One level deep (`/surveys/index.html`): `base="../"` + `src="../design-system/..."`
+- Two levels deep (`/surveys/create/index.html`): `base="../../"` + `src="../../design-system/..."`
+
+### 2. Web Components Pattern
+ALL UI components extend `BaseComponent` from `design-system/utils/base-component.js`:
 
 ```javascript
 import { BaseComponent } from '../../utils/base-component.js';
 
-export class WebropolButton extends BaseComponent {
+export class WebropolCustom extends BaseComponent {
   static get observedAttributes() {
-    return ['variant', 'size', 'disabled'];
+    return ['variant', 'size', 'disabled']; // Watched attributes
+  }
+  
+  init() {
+    // Setup before render (optional)
   }
   
   render() {
-    // Component HTML using Tailwind classes
+    const variant = this.getAttr('variant', 'primary');
+    this.innerHTML = `
+      <div class="${this.getVariantClasses('button', variant)}">
+        <slot></slot>
+      </div>
+    `;
   }
   
   bindEvents() {
-    // Event handling logic
+    this.addEventListener('click', () => this.emit('custom-event', { data: 'value' }));
   }
 }
 
-customElements.define('webropol-button', WebropolButton);
+customElements.define('webropol-custom', WebropolCustom);
 ```
 
-**Usage in HTML**:
-```html
-<webropol-button variant="primary" size="md">Save Changes</webropol-button>
-<webropol-card title="Survey Analytics" badge="Active">
-  Content here
-</webropol-card>
-```
+**BaseComponent Utilities** (use these, don't reinvent):
+- `getAttr(name, default)` - Get attribute with fallback
+- `getBoolAttr(name)` - Boolean attribute check
+- `getVariantClasses(component, variant)` - Predefined style variants
+- `getSizeClasses(component, size)` - Size utility classes
+- `emit(eventName, detail)` - Custom event dispatcher
+- `setState(obj, rerender=true)` - Internal state management
 
-## Design Tokens & Styling
+### 3. Alpine.js State Management
+Standard Alpine.js app function pattern (NO x-cloak unless styled):
 
-### Color System (Consistent Across All Pages)
-- **Primary**: `webropol-primary-50` through `webropol-primary-900` (teal/cyan)
-- **Gray Scale**: `webropol-gray-50` through `webropol-gray-900`
-- **Extended**: `webropol-green`, `webropol-red` for status indicators
-
-### Typography
-- **Font Family**: Inter (loaded via Google Fonts)
-- **Component Classes**: Use Tailwind utilities with design tokens
-
-### Example Tailwind Config (Standard Pattern):
 ```javascript
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        'webropol-primary': { 
-          50: '#f0fdff', 500: '#06b6d4', 700: '#0e7490', 900: '#164e63'
-        },
-        'webropol-gray': { 
-          50: '#f8fafc', 500: '#64748b', 900: '#0f172a'
-        }
-      },
-      fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif']
-      }
-    }
-  }
-}
-```
-
-## Critical Development Patterns
-
-### 1. Page Creation Workflow
-1. **Start with template**: Use existing page structure as reference
-2. **Set active sidebar**: `<webropol-sidebar active="module-name">` 
-3. **Load required components**: Import only needed design system components
-4. **Follow path conventions**: `../components/` for relative imports
-
-### 2. Component Integration
-- **Standalone option**: Use `design-system/webropol-standalone.js` for all-in-one loading
-- **Modular option**: Import specific components via ES6 modules
-- **Always validate**: Run validation script if available
-
-### 3. State Management (Alpine.js Pattern)
-```javascript
-// Standard Alpine.js app structure
 function moduleName() {
   return {
-    // Reactive data
+    // Data
     items: [],
     loading: false,
+    selectedTab: 'all',
     
     // Lifecycle
     init() {
-      this.loadData();
+      this.loadFromLocalStorage();
+      this.setupEventListeners();
     },
     
     // Methods
-    loadData() {
-      // Implementation
+    loadFromLocalStorage() {
+      const data = localStorage.getItem('webropol_module_data');
+      this.items = data ? JSON.parse(data) : [];
+    },
+    
+    saveToLocalStorage() {
+      localStorage.setItem('webropol_module_data', JSON.stringify(this.items));
     }
   }
 }
 ```
 
-### 4. SPA Navigation (Optional)
-For complex modules, use `design-system/utils/spa-router.js`:
-- Enables client-side routing between module pages
-- Maintains consistent navigation experience
-- Preserves Alpine.js state across route changes
+### 4. localStorage Conventions (CRITICAL)
+- **Prefix ALL keys**: `webropol_*` (e.g., `webropol_global_settings`, `webropol_survey_123`)
+- **Preserve existing data**: Read full object, merge changes, then write back
+- **Error handling**: Wrap in try/catch (quota limits, private browsing)
 
-## AI-Specific Features (WebropAI Module)
+```javascript
+// CORRECT pattern
+try {
+  const existing = JSON.parse(localStorage.getItem('webropol_surveys') || '{}');
+  existing.newSurvey = { id: 123, name: 'Test' };
+  localStorage.setItem('webropol_surveys', JSON.stringify(existing));
+} catch (e) {
+  console.error('localStorage error:', e);
+}
 
-The `webroai/` directory contains AI-first survey and event management:
-- **AI Models**: `ai-engine.js` with SurveyAI, EventAI, AnalyticsAI classes
-- **Natural Language**: Prompt-to-question generation, intent detection
-- **Predictive Analytics**: Attendance forecasting, engagement prediction
-- **Real-time Insights**: Sentiment analysis, anomaly detection
+// WRONG: overwrites all data
+localStorage.setItem('webropol_surveys', JSON.stringify({ newSurvey: {...} }));
+```
 
-**Integration Pattern**:
+## Design System Integration
+
+### Quick Component Loading Options
+
+**Option 1: Standalone Bundle** (loads all components at once)
+```html
+<script type="module" src="design-system/webropol-standalone.js"></script>
+```
+
+**Option 2: Modular Imports** (recommended for performance)
+```html
+<script src="../design-system/components/buttons/Button.js" type="module"></script>
+<script src="../design-system/components/cards/Card.js" type="module"></script>
+```
+
+### Available Components (see `design-system/components/`)
+- **Navigation**: `Sidebar`, `Header`, `Breadcrumbs`
+- **Buttons**: `Button` (variants: primary, secondary, tertiary, danger)
+- **Cards**: `Card`, `ActionCard`, `ListCard`, `VideoCard`, `ConfigurableCard`
+- **Forms**: `Input`, `Badge`, `Tooltip`
+- **Modals**: `Modal`, `SettingsModal`
+- **Feedback**: `Loading` (types: spinner, dots, pulse, bars)
+- **Interactive**: `FloatingButton`, `Tabs`
+
+### Color Token System (ALWAYS use these)
+```html
+<!-- Primary (cyan/teal) -->
+<div class="bg-webropol-primary-500 text-white">...</div>
+<button class="hover:bg-webropol-primary-600">...</button>
+
+<!-- Grays -->
+<div class="bg-webropol-gray-50 text-webropol-gray-900">...</div>
+
+<!-- Extended (status) -->
+<span class="bg-webropol-green-100 text-webropol-green-700">Active</span>
+
+<!-- Royal gradients (special) -->
+<div class="bg-gradient-to-br from-webropol-royalViolet-500 to-webropol-royalBlue-600">...</div>
+```
+
+**NEVER use**: `bg-blue-500`, `text-gray-600`, etc. (arbitrary Tailwind colors)
+
+### Typography & Spacing
+```html
+<!-- Font weights (Inter family) -->
+<h1 class="font-semibold">Title</h1>  <!-- 600 -->
+<p class="font-medium">Body</p>       <!-- 500 -->
+
+<!-- Shadows (predefined) -->
+<div class="shadow-card">Card</div>
+<div class="shadow-medium">Elevated</div>
+<div class="shadow-soft">Subtle</div>
+
+<!-- Border radius -->
+<div class="rounded-xl">12px</div>
+<div class="rounded-2xl">16px</div>
+<div class="rounded-3xl">24px</div>
+```
+
+## Module-Specific Patterns
+
+### Sidebar Active States (match module name)
+```html
+<webropol-sidebar active="surveys" base="../"></webropol-sidebar>
+<!-- Valid: home, surveys, events, sms, dashboards, mywebropol, admin-tools, training-videos, shop -->
+```
+
+### FloatingButton Menu Items
+```javascript
+items='[
+  {
+    "id": "survey",
+    "label": "Survey",
+    "description": "Create custom survey",
+    "icon": "fal fa-chart-bar",  // FontAwesome class
+    "url": "../surveys/create.html"
+  }
+]'
+```
+
+### AI Integration (webroai module)
 ```javascript
 import { AIEngine } from './ai-engine.js';
 
 const ai = new AIEngine();
-const suggestions = ai.surveyAI.generateQuestions(userInput);
-const insights = ai.analyticsAI.generateInsights(surveyData);
+
+// Survey AI
+const questions = ai.models.survey.generateQuestions('customer satisfaction survey');
+
+// Event AI
+const prediction = ai.models.events.predictAttendance({ capacity: 100, registrations: 120 });
+
+// Analytics AI
+const insights = ai.models.analytics.generateInsights(surveyData);
+
+// Distribution AI
+const bestTime = ai.models.distribution.optimizeSendTime(audienceData);
 ```
 
-## Validation & Quality Assurance
+## Development Workflow
 
-### Required Checks Before Submission
-1. **Component Integration**: All `webropol-*` components properly imported
-2. **Design Tokens**: Use `webropol-primary-*` and `webropol-gray-*` color classes
-3. **Accessibility**: Proper ARIA labels, keyboard navigation support
-4. **Mobile Responsive**: Test on mobile breakpoints
-5. **Alpine.js Integration**: State management follows established patterns
+### Creating a New Page
+1. **Copy template** from existing module page (e.g., `surveys/index.html`)
+2. **Update paths**: Adjust `../` depth in script imports and `base` attribute
+3. **Set sidebar active state**: Match module name
+4. **Configure breadcrumbs**: Build navigation trail array
+5. **Add Alpine.js app**: Create `moduleName()` function
+6. **Test navigation**: Verify all links work from different page depths
 
-### Validation Script
-If available, run: `node validate-pages.js` to verify:
-- Sidebar/Header component usage
-- Required script imports  
-- HTML structure compliance
+### Creating a New Component
+1. **Extend BaseComponent**: Import from `utils/base-component.js`
+2. **Define observedAttributes**: List watched attributes
+3. **Implement render()**: Generate innerHTML with Tailwind classes
+4. **Implement bindEvents()**: Set up event listeners
+5. **Register component**: `customElements.define('webropol-name', ClassName)`
+6. **Document usage**: Add examples to design system docs
 
-## Common Pitfalls to Avoid
+### Debugging Checklist
+- [ ] Check browser console for import errors (ES6 module paths)
+- [ ] Verify Tailwind config loaded (inspect element colors)
+- [ ] Confirm Alpine.js initialized (`Alpine` global exists)
+- [ ] Test localStorage in private browsing mode
+- [ ] Validate web component registration (`customElements.get('webropol-*')`)
 
-1. **Don't mix component patterns**: Stick to web components, avoid mixing with other frameworks
-2. **Don't break path conventions**: Use relative imports consistently (`../design-system/`)
-3. **Don't ignore design tokens**: Always use `webropol-*` color classes, not arbitrary Tailwind colors
-4. **Don't skip component registration**: Ensure `customElements.define()` for new components
-5. **Don't forget Alpine.js reactivity**: Use `x-data`, `x-show`, `x-model` for dynamic behavior
+## Common Anti-Patterns (AVOID)
 
-## Quick Reference
+❌ **Hardcoded colors**: `bg-blue-500` → ✅ `bg-webropol-primary-500`  
+❌ **Inline styles**: `style="color: red"` → ✅ `class="text-red-500"`  
+❌ **Direct localStorage overwrite** → ✅ Merge with existing data  
+❌ **Missing error handling** → ✅ Wrap localStorage in try/catch  
+❌ **Framework imports**: `import React` → ✅ Vanilla JS only  
+❌ **Build tool config**: `webpack.config.js` → ✅ Not used in this project  
+❌ **npm scripts**: `package.json` → ✅ No dependencies  
 
-### Essential Files
-- `design-system/utils/base-component.js` - Component base class
-- `design-system/webropol-standalone.js` - All-in-one component bundle
-- `agent-instructions.json` - Project-specific coding rules
-- `README.md` - Page structure and validation guide
+## Essential Files Reference
 
-### Component Registry
-Standard components available: `webropol-button`, `webropol-card`, `webropol-action-card`, `webropol-list-card`, `webropol-modal`, `webropol-sidebar`, `webropol-header`, `webropol-tabs`
+- **`design-system/utils/base-component.js`** - Component base class with utilities
+- **`design-system/webropol-standalone.js`** - All-in-one component bundle
+- **`design-system/styles/tokens.css`** - CSS custom properties (design tokens)
+- **`design-system/styles/tokens.js`** - JS design token exports
+- **`webroai/ai-engine.js`** - AI model implementations (802 lines)
+- **`agent-instructions.json`** - Project-specific rules (Tailwind-only, no emojis, etc.)
+- **`docs/SIDEBAR-HEADER-GUIDE.md`** - Navigation component integration guide
 
-### Module Sidebar Active States
-- `home`, `surveys`, `events`, `sms`, `dashboards`, `mywebropol`, `admin-tools`, `training-videos`, `shop`
+## Getting Help
+
+1. **Component APIs**: See `design-system/README.md` for available components
+2. **Integration patterns**: Check `docs/INTEGRATION.md` for migration guides
+3. **Example pages**: Reference `surveys/index.html` or `events/index.html` for complete implementations
+4. **Design tokens**: Inspect `design-system/styles/tokens.js` for full color/spacing/typography scales
 
 ---
-*Generated from codebase analysis. For questions about specific implementations, consult the detailed documentation in `/docs/` or examine existing module patterns.*
+
+*Last updated: 2025-10-22. Based on codebase analysis of 50+ pages, 30+ components, and 15+ modules.*
