@@ -265,9 +265,77 @@
                 <button onclick="window.location.href='#/surveys/edit'" class="survey-action-btn inline-flex items-center justify-center rounded-lg border border-webropol-gray-200 bg-white text-webropol-gray-600 hover:border-webropol-primary-300 hover:text-webropol-primary-700 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-1 transition" title="Edit survey" aria-label="Edit survey">
                   <i class="fal fa-edit text-lg"></i>
                 </button>
-                <button class="survey-action-btn inline-flex items-center justify-center rounded-lg border border-webropol-gray-200 bg-white text-webropol-gray-600 hover:border-webropol-primary-300 hover:text-webropol-primary-700 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-1 transition" title="More options" aria-label="More options">
-                  <i class="fal fa-ellipsis-v text-lg"></i>
-                </button>
+                <div class="relative" x-data="{ moreMenuOpen: false, textEditorEnabled: false, iconsOnly: false }" @click.away="moreMenuOpen = false">
+                  <button @click="moreMenuOpen = !moreMenuOpen" class="survey-action-btn inline-flex items-center justify-center rounded-lg border border-webropol-gray-200 bg-white text-webropol-gray-600 hover:border-webropol-primary-300 hover:text-webropol-primary-700 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-1 transition" title="More options" aria-label="More options">
+                    <i class="fal fa-ellipsis-v text-lg"></i>
+                  </button>
+                  <div x-show="moreMenuOpen" 
+                       x-transition:enter="transition ease-out duration-100"
+                       x-transition:enter-start="opacity-0 scale-95"
+                       x-transition:enter-end="opacity-1 scale-100"
+                       x-transition:leave="transition ease-in duration-75"
+                       x-transition:leave-start="opacity-1 scale-100"
+                       x-transition:leave-end="opacity-0 scale-95"
+                       class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-webropol-gray-200 py-1 z-50"
+                       style="display: none;">
+                    <!-- Survey ID -->
+                    <div class="px-4 py-3 border-b border-webropol-gray-100">
+                      <div class="flex items-center justify-between">
+                        <div>
+                          <div class="text-xs font-medium text-webropol-gray-600 mb-1">Survey ID:</div>
+                          <div class="text-sm font-semibold text-webropol-gray-900">Fin348267</div>
+                        </div>
+                        <button @click="navigator.clipboard.writeText('Fin348267')" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-webropol-gray-100 text-webropol-gray-500 hover:text-webropol-primary-600 transition" title="Copy Survey ID">
+                          <i class="fal fa-copy"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <!-- Text Editor with toggle -->
+                    <div class="flex items-center justify-between px-4 py-2.5 hover:bg-webropol-gray-50">
+                      <div class="flex items-center gap-3 flex-1">
+                        <i class="fal fa-pen-to-square w-5 text-center text-webropol-gray-500"></i>
+                        <span class="text-sm text-webropol-gray-700">Text Editor [disabled]</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" x-model="textEditorEnabled" class="sr-only peer">
+                        <div class="w-9 h-5 bg-webropol-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                      </label>
+                    </div>
+                    
+                    <!-- Log, rights and properties -->
+                    <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                      <i class="fal fa-clipboard-list w-5 text-center text-webropol-gray-500"></i>
+                      <span>Log, rights and properties</span>
+                    </button>
+                    
+                    <!-- Display Icons Only with toggle -->
+                    <div class="flex items-center justify-between px-4 py-2.5 hover:bg-webropol-gray-50">
+                      <div class="flex items-center gap-3 flex-1">
+                        <i class="fal fa-eye-slash w-5 text-center text-webropol-gray-500"></i>
+                        <span class="text-sm text-webropol-gray-700">Display Icons Only</span>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" x-model="iconsOnly" class="sr-only peer">
+                        <div class="w-9 h-5 bg-webropol-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                      </label>
+                    </div>
+                    
+                    <div class="border-t border-webropol-gray-100 my-1"></div>
+                    
+                    <!-- Undo -->
+                    <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                      <i class="fal fa-rotate-left w-5 text-center text-webropol-gray-500"></i>
+                      <span>Undo</span>
+                    </button>
+                    
+                    <!-- Redo -->
+                    <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                      <i class="fal fa-rotate-right w-5 text-center text-webropol-gray-500"></i>
+                      <span>Redo</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
