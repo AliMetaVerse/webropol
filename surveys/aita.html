@@ -379,13 +379,41 @@
         </div>
 
         <!-- Dashboard Links Section -->
-        <div x-data="{ get hasLinks() { return publicLinks.length > 0 } }">
+        <div x-data="{ get hasLinks() { return publicLinks.length > 0 }, showTooltip: false }">
           <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-semibold text-webropol-gray-900 flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-webropol-primary-100 flex items-center justify-center flex-shrink-0 shadow-sm">
                 <i class="fal fa-link text-webropol-primary-600 text-xl"></i>
               </div>
               <span>Dashboard Links</span>
+              <div class="relative inline-flex">
+                <button 
+                  @click="showTooltip = !showTooltip" 
+                  @mouseenter="showTooltip = true" 
+                  @mouseleave="showTooltip = false"
+                  class="w-6 h-6 flex items-center justify-center rounded-full text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors cursor-help"
+                  aria-label="Dashboard links information"
+                >
+                  <i class="fal fa-question-circle text-base"></i>
+                </button>
+                <div 
+                  x-show="showTooltip" 
+                  x-transition:enter="transition ease-out duration-200"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-1 scale-100"
+                  x-transition:leave="transition ease-in duration-150"
+                  x-transition:leave-start="opacity-1 scale-100"
+                  x-transition:leave-end="opacity-0 scale-95"
+                  class="absolute left-8 top-0 z-50 w-80 bg-webropol-gray-900 text-white text-sm rounded-lg px-4 py-3 shadow-xl"
+                  style="display: none;"
+                >
+                  <div class="flex items-start gap-2">
+                    <i class="fal fa-info-circle text-webropol-primary-400 mt-0.5"></i>
+                    <p class="leading-relaxed">Creates a shareable link with a report-style layout (dashboard widgets are stacked vertically).</p>
+                  </div>
+                  <div class="absolute left-0 top-1/2 transform -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-webropol-gray-900"></div>
+                </div>
+              </div>
             </h3>
             <button x-show="hasLinks" @click="sharePublicLinkOpen = true" class="btn btn-primary">
               <i class="fal fa-plus"></i>
