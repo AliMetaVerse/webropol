@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey and Folder Rights - Webropol Admin Tools</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99eefd', 300: '#5de0fa', 400: '#1ac9f0', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' },
+            'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+</head>
+<body x-data="surveyFolderRightsApp()">
+  <div class="flex h-screen">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="Admin User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Admin tools","url":"index.html"},{"label":"Survey and folder rights","url":"survey-folder-rights.html"}]'></webropol-breadcrumbs>
+      </div>
+      <main class="flex-1 overflow-y-auto px-6 py-8" role="main">
+        <div class="max-w-7xl mx-auto">
+          <!-- Header with Back Button -->
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h1 class="text-3xl font-bold text-webropol-gray-900">Survey and folder rights</h1>
+            </div>
+            <a href="#" @click.prevent="window.history.back()" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-webropol-primary-700 hover:text-webropol-primary-800 bg-white border border-webropol-primary-300 rounded-lg hover:bg-webropol-primary-50 transition-colors">
+              <i class="fal fa-arrow-left"></i>
+              <span>Back to survey</span>
+            </a>
+          </div>
+
+          <!-- Tabs Navigation -->
+          <div class="mb-6 border-b border-webropol-gray-200">
+            <nav class="flex gap-2" role="tablist">
+              <button @click="activeTab = 'user-management'" :class="activeTab === 'user-management' ? 'border-b-2 border-webropol-primary-600 text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:border-webropol-gray-300'" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-colors">
+                User management and new user creation
+              </button>
+              <button @click="activeTab = 'survey-folder'" :class="activeTab === 'survey-folder' ? 'border-b-2 border-webropol-primary-600 text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:border-webropol-gray-300'" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-colors">
+                Survey and folder rights
+              </button>
+              <button @click="activeTab = 'user-group'" :class="activeTab === 'user-group' ? 'border-b-2 border-webropol-primary-600 text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:border-webropol-gray-300'" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-colors">
+                User group management
+              </button>
+              <button @click="activeTab = 'access-requests'" :class="activeTab === 'access-requests' ? 'border-b-2 border-webropol-primary-600 text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:border-webropol-gray-300'" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-colors relative">
+                Access requests
+                <span class="ml-1 text-orange-600" x-show="accessRequestsCount > 0">(0)</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Tab Content -->
+          <div x-show="activeTab === 'survey-folder'">
+            <!-- Page Title and Instructions -->
+            <div class="mb-6">
+              <h2 class="text-xl font-bold text-webropol-gray-900 mb-2">Survey and folder rights</h2>
+              <p class="text-sm text-webropol-gray-600">Show survey and folder rights: click on settings icon after survey or folder name</p>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Left Column: Folders -->
+              <div class="bg-white rounded-2xl shadow-sm border border-webropol-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-webropol-gray-700 mb-4">Folders</h3>
+                
+                <!-- Folder Selector -->
+                <div class="mb-4">
+                  <select x-model="selectedFolder" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    <option value="">Survey&Reporting folders</option>
+                    <option value="folder1">Project Alpha</option>
+                    <option value="folder2">Customer Feedback</option>
+                    <option value="folder3">Employee Surveys</option>
+                  </select>
+                  <button class="mt-2 w-8 h-8 rounded-lg bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors" title="Help">
+                    <i class="fal fa-question-circle text-webropol-gray-500"></i>
+                  </button>
+                </div>
+
+                <!-- Search Folders -->
+                <div class="mb-4">
+                  <div class="relative">
+                    <input 
+                      type="text" 
+                      x-model="folderSearch"
+                      placeholder="Search for folders"
+                      class="w-full px-4 py-2 pl-10 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400"></i>
+                  </div>
+                </div>
+
+                <!-- Folder Tree -->
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2 p-2 hover:bg-webropol-gray-50 rounded-lg cursor-pointer group" @click="expandedFolders.root = !expandedFolders.root">
+                    <i class="fal text-webropol-primary-600" :class="expandedFolders.root ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                    <i class="fal fa-folder text-webropol-primary-600"></i>
+                    <span class="text-sm font-medium text-webropol-gray-900 flex-1">Root folder</span>
+                  </div>
+                  
+                  <div x-show="expandedFolders.root" class="ml-6 space-y-2">
+                    <div class="flex items-center gap-2 p-2 hover:bg-webropol-gray-50 rounded-lg cursor-pointer group">
+                      <i class="fal fa-chevron-right text-webropol-gray-400"></i>
+                      <i class="fal fa-folder text-webropol-primary-600"></i>
+                      <span class="text-sm text-webropol-gray-700 flex-1">Ali</span>
+                      <button @click.stop="openFolderSettings('1')" class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+                        <i class="fal fa-ellipsis-v"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Surveys -->
+              <div class="bg-white rounded-2xl shadow-sm border border-webropol-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-semibold text-webropol-gray-700">
+                    Surveys
+                    <button class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-sm"></i>
+                    </button>
+                  </h3>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-webropol-gray-600">Survey ID</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-sm"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Search Surveys -->
+                <div class="mb-4">
+                  <div class="relative">
+                    <input 
+                      type="text" 
+                      x-model="surveySearch"
+                      placeholder="Search for surveys"
+                      class="w-full px-4 py-2 pl-10 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400"></i>
+                  </div>
+                </div>
+
+                <!-- Surveys List -->
+                <div class="space-y-2 max-h-96 overflow-y-auto">
+                  <template x-for="survey in filteredSurveys" :key="survey.id">
+                    <div class="flex items-center justify-between p-3 hover:bg-webropol-gray-50 rounded-lg border border-webropol-gray-100 group">
+                      <div class="flex-1 min-w-0">
+                        <span class="text-sm text-webropol-gray-900 block truncate" x-text="survey.name"></span>
+                      </div>
+                      <div class="flex items-center gap-3 ml-4">
+                        <button @click="openSurveySettings(survey)" class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
+                          <i class="fal fa-cog"></i>
+                        </button>
+                        <span class="text-sm text-webropol-gray-600 font-mono" x-text="survey.id"></span>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Placeholder content for other tabs -->
+          <div x-show="activeTab !== 'survey-folder'" class="bg-white rounded-2xl shadow-sm border border-webropol-gray-200 p-8 text-center">
+            <i class="fal fa-info-circle text-4xl text-webropol-gray-300 mb-4"></i>
+            <p class="text-webropol-gray-600">This tab content is under development.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Access Rights Modal -->
+  <div x-show="showAccessModal" 
+       x-cloak
+       @click.self="showAccessModal = false"
+       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+       style="display: none;">
+    <div @click.away="showAccessModal = false"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between bg-webropol-gray-50">
+        <h2 class="text-2xl font-bold text-webropol-gray-900">
+          Survey's Access Rights: <span x-text="selectedSurvey?.name"></span>
+        </h2>
+        <button @click="showAccessModal = false" class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+          <i class="fal fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <div class="flex items-center justify-end">
+            <div class="relative w-96">
+              <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                Search for users by user name, name or user class
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  x-model="userSearch"
+                  placeholder=""
+                  class="w-full px-4 py-2 pr-10 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                <button class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600">
+                  <i class="fal fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-webropol-gray-50 border-b border-webropol-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Username</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Name</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">User class</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="selectAllRead" @change="toggleAllRead()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Read</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Read permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="selectAllWrite" @change="toggleAllWrite()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Write</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Write permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="selectAllManage" @change="toggleAllManage()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Manage</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Manage permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-webropol-gray-200">
+              <template x-for="user in filteredUsers" :key="user.username">
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-4 py-3 text-sm text-webropol-gray-900" x-text="user.username"></td>
+                  <td class="px-4 py-3 text-sm text-webropol-gray-900" x-text="user.name"></td>
+                  <td class="px-4 py-3 text-sm text-webropol-gray-700" x-text="user.userClass"></td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.read" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.write" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.manage" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-webropol-gray-200 bg-webropol-gray-50 flex items-center justify-end gap-3">
+        <button @click="showAccessModal = false" class="px-4 py-2 text-sm font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button @click="saveAccessRights()" class="px-4 py-2 text-sm font-medium text-white bg-webropol-primary-600 rounded-lg hover:bg-webropol-primary-700 transition-colors">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Folder Access Rights Modal -->
+  <div x-show="showFolderModal" 
+       x-cloak
+       @click.self="showFolderModal = false"
+       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+       style="display: none;">
+    <div @click.away="showFolderModal = false"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between bg-webropol-gray-50">
+        <h2 class="text-2xl font-bold text-webropol-gray-900">
+          Folder's Access Rights: <span x-text="selectedFolderName"></span>
+        </h2>
+        <button @click="showFolderModal = false" class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+          <i class="fal fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+        <!-- Folder Type Info -->
+        <div class="mb-6 flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-webropol-gray-700">Folder type</span>
+            <i class="fal fa-folder text-webropol-gray-600"></i>
+            <span class="text-sm text-webropol-gray-900" x-text="selectedFolderType"></span>
+          </div>
+          <button class="px-4 py-2 text-sm font-medium text-webropol-primary-700 bg-white border-2 border-webropol-primary-600 rounded-full hover:bg-webropol-primary-50 transition-colors">
+            Change to inheriting folder
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <div class="flex items-center justify-end">
+            <div class="relative w-96">
+              <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                Search for users by user name, name or user class
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  x-model="folderUserSearch"
+                  placeholder=""
+                  class="w-full px-4 py-2 pr-10 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                <button class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600">
+                  <i class="fal fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-webropol-gray-50 border-b border-webropol-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Username</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Name</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-webropol-gray-900">User class</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="folderSelectAllRead" @change="toggleFolderAllRead()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Read</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Read permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="folderSelectAllWrite" @change="toggleFolderAllWrite()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Write</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Write permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="folderSelectAllManage" @change="toggleFolderAllManage()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Manage</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Manage permission info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+                <th class="px-4 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="checkbox" x-model="folderSelectAllHomeFolder" @change="toggleFolderAllHomeFolder()" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                    <span class="text-sm font-semibold text-webropol-gray-900">Home folder</span>
+                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                      <i class="fal fa-sort text-xs"></i>
+                    </button>
+                    <button class="w-5 h-5 rounded-full bg-webropol-primary-500 text-white flex items-center justify-center text-xs hover:bg-webropol-primary-600" title="Home folder info">
+                      <i class="fal fa-info"></i>
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-webropol-gray-200">
+              <template x-for="user in filteredFolderUsers" :key="user.username">
+                <tr class="hover:bg-webropol-gray-50">
+                  <td class="px-4 py-3 text-sm text-webropol-gray-900" x-text="user.username"></td>
+                  <td class="px-4 py-3 text-sm text-webropol-gray-900" x-text="user.name"></td>
+                  <td class="px-4 py-3 text-sm text-webropol-gray-700" x-text="user.userClass"></td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.read" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.write" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.manage" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                  <td class="px-4 py-3 text-center">
+                    <input type="checkbox" x-model="user.homeFolder" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 border-t border-webropol-gray-200 bg-webropol-gray-50 flex items-center justify-end gap-3">
+        <button @click="showFolderModal = false" class="px-4 py-2 text-sm font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button @click="saveFolderAccessRights()" class="px-4 py-2 text-sm font-medium text-white bg-webropol-primary-600 rounded-lg hover:bg-webropol-primary-700 transition-colors">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
+
+  <script>
+    function surveyFolderRightsApp() {
+      return {
+        activeTab: 'survey-folder',
+        accessRequestsCount: 0,
+        selectedFolder: '',
+        folderSearch: '',
+        surveySearch: '',
+        showAccessModal: false,
+        showFolderModal: false,
+        selectedSurvey: null,
+        selectedFolderName: '',
+        selectedFolderType: 'Normal folder',
+        userSearch: '',
+        folderUserSearch: '',
+        selectAllRead: false,
+        selectAllWrite: false,
+        selectAllManage: false,
+        folderSelectAllRead: false,
+        folderSelectAllWrite: false,
+        folderSelectAllManage: false,
+        folderSelectAllHomeFolder: false,
+        expandedFolders: {
+          root: true
+        },
+        surveys: [
+          { id: 'Fin347512', name: 'NPS Survey' },
+          { id: 'Fin322886', name: 'CX Survey' }
+        ],
+        users: [
+          { username: 'ali.admin', name: 'Ali Al Zuhairi', userClass: 'Admin', read: false, write: false, manage: false },
+          { username: 'ali.user', name: 'Ali Al Zuhairi', userClass: 'User', read: false, write: false, manage: false },
+          { username: 'Ali-User-Group', name: '', userClass: 'User group', read: false, write: false, manage: false },
+          { username: 'anna.gotkowicz', name: 'Anna DirectPL', userClass: 'Admin', read: true, write: true, manage: true }
+        ],
+        folderUsers: [
+          { username: 'ali.admin', name: 'Ali Al Zuhairi', userClass: 'Admin', read: false, write: false, manage: false, homeFolder: false },
+          { username: 'ali.user', name: 'Ali Al Zuhairi', userClass: 'User', read: false, write: false, manage: false, homeFolder: false },
+          { username: 'Ali-User-Group', name: '', userClass: 'User group', read: false, write: false, manage: false, homeFolder: false },
+          { username: 'anna.gotkowicz', name: 'Anna DirectPL', userClass: 'Admin', read: true, write: true, manage: true, homeFolder: false }
+        ],
+        
+        get filteredSurveys() {
+          if (!this.surveySearch) return this.surveys;
+          const search = this.surveySearch.toLowerCase();
+          return this.surveys.filter(survey => 
+            survey.name.toLowerCase().includes(search) || 
+            survey.id.toLowerCase().includes(search)
+          );
+        },
+        
+        get filteredUsers() {
+          if (!this.userSearch) return this.users;
+          const search = this.userSearch.toLowerCase();
+          return this.users.filter(user => 
+            user.username.toLowerCase().includes(search) || 
+            user.name.toLowerCase().includes(search) ||
+            user.userClass.toLowerCase().includes(search)
+          );
+        },
+        
+        get filteredFolderUsers() {
+          if (!this.folderUserSearch) return this.folderUsers;
+          const search = this.folderUserSearch.toLowerCase();
+          return this.folderUsers.filter(user => 
+            user.username.toLowerCase().includes(search) || 
+            user.name.toLowerCase().includes(search) ||
+            user.userClass.toLowerCase().includes(search)
+          );
+        },
+        
+        openSurveySettings(survey) {
+          this.selectedSurvey = survey;
+          this.showAccessModal = true;
+          this.userSearch = '';
+        },
+        
+        openFolderSettings(folderName) {
+          this.selectedFolderName = folderName;
+          this.selectedFolderType = 'Normal folder';
+          this.showFolderModal = true;
+          this.folderUserSearch = '';
+        },
+        
+        toggleAllRead() {
+          this.users.forEach(user => {
+            user.read = this.selectAllRead;
+          });
+        },
+        
+        toggleAllWrite() {
+          this.users.forEach(user => {
+            user.write = this.selectAllWrite;
+          });
+        },
+        
+        toggleAllManage() {
+          this.users.forEach(user => {
+            user.manage = this.selectAllManage;
+          });
+        },
+        
+        toggleFolderAllRead() {
+          this.folderUsers.forEach(user => {
+            user.read = this.folderSelectAllRead;
+          });
+        },
+        
+        toggleFolderAllWrite() {
+          this.folderUsers.forEach(user => {
+            user.write = this.folderSelectAllWrite;
+          });
+        },
+        
+        toggleFolderAllManage() {
+          this.folderUsers.forEach(user => {
+            user.manage = this.folderSelectAllManage;
+          });
+        },
+        
+        toggleFolderAllHomeFolder() {
+          this.folderUsers.forEach(user => {
+            user.homeFolder = this.folderSelectAllHomeFolder;
+          });
+        },
+        
+        saveAccessRights() {
+          console.log('Saving access rights for:', this.selectedSurvey);
+          console.log('Users:', this.users);
+          this.showAccessModal = false;
+        },
+        
+        saveFolderAccessRights() {
+          console.log('Saving folder access rights for:', this.selectedFolderName);
+          console.log('Folder Users:', this.folderUsers);
+          this.showFolderModal = false;
+        },
+        
+        init() {
+          console.log('Survey and Folder Rights initialized');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
