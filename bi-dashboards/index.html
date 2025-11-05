@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BI Dashboards - Survey & Reporting Reports | Webropol</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Pro -->
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 
+              50: '#f0fdff', 
+              100: '#ccfbff', 
+              200: '#99f6ff', 
+              300: '#4de9ff', 
+              400: '#06d9f4', 
+              500: '#06b6d4', 
+              600: '#0891b2', 
+              700: '#0e7490', 
+              800: '#155e75', 
+              900: '#164e63' 
+            },
+            'webropol-gray': { 
+              50: '#f8fafc', 
+              100: '#f1f5f9', 
+              200: '#e2e8f0', 
+              300: '#cbd5e1', 
+              400: '#94a3b8', 
+              500: '#64748b', 
+              600: '#475569', 
+              700: '#334155', 
+              800: '#1e293b', 
+              900: '#0f172a' 
+            },
+            'webropol-green': {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              700: '#15803d'
+            },
+            'webropol-red': {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              500: '#ef4444',
+              700: '#b91c1c'
+            },
+            'webropol-royalViolet': {
+              500: '#8b5cf6',
+              600: '#7c3aed'
+            },
+            'webropol-royalBlue': {
+              500: '#3b82f6',
+              600: '#2563eb'
+            },
+            'webropol-royalTurquoise': {
+              500: '#06b6d4',
+              600: '#0891b2'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            'soft': '0 2px 8px rgba(0, 0, 0, 0.05)',
+            'medium': '0 4px 16px rgba(0, 0, 0, 0.1)',
+            'card': '0 1px 3px rgba(0, 0, 0, 0.1)'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Design System Components -->
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+</head>
+<body x-data="biDashboardsApp()" class="bg-webropol-gray-50">
+  <div class="flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <webropol-sidebar active="bi-dashboards" base="../"></webropol-sidebar>
+    
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <webropol-header 
+        username="Jane" 
+        show-notifications 
+        show-help 
+        show-user-menu 
+        show-theme-selector>
+      </webropol-header>
+      
+      <!-- Breadcrumbs -->
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[
+          {"label":"Home","url":"../index.html"},
+          {"label":"BI Dashboards","url":"./index.html"}
+        ]'></webropol-breadcrumbs>
+      </div>
+      
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto bg-webropol-gray-50" role="main">
+        <div class="max-w-[1600px] mx-auto px-6 py-8">
+          
+          <!-- Welcome Banner -->
+          <div class="mb-8">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-16 h-16 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-2xl flex items-center justify-center shadow-medium">
+                <i class="fa-duotone fa-thin fa-chart-line text-white text-2xl"></i>
+              </div>
+              <div>
+                <h1 class="text-3xl font-bold text-webropol-gray-900">Hi, Welcome to View Dashboard</h1>
+                <p class="text-webropol-gray-600">Analyze and explore your survey and reporting data</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Navigation Tabs -->
+          <div class="bg-white rounded-2xl shadow-soft mb-6 border border-webropol-gray-200/50">
+            <div class="flex items-center overflow-x-auto border-b border-webropol-gray-200/50">
+              <button 
+                @click="activeTab = 'employee-experience'"
+                :class="activeTab === 'employee-experience' ? 'border-b-2 border-webropol-primary-500 text-webropol-primary-600' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                class="flex items-center gap-2 px-6 py-4 font-medium transition-all whitespace-nowrap">
+                <i class="fal fa-users"></i>
+                Employee Experience
+              </button>
+              <button 
+                @click="activeTab = 'reports'"
+                :class="activeTab === 'reports' ? 'border-b-2 border-webropol-primary-500 text-webropol-primary-600' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                class="flex items-center gap-2 px-6 py-4 font-medium transition-all whitespace-nowrap">
+                <i class="fal fa-chart-bar"></i>
+                Reports
+              </button>
+              <button 
+                @click="activeTab = 'dashboards'"
+                :class="activeTab === 'dashboards' ? 'border-b-2 border-webropol-primary-500 text-webropol-primary-600' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                class="flex items-center gap-2 px-6 py-4 font-medium transition-all whitespace-nowrap">
+                <i class="fal fa-tachometer-alt"></i>
+                Dashboards
+              </button>
+              <button 
+                @click="activeTab = '360-evaluations'"
+                :class="activeTab === '360-evaluations' ? 'border-b-2 border-webropol-primary-500 text-webropol-primary-600' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                class="flex items-center gap-2 px-6 py-4 font-medium transition-all whitespace-nowrap">
+                <i class="fal fa-360-degrees"></i>
+                360 Evaluations
+              </button>
+              <button 
+                @click="activeTab = 'admin-tools'"
+                :class="activeTab === 'admin-tools' ? 'border-b-2 border-webropol-primary-500 text-webropol-primary-600' : 'text-webropol-gray-600 hover:text-webropol-gray-900'"
+                class="flex items-center gap-2 px-6 py-4 font-medium transition-all whitespace-nowrap">
+                <i class="fal fa-cog"></i>
+                Admin tools
+              </button>
+              
+              <!-- Apps Dropdown -->
+              <div class="ml-auto px-4 relative" x-data="{ appsOpen: false }">
+                <button 
+                  @click="appsOpen = !appsOpen"
+                  class="flex items-center gap-2 px-4 py-2 text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg transition-all">
+                  <i class="fal fa-th"></i>
+                  Apps
+                  <i class="fal fa-chevron-down text-xs" :class="appsOpen && 'rotate-180'" style="transition: transform 0.2s"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div 
+                  x-show="appsOpen"
+                  @click.away="appsOpen = false"
+                  x-transition:enter="transition ease-out duration-200"
+                  x-transition:enter-start="opacity-0 transform scale-95"
+                  x-transition:enter-end="opacity-100 transform scale-100"
+                  x-transition:leave="transition ease-in duration-150"
+                  x-transition:leave-start="opacity-100 transform scale-100"
+                  x-transition:leave-end="opacity-0 transform scale-95"
+                  class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-medium border border-webropol-gray-200/50 py-2 z-50"
+                  style="display: none;">
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-chart-pie text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Survey</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-calendar text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Events</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-flask text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">eTest</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-360-degrees text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">360</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-mobile text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Direct Mobile Survey</span>
+                  </a>
+                  <div class="border-t border-webropol-gray-200/50 my-2"></div>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-briefcase text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Case Management</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-book text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Handler Menu</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-tasks text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">WOTT</span>
+                  </a>
+                  <div class="border-t border-webropol-gray-200/50 my-2"></div>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-video text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Training Videos</span>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors">
+                    <i class="fal fa-shopping-cart text-webropol-primary-500"></i>
+                    <span class="text-webropol-gray-700">Shop</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Survey & Reporting Reports Section -->
+          <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-200/50 overflow-hidden">
+            <!-- Header with Search -->
+            <div class="px-6 py-4 border-b border-webropol-gray-200/50">
+              <div class="flex items-center justify-between gap-4 mb-4">
+                <h2 class="text-xl font-semibold text-webropol-gray-900">Survey & Reporting Reports</h2>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm text-webropol-gray-500">Open report in</span>
+                  <span class="px-3 py-1.5 bg-webropol-primary-50 text-webropol-primary-700 rounded-lg text-sm font-medium">
+                    Survey&Reporting
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Search Bar -->
+              <div class="relative">
+                <i class="fal fa-search absolute left-4 top-1/2 -translate-y-1/2 text-webropol-gray-400"></i>
+                <input 
+                  type="text" 
+                  x-model="searchQuery"
+                  @input="filterReports()"
+                  placeholder="Search for reports"
+                  class="w-full pl-12 pr-4 py-3 border border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none transition-all">
+                <button 
+                  x-show="searchQuery"
+                  @click="searchQuery = ''; filterReports()"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600">
+                  <i class="fal fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Reports Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-webropol-gray-50 border-b border-webropol-gray-200/50">
+                  <tr>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('name')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Report name
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('survey')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Survey name
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('responses')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Responses
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('createdBy')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Created by
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('editedBy')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Edited by
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                    <th class="px-6 py-3 text-left">
+                      <button @click="sortTable('editedOn')" class="flex items-center gap-2 font-semibold text-sm text-webropol-gray-700 hover:text-webropol-gray-900">
+                        Edited on
+                        <i class="fal fa-sort text-xs"></i>
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-webropol-gray-200/50">
+                  <template x-for="report in paginatedReports" :key="report.id">
+                    <tr class="hover:bg-webropol-gray-50 transition-colors cursor-pointer">
+                      <td class="px-6 py-4">
+                        <a href="#" class="text-webropol-primary-600 hover:text-webropol-primary-700 font-medium" x-text="report.name"></a>
+                      </td>
+                      <td class="px-6 py-4">
+                        <a href="#" class="text-webropol-primary-600 hover:text-webropol-primary-700" x-text="report.survey"></a>
+                      </td>
+                      <td class="px-6 py-4 text-webropol-gray-700" x-text="report.responses"></td>
+                      <td class="px-6 py-4 text-webropol-gray-700" x-text="report.createdBy"></td>
+                      <td class="px-6 py-4 text-webropol-gray-700" x-text="report.editedBy"></td>
+                      <td class="px-6 py-4 text-webropol-gray-700" x-text="report.editedOn"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              
+              <!-- Empty State -->
+              <div x-show="filteredReports.length === 0" class="text-center py-16">
+                <i class="fal fa-search text-6xl text-webropol-gray-300 mb-4"></i>
+                <h3 class="text-xl font-semibold text-webropol-gray-700 mb-2">No reports found</h3>
+                <p class="text-webropol-gray-500">Try adjusting your search criteria</p>
+              </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-webropol-gray-200/50 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-webropol-gray-600" x-text="`${totalReports} results`"></span>
+                <button 
+                  @click="previousPage()"
+                  :disabled="currentPage === 1"
+                  :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-webropol-gray-100'"
+                  class="px-3 py-1.5 text-sm text-webropol-gray-700 rounded-lg transition-colors">
+                  <i class="fal fa-chevron-left mr-1"></i> Previous
+                </button>
+                <span class="text-sm text-webropol-gray-700 font-medium" x-text="`Page ${currentPage} / ${totalPages}`"></span>
+                <button 
+                  @click="nextPage()"
+                  :disabled="currentPage === totalPages"
+                  :class="currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-webropol-gray-100'"
+                  class="px-3 py-1.5 text-sm text-webropol-gray-700 rounded-lg transition-colors">
+                  Next <i class="fal fa-chevron-right ml-1"></i>
+                </button>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-webropol-gray-600">Show on page</span>
+                <button 
+                  @click="itemsPerPage = 10; currentPage = 1; filterReports()"
+                  :class="itemsPerPage === 10 ? 'text-webropol-primary-600 font-semibold' : 'text-webropol-gray-700 hover:text-webropol-gray-900'"
+                  class="px-2 py-1 text-sm rounded transition-colors">
+                  10
+                </button>
+                <button 
+                  @click="itemsPerPage = 20; currentPage = 1; filterReports()"
+                  :class="itemsPerPage === 20 ? 'text-webropol-primary-600 font-semibold' : 'text-webropol-gray-700 hover:text-webropol-gray-900'"
+                  class="px-2 py-1 text-sm rounded transition-colors">
+                  20
+                </button>
+                <button 
+                  @click="itemsPerPage = 50; currentPage = 1; filterReports()"
+                  :class="itemsPerPage === 50 ? 'text-webropol-primary-600 font-semibold' : 'text-webropol-gray-700 hover:text-webropol-gray-900'"
+                  class="px-2 py-1 text-sm rounded transition-colors">
+                  50
+                </button>
+                <button 
+                  @click="itemsPerPage = 100; currentPage = 1; filterReports()"
+                  :class="itemsPerPage === 100 ? 'text-webropol-primary-600 font-semibold' : 'text-webropol-gray-700 hover:text-webropol-gray-900'"
+                  class="px-2 py-1 text-sm rounded transition-colors">
+                  100
+                </button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Alpine.js App Logic -->
+  <script>
+    function biDashboardsApp() {
+      return {
+        // Active tab
+        activeTab: 'employee-experience',
+        
+        // Search and filter
+        searchQuery: '',
+        
+        // Pagination
+        currentPage: 1,
+        itemsPerPage: 10,
+        
+        // Sort
+        sortField: null,
+        sortDirection: 'asc',
+        
+        // Data
+        allReports: [
+          {
+            id: 1,
+            name: 'multifilter',
+            survey: 'view comparison report te...',
+            responses: 2000,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '10.01.2025, 13:29'
+          },
+          {
+            id: 2,
+            name: 'filters and comparisons',
+            survey: 'view comparison report te...',
+            responses: 2000,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '10.01.2025, 10:26'
+          },
+          {
+            id: 3,
+            name: 'saved copy',
+            survey: 'view comparison report te...',
+            responses: 2000,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '10.01.2025, 10:21'
+          },
+          {
+            id: 4,
+            name: 'saved',
+            survey: 'ano report limit index Copy',
+            responses: 3,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '08.01.2025, 12:18'
+          },
+          {
+            id: 5,
+            name: 'saved',
+            survey: 'selection group view limit',
+            responses: 23,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '29.11.2024, 14:21'
+          },
+          {
+            id: 6,
+            name: 'Individual response report',
+            survey: 'moro',
+            responses: 5,
+            createdBy: 'ter ve',
+            editedBy: '',
+            editedOn: '29.11.2024, 09:59'
+          },
+          {
+            id: 7,
+            name: 'ro',
+            survey: 'moro',
+            responses: 5,
+            createdBy: 'ter ve',
+            editedBy: 'ter ve',
+            editedOn: '29.11.2024, 09:51'
+          },
+          {
+            id: 8,
+            name: 'Report GROUP',
+            survey: 'NPS Group Copy',
+            responses: 4,
+            createdBy: 'Kristoffer Ribbencrantz',
+            editedBy: 'First Name 6383404 Last...',
+            editedOn: '27.11.2024, 09:53'
+          },
+          {
+            id: 9,
+            name: '2024 SIHy Koulutuspalvelut/Harjoitan koulu',
+            survey: 'view comparison report te...',
+            responses: 2000,
+            createdBy: 'Janne Laukkarinen',
+            editedBy: 'Janne Laukkarinen',
+            editedOn: '26.11.2024, 13:35'
+          },
+          {
+            id: 10,
+            name: 'Group test',
+            survey: 'NPS Group',
+            responses: 3,
+            createdBy: 'Kristoffer Ribbencrantz',
+            editedBy: 'First Name 6383404 Last...',
+            editedOn: '22.11.2024, 11:23'
+          }
+        ],
+        filteredReports: [],
+        
+        // Computed properties
+        get totalReports() {
+          return this.filteredReports.length;
+        },
+        
+        get totalPages() {
+          return Math.ceil(this.filteredReports.length / this.itemsPerPage);
+        },
+        
+        get paginatedReports() {
+          const start = (this.currentPage - 1) * this.itemsPerPage;
+          const end = start + this.itemsPerPage;
+          return this.filteredReports.slice(start, end);
+        },
+        
+        // Methods
+        init() {
+          this.loadFromLocalStorage();
+          this.filterReports();
+        },
+        
+        loadFromLocalStorage() {
+          try {
+            const stored = localStorage.getItem('webropol_bi_reports');
+            if (stored) {
+              const data = JSON.parse(stored);
+              this.allReports = data.reports || this.allReports;
+            }
+          } catch (e) {
+            console.error('Error loading from localStorage:', e);
+          }
+        },
+        
+        saveToLocalStorage() {
+          try {
+            localStorage.setItem('webropol_bi_reports', JSON.stringify({
+              reports: this.allReports,
+              lastUpdated: new Date().toISOString()
+            }));
+          } catch (e) {
+            console.error('Error saving to localStorage:', e);
+          }
+        },
+        
+        filterReports() {
+          const query = this.searchQuery.toLowerCase().trim();
+          
+          if (!query) {
+            this.filteredReports = [...this.allReports];
+          } else {
+            this.filteredReports = this.allReports.filter(report => {
+              return (
+                report.name.toLowerCase().includes(query) ||
+                report.survey.toLowerCase().includes(query) ||
+                report.createdBy.toLowerCase().includes(query) ||
+                report.editedBy.toLowerCase().includes(query)
+              );
+            });
+          }
+          
+          // Reset to first page when filtering
+          this.currentPage = 1;
+        },
+        
+        sortTable(field) {
+          if (this.sortField === field) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+          } else {
+            this.sortField = field;
+            this.sortDirection = 'asc';
+          }
+          
+          this.filteredReports.sort((a, b) => {
+            let aVal = a[field];
+            let bVal = b[field];
+            
+            // Handle numeric values
+            if (typeof aVal === 'number' && typeof bVal === 'number') {
+              return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+            
+            // Handle string values
+            aVal = String(aVal).toLowerCase();
+            bVal = String(bVal).toLowerCase();
+            
+            if (this.sortDirection === 'asc') {
+              return aVal.localeCompare(bVal);
+            } else {
+              return bVal.localeCompare(aVal);
+            }
+          });
+        },
+        
+        nextPage() {
+          if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+          }
+        },
+        
+        previousPage() {
+          if (this.currentPage > 1) {
+            this.currentPage--;
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>
