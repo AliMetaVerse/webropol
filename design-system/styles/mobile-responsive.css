@@ -22,7 +22,8 @@
   /* Mobile-specific z-indexes */
   --z-mobile-backdrop: 99998;
   --z-mobile-drawer: 99999;
-  --z-mobile-header: 100000;
+  --z-mobile-header: 2147483646;
+  --z-mobile-header-dropdown: 2147483647;
   --z-mobile-modal: 100001;
 }
 
@@ -456,6 +457,42 @@ html, body {
     border-top: 1px solid var(--neutral-200);
     padding: 1rem;
   }
+}
+
+/* ===== HEADER Z-INDEX SYSTEM ===== */
+/* Ensure header and all its menus overlay everything across all pages */
+header,
+webropol-header,
+webropol-header-enhanced {
+  position: relative;
+  z-index: var(--z-mobile-header) !important;
+}
+
+/* All header dropdowns and menus must be above header */
+header .create-menu-dropdown,
+header .theme-dropdown,
+header .feedback-dropdown,
+header .user-dropdown,
+header [data-dropdown],
+[data-header-layer],
+[data-header-layer] > * {
+  z-index: var(--z-mobile-header-dropdown) !important;
+}
+
+/* Ensure breadcrumbs and other elements don't interfere */
+#breadcrumbs-fix-wrapper,
+webropol-breadcrumbs {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Main content and sidebar below header */
+main,
+webropol-sidebar,
+webropol-sidebar-enhanced,
+.mobile-main-content {
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== RESPONSIVE TYPOGRAPHY ===== */
