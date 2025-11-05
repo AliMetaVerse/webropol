@@ -87,15 +87,17 @@
                 
                 <!-- Folder Selector -->
                 <div class="mb-4">
-                  <select x-model="selectedFolder" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
-                    <option value="">Survey&Reporting folders</option>
-                    <option value="folder1">Project Alpha</option>
-                    <option value="folder2">Customer Feedback</option>
-                    <option value="folder3">Employee Surveys</option>
-                  </select>
-                  <button class="mt-2 w-8 h-8 rounded-lg bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors" title="Help">
-                    <i class="fal fa-question-circle text-webropol-gray-500"></i>
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <select x-model="selectedFolder" class="flex-1 px-4 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                      <option value="">Survey&Reporting folders</option>
+                      <option value="folder1">Project Alpha</option>
+                      <option value="folder2">Customer Feedback</option>
+                      <option value="folder3">Employee Surveys</option>
+                    </select>
+                    <button class="w-8 h-8 rounded-lg bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors flex-shrink-0" title="Help">
+                      <i class="fal fa-question-circle text-webropol-gray-500"></i>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Search Folders -->
@@ -140,11 +142,16 @@
                       <i class="fal fa-sort text-sm"></i>
                     </button>
                   </h3>
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm text-webropol-gray-600">Survey ID</span>
-                    <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
-                      <i class="fal fa-sort text-sm"></i>
-                    </button>
+                  <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2 justify-center w-24">
+                      <span class="text-sm text-webropol-gray-600">Survey ID</span>
+                      <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
+                        <i class="fal fa-sort text-sm"></i>
+                      </button>
+                    </div>
+                    <div class="flex items-center gap-2 justify-center w-16">
+                      <span class="text-sm text-webropol-gray-600">Actions</span>
+                    </div>
                   </div>
                 </div>
 
@@ -167,11 +174,13 @@
                       <div class="flex-1 min-w-0">
                         <span class="text-sm text-webropol-gray-900 block truncate" x-text="survey.name"></span>
                       </div>
-                      <div class="flex items-center gap-3 ml-4">
-                        <button @click="openSurveySettings(survey)" class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
-                          <i class="fal fa-cog"></i>
-                        </button>
-                        <span class="text-sm text-webropol-gray-600 font-mono" x-text="survey.id"></span>
+                      <div class="flex items-center gap-6 ml-4">
+                        <span class="text-sm text-webropol-gray-600 font-mono w-24 text-center" x-text="survey.id"></span>
+                        <div class="w-16 flex items-center justify-center">
+                          <button @click="openSurveySettings(survey)" class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
+                            <i class="fal fa-cog"></i>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </template>
@@ -203,7 +212,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
-         class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+         class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
       
       <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between bg-webropol-gray-50">
@@ -352,7 +361,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
-         class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+         class="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
       
       <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-webropol-gray-200 flex items-center justify-between bg-webropol-gray-50">
@@ -544,10 +553,7 @@
         expandedFolders: {
           root: true
         },
-        surveys: [
-          { id: 'Fin347512', name: 'NPS Survey' },
-          { id: 'Fin322886', name: 'CX Survey' }
-        ],
+        surveys: [],
         users: [
           { username: 'ali.admin', name: 'Ali Al Zuhairi', userClass: 'Admin', read: false, write: false, manage: false },
           { username: 'ali.user', name: 'Ali Al Zuhairi', userClass: 'User', read: false, write: false, manage: false },
@@ -659,6 +665,33 @@
         
         init() {
           console.log('Survey and Folder Rights initialized');
+          this.loadSurveysFromStorage();
+        },
+        
+        loadSurveysFromStorage() {
+          try {
+            // Try to get surveys from localStorage
+            const surveysData = localStorage.getItem('webropol_surveys');
+            if (surveysData) {
+              this.surveys = JSON.parse(surveysData);
+            } else {
+              // Fallback to hardcoded surveys if no localStorage data
+              this.surveys = [
+                { id: 'Fin347512', name: 'Customer Satisfaction Survey' },
+                { id: 'Fin322886', name: 'Employee Engagement Survey 2024' },
+                { id: 'Fin398745', name: 'Product Feedback - Mobile App' },
+                { id: 'Fin256389', name: 'Market Research - Q1 2024' },
+                { id: 'Fin189234', name: 'Event Feedback - Annual Conference' },
+                { id: 'Fin445678', name: 'AI Text Analysis Survey' }
+              ];
+              // Save to localStorage for future use
+              localStorage.setItem('webropol_surveys', JSON.stringify(this.surveys));
+            }
+          } catch (e) {
+            console.error('Error loading surveys:', e);
+            // Fallback to empty array on error
+            this.surveys = [];
+          }
         }
       }
     }

@@ -237,6 +237,38 @@
             cursor: help;
         }
 
+        .distribution-badge[title]:hover::before {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .distribution-badge[title]:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 2px;
+            border: 5px solid transparent;
+            border-top-color: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
         .modern-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -998,11 +1030,24 @@
                     }
                 ],
                 
+                // Surveys data
+                surveys: [
+                    { id: 'Fin347512', name: 'Customer Satisfaction Survey', status: 'published', answers: 156, lastEdited: '20.01.2024 14:22', createdBy: 'Ali Al-Zuhairi' },
+                    { id: 'Fin322886', name: 'Employee Engagement Survey 2024', status: 'published', answers: 89, lastEdited: '18.01.2024 09:15', createdBy: 'Jane Smith' },
+                    { id: 'Fin398745', name: 'Product Feedback - Mobile App', status: 'draft', answers: 0, lastEdited: '22.01.2024 16:45', createdBy: 'Mike Johnson' },
+                    { id: 'Fin256389', name: 'Market Research - Q1 2024', status: 'published', answers: 234, lastEdited: '08.01.2024 11:30', createdBy: 'Sarah Wilson' },
+                    { id: 'Fin189234', name: 'Event Feedback - Annual Conference', status: 'closed', answers: 67, lastEdited: '30.11.2023 13:20', createdBy: 'David Brown' },
+                    { id: 'Fin445678', name: 'AI Text Analysis Survey', status: 'published', answers: 12, lastEdited: '25.01.2024 10:05', createdBy: 'Ali Al-Zuhairi' }
+                ],
+                
                 init() {
                     console.log('Surveys List initialized');
                     
                     // Initialize interface mode from localStorage or default to classic
                     this.interfaceMode = localStorage.getItem('interfaceMode') || 'classic';
+                    
+                    // Save surveys to localStorage for use in admin-tools
+                    this.saveSurveysToStorage();
                 },
                 
                 // Interface mode management
@@ -1014,6 +1059,15 @@
                 setInterfaceMode(mode) {
                     this.interfaceMode = mode;
                     localStorage.setItem('interfaceMode', mode);
+                },
+                
+                // Save surveys to localStorage
+                saveSurveysToStorage() {
+                    try {
+                        localStorage.setItem('webropol_surveys', JSON.stringify(this.surveys));
+                    } catch (e) {
+                        console.error('Error saving surveys to localStorage:', e);
+                    }
                 },
                 
                 // Folder management functions
