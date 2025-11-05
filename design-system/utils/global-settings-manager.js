@@ -63,7 +63,8 @@ export class GlobalSettingsManager {
       showSettingsAnimation: true,
       showAnimationType: true,
       showAnimationFrequency: true,
-      showAnimationDuration: true
+      showAnimationDuration: true,
+      showDevModeToggle: false
     },
     // Module controls
     modules: {

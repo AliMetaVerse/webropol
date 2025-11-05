@@ -435,7 +435,7 @@
           </div>
 
           <!-- Survey State Toggle for Testing (Remove in production) -->
-          <div class="max-w-6xl mx-auto mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg" x-show="true">
+          <div class="max-w-6xl mx-auto mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg" x-show="showDevModeToggle">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <i class="fal fa-flask text-amber-600"></i>
@@ -2318,21 +2318,48 @@
     // Minimal Alpine data with survey state management
     function surveyEditApp() {
       return {
-        // Survey state: 'draft' or 'published'
-        surveyState: localStorage.getItem('webropol_survey_state') || 'draft',
+        // Survey state: 'draft' or 'published' (default to draft)
+        surveyState: 'draft',
         
         // Active distribution tab for published state
         activeDistTab: 'overview',
         
+        // Dev mode toggle visibility
+        showDevModeToggle: false,
+        
         // Initialize
         init() {
-          // Load saved state
-          this.loadSurveyState();
+          // Load dev mode toggle visibility from settings
+          this.loadDevModeToggleVisibility();
+          
+          // Load saved state only if dev mode toggle is enabled
+          if (this.showDevModeToggle) {
+            this.loadSurveyState();
+          }
           
           // Set up watchers
           this.$watch('surveyState', (value) => {
-            this.saveSurveyState();
+            if (this.showDevModeToggle) {
+              this.saveSurveyState();
+            }
           });
+          
+          // Listen for settings changes
+          window.addEventListener('webropol-settings-applied', () => {
+            this.loadDevModeToggleVisibility();
+          });
+        },
+        
+        // Load dev mode toggle visibility from global settings
+        loadDevModeToggleVisibility() {
+          try {
+            if (window.globalSettingsManager) {
+              const settings = window.globalSettingsManager.getAllSettings();
+              this.showDevModeToggle = settings.settingsModal?.showDevModeToggle || false;
+            }
+          } catch (e) {
+            console.error('Error loading dev mode toggle visibility:', e);
+          }
         },
         
         // Load survey state from localStorage

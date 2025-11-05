@@ -544,6 +544,25 @@ export class WebropolSettingsModal extends BaseComponent {
                     </label>
           </div>` : ''}
                   
+          <!-- Dev Mode Toggle Visibility -->
+          <div class="flex items-center justify-between py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center">
+                        <label class="text-sm font-medium text-webropol-gray-700 truncate">Dev Mode Toggle</label>
+                        <div class="ml-2 text-webropol-gray-400 hover:text-webropol-gray-600 cursor-help" 
+                             title="Show or hide the draft/published mode toggle in collection pages">
+                          <i class="fal fa-question-circle text-xs"></i>
+                        </div>
+                      </div>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5 truncate">Display draft/published toggle</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer ml-3">
+                      <input type="checkbox" class="sr-only peer" ${this.settings.settingsModal?.showDevModeToggle ? 'checked' : ''} 
+                             data-setting="settingsModal.showDevModeToggle">
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-webropol-primary-600"></div>
+                    </label>
+          </div>
+                  
           <!-- Auto Logout Setting -->
           ${sm.showAutoLogout ? `
           <div class="py-2.5 px-3 bg-white/80 backdrop-blur-sm rounded-lg border border-webropol-blue-100/50">
@@ -826,6 +845,11 @@ export class WebropolSettingsModal extends BaseComponent {
           const subKey = settingKey.split('.')[1];
           this.settings.aiAssistant = { ...(this.settings.aiAssistant||{}), [subKey]: value };
           this.saveSettings();
+        } else if (settingKey && settingKey.startsWith('settingsModal.')) {
+          // deep update for settingsModal nested keys
+          const subKey = settingKey.split('.')[1];
+          this.settings.settingsModal = { ...(this.settings.settingsModal||{}), [subKey]: value };
+          this.saveSettings();
         } else {
           this.toggleSetting(settingKey, value);
         }
@@ -842,6 +866,11 @@ export class WebropolSettingsModal extends BaseComponent {
         if (settingKey && settingKey.startsWith('aiAssistant.')) {
           const subKey = settingKey.split('.')[1];
           this.settings.aiAssistant = { ...(this.settings.aiAssistant||{}), [subKey]: value };
+          this.saveSettings();
+        } else if (settingKey && settingKey.startsWith('settingsModal.')) {
+          // deep update for settingsModal nested keys
+          const subKey = settingKey.split('.')[1];
+          this.settings.settingsModal = { ...(this.settings.settingsModal||{}), [subKey]: value };
           this.saveSettings();
         } else {
           this.toggleSetting(settingKey, value);
