@@ -150,7 +150,7 @@
           </div>
           
           <!-- Remember Me -->
-          <div class="flex items-center mb-6">
+          <div class="flex items-center mb-6" style="display: none;">
             <input 
               type="checkbox" 
               id="remember"
@@ -169,6 +169,25 @@
               <i class="fal fa-spinner-third fa-spin"></i>
               Signing in...
             </span>
+          </button>
+          
+          <!-- Divider -->
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-webropol-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-4 bg-white text-webropol-gray-500">or</span>
+            </div>
+          </div>
+          
+          <!-- SSO Button -->
+          <button 
+            type="button"
+            @click="handleSSOLogin"
+            class="w-full px-6 py-3 bg-white border-2 border-webropol-gray-300 hover:border-webropol-primary-500 hover:bg-webropol-gray-50 text-webropol-gray-700 hover:text-webropol-primary-600 font-semibold rounded-full transition-all flex items-center justify-center gap-2">
+            <i class="fal fa-building text-lg"></i>
+            <span>Sign in with SSO</span>
           </button>
           
           <!-- Forgot Password -->
@@ -365,6 +384,25 @@
             // Redirect to dashboard
             window.location.href = 'dash.html';
           }, 1500);
+        },
+        
+        handleSSOLogin() {
+          // Simulate SSO redirect
+          console.log('Redirecting to SSO provider...');
+          
+          // In a real implementation, this would redirect to your SSO provider
+          // For now, we'll just simulate a successful SSO login
+          setTimeout(() => {
+            try {
+              localStorage.setItem('webropol_logged_in', 'true');
+              localStorage.setItem('webropol_username', 'sso.user');
+              localStorage.setItem('webropol_sso_login', 'true');
+            } catch (e) {
+              console.error('Error saving to localStorage:', e);
+            }
+            
+            window.location.href = 'dash.html';
+          }, 1000);
         },
         
         init() {
