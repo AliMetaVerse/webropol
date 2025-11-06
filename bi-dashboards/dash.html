@@ -304,46 +304,78 @@
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
             class="mb-6">
-            <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-2xl shadow-soft p-6 border border-webropol-primary-200">
-              <div class="flex items-start justify-between">
+            <div class="bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 rounded-2xl shadow-soft border border-webropol-primary-200">
+              <!-- Collapsible Header -->
+              <div 
+                @click="overviewExpanded = !overviewExpanded"
+                class="flex items-center justify-between p-6 cursor-pointer hover:bg-white/30 transition-colors rounded-t-2xl">
                 <div class="flex-1">
-                  <h2 class="text-2xl font-bold text-webropol-gray-900 mb-2">Dashboard Overview</h2>
-                  <p class="text-webropol-gray-600 mb-6">Monitor and analyze your survey reports and BI insights in real-time</p>
-                  
-                  <!-- Quick Stats -->
-                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft">
-                      <div class="flex items-center justify-between mb-2">
-                        <i class="fal fa-chart-bar text-2xl text-webropol-primary-600"></i>
-                        <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Total</span>
-                      </div>
-                      <div class="text-3xl font-bold text-webropol-gray-900" x-text="allReports.length"></div>
-                      <div class="text-sm text-webropol-gray-600">Reports</div>
+                  <h2 class="text-2xl font-bold text-webropol-gray-900 mb-1">Dashboard Overview</h2>
+                  <p class="text-webropol-gray-600">Monitor and analyze your survey reports and BI insights in real-time</p>
+                </div>
+                <button class="ml-4 w-10 h-10 flex items-center justify-center bg-white/50 hover:bg-white rounded-lg transition-all">
+                  <i class="fal fa-chevron-down text-webropol-gray-700 transition-transform duration-300" :class="overviewExpanded ? 'rotate-180' : ''"></i>
+                </button>
+              </div>
+              
+              <!-- Collapsible Content -->
+              <div 
+                x-show="overviewExpanded"
+                x-collapse
+                class="px-6 pb-6">
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div 
+                    class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft transform transition-all duration-300 hover:scale-105 hover:shadow-medium"
+                    x-show="overviewExpanded"
+                    x-transition:enter="transition ease-out duration-300 delay-75"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="flex items-center justify-between mb-2">
+                      <i class="fal fa-chart-bar text-2xl text-webropol-primary-600"></i>
+                      <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Total</span>
                     </div>
-                    <div class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft">
-                      <div class="flex items-center justify-between mb-2">
-                        <i class="fal fa-chart-line text-2xl text-webropol-green-600"></i>
-                        <span class="text-xs bg-webropol-green-100 text-webropol-green-700 px-2 py-1 rounded-full font-medium">Active</span>
-                      </div>
-                      <div class="text-3xl font-bold text-webropol-gray-900">2,000</div>
-                      <div class="text-sm text-webropol-gray-600">Responses</div>
+                    <div class="text-3xl font-bold text-webropol-gray-900" x-text="allReports.length"></div>
+                    <div class="text-sm text-webropol-gray-600">Reports</div>
+                  </div>
+                  <div 
+                    class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft transform transition-all duration-300 hover:scale-105 hover:shadow-medium"
+                    x-show="overviewExpanded"
+                    x-transition:enter="transition ease-out duration-300 delay-150"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="flex items-center justify-between mb-2">
+                      <i class="fal fa-chart-line text-2xl text-webropol-green-600"></i>
+                      <span class="text-xs bg-webropol-green-100 text-webropol-green-700 px-2 py-1 rounded-full font-medium">Active</span>
                     </div>
-                    <div class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft">
-                      <div class="flex items-center justify-between mb-2">
-                        <i class="fal fa-users text-2xl text-webropol-royalViolet-600"></i>
-                        <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Users</span>
-                      </div>
-                      <div class="text-3xl font-bold text-webropol-gray-900">5</div>
-                      <div class="text-sm text-webropol-gray-600">Contributors</div>
+                    <div class="text-3xl font-bold text-webropol-gray-900">2,000</div>
+                    <div class="text-sm text-webropol-gray-600">Responses</div>
+                  </div>
+                  <div 
+                    class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft transform transition-all duration-300 hover:scale-105 hover:shadow-medium"
+                    x-show="overviewExpanded"
+                    x-transition:enter="transition ease-out duration-300 delay-[225ms]"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="flex items-center justify-between mb-2">
+                      <i class="fal fa-users text-2xl text-webropol-royalViolet-600"></i>
+                      <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Users</span>
                     </div>
-                    <div class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft">
-                      <div class="flex items-center justify-between mb-2">
-                        <i class="fal fa-clock text-2xl text-webropol-royalBlue-600"></i>
-                        <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Recent</span>
-                      </div>
-                      <div class="text-3xl font-bold text-webropol-gray-900">2</div>
-                      <div class="text-sm text-webropol-gray-600">Today</div>
+                    <div class="text-3xl font-bold text-webropol-gray-900">5</div>
+                    <div class="text-sm text-webropol-gray-600">Contributors</div>
+                  </div>
+                  <div 
+                    class="bg-white rounded-xl p-4 border border-webropol-gray-200 shadow-soft transform transition-all duration-300 hover:scale-105 hover:shadow-medium"
+                    x-show="overviewExpanded"
+                    x-transition:enter="transition ease-out duration-300 delay-300"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0">
+                    <div class="flex items-center justify-between mb-2">
+                      <i class="fal fa-clock text-2xl text-webropol-royalBlue-600"></i>
+                      <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Recent</span>
                     </div>
+                    <div class="text-3xl font-bold text-webropol-gray-900">2</div>
+                    <div class="text-sm text-webropol-gray-600">Today</div>
                   </div>
                 </div>
               </div>
@@ -692,6 +724,7 @@
       return {
         // UI state
         showWelcomeSection: true,
+        overviewExpanded: false,
         
         // Active tab
         activeTab: 'employee-experience',
@@ -750,6 +783,11 @@
           this.loadFromLocalStorage();
           this.filterReports();
           this.checkLoginStatus();
+          
+          // Trigger widget animations on initial load
+          setTimeout(() => {
+            this.overviewExpanded = true;
+          }, 100);
         },
         
         checkLoginStatus() {
