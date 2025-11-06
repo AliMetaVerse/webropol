@@ -285,21 +285,20 @@
           
           // Simulate API call
           setTimeout(() => {
-            // Store credentials if remember me is checked
-            if (this.rememberMe) {
-              try {
-                localStorage.setItem('webropol_remember_me', 'true');
-                localStorage.setItem('webropol_username', this.username);
-              } catch (e) {
-                console.error('Error saving to localStorage:', e);
-              }
-            }
-            
-            // Store login status
+            // Store credentials
             try {
+              localStorage.setItem('webropol_username', this.username);
+              localStorage.setItem('webropol_password', this.password);
               localStorage.setItem('webropol_logged_in', 'true');
+              
+              // Store remember me preference
+              if (this.rememberMe) {
+                localStorage.setItem('webropol_remember_me', 'true');
+              } else {
+                localStorage.removeItem('webropol_remember_me');
+              }
             } catch (e) {
-              console.error('Error saving login status:', e);
+              console.error('Error saving to localStorage:', e);
             }
             
             // Redirect to dashboard
@@ -312,9 +311,15 @@
           try {
             const rememberMe = localStorage.getItem('webropol_remember_me');
             const savedUsername = localStorage.getItem('webropol_username');
+            const savedPassword = localStorage.getItem('webropol_password');
             
-            if (rememberMe === 'true' && savedUsername) {
-              this.username = savedUsername;
+            if (rememberMe === 'true') {
+              if (savedUsername) {
+                this.username = savedUsername;
+              }
+              if (savedPassword) {
+                this.password = savedPassword;
+              }
               this.rememberMe = true;
             }
           } catch (e) {
