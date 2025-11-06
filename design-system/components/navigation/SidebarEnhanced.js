@@ -381,10 +381,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       <!-- Mobile Header -->
       <div class="flex items-center justify-between h-16 px-4 border-b border-webropol-gray-200 bg-white">
         <div class="flex items-center">
-          <div class="w-6 h-6 flex items-center justify-center mr-3">
-            <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
-          </div>
-          <h2 class="font-bold text-webropol-gray-900 text-lg uppercase"><webropol-brand></webropol-brand></h2>
+          <h2 class="font-bold text-webropol-gray-900 text-lg"><webropol-brand base="${this.getAttr('base', '')}"></webropol-brand></h2>
         </div>
         <button class="mobile-close-btn w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 rounded-lg transition-all"
                 aria-label="Close navigation menu">
@@ -543,12 +540,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         
         <!-- Tablet Header -->
         <div class="h-20 flex items-center justify-center group-hover:justify-start group-hover:px-6 border-b border-webropol-gray-200/50 transition-all duration-300">
-          <div class="w-6 h-6 flex items-center justify-center flex-shrink-0">
-            <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
-          </div>
-          <div class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden">
-            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap uppercase"><webropol-brand></webropol-brand></h1>
-            <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
+          <div class="opacity-100 transition-opacity duration-300">
+            <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap"><webropol-brand base="${this.getAttr('base', '')}"></webropol-brand></h1>
           </div>
         </div>
         
@@ -609,15 +602,11 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     group-hover:px-8
                     transition-all duration-300">
           <div class="flex items-center min-w-0 flex-1">
-            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <img src="img/logo/W-logo-dark.svg" alt="Webropol" style="width: 100%; height: 100%; object-fit: contain;">
-            </div>
-            <div class="ml-3 overflow-hidden transition-all duration-300
+            <div class="overflow-hidden transition-all duration-300
                         xl:opacity-100 xl:w-auto
                         opacity-0 w-0
-                        group-hover:opacity-100 group-hover:w-auto group-hover:ml-3">
-              <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap uppercase"><webropol-brand></webropol-brand></h1>
-              <p class="text-[10px] text-webropol-gray-400 -mt-1 whitespace-nowrap">Survey Tool Forerunner</p>
+                        group-hover:opacity-100 group-hover:w-auto">
+              <h1 class="font-bold text-webropol-gray-900 text-lg whitespace-nowrap"><webropol-brand base="${this.getAttr('base', '')}"></webropol-brand></h1>
             </div>
           </div>
           <button class="sidebar-collapse-btn ml-2 w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" title="Hide sidebar" aria-label="Hide sidebar">
