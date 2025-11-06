@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - BI Dashboards | Webropol</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Pro -->
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 
+              50: '#f0fdff', 
+              100: '#ccfbff', 
+              200: '#99f6ff', 
+              300: '#4de9ff', 
+              400: '#06d9f4', 
+              500: '#06b6d4', 
+              600: '#0891b2', 
+              700: '#0e7490', 
+              800: '#155e75', 
+              900: '#164e63' 
+            },
+            'webropol-gray': { 
+              50: '#f8fafc', 
+              100: '#f1f5f9', 
+              200: '#e2e8f0', 
+              300: '#cbd5e1', 
+              400: '#94a3b8', 
+              500: '#64748b', 
+              600: '#475569', 
+              700: '#334155', 
+              800: '#1e293b', 
+              900: '#0f172a' 
+            },
+            'webropol-teal': {
+              600: '#0d9488',
+              700: '#0f766e'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body x-data="loginApp()" class="bg-webropol-gray-50 min-h-screen flex">
+  
+  <!-- Left Side - Login Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white">
+    <div class="w-full max-w-md">
+      
+      <!-- Language Selector -->
+      <div class="flex justify-end mb-8">
+        <div class="relative" x-data="{ langOpen: false }">
+          <button 
+            @click="langOpen = !langOpen"
+            class="flex items-center gap-2 px-4 py-2 bg-webropol-gray-100 hover:bg-webropol-gray-200 rounded-lg transition-all text-sm text-webropol-gray-700">
+            <i class="fal fa-globe"></i>
+            <span>English</span>
+            <i class="fal fa-chevron-down text-xs" :class="langOpen && 'rotate-180'" style="transition: transform 0.2s"></i>
+          </button>
+          
+          <div 
+            x-show="langOpen"
+            @click.away="langOpen = false"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 transform scale-95"
+            x-transition:enter-end="opacity-100 transform scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 transform scale-100"
+            x-transition:leave-end="opacity-0 transform scale-95"
+            class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 py-2 z-50"
+            style="display: none;">
+            <button @click="langOpen = false" class="w-full text-left px-4 py-2 hover:bg-webropol-gray-50 transition-colors text-sm text-webropol-gray-700">
+              English
+            </button>
+            <button @click="langOpen = false" class="w-full text-left px-4 py-2 hover:bg-webropol-gray-50 transition-colors text-sm text-webropol-gray-700">
+              Finnish
+            </button>
+            <button @click="langOpen = false" class="w-full text-left px-4 py-2 hover:bg-webropol-gray-50 transition-colors text-sm text-webropol-gray-700">
+              Swedish
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Logo -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center">
+            <span class="text-white font-bold text-xl">W</span>
+          </div>
+          <span class="text-2xl font-bold text-webropol-gray-900">VIEW</span>
+        </div>
+      </div>
+      
+      <!-- Login Form -->
+      <div>
+        <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Login</h1>
+        <p class="text-webropol-gray-600 mb-8">Enter your credentials to access your account</p>
+        
+        <form @submit.prevent="handleLogin">
+          <!-- Username Field -->
+          <div class="mb-5">
+            <label for="username" class="block text-sm font-medium text-webropol-gray-700 mb-2">Username</label>
+            <input 
+              type="text" 
+              id="username"
+              x-model="username"
+              placeholder="ali.view"
+              class="w-full px-4 py-3 bg-webropol-gray-50 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none transition-all text-webropol-gray-900"
+              required>
+          </div>
+          
+          <!-- Password Field -->
+          <div class="mb-6">
+            <label for="password" class="block text-sm font-medium text-webropol-gray-700 mb-2">Password</label>
+            <div class="relative">
+              <input 
+                :type="showPassword ? 'text' : 'password'" 
+                id="password"
+                x-model="password"
+                placeholder="••••••••"
+                class="w-full px-4 py-3 bg-webropol-gray-50 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none transition-all text-webropol-gray-900 pr-12"
+                required>
+              <button 
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+                <i class="fal" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Remember Me -->
+          <div class="flex items-center mb-6">
+            <input 
+              type="checkbox" 
+              id="remember"
+              x-model="rememberMe"
+              class="w-4 h-4 text-webropol-primary-600 bg-webropol-gray-100 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 focus:ring-2">
+            <label for="remember" class="ml-2 text-sm text-webropol-gray-700">Remember me next time</label>
+          </div>
+          
+          <!-- Sign In Button -->
+          <button 
+            type="submit"
+            :disabled="loading"
+            class="w-full px-6 py-3 bg-webropol-primary-500 hover:bg-webropol-primary-600 text-white font-semibold rounded-full transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <span x-show="!loading">Sign in</span>
+            <span x-show="loading" class="flex items-center gap-2">
+              <i class="fal fa-spinner-third fa-spin"></i>
+              Signing in...
+            </span>
+          </button>
+          
+          <!-- Forgot Password -->
+          <div class="text-center mt-6">
+            <a href="#" class="text-sm text-webropol-primary-600 hover:text-webropol-primary-700 transition-colors">
+              I forgot my password.
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right Side - Hero Section -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 items-center justify-center p-12 relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full filter blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-400 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <!-- Content -->
+    <div class="relative z-10 text-center max-w-lg">
+      <!-- Dashboard Mockup -->
+      <div class="mb-8 relative">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl">
+          <div class="flex items-center gap-2 mb-6">
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-red-400"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+              <div class="w-3 h-3 rounded-full bg-green-400"></div>
+            </div>
+            <div class="flex-1 bg-white/10 rounded px-3 py-1 text-xs text-white/60">
+              analytics.webropol.com
+            </div>
+          </div>
+          
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-4 gap-3 mb-6">
+            <div class="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+              <div class="text-2xl font-bold text-white">2,500</div>
+              <div class="text-xs text-white/70">Users</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+              <div class="text-2xl font-bold text-white">4,567</div>
+              <div class="text-xs text-white/70">Sessions</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+              <div class="text-2xl font-bold text-white">2,315</div>
+              <div class="text-xs text-white/70">Reports</div>
+            </div>
+            <div class="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+              <div class="text-2xl font-bold text-white">1,325</div>
+              <div class="text-xs text-white/70">Active</div>
+            </div>
+          </div>
+          
+          <!-- Chart Visualization -->
+          <div class="bg-white/5 rounded-lg p-4">
+            <div class="flex items-end justify-between gap-2 h-24">
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 60%"></div>
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 85%"></div>
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 45%"></div>
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 70%"></div>
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 95%"></div>
+              <div class="flex-1 bg-gradient-to-t from-webropol-primary-500 to-webropol-primary-300 rounded-t opacity-80" style="height: 55%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hero Text -->
+      <h2 class="text-4xl font-bold text-white mb-4">Advanced Analytics</h2>
+      <p class="text-lg text-purple-200 leading-relaxed">
+        Unlock powerful insights with our next-generation dashboard platform. Visualize data, track performance, and make informed decisions with ease.
+      </p>
+      
+      <!-- Features -->
+      <div class="grid grid-cols-3 gap-4 mt-8">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center mx-auto mb-2">
+            <i class="fal fa-chart-line text-white text-xl"></i>
+          </div>
+          <div class="text-sm text-purple-200">Real-time Data</div>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center mx-auto mb-2">
+            <i class="fal fa-shield-check text-white text-xl"></i>
+          </div>
+          <div class="text-sm text-purple-200">Secure Access</div>
+        </div>
+        <div class="text-center">
+          <div class="w-12 h-12 bg-white/10 backdrop-blur rounded-lg flex items-center justify-center mx-auto mb-2">
+            <i class="fal fa-users text-white text-xl"></i>
+          </div>
+          <div class="text-sm text-purple-200">Team Collaboration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alpine.js App Logic -->
+  <script>
+    function loginApp() {
+      return {
+        username: '',
+        password: '',
+        rememberMe: false,
+        showPassword: false,
+        loading: false,
+        
+        handleLogin() {
+          this.loading = true;
+          
+          // Simulate API call
+          setTimeout(() => {
+            // Store credentials if remember me is checked
+            if (this.rememberMe) {
+              try {
+                localStorage.setItem('webropol_remember_me', 'true');
+                localStorage.setItem('webropol_username', this.username);
+              } catch (e) {
+                console.error('Error saving to localStorage:', e);
+              }
+            }
+            
+            // Store login status
+            try {
+              localStorage.setItem('webropol_logged_in', 'true');
+            } catch (e) {
+              console.error('Error saving login status:', e);
+            }
+            
+            // Redirect to dashboard
+            window.location.href = 'dash.html';
+          }, 1500);
+        },
+        
+        init() {
+          // Check if user should be remembered
+          try {
+            const rememberMe = localStorage.getItem('webropol_remember_me');
+            const savedUsername = localStorage.getItem('webropol_username');
+            
+            if (rememberMe === 'true' && savedUsername) {
+              this.username = savedUsername;
+              this.rememberMe = true;
+            }
+          } catch (e) {
+            console.error('Error loading from localStorage:', e);
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>

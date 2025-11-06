@@ -92,10 +92,10 @@
   
   <!-- Header -->
   <header class="bg-white border-b border-webropol-gray-200 sticky top-0 z-40">
-    <div class="flex items-center justify-between px-6 py-3">
+    <div class="flex items-center justify-between px-3 sm:px-6 py-3 gap-2">
       <!-- Logo -->
-      <div class="flex items-center">
-        <img src="../img/logo/webropol-logo.svg" alt="Webropol" class="h-8" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <div class="flex items-center flex-shrink-0">
+        <img src="../img/logo/webropol-logo.svg" alt="Webropol" class="h-6 sm:h-8" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
         <div class="hidden items-center gap-2">
           <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
             <span class="text-white font-bold text-sm">W</span>
@@ -107,22 +107,22 @@
       <!-- Up Arrow -->
       <button 
         @click="showWelcomeSection = !showWelcomeSection"
-        class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+        class="text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors flex-shrink-0 hidden sm:flex">
         <i class="fal transition-transform duration-200" :class="showWelcomeSection ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
       </button>
       
       <!-- User Menu & Hamburger Menu Container -->
       <div 
-        class="flex items-center gap-2"
+        class="flex items-center gap-1 sm:gap-2 flex-shrink-0"
         x-data="{ userMenuOpen: false, hamburgerOpen: false }">
         
         <!-- User Menu -->
         <div class="relative">
           <button 
             @click="userMenuOpen = !userMenuOpen"
-            class="flex items-center gap-2 px-4 py-2 bg-webropol-primary-400 hover:bg-webropol-primary-500 text-white rounded-lg transition-all">
-            <i class="fal fa-user"></i>
-            <span class="font-medium">Jane</span>
+            class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-webropol-primary-400 hover:bg-webropol-primary-500 text-white rounded-lg transition-all">
+            <i class="fal fa-user text-sm sm:text-base"></i>
+            <span class="font-medium text-sm sm:text-base hidden sm:inline">Jane</span>
             <i class="fal fa-chevron-down text-xs" :class="userMenuOpen && 'rotate-180'" style="transition: transform 0.2s"></i>
           </button>
           
@@ -184,7 +184,7 @@
             x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 transform scale-100"
             x-transition:leave-end="opacity-0 transform scale-95"
-            class="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-medium border border-webropol-gray-200/50 py-2 z-50"
+            class="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-medium border border-webropol-gray-200/50 py-2 z-50 max-h-[calc(100vh-5rem)] overflow-y-auto"
             style="display: none;">
             
             <!-- Tabs Section -->
@@ -331,77 +331,80 @@
             x-transition:leave-end="opacity-0 -translate-y-4"
             class="mb-6">
             <!-- Action Tabs with Edit Survey Style -->
-            <div class="flex items-center justify-between border-b border-webropol-gray-300">
-              <div class="flex gap-4 overflow-x-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="flex items-center justify-between border-b border-webropol-gray-300 flex-wrap sm:flex-nowrap gap-2">
+              <div class="flex gap-2 sm:gap-4 overflow-x-auto w-full sm:w-auto" style="scrollbar-width: none; -ms-overflow-style: none;">
                 <style>.overflow-x-auto::-webkit-scrollbar { display: none; }</style>
                 <!-- Employee Experience (Active) -->
                 <button 
                   @click="activeTab = 'employee-experience'"
                   :class="activeTab === 'employee-experience' ? 'bg-white shadow-sm' : 'hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                  class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-4 border-transparent -mb-[2px] flex items-center gap-2 rounded-xl transition-all duration-200 ease-out relative">
-                  <span class="inline-flex w-8 h-8 rounded-full bg-green-100 items-center justify-center">
-                    <i class="fal fa-users text-green-700"></i>
+                  class="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-base text-webropol-gray-800 border-b-4 border-transparent -mb-[2px] flex items-center gap-1 sm:gap-2 rounded-xl transition-all duration-200 ease-out relative whitespace-nowrap">
+                  <span class="inline-flex w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-100 items-center justify-center flex-shrink-0">
+                    <i class="fal fa-users text-green-700 text-xs sm:text-base"></i>
                   </span>
-                  <span>Employee Experience</span>
-                  <div x-show="activeTab === 'employee-experience'" class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                  <span class="hidden sm:inline">Employee Experience</span>
+                  <span class="inline sm:hidden">Employees</span>
+                  <div x-show="activeTab === 'employee-experience'" class="absolute bottom-0 left-2 sm:left-4 right-2 sm:right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
                 </button>
 
                 <!-- Reports -->
                 <button 
                   @click="activeTab = 'reports'"
                   :class="activeTab === 'reports' ? 'bg-white shadow-sm' : 'hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                  class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-2 rounded-xl transition-all duration-200 ease-out relative">
-                  <span class="inline-flex w-8 h-8 rounded-full bg-sky-100 items-center justify-center">
-                    <i class="fal fa-chart-bar text-sky-700"></i>
+                  class="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-base text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-1 sm:gap-2 rounded-xl transition-all duration-200 ease-out relative whitespace-nowrap">
+                  <span class="inline-flex w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-sky-100 items-center justify-center flex-shrink-0">
+                    <i class="fal fa-chart-bar text-sky-700 text-xs sm:text-base"></i>
                   </span>
                   <span>Reports</span>
-                  <div x-show="activeTab === 'reports'" class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                  <div x-show="activeTab === 'reports'" class="absolute bottom-0 left-2 sm:left-4 right-2 sm:right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
                 </button>
 
                 <!-- Dashboards -->
                 <button 
                   @click="activeTab = 'dashboards'"
                   :class="activeTab === 'dashboards' ? 'bg-white shadow-sm' : 'hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                  class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-2 rounded-xl transition-all duration-200 ease-out relative">
-                  <span class="inline-flex w-8 h-8 rounded-full bg-rose-100 items-center justify-center">
-                    <i class="fal fa-tachometer-alt text-rose-700"></i>
+                  class="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-base text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-1 sm:gap-2 rounded-xl transition-all duration-200 ease-out relative whitespace-nowrap">
+                  <span class="inline-flex w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-rose-100 items-center justify-center flex-shrink-0">
+                    <i class="fal fa-tachometer-alt text-rose-700 text-xs sm:text-base"></i>
                   </span>
                   <span>Dashboards</span>
-                  <div x-show="activeTab === 'dashboards'" class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                  <div x-show="activeTab === 'dashboards'" class="absolute bottom-0 left-2 sm:left-4 right-2 sm:right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
                 </button>
 
                 <!-- 360 Evaluations -->
                 <button 
                   @click="activeTab = '360-evaluations'"
                   :class="activeTab === '360-evaluations' ? 'bg-white shadow-sm' : 'hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                  class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-2 rounded-xl transition-all duration-200 ease-out relative">
-                  <span class="inline-flex w-8 h-8 rounded-full bg-amber-100 items-center justify-center">
-                    <i class="fal fa-360-degrees text-amber-700"></i>
+                  class="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-base text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-1 sm:gap-2 rounded-xl transition-all duration-200 ease-out relative whitespace-nowrap">
+                  <span class="inline-flex w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-amber-100 items-center justify-center flex-shrink-0">
+                    <i class="fal fa-360-degrees text-amber-700 text-xs sm:text-base"></i>
                   </span>
-                  <span>360 Evaluations</span>
-                  <div x-show="activeTab === '360-evaluations'" class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                  <span class="hidden md:inline">360 Evaluations</span>
+                  <span class="inline md:hidden">360</span>
+                  <div x-show="activeTab === '360-evaluations'" class="absolute bottom-0 left-2 sm:left-4 right-2 sm:right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
                 </button>
 
                 <!-- Admin tools -->
                 <button 
                   @click="activeTab = 'admin-tools'"
                   :class="activeTab === 'admin-tools' ? 'bg-white shadow-sm' : 'hover:bg-white hover:shadow-md hover:scale-[1.01]'"
-                  class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-2 rounded-xl transition-all duration-200 ease-out relative">
-                  <span class="inline-flex w-8 h-8 rounded-full bg-orange-100 items-center justify-center">
-                    <i class="fal fa-cog text-orange-700"></i>
+                  class="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-base text-webropol-gray-800 border-b-2 border-transparent -mb-[1px] flex items-center gap-1 sm:gap-2 rounded-xl transition-all duration-200 ease-out relative whitespace-nowrap">
+                  <span class="inline-flex w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-orange-100 items-center justify-center flex-shrink-0">
+                    <i class="fal fa-cog text-orange-700 text-xs sm:text-base"></i>
                   </span>
-                  <span>Admin tools</span>
-                  <div x-show="activeTab === 'admin-tools'" class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                  <span class="hidden lg:inline">Admin tools</span>
+                  <span class="inline lg:hidden">Admin</span>
+                  <div x-show="activeTab === 'admin-tools'" class="absolute bottom-0 left-2 sm:left-4 right-2 sm:right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
                 </button>
               </div>
               
               <!-- Apps Dropdown -->
-              <div class="px-4 relative" x-data="{ appsOpen: false }">
+              <div class="px-2 sm:px-4 relative flex-shrink-0" x-data="{ appsOpen: false }">
                 <button 
                   @click="appsOpen = !appsOpen"
-                  class="flex items-center gap-2 px-4 py-2 text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg transition-all">
+                  class="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 text-xs sm:text-base text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-lg transition-all whitespace-nowrap">
                   <i class="fal fa-th"></i>
-                  Apps
+                  <span class="hidden sm:inline">Apps</span>
                   <i class="fal fa-chevron-down text-xs" :class="appsOpen && 'rotate-180'" style="transition: transform 0.2s"></i>
                 </button>
                 
