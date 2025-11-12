@@ -785,61 +785,40 @@
 						<div class="px-6 py-4 border-b border-webropol-gray-200">
 							<!-- Message Content Editor -->
 							<div class="flex items-center justify-between mb-6">
-								<h3 class="text-base font-semibold text-webropol-gray-800 flex items-center">
-									<i class="fa-regular fa-envelope-open mr-2 text-webropol-primary-600"></i>
-									Message Content
-								</h3>
+								<div class="flex items-center gap-3">
+									<label class="text-sm font-medium text-webropol-gray-700">
+										Message (mandatory): <span class="text-red-500">*</span>
+									</label>
+								</div>
 								<div class="flex items-center gap-2">
-									<webropol-badge variant="info" size="sm">AI Powered</webropol-badge>
-									<webropol-button variant="ghost" size="sm" @click="insertMergeFields()">
-										<i class="fa-regular fa-code mr-1"></i>Merge Fields
+									<webropol-button variant="secondary" size="sm" @click="generateAI()">
+										<i class="fa-regular fa-wand-magic-sparkles mr-1"></i>Generate email via AI
 									</webropol-button>
+									<button class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-colors"
+										title="Help">
+										<i class="fa-regular fa-circle-question text-lg"></i>
+									</button>
+									<webropol-button variant="ghost" size="sm" @click="insertSurveyLink()">
+										<i class="fa-regular fa-square-poll-horizontal mr-1"></i>Show question in email
+									</webropol-button>
+									<webropol-button variant="ghost" size="sm" @click="insertMergeFields()">
+										<i class="fa-regular fa-code mr-1"></i>-- Add Tag --
+									</webropol-button>
+									<webropol-button variant="ghost" size="sm" @click="openCustomLinks()">
+										<i class="fa-regular fa-link mr-1"></i>--Customised links--
+									</webropol-button>
+									<button class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-colors"
+										title="Information">
+										<i class="fa-regular fa-circle-info text-lg"></i>
+									</button>
 								</div>
 							</div>
 
-							<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+							<div class="space-y-8">
 								<!-- Message Editor -->
-								<div class="xl:col-span-2 space-y-6">
+								<div class="space-y-6">
 
 									<div class="space-y-4">
-										<!-- AI-Powered Content Tools -->
-										<div
-											class="bg-gradient-to-r from-webropol-primary-50 to-blue-50 border border-webropol-primary-200 rounded-lg p-4">
-											<div class="flex items-center justify-between mb-3">
-												<h4 class="font-medium text-webropol-gray-800 flex items-center">
-													<i
-														class="fa-regular fa-wand-magic-sparkles mr-2 text-webropol-primary-600"></i>
-													AI Content Assistant
-												</h4>
-												<webropol-badge variant="primary" size="sm">Beta</webropol-badge>
-											</div>
-											<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-												<webropol-button variant="secondary" size="sm" @click="generateAI()"
-													class="w-full">
-													<i class="fa-regular fa-robot mr-2"></i>Generate Content
-												</webropol-button>
-												<webropol-button variant="secondary" size="sm" @click="improveContent()"
-													class="w-full">
-													<i class="fa-regular fa-sparkles mr-2"></i>Improve Existing
-												</webropol-button>
-											</div>
-										</div>
-
-										<!-- Content Tools -->
-										<div class="flex flex-wrap gap-2">
-											<webropol-button variant="ghost" size="sm" @click="insertSurveyLink()">
-												<i class="fa-regular fa-square-poll-horizontal mr-2"></i>Survey Link
-											</webropol-button>
-											<webropol-button variant="ghost" size="sm" @click="insertPersonalization()">
-												<i class="fa-regular fa-user mr-2"></i>Personalization
-											</webropol-button>
-											<webropol-button variant="ghost" size="sm" @click="insertUnsubscribe()">
-												<i class="fa-regular fa-link-slash mr-2"></i>Unsubscribe
-											</webropol-button>
-											<webropol-button variant="ghost" size="sm" @click="openSnippets()">
-												<i class="fa-regular fa-file-text mr-2"></i>Snippets
-											</webropol-button>
-										</div>
 
 										<!-- Enhanced Rich Text Editor -->
 										<div
@@ -1002,7 +981,7 @@
 									</div>
 								</div>
 
-								<!-- Campaign Summary & Settings -->
+								<!-- Below Editor Panels -->
 								<div class="space-y-6">
 									<!-- Attachments -->
 									<div class="action-panel rounded-lg p-4">
@@ -1583,16 +1562,12 @@
 					}
 				},
 
-				insertPersonalization() {
-					alert('Personalization tokens - would show available merge fields like [FirstName], [Company], etc.');
+				insertMergeFields() {
+					alert('Add Tag - would show available merge fields/tags like [FirstName], [Email], [Company], etc.');
 				},
 
-				insertUnsubscribe() {
-					this.form.body += '\n\n[Unsubscribe: [UnsubscribeLink]]';
-				},
-
-				openSnippets() {
-					alert('Content snippets library - would show pre-written content blocks');
+				openCustomLinks() {
+					alert('Customised links - would open custom link management dialog');
 				},
 
 				togglePreviewMode() {
