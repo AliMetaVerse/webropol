@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Survey - Send Survey | Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
+            'webropol-orange': { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' },
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+<body x-data="emailSurveyApp()" class="bg-webropol-gray-50">
+  <div class="flex h-screen">
+    <webropol-sidebar active="surveys" base="../../"></webropol-sidebar>
+    
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+      
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../../index.html"},{"label":"Surveys","url":"../index.html"},{"label":"Collect Answers","url":"../collect.html"},{"label":"Email Survey"}]'></webropol-breadcrumbs>
+      </div>
+      
+      <main class="flex-1 overflow-y-auto px-6 py-8">
+        <div class="max-w-7xl mx-auto">
+          
+          <!-- Header Section -->
+          <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2 flex items-center gap-3">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 flex items-center justify-center text-white shadow-lg">
+                    <i class="fal fa-envelope text-2xl"></i>
+                  </div>
+                  Email Survey - Private Links
+                </h1>
+                <p class="text-webropol-gray-600">Send personalized survey links via email and track individual responses</p>
+              </div>
+              <button @click="window.history.back()" class="px-4 py-2 text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-webropol-gray-100 rounded-xl transition flex items-center gap-2">
+                <i class="fal fa-arrow-left"></i>
+                <span>Back</span>
+              </button>
+            </div>
+
+            <!-- Status Alert -->
+            <div x-show="recipients.length === 0" class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-lg mb-6">
+              <div class="flex items-center gap-3">
+                <i class="fal fa-info-circle text-amber-600 text-xl"></i>
+                <div>
+                  <p class="text-sm font-medium text-amber-900">Private links are currently open.</p>
+                  <p class="text-sm text-amber-700">Add recipients to start sending your survey.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            
+            <!-- Left Column - Recipients Management -->
+            <div class="lg:col-span-2 space-y-6">
+              
+              <!-- Add Recipients Section -->
+              <div class="bg-white rounded-2xl border border-webropol-gray-200 shadow-soft overflow-hidden">
+                <div class="p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-primary-50 to-cyan-50">
+                  <h2 class="text-xl font-bold text-webropol-gray-900 flex items-center gap-2">
+                    <i class="fal fa-users text-webropol-primary-600"></i>
+                    Add Recipients
+                  </h2>
+                  <p class="text-sm text-webropol-gray-600 mt-1">Step 1 of 2: Build your recipient list</p>
+                </div>
+                
+                <div class="p-6">
+                  <!-- Tabs for different input methods -->
+                  <div class="mb-6 inline-flex gap-2 p-1.5 bg-webropol-gray-100/80 rounded-xl backdrop-blur-sm">
+                    <button 
+                      @click="addMethod = 'manual'"
+                      :class="addMethod === 'manual' ? 'bg-white text-webropol-primary-600 shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-white/50'"
+                      class="px-4 py-2.5 text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                      <i class="fal fa-keyboard"></i>Manual Entry
+                    </button>
+                    <button 
+                      @click="addMethod = 'import'"
+                      :class="addMethod === 'import' ? 'bg-white text-webropol-primary-600 shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-white/50'"
+                      class="px-4 py-2.5 text-sm font-medium rounded-lg transition flex items-center gap-2">
+                      <i class="fal fa-file-import"></i>Import File
+                    </button>
+                    <button 
+                      @click="addMethod = 'demographics'"
+                      :class="addMethod === 'demographics' ? 'bg-white text-webropol-primary-600 shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-900 hover:bg-white/50'"
+                      class="px-4 py-2.5 text-sm font-medium rounded-lg transition flex items-center gap-2">
+                      <i class="fal fa-list"></i>Demographic Information
+                    </button>
+                  </div>
+
+                  <!-- Manual Entry Form -->
+                  <div x-show="addMethod === 'manual'" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">Email *</label>
+                        <input 
+                          x-model="newRecipient.email"
+                          type="email" 
+                          placeholder="recipient@example.com"
+                          class="w-full px-4 py-3 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 transition">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">Sent</label>
+                        <input 
+                          x-model="newRecipient.sent"
+                          type="number" 
+                          value="1"
+                          class="w-full px-4 py-3 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 transition">
+                      </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">Responses</label>
+                        <input 
+                          x-model="newRecipient.responses"
+                          type="number" 
+                          value="0"
+                          class="w-full px-4 py-3 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 transition">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">Updated</label>
+                        <input 
+                          x-model="newRecipient.updated"
+                          type="number" 
+                          value="0"
+                          class="w-full px-4 py-3 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 transition">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-semibold text-webropol-gray-700 mb-2">Valid</label>
+                        <div class="flex items-center h-12 px-4 bg-webropol-gray-100 rounded-xl">
+                          <input 
+                            x-model="newRecipient.valid"
+                            type="checkbox" 
+                            checked
+                            class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                          <label class="ml-2 text-sm text-webropol-gray-700">Valid Email</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button 
+                      @click="addRecipient()"
+                      class="w-full px-6 py-3 bg-gradient-to-r from-webropol-orange-500 to-webropol-orange-600 text-white font-semibold rounded-xl hover:from-webropol-orange-600 hover:to-webropol-orange-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                      <i class="fas fa-plus-circle"></i>
+                      <span>Add Recipient</span>
+                    </button>
+                  </div>
+
+                  <!-- Import File -->
+                  <div x-show="addMethod === 'import'" class="space-y-4">
+                    <div class="border-2 border-dashed border-webropol-gray-300 rounded-xl p-8 text-center hover:border-webropol-primary-400 transition">
+                      <div class="w-16 h-16 mx-auto mb-4 bg-webropol-primary-100 rounded-2xl flex items-center justify-center">
+                        <i class="fal fa-cloud-upload text-3xl text-webropol-primary-600"></i>
+                      </div>
+                      <h3 class="font-semibold text-webropol-gray-900 mb-2">Upload recipient list</h3>
+                      <p class="text-sm text-webropol-gray-600 mb-4">Drag and drop or click to browse</p>
+                      <input type="file" accept=".csv,.xlsx,.xls" class="hidden" id="fileUpload">
+                      <label for="fileUpload" class="inline-flex px-6 py-3 bg-webropol-primary-600 text-white font-medium rounded-xl hover:bg-webropol-primary-700 transition cursor-pointer">
+                        <i class="fal fa-file-import mr-2"></i>
+                        Choose File
+                      </label>
+                      <p class="text-xs text-webropol-gray-500 mt-3">Supported formats: CSV, Excel (.xlsx, .xls)</p>
+                    </div>
+                  </div>
+
+                  <!-- Demographics -->
+                  <div x-show="addMethod === 'demographics'" class="space-y-4">
+                    <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                      <div class="flex gap-3">
+                        <i class="fal fa-info-circle text-blue-600 text-xl mt-0.5"></i>
+                        <div>
+                          <h4 class="font-semibold text-blue-900 mb-1">Demographic Information</h4>
+                          <p class="text-sm text-blue-800">Add custom fields to track additional information about your recipients (e.g., department, location, age group).</p>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="w-full px-6 py-3 border-2 border-webropol-primary-300 text-webropol-primary-600 font-semibold rounded-xl hover:bg-webropol-primary-50 transition flex items-center justify-center gap-2">
+                      <i class="fal fa-plus"></i>
+                      <span>Add Demographic Field</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recipients List -->
+              <div class="bg-white rounded-2xl border border-webropol-gray-200 shadow-soft overflow-hidden">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-webropol-gray-900 flex items-center gap-2">
+                      <i class="fal fa-table text-webropol-primary-600"></i>
+                      Survey Recipients
+                      <span class="ml-2 px-3 py-1 bg-webropol-primary-100 text-webropol-primary-700 rounded-lg text-sm font-bold" x-text="recipients.length"></span>
+                    </h2>
+                    <div class="flex gap-2">
+                      <button class="px-4 py-2 text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition flex items-center gap-2">
+                        <i class="fal fa-search"></i>
+                        <span class="text-sm">Search</span>
+                      </button>
+                      <button class="px-4 py-2 text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition flex items-center gap-2">
+                        <i class="fal fa-filter"></i>
+                        <span class="text-sm">Filter</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                  <table class="w-full">
+                    <thead class="bg-webropol-gray-50 border-b border-webropol-gray-200">
+                      <tr>
+                        <th class="px-6 py-3 text-left">
+                          <input type="checkbox" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Sent</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Responses</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Updated</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Valid</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-webropol-gray-200">
+                      <template x-if="recipients.length === 0">
+                        <tr>
+                          <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                              <div class="w-20 h-20 mb-4 bg-webropol-gray-100 rounded-2xl flex items-center justify-center">
+                                <i class="fal fa-inbox text-4xl text-webropol-gray-400"></i>
+                              </div>
+                              <p class="text-webropol-gray-600 font-medium">No recipients added yet</p>
+                              <p class="text-sm text-webropol-gray-500 mt-1">Add recipients using the form above</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
+                      <template x-for="(recipient, index) in recipients" :key="index">
+                        <tr class="hover:bg-webropol-gray-50 transition">
+                          <td class="px-6 py-4">
+                            <input type="checkbox" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+                          </td>
+                          <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                              <i class="fal fa-envelope text-webropol-gray-400"></i>
+                              <span class="text-sm font-medium text-webropol-gray-900" x-text="recipient.email"></span>
+                            </div>
+                          </td>
+                          <td class="px-6 py-4">
+                            <span class="text-sm text-webropol-gray-700" x-text="recipient.sent"></span>
+                          </td>
+                          <td class="px-6 py-4">
+                            <span class="text-sm text-webropol-gray-700" x-text="recipient.responses"></span>
+                          </td>
+                          <td class="px-6 py-4">
+                            <span class="text-sm text-webropol-gray-700" x-text="recipient.updated"></span>
+                          </td>
+                          <td class="px-6 py-4">
+                            <span 
+                              :class="recipient.valid ? 'bg-webropol-green-100 text-webropol-green-700 border-webropol-green-300' : 'bg-red-100 text-red-700 border-red-300'"
+                              class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium border">
+                              <i :class="recipient.valid ? 'fa-check-circle' : 'fa-times-circle'" class="fal"></i>
+                              <span x-text="recipient.valid ? 'Valid' : 'Invalid'"></span>
+                            </span>
+                          </td>
+                          <td class="px-6 py-4">
+                            <button @click="deleteRecipient(index)" class="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition">
+                              <i class="fal fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Pagination -->
+                <div x-show="recipients.length > 0" class="px-6 py-4 border-t border-webropol-gray-200 bg-webropol-gray-50 flex items-center justify-between">
+                  <div class="text-sm text-webropol-gray-600">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium" x-text="recipients.length"></span> of <span class="font-medium" x-text="recipients.length"></span> recipients
+                  </div>
+                  <div class="flex gap-2">
+                    <button class="px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm font-medium text-webropol-gray-600 hover:bg-webropol-gray-100 transition">
+                      <i class="fal fa-chevron-left"></i>
+                    </button>
+                    <button class="px-3 py-2 bg-webropol-primary-600 text-white rounded-lg text-sm font-medium">1</button>
+                    <button class="px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm font-medium text-webropol-gray-600 hover:bg-webropol-gray-100 transition">
+                      <i class="fal fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Column - Stats & Send -->
+            <div class="space-y-6">
+              
+              <!-- Statistics Card -->
+              <div class="bg-white rounded-2xl border border-webropol-gray-200 shadow-soft overflow-hidden">
+                <div class="p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-primary-50 to-cyan-50">
+                  <h3 class="font-bold text-webropol-gray-900 flex items-center gap-2">
+                    <i class="fal fa-chart-bar text-webropol-primary-600"></i>
+                    Campaign Statistics
+                  </h3>
+                </div>
+                <div class="p-6 space-y-4">
+                  <div class="flex items-center justify-between p-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-webropol-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fal fa-users text-webropol-primary-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-webropol-gray-700">Total Recipients</span>
+                    </div>
+                    <span class="text-2xl font-bold text-webropol-gray-900" x-text="recipients.length">0</span>
+                  </div>
+                  
+                  <div class="flex items-center justify-between p-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-webropol-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fal fa-paper-plane text-webropol-green-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-webropol-gray-700">Sent</span>
+                    </div>
+                    <span class="text-2xl font-bold text-webropol-gray-900" x-text="stats.sent">0</span>
+                  </div>
+                  
+                  <div class="flex items-center justify-between p-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                        <i class="fal fa-clock text-amber-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-webropol-gray-700">Pending</span>
+                    </div>
+                    <span class="text-2xl font-bold text-webropol-gray-900" x-text="stats.pending">0</span>
+                  </div>
+
+                  <div class="flex items-center justify-between p-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fal fa-check-circle text-purple-600"></i>
+                      </div>
+                      <span class="text-sm font-medium text-webropol-gray-700">Responses</span>
+                    </div>
+                    <span class="text-2xl font-bold text-webropol-gray-900" x-text="stats.responses">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Send Survey Section -->
+              <div class="bg-white rounded-2xl border border-webropol-gray-200 shadow-soft overflow-hidden">
+                <div class="p-6 border-b border-webropol-gray-200 bg-gradient-to-r from-webropol-orange-50 to-amber-50">
+                  <h3 class="font-bold text-webropol-gray-900 flex items-center gap-2">
+                    <i class="fal fa-rocket text-webropol-orange-600"></i>
+                    Send Email Survey
+                  </h3>
+                  <p class="text-sm text-webropol-gray-600 mt-1">Step 2 of 2: Configure and send</p>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                  <!-- Send Options -->
+                  <div>
+                    <label class="block text-sm font-semibold text-webropol-gray-700 mb-3">
+                      <i class="fal fa-cog mr-1 text-webropol-primary-600"></i>
+                      Sending Options
+                    </label>
+                    <div class="space-y-2">
+                      <button 
+                        @click="sendOption = 'now'"
+                        :class="sendOption === 'now' ? 'bg-webropol-primary-50 border-webropol-primary-300' : 'bg-white border-webropol-gray-200'"
+                        class="w-full p-4 border-2 rounded-xl hover:border-webropol-primary-300 transition text-left">
+                        <div class="flex items-center gap-3">
+                          <i class="fal fa-bolt text-xl text-webropol-primary-600"></i>
+                          <div>
+                            <div class="font-semibold text-webropol-gray-900">Send Now</div>
+                            <div class="text-xs text-webropol-gray-600">Send immediately to all recipients</div>
+                          </div>
+                        </div>
+                      </button>
+                      
+                      <button 
+                        @click="sendOption = 'schedule'"
+                        :class="sendOption === 'schedule' ? 'bg-webropol-primary-50 border-webropol-primary-300' : 'bg-white border-webropol-gray-200'"
+                        class="w-full p-4 border-2 rounded-xl hover:border-webropol-primary-300 transition text-left">
+                        <div class="flex items-center gap-3">
+                          <i class="fal fa-calendar-alt text-xl text-webropol-primary-600"></i>
+                          <div>
+                            <div class="font-semibold text-webropol-gray-900">Schedule</div>
+                            <div class="text-xs text-webropol-gray-600">Send at a specific date and time</div>
+                          </div>
+                        </div>
+                      </button>
+
+                      <button 
+                        @click="sendOption = 'preview'"
+                        :class="sendOption === 'preview' ? 'bg-webropol-primary-50 border-webropol-primary-300' : 'bg-white border-webropol-gray-200'"
+                        class="w-full p-4 border-2 rounded-xl hover:border-webropol-primary-300 transition text-left">
+                        <div class="flex items-center gap-3">
+                          <i class="fal fa-eye text-xl text-webropol-primary-600"></i>
+                          <div>
+                            <div class="font-semibold text-webropol-gray-900">Preview</div>
+                            <div class="text-xs text-webropol-gray-600">Preview email message first</div>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Schedule DateTime (shown when schedule is selected) -->
+                  <div x-show="sendOption === 'schedule'" class="space-y-3">
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Date</label>
+                      <input type="date" class="w-full px-4 py-2 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Time</label>
+                      <input type="time" class="w-full px-4 py-2 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    </div>
+                  </div>
+
+                  <!-- Send Button -->
+                  <button 
+                    @click="sendSurvey()"
+                    :disabled="recipients.length === 0"
+                    :class="recipients.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl transform hover:-translate-y-0.5'"
+                    class="w-full px-6 py-4 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fas fa-paper-plane"></i>
+                    <span x-text="sendOption === 'schedule' ? 'Schedule Survey' : sendOption === 'preview' ? 'Preview Email' : 'Send Survey Now'">Send Survey Now</span>
+                  </button>
+
+                  <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p class="text-xs text-blue-800">
+                      <i class="fal fa-info-circle mr-1"></i>
+                      <span x-text="recipients.length === 0 ? 'Add recipients before sending' : 'Ready to send to ' + recipients.length + ' recipient(s)'"></span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email Template Preview -->
+              <div class="bg-white rounded-2xl border border-webropol-gray-200 shadow-soft overflow-hidden">
+                <div class="p-6 border-b border-webropol-gray-200">
+                  <h3 class="font-bold text-webropol-gray-900 flex items-center gap-2">
+                    <i class="fal fa-envelope-open-text text-webropol-primary-600"></i>
+                    Email Template
+                  </h3>
+                </div>
+                <div class="p-6">
+                  <div class="space-y-3">
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">From</label>
+                      <input type="email" value="noreply@webropolsurveys.com" readonly class="w-full px-4 py-2 bg-webropol-gray-50 border border-webropol-gray-300 rounded-lg text-sm text-webropol-gray-600">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Subject *</label>
+                      <input type="text" x-model="emailTemplate.subject" placeholder="Survey invitation" class="w-full px-4 py-2 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Message *</label>
+                      <textarea x-model="emailTemplate.message" rows="4" placeholder="Dear recipient, please take our survey..." class="w-full px-4 py-2 border-2 border-webropol-gray-300 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500"></textarea>
+                    </div>
+                    <button class="w-full px-4 py-2 border-2 border-webropol-primary-300 text-webropol-primary-600 font-medium rounded-xl hover:bg-webropol-primary-50 transition flex items-center justify-center gap-2">
+                      <i class="fal fa-edit"></i>
+                      <span>Customize Template</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    function emailSurveyApp() {
+      return {
+        // Data
+        addMethod: 'manual',
+        sendOption: 'now',
+        recipients: [],
+        newRecipient: {
+          email: '',
+          sent: 1,
+          responses: 0,
+          updated: 0,
+          valid: true
+        },
+        emailTemplate: {
+          subject: '',
+          message: ''
+        },
+        stats: {
+          sent: 0,
+          pending: 0,
+          responses: 0
+        },
+
+        // Methods
+        init() {
+          this.loadFromLocalStorage();
+        },
+
+        loadFromLocalStorage() {
+          const data = localStorage.getItem('webropol_email_survey_recipients');
+          if (data) {
+            this.recipients = JSON.parse(data);
+            this.calculateStats();
+          }
+        },
+
+        saveToLocalStorage() {
+          localStorage.setItem('webropol_email_survey_recipients', JSON.stringify(this.recipients));
+        },
+
+        addRecipient() {
+          if (!this.newRecipient.email) {
+            alert('Please enter an email address');
+            return;
+          }
+
+          // Validate email
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const isValid = emailRegex.test(this.newRecipient.email);
+
+          this.recipients.push({
+            email: this.newRecipient.email,
+            sent: parseInt(this.newRecipient.sent) || 0,
+            responses: parseInt(this.newRecipient.responses) || 0,
+            updated: parseInt(this.newRecipient.updated) || 0,
+            valid: isValid
+          });
+
+          // Reset form
+          this.newRecipient = {
+            email: '',
+            sent: 1,
+            responses: 0,
+            updated: 0,
+            valid: true
+          };
+
+          this.saveToLocalStorage();
+          this.calculateStats();
+        },
+
+        deleteRecipient(index) {
+          if (confirm('Are you sure you want to remove this recipient?')) {
+            this.recipients.splice(index, 1);
+            this.saveToLocalStorage();
+            this.calculateStats();
+          }
+        },
+
+        calculateStats() {
+          this.stats.sent = this.recipients.reduce((sum, r) => sum + r.sent, 0);
+          this.stats.responses = this.recipients.reduce((sum, r) => sum + r.responses, 0);
+          this.stats.pending = this.stats.sent - this.stats.responses;
+        },
+
+        sendSurvey() {
+          if (this.recipients.length === 0) {
+            alert('Please add recipients first');
+            return;
+          }
+
+          if (!this.emailTemplate.subject) {
+            alert('Please enter an email subject');
+            return;
+          }
+
+          let message = 'Send survey to ' + this.recipients.length + ' recipient(s)';
+          if (this.sendOption === 'schedule') {
+            message = 'Schedule survey for later?';
+          } else if (this.sendOption === 'preview') {
+            // Show preview modal
+            alert('Preview functionality would open here');
+            return;
+          }
+
+          if (confirm(message + '?')) {
+            alert('Survey sent successfully!');
+            // In production, this would make an API call
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
