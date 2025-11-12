@@ -841,47 +841,162 @@
 											</webropol-button>
 										</div>
 
-										<!-- Enhanced Editor -->
+										<!-- Enhanced Rich Text Editor -->
 										<div
 											class="border border-webropol-gray-200 rounded-lg overflow-hidden bg-white">
 											<div
-												class="wysiwyg-toolbar flex items-center justify-between p-3 border-b bg-webropol-gray-50">
-												<div class="flex items-center gap-1">
+												class="wysiwyg-toolbar flex items-center justify-between p-2 border-b bg-webropol-gray-50 flex-wrap gap-2">
+												<div class="flex items-center gap-1 flex-wrap">
+													<!-- Text Formatting -->
 													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-														:aria-pressed="toolbar.bold"
-														@click="toolbar.bold = !toolbar.bold" title="Bold">
+														@click="execCommand('bold')" title="Bold (Ctrl+B)">
 														<i class="fa-solid fa-bold"></i>
 													</button>
 													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-														:aria-pressed="toolbar.italic"
-														@click="toolbar.italic = !toolbar.italic" title="Italic">
+														@click="execCommand('italic')" title="Italic (Ctrl+I)">
 														<i class="fa-solid fa-italic"></i>
 													</button>
 													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-														:aria-pressed="toolbar.ul" @click="toolbar.ul = !toolbar.ul"
-														title="Bullet List">
+														@click="execCommand('underline')" title="Underline (Ctrl+U)">
+														<i class="fa-solid fa-underline"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('strikeThrough')" title="Strikethrough">
+														<i class="fa-solid fa-strikethrough"></i>
+													</button>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Lists -->
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('insertUnorderedList')" title="Bullet List">
 														<i class="fa-regular fa-list-ul"></i>
 													</button>
-													<div class="w-px h-6 bg-webropol-gray-300 mx-2"></div>
 													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-														title="Add Link">
+														@click="execCommand('insertOrderedList')" title="Numbered List">
+														<i class="fa-regular fa-list-ol"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('indent')" title="Indent">
+														<i class="fa-regular fa-indent"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('outdent')" title="Outdent">
+														<i class="fa-regular fa-outdent"></i>
+													</button>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Alignment -->
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('justifyLeft')" title="Align Left">
+														<i class="fa-regular fa-align-left"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('justifyCenter')" title="Align Center">
+														<i class="fa-regular fa-align-center"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('justifyRight')" title="Align Right">
+														<i class="fa-regular fa-align-right"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('justifyFull')" title="Justify">
+														<i class="fa-regular fa-align-justify"></i>
+													</button>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Insert Elements -->
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="insertLink()" title="Insert Link">
 														<i class="fa-regular fa-link"></i>
 													</button>
 													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-														title="Insert Image">
+														@click="insertImage()" title="Insert Image">
 														<i class="fa-regular fa-image"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="insertTable()" title="Insert Table">
+														<i class="fa-regular fa-table"></i>
+													</button>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Format Selector -->
+													<select class="px-2 py-1 text-sm border-0 bg-transparent rounded hover:bg-white transition-colors cursor-pointer"
+														@change="execCommand('formatBlock', $event.target.value); $event.target.value = ''">
+														<option value="">Format</option>
+														<option value="h1">Heading 1</option>
+														<option value="h2">Heading 2</option>
+														<option value="h3">Heading 3</option>
+														<option value="p">Paragraph</option>
+													</select>
+													
+													<!-- Font Size -->
+													<select class="px-2 py-1 text-sm border-0 bg-transparent rounded hover:bg-white transition-colors cursor-pointer"
+														@change="execCommand('fontSize', $event.target.value); $event.target.value = ''">
+														<option value="">Size</option>
+														<option value="1">Small</option>
+														<option value="3">Normal</option>
+														<option value="5">Large</option>
+														<option value="7">Huge</option>
+													</select>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Text Color -->
+													<div class="relative" x-data="{ open: false }">
+														<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+															@click="open = !open" title="Text Color">
+															<i class="fa-regular fa-palette"></i>
+														</button>
+														<div x-show="open" @click.away="open = false"
+															class="absolute top-full left-0 mt-1 bg-white border border-webropol-gray-200 rounded-lg shadow-lg p-2 z-10 grid grid-cols-5 gap-1">
+															<button @click="execCommand('foreColor', '#000000'); open = false" 
+																class="w-6 h-6 rounded bg-black"></button>
+															<button @click="execCommand('foreColor', '#e74c3c'); open = false" 
+																class="w-6 h-6 rounded bg-red-500"></button>
+															<button @click="execCommand('foreColor', '#3498db'); open = false" 
+																class="w-6 h-6 rounded bg-blue-500"></button>
+															<button @click="execCommand('foreColor', '#2ecc71'); open = false" 
+																class="w-6 h-6 rounded bg-green-500"></button>
+															<button @click="execCommand('foreColor', '#f39c12'); open = false" 
+																class="w-6 h-6 rounded bg-yellow-500"></button>
+														</div>
+													</div>
+													
+													<div class="w-px h-6 bg-webropol-gray-300 mx-1"></div>
+													
+													<!-- Actions -->
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('undo')" title="Undo (Ctrl+Z)">
+														<i class="fa-regular fa-undo"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="execCommand('redo')" title="Redo (Ctrl+Y)">
+														<i class="fa-regular fa-redo"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														@click="clearFormatting()" title="Clear Formatting">
+														<i class="fa-regular fa-eraser"></i>
 													</button>
 												</div>
 												<div class="flex items-center gap-2 text-xs text-webropol-gray-500">
 													<span>Word count: <span class="font-medium"
-															x-text="form.body.split(' ').length"></span></span>
+															x-text="getWordCount()"></span></span>
 												</div>
 											</div>
 											<div class="p-6">
-												<textarea
-													class="w-full h-48 border-0 resize-none focus:outline-none text-sm leading-relaxed"
-													placeholder="Enter your email message here..." x-model="form.body"
-													aria-label="Email message content"></textarea>
+												<div
+													id="messageEditor"
+													contenteditable="true"
+													class="w-full min-h-[12rem] border-0 focus:outline-none text-sm leading-relaxed"
+													@input="updateFormBody($el)"
+													@blur="updateFormBody($el)"
+													x-html="form.body"
+													style="white-space: pre-wrap;">
+												</div>
 											</div>
 										</div>
 									</div>
@@ -1392,7 +1507,65 @@
 				},
 
 				generateAI() {
-					this.form.body = 'We value your feedback and would appreciate a few minutes of your time to help us improve our services. Your responses will remain confidential and help shape our future offerings.';
+					const content = '<p>We value your feedback and would appreciate a few minutes of your time to help us improve our services.</p><p>Your responses will remain confidential and help shape our future offerings.</p><p><strong>Thank you for your participation!</strong></p>';
+					this.form.body = content;
+					const editor = document.getElementById('messageEditor');
+					if (editor) {
+						editor.innerHTML = content;
+					}
+				},
+
+				// Rich Text Editor Functions
+				execCommand(command, value = null) {
+					document.execCommand(command, false, value);
+					const editor = document.getElementById('messageEditor');
+					if (editor) {
+						this.updateFormBody(editor);
+					}
+				},
+
+				insertLink() {
+					const url = prompt('Enter the URL:');
+					if (url) {
+						this.execCommand('createLink', url);
+					}
+				},
+
+				insertImage() {
+					const url = prompt('Enter the image URL:');
+					if (url) {
+						this.execCommand('insertImage', url);
+					}
+				},
+
+				insertTable() {
+					const rows = prompt('Number of rows:', '3');
+					const cols = prompt('Number of columns:', '3');
+					if (rows && cols) {
+						let table = '<table border="1" style="border-collapse: collapse; width: 100%;"><tbody>';
+						for (let i = 0; i < parseInt(rows); i++) {
+							table += '<tr>';
+							for (let j = 0; j < parseInt(cols); j++) {
+								table += '<td style="padding: 8px; border: 1px solid #ddd;">&nbsp;</td>';
+							}
+							table += '</tr>';
+						}
+						table += '</tbody></table>';
+						this.execCommand('insertHTML', table);
+					}
+				},
+
+				clearFormatting() {
+					this.execCommand('removeFormat');
+				},
+
+				updateFormBody(editor) {
+					this.form.body = editor.innerHTML;
+				},
+
+				getWordCount() {
+					const text = this.form.body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+					return text ? text.split(' ').length : 0;
 				},
 
 				// Enhanced content and template functions
@@ -1401,7 +1574,13 @@
 				},
 
 				insertSurveyLink() {
-					this.form.body += '\n\n[Take the survey here: [SurveyLink]]';
+					const editor = document.getElementById('messageEditor');
+					if (editor) {
+						const link = '<p><a href="[SurveyLink]" style="color: #0891b2; text-decoration: underline;">Take the survey here</a></p>';
+						this.execCommand('insertHTML', link);
+					} else {
+						this.form.body += '\n\n[Take the survey here: [SurveyLink]]';
+					}
 				},
 
 				insertPersonalization() {
