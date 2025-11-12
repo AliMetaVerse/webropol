@@ -784,154 +784,104 @@
 					<section class="bg-white border border-webropol-gray-200 rounded-xl shadow-sm mt-6">
 						<div class="px-6 py-4 border-b border-webropol-gray-200">
 							<!-- Message Content Editor -->
-							<div class="border-t border-webropol-gray-200 pt-6">
-								<div class="flex items-center justify-between mb-6">
-									<h3 class="text-base font-semibold text-webropol-gray-800 flex items-center">
-										<i class="fa-regular fa-envelope-open mr-2 text-webropol-primary-600"></i>
-										Message Content
-									</h3>
-									<div class="flex items-center gap-2">
-										<webropol-badge variant="info" size="sm">AI Powered</webropol-badge>
-										<webropol-button variant="ghost" size="sm" @click="insertMergeFields()">
-											<i class="fa-regular fa-code mr-1"></i>Merge Fields
-										</webropol-button>
-									</div>
+							<div class="flex items-center justify-between mb-6">
+								<h3 class="text-base font-semibold text-webropol-gray-800 flex items-center">
+									<i class="fa-regular fa-envelope-open mr-2 text-webropol-primary-600"></i>
+									Message Content
+								</h3>
+								<div class="flex items-center gap-2">
+									<webropol-badge variant="info" size="sm">AI Powered</webropol-badge>
+									<webropol-button variant="ghost" size="sm" @click="insertMergeFields()">
+										<i class="fa-regular fa-code mr-1"></i>Merge Fields
+									</webropol-button>
 								</div>
+							</div>
 
-								<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-									<!-- Message Editor -->
-									<div class="xl:col-span-2 space-y-6">
+							<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+								<!-- Message Editor -->
+								<div class="xl:col-span-2 space-y-6">
 
-										<div class="space-y-4">
-											<!-- AI-Powered Content Tools -->
+									<div class="space-y-4">
+										<!-- AI-Powered Content Tools -->
+										<div
+											class="bg-gradient-to-r from-webropol-primary-50 to-blue-50 border border-webropol-primary-200 rounded-lg p-4">
+											<div class="flex items-center justify-between mb-3">
+												<h4 class="font-medium text-webropol-gray-800 flex items-center">
+													<i
+														class="fa-regular fa-wand-magic-sparkles mr-2 text-webropol-primary-600"></i>
+													AI Content Assistant
+												</h4>
+												<webropol-badge variant="primary" size="sm">Beta</webropol-badge>
+											</div>
+											<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+												<webropol-button variant="secondary" size="sm" @click="generateAI()"
+													class="w-full">
+													<i class="fa-regular fa-robot mr-2"></i>Generate Content
+												</webropol-button>
+												<webropol-button variant="secondary" size="sm" @click="improveContent()"
+													class="w-full">
+													<i class="fa-regular fa-sparkles mr-2"></i>Improve Existing
+												</webropol-button>
+											</div>
+										</div>
+
+										<!-- Content Tools -->
+										<div class="flex flex-wrap gap-2">
+											<webropol-button variant="ghost" size="sm" @click="insertSurveyLink()">
+												<i class="fa-regular fa-square-poll-horizontal mr-2"></i>Survey Link
+											</webropol-button>
+											<webropol-button variant="ghost" size="sm" @click="insertPersonalization()">
+												<i class="fa-regular fa-user mr-2"></i>Personalization
+											</webropol-button>
+											<webropol-button variant="ghost" size="sm" @click="insertUnsubscribe()">
+												<i class="fa-regular fa-link-slash mr-2"></i>Unsubscribe
+											</webropol-button>
+											<webropol-button variant="ghost" size="sm" @click="openSnippets()">
+												<i class="fa-regular fa-file-text mr-2"></i>Snippets
+											</webropol-button>
+										</div>
+
+										<!-- Enhanced Editor -->
+										<div
+											class="border border-webropol-gray-200 rounded-lg overflow-hidden bg-white">
 											<div
-												class="bg-gradient-to-r from-webropol-primary-50 to-blue-50 border border-webropol-primary-200 rounded-lg p-4">
-												<div class="flex items-center justify-between mb-3">
-													<h4 class="font-medium text-webropol-gray-800 flex items-center">
-														<i
-															class="fa-regular fa-wand-magic-sparkles mr-2 text-webropol-primary-600"></i>
-														AI Content Assistant
-													</h4>
-													<webropol-badge variant="primary" size="sm">Beta</webropol-badge>
+												class="wysiwyg-toolbar flex items-center justify-between p-3 border-b bg-webropol-gray-50">
+												<div class="flex items-center gap-1">
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														:aria-pressed="toolbar.bold"
+														@click="toolbar.bold = !toolbar.bold" title="Bold">
+														<i class="fa-solid fa-bold"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														:aria-pressed="toolbar.italic"
+														@click="toolbar.italic = !toolbar.italic" title="Italic">
+														<i class="fa-solid fa-italic"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														:aria-pressed="toolbar.ul" @click="toolbar.ul = !toolbar.ul"
+														title="Bullet List">
+														<i class="fa-regular fa-list-ul"></i>
+													</button>
+													<div class="w-px h-6 bg-webropol-gray-300 mx-2"></div>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														title="Add Link">
+														<i class="fa-regular fa-link"></i>
+													</button>
+													<button class="px-2 py-1.5 rounded hover:bg-white transition-colors"
+														title="Insert Image">
+														<i class="fa-regular fa-image"></i>
+													</button>
 												</div>
-												<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-													<webropol-button variant="secondary" size="sm" @click="generateAI()"
-														class="w-full">
-														<i class="fa-regular fa-robot mr-2"></i>Generate Content
-													</webropol-button>
-													<webropol-button variant="secondary" size="sm"
-														@click="improveContent()" class="w-full">
-														<i class="fa-regular fa-sparkles mr-2"></i>Improve Existing
-													</webropol-button>
-												</div>
-											</div>
-
-											<!-- Content Tools -->
-											<div class="flex flex-wrap gap-2">
-												<webropol-button variant="ghost" size="sm" @click="insertSurveyLink()">
-													<i class="fa-regular fa-square-poll-horizontal mr-2"></i>Survey Link
-												</webropol-button>
-												<webropol-button variant="ghost" size="sm"
-													@click="insertPersonalization()">
-													<i class="fa-regular fa-user mr-2"></i>Personalization
-												</webropol-button>
-												<webropol-button variant="ghost" size="sm" @click="insertUnsubscribe()">
-													<i class="fa-regular fa-link-slash mr-2"></i>Unsubscribe
-												</webropol-button>
-												<webropol-button variant="ghost" size="sm" @click="openSnippets()">
-													<i class="fa-regular fa-file-text mr-2"></i>Snippets
-												</webropol-button>
-											</div>
-
-											<!-- Enhanced Editor -->
-											<div
-												class="border border-webropol-gray-200 rounded-lg overflow-hidden bg-white">
-												<div
-													class="wysiwyg-toolbar flex items-center justify-between p-3 border-b bg-webropol-gray-50">
-													<div class="flex items-center gap-1">
-														<button
-															class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-															:aria-pressed="toolbar.bold"
-															@click="toolbar.bold = !toolbar.bold" title="Bold">
-															<i class="fa-solid fa-bold"></i>
-														</button>
-														<button
-															class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-															:aria-pressed="toolbar.italic"
-															@click="toolbar.italic = !toolbar.italic" title="Italic">
-															<i class="fa-solid fa-italic"></i>
-														</button>
-														<button
-															class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-															:aria-pressed="toolbar.ul" @click="toolbar.ul = !toolbar.ul"
-															title="Bullet List">
-															<i class="fa-regular fa-list-ul"></i>
-														</button>
-														<div class="w-px h-6 bg-webropol-gray-300 mx-2"></div>
-														<button
-															class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-															title="Add Link">
-															<i class="fa-regular fa-link"></i>
-														</button>
-														<button
-															class="px-2 py-1.5 rounded hover:bg-white transition-colors"
-															title="Insert Image">
-															<i class="fa-regular fa-image"></i>
-														</button>
-													</div>
-													<div class="flex items-center gap-2 text-xs text-webropol-gray-500">
-														<span>Word count: <span class="font-medium"
-																x-text="form.body.split(' ').length"></span></span>
-													</div>
-												</div>
-												<div class="p-6">
-													<textarea
-														class="w-full h-48 border-0 resize-none focus:outline-none text-sm leading-relaxed"
-														placeholder="Enter your email message here..."
-														x-model="form.body"
-														aria-label="Email message content"></textarea>
+												<div class="flex items-center gap-2 text-xs text-webropol-gray-500">
+													<span>Word count: <span class="font-medium"
+															x-text="form.body.split(' ').length"></span></span>
 												</div>
 											</div>
-
-											<!-- Live Preview -->
-											<div>
-												<div class="flex items-center justify-between mb-3">
-													<h4 class="font-medium text-webropol-gray-800">Live Preview</h4>
-													<div class="flex items-center gap-2">
-														<webropol-button variant="ghost" size="sm"
-															@click="togglePreviewMode()">
-															<i class="fa-regular fa-mobile mr-1"></i>Mobile
-														</webropol-button>
-														<webropol-button variant="ghost" size="sm"
-															@click="sendTestEmail()">
-															<i class="fa-regular fa-paper-plane mr-1"></i>Send Test
-														</webropol-button>
-													</div>
-												</div>
-												<div class="border rounded-lg overflow-hidden bg-white shadow-sm">
-													<div class="bg-webropol-primary-700 text-white px-6 py-4">
-														<div class="flex items-center justify-between">
-															<h5 class="font-semibold" x-text="form.subject"></h5>
-															<span class="text-xs opacity-75">From: <span
-																	x-text="form.senderName || 'Survey Team'"></span></span>
-														</div>
-													</div>
-													<div class="p-6 space-y-4 text-sm text-webropol-gray-800">
-														<p>Hello <span
-																class="font-semibold text-webropol-primary-700">[Recipient
-																Name]</span>,</p>
-														<div x-html="form.body.replace(/\n/g, '<br>')"></div>
-														<div class="pt-4 border-t border-webropol-gray-200">
-															<p class="text-webropol-gray-600">Best regards,<br /><span
-																	x-text="form.senderName || 'Survey Team'"></span>
-															</p>
-														</div>
-														<div class="pt-2">
-															<webropol-button variant="primary" size="sm">Take
-																Survey</webropol-button>
-														</div>
-													</div>
-												</div>
+											<div class="p-6">
+												<textarea
+													class="w-full h-48 border-0 resize-none focus:outline-none text-sm leading-relaxed"
+													placeholder="Enter your email message here..." x-model="form.body"
+													aria-label="Email message content"></textarea>
 											</div>
 										</div>
 									</div>
