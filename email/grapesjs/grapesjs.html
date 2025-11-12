@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Webropol Email Builder (GrapesJS)</title>
+	<!-- GrapesJS core CSS/JS via CDN (no build tools) -->
+	<link href="https://unpkg.com/grapesjs@0.21.8/dist/css/grapes.min.css" rel="stylesheet" />
+	<script src="https://unpkg.com/grapesjs@0.21.8"></script>
+	<!-- Newsletter preset (email-optimized blocks/components) -->
+	<script src="https://unpkg.com/grapesjs-preset-newsletter@1.0.2"></script>
+	<!-- Optional export plugin (adds Export button + inline CSS) -->
+	<script src="https://unpkg.com/grapesjs-plugin-export@1.0.12"></script>
+	<!-- EmailJS client (optional pure-HTML sending) -->
+	<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+	<style>
+		body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+		.topbar { position: fixed; inset: 0 0 auto 0; height: 56px; background: #0f172a; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 12; }
+		.brand { font-weight: 600; letter-spacing: .2px; }
+		.actions { display: flex; gap: 8px; align-items: center; }
+		.btn { appearance: none; border: 0; border-radius: 8px; padding: 8px 12px; background: #06b6d4; color: #fff; font-weight: 600; cursor: pointer; }
+		.btn.secondary { background: #334155; }
+		.panel { position: fixed; top: 64px; right: 12px; width: 320px; max-width: calc(100% - 24px); background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 24px rgba(2,8,23,.12); padding: 12px; z-index: 11; }
+		.panel h3 { margin: 6px 0 10px; font-size: 14px; color: #0f172a; }
+		.field { display: grid; gap: 6px; margin: 10px 0; }
+		.field label { font-size: 12px; color: #334155; }
+		.field input, .field textarea { font-size: 13px; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+		.muted { font-size: 12px; color: #64748b; }
+		#gjs { height: calc(100vh - 56px); margin-top: 56px; }
+		.hidden { display: none; }
+	</style>
+</head>
+<body>
+	<div class="topbar">
+		<div class="brand">Webropol Email Builder</div>
+		<div class="actions">
+			<button id="btn-save" class="btn secondary" title="Save to localStorage">Save</button>
+			<button id="btn-load" class="btn secondary" title="Load from localStorage">Load</button>
+			<button id="btn-download" class="btn" title="Download HTML">Download HTML</button>
+			<button id="btn-toggle-send" class="btn" title="Show/Hide send panel">Send</button>
+		</div>
+	</div>
+
+	<div id="send-panel" class="panel hidden">
+		<h3>Send via EmailJS (pure HTML, no backend)</h3>
+		<div class="field">
+			<label>Public Key (user_id)</label>
+			<input id="ej-public" placeholder="EmailJS Public Key" />
+		</div>
+		<div class="field">
+			<label>Service ID</label>
+			<input id="ej-service" placeholder="e.g. service_xxxxx" />
+		</div>
+		<div class="field">
+			<label>Template ID</label>
+			<input id="ej-template" placeholder="e.g. template_xxxxx" />
+			<div class="muted">Your EmailJS template should include variables like subject, to_email, and message (or html).</div>
+		</div>
+		<div class="field">
+			<label>Subject</label>
+			<input id="ej-subject" placeholder="Campaign subject" />
+		</div>
+		<div class="field">
+			<label>Recipients (comma or newline separated)</label>
+			<textarea id="ej-recipients" rows="3" placeholder="john@acme.com, jane@acme.com"></textarea>
+		</div>
+		<div class="field">
+			<label>From Name</label>
+			<input id="ej-from-name" placeholder="Webropol" />
+		</div>
+		<div class="field">
+			<label>From Email</label>
+			<input id="ej-from-email" placeholder="no-reply@yourdomain.tld" />
+		</div>
+		<div class="actions" style="justify-content:flex-end; margin-top: 8px;">
+			<button id="btn-send-test" class="btn secondary">Send test</button>
+			<button id="btn-send-campaign" class="btn">Send campaign</button>
+		</div>
+		<div id="send-status" class="muted" style="margin-top:8px;"></div>
+	</div>
+
+	<div id="gjs"></div>
+
+	<script>
+		// 1) Configuration
+		const PUBLIC_NAMESPACE_KEY = '98899369056f4e1f953e84362d3fc84f8e8183a6f5cc4faeb3a89e19ca7541e2'; // Provided key
+		const STORAGE_KEY = `webropol_grapesjs_${PUBLIC_NAMESPACE_KEY}`; // localStorage key (Webropol convention)
+
+		// 2) Init GrapesJS with newsletter preset + export plugin
+		const editor = grapesjs.init({
+			container: '#gjs',
+			height: '100%',
+			fromElement: false,
+			storageManager: {
+				type: 'local',
+				autosave: false,
+				autoload: true,
+				stepsBeforeSave: 1,
+				options: {
+					local: { key: STORAGE_KEY }
+				}
+			},
+			plugins: ['grapesjs-preset-newsletter', 'grapesjs-plugin-export'],
+			pluginsOpts: {
+				'grapesjs-preset-newsletter': {
+					// Add export button with inlined CSS for better email compatibility
+					modalTitleImport: 'Import HTML',
+					inlineCss: true,
+					cmdOpenImport: 'gjs-open-import-template',
+					codeViewerTheme: 'hopscotch',
+				},
+				'grapesjs-plugin-export': {
+					btnLabel: 'Export',
+					filename: 'newsletter.html',
+					inlineCss: true
+				}
+			}
+		});
+
+		// Add a Bulletproof Button block (works in modern + classic Outlook)
+		editor.on('load', function() {
+			const content = '<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center">' +
+				'<tr><td align="center">' +
+				'<!--[if mso]>' +
+				'<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://www.webropol.com/" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="50%" stroke="f" fillcolor="#06b6d4">' +
+				'<w:anchorlock/>' +
+				'<center style="font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;">Call to action</center>' +
+				'</v:roundrect>' +
+				'<![endif]-->' +
+				'<!--[if !mso]><!-- -->' +
+				'<a href="https://www.webropol.com/" target="_blank" style="background:#06b6d4;border-radius:24px;color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:20px;text-decoration:none;padding:14px 32px;display:inline-block;">Call to action</a>' +
+				'<!--<![endif]-->' +
+				'</td></tr></table>';
+			
+			editor.BlockManager.add('webropol-bulletproof-button', {
+				label: 'Bulletproof Button',
+				category: 'Basic',
+				content: content
+			});
+		});		// Basic starter template (optional)
+		if (!localStorage.getItem(STORAGE_KEY)) {
+			const starter = `
+				<table cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f4f4; padding: 24px 0;">
+					<tr>
+						<td align="center">
+							<table cellpadding="0" cellspacing="0" width="600" style="background:#ffffff;">
+								<tr>
+									<td style="padding:24px; text-align:center; font-weight:700; font-size:24px;">Your Newsletter</td>
+								</tr>
+								<tr>
+									<td style="padding:24px; font-size:15px; line-height:22px; color:#334155;">Hello! Start editing this template in the builder. Use the Export or Download buttons to get email-ready HTML.</td>
+								</tr>
+								<tr>
+									<td style="padding:24px; text-align:center;">
+										<a href="https://www.webropol.com/" target="_blank" style="background:#06b6d4; color:#ffffff; text-decoration:none; font-weight:700; padding:12px 24px; border-radius:22px; display:inline-block;">Call to action</a>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>`;
+			editor.setComponents(starter);
+			editor.store();
+		}
+
+		// 3) Topbar actions
+		const $ = (sel) => document.querySelector(sel);
+		$('#btn-save').onclick = () => {
+			editor.store(() => notify('Saved to localStorage'));
+		};
+		$('#btn-load').onclick = () => {
+			editor.load(() => notify('Loaded from localStorage'));
+		};
+		$('#btn-download').onclick = () => {
+			const html = getExportHtml();
+			const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+			const a = document.createElement('a');
+			a.href = URL.createObjectURL(blob);
+			a.download = 'newsletter.html';
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+		};
+		$('#btn-toggle-send').onclick = () => {
+			$('#send-panel').classList.toggle('hidden');
+		};
+
+		// 4) EmailJS setup and actions (pure HTML send)
+		const ejPublic = $('#ej-public');
+		ejPublic.value = PUBLIC_NAMESPACE_KEY; // default with provided key if it is EmailJS public key
+
+		function initEmailJs() {
+			const key = ejPublic.value.trim();
+			if (!key) { return false; }
+			try {
+				emailjs.init({ publicKey: key });
+				return true;
+			} catch (e) {
+				return false;
+			}
+		}
+
+		$('#btn-send-test').onclick = async () => {
+			$('#send-status').textContent = 'Sending test…';
+			const ok = initEmailJs();
+			if (!ok) return fail('Invalid EmailJS public key');
+			const res = await sendEmails(['test@example.com']);
+			showSendResult(res);
+		};
+
+		$('#btn-send-campaign').onclick = async () => {
+			$('#send-status').textContent = 'Sending campaign…';
+			const ok = initEmailJs();
+			if (!ok) return fail('Invalid EmailJS public key');
+			const list = parseRecipients($('#ej-recipients').value);
+			if (!list.length) return fail('Add at least one recipient');
+			const res = await sendEmails(list);
+			showSendResult(res);
+		};
+
+		function parseRecipients(value) {
+			return (value || '')
+				.split(/\n|,|;|\s/)
+				.map(s => s.trim())
+				.filter(Boolean);
+		}
+
+		async function sendEmails(recipients) {
+			const service = $('#ej-service').value.trim();
+			const template = $('#ej-template').value.trim();
+			const subject = $('#ej-subject').value.trim() || 'Newsletter';
+			const fromName = $('#ej-from-name').value.trim() || 'Webropol';
+			const fromEmail = $('#ej-from-email').value.trim() || 'no-reply@example.com';
+			if (!service || !template) return { ok: false, errors: ['Missing Service ID or Template ID'] };
+			const html = getExportHtml();
+
+			const results = [];
+			for (const to of recipients) {
+				const params = {
+					subject,
+					to_email: to,
+					from_name: fromName,
+					from_email: fromEmail,
+					// Common EmailJS variable names; adjust to your template
+					message: html,
+					message_html: html,
+				};
+				try {
+					const r = await emailjs.send(service, template, params);
+					results.push({ to, ok: true, status: r.status });
+				} catch (e) {
+					results.push({ to, ok: false, error: String(e && e.text || e) });
+				}
+			}
+			const ok = results.every(r => r.ok);
+			return { ok, results };
+		}
+
+		function getExportHtml() {
+			// Get full HTML with inlined CSS
+			const html = editor.getHtml({ cleanId: true });
+			const css = editor.getCss({ avoidProtected: true });
+			// Simple inliner: embed CSS in style tag (most clients support <style> if selectors are simple)
+			// For best results, use Export plugin's inlineCss option (enabled above)
+			return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">`+
+						 `<style>${css}</style></head><body>${html}</body></html>`;
+		}
+
+		function notify(msg) {
+			const el = document.createElement('div');
+			el.textContent = msg;
+			el.style.cssText = 'position:fixed;bottom:16px;right:16px;background:#0ea5e9;color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(2,8,23,.25);z-index:30;font-weight:600;';
+			document.body.appendChild(el);
+			setTimeout(() => el.remove(), 1600);
+		}
+
+		function fail(msg) { $('#send-status').textContent = msg; }
+		function showSendResult(res) {
+			if (!res || !res.results) { fail('Unknown send result'); return; }
+			const ok = res.ok;
+			const good = res.results.filter(r => r.ok).length;
+			const bad = res.results.length - good;
+			$('#send-status').textContent = ok ? `Sent ${good} email(s) successfully` : `Sent ${good}, failed ${bad}`;
+		}
+	</script>
+</body>
+</html>
+

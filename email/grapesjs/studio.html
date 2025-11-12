@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Webropol Studio Email Builder</title>
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="stylesheet" href="https://unpkg.com/@grapesjs/studio-sdk/dist/style.css" />
+  <!-- Fallback for local development without SDK license -->
+  <link href="https://unpkg.com/grapesjs@0.21.8/dist/css/grapes.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/grapesjs@0.21.8"></script>
+  <script src="https://unpkg.com/grapesjs-preset-newsletter@1.0.2"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin:0; font-family: system-ui, Arial, sans-serif; }
+    #studio-shell { height: 100dvh; display:flex; flex-direction:column; }
+    header { height:52px; background:#0f172a; color:#fff; display:flex; align-items:center; padding:0 16px; gap:16px; }
+    header .title { font-weight:600; letter-spacing:.3px; }
+    header button { background:#06b6d4; color:#fff; border:0; padding:8px 14px; font-weight:600; border-radius:8px; cursor:pointer; }
+    header button.secondary { background:#334155; }
+    #studio-editor { flex:1 1 auto; min-height:0; }
+    .status { font-size:12px; color:#94a3b8; margin-left:auto; }
+  </style>
+  <script src="https://unpkg.com/@grapesjs/studio-sdk/dist/index.umd.js"></script>
+</head>
+<body>
+  <div id="studio-shell">
+    <header>
+      <div class="title">Webropol Studio</div>
+      <button id="btn-new">New Project</button>
+      <button id="btn-clone" class="secondary">Clone</button>
+      <button id="btn-export" class="secondary">Export HTML</button>
+      <div id="status" class="status">Idle</div>
+    </header>
+    <div id="studio-editor"></div>
+  </div>
+
+  <script>
+    // Persistent identifiers (simulate per-user / per-project naming)
+    const USER_KEY = 'webropol_studio_user_id';
+    const PROJECT_KEY = 'webropol_studio_project_id';
+
+    function getOrCreateId(key,prefix){
+      let v = localStorage.getItem(key);
+      if(!v){ v = prefix + '_' + Math.random().toString(36).slice(2,11); localStorage.setItem(key,v); }
+      return v;
+    }
+
+    const endUserId = getOrCreateId(USER_KEY,'user');
+    const projectId = getOrCreateId(PROJECT_KEY,'proj');
+
+    const statusEl = document.getElementById('status');
+    const setStatus = (msg)=>{ statusEl.textContent = msg; };
+
+    // Development mode flag (set to false when deploying to webropol.com)
+    const DEV_MODE = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+
+    let studio;
+    let editor; // For fallback mode
+
+    if (DEV_MODE) {
+      // DEVELOPMENT: Use free GrapesJS preset (no SDK license required)
+      console.warn('Development mode: Using GrapesJS preset-newsletter (SDK not available on localhost)');
+      setStatus('Dev Mode');
+      
+      editor = grapesjs.init({
+        container: '#studio-editor',
+        height: '100%',
+        fromElement: false,
+        storageManager: {
+          type: 'local',
+          autosave: true,
+          autoload: true,
+          options: { local: { key: 'webropol_studio_dev_'+projectId } }
+        },
+        plugins: ['grapesjs-preset-newsletter'],
+        pluginsOpts: {
+          'grapesjs-preset-newsletter': {
+            inlineCss: true,
+            modalTitleImport: 'Import HTML',
+            codeViewerTheme: 'hopscotch'
+          }
+        }
+      });
+
+      // Export function for dev mode
+      window.exportCurrent = async function(){
+        setStatus('Exporting…');
+        const html = editor.getHtml({ cleanId: true });
+        const css = editor.getCss({ avoidProtected: true });
+        const full = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>${css}</style></head><body>${html}</body></html>`;
+        const blob = new Blob([full], {type:'text/html;charset=utf-8'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'studio-export.html';
+        document.body.appendChild(a); a.click(); a.remove();
+        setStatus('Exported');
+        setTimeout(()=>setStatus('Idle'),1600);
+      };
+
+    } else {
+      // PRODUCTION: Use Studio SDK with license
+      setStatus('Loading Studio…');
+      
+      studio = GrapesJsStudioSDK.createStudioEditor({
+        root: '#studio-editor',
+        licenseKey: '98899369056f4e1f953e84362d3fc84f8e8183a6f5cc4faeb3a89e19ca7541e2',
+        project: {
+          type: 'email',
+          id: projectId,
+        },
+        identity: { id: endUserId },
+        assets: { storageType: 'cloud' },
+        storage: {
+          type: 'cloud',
+          autosaveChanges: 100,
+          autosaveIntervalMs: 8000
+        }
+      });
+    }
+
+    // Utility: export current HTML+CSS (basic) by printing to console & download
+    async function exportCurrent(){
+      if (DEV_MODE) {
+        await window.exportCurrent();
+        return;
+      }
+      try {
+        setStatus('Exporting…');
+        const proj = await studio.getProject();
+        const html = proj.getHtml();
+        const css = proj.getCss();
+        const full = `<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width\"><style>${css}</style></head><body>${html}</body></html>`;
+        const blob = new Blob([full], {type:'text/html;charset=utf-8'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'studio-export.html';
+        document.body.appendChild(a); a.click(); a.remove();
+        console.log('Exported HTML:', full);
+        setStatus('Exported');
+        setTimeout(()=>setStatus('Idle'),1600);
+      } catch(e){
+        console.error(e);
+        setStatus('Export failed');
+      }
+    }
+
+    // New Project (generates new id, resets environment)
+    document.getElementById('btn-new').onclick = ()=>{
+      localStorage.removeItem(PROJECT_KEY);
+      location.reload();
+    };
+
+    // Clone: duplicate current project to new id (client-side only simulation)
+    document.getElementById('btn-clone').onclick = async ()=>{
+      setStatus('Cloning…');
+      try {
+        const proj = await studio.getProject();
+        const html = proj.getHtml();
+        const css = proj.getCss();
+        const newId = 'proj_' + Math.random().toString(36).slice(2,11);
+        localStorage.setItem(PROJECT_KEY,newId);
+        location.reload();
+        // On reload studio re-inits with new ID (cloud storage would treat as new project)
+      } catch(e){
+        console.error(e); setStatus('Clone failed'); setTimeout(()=>setStatus('Idle'),2000);
+      }
+    };
+
+    document.getElementById('btn-export').onclick = exportCurrent;
+
+    // Basic event hooks (if provided by SDK for changes) – defensive checks
+    if (!DEV_MODE && studio && studio.on) {
+      try {
+        studio.on('project:load', () => setStatus('Project loaded'));
+        studio.on('project:store', () => { setStatus('Saved'); setTimeout(()=>setStatus('Idle'),1000); });
+        studio.on('asset:upload:start', () => setStatus('Uploading assets…'));
+        studio.on('asset:upload:end', () => { setStatus('Assets uploaded'); setTimeout(()=>setStatus('Idle'),1000); });
+        studio.on('error', (err) => { console.warn('Studio error', err); setStatus('Error'); });
+      } catch(e) { console.warn('Event binding not supported in this SDK version'); }
+    }
+  </script>
+</body>
+</html>
