@@ -506,8 +506,58 @@
             </div>
           </div>
           
+          <!-- Employee Experience: KPI cards -->
+          <div 
+            x-show="activeTab === 'employee-experience'"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            class="mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Reports -->
+              <div class="bg-white rounded-xl p-5 border border-webropol-gray-200 shadow-soft">
+                <div class="flex items-center justify-between mb-2">
+                  <i class="fal fa-list-alt text-2xl text-webropol-primary-600"></i>
+                  <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Total</span>
+                </div>
+                <div class="text-3xl font-bold text-webropol-gray-900" x-text="employeeStats.reports"></div>
+                <div class="text-sm text-webropol-gray-600">Reports</div>
+              </div>
+
+              <!-- Responses -->
+              <div class="bg-white rounded-xl p-5 border border-webropol-gray-200 shadow-soft">
+                <div class="flex items-center justify-between mb-2">
+                  <i class="fal fa-chart-line text-2xl text-webropol-green-700"></i>
+                  <span class="text-xs bg-webropol-green-100 text-webropol-green-700 px-2 py-1 rounded-full font-medium">Active</span>
+                </div>
+                <div class="text-3xl font-bold text-webropol-gray-900" x-text="employeeStats.responses.toLocaleString()"></div>
+                <div class="text-sm text-webropol-gray-600">Responses</div>
+              </div>
+
+              <!-- Contributors -->
+              <div class="bg-white rounded-xl p-5 border border-webropol-gray-200 shadow-soft">
+                <div class="flex items-center justify-between mb-2">
+                  <i class="fal fa-users text-2xl text-webropol-royalViolet-600"></i>
+                  <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Users</span>
+                </div>
+                <div class="text-3xl font-bold text-webropol-gray-900" x-text="employeeStats.contributors"></div>
+                <div class="text-sm text-webropol-gray-600">Contributors</div>
+              </div>
+
+              <!-- Today -->
+              <div class="bg-white rounded-xl p-5 border border-webropol-gray-200 shadow-soft">
+                <div class="flex items-center justify-between mb-2">
+                  <i class="fal fa-clock text-2xl text-webropol-royalBlue-600"></i>
+                  <span class="text-xs bg-webropol-gray-100 text-webropol-gray-700 px-2 py-1 rounded-full font-medium">Recent</span>
+                </div>
+                <div class="text-3xl font-bold text-webropol-gray-900" x-text="employeeStats.today"></div>
+                <div class="text-sm text-webropol-gray-600">Today</div>
+              </div>
+            </div>
+          </div>
+
           <!-- Survey & Reporting Reports Section -->
-          <div class="bg-white rounded-2xl shadow-medium border border-webropol-gray-200 overflow-hidden">
+          <div x-show="activeTab === 'reports'" class="bg-white rounded-2xl shadow-medium border border-webropol-gray-200 overflow-hidden">
             <!-- Header with Search -->
             <div class="px-6 py-5 bg-white border-b border-webropol-gray-200">
               <div class="flex items-center justify-between gap-4 mb-4">
@@ -740,7 +790,7 @@
         sortField: null,
         sortDirection: 'asc',
         
-        // Data
+  // Data
         allReports: [
           {
             id: 1,
@@ -762,6 +812,14 @@
           }
         ],
         filteredReports: [],
+
+        // Employee Experience KPIs
+        employeeStats: {
+          reports: 0,
+          responses: 2000,
+          contributors: 5,
+          today: 2
+        },
         
         // Computed properties
         get totalReports() {
@@ -788,6 +846,9 @@
           setTimeout(() => {
             this.overviewExpanded = true;
           }, 100);
+
+          // Initialize KPI values
+          this.employeeStats.reports = this.allReports.length;
         },
         
         checkLoginStatus() {
