@@ -738,8 +738,9 @@
             class="space-y-6">
 
             <!-- Navigation Tabs -->
-            <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-200 p-2 overflow-x-auto">
-              <div class="flex gap-2 min-w-max">
+            <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-200 p-2" x-data="{ moreMenuOpen: false }">
+              <div class="flex gap-2">
+                <!-- Visible tabs - show on larger screens -->
                 <button @click="adminTab = 'user-management'" 
                         :class="adminTab === 'user-management' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
                         class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
@@ -749,59 +750,123 @@
                 
                 <button @click="adminTab = 'organisation-management'" 
                         :class="adminTab === 'organisation-management' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                        class="hidden sm:flex px-4 py-2.5 rounded-xl font-semibold text-sm transition-all items-center gap-2 whitespace-nowrap">
                   <i class="fal fa-building"></i>
                   <span>Organisation Management</span>
                 </button>
                 
                 <button @click="adminTab = 'administrators'" 
                         :class="adminTab === 'administrators' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                        class="hidden md:flex px-4 py-2.5 rounded-xl font-semibold text-sm transition-all items-center gap-2 whitespace-nowrap">
                   <i class="fal fa-user-shield"></i>
                   <span>Administrators</span>
                 </button>
                 
                 <button @click="adminTab = 'user-groups'" 
                         :class="adminTab === 'user-groups' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                        class="hidden lg:flex px-4 py-2.5 rounded-xl font-semibold text-sm transition-all items-center gap-2 whitespace-nowrap">
                   <i class="fal fa-users"></i>
                   <span>User Groups</span>
                 </button>
                 
                 <button @click="adminTab = 'report-rights'" 
                         :class="adminTab === 'report-rights' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                        class="hidden xl:flex px-4 py-2.5 rounded-xl font-semibold text-sm transition-all items-center gap-2 whitespace-nowrap">
                   <i class="fal fa-file-chart-line"></i>
                   <span>Report Rights</span>
                 </button>
                 
                 <button @click="adminTab = 'dashboard-rights'" 
                         :class="adminTab === 'dashboard-rights' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
+                        class="hidden 2xl:flex px-4 py-2.5 rounded-xl font-semibold text-sm transition-all items-center gap-2 whitespace-nowrap">
                   <i class="fal fa-tachometer-alt-fast"></i>
                   <span>Dashboard Rights</span>
                 </button>
                 
-                <button @click="adminTab = 'manage-excel-files'" 
-                        :class="adminTab === 'manage-excel-files' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
-                  <i class="fal fa-file-excel"></i>
-                  <span>Manage Excel Files</span>
-                </button>
-                
-                <button @click="adminTab = 'image-gallery'" 
-                        :class="adminTab === 'image-gallery' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
-                  <i class="fal fa-images"></i>
-                  <span>Image Gallery</span>
-                </button>
-                
-                <button @click="adminTab = 'logs'" 
-                        :class="adminTab === 'logs' ? 'bg-webropol-primary-500 text-white shadow-sm' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
-                        class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap">
-                  <i class="fal fa-clipboard-list"></i>
-                  <span>Logs</span>
-                </button>
+                <!-- More dropdown button -->
+                <div class="relative ml-auto">
+                  <button @click="moreMenuOpen = !moreMenuOpen"
+                          class="px-4 py-2.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 whitespace-nowrap text-webropol-gray-700 hover:bg-webropol-gray-100">
+                    <i class="fal fa-ellipsis-h"></i>
+                    <span class="hidden sm:inline">More</span>
+                    <i class="fal fa-chevron-down text-xs transition-transform" :class="moreMenuOpen && 'rotate-180'"></i>
+                  </button>
+                  
+                  <!-- Dropdown menu -->
+                  <div x-show="moreMenuOpen"
+                       @click.away="moreMenuOpen = false"
+                       x-transition:enter="transition ease-out duration-200"
+                       x-transition:enter-start="opacity-0 transform scale-95"
+                       x-transition:enter-end="opacity-100 transform scale-100"
+                       x-transition:leave="transition ease-in duration-150"
+                       x-transition:leave-start="opacity-100 transform scale-100"
+                       x-transition:leave-end="opacity-0 transform scale-95"
+                       class="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-medium border border-webropol-gray-200 py-2 z-50"
+                       style="display: none;">
+                    
+                    <!-- Show on small screens (< sm) -->
+                    <button @click="adminTab = 'organisation-management'; moreMenuOpen = false"
+                            :class="adminTab === 'organisation-management' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="sm:hidden w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-building"></i>
+                      <span>Organisation Management</span>
+                    </button>
+                    
+                    <!-- Show on small-medium screens (< md) -->
+                    <button @click="adminTab = 'administrators'; moreMenuOpen = false"
+                            :class="adminTab === 'administrators' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="md:hidden w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-user-shield"></i>
+                      <span>Administrators</span>
+                    </button>
+                    
+                    <!-- Show on medium screens (< lg) -->
+                    <button @click="adminTab = 'user-groups'; moreMenuOpen = false"
+                            :class="adminTab === 'user-groups' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="lg:hidden w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-users"></i>
+                      <span>User Groups</span>
+                    </button>
+                    
+                    <!-- Show on large screens (< xl) -->
+                    <button @click="adminTab = 'report-rights'; moreMenuOpen = false"
+                            :class="adminTab === 'report-rights' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="xl:hidden w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-file-chart-line"></i>
+                      <span>Report Rights</span>
+                    </button>
+                    
+                    <!-- Show on extra large screens (< 2xl) -->
+                    <button @click="adminTab = 'dashboard-rights'; moreMenuOpen = false"
+                            :class="adminTab === 'dashboard-rights' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="2xl:hidden w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-tachometer-alt-fast"></i>
+                      <span>Dashboard Rights</span>
+                    </button>
+                    
+                    <!-- Always in dropdown -->
+                    <button @click="adminTab = 'manage-excel-files'; moreMenuOpen = false"
+                            :class="adminTab === 'manage-excel-files' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-file-excel"></i>
+                      <span>Manage Excel Files</span>
+                    </button>
+                    
+                    <button @click="adminTab = 'image-gallery'; moreMenuOpen = false"
+                            :class="adminTab === 'image-gallery' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-images"></i>
+                      <span>Image Gallery</span>
+                    </button>
+                    
+                    <button @click="adminTab = 'logs'; moreMenuOpen = false"
+                            :class="adminTab === 'logs' ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'text-webropol-gray-700'"
+                            class="w-full flex items-center gap-3 px-4 py-3 hover:bg-webropol-gray-50 transition-colors text-left">
+                      <i class="fal fa-clipboard-list"></i>
+                      <span>Logs</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
