@@ -95,16 +95,8 @@
     <div class="flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 gap-2">
       <!-- Logo -->
       <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-webropol-primary-100 to-webropol-primary-200 rounded-xl flex items-center justify-center">
-          <i class="fal fa-chart-network text-webropol-primary-700 text-base sm:text-lg"></i>
-        </div>
-        <div class="hidden sm:block">
-          <h1 class="text-webropol-gray-900 font-bold text-lg sm:text-xl">BI Dashboards</h1>
-          <p class="text-webropol-gray-500 text-xs">Analytics & Reporting</p>
-        </div>
+        <img src="../img/logo/bi-logo.png" alt="BI Dashboards" class="h-10 w-auto sm:h-10 md:h-10 lg:h-10 object-contain" />
       </div>
-      
-      
       
       <!-- User Menu & Hamburger Menu Container -->
       <div 
@@ -285,13 +277,61 @@
             </div>
           </div>
           
-          <!-- Employee Experience: KPI cards -->
+          <!-- Employee Experience: UX tabs + dropdown + KPI widgets -->
           <div 
             x-show="activeTab === 'employee-experience'"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 -translate-y-2"
             x-transition:enter-end="opacity-100 translate-y-0"
             class="mb-6">
+            
+            <!-- Sub tabs -->
+            <div class="flex items-center gap-4 mb-4">
+              <button 
+                @click="uxTab = 'home'"
+                :class="uxTab === 'home' ? 'bg-webropol-primary-100 text-webropol-gray-900' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                class="px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                <i class="fal fa-home"></i>
+                <span>Home</span>
+              </button>
+              <button 
+                @click="uxTab = 'responding'"
+                :class="uxTab === 'responding' ? 'bg-webropol-primary-100 text-webropol-gray-900' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                class="px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                <i class="fal fa-user-headset"></i>
+                <span>Responding</span>
+              </button>
+              <button 
+                @click="uxTab = 'follow-up'"
+                :class="uxTab === 'follow-up' ? 'bg-webropol-primary-100 text-webropol-gray-900' : 'text-webropol-gray-700 hover:bg-webropol-gray-100'"
+                class="px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                <i class="fal fa-eye"></i>
+                <span>Follow up</span>
+              </button>
+            </div>
+
+            <!-- Section header and survey select -->
+            <div class="mb-4">
+              <h2 class="text-2xl font-bold text-webropol-gray-900 mb-3" x-text="uxTabLabel"></h2>
+              <div class="relative inline-block">
+                <button @click="surveyMenuOpen = !surveyMenuOpen" class="w-64 text-left pl-10 pr-4 py-3 bg-white border border-webropol-gray-300 rounded-xl hover:bg-webropol-gray-50 transition-all flex items-center gap-2">
+                  <i class="fal fa-search absolute left-4 text-webropol-gray-400"></i>
+                  <span class="text-webropol-gray-700" x-text="selectedSurvey || 'Select survey'"></span>
+                  <i class="fal fa-angle-down ml-auto text-webropol-gray-500"></i>
+                </button>
+                <!-- dropdown -->
+                <div x-show="surveyMenuOpen" @click.away="surveyMenuOpen = false" class="absolute z-50 mt-2 w-64 bg-white rounded-xl border border-webropol-gray-200 shadow-medium max-h-72 overflow-y-auto" style="display: none;">
+                  <template x-for="opt in surveyOptions" :key="opt">
+                    <button @click="selectSurvey(opt)" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 text-webropol-gray-700">
+                      <span x-text="opt"></span>
+                    </button>
+                  </template>
+                  <div x-show="surveyOptions.length === 0" class="px-4 py-3 text-sm text-webropol-gray-500">No surveys</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KPI widgets -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <!-- Reports -->
               <div class="bg-white rounded-xl p-5 border border-webropol-gray-200 shadow-soft">
@@ -555,9 +595,15 @@
         
         // Active tab
         activeTab: 'employee-experience',
+  uxTab: 'home',
         
         // Search and filter
         searchQuery: '',
+
+  // UX survey select
+  surveyMenuOpen: false,
+  selectedSurvey: '',
+  surveyOptions: [],
         
         // Pagination
         currentPage: 1,
@@ -602,6 +648,11 @@
         get totalReports() {
           return this.filteredReports.length;
         },
+        get uxTabLabel() {
+          if (this.uxTab === 'responding') return 'Responding';
+          if (this.uxTab === 'follow-up') return 'Follow up';
+          return 'Home';
+        },
         
         get totalPages() {
           return Math.ceil(this.filteredReports.length / this.itemsPerPage);
@@ -621,6 +672,14 @@
 
           // Initialize KPI values
           this.employeeStats.reports = this.allReports.length;
+
+          // Build survey options from reports (unique)
+          const set = new Set(this.allReports.map(r => r.survey));
+          this.surveyOptions = Array.from(set);
+        },
+        selectSurvey(name) {
+          this.selectedSurvey = name;
+          this.surveyMenuOpen = false;
         },
         
         checkLoginStatus() {
