@@ -102,49 +102,6 @@
     #restartBtn:active {
       transform: scale(0.95);
     }
-
-    #startScreen {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.6);
-      padding: 25px 40px;
-      border-radius: 15px;
-      text-align: center;
-      z-index: 100;
-    }
-
-    #startScreen h1 {
-      color: #fff;
-      font-size: 32px;
-      margin-bottom: 15px;
-    }
-
-    #startScreen p {
-      color: #ddd;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    #startBtn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 10px 30px;
-      font-size: 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    #startBtn:hover {
-      transform: scale(1.1);
-    }
-
-    #startBtn:active {
-      transform: scale(0.95);
-    }
   </style>
 </head>
 <body>
@@ -152,12 +109,6 @@
     <div id="gameInfo">
       <div id="score">0</div>
       <div id="instructions">TAP or SPACE to Fly!</div>
-    </div>
-
-    <div id="startScreen">
-      <h1>🛹 Flappy Skater</h1>
-      <p>Tap or press SPACE to fly<br>Avoid the pipes!</p>
-      <button id="startBtn">Start Game</button>
     </div>
 
     <div id="gameOver">
@@ -298,7 +249,8 @@
     // Flap (jump)
     function flap() {
       if (!isGameStarted) {
-        startGame();
+        isGameStarted = true;
+        bird.velocityY = bird.flapPower;
         return;
       }
       
@@ -366,21 +318,6 @@
       });
     }
 
-    // Start game
-    function startGame() {
-      isGameStarted = true;
-      document.getElementById('startScreen').style.display = 'none';
-      bird.velocityY = bird.flapPower;
-    }
-
-    // Game over
-    function gameOver() {
-      if (isGameOver) return;
-      isGameOver = true;
-      document.getElementById('finalScore').textContent = score;
-      document.getElementById('gameOver').style.display = 'block';
-    }
-
     // Restart game
     function restart() {
       isGameOver = false;
@@ -394,7 +331,14 @@
       bird.rotation = 0;
       document.getElementById('score').textContent = '0';
       document.getElementById('gameOver').style.display = 'none';
-      document.getElementById('startScreen').style.display = 'block';
+    }
+
+    // Game over
+    function gameOver() {
+      if (isGameOver) return;
+      isGameOver = true;
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('gameOver').style.display = 'block';
     }
 
     // Main game loop
@@ -429,10 +373,6 @@
     });
 
     canvas.addEventListener('click', flap);
-    document.getElementById('startBtn').addEventListener('click', () => {
-      document.getElementById('startScreen').style.display = 'none';
-      isGameStarted = true;
-    });
     document.getElementById('restartBtn').addEventListener('click', restart);
 
     // Start game loop
