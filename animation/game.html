@@ -146,6 +146,14 @@
       rotation: 0
     };
 
+    // Pipe colors from logo
+    const pipeColors = [
+      { main: '#46BAC5', dark: '#2a7a85', light: '#6dd4dd', cap: '#194957' }, // Cyan
+      { main: '#DF622A', dark: '#b84e1f', light: '#f07d4a', cap: '#8a3c18' }, // Orange
+      { main: '#60B262', dark: '#4a8d4c', light: '#7fcf81', cap: '#3d7d3f' }, // Green
+      { main: '#194957', dark: '#0d2a32', light: '#2d6b7d', cap: '#0a1d24' }  // Dark teal
+    ];
+
     // Pipes array
     let pipes = [];
     const pipeWidth = 60;
@@ -188,24 +196,27 @@
 
     // Draw pipe
     function drawPipe(pipe) {
-      // Top pipe
-      ctx.fillStyle = '#5FBA7D';
+      const colors = pipeColors[pipe.colorIndex];
+      
+      // Main pipe body
+      ctx.fillStyle = colors.main;
       ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-      
-      // Top pipe cap
-      ctx.fillStyle = '#4A9D6A';
-      ctx.fillRect(pipe.x - 5, pipe.top - 30, pipeWidth + 10, 30);
-      
-      // Bottom pipe
       ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
       
-      // Bottom pipe cap
+      // Pipe caps (darker shade)
+      ctx.fillStyle = colors.cap;
+      ctx.fillRect(pipe.x - 5, pipe.top - 30, pipeWidth + 10, 30);
       ctx.fillRect(pipe.x - 5, pipe.bottom, pipeWidth + 10, 30);
       
-      // Pipe highlights
-      ctx.fillStyle = '#7CCD9C';
-      ctx.fillRect(pipe.x + 5, 0, 10, pipe.top);
-      ctx.fillRect(pipe.x + 5, pipe.bottom, 10, canvas.height - pipe.bottom);
+      // Highlights (lighter shade)
+      ctx.fillStyle = colors.light;
+      ctx.fillRect(pipe.x + 5, 0, 10, pipe.top - 30);
+      ctx.fillRect(pipe.x + 5, pipe.bottom + 30, 10, canvas.height - pipe.bottom - 30);
+      
+      // Shadow on right edge (darker shade)
+      ctx.fillStyle = colors.dark;
+      ctx.fillRect(pipe.x + pipeWidth - 8, 0, 8, pipe.top - 30);
+      ctx.fillRect(pipe.x + pipeWidth - 8, pipe.bottom + 30, 8, canvas.height - pipe.bottom - 30);
     }
 
     // Draw background
@@ -259,16 +270,20 @@
       bird.velocityY = bird.flapPower;
     }
 
-    // Create pipe
+    // Create new pipe
     function createPipe() {
       const minTop = 50;
       const maxTop = canvas.height - pipeGap - 50;
       const top = Math.random() * (maxTop - minTop) + minTop;
       
+      // Randomly select a color from logo colors
+      const colorIndex = Math.floor(Math.random() * pipeColors.length);
+      
       pipes.push({
         x: canvas.width,
         top: top,
         bottom: top + pipeGap,
+        colorIndex: colorIndex,
         passed: false
       });
     }
