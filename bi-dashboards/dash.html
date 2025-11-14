@@ -87,6 +87,40 @@
   
   <!-- Design System Components -->
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  
+  <style>
+    /* ============================================
+       WEBROPOL Z-INDEX LAYERING SYSTEM
+       ============================================
+       
+       RULE OF THUMB: All dropdowns, popovers, and menus MUST use z-50 
+       to stay on top of all content except modals.
+       
+       Z-Index Hierarchy (lowest to highest):
+       - z-0    : Default/Base content
+       - z-10   : Elevated cards, sticky elements
+       - z-20   : Floating elements (badges, tooltips)
+       - z-30   : Fixed navigation (sidebars, bottom bars)
+       - z-40   : Sticky headers, top navigation
+       - z-50   : Dropdowns, popovers, context menus (STANDARD FOR ALL DROPDOWNS)
+       - z-[60] : Overlay backgrounds (for modals)
+       - z-[70] : Modal dialogs (highest layer)
+       
+       IMPLEMENTATION GUIDE:
+       1. All dropdown menus MUST have: class="... z-50"
+       2. All popovers MUST have: class="... z-50"
+       3. All context menus MUST have: class="... z-50"
+       4. Modal overlays: class="... z-[60]"
+       5. Modal dialogs: class="... z-[70]"
+       
+       EXAMPLE:
+       <div class="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-medium z-50">
+         <!-- Dropdown content -->
+       </div>
+       
+       DO NOT use z-values between 50-60 or 60-70 for custom purposes.
+       ============================================ */
+  </style>
 </head>
 <body x-data="biDashboardsApp()" class="bg-webropol-gray-50">
   
@@ -1125,16 +1159,57 @@
                           </div>
                         </td>
                         <td class="px-6 py-4">
-                          <div class="flex items-center justify-center gap-2">
-                            <button class="p-2 text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all" title="Edit">
-                              <i class="fal fa-edit"></i>
-                            </button>
-                            <button class="p-2 text-webropol-royalBlue-600 hover:bg-webropol-royalBlue-50 rounded-lg transition-all" title="Settings">
-                              <i class="fal fa-cog"></i>
-                            </button>
-                            <button class="p-2 text-webropol-red-600 hover:bg-webropol-red-50 rounded-lg transition-all" title="Delete">
-                              <i class="fal fa-trash-alt"></i>
-                            </button>
+                          <div class="flex items-center justify-center gap-2" x-data="{ menuOpen: false }">
+                            <div class="relative">
+                              <button 
+                                @click="menuOpen = !menuOpen; if(menuOpen) { const rect = $el.getBoundingClientRect(); $refs.menu.style.top = rect.bottom + 8 + 'px'; $refs.menu.style.left = (rect.right - 224) + 'px'; }"
+                                class="p-2 text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all" 
+                                title="Actions">
+                                <i class="fal fa-ellipsis-h"></i>
+                              </button>
+                              
+                              <!-- Dropdown Menu - Using fixed positioning to escape overflow containers -->
+                              <div 
+                                x-show="menuOpen"
+                                @click.away="menuOpen = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 transform scale-95"
+                                x-transition:enter-end="opacity-100 transform scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 transform scale-100"
+                                x-transition:leave-end="opacity-0 transform scale-95"
+                                x-ref="menu"
+                                class="fixed w-56 bg-white rounded-xl shadow-medium border border-webropol-gray-200 py-2 z-50"
+                                style="display: none;">
+                                
+                                <button @click="menuOpen = false" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-webropol-gray-50 text-left transition-colors">
+                                  <i class="fal fa-user-edit text-webropol-primary-600"></i>
+                                  <span class="text-webropol-gray-700 text-sm">Edit user profile</span>
+                                </button>
+                                
+                                <button @click="menuOpen = false" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-webropol-gray-50 text-left transition-colors">
+                                  <i class="fal fa-shield-check text-webropol-royalBlue-600"></i>
+                                  <span class="text-webropol-gray-700 text-sm">Edit user rights</span>
+                                </button>
+                                
+                                <button @click="menuOpen = false" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-webropol-gray-50 text-left transition-colors">
+                                  <i class="fal fa-key text-webropol-royalViolet-600"></i>
+                                  <span class="text-webropol-gray-700 text-sm">Reset password</span>
+                                </button>
+                                
+                                <button @click="menuOpen = false" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-webropol-gray-50 text-left transition-colors">
+                                  <i class="fal fa-envelope text-webropol-gray-500"></i>
+                                  <span class="text-webropol-gray-400 text-sm">Send email validation link</span>
+                                </button>
+                                
+                                <div class="border-t border-webropol-gray-200 my-2"></div>
+                                
+                                <button @click="menuOpen = false" class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-webropol-red-50 text-left transition-colors">
+                                  <i class="fal fa-trash-alt text-webropol-red-600"></i>
+                                  <span class="text-webropol-red-600 text-sm font-medium">Delete</span>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>
