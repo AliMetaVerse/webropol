@@ -63,7 +63,7 @@ The following pages have sidebar and header components integrated:
 - **Admin Tools**: `/admin-tools/index.html`
 - **Dashboards**: `/dashboards/index.html`
 - **Events**: `/events/index.html`, `/events/events.html`
-- **MyWebropol**: `/mywebropol/index.html`, `/mywebropol/library.html`
+- **MyWebropol**: `/mywebropol/index.html`, `/mywebropol/lib/library.html`
 - **Shop**: `/shop/index.html`
 - **SMS**: `/sms/index.html`
 - **Surveys**: `/surveys/index.html`

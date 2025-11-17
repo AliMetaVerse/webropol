@@ -243,7 +243,7 @@ The following pages are correctly configured:
 - `/webropol/events/index.html` - Events listing
 - `/webropol/events/events.html` - Events page
 - `/webropol/mywebropol/index.html` - MyWebropol main
-- `/webropol/mywebropol/library.html` - MyWebropol library
+- `/webropol/mywebropol/lib/library.html` - MyWebropol library
 - `/webropol/shop/index.html` - Shop
 - `/webropol/sms/index.html` - SMS surveys
 - `/webropol/surveys/index.html` - Surveys
