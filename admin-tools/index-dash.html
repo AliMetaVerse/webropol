@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script>
+          <script>
     tailwind.config = {
       theme: {
         extend: {
@@ -17,6 +17,11 @@
             'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
             'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
             'webropol-green': { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' },
+            'webropol-red': { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' },
+            'webropol-purple': { 50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe', 400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7c3aed', 800: '#6b21a8', 900: '#581c87' },
+            'webropol-orange': { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' },
+            'webropol-indigo': { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+            'webropol-emerald': { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b' },
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
@@ -96,7 +101,7 @@
         <div class="max-w-7xl mx-auto">
           <!-- Modern Header Section -->
           <div class="mb-10">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div>
                 <h1 class="text-4xl font-bold text-webropol-gray-900 mb-3">
                   Admin Tools
@@ -106,14 +111,11 @@
                 </p>
               </div>
               <div class="flex items-center gap-3">
-                <button class="inline-flex items-center px-5 py-2.5 bg-white border-2 border-webropol-primary-600 text-webropol-primary-700 text-sm font-semibold rounded-full hover:bg-webropol-primary-50 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 transition-all duration-200 shadow-sm">
-                  <i class="fal fa-file-download mr-2"></i>
-                  Export Settings
-                </button>
-                <button class="inline-flex items-center px-5 py-2.5 bg-webropol-primary-600 text-white text-sm font-semibold rounded-full hover:bg-webropol-primary-700 focus:outline-none focus:ring-4 focus:ring-webropol-primary-200 transition-all duration-200 shadow-md hover:shadow-lg">
-                  <i class="fal fa-cog mr-2"></i>
-                  Quick Settings
-                </button>
+                <div class="relative">
+                  <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400"></i>
+                  <input x-model="searchQuery" type="text" placeholder="Search settings..." class="pl-10 pr-4 py-2 border border-webropol-gray-200 rounded-lg bg-white text-webropol-gray-700 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 text-sm w-56" />
+                </div>
+                <!-- Buttons removed: Export Settings and Quick Settings -->
               </div>
             </div>
           </div>
@@ -202,7 +204,7 @@
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <a href="user-manage-list.html"
+                <a href="user-manage-list.html" x-show="cardVisible('User Management')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -217,7 +219,7 @@
                   </div>
                 </a>
 
-                <a href="survey-folder-rights.html"
+                <a href="survey-folder-rights.html" x-show="cardVisible('Survey & Folder Rights')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -232,7 +234,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('User Group Management')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -247,7 +249,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('Access Requests')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-orange-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -284,7 +286,7 @@
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <a href="#"
+                <a href="#" x-show="cardVisible('Environment Cleaning')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-red-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -302,7 +304,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('Restore Surveys')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-green-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -317,7 +319,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('GDPR Management')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-purple-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -332,7 +334,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('Password Policy')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-indigo-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -347,7 +349,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('Two-Factor Auth')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -365,7 +367,7 @@
                   </div>
                 </a>
 
-                <a href="#"
+                <a href="#" x-show="cardVisible('IP Restrictions')"
                   class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-purple-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
@@ -399,7 +401,7 @@
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-emerald-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('360 Evaluations')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-emerald-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-emerald-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-emerald-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -413,7 +415,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Hierarchy')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-primary-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -427,7 +429,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Hierarchy Admins')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-indigo-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-indigo-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -441,7 +443,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Suomi.fi Messages')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-green-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -458,7 +460,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Online Payments')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-purple-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -472,7 +474,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Voice Answers')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-red-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -486,7 +488,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-orange-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Wott Management')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-orange-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-orange-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-orange-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -519,7 +521,7 @@
               </div>
               
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Respondent Login')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-primary-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-primary-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-primary-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -533,7 +535,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Question Keywords')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-indigo-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-indigo-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-indigo-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -547,7 +549,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Question IDs')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-green-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-green-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -561,7 +563,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Respondent Panel')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-purple-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-purple-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -575,7 +577,7 @@
                   </div>
                 </a>
 
-                <a href="#" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <a href="#" x-show="cardVisible('Do-Not-Contact List')" class="group relative bg-white rounded-2xl p-6 border-2 border-webropol-gray-100 hover:border-webropol-red-300 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <div class="absolute top-0 right-0 w-32 h-32 bg-webropol-red-50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
                   <div class="relative">
                     <div class="w-14 h-14 bg-webropol-red-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -605,6 +607,8 @@
       return {
         // Enhanced admin tools functionality
         showContextMenu: null,
+        // Search query for filtering setting cards
+        searchQuery: '',
 
         // Initialize any admin-specific features
         init() {
@@ -614,6 +618,16 @@
         setupInteractiveElements() {
           // Add any admin-specific interactive features here
           console.log('Admin Tools initialized');
+        },
+
+        // Determine if a card should show for a search term
+        cardVisible(title) {
+          if (!this.searchQuery || this.searchQuery.trim() === '') return true;
+          try {
+            return String(title).toLowerCase().includes(this.searchQuery.trim().toLowerCase());
+          } catch (e) {
+            return true;
+          }
         }
       }
     }
