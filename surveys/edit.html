@@ -1208,9 +1208,16 @@
                   </div>
 
                   <!-- Question Container (selected/unselected states) -->
-         <div x-data="{ selected: $store.questionEditor.activeQuestion === 'q1' }" x-init="$watch('selected', value => { if(value) $store.questionEditor.setActive('q1'); })" @question-close.window="if($store.questionEditor.activeQuestion !== 'q1') selected = false" class="question-card" :class="selected ? 'selected' : ''">
-                  <!-- Expanded header and toolbar (selected) -->
-                  <div x-show="selected" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="question-card-header">
+         <div x-data="{ selected: false }" class="question-card" :class="selected ? 'selected' : ''">
+                  <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
+                  <div x-show="selected" 
+                       x-transition:enter="transition ease-out duration-200" 
+                       x-transition:enter-start="opacity-0 -translate-y-2" 
+                       x-transition:enter-end="opacity-100 translate-y-0"
+                       x-transition:leave="transition ease-in duration-150"
+                       x-transition:leave-start="opacity-100 translate-y-0"
+                       x-transition:leave-end="opacity-0 -translate-y-2"
+                       class="question-card-header">
                     <div class="flex items-center gap-3">
                       <i class="fal fa-search text-webropol-primary-600"></i>
                       <span class="px-3 py-1 rounded-full text-xs font-medium bg-webropol-primary-100 text-webropol-primary-700">Autosuggest text field</span>
@@ -1262,32 +1269,46 @@
                         </div>
                       </div>
                       <div class="w-px h-5 bg-webropol-gray-300 mx-1"></div>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="$store.questionEditor.setActive(null)"><i class="fal fa-times"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="selected = false"><i class="fal fa-times"></i></button>
                     </div>
                   </div>
 
-                  <!-- Collapsed (unselected) content preview -->
-                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" @click="selected = true">
-                    <div class="flex items-start justify-between mb-4">
-                      <label class="block text-lg font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
+                  <!-- Collapsed (unselected) content preview - VIEW MODE -->
+                  <div x-show="!selected" 
+                       x-transition:enter="transition ease-out duration-200"
+                       x-transition:enter-start="opacity-0"
+                       x-transition:enter-end="opacity-100"
+                       x-transition:leave="transition ease-in duration-150"
+                       x-transition:leave-start="opacity-100"
+                       x-transition:leave-end="opacity-0"
+                       class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" 
+                       @click="selected = true">
+                    <!-- Question Title -->
+                    <div class="mb-4">
+                      <h3 class="text-base font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
                         1. Auto Suggest
-                      </label>
-                      <div class="flex items-center space-x-2">
-                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity">Autosuggest</span>
-                        <i class="fal fa-edit text-webropol-primary-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                      </div>
+                      </h3>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
-                      <span class="text-sm text-webropol-gray-600">Option</span>
-                      <div class="sm:col-span-2">
-                        <input type="text" class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg bg-webropol-gray-50" disabled placeholder="Type to see suggestions...">
+                    
+                    <!-- Simple field layout matching design -->
+                    <div class="space-y-3">
+                      <div class="flex items-start gap-4">
+                        <label class="text-sm text-webropol-gray-600 pt-2 min-w-[60px]">Option</label>
+                        <div class="flex-1">
+                          <input 
+                            type="text" 
+                            class="w-full px-4 py-2 border border-webropol-gray-300 rounded-lg bg-white text-webropol-gray-400" 
+                            disabled 
+                            placeholder="Type to see suggestions..."
+                          >
+                        </div>
                       </div>
-                    </div>
-                    <div class="mt-3 text-xs text-webropol-gray-500 flex items-center space-x-4">
-                      <span class="flex items-center space-x-1">
+                      
+                      <!-- Auto-suggest enabled indicator -->
+                      <div class="flex items-center gap-2 text-xs text-webropol-gray-500 ml-[76px]">
                         <i class="fal fa-database"></i>
                         <span>Auto-suggest enabled</span>
-                      </span>
+                      </div>
                     </div>
                   </div>
 
@@ -1430,9 +1451,16 @@
                   </div>
 
                   <!-- NPS Question Card -->
-                  <div x-data="{ selected: $store.questionEditor.activeQuestion === 'q2' }" x-init="$watch('selected', value => { if(value) $store.questionEditor.setActive('q2'); })" @question-close.window="if($store.questionEditor.activeQuestion !== 'q2') selected = false" class="question-card" :class="selected ? 'selected' : ''">
-                  <!-- Expanded header and toolbar (selected) -->
-                  <div x-show="selected" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="question-card-header">
+                  <div x-data="{ selected: false }" class="question-card" :class="selected ? 'selected' : ''">
+                  <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
+                  <div x-show="selected" 
+                       x-transition:enter="transition ease-out duration-200" 
+                       x-transition:enter-start="opacity-0 -translate-y-2" 
+                       x-transition:enter-end="opacity-100 translate-y-0"
+                       x-transition:leave="transition ease-in duration-150"
+                       x-transition:leave-start="opacity-100 translate-y-0"
+                       x-transition:leave-end="opacity-0 -translate-y-2"
+                       class="question-card-header">
                     <div class="flex items-center gap-3">
                       <i class="fal fa-chart-line text-webropol-primary-600"></i>
                       <span class="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">Net Promoter Score</span>
@@ -1484,7 +1512,7 @@
                         </div>
                       </div>
                       <div class="w-px h-5 bg-webropol-gray-300 mx-1"></div>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="$store.questionEditor.setActive(null)"><i class="fal fa-times"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="selected = false"><i class="fal fa-times"></i></button>
                     </div>
                   </div>
 
