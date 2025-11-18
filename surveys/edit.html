@@ -122,7 +122,7 @@
     .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
     .question-card:hover{border-color:#d5dde6}
     .question-card.selected{border-color:#06b6d4;background:#f0fdff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
-    .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc}
+    .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
     .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
     .question-card-toolbar button{padding:.35rem .55rem;border-radius:.6rem}
     .question-card-collapsed:hover{background:#f8fafc}
@@ -1004,26 +1004,65 @@
                       <span class="text-webropol-gray-500 text-xs">Question 1</span>
                     </div>
                     <div class="flex items-center gap-1 question-card-toolbar">
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="AI Suggest"><i class="fal fa-magic"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Translations"><i class="fal fa-language"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Upload Image"><i class="fal fa-image"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('autosuggest')"><i class="fal fa-cog"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy"><i class="fal fa-copy"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-red-600" title="Delete"><i class="fal fa-trash"></i></button>
+                      <!-- Quick action buttons -->
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Randomize options"><i class="fal fa-shuffle"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
+                      <!-- More menu dropdown -->
+                      <div class="relative" x-data="{ moreMenuOpen: false }" @click.away="moreMenuOpen = false">
+                        <button @click="moreMenuOpen = !moreMenuOpen" class="text-webropol-gray-500 hover:text-webropol-primary-600" title="More options" aria-label="More options">
+                          <i class="fal fa-ellipsis-v"></i>
+                        </button>
+                        <div x-show="moreMenuOpen" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-1 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-1 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-webropol-gray-200 py-1 z-50"
+                             style="display: none;">
+                          <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                            <i class="fal fa-image w-5 text-center text-webropol-gray-500"></i>
+                            <span>Add Image</span>
+                          </button>
+                          <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                            <i class="fal fa-copy w-5 text-center text-webropol-gray-500"></i>
+                            <span>Copy</span>
+                          </button>
+                          <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                            <i class="fal fa-graduation-cap w-5 text-center text-webropol-gray-500"></i>
+                            <span>eTest</span>
+                          </button>
+                          <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                            <i class="fal fa-bullseye w-5 text-center text-webropol-gray-500"></i>
+                            <span>Points</span>
+                          </button>
+                          <button @click="moreMenuOpen = false; openQuestionSettingsModal('autosuggest')" class="w-full px-4 py-2.5 text-left text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 flex items-center gap-3">
+                            <i class="fal fa-cog w-5 text-center text-webropol-gray-500"></i>
+                            <span>Settings</span>
+                          </button>
+                          <div class="border-t border-webropol-gray-100 my-1"></div>
+                          <button @click="moreMenuOpen = false" class="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-3">
+                            <i class="fal fa-trash w-5 text-center"></i>
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
                       <div class="w-px h-5 bg-webropol-gray-300 mx-1"></div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Close editor" aria-label="Close editor" @click="selected = false"><i class="fal fa-times"></i></button>
                     </div>
                   </div>
 
                   <!-- Collapsed (unselected) content preview -->
-                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors" @click="selected = true">
+                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" @click="selected = true">
                     <div class="flex items-start justify-between mb-4">
                       <label class="block text-lg font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
                         1. Auto Suggest
                       </label>
-                      <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium">Autosuggest</span>
-                        <i class="fal fa-edit text-webropol-primary-600"></i>
+                      <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity">Autosuggest</span>
+                        <i class="fal fa-edit text-webropol-primary-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                       </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
@@ -1042,7 +1081,7 @@
                   </div>
 
                   <!-- Expanded (selected) content -->
-                  <div x-show="selected" class="p-6">
+                  <div x-show="selected" class="p-6 rounded-b-3xl">
                     <div class="mb-6">
                       <label class="block text-lg font-semibold text-webropol-gray-900 mb-2">
                         1. Auto Suggest
