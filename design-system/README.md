@@ -78,6 +78,9 @@ design-system/
 - **VideoCard** - Cards for video content with thumbnails and play buttons
 - **ConfigurableCard** - Expandable cards with detailed information and actions
 
+### Menu Components
+- **ContextMenu** - Vertical menu with icon-labeled actions, hover states, and danger variants
+
 ### Navigation Components
 - **Sidebar** - Primary navigation with menu items and branding
 - **Header** - Top navigation bar with user controls and actions

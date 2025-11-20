@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Menu Demo - Webropol Design System</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <!-- Tailwind config with Webropol tokens -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#f0fdff',
+              100: '#ccfbff',
+              200: '#99f6ff',
+              300: '#5beeff',
+              400: '#00dcff',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+              800: '#155e75',
+              900: '#164e63'
+            },
+            'webropol-gray': {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a'
+            },
+            'webropol-royalViolet': {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7',
+              600: '#9333ea',
+              700: '#7e22ce',
+              800: '#6b21a8',
+              900: '#581c87'
+            },
+            'webropol-royalBlue': {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            'webropol-royalTurquoise': {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            'soft': '0 2px 8px rgba(0, 0, 0, 0.08)',
+            'card': '0 4px 12px rgba(0, 0, 0, 0.1)',
+            'medium': '0 8px 24px rgba(0, 0, 0, 0.12)',
+            'large': '0 16px 48px rgba(0, 0, 0, 0.15)'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Context Menu Component -->
+  <script src="../components/menus/ContextMenu.js" type="module"></script>
+</head>
+<body class="bg-webropol-gray-50 min-h-screen p-8" x-data="contextMenuDemo()">
+  
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Context Menu Component</h1>
+      <p class="text-webropol-gray-600">Vertical menu with icon-labeled actions, hover states, and danger variants</p>
+    </div>
+
+    <!-- Examples Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      <!-- Example 1: Default Menu -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Default Menu</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Standard context menu with all actions</p>
+        <webropol-context-menu
+          items='[
+            {"id": "rename", "label": "Rename", "icon": "fal fa-pen"},
+            {"id": "copy", "label": "Copy", "icon": "fal fa-copy"},
+            {"id": "move", "label": "Move to a folder", "icon": "fal fa-folder-arrow-up"},
+            {"id": "rights", "label": "Rights", "icon": "fal fa-key"},
+            {"id": "properties", "label": "Properties, rights and log", "icon": "fal fa-list-ul"},
+            {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+          ]'
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+      <!-- Example 2: Without Icons -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">No Icons</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Simple text-only menu</p>
+        <webropol-context-menu
+          items='[
+            {"id": "edit", "label": "Edit"},
+            {"id": "duplicate", "label": "Duplicate"},
+            {"id": "archive", "label": "Archive"},
+            {"id": "delete", "label": "Delete", "variant": "danger"}
+          ]'
+          width="sm"
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+      <!-- Example 3: With Disabled Items -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Disabled Items</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Some actions disabled</p>
+        <webropol-context-menu
+          items='[
+            {"id": "view", "label": "View", "icon": "fal fa-eye"},
+            {"id": "edit", "label": "Edit", "icon": "fal fa-pen", "disabled": true},
+            {"id": "share", "label": "Share", "icon": "fal fa-share-nodes"},
+            {"id": "download", "label": "Download", "icon": "fal fa-download", "disabled": true},
+            {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+          ]'
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+      <!-- Example 4: Survey Actions -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Survey Actions</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Survey-specific context menu</p>
+        <webropol-context-menu
+          items='[
+            {"id": "edit", "label": "Edit survey", "icon": "fal fa-pen"},
+            {"id": "preview", "label": "Preview", "icon": "fal fa-eye"},
+            {"id": "duplicate", "label": "Duplicate", "icon": "fal fa-copy"},
+            {"id": "export", "label": "Export results", "icon": "fal fa-file-export"},
+            {"id": "share", "label": "Share", "icon": "fal fa-share-nodes"},
+            {"id": "archive", "label": "Archive", "icon": "fal fa-box-archive"},
+            {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+          ]'
+          width="md"
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+      <!-- Example 5: Event Actions -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Event Actions</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Event management menu</p>
+        <webropol-context-menu
+          items='[
+            {"id": "manage", "label": "Manage event", "icon": "fal fa-calendar-edit"},
+            {"id": "attendees", "label": "View attendees", "icon": "fal fa-users"},
+            {"id": "send", "label": "Send invitations", "icon": "fal fa-envelope"},
+            {"id": "qr", "label": "QR code", "icon": "fal fa-qrcode"},
+            {"id": "cancel", "label": "Cancel event", "icon": "fal fa-ban", "variant": "danger"}
+          ]'
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+      <!-- Example 6: Rounded Variants -->
+      <div class="bg-white p-6 rounded-xl shadow-card">
+        <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Rounded Corners</h3>
+        <p class="text-sm text-webropol-gray-600 mb-4">Menu with custom rounded corners</p>
+        <webropol-context-menu
+          items='[
+            {"id": "option1", "label": "Option 1", "icon": "fal fa-check"},
+            {"id": "option2", "label": "Option 2", "icon": "fal fa-star"},
+            {"id": "option3", "label": "Option 3", "icon": "fal fa-heart"}
+          ]'
+          rounded="xl"
+          width="sm"
+          @item-click="handleMenuClick($event)"
+        ></webropol-context-menu>
+      </div>
+
+    </div>
+
+    <!-- Event Log -->
+    <div class="mt-12 bg-white p-6 rounded-xl shadow-card">
+      <h3 class="text-lg font-semibold text-webropol-gray-900 mb-4">Event Log</h3>
+      <div class="space-y-2">
+        <template x-if="events.length === 0">
+          <p class="text-sm text-webropol-gray-500 italic">Click any menu item to see events...</p>
+        </template>
+        <template x-for="event in events" :key="event.timestamp">
+          <div class="flex items-start gap-3 p-3 bg-webropol-gray-50 rounded-lg">
+            <i class="fal fa-circle-check text-webropol-primary-500 mt-0.5"></i>
+            <div class="flex-1">
+              <p class="text-sm font-medium text-webropol-gray-900" x-text="event.message"></p>
+              <p class="text-xs text-webropol-gray-500" x-text="event.time"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+      <template x-if="events.length > 0">
+        <button 
+          @click="events = []"
+          class="mt-4 px-4 py-2 text-sm font-medium text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-lg transition-colors"
+        >
+          Clear Log
+        </button>
+      </template>
+    </div>
+
+    <!-- Usage Examples -->
+    <div class="mt-12 bg-webropol-gray-900 text-white p-6 rounded-xl">
+      <h3 class="text-lg font-semibold mb-4">Usage Example</h3>
+      <pre class="text-sm overflow-x-auto"><code>&lt;webropol-context-menu
+  items='[
+    {"id": "rename", "label": "Rename", "icon": "fal fa-pen"},
+    {"id": "copy", "label": "Copy", "icon": "fal fa-copy"},
+    {"id": "move", "label": "Move to a folder", "icon": "fal fa-folder-arrow-up"},
+    {"id": "rights", "label": "Rights", "icon": "fal fa-key"},
+    {"id": "properties", "label": "Properties, rights and log", "icon": "fal fa-list-ul"},
+    {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+  ]'
+  width="auto"
+  rounded="md"
+  @item-click="handleMenuClick($event)"
+&gt;&lt;/webropol-context-menu&gt;</code></pre>
+      
+      <h4 class="text-base font-semibold mt-6 mb-3">Attributes</h4>
+      <ul class="space-y-2 text-sm">
+        <li><code class="bg-webropol-gray-800 px-2 py-1 rounded">items</code> - JSON array of menu items (id, label, icon, variant, disabled)</li>
+        <li><code class="bg-webropol-gray-800 px-2 py-1 rounded">width</code> - auto, sm, md, lg, full (default: auto)</li>
+        <li><code class="bg-webropol-gray-800 px-2 py-1 rounded">rounded</code> - none, sm, md, lg, xl (default: md)</li>
+        <li><code class="bg-webropol-gray-800 px-2 py-1 rounded">disabled</code> - Disable entire menu</li>
+      </ul>
+
+      <h4 class="text-base font-semibold mt-6 mb-3">Events</h4>
+      <ul class="space-y-2 text-sm">
+        <li><code class="bg-webropol-gray-800 px-2 py-1 rounded">item-click</code> - Fired when menu item clicked (detail: {id, label, data})</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    function contextMenuDemo() {
+      return {
+        events: [],
+        
+        handleMenuClick(event) {
+          const { id, label } = event.detail;
+          const now = new Date();
+          
+          this.events.unshift({
+            message: `Clicked: ${label} (ID: ${id})`,
+            time: now.toLocaleTimeString(),
+            timestamp: now.getTime()
+          });
+
+          // Keep only last 10 events
+          if (this.events.length > 10) {
+            this.events = this.events.slice(0, 10);
+          }
+
+          console.log('Context menu item clicked:', event.detail);
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
