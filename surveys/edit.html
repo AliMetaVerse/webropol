@@ -1215,7 +1215,7 @@
                 <!-- Title moved inside the page card below -->
                 
                 <!-- Page container with top badge -->
-                <section class="relative bg-white rounded-3xl shadow-xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 pt-8 space-y-4 mb-4">
+                <section class="relative bg-white rounded-3xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 pt-8 space-y-4 mb-4">
                   <!-- Top page badge -->
                   <div class="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center px-3 py-1 bg-webropol-primary-100 text-webropol-primary-800 rounded-full text-xs font-medium shadow">
                     <i class="fal fa-file-alt mr-2"></i>
@@ -1248,7 +1248,7 @@
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy"><i class="fal fa-copy"></i></button>
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q1')"><i class="fal fa-copy"></i></button>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings"><i class="fal fa-cog"></i></button>
                         <button class="text-red-500 hover:text-red-600" title="Delete"><i class="fal fa-trash"></i></button>
                       </div>
@@ -1347,7 +1347,7 @@
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Add Image"><i class="fal fa-image"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy"><i class="fal fa-copy"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q2')"><i class="fal fa-copy"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Points"><i class="fal fa-bullseye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('autosuggest')"><i class="fal fa-cog"></i></button>
@@ -1520,7 +1520,7 @@
                 </section>
                 
                 <!-- PAGE 2 SECTION: NPS Question -->
-                <section class="relative bg-white rounded-3xl shadow-xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 pt-8 space-y-4 mb-4">
+                <section class="relative bg-white rounded-3xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 pt-8 space-y-4 mb-4">
                   <!-- Top page badge -->
                   <div class="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center px-3 py-1 bg-webropol-primary-100 text-webropol-primary-800 rounded-full text-xs font-medium shadow">
                     <i class="fal fa-file-alt mr-2"></i>
@@ -1554,7 +1554,7 @@
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Add Image"><i class="fal fa-image"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy"><i class="fal fa-copy"></i></button>
+                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q3')"><i class="fal fa-copy"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Points"><i class="fal fa-bullseye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('nps')"><i class="fal fa-cog"></i></button>
@@ -2834,7 +2834,7 @@
             </div>
             Question Mode
           </h2>
-          <p class="modal-subtitle">Choose where to insert the new question</p>
+          <p class="modal-subtitle">Choose where to insert the new question (this will be applied to the copy function only)</p>
         </div>
         <button class="modal-close" onclick="closeQuestionModeModal()" aria-label="Close modal">
           <i class="fal fa-times"></i>
@@ -2864,6 +2864,38 @@
                   <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question at the beginning of the current page</p>
                 </div>
               </label>
+              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('after')">
+                <input
+                  type="radio"
+                  name="insertionPoint"
+                  value="after"
+                  class="radio-input"
+                  id="insertAfter"
+                >
+                <div class="radio-content" style="flex: 1;">
+                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
+                    <i class="fal fa-level-down-alt mr-2 text-webropol-primary-600"></i>
+                    Insert After Current Question
+                  </div>
+                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately after the currently selected question</p>
+                </div>
+              </label>
+              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('above')">
+                <input
+                  type="radio"
+                  name="insertionPoint"
+                  value="above"
+                  class="radio-input"
+                  id="insertAbove"
+                >
+                <div class="radio-content" style="flex: 1;">
+                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
+                    <i class="fal fa-level-up-alt mr-2 text-webropol-primary-600"></i>
+                    Insert Above Current Question
+                  </div>
+                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately before the currently selected question</p>
+                </div>
+              </label>
               <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('bottom')">
                 <input
                   type="radio"
@@ -2886,12 +2918,18 @@
         </div>
       </div>
       <div class="modal-footer">
-        <div class="footer-actions">
-          <button class="btn btn-secondary" onclick="closeQuestionModeModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="confirmQuestionMode()">
-            <i class="fal fa-check"></i>
-            Confirm
-          </button>
+        <div class="flex items-center justify-between w-full">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="rememberInsertionChoice" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+            <span class="text-sm text-webropol-gray-700">Remember my choice</span>
+          </label>
+          <div class="footer-actions">
+            <button class="btn btn-secondary" onclick="closeQuestionModeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="confirmQuestionMode()">
+              <i class="fal fa-check"></i>
+              Confirm
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -5415,7 +5453,10 @@
     }
 
     // Question Mode Modal Functions
-    function openQuestionModeModal() {
+    let currentQuestionIdForCopy = null;
+
+    function openQuestionModeModal(questionId = null) {
+      currentQuestionIdForCopy = questionId;
       const modal = document.getElementById('questionModeModal');
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -5423,14 +5464,33 @@
       
       // Load saved preference
       const savedPosition = localStorage.getItem('questionInsertionPoint') || 'bottom';
-      const topRadio = document.getElementById('insertTop');
-      const bottomRadio = document.getElementById('insertBottom');
+      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
       
-      if (savedPosition === 'top') {
+      // Get all radio buttons
+      const topRadio = document.getElementById('insertTop');
+      const afterRadio = document.getElementById('insertAfter');
+      const aboveRadio = document.getElementById('insertAbove');
+      const bottomRadio = document.getElementById('insertBottom');
+      const rememberCheckbox = document.getElementById('rememberInsertionChoice');
+      
+      // Set remember checkbox
+      if (rememberCheckbox) {
+        rememberCheckbox.checked = rememberChoice;
+      }
+      
+      // Clear all selections first
+      [topRadio, afterRadio, aboveRadio, bottomRadio].forEach(radio => {
+        if (radio) radio.checked = false;
+      });
+      
+      // Set the saved selection
+      if (savedPosition === 'top' && topRadio) {
         topRadio.checked = true;
-        bottomRadio.checked = false;
-      } else {
-        topRadio.checked = false;
+      } else if (savedPosition === 'after' && afterRadio) {
+        afterRadio.checked = true;
+      } else if (savedPosition === 'above' && aboveRadio) {
+        aboveRadio.checked = true;
+      } else if (bottomRadio) {
         bottomRadio.checked = true;
       }
     }
@@ -5444,40 +5504,73 @@
 
     function setQuestionInsertionPoint(position) {
       const topRadio = document.getElementById('insertTop');
+      const afterRadio = document.getElementById('insertAfter');
+      const aboveRadio = document.getElementById('insertAbove');
       const bottomRadio = document.getElementById('insertBottom');
       
-      if (position === 'top') {
+      // Clear all
+      [topRadio, afterRadio, aboveRadio, bottomRadio].forEach(radio => {
+        if (radio) radio.checked = false;
+      });
+      
+      // Set selected
+      if (position === 'top' && topRadio) {
         topRadio.checked = true;
-        bottomRadio.checked = false;
-      } else {
-        topRadio.checked = false;
+      } else if (position === 'after' && afterRadio) {
+        afterRadio.checked = true;
+      } else if (position === 'above' && aboveRadio) {
+        aboveRadio.checked = true;
+      } else if (bottomRadio) {
         bottomRadio.checked = true;
       }
     }
 
     function confirmQuestionMode() {
       const topRadio = document.getElementById('insertTop');
+      const afterRadio = document.getElementById('insertAfter');
+      const aboveRadio = document.getElementById('insertAbove');
       const bottomRadio = document.getElementById('insertBottom');
+      const rememberCheckbox = document.getElementById('rememberInsertionChoice');
       
-      const selectedPosition = topRadio.checked ? 'top' : 'bottom';
+      let selectedPosition = 'bottom';
+      if (topRadio && topRadio.checked) selectedPosition = 'top';
+      else if (afterRadio && afterRadio.checked) selectedPosition = 'after';
+      else if (aboveRadio && aboveRadio.checked) selectedPosition = 'above';
+      else if (bottomRadio && bottomRadio.checked) selectedPosition = 'bottom';
       
-      // Save preference to localStorage
+      const rememberChoice = rememberCheckbox ? rememberCheckbox.checked : false;
+      
+      // Save preferences to localStorage
       try {
         localStorage.setItem('questionInsertionPoint', selectedPosition);
+        localStorage.setItem('rememberInsertionChoice', rememberChoice.toString());
       } catch (e) {
         console.warn('Could not save insertion point preference:', e);
+      }
+      
+      // If copying a question, perform the copy action here
+      if (currentQuestionIdForCopy) {
+        performQuestionCopy(currentQuestionIdForCopy, selectedPosition);
+        currentQuestionIdForCopy = null;
       }
       
       // Close modal
       closeQuestionModeModal();
       
       // Show confirmation feedback
+      const positionLabels = {
+        'top': 'Top of page',
+        'after': 'After current question',
+        'above': 'Above current question',
+        'bottom': 'Bottom of page'
+      };
+      
       const notification = document.createElement('div');
       notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9998] transition-all transform translate-x-full';
       notification.innerHTML = `
         <div class="flex items-center gap-2">
           <i class="fal fa-check-circle"></i>
-          <span>Question insertion point set to: ${selectedPosition === 'top' ? 'Top of page' : 'Bottom of page'}</span>
+          <span>Question copied: ${positionLabels[selectedPosition] || 'Bottom of page'}</span>
         </div>
       `;
       
@@ -5498,6 +5591,58 @@
       
       // You could also trigger the Add Question modal here if desired
       // setTimeout(() => openAddQuestionModal(), 300);
+    }
+
+    // Handle question copy - check if user wants to remember choice
+    function handleQuestionCopy(questionId) {
+      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
+      
+      if (rememberChoice) {
+        // User has chosen to remember - use saved preference and copy directly
+        const savedPosition = localStorage.getItem('questionInsertionPoint') || 'bottom';
+        performQuestionCopy(questionId, savedPosition);
+        
+        // Show quick confirmation
+        const positionLabels = {
+          'top': 'Top of page',
+          'after': 'After current question',
+          'above': 'Above current question',
+          'bottom': 'Bottom of page'
+        };
+        
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9998] transition-all transform translate-x-full';
+        notification.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i class="fal fa-check-circle"></i>
+            <span>Question copied: ${positionLabels[savedPosition] || 'Bottom of page'}</span>
+          </div>
+        `;
+        
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+        setTimeout(() => {
+          notification.classList.add('translate-x-full');
+          setTimeout(() => document.body.removeChild(notification), 300);
+        }, 3000);
+      } else {
+        // Show modal to choose insertion point
+        openQuestionModeModal(questionId);
+      }
+    }
+
+    // Perform the actual question copy
+    function performQuestionCopy(questionId, position) {
+      console.log(`Copying question ${questionId} to position: ${position}`);
+      
+      // Here you would implement the actual copy logic
+      // This is a placeholder for the actual implementation
+      
+      // Example: You might want to clone the question DOM element,
+      // update its ID, and insert it at the specified position
+      
+      // For now, just log the action
+      console.log('Question copy would be performed here');
     }
 
     function selectQuestionType(type) {
