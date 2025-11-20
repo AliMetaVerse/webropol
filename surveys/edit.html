@@ -2519,15 +2519,15 @@
   <!-- Question Mode Modal -->
   <div id="questionModeModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 500px;">
-      <div class="modal-header">
-        <div class="modal-title-section">
-          <h2 class="modal-title">
-            <div class="w-10 h-10 bg-gradient-to-br from-orange-100 to-orange-100 rounded-full flex items-center justify-center">
-              <i class="fal fa-plus-circle text-orange-600 text-lg"></i>
-            </div>
-            Question Mode
-          </h2>
-          <p class="modal-subtitle">Choose where to insert the new question (this will be applied to the copy function only)</p>
+      <div class="modal-header question-mode-header">
+        <div class="modal-title-section question-mode-title">
+          <div class="question-mode-icon-badge">
+            <i class="fal fa-plus-circle"></i>
+          </div>
+          <div class="question-mode-text">
+            <h2 class="modal-title">Question Mode</h2>
+            <p class="modal-subtitle">Choose where to insert the new question (this will be applied to the copy function only)</p>
+          </div>
         </div>
         <button class="modal-close" onclick="closeQuestionModeModal()" aria-label="Close modal">
           <i class="fal fa-times"></i>
@@ -2540,72 +2540,87 @@
             Insertion Point
           </h3>
           <div class="form-group">
-            <div class="radio-group" style="flex-direction: column; gap: 1rem;">
-              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('top')">
-                <input
-                  type="radio"
-                  name="insertionPoint"
-                  value="top"
-                  class="radio-input"
-                  id="insertTop"
-                >
-                <div class="radio-content" style="flex: 1;">
-                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
-                    <i class="fal fa-arrow-up mr-2 text-webropol-primary-600"></i>
-                    Insert at Top of Page
+            <!-- Page-level options -->
+            <div style="margin-bottom: 1.25rem;">
+              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
+                Page position
+              </div>
+              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('top')">
+                  <input
+                    type="radio"
+                    name="insertionPoint"
+                    value="top"
+                    class="radio-input"
+                    id="insertTop"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-arrow-up mr-2 text-webropol-primary-600"></i>
+                      Insert at top of page
+                    </div>
+                    <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question at the beginning of the current page.</p>
                   </div>
-                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question at the beginning of the current page</p>
-                </div>
-              </label>
-              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('after')">
-                <input
-                  type="radio"
-                  name="insertionPoint"
-                  value="after"
-                  class="radio-input"
-                  id="insertAfter"
-                >
-                <div class="radio-content" style="flex: 1;">
-                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
-                    <i class="fal fa-level-down-alt mr-2 text-webropol-primary-600"></i>
-                    Insert After Current Question
+                </label>
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('bottom')">
+                  <input
+                    type="radio"
+                    name="insertionPoint"
+                    value="bottom"
+                    class="radio-input"
+                    id="insertBottom"
+                    checked
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-arrow-down mr-2 text-webropol-primary-600"></i>
+                      Insert at bottom of page (default)
+                    </div>
+                    <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question at the end of the current page.</p>
                   </div>
-                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately after the currently selected question</p>
-                </div>
-              </label>
-              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('above')">
-                <input
-                  type="radio"
-                  name="insertionPoint"
-                  value="above"
-                  class="radio-input"
-                  id="insertAbove"
-                >
-                <div class="radio-content" style="flex: 1;">
-                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
-                    <i class="fal fa-level-up-alt mr-2 text-webropol-primary-600"></i>
-                    Insert Above Current Question
+                </label>
+              </div>
+            </div>
+
+            <!-- Question-level options -->
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
+                Relative to selected question
+              </div>
+              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('above')">
+                  <input
+                    type="radio"
+                    name="insertionPoint"
+                    value="above"
+                    class="radio-input"
+                    id="insertAbove"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-level-up-alt mr-2 text-webropol-primary-600"></i>
+                      Insert above current question
+                    </div>
+                    <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately before the currently selected question.</p>
                   </div>
-                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately before the currently selected question</p>
-                </div>
-              </label>
-              <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('bottom')">
-                <input
-                  type="radio"
-                  name="insertionPoint"
-                  value="bottom"
-                  class="radio-input"
-                  id="insertBottom"
-                  checked
-                >
-                <div class="radio-content" style="flex: 1;">
-                  <div class="radio-title" style="font-size: 1rem; margin-bottom: 0.25rem;">
-                    <i class="fal fa-arrow-down mr-2 text-webropol-primary-600"></i>
-                    Insert at Bottom of Page
+                </label>
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setQuestionInsertionPoint('after')">
+                  <input
+                    type="radio"
+                    name="insertionPoint"
+                    value="after"
+                    class="radio-input"
+                    id="insertAfter"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-level-down-alt mr-2 text-webropol-primary-600"></i>
+                      Insert after current question
+                    </div>
+                    <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question immediately after the currently selected question.</p>
                   </div>
-                  <p style="font-size: 0.875rem; color: #64748b; margin: 0;">Add the new question at the end of the current page (default)</p>
-                </div>
-              </label>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -2799,16 +2814,44 @@
       font-size: 1.25rem;
       font-weight: 700;
       color: #334155;
-      margin-bottom: 0.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      margin: 0;
     }
 
     .modal-subtitle {
       font-size: 0.875rem;
       color: #64748b;
-      margin-left: calc(2.5rem + 0.75rem);
+    }
+
+    /* Question Mode header overrides */
+    .question-mode-header {
+      align-items: center;
+    }
+
+    .question-mode-title {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .question-mode-icon-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #d97706;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.12);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .question-mode-text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
     }
 
     .modal-close {
