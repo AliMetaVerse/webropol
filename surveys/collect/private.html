@@ -285,36 +285,31 @@
 								<div>
 									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Search
 										Field</label>
-									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm"
-										x-model="searchField">
-										<option value="firstName">Name</option>
-										<option value="email">Email</option>
-										<option value="department">Department</option>
-										<option value="role">Role</option>
-									</select>
+									<webropol-dropdown
+										:value="searchField"
+										@change="searchField = $event.detail.value"
+										options='[{"label":"Name","value":"firstName"},{"label":"Email","value":"email"},{"label":"Department","value":"department"},{"label":"Role","value":"role"}]'
+									></webropol-dropdown>
 								</div>
 
 								<div>
 									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Search
 										Type</label>
-									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm"
-										x-model="searchOp">
-										<option value="contains">Contains</option>
-										<option value="starts">Starts with</option>
-										<option value="exact">Exact match</option>
-									</select>
+									<webropol-dropdown
+										:value="searchOp"
+										@change="searchOp = $event.detail.value"
+										options='[{"label":"Contains","value":"contains"},{"label":"Starts with","value":"starts"},{"label":"Exact match","value":"exact"}]'
+									></webropol-dropdown>
 								</div>
 
 								<div>
 									<label class="block text-sm font-medium text-webropol-gray-700 mb-2">Results Per
 										Page</label>
-									<select class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm"
-										x-model.number="pageSize">
-										<option value="10">10 per page</option>
-										<option value="25">25 per page</option>
-										<option value="50">50 per page</option>
-										<option value="100">100 per page</option>
-									</select>
+									<webropol-dropdown
+										:value="pageSize"
+										@change="pageSize = $event.detail.value"
+										options='[{"label":"10 per page","value":10},{"label":"25 per page","value":25},{"label":"50 per page","value":50},{"label":"100 per page","value":100}]'
+									></webropol-dropdown>
 								</div>
 							</div>
 						</div>
@@ -618,15 +613,11 @@
 											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
 												Email Template <span class="text-red-500">*</span>
 											</label>
-											<select class="enterprise-input w-full px-4 py-3 rounded-lg"
-												x-model="form.template">
-												<option value="">Select a template...</option>
-												<option value="corporate">Corporate Standard</option>
-												<option value="nps">NPS Survey</option>
-												<option value="feedback">Feedback Request</option>
-												<option value="reminder">Follow-up Reminder</option>
-												<option value="custom">Custom Template</option>
-											</select>
+											<webropol-dropdown
+												:value="form.template"
+												@change="form.template = $event.detail.value"
+												options='[{"label":"Select a template...","value":""},{"label":"Corporate Standard","value":"corporate"},{"label":"NPS Survey","value":"nps"},{"label":"Feedback Request","value":"feedback"},{"label":"Follow-up Reminder","value":"reminder"},{"label":"Custom Template","value":"custom"}]'
+											></webropol-dropdown>
 											<p class="text-xs text-webropol-gray-500 mt-2">
 												<i class="fa-regular fa-info-circle mr-1"></i>
 												Choose your email template or start with the default.
@@ -662,12 +653,11 @@
 											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
 												From Address <span class="text-red-500">*</span>
 											</label>
-											<select class="enterprise-input w-full px-4 py-3 rounded-lg"
-												x-model="form.fromType" @change="updateFromAddress()">
-												<option value="noreply">No-Reply (Recommended)</option>
-												<option value="custom">Custom Address</option>
-												<option value="user">Your Email Address</option>
-											</select>
+											<webropol-dropdown
+												:value="form.fromType"
+												@change="form.fromType = $event.detail.value; updateFromAddress()"
+												options='[{"label":"No-Reply (Recommended)","value":"noreply"},{"label":"Custom Address","value":"custom"},{"label":"Your Email Address","value":"user"}]'
+											></webropol-dropdown>
 											<input x-show="form.fromType === 'custom'" type="email"
 												class="enterprise-input w-full px-4 py-3 rounded-lg mt-2"
 												placeholder="Enter custom email address" x-model="form.customFromEmail"
@@ -722,12 +712,11 @@
 											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
 												Priority Level
 											</label>
-											<select class="enterprise-input w-full px-4 py-3 rounded-lg"
-												x-model="form.priority">
-												<option value="normal">Normal Priority</option>
-												<option value="high">High Priority</option>
-												<option value="urgent">Urgent</option>
-											</select>
+											<webropol-dropdown
+												:value="form.priority"
+												@change="form.priority = $event.detail.value"
+												options='[{"label":"Normal Priority","value":"normal"},{"label":"High Priority","value":"high"},{"label":"Urgent","value":"urgent"}]'
+											></webropol-dropdown>
 											<p class="text-xs text-webropol-gray-500 mt-2">
 												High priority may be filtered by email clients
 											</p>
@@ -743,12 +732,11 @@
 											<label class="block text-sm font-medium text-webropol-gray-700 mb-2">
 												Send Rate Limit
 											</label>
-											<select class="enterprise-input w-full px-4 py-3 rounded-lg"
-												x-model="form.rateLimit">
-												<option value="normal">Normal (100/hour)</option>
-												<option value="fast">Fast (500/hour)</option>
-												<option value="slow">Slow (50/hour)</option>
-											</select>
+											<webropol-dropdown
+												:value="form.rateLimit"
+												@change="form.rateLimit = $event.detail.value"
+												options='[{"label":"Normal (100/hour)","value":"normal"},{"label":"Fast (500/hour)","value":"fast"},{"label":"Slow (50/hour)","value":"slow"}]'
+											></webropol-dropdown>
 										</div>
 
 										<div>

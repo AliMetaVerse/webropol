@@ -13,6 +13,7 @@
   <link href="../design-system/styles/animations.css" rel="stylesheet">
   <script type="module" src="../design-system/components/navigation/Header.js"></script>
   <script type="module" src="../design-system/components/navigation/Breadcrumbs.js"></script>
+  <script type="module" src="../design-system/components/forms/Dropdown.js"></script>
   <script type="module" src="../design-system/utils/global-settings-manager.js"></script>
   <script type="module" src="./shop-sidebar.js"></script>
   <style>
@@ -49,13 +50,10 @@
                   <div class="text-xs text-slate-500 mt-1">Prices exclude VAT</div>
                   <hr class="my-5" />
                   <label class="block text-sm font-medium text-slate-700 mb-1" for="companySize">Company size</label>
-                  <select id="companySize" class="w-full rounded-lg border-slate-300 focus:border-primary-500 focus:ring-primary-500">
-                    <option value="1-10">1–10</option>
-                    <option value="11-50">11–50</option>
-                    <option value="51-200">51–200</option>
-                    <option value="201-1000">201–1000</option>
-                    <option value=">1000">1000+</option>
-                  </select>
+                  <webropol-dropdown
+                    id="companySize"
+                    options='[{"label":"1–10","value":"1-10"},{"label":"11–50","value":"11-50"},{"label":"51–200","value":"51-200"},{"label":"201–1000","value":"201-1000"},{"label":"1000+","value":">1000"}]'
+                  ></webropol-dropdown>
                   <button class="mt-4 w-full bg-gradient-to-r from-primary-600 to-primary-500 text-white font-medium py-3 rounded-lg hover:shadow-lg">Add to order</button>
                 </div>
                 <div class="bg-primary-50 border border-primary-100 text-primary-800 rounded-2xl p-4 text-sm">
@@ -75,12 +73,12 @@
     (function() {
       try {
         const key = 'webropol_company_size';
-        const select = document.getElementById('companySize');
+        const dropdown = document.getElementById('companySize');
         const stored = localStorage.getItem(key);
-        if (stored && select.querySelector(`option[value="${stored}"]`)) {
-          select.value = stored;
+        if (stored) {
+          dropdown.setAttribute('value', stored);
         }
-        select.addEventListener('change', () => localStorage.setItem(key, select.value));
+        dropdown.addEventListener('change', (e) => localStorage.setItem(key, e.detail.value));
       } catch (_) {}
     })();
 
