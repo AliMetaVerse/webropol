@@ -19,6 +19,7 @@
 	<script src="../../design-system/components/buttons/Button.js" type="module"></script>
 	<script src="../../design-system/components/feedback/Badge.js" type="module"></script>
 	<script src="../../design-system/components/modals/Modal.js" type="module"></script>
+	<script src="../../design-system/components/forms/Dropdown.js" type="module"></script>
 
 	<script>
 		tailwind.config = {
@@ -250,16 +251,13 @@
 											class="w-full pl-10 pr-4 py-2 border border-webropol-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500"
 											x-model="searchText" @input.debounce.300ms="performSearch()" />
 									</div>
-									<select
-										class="px-3 py-2 border border-webropol-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-webropol-primary-500"
-										x-model="statusFilter">
-										<option value="">All Recipients</option>
-										<option value="responded">Responded</option>
-										<option value="sent">Sent</option>
-										<option value="unsent">Not Sent</option>
-										<option value="valid">Valid Email</option>
-										<option value="invalid">Invalid Email</option>
-									</select>
+									<div class="w-48">
+										<webropol-dropdown
+											:value="statusFilter"
+											@change="statusFilter = $event.detail.value"
+											options='[{"label":"All Recipients","value":""},{"label":"Responded","value":"responded"},{"label":"Sent","value":"sent"},{"label":"Not Sent","value":"unsent"},{"label":"Valid Email","value":"valid"},{"label":"Invalid Email","value":"invalid"}]'
+										></webropol-dropdown>
+									</div>
 								</div>
 								<div class="flex items-center gap-2">
 									<button @click="showAdvanced = !showAdvanced"

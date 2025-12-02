@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="../../design-system/components/forms/Dropdown.js" type="module"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -262,15 +263,12 @@
                                     </button>
                                 </div> <!-- Language Selection -->
                                 <div class="relative mb-4">
-                                    <select x-model="selectedLanguage"
+                                    <webropol-dropdown
+                                        :value="selectedLanguage"
+                                        @change="selectedLanguage = $event.detail.value"
                                         :disabled="currentView === 'questions'"
-                                        :title="currentView === 'questions' ? 'Language for Questions is not supported' : ''"
-                                        class="w-full px-4 py-3 pr-10 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all appearance-none text-sm font-medium">
-                                        <option value="en">English</option>
-                                        <option value="fi">Finnish</option>
-                                    </select>
-                                    <i
-                                        class="fal fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 pointer-events-none"></i>
+                                        options='[{"label":"English","value":"en"},{"label":"Finnish","value":"fi"}]'
+                                    ></webropol-dropdown>
                                 </div>
 
                                 <div class="relative mb-6">
