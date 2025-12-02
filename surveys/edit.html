@@ -2633,6 +2633,129 @@
     </div>
   </div>
 
+  <!-- Copy Question Modal -->
+  <div id="copyQuestionModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 660px;">
+      <div class="modal-header question-mode-header">
+        <div class="modal-title-section question-mode-title" style="justify-content: flex-start;">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 shadow-sm text-lg flex-shrink-0">
+            <i class="fal fa-copy"></i>
+          </div>
+          <div class="question-mode-text">
+            <h2 class="modal-title">Copy Question</h2>
+            <p class="modal-subtitle">Choose where to insert the copy</p>
+          </div>
+        </div>
+        <button class="modal-close w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all" onclick="closeCopyQuestionModal()" aria-label="Close modal">
+          <i class="fal fa-times text-lg"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3 class="section-title">
+            <i class="fal fa-location-arrow"></i>
+            Insertion Point
+          </h3>
+          <div class="form-group">
+            <!-- Page-level options -->
+            <div style="margin-bottom: 1.25rem;">
+              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
+                Page position
+              </div>
+              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('top')">
+                  <input
+                    type="radio"
+                    name="copyInsertionPoint"
+                    value="top"
+                    class="radio-input"
+                    id="copyInsertTop"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-arrow-up mr-2 text-webropol-primary-600"></i>
+                      Insert at top of page
+                    </div>
+                  </div>
+                </label>
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('bottom')">
+                  <input
+                    type="radio"
+                    name="copyInsertionPoint"
+                    value="bottom"
+                    class="radio-input"
+                    id="copyInsertBottom"
+                    checked
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-arrow-down mr-2 text-webropol-primary-600"></i>
+                      Insert at bottom of page (default)
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Question-level options -->
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
+                Relative to selected question
+              </div>
+              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('above')">
+                  <input
+                    type="radio"
+                    name="copyInsertionPoint"
+                    value="above"
+                    class="radio-input"
+                    id="copyInsertAbove"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-level-up-alt mr-2 text-webropol-primary-600"></i>
+                      Insert above current question
+                    </div>
+                  </div>
+                </label>
+                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('after')">
+                  <input
+                    type="radio"
+                    name="copyInsertionPoint"
+                    value="after"
+                    class="radio-input"
+                    id="copyInsertAfter"
+                  >
+                  <div class="radio-content" style="flex: 1;">
+                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
+                      <i class="fal fa-level-down-alt mr-2 text-webropol-primary-600"></i>
+                      Insert after current question
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="flex items-center justify-between w-full">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="rememberCopyChoice" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
+            <span class="text-sm text-webropol-gray-700">Remember my choice</span>
+          </label>
+          <div class="footer-actions">
+            <button class="btn btn-secondary" onclick="closeCopyQuestionModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="confirmCopyQuestion()">
+              <i class="fal fa-check"></i>
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <style>
     /* Modal Styles */
     .modal-overlay {
@@ -5588,6 +5711,63 @@
 
     // REMOVED: closeAddQuestionModal() function has been removed
 
+    // Copy Question Modal Functions
+    let currentCopyQuestionId = null;
+    let currentCopyInsertionPoint = 'bottom';
+
+    function openCopyQuestionModal(questionId) {
+      currentCopyQuestionId = questionId;
+      const modal = document.getElementById('copyQuestionModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
+      
+      // Load saved preference
+      const savedPosition = localStorage.getItem('questionInsertionPoint') || 'bottom';
+      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
+      
+      // Set default state
+      currentCopyInsertionPoint = savedPosition;
+      
+      // Update UI
+      const radios = document.getElementsByName('copyInsertionPoint');
+      radios.forEach(radio => {
+        if (radio.value === savedPosition) radio.checked = true;
+      });
+      
+      const rememberCheckbox = document.getElementById('rememberCopyChoice');
+      if (rememberCheckbox) rememberCheckbox.checked = rememberChoice;
+    }
+
+    function closeCopyQuestionModal() {
+      const modal = document.getElementById('copyQuestionModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
+    }
+
+    function setCopyInsertionPoint(point) {
+      currentCopyInsertionPoint = point;
+      // Update radio button
+      const radios = document.getElementsByName('copyInsertionPoint');
+      radios.forEach(radio => {
+        if (radio.value === point) radio.checked = true;
+      });
+    }
+
+    function confirmCopyQuestion() {
+      const rememberCheckbox = document.getElementById('rememberCopyChoice');
+      if (rememberCheckbox && rememberCheckbox.checked) {
+        localStorage.setItem('rememberInsertionChoice', 'true');
+        localStorage.setItem('questionInsertionPoint', currentCopyInsertionPoint);
+      } else {
+        localStorage.setItem('rememberInsertionChoice', 'false');
+      }
+      
+      performQuestionCopy(currentCopyQuestionId, currentCopyInsertionPoint);
+      closeCopyQuestionModal();
+    }
+
     // Question Mode Modal Functions
     let currentQuestionIdForCopy = null;
 
@@ -5763,7 +5943,7 @@
         }, 3000);
       } else {
         // Show modal to choose insertion point
-        openQuestionModeModal(questionId);
+        openCopyQuestionModal(questionId);
       }
     }
 
