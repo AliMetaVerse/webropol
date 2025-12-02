@@ -89,48 +89,44 @@ export class WebropolAIAssistant extends BaseComponent {
           <!-- Conversation Area -->
           <div class="ai-conversation flex-1 overflow-y-auto px-6 py-4 space-y-4">
             
-            <!-- Welcome Message -->
-            <div class="ai-message-group">
-              <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center flex-shrink-0">
-                  <i class="fal fa-sparkles text-white"></i>
+            <!-- Welcome Container -->
+            <div class="ai-welcome-container bg-[#F8F5FF] rounded-3xl p-6 border border-purple-100">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-500/20">
+                        <i class="fal fa-sparkles text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">Welcome to Webropol AI Assistant!</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">Ask anything about the Webropol system, such as features and modules. Get guidance, instructions and tips on how to proceed with your tasks.</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                  <div class="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-2xl rounded-tl-none px-4 py-3 border border-purple-100">
-                    <h3 class="font-semibold text-webropol-gray-900 mb-1">Welcome to Webropol AI Assistant!</h3>
-                    <p class="text-sm text-webropol-gray-600 leading-relaxed">Ask anything about the Webropol system, such as features and modules. Get guidance, instructions and tips on how to proceed with your tasks.</p>
-                  </div>
+
+                <div class="flex justify-end mb-3">
+                    <button class="ai-random-btn inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium text-sm transition-colors group">
+                        <i class="fal fa-shuffle group-hover:rotate-180 transition-transform"></i>
+                        Random
+                    </button>
                 </div>
-              </div>
-            </div>
 
-            <!-- Random Button -->
-            <div class="flex justify-end">
-              <button class="ai-random-btn inline-flex items-center gap-2 px-4 py-2 bg-white border border-purple-200 hover:border-purple-300 rounded-xl text-purple-600 hover:text-purple-700 font-medium text-sm transition-all hover:shadow-md group">
-                <i class="fal fa-shuffle group-hover:rotate-180 transition-transform"></i>
-                Random
-              </button>
-            </div>
-
-            <!-- Suggestion Cards -->
-            <div class="space-y-3">
-              ${[
-                { icon: 'fa-file-lines', text: 'Where can I get templates for my staff engagement survey?' },
-                { icon: 'fa-language', text: 'How to add more languages to a survey?' },
-                { icon: 'fa-download', text: 'How to import surveys from the library with different languages?' },
-                { icon: 'fa-calendar', text: 'Is there a way to create event invitations?' }
-              ].map((q, index) => `
-                <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-white hover:bg-gradient-to-r hover:from-purple-50 hover:to-fuchsia-50 border border-webropol-gray-200 hover:border-purple-300 rounded-xl transition-all group" data-question="${q.text}">
-                  <div class="flex items-center gap-3">
-                    <i class="fal ${q.icon} text-purple-600 text-lg"></i>
-                    <p class="text-sm font-medium text-webropol-gray-700 group-hover:text-purple-700 flex-1">${q.text}</p>
-                  </div>
-                </button>
-              `).join('')}
+                <div class="space-y-3">
+                    ${[
+                        { icon: 'fa-comment-dots', text: 'Where can I get templates for my staff engagement survey?' },
+                        { icon: 'fa-comment-dots', text: 'How to add more languages to a survey?' },
+                        { icon: 'fa-comment-dots', text: 'How to import surveys from the library with different languages?' },
+                        { icon: 'fa-comment-dots', text: 'Is there a way to create event invitations?' }
+                    ].map((q, index) => `
+                        <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-white hover:bg-white border border-purple-100 hover:border-purple-300 rounded-2xl transition-all group shadow-sm hover:shadow-md" data-question="${q.text}">
+                            <div class="flex items-center gap-3">
+                                <i class="fal ${q.icon} text-purple-500 text-lg"></i>
+                                <p class="text-sm font-medium text-gray-700 group-hover:text-purple-700 flex-1">${q.text}</p>
+                            </div>
+                        </button>
+                    `).join('')}
+                </div>
             </div>
 
             <!-- Messages container for conversation -->
-            <div class="ai-messages-container"></div>
+            <div class="ai-messages-container space-y-4"></div>
 
           </div>
 
@@ -203,12 +199,9 @@ export class WebropolAIAssistant extends BaseComponent {
     const input = this.querySelector('.ai-input-field');
     if (input) input.value = '';
     
-    // Show suggestions again
-    const suggestionsContainer = this.querySelector('.space-y-3');
-    if (suggestionsContainer) suggestionsContainer.style.display = 'block';
-    
-    const randomBtnContainer = this.querySelector('.ai-random-btn')?.parentElement;
-    if (randomBtnContainer) randomBtnContainer.style.display = 'flex';
+    // Show welcome container
+    const welcomeContainer = this.querySelector('.ai-welcome-container');
+    if (welcomeContainer) welcomeContainer.style.display = 'block';
   }
 
   handleRandom() {
@@ -233,12 +226,9 @@ export class WebropolAIAssistant extends BaseComponent {
     const question = input.value.trim();
     const messagesContainer = this.querySelector('.ai-messages-container');
     
-    // Hide suggestions after first message
-    const suggestionsContainer = this.querySelector('.space-y-3');
-    if (suggestionsContainer) suggestionsContainer.style.display = 'none';
-    
-    const randomBtnContainer = this.querySelector('.ai-random-btn')?.parentElement;
-    if (randomBtnContainer) randomBtnContainer.style.display = 'none';
+    // Hide welcome container
+    const welcomeContainer = this.querySelector('.ai-welcome-container');
+    if (welcomeContainer) welcomeContainer.style.display = 'none';
     
     // Add user message
     if (messagesContainer) {
