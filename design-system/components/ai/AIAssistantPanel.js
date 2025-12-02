@@ -115,7 +115,7 @@ export class WebropolAIAssistant extends BaseComponent {
                         { icon: 'fa-comment-dots', text: 'How to import surveys from the library with different languages?' },
                         { icon: 'fa-comment-dots', text: 'Is there a way to create event invitations?' }
                     ].map((q, index) => `
-                        <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-white hover:bg-white border border-purple-100 hover:border-purple-300 rounded-2xl transition-all group shadow-sm hover:shadow-md" data-question="${q.text}">
+                        <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-gradient-to-r from-purple-50/50 to-white hover:from-purple-100/50 hover:to-white border border-purple-100 hover:border-purple-300 rounded-2xl transition-all group shadow-sm hover:shadow-md" data-question="${q.text}">
                             <div class="flex items-center gap-3">
                                 <i class="fal ${q.icon} text-purple-500 text-lg"></i>
                                 <p class="text-sm font-medium text-gray-700 group-hover:text-purple-700 flex-1">${q.text}</p>
