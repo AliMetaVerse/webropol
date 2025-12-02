@@ -38,6 +38,7 @@
   <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
   <script src="../design-system/components/forms/Dropdown.js" type="module"></script>
+  <script src="../design-system/components/forms/Input.js" type="module"></script>
   <script src="../design-system/components/tabs/unified-tabs.js" type="module"></script>
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <style>
@@ -100,14 +101,12 @@
             <div class="bg-white rounded-xl border border-webropol-gray-200 p-6 shadow-sm">
               <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                  <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <i class="fal fa-search text-webropol-gray-400"></i>
-                    </div>
-                    <input x-model.trim.debounce.300ms="filters.query" type="text" 
-                           class="block w-full pl-10 pr-3 py-2.5 border border-webropol-gray-300 rounded-lg leading-5 bg-white placeholder-webropol-gray-500 focus:outline-none focus:placeholder-webropol-gray-400 focus:ring-1 focus:ring-webropol-primary-500 focus:border-webropol-primary-500"
-                           placeholder="Search team members...">
-                  </div>
+                  <webropol-input
+                    icon="search"
+                    placeholder="Search team members..."
+                    :value="filters.query"
+                    @webropol-input-change.debounce.300ms="filters.query = $event.detail.value"
+                  ></webropol-input>
                 </div>
                 <div class="flex items-center gap-3">
                   <webropol-dropdown
