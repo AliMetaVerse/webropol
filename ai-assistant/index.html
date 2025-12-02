@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant - Webropol</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Pro -->
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <!-- Tailwind config with Webropol tokens -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd',
+              100: '#d5f4f8',
+              200: '#b0e8f1',
+              300: '#79d6e7',
+              400: '#3fbcd5',
+              500: '#209fba',
+              600: '#1d809d',
+              700: '#1e6880',
+              800: '#215669',
+              900: '#204859',
+              950: '#102e3c'
+            },
+            'webropol-gray': {
+              0: '#ffffff',
+              50: '#f9fafa',
+              100: '#f3f4f4',
+              200: '#e6e7e8',
+              300: '#d1d5d6',
+              400: '#b5bbbd',
+              500: '#9ba2a4',
+              600: '#787f81',
+              700: '#61686a',
+              800: '#515557',
+              900: '#45484a',
+              950: '#272a2b'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Inter font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Design system components -->
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/ai/AIAssistantPanel.js" type="module"></script>
+</head>
+<body x-data="aiAssistantApp()">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <webropol-sidebar active="home" base="../"></webropol-sidebar>
+    
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <webropol-header 
+        username="Ali Al-Zuhairi" 
+        show-notifications 
+        show-help 
+        show-user-menu 
+        show-theme-selector
+      ></webropol-header>
+      
+      <!-- Breadcrumbs -->
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs 
+          trail='[{"label":"Home","url":"../index.html"},{"label":"AI Assistant","url":"./index.html"}]'
+        ></webropol-breadcrumbs>
+      </div>
+      
+      <!-- Page Content -->
+      <main class="flex-1 overflow-y-auto px-6 py-12 bg-gradient-to-br from-purple-50/30 via-fuchsia-50/20 to-sky-50/30" role="main">
+        <div class="max-w-5xl mx-auto">
+          
+          <!-- Page Title -->
+          <div class="mb-8">
+            <h1 class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-sky-500 bg-clip-text text-transparent mb-4">
+              AI Assistant
+            </h1>
+            <p class="text-lg text-webropol-gray-600">
+              Your intelligent helper for navigating the Webropol platform. Get instant answers, guidance, and tips.
+            </p>
+          </div>
+
+          <!-- Demo Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            
+            <!-- Features Card -->
+            <div class="bg-white rounded-2xl shadow-soft p-6 border border-webropol-gray-100">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center mb-4">
+                <i class="fal fa-sparkles text-white text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">Features</h3>
+              <ul class="space-y-2">
+                <li class="flex items-start gap-2">
+                  <i class="fal fa-check text-purple-600 mt-1"></i>
+                  <span class="text-sm text-webropol-gray-600">Context-aware assistance based on your current module</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fal fa-check text-purple-600 mt-1"></i>
+                  <span class="text-sm text-webropol-gray-600">Intelligent question suggestions</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fal fa-check text-purple-600 mt-1"></i>
+                  <span class="text-sm text-webropol-gray-600">Real-time chat conversation</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fal fa-check text-purple-600 mt-1"></i>
+                  <span class="text-sm text-webropol-gray-600">Multi-segment support (Surveys, Events, SMS, etc.)</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- How to Use Card -->
+            <div class="bg-white rounded-2xl shadow-soft p-6 border border-webropol-gray-100">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-cyan-500 flex items-center justify-center mb-4">
+                <i class="fal fa-lightbulb text-white text-2xl"></i>
+              </div>
+              <h3 class="text-xl font-bold text-webropol-gray-900 mb-3">How to Use</h3>
+              <ol class="space-y-2">
+                <li class="flex items-start gap-3">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">1</span>
+                  <span class="text-sm text-webropol-gray-600">Click the AI Assistant button in the header</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">2</span>
+                  <span class="text-sm text-webropol-gray-600">Select your segment for precise help</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">3</span>
+                  <span class="text-sm text-webropol-gray-600">Choose a suggestion or type your question</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">4</span>
+                  <span class="text-sm text-webropol-gray-600">Get instant, helpful responses</span>
+                </li>
+              </ol>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button 
+              @click="openAIAssistant()"
+              class="px-6 py-4 bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-sky-400 hover:from-indigo-600 hover:via-fuchsia-600 hover:to-sky-500 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all flex items-center justify-center gap-3 group"
+            >
+              <i class="fal fa-sparkles text-xl group-hover:rotate-12 transition-transform"></i>
+              <span>Open AI Assistant</span>
+            </button>
+
+            <button 
+              @click="toggleSettings()"
+              class="px-6 py-4 bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 font-semibold rounded-2xl shadow-md hover:shadow-lg border border-webropol-gray-200 transition-all flex items-center justify-center gap-3"
+            >
+              <i class="fal fa-cog"></i>
+              <span>Settings</span>
+            </button>
+          </div>
+
+          <!-- Settings Panel -->
+          <div x-show="showSettings" x-transition class="mt-6 bg-white rounded-2xl shadow-soft p-6 border border-webropol-gray-100">
+            <h3 class="text-lg font-bold text-webropol-gray-900 mb-4">AI Assistant Settings</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-4 bg-webropol-gray-50 rounded-xl">
+                <div>
+                  <label class="text-sm font-semibold text-webropol-gray-900">Enable AI Assistant in App</label>
+                  <p class="text-xs text-webropol-gray-600 mt-1">Show AI Assistant button in the header</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" x-model="enabledInApp" @change="saveSettings()" class="sr-only peer">
+                  <div class="w-11 h-6 bg-webropol-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-webropol-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+              
+              <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <p class="text-sm text-blue-700">
+                  <i class="fal fa-info-circle mr-2"></i>
+                  Settings are stored locally in your browser and can also be controlled from the Control Panel.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- AI Assistant Panel (will be created dynamically) -->
+  
+  <script>
+    function aiAssistantApp() {
+      return {
+        showSettings: false,
+        enabledInApp: true,
+        
+        init() {
+          this.loadSettings();
+          this.updateGlobalSettings();
+        },
+        
+        loadSettings() {
+          try {
+            const settings = JSON.parse(localStorage.getItem('webropol_ai_assistant_settings') || '{}');
+            this.enabledInApp = settings.enabledInApp !== false;
+          } catch (e) {
+            console.error('Error loading AI Assistant settings:', e);
+          }
+        },
+        
+        saveSettings() {
+          try {
+            const settings = {
+              enabledInApp: this.enabledInApp,
+              enabledFromSettings: true
+            };
+            localStorage.setItem('webropol_ai_assistant_settings', JSON.stringify(settings));
+            this.updateGlobalSettings();
+            
+            // Trigger header re-render
+            window.dispatchEvent(new CustomEvent('webropol-settings-applied'));
+          } catch (e) {
+            console.error('Error saving AI Assistant settings:', e);
+          }
+        },
+        
+        updateGlobalSettings() {
+          // Update global settings manager if available
+          if (window.globalSettingsManager) {
+            const settings = {
+              enabledInApp: this.enabledInApp,
+              enabledFromSettings: true
+            };
+            window.globalSettingsManager.setSetting('aiAssistant', settings);
+          }
+        },
+        
+        toggleSettings() {
+          this.showSettings = !this.showSettings;
+        },
+        
+        async openAIAssistant() {
+          // Ensure component is loaded
+          if (!customElements.get('webropol-ai-assistant')) {
+            try {
+              await import('../design-system/components/ai/AIAssistantPanel.js');
+            } catch (e) {
+              console.error('Error loading AI Assistant component:', e);
+              return;
+            }
+          }
+          
+          // Create or get panel
+          let panel = document.querySelector('webropol-ai-assistant');
+          if (!panel) {
+            panel = document.createElement('webropol-ai-assistant');
+            document.body.appendChild(panel);
+          }
+          
+          // Open panel
+          if (typeof panel.open === 'function') {
+            panel.open();
+          } else {
+            panel.setAttribute('open', '');
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>

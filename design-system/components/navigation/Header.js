@@ -223,21 +223,24 @@ export class WebropolHeader extends BaseComponent {
       e.stopPropagation();
       // Ensure component is defined
       if (!customElements.get('webropol-ai-assistant')) {
-        try { await import('../ai/AIAssistantPanel.js'); } catch {}
+        try { 
+          await import('../ai/AIAssistantPanel.js'); 
+        } catch (err) {
+          console.error('Failed to load AI Assistant:', err);
+          return;
+        }
       }
       let panel = document.querySelector('webropol-ai-assistant');
       if (!panel) {
         panel = document.createElement('webropol-ai-assistant');
         document.body.appendChild(panel);
       }
-      // Set top/height dynamically to match header height if available
-      try {
-        const headerEl = this.querySelector('header');
-        const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 80;
-        panel.style.top = `${headerHeight}px`;
-        panel.style.height = `calc(100% - ${headerHeight}px)`;
-      } catch {}
-      if (typeof panel.open === 'function') panel.open(); else panel.setAttribute('open','');
+      // Open panel using the open method
+      if (typeof panel.open === 'function') {
+        panel.open();
+      } else {
+        panel.setAttribute('open','');
+      }
     });
   }
 
