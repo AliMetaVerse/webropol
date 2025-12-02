@@ -115,12 +115,12 @@ export class WebropolAIAssistant extends BaseComponent {
             <!-- Suggestion Cards -->
             <div class="space-y-3">
               ${[
-                { icon: 'fa-file-lines', text: 'Where can I get templates for my staff engagement survey?', hovered: true },
-                { icon: 'fa-language', text: 'How to add more languages to a survey?', hovered: false },
-                { icon: 'fa-download', text: 'How to import surveys from the library with different languages?', hovered: false },
-                { icon: 'fa-calendar', text: 'Is there a way to create event invitations?', hovered: false }
+                { icon: 'fa-file-lines', text: 'Where can I get templates for my staff engagement survey?' },
+                { icon: 'fa-language', text: 'How to add more languages to a survey?' },
+                { icon: 'fa-download', text: 'How to import surveys from the library with different languages?' },
+                { icon: 'fa-calendar', text: 'Is there a way to create event invitations?' }
               ].map((q, index) => `
-                <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-white hover:bg-gradient-to-r hover:from-purple-50 hover:to-fuchsia-50 border border-webropol-gray-200 hover:border-purple-300 rounded-xl transition-all group ${q.hovered ? 'bg-gradient-to-r from-purple-50 to-fuchsia-50 border-purple-300' : ''}" data-question="${q.text}">
+                <button class="ai-suggestion-card w-full text-left px-4 py-3 bg-white hover:bg-gradient-to-r hover:from-purple-50 hover:to-fuchsia-50 border border-webropol-gray-200 hover:border-purple-300 rounded-xl transition-all group" data-question="${q.text}">
                   <div class="flex items-center gap-3">
                     <i class="fal ${q.icon} text-purple-600 text-lg"></i>
                     <p class="text-sm font-medium text-webropol-gray-700 group-hover:text-purple-700 flex-1">${q.text}</p>
