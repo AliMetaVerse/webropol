@@ -48,9 +48,9 @@ export class WebropolAIAssistant extends BaseComponent {
       <!-- Side Panel -->
       <aside class="ai-assistant-panel fixed right-0 w-[474px] max-w-[90vw] bg-white shadow-2xl z-[100003] ${isOpen ? 'translate-x-0' : 'translate-x-full'}" style="will-change: transform; transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); top: 0; height: 100vh;">
         <!-- Header with gradient -->
-        <header class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-sky-400 relative overflow-hidden">
+        <header class="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-purple-600 via-blue-500 to-cyan-400 relative overflow-hidden">
           <!-- Animated gradient overlay -->
-          <div class="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-fuchsia-600/20 to-cyan-500/20 animate-pulse"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-purple-700/20 via-blue-600/20 to-cyan-500/20 animate-pulse"></div>
           
           <div class="flex items-center space-x-3 text-white relative z-10">
             <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -92,7 +92,7 @@ export class WebropolAIAssistant extends BaseComponent {
             <!-- Welcome Message -->
             <div class="ai-message-group">
               <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center flex-shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center flex-shrink-0">
                   <i class="fal fa-sparkles text-white"></i>
                 </div>
                 <div class="flex-1">
@@ -137,7 +137,7 @@ export class WebropolAIAssistant extends BaseComponent {
           <!-- Input Area -->
           <div class="ai-input-area border-t border-webropol-gray-200 bg-white px-6 py-4">
             <!-- Start New Chat Button -->
-            <button class="ai-new-chat-btn w-full mb-3 px-4 py-3 bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-sky-400 hover:from-indigo-600 hover:via-fuchsia-600 hover:to-sky-500 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+            <button class="ai-new-chat-btn w-full mb-3 px-4 py-3 bg-gradient-to-r from-purple-600 via-blue-500 to-cyan-400 hover:from-purple-700 hover:via-blue-600 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
               <i class="fal fa-comment-plus"></i>
               <span>Start a new chat</span>
             </button>
@@ -149,7 +149,7 @@ export class WebropolAIAssistant extends BaseComponent {
                 placeholder="Type in your question..." 
                 aria-label="AI Assistant question input"
               />
-              <button class="ai-send-btn absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-gradient-to-r from-indigo-500 to-fuchsia-500 hover:from-indigo-600 hover:to-fuchsia-600 text-white flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Send message">
+              <button class="ai-send-btn absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Send message">
                 <i class="fal fa-paper-plane"></i>
               </button>
             </div>
@@ -245,7 +245,7 @@ export class WebropolAIAssistant extends BaseComponent {
       const userMessage = document.createElement('div');
       userMessage.className = 'ai-message-group flex justify-end';
       userMessage.innerHTML = `
-        <div class="max-w-[80%] bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white rounded-2xl rounded-tr-none px-4 py-3">
+        <div class="max-w-[80%] bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-2xl rounded-tr-none px-4 py-3">
           <p class="text-sm">${this.escapeHtml(question)}</p>
         </div>
       `;
@@ -257,7 +257,7 @@ export class WebropolAIAssistant extends BaseComponent {
         aiMessage.className = 'ai-message-group';
         aiMessage.innerHTML = `
           <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-500 flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center flex-shrink-0">
               <i class="fal fa-sparkles text-white"></i>
             </div>
             <div class="flex-1">
