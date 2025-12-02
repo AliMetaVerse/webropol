@@ -73,16 +73,22 @@ export class WebropolAIAssistant extends BaseComponent {
           <!-- Segment Selector -->
           <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-purple-50/50 to-transparent">
             <label class="block text-sm text-webropol-gray-600 mb-2 font-medium">For more precise interaction, please select a segment.</label>
-            <div class="relative">
-              <select class="ai-segment-selector w-full px-4 py-3 pr-10 bg-white border border-webropol-gray-200 rounded-xl text-webropol-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all appearance-none cursor-pointer">
-                <option value="all">All segments</option>
-                <option value="surveys">Surveys</option>
-                <option value="events">Events</option>
-                <option value="dashboards">Dashboards</option>
-                <option value="sms">SMS</option>
-                <option value="admin">Admin Tools</option>
-              </select>
-              <i class="fal fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none"></i>
+            <div class="relative ai-custom-select" data-value="all">
+              <button type="button" class="ai-select-trigger w-full px-4 py-3 bg-white border border-webropol-gray-200 rounded-xl text-webropol-gray-700 font-medium flex items-center justify-between hover:border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all group">
+                <span class="selected-text">All segments</span>
+                <i class="fal fa-chevron-down text-webropol-gray-400 group-hover:text-purple-500 transition-transform duration-200"></i>
+              </button>
+              
+              <div class="ai-select-options absolute top-full left-0 right-0 mt-2 bg-white border border-webropol-gray-100 rounded-xl shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50 overflow-hidden">
+                <div class="p-1">
+                  ${['All segments', 'Surveys', 'Events', 'Dashboards', 'SMS', 'Admin Tools'].map(opt => `
+                    <button type="button" class="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-webropol-gray-600 hover:bg-purple-50 hover:text-purple-700 transition-colors flex items-center justify-between group ${opt === 'All segments' ? 'bg-purple-50 text-purple-700 selected' : ''}" data-value="${opt}">
+                      ${opt}
+                      <i class="fal fa-check text-purple-600 ${opt === 'All segments' ? '' : 'opacity-0'} group-[.selected]:opacity-100 transition-opacity"></i>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -182,6 +188,64 @@ export class WebropolAIAssistant extends BaseComponent {
         this.handleSend();
       };
     });
+
+    // Custom Select Logic
+    const selectContainer = this.querySelector('.ai-custom-select');
+    const selectTrigger = this.querySelector('.ai-select-trigger');
+    const selectOptions = this.querySelector('.ai-select-options');
+    const options = this.querySelectorAll('.ai-select-options button');
+
+    if (selectTrigger && selectOptions) {
+        const closeSelect = () => {
+            selectOptions.classList.add('invisible', 'opacity-0', '-translate-y-2');
+            selectTrigger.classList.remove('border-purple-500', 'ring-2', 'ring-purple-500/20');
+            selectTrigger.querySelector('.fa-chevron-down').classList.remove('rotate-180');
+        };
+
+        selectTrigger.onclick = (e) => {
+            e.stopPropagation();
+            const isOpen = !selectOptions.classList.contains('invisible');
+            if (isOpen) {
+                closeSelect();
+            } else {
+                selectOptions.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+                selectTrigger.classList.add('border-purple-500', 'ring-2', 'ring-purple-500/20');
+                selectTrigger.querySelector('.fa-chevron-down').classList.add('rotate-180');
+            }
+        };
+
+        options.forEach(opt => {
+            opt.onclick = (e) => {
+                e.stopPropagation();
+                const text = opt.innerText.trim();
+                
+                // Update trigger
+                selectTrigger.querySelector('.selected-text').textContent = text;
+                
+                // Update selected state
+                options.forEach(o => {
+                    o.classList.remove('bg-purple-50', 'text-purple-700', 'selected');
+                    o.querySelector('.fa-check').classList.add('opacity-0');
+                });
+                
+                opt.classList.add('bg-purple-50', 'text-purple-700', 'selected');
+                opt.querySelector('.fa-check').classList.remove('opacity-0');
+                
+                closeSelect();
+            };
+        });
+
+        // Handle click outside
+        if (this._clickOutsideHandler) {
+            document.removeEventListener('click', this._clickOutsideHandler);
+        }
+        this._clickOutsideHandler = (e) => {
+            if (selectContainer && !selectContainer.contains(e.target)) {
+                closeSelect();
+            }
+        };
+        document.addEventListener('click', this._clickOutsideHandler);
+    }
 
     document.removeEventListener('keydown', this.handleKey);
     if (isOpen) {
@@ -303,6 +367,9 @@ export class WebropolAIAssistant extends BaseComponent {
 
   disconnectedCallback() {
     document.removeEventListener('keydown', this.handleKey);
+    if (this._clickOutsideHandler) {
+        document.removeEventListener('click', this._clickOutsideHandler);
+    }
     document.body.style.overflow = '';
   }
 }
