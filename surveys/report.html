@@ -336,8 +336,15 @@
                      x-transition:leave-start="opacity-1 scale-100"
                      x-transition:leave-end="opacity-0 scale-95"
                      class="absolute right-0 mt-2 z-50"
-                     style="display: none;">
+                     style="display: none;"
+                     @item-click.window="
+                       if ($event.detail.id === 'combine') {
+                         combineReportsOpen = true;
+                         open = false;
+                       }
+                     ">
                   <webropol-context-menu
+                    id="moreContextMenu"
                     items='[
                       {"id": "weighting", "label": "Respondents Weighting", "icon": "fal fa-balance-scale"},
                       {"id": "combine", "label": "Combine Reports", "icon": "fal fa-object-group"},
@@ -758,6 +765,134 @@
         <div class="footer-actions">
           <button class="btn btn-secondary" @click="editReportLinkOpen = false">Cancel</button>
           <button class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combine Reports Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': combineReportsOpen }" @click.self="combineReportsOpen = false" @keydown.window.escape="combineReportsOpen = false" role="dialog" aria-modal="true" aria-labelledby="combineReportsTitle">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title" id="combineReportsTitle">
+            <span class="inline-flex w-10 h-10 rounded-full bg-cyan-100 items-center justify-center text-cyan-600"><i class="fal fa-object-group text-lg"></i></span>
+            <span>Combine reports</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="combineReportsOpen = false"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <!-- Instructions -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <p class="text-sm text-blue-900 leading-relaxed">
+            <strong>Select the basic report(s) you want to combine with "View (Basic Report)".</strong> Please note! The reports to be combined must have a similar title, question and answer option structure. The following question types will always be shown as separate questions on the report: text field, contact form, fourfold, attachment and calendar question types.
+          </p>
+        </div>
+
+        <!-- Search and filters -->
+        <div class="mb-4">
+          <div class="flex items-center gap-3">
+            <label class="text-sm font-medium text-gray-700">Search By:</label>
+            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option>Survey name</option>
+              <option>Survey ID</option>
+              <option>Created by</option>
+            </select>
+            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option>Contains</option>
+              <option>Equals</option>
+              <option>Starts with</option>
+            </select>
+            <input type="text" placeholder="Search..." class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+            <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
+              Search
+            </button>
+            <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">
+              Show all
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left">
+                  <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+                </th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                  Survey name ▲
+                </th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                  Created by ▼
+                </th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                  Responses(N) ▼
+                </th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                  Last Updated ▼
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">
+                  <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+                </td>
+                <td class="px-4 py-3">
+                  <a href="#" class="text-blue-600 hover:underline">[Follow-up] System error</a>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">Ali.Al-Zuhairi@webropol...</td>
+                <td class="px-4 py-3 text-sm text-gray-900">0</td>
+                <td class="px-4 py-3 text-sm text-gray-900">10.09.2025</td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">
+                  <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+                </td>
+                <td class="px-4 py-3">
+                  <a href="#" class="text-blue-600 hover:underline">+3584573958980</a>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">Ali.Al-Zuhairi@webropol...</td>
+                <td class="px-4 py-3 text-sm text-gray-900">15</td>
+                <td class="px-4 py-3 text-sm text-gray-900">04.11.2024</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-4">
+          <div class="flex items-center gap-2 text-sm text-gray-600">
+            <button class="px-2 py-1 hover:bg-gray-100 rounded">⏮</button>
+            <button class="px-2 py-1 hover:bg-gray-100 rounded">◀ Previous</button>
+            <span>Page 1 / 92</span>
+            <button class="px-2 py-1 hover:bg-gray-100 rounded">Next ▶</button>
+            <button class="px-2 py-1 hover:bg-gray-100 rounded">⏭</button>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="text-gray-600">Show on page</span>
+            <button class="px-3 py-1 bg-blue-600 text-white rounded">15</button>
+            <button class="px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">30</button>
+            <button class="px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">100</button>
+            <button class="px-3 py-1 text-gray-700 hover:bg-gray-100 rounded">All</button>
+          </div>
+        </div>
+
+        <!-- Selection info -->
+        <div class="mt-4 text-sm text-gray-600">
+          0 report(s) selected
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-actions">
+          <button class="btn btn-secondary" @click="combineReportsOpen = false">Cancel</button>
+          <button class="btn btn-primary">
+            <i class="fal fa-check mr-2"></i>
+            Combine
+          </button>
         </div>
       </div>
     </div>
@@ -1547,6 +1682,7 @@
         sharePublicLinkOpen: false,
         showPublicLinksOpen: false,
         editReportLinkOpen: false,
+        combineReportsOpen: false,
         reportName: 'Ali\'s Survey Link',
         reportPassword: '',
         hideAnswersAfterCreation: false,
@@ -1557,6 +1693,37 @@
         editAllowCommenting: false,
       };
     }
+
+    // Handle context menu item clicks
+    document.addEventListener('DOMContentLoaded', () => {
+      const contextMenu = document.getElementById('moreContextMenu');
+      if (contextMenu) {
+        contextMenu.addEventListener('item-click', (event) => {
+          const { id } = event.detail;
+          
+          // Get Alpine data
+          const alpineData = Alpine.$data(document.querySelector('[x-data="surveyEditApp()"]'));
+          
+          switch(id) {
+            case 'combine':
+              alpineData.combineReportsOpen = true;
+              break;
+            case 'weighting':
+              console.log('Respondents Weighting clicked');
+              break;
+            case 'multiple':
+              console.log('Multiple Reports clicked');
+              break;
+            case 'timeline':
+              console.log('Timeline clicked');
+              break;
+            case 'personal':
+              console.log('Personal data clicked');
+              break;
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
