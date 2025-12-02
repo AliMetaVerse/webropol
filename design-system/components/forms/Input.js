@@ -28,14 +28,14 @@ export class WebropolInput extends BaseComponent {
 
     // Size classes
     const sizeClasses = {
-      sm: 'px-3 py-2 text-sm',
-      md: 'px-4 py-3 text-sm',
-      lg: 'px-5 py-4 text-base'
+      sm: 'px-3 py-2 text-sm rounded-lg',
+      md: 'px-3 py-2 text-sm rounded-lg',
+      lg: 'px-5 py-4 text-base rounded-xl'
     };
 
     // Base input classes
     const inputClasses = this.classNames(
-      'w-full rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:border-transparent',
+      'w-full border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:border-transparent',
       sizeClasses[size] || sizeClasses.md,
       icon ? 'pl-10' : '',
       error ? 'border-red-300 bg-red-50 focus:ring-red-200' : 'border-webropol-gray-200 bg-white hover:border-webropol-gray-300',
