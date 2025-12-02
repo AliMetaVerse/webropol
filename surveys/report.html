@@ -9,6 +9,7 @@
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script defer src="../design-system/components/tabs/unified-tabs.js"></script>
   <script src="../design-system/components/forms/Dropdown.js" type="module"></script>
+  <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -322,9 +323,34 @@
               <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-chart-line text-xl mb-1"></i><span>Analytics</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
-                <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
-              </button>
+              
+              <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                <button @click="open = !open" class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                  <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
+                </button>
+                <div x-show="open" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-1 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-1 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute right-0 mt-2 z-50"
+                     style="display: none;">
+                  <webropol-context-menu
+                    items='[
+                      {"id": "weighting", "label": "Respondents Weighting", "icon": "fal fa-balance-scale"},
+                      {"id": "combine", "label": "Combine Reports", "icon": "fal fa-object-group"},
+                      {"id": "multiple", "label": "Multiple Reports", "icon": "fal fa-layer-group"},
+                      {"id": "timeline", "label": "Timeline", "icon": "fal fa-chart-network"},
+                      {"id": "personal", "label": "Personal data", "icon": "fal fa-shield-check"}
+                    ]'
+                    width="md"
+                    rounded="lg"
+                  ></webropol-context-menu>
+                </div>
+              </div>
+
               <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareOpen = true" title="Export & Share">
                 <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
               </button>
