@@ -45,6 +45,7 @@ export class WebropolAccordion extends BaseComponent {
       'expanded',
       'variant',
       'show-icon',
+      'show-avatar',
       'icon',
       'icon-color',
       'badge-label',
@@ -59,10 +60,46 @@ export class WebropolAccordion extends BaseComponent {
   }
 
   render() {
+    // Capture children to preserve them (Light DOM slot emulation)
+    const slots = {
+      'header-actions': [],
+      'default': []
+    };
+
+    // Check if we've rendered before by looking for our structure
+    const existingHeaderSlot = this.querySelector('slot[name="header-actions"]');
+    const existingDefaultSlot = this.querySelector('slot:not([name])');
+
+    if (existingHeaderSlot || existingDefaultSlot) {
+      // Re-render: extract from existing slots
+      if (existingHeaderSlot) {
+        while (existingHeaderSlot.firstChild) {
+          slots['header-actions'].push(existingHeaderSlot.firstChild);
+          existingHeaderSlot.removeChild(existingHeaderSlot.firstChild);
+        }
+      }
+      if (existingDefaultSlot) {
+        while (existingDefaultSlot.firstChild) {
+          slots['default'].push(existingDefaultSlot.firstChild);
+          existingDefaultSlot.removeChild(existingDefaultSlot.firstChild);
+        }
+      }
+    } else {
+      // Initial render: extract from direct children
+      // We must convert to array because we'll be moving them
+      Array.from(this.childNodes).forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE && node.getAttribute('slot') === 'header-actions') {
+          slots['header-actions'].push(node);
+        } else {
+          slots['default'].push(node);
+        }
+      });
+    }
+
     const title = this.getAttr('title', 'Accordion Title');
     const subtitle = this.getAttr('subtitle', '');
     const variant = this.getAttr('variant', 'default');
-    const showIcon = this.getBoolAttr('show-icon');
+    const showAvatar = this.getBoolAttr('show-avatar') || this.getBoolAttr('show-icon');
     const icon = this.getAttr('icon', 'fa-light fa-layer-group');
     const iconColor = this.getAttr('icon-color', 'text-webropol-primary-500');
     const badgeLabel = this.getAttr('badge-label', '');
@@ -70,45 +107,59 @@ export class WebropolAccordion extends BaseComponent {
 
     const containerClass = this.getVariantClass(variant);
     const badgeClass = this.getBadgeClass(badgeVariant);
+    
+    // Determine if we should show separator
+    // We assume if there are nodes in header-actions slot, we have buttons
+    // Note: This check might be imperfect if slot only contains whitespace, but it's a start
+    const hasButtons = slots['header-actions'].some(node => 
+      node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0)
+    );
+    const showSeparator = badgeLabel && hasButtons;
 
     this.innerHTML = `
       <div class="${containerClass}">
         <!-- Accordion Header -->
         <div class="accordion-header">
-          <div class="flex items-start justify-between gap-4">
-            <!-- Left: Icon + Title/Subtitle -->
-            <div class="flex items-start gap-3 flex-1 min-w-0">
-              ${showIcon ? `
-                <div class="accordion-icon mt-1">
-                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center flex-shrink-0">
+          <div class="flex items-center justify-between gap-4">
+            <!-- Left: Avatar + Title/Subtitle -->
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              ${showAvatar ? `
+                <div class="accordion-icon flex-shrink-0">
+                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
                     <i class="${icon} ${iconColor}"></i>
                   </div>
                 </div>
               ` : ''}
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <h3 class="accordion-title text-webropol-gray-900 font-bold text-lg tracking-tight">
-                    ${title}
-                  </h3>
-                  ${badgeLabel ? `
-                    <span class="${badgeClass}">
-                      ${badgeLabel}
-                    </span>
-                  ` : ''}
-                </div>
+                <h3 class="accordion-title text-webropol-gray-900 font-bold text-lg tracking-tight truncate">
+                  ${title}
+                </h3>
                 ${subtitle ? `
-                  <p class="accordion-subtitle text-sm text-webropol-gray-600 mt-1">
+                  <p class="accordion-subtitle text-sm text-webropol-gray-600 mt-0.5 truncate">
                     ${subtitle}
                   </p>
                 ` : ''}
               </div>
             </div>
 
-            <!-- Right: Action Buttons + Chevron -->
+            <!-- Right: Badge + Separator + Action Buttons + Chevron -->
             <div class="flex items-center gap-3 flex-shrink-0">
-              <slot name="header-actions"></slot>
-              <button class="accordion-toggle" aria-label="Toggle accordion">
-                <i class="fa-solid fa-chevron-down text-lg text-webropol-primary-600 transition-transform duration-200 ${this.state.isExpanded ? 'rotate-180' : ''}"></i>
+              ${badgeLabel ? `
+                <span class="${badgeClass}">
+                  ${badgeLabel}
+                </span>
+              ` : ''}
+
+              ${showSeparator ? `
+                <div class="h-6 w-px bg-webropol-gray-200 mx-1"></div>
+              ` : ''}
+
+              <div class="flex items-center gap-2">
+                <slot name="header-actions"></slot>
+              </div>
+
+              <button class="accordion-toggle w-8 h-8 flex items-center justify-center rounded-lg hover:bg-webropol-primary-50 text-webropol-primary-600 transition-colors" aria-label="Toggle accordion">
+                <i class="fa-solid fa-chevron-down text-lg transition-transform duration-200 ${this.state.isExpanded ? 'rotate-180' : ''}"></i>
               </button>
             </div>
           </div>
@@ -128,20 +179,7 @@ export class WebropolAccordion extends BaseComponent {
         }
 
         .accordion-toggle {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          background: transparent;
-          border: none;
           cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .accordion-toggle:hover {
-          background: rgb(240 253 255 / 1); /* webropol-primary-50 */
-          color: rgb(14 116 144 / 1); /* webropol-primary-700 */
         }
 
         .accordion-body {
@@ -162,6 +200,17 @@ export class WebropolAccordion extends BaseComponent {
         }
       </style>
     `;
+
+    // Restore children to slots
+    const newHeaderSlot = this.querySelector('slot[name="header-actions"]');
+    const newDefaultSlot = this.querySelector('slot:not([name])');
+
+    if (newHeaderSlot) {
+      slots['header-actions'].forEach(node => newHeaderSlot.appendChild(node));
+    }
+    if (newDefaultSlot) {
+      slots['default'].forEach(node => newDefaultSlot.appendChild(node));
+    }
   }
 
   getVariantClass(variant) {
