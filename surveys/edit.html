@@ -1244,7 +1244,9 @@
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q1')"><i class="fal fa-copy"></i></button>
+                        <div class="js-copy-btn-container inline-flex items-center" data-question-id="q1">
+                          <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q1')"><i class="fal fa-copy"></i></button>
+                        </div>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings"><i class="fal fa-cog"></i></button>
                         <button class="text-red-500 hover:text-red-600" title="Delete"><i class="fal fa-trash"></i></button>
                       </div>
@@ -1343,7 +1345,9 @@
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Add Image"><i class="fal fa-image"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q2')"><i class="fal fa-copy"></i></button>
+                      <div class="js-copy-btn-container inline-flex items-center" data-question-id="q2">
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q2')"><i class="fal fa-copy"></i></button>
+                      </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Points"><i class="fal fa-bullseye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('autosuggest')"><i class="fal fa-cog"></i></button>
@@ -1542,7 +1546,9 @@
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Required field"><i class="fal fa-asterisk"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Visibility"><i class="fal fa-eye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Add Image"><i class="fal fa-image"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q3')"><i class="fal fa-copy"></i></button>
+                      <div class="js-copy-btn-container inline-flex items-center" data-question-id="q3">
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Copy" onclick="handleQuestionCopy('q3')"><i class="fal fa-copy"></i></button>
+                      </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Points"><i class="fal fa-bullseye"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600" title="Settings" onclick="openQuestionSettingsModal('nps')"><i class="fal fa-cog"></i></button>
@@ -5764,9 +5770,60 @@
         localStorage.setItem('rememberInsertionChoice', 'false');
       }
       
+      updateCopyButtonsState();
       performQuestionCopy(currentCopyQuestionId, currentCopyInsertionPoint);
       closeCopyQuestionModal();
     }
+
+    function updateCopyButtonsState() {
+      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
+      const containers = document.querySelectorAll('.js-copy-btn-container');
+      
+      containers.forEach(container => {
+        const questionId = container.dataset.questionId;
+        
+        // Clean up existing elements first
+        const existingDropdown = container.querySelector('.js-copy-dropdown-trigger');
+        const existingSeparator = container.querySelector('.js-copy-separator');
+        
+        if (existingDropdown) existingDropdown.remove();
+        if (existingSeparator) existingSeparator.remove();
+        container.classList.remove('bg-webropol-gray-50', 'border', 'border-webropol-gray-300', 'border-webropol-primary-600', 'rounded-lg', 'pr-1');
+        
+        if (rememberChoice) {
+          // Add separator
+          const separator = document.createElement('div');
+          separator.className = 'js-copy-separator w-px h-4 bg-webropol-gray-300 mx-0.5';
+          container.appendChild(separator);
+
+          // Add dropdown trigger
+          const dropdownBtn = document.createElement('button');
+          dropdownBtn.className = 'js-copy-dropdown-trigger text-webropol-gray-400 hover:text-webropol-primary-600 px-1 ml-0.5 h-6 flex items-center justify-center rounded hover:bg-webropol-gray-100 transition-colors';
+          dropdownBtn.title = 'Change copy settings';
+          dropdownBtn.innerHTML = '<i class="fal fa-chevron-down" style="font-size: 10px;"></i>';
+          dropdownBtn.onclick = (e) => {
+            e.stopPropagation();
+            openCopyQuestionModal(questionId);
+          };
+          container.appendChild(dropdownBtn);
+          
+          // Add visual grouping - Border only, no background
+          container.classList.add('border', 'border-webropol-primary-600', 'rounded-lg', 'pr-1');
+        }
+      });
+    }
+
+    // Initialize button state on load
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCopyButtonsState();
+      // Re-run after a short delay to ensure DOM is settled and frameworks are initialized
+      setTimeout(updateCopyButtonsState, 100);
+    });
+    
+    // Also run on window load to be safe
+    window.addEventListener('load', () => {
+      updateCopyButtonsState();
+    });
 
     // Question Mode Modal Functions
     let currentQuestionIdForCopy = null;
