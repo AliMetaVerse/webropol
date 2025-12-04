@@ -128,6 +128,8 @@
     .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
     .question-card-toolbar button{padding:.35rem .55rem;border-radius:.6rem}
     .question-card-collapsed:hover{background:#f8fafc}
+    .question-card-highlighted{border-color:transparent !important;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#06b6d4,#a855f7,#06b6d4) border-box;animation:questionHighlightBorder 1.2s ease-in-out infinite alternate}
+    @keyframes questionHighlightBorder{0%{box-shadow:0 0 0 0 rgba(6,182,212,.35)}100%{box-shadow:0 0 0 6px rgba(6,182,212,.05)}}
     
     /* Custom range slider styles */
     .slider {
@@ -1164,8 +1166,8 @@
                   </div>
 
                   <!-- Contact Form Question (Question 1) -->
-                  <div x-data="{ selected: false }" 
-                       @click-question.window="if ($event.detail !== 'q1') selected = false"
+                     <div x-data="{ selected: false, questionId: 'q1' }" 
+                       @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                     <!-- Expanded header and toolbar (EDIT MODE) -->
                     <div x-show="selected" 
@@ -1195,8 +1197,8 @@
                             ></webropol-context-menu>
                           </div>
                         </div>
-                        <div class="js-copy-btn-container inline-flex items-center" data-question-id="q1">
-                          <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
+                        <div class="js-copy-btn-container inline-flex items-center" :data-question-id="questionId">
+                          <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" @click="copyQuestionNow(questionId)"><i class="fal fa-copy"></i></button>
                         </div>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Settings"><i class="fal fa-cog"></i></button>
                         <button class="text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><i class="fal fa-trash"></i></button>
@@ -1212,7 +1214,7 @@
                          x-transition:leave-start="opacity-100"
                          x-transition:leave-end="opacity-0"
                          class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" 
-                         @click="selected = true; $dispatch('click-question', 'q1')">
+                         @click="selected = true; $dispatch('click-question', questionId)">
                       <div class="mb-4">
                         <h3 class="text-base font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
                           1. Please fill in your details.
@@ -1275,8 +1277,8 @@
                   </div>
 
                   <!-- Auto Suggest Question (Question 2) -->
-                  <div x-data="{ selected: false }" 
-                       @click-question.window="if ($event.detail !== 'q2') selected = false"
+                     <div x-data="{ selected: false, questionId: 'q2' }" 
+                       @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                   <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
                   <div x-show="selected" 
@@ -1307,8 +1309,8 @@
                         </div>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Add Image"><i class="fal fa-image"></i></button>
-                      <div class="js-copy-btn-container inline-flex items-center" data-question-id="q2">
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
+                      <div class="js-copy-btn-container inline-flex items-center" :data-question-id="questionId">
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" @click="copyQuestionNow(questionId)"><i class="fal fa-copy"></i></button>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Points"><i class="fal fa-bullseye"></i></button>
@@ -1326,7 +1328,7 @@
                        x-transition:leave-start="opacity-100"
                        x-transition:leave-end="opacity-0"
                        class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" 
-                       @click="selected = true; $dispatch('click-question', 'q2')">
+                       @click="selected = true; $dispatch('click-question', questionId)">
                     <!-- Question Title -->
                     <div class="mb-4">
                       <h3 class="text-base font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
@@ -1487,8 +1489,8 @@
                   </div>
 
                   <!-- NPS Question Card -->
-                  <div x-data="{ selected: false }" 
-                       @click-question.window="if ($event.detail !== 'q3') selected = false"
+                     <div x-data="{ selected: false, questionId: 'q3' }" 
+                       @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                   <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
                   <div x-show="selected" 
@@ -1519,8 +1521,8 @@
                         </div>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Add Image"><i class="fal fa-image"></i></button>
-                      <div class="js-copy-btn-container inline-flex items-center" data-question-id="q3">
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
+                      <div class="js-copy-btn-container inline-flex items-center" :data-question-id="questionId">
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" @click="copyQuestionNow(questionId)"><i class="fal fa-copy"></i></button>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Points"><i class="fal fa-bullseye"></i></button>
@@ -1530,7 +1532,7 @@
                   </div>
 
                   <!-- Collapsed (unselected) content preview -->
-                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" @click="selected = true; $dispatch('click-question', 'q3')">
+                  <div x-show="!selected" class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl" @click="selected = true; $dispatch('click-question', questionId)">
                     <div class="flex items-start justify-between mb-4">
                       <label class="block text-lg font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors">
                         3. How likely are you to recommend our product to a friend or colleague?
@@ -2612,128 +2614,7 @@
     </div>
   </div>
 
-  <!-- Copy Question Modal -->
-  <div id="copyQuestionModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 660px;">
-      <div class="modal-header question-mode-header">
-        <div class="modal-title-section question-mode-title" style="justify-content: flex-start;">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 shadow-sm text-lg flex-shrink-0">
-            <i class="fal fa-copy"></i>
-          </div>
-          <div class="question-mode-text">
-            <h2 class="modal-title">Copy Question</h2>
-            <p class="modal-subtitle">Choose where to insert the copy</p>
-          </div>
-        </div>
-        <button class="modal-close w-8 h-8 flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-all" onclick="closeCopyQuestionModal()" aria-label="Close modal">
-          <i class="fal fa-times text-lg"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="settings-section">
-          <h3 class="section-title">
-            <i class="fal fa-location-arrow"></i>
-            Insertion Point
-          </h3>
-          <div class="form-group">
-            <!-- Page-level options -->
-            <div style="margin-bottom: 1.25rem;">
-              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
-                Page position
-              </div>
-              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
-                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('top')">
-                  <input
-                    type="radio"
-                    name="copyInsertionPoint"
-                    value="top"
-                    class="radio-input"
-                    id="copyInsertTop"
-                  >
-                  <div class="radio-content" style="flex: 1;">
-                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
-                      <i class="fal fa-arrow-up mr-2 text-webropol-primary-600"></i>
-                      Insert at top of page
-                    </div>
-                  </div>
-                </label>
-                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('bottom')">
-                  <input
-                    type="radio"
-                    name="copyInsertionPoint"
-                    value="bottom"
-                    class="radio-input"
-                    id="copyInsertBottom"
-                    checked
-                  >
-                  <div class="radio-content" style="flex: 1;">
-                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
-                      <i class="fal fa-arrow-down mr-2 text-webropol-primary-600"></i>
-                      Insert at bottom of page (default)
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Question-level options -->
-            <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: #94a3b8; margin-bottom: 0.5rem;">
-                Relative to selected question
-              </div>
-              <div class="radio-group" style="flex-direction: column; gap: 0.75rem;">
-                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('above')">
-                  <input
-                    type="radio"
-                    name="copyInsertionPoint"
-                    value="above"
-                    class="radio-input"
-                    id="copyInsertAbove"
-                  >
-                  <div class="radio-content" style="flex: 1;">
-                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
-                      <i class="fal fa-level-up-alt mr-2 text-webropol-primary-600"></i>
-                      Insert above current question
-                    </div>
-                  </div>
-                </label>
-                <label class="radio-item" style="cursor: pointer; transition: all 0.2s ease;" onclick="setCopyInsertionPoint('after')">
-                  <input
-                    type="radio"
-                    name="copyInsertionPoint"
-                    value="after"
-                    class="radio-input"
-                    id="copyInsertAfter"
-                  >
-                  <div class="radio-content" style="flex: 1;">
-                    <div class="radio-title" style="font-size: 0.95rem; margin-bottom: 0.2rem;">
-                      <i class="fal fa-level-down-alt mr-2 text-webropol-primary-600"></i>
-                      Insert after current question
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <div class="flex items-center justify-between w-full">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" id="rememberCopyChoice" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
-            <span class="text-sm text-webropol-gray-700">Remember my choice</span>
-          </label>
-          <div class="footer-actions">
-            <button class="btn btn-secondary" onclick="closeCopyQuestionModal()">Cancel</button>
-            <button class="btn btn-primary" onclick="confirmCopyQuestion()">
-              <i class="fal fa-check"></i>
-              Confirm
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Copy Question Modal removed: Copy now duplicates immediately on click -->
 
   <style>
     /* Modal Styles */
@@ -5690,11 +5571,93 @@
 
     // REMOVED: closeAddQuestionModal() function has been removed
 
-    // Copy Question Modal Functions - REMOVED
+    // Copy Question: immediate duplicate to end + scroll + highlight
+    let currentQuestionIdForCopy = null;
+
+    function copyQuestionNow(questionId) {
+      currentQuestionIdForCopy = questionId || null;
+
+      const allQuestions = Array.from(document.querySelectorAll('.question-card'));
+      if (!allQuestions.length) return;
+
+      const sourceQuestion = currentQuestionIdForCopy
+        ? document.querySelector(`.js-copy-btn-container[data-question-id="${currentQuestionIdForCopy}"]`)?.closest('.question-card')
+        : allQuestions[allQuestions.length - 1];
+
+      if (!sourceQuestion) return;
+
+      // Ensure all questions except the new copy are not in edit mode
+      try {
+        allQuestions.forEach(card => {
+          if (card.__x && card.__x.$data && typeof card.__x.$data.selected !== 'undefined') {
+            card.__x.$data.selected = false;
+          }
+          // Also clear the visual selected class in case Alpine is not initialised
+          card.classList.remove('selected');
+        });
+      } catch (e) {}
+
+      const cloned = sourceQuestion.cloneNode(true);
+
+      // Assign a brand new unique question id for the clone so Click-Question semantics keep unique
+      const safeBase = (currentQuestionIdForCopy || 'q').replace(/[^a-zA-Z0-9-_]/g, '');
+      const newQuestionId = `${safeBase}-copy-${Date.now()}`;
+
+      // Update the cloned element's x-data attribute to set its own questionId
+      try {
+        cloned.setAttribute('x-data', `{ selected: false, questionId: '${newQuestionId}' }`);
+      } catch (e) {}
+
+      // Update any data-question-id inside the cloned DOM (eg. copy button container)
+      try {
+        const copyContainer = cloned.querySelector('.js-copy-btn-container');
+        if (copyContainer) copyContainer.setAttribute('data-question-id', newQuestionId);
+      } catch (e) {}
+
+      // Ensure cloned question has no lingering highlight class
+      cloned.classList.remove('question-card-highlighted');
+
+      // Append clone after the last question card
+      const lastQuestion = allQuestions[allQuestions.length - 1];
+      if (lastQuestion && lastQuestion.parentNode) {
+        lastQuestion.parentNode.insertBefore(cloned, lastQuestion.nextSibling);
+      } else if (sourceQuestion.parentNode) {
+        sourceQuestion.parentNode.appendChild(cloned);
+      }
+
+      // Initialize Alpine on the clone (so it receives reactivity and event handlers)
+      if (window.Alpine && typeof window.Alpine.initTree === 'function'){
+        try { window.Alpine.initTree(cloned); } catch(e) {}
+      }
+
+      // First broadcast to collapse any existing questions listening globally
+      window.dispatchEvent(new CustomEvent('click-question', { detail: newQuestionId }));
+
+      // Then, once Alpine has initialized on the cloned card, set selected to true and add CSS class
+      setTimeout(() => {
+        try {
+          if (cloned.__x && cloned.__x.$data && typeof cloned.__x.$data.selected !== 'undefined') {
+            cloned.__x.$data.selected = true;
+          }
+        } catch (e) {}
+        // As a fallback apply the class so visual state is consistent
+        cloned.classList.add('selected');
+      }, 50);
+
+      // Smooth scroll into view
+      setTimeout(() => {
+        cloned.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+
+      // Temporary animated gradient border highlight
+      cloned.classList.add('question-card-highlighted');
+      setTimeout(() => {
+        cloned.classList.remove('question-card-highlighted');
+      }, 5000);
+    }
 
 
     // Question Mode Modal Functions
-    let currentQuestionIdForCopy = null;
 
     function openQuestionModeModal(questionId = null) {
       currentQuestionIdForCopy = questionId;
