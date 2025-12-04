@@ -12,6 +12,7 @@ import { BaseComponent } from '../../utils/base-component.js';
  *   - 'default': White background with border
  *   - 'elevated': White background with shadow
  *   - 'minimal': Transparent background, bottom border only
+ *   - 'grouped': For use inside a parent container (no border radius, transparent background, bottom border)
  * @attr {boolean} show-icon - Show left icon (default: false)
  * @attr {string} icon - FontAwesome icon class (e.g., 'fa-light fa-heart')
  * @attr {string} icon-color - Icon color class (default: 'text-webropol-primary-500')
@@ -217,7 +218,8 @@ export class WebropolAccordion extends BaseComponent {
     const variants = {
       default: 'bg-white border border-webropol-gray-200 rounded-xl p-6 transition-shadow hover:shadow-md',
       elevated: 'bg-white rounded-xl p-6 shadow-card hover:shadow-medium transition-shadow',
-      minimal: 'bg-transparent border-b border-webropol-gray-200 pb-4 mb-4'
+      minimal: 'bg-transparent border-b border-webropol-gray-200 pb-4 mb-4',
+      grouped: 'bg-transparent border-b border-webropol-gray-200 last:border-b-0 p-6'
     };
     return variants[variant] || variants.default;
   }

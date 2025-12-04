@@ -45,6 +45,7 @@ A reusable, accessible accordion component for collapsible content sections with
 - `default`: White background with border
 - `elevated`: White background with shadow (recommended for cards)
 - `minimal`: Transparent background, bottom border only (good for FAQs)
+- `grouped`: For use inside a parent container (no border radius, transparent background, bottom border between items)
 
 ### Badge Variant Options
 
@@ -113,6 +114,37 @@ A reusable, accessible accordion component for collapsible content sections with
   variant="minimal">
   <p>To create a survey, navigate to the Surveys section and click "Add new survey".</p>
 </webropol-accordion>
+```
+
+### Grouped Variant (Shared Container)
+
+```html
+<div class="border border-webropol-gray-200 rounded-xl overflow-hidden bg-white shadow-card">
+  <webropol-accordion 
+    title="Grouped Accordion 1" 
+    subtitle="First item in the group"
+    variant="grouped">
+    <p>Content for first accordion item.</p>
+  </webropol-accordion>
+
+  <webropol-accordion 
+    title="Grouped Accordion 2" 
+    subtitle="Second item in the group"
+    variant="grouped"
+    show-icon
+    icon="fa-light fa-layer-group">
+    <p>Content for second accordion item.</p>
+  </webropol-accordion>
+
+  <webropol-accordion 
+    title="Grouped Accordion 3" 
+    subtitle="Third item in the group"
+    variant="grouped"
+    show-icon
+    icon="fa-light fa-heart">
+    <p>Content for third accordion item. Notice no border on the last item.</p>
+  </webropol-accordion>
+</div>
 ```
 
 ### With Alpine.js Integration
