@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -945,257 +945,196 @@
                   </div>
                 </div>
                 
-                <!-- Styles Tab Content -->
-                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-5 mb-6">
+                                <!-- Styles Tab Content -->
+                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-6 mb-6">
+                  
                   <!-- Survey Pages Section -->
-                  <div class="bg-white rounded-xl border border-blue-200/40 shadow-sm overflow-hidden">
-                    <div class="bg-blue-50/30 px-4 py-3 border-b border-blue-100/50">
-                      <h4 class="text-blue-900 font-medium flex items-center gap-2">
-                        <i class="fal fa-file-alt text-blue-600"></i>
-                        Survey Pages
-                      </h4>
-                      <p class="text-blue-600/70 text-xs mt-1">Customize the appearance of your survey page cards</p>
+                  <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <i class="fal fa-file-alt text-webropol-primary-600"></i>
+                      <h4 class="text-webropol-gray-900 font-semibold">Survey Pages</h4>
                     </div>
+                    <p class="text-sm text-webropol-gray-500 -mt-3 mb-4">Customize the appearance of your survey page cards</p>
                     
-                    <div class="p-4 space-y-4">
-                      <!-- Color Mode Selection -->
-                      <div class="grid grid-cols-2 gap-3">
-                        <label class="group cursor-pointer">
-                          <input type="radio" name="surveyColorMode" value="color" x-model="surveyColorMode" class="sr-only">
-                          <div :class="surveyColorMode === 'color' ? 'bg-blue-50 border-blue-300 text-blue-800' : 'bg-gray-50 border-gray-200 text-gray-600'"
-                               class="p-3 rounded-lg border-2 transition-all group-hover:shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                              <div class="w-3 h-3 rounded-full border border-blue-200" :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${(100 - surveyTransparency) / 100})`"></div>
-                              <span class="font-medium text-sm">Color Mode</span>
-                            </div>
-                            <p class="text-xs opacity-70">Apply color with transparency</p>
+                    <div class="grid grid-cols-2 gap-4">
+                      <!-- Color Mode Option -->
+                      <label class="relative cursor-pointer group">
+                        <input type="radio" name="surveyColorMode" value="color" x-model="surveyColorMode" class="sr-only peer">
+                        <div class="p-4 rounded-xl border-2 border-webropol-gray-200 bg-white hover:border-webropol-primary-300 peer-checked:border-webropol-primary-500 peer-checked:ring-1 peer-checked:ring-webropol-primary-500 transition-all h-full">
+                          <div class="flex items-center gap-2 mb-2">
+                            <div class="w-4 h-4 rounded-full border border-gray-200 shadow-sm" :style="ackground-color: rgba(, , , )"></div>
+                            <span class="font-medium text-webropol-gray-900">Color Mode</span>
                           </div>
-                        </label>
-                        
-                        <label class="group cursor-pointer">
-                          <input type="radio" name="surveyColorMode" value="transparent" x-model="surveyColorMode" class="sr-only">
-                          <div :class="surveyColorMode === 'transparent' ? 'bg-blue-50 border-blue-300 text-blue-800' : 'bg-gray-50 border-gray-200 text-gray-600'"
-                               class="p-3 rounded-lg border-2 transition-all group-hover:shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                              <div class="w-3 h-3 rounded-full border-2 border-dashed border-current"></div>
-                              <span class="font-medium text-sm">Transparent</span>
-                            </div>
-                            <p class="text-xs opacity-70">No background color</p>
+                          <p class="text-xs text-webropol-gray-500">Apply color with transparency</p>
+                        </div>
+                        <div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100 text-webropol-primary-600 transition-opacity">
+                          <i class="fas fa-check-circle"></i>
+                        </div>
+                      </label>
+                      
+                      <!-- Transparent Option -->
+                      <label class="relative cursor-pointer group">
+                        <input type="radio" name="surveyColorMode" value="transparent" x-model="surveyColorMode" class="sr-only peer">
+                        <div class="p-4 rounded-xl border-2 border-webropol-gray-200 bg-white hover:border-webropol-primary-300 peer-checked:border-webropol-primary-500 peer-checked:ring-1 peer-checked:ring-webropol-primary-500 transition-all h-full">
+                          <div class="flex items-center gap-2 mb-2">
+                            <div class="w-4 h-4 rounded-full border-2 border-dashed border-gray-300"></div>
+                            <span class="font-medium text-webropol-gray-900">Transparent</span>
                           </div>
-                        </label>
+                          <p class="text-xs text-webropol-gray-500">No background color</p>
+                        </div>
+                        <div class="absolute top-4 right-4 opacity-0 peer-checked:opacity-100 text-webropol-primary-600 transition-opacity">
+                          <i class="fas fa-check-circle"></i>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Color Settings (Conditional) -->
+                    <div x-show="surveyColorMode === 'color'" x-transition class="bg-webropol-gray-50 rounded-xl p-5 space-y-5 border border-webropol-gray-100">
+                      <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-webropol-gray-700">Color</span>
+                        <div class="w-12 h-8 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-webropol-primary-200 transition-all" 
+                             :style="ackground-color: rgba(, , , )"
+                             @click="openColorPicker('survey')">
+                        </div>
                       </div>
                       
-                      <!-- Color Picker & Transparency (only when color mode) -->
-                      <div x-show="surveyColorMode === 'color'" class="bg-gray-50/50 rounded-lg p-3 space-y-3 border border-gray-100">
-                        <div class="flex items-center gap-3">
-                          <span class="text-sm font-medium text-gray-700 min-w-[60px]">Color</span>
-                          <div class="w-10 h-8 rounded-lg border-2 border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition-transform" 
-                               :style="`background-color: rgba(${surveyColor.r}, ${surveyColor.g}, ${surveyColor.b}, ${(100 - surveyTransparency) / 100})`"
-                               @click="openColorPicker('survey')">
+                      <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                          <span class="text-sm font-medium text-webropol-gray-700">Transparency</span>
+                          <div class="flex items-center bg-white rounded-md border border-gray-200 px-2 py-1">
+                            <input type="number" x-model="surveyTransparency" min="0" max="100" 
+                                   class="w-8 text-right text-sm border-none p-0 focus:ring-0 text-webropol-gray-700">
+                            <span class="text-sm text-webropol-gray-400 ml-1">%</span>
                           </div>
                         </div>
-                        
-                        <div class="space-y-2">
-                          <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-gray-700">Transparency</span>
-                            <div class="flex items-center gap-1">
-                              <input type="number" x-model="surveyTransparency" min="0" max="100" 
-                                     class="w-12 px-1 py-1 text-xs border border-gray-200 rounded text-center">
-                              <span class="text-xs text-gray-500">%</span>
-                            </div>
-                          </div>
-                          <input type="range" min="0" max="100" x-model="surveyTransparency" 
-                                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none slider">
-                        </div>
-                        
-                        <label class="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" x-model="surveyBlur" class="w-4 h-4 text-blue-600 rounded">
-                          <span class="text-sm text-gray-700">Apply blur effect</span>
-                        </label>
+                        <input type="range" min="0" max="100" x-model="surveyTransparency" 
+                               class="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-webropol-primary-600">
                       </div>
+                      
+                      <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative">
+                          <input type="checkbox" x-model="surveyBlur" class="sr-only peer">
+                          <div class="w-10 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-primary-600"></div>
+                        </div>
+                        <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-primary-700 transition-colors">Apply blur effect</span>
+                      </label>
                     </div>
                   </div>
 
-                  <!-- Background Section -->
-                  <div class="bg-white rounded-xl border border-emerald-200/40 shadow-sm overflow-hidden">
-                    <div class="bg-emerald-50/30 px-4 py-3 border-b border-emerald-100/50">
-                      <h4 class="text-emerald-900 font-medium flex items-center gap-2">
-                        <i class="fal fa-image text-emerald-600"></i>
-                        Survey Background
-                      </h4>
-                      <p class="text-emerald-600/70 text-xs mt-1">Set the background color and image behind your survey</p>
+                  <hr class="border-webropol-gray-100">
+
+                  <!-- Survey Background Section -->
+                  <div class="space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <i class="fal fa-image text-webropol-primary-600"></i>
+                      <h4 class="text-webropol-gray-900 font-semibold">Survey Background</h4>
                     </div>
+                    <p class="text-sm text-webropol-gray-500 -mt-3 mb-4">Set the background color and image behind your survey</p>
                     
-                    <div class="p-4 space-y-4">
-                      <!-- Background Color -->
-                      <div class="bg-gray-50/50 rounded-lg p-3 border border-gray-100">
-                        <div class="flex items-center gap-3 mb-3">
-                          <span class="text-sm font-medium text-gray-700">Background Color</span>
-                          <div class="w-10 h-8 rounded-lg border-2 border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition-transform" 
-                               :style="`background-color: rgb(${pageColor.r}, ${pageColor.g}, ${pageColor.b})`"
-                               @click="openColorPicker('page')">
-                          </div>
+                    <div class="bg-white rounded-xl border border-webropol-gray-200 p-1">
+                      <div class="flex items-center justify-between p-3">
+                        <span class="text-sm font-medium text-webropol-gray-700">Background Color</span>
+                        <div class="w-12 h-8 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-webropol-primary-200 transition-all" 
+                             :style="ackground-color: rgb(, , )"
+                             @click="openColorPicker('page')">
                         </div>
                       </div>
-                      
-                      <!-- Background Image -->
-                      <div class="bg-gray-50/50 rounded-lg p-3 space-y-3 border border-gray-100">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" x-model="usePageBackground" class="w-4 h-4 text-emerald-600 rounded">
-                          <span class="text-sm font-medium text-gray-700">Use background image</span>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl border border-webropol-gray-200 overflow-hidden">
+                      <div class="p-4 border-b border-webropol-gray-100 bg-gray-50/50">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                          <div class="relative">
+                            <input type="checkbox" x-model="usePageBackground" class="sr-only peer">
+                            <div class="w-10 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-webropol-primary-600"></div>
+                          </div>
+                          <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-primary-700 transition-colors">Use background image</span>
                         </label>
+                      </div>
+                      
+                      <div x-show="usePageBackground" x-transition class="p-4 space-y-5">
+                        <!-- Image Upload -->
+                        <button @click=".imageInput.click()" class="w-full py-3 border-2 border-dashed border-webropol-gray-300 rounded-xl text-webropol-gray-500 hover:border-webropol-primary-400 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-all flex flex-col items-center justify-center gap-2 group">
+                          <i class="fal fa-cloud-upload text-xl group-hover:scale-110 transition-transform"></i>
+                          <span class="text-sm font-medium">Choose Image</span>
+                        </button>
+                        <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload()">
                         
-                        <div x-show="usePageBackground" class="space-y-3 border-l-2 border-emerald-200/60 pl-3">
-                          <!-- Image Upload -->
-                          <div class="flex items-center gap-3">
-                            <button @click="$refs.imageInput.click()" class="btn btn-secondary text-sm">
-                              <i class="fal fa-upload mr-2"></i>
-                              Choose Image
-                            </button>
-                            <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
-                          </div>
-                          
-                          <!-- Image Preview -->
-                          <div class="w-full h-24 rounded-lg border border-gray-300/60 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 relative">
-                            <img x-show="selectedImage" :src="selectedImage" class="w-full h-full object-cover" alt="Background preview">
-                            <div x-show="!selectedImage" class="flex items-center justify-center h-full text-gray-400">
-                              <div class="text-center">
-                                <i class="fal fa-image text-lg mb-1"></i>
-                                <div class="text-xs">No image</div>
-                              </div>
+                        <!-- Image Preview & Controls -->
+                        <div x-show="selectedImage" class="space-y-4">
+                          <div class="relative rounded-xl overflow-hidden border border-gray-200 shadow-sm group">
+                            <img :src="selectedImage" class="w-full h-32 object-cover" alt="Background preview">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button @click="removeSelectedImage()" class="bg-white/90 text-red-600 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-white transition-colors shadow-lg">
+                                Remove Image
+                              </button>
                             </div>
-                            <button x-show="selectedImage" @click="removeSelectedImage()" 
-                                    class="absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs transition-colors">
-                              <i class="fal fa-times"></i>
-                            </button>
                           </div>
                           
-                          <!-- Image Controls -->
-                          <div x-show="selectedImage" class="grid grid-cols-2 gap-4">
-                            <!-- Repeat Options -->
-                            <div>
-                              <label class="text-xs font-medium text-gray-600 mb-2 block">Repeat</label>
-                              <div class="grid grid-cols-2 gap-1">
-                                <label class="cursor-pointer">
-                                  <input type="radio" name="backgroundRepeat" value="no-repeat" x-model="backgroundRepeat" class="sr-only">
-                                  <div :class="backgroundRepeat === 'no-repeat' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-200'"
-                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
-                                    None
-                                  </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                  <input type="radio" name="backgroundRepeat" value="repeat" x-model="backgroundRepeat" class="sr-only">
-                                  <div :class="backgroundRepeat === 'repeat' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-200'"
-                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
-                                    Both
-                                  </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                  <input type="radio" name="backgroundRepeat" value="repeat-x" x-model="backgroundRepeat" class="sr-only">
-                                  <div :class="backgroundRepeat === 'repeat-x' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-200'"
-                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
-                                    Horizontal
-                                  </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                  <input type="radio" name="backgroundRepeat" value="repeat-y" x-model="backgroundRepeat" class="sr-only">
-                                  <div :class="backgroundRepeat === 'repeat-y' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-white text-gray-600 border-gray-200'"
-                                       class="px-2 py-1 text-xs border rounded text-center hover:bg-gray-50 transition-colors">
-                                    Vertical
-                                  </div>
-                                </label>
+                          <div class="grid grid-cols-2 gap-6">
+                            <!-- Repeat & Scale -->
+                            <div class="space-y-4">
+                              <div>
+                                <label class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider mb-2 block">Repeat</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                  <button @click="backgroundRepeat = 'no-repeat'" :class="backgroundRepeat === 'no-repeat' ? 'bg-webropol-primary-50 text-webropol-primary-700 border-webropol-primary-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'" class="px-2 py-1.5 text-xs border rounded-lg transition-colors">None</button>
+                                  <button @click="backgroundRepeat = 'repeat'" :class="backgroundRepeat === 'repeat' ? 'bg-webropol-primary-50 text-webropol-primary-700 border-webropol-primary-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'" class="px-2 py-1.5 text-xs border rounded-lg transition-colors">Both</button>
+                                  <button @click="backgroundRepeat = 'repeat-x'" :class="backgroundRepeat === 'repeat-x' ? 'bg-webropol-primary-50 text-webropol-primary-700 border-webropol-primary-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'" class="px-2 py-1.5 text-xs border rounded-lg transition-colors">Horiz.</button>
+                                  <button @click="backgroundRepeat = 'repeat-y'" :class="backgroundRepeat === 'repeat-y' ? 'bg-webropol-primary-50 text-webropol-primary-700 border-webropol-primary-200' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'" class="px-2 py-1.5 text-xs border rounded-lg transition-colors">Vert.</button>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <label class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider mb-2 block">Scale</label>
+                                <div class="space-y-2">
+                                  <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="backgroundScale" value="fit-width" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 border-gray-300 focus:ring-webropol-primary-500">
+                                    <span class="text-sm text-gray-700">Fit Width</span>
+                                  </label>
+                                  <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="backgroundScale" value="fixed" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 border-gray-300 focus:ring-webropol-primary-500">
+                                    <span class="text-sm text-gray-700">Fixed</span>
+                                  </label>
+                                  <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="backgroundScale" value="original" x-model="backgroundScale" class="w-4 h-4 text-webropol-primary-600 border-gray-300 focus:ring-webropol-primary-500">
+                                    <span class="text-sm text-gray-700">Original</span>
+                                  </label>
+                                </div>
                               </div>
                             </div>
                             
-                            <!-- Scale Options -->
+                            <!-- Position Grid -->
                             <div>
-                              <label class="text-xs font-medium text-gray-600 mb-2 block">Scale</label>
-                              <div class="space-y-1">
-                                <label class="flex items-center gap-1 cursor-pointer">
-                                  <input type="radio" name="backgroundScale" value="fit-width" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
-                                  <span class="text-xs text-gray-700">Fit Width</span>
-                                </label>
-                                <label class="flex items-center gap-1 cursor-pointer">
-                                  <input type="radio" name="backgroundScale" value="fixed" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
-                                  <span class="text-xs text-gray-700">Fixed</span>
-                                </label>
-                                <label class="flex items-center gap-1 cursor-pointer">
-                                  <input type="radio" name="backgroundScale" value="original" x-model="backgroundScale" class="w-3 h-3 text-emerald-600">
-                                  <span class="text-xs text-gray-700">Original</span>
-                                </label>
+                              <label class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider mb-2 block">Position</label>
+                              <div class="grid grid-cols-3 gap-1.5 w-fit">
+                                <template x-for="v in ['top', 'center', 'bottom']">
+                                  <template x-for="h in ['left', 'center', 'right']">
+                                    <button @click="setImagePosition(v, h)" 
+                                            :class="imagePositionVertical === v && imagePositionHorizontal === h ? 'bg-webropol-primary-600 text-white shadow-md ring-2 ring-webropol-primary-200' : 'bg-white border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600'"
+                                            class="w-8 h-8 rounded-lg text-[10px] flex items-center justify-center transition-all">
+                                      <i class="fas fa-circle text-[4px]"></i>
+                                    </button>
+                                  </template>
+                                </template>
                               </div>
-                            </div>
-                          </div>
-                          
-                          <!-- Position Grid -->
-                          <div x-show="selectedImage">
-                            <label class="text-xs font-medium text-gray-600 mb-2 block">Position</label>
-                            <div class="grid grid-cols-3 gap-1 w-fit mx-auto">
-                              <button @click="setImagePosition('top', 'left')" 
-                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('top', 'center')" 
-                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('top', 'right')" 
-                                      :class="imagePositionVertical === 'top' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('center', 'left')" 
-                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('center', 'center')" 
-                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                �
-                              </button>
-                              <button @click="setImagePosition('center', 'right')" 
-                                      :class="imagePositionVertical === 'center' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('bottom', 'left')" 
-                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'left' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('bottom', 'center')" 
-                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'center' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
-                              <button @click="setImagePosition('bottom', 'right')" 
-                                      :class="imagePositionVertical === 'bottom' && imagePositionHorizontal === 'right' ? 'bg-emerald-500 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'"
-                                      class="w-8 h-8 rounded text-xs transition-colors">
-                                ?
-                              </button>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                <!-- Add Content Section - Pages Tab (removed as requested) -->
-                
-                <!-- Style Actions Section - Styles Tab -->
-                <div x-show="activeTab === 'styles'" class="space-y-3">
-                  <button class="btn btn-primary w-full" @click="applySelectedStyle()">
-                    <i class="fal fa-check"></i>
-                    <span>Apply Changes</span>
-                  </button>
-                  <button class="btn btn-secondary w-full" @click="resetStyles()">
-                    <i class="fal fa-undo"></i>
-                    <span>Reset to Default</span>
-                  </button>
+                  
+                  <!-- Style Actions Section -->
+                  <div class="pt-4 flex gap-3">
+                    <button class="flex-1 bg-webropol-primary-600 text-white px-4 py-2.5 rounded-xl font-medium hover:bg-webropol-primary-700 transition-colors shadow-sm hover:shadow flex items-center justify-center gap-2" @click="applySelectedStyle()">
+                      <i class="fal fa-check"></i>
+                      <span>Apply Changes</span>
+                    </button>
+                    <button class="px-4 py-2.5 rounded-xl font-medium text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors border border-transparent hover:border-webropol-gray-200" @click="resetStyles()">
+                      <i class="fal fa-undo"></i>
+                      <span>Reset</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1257,7 +1196,7 @@
                           </div>
                         </div>
                         <div class="js-copy-btn-container inline-flex items-center" data-question-id="q1">
-                          <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" onclick="handleQuestionCopy('q1')"><i class="fal fa-copy"></i></button>
+                          <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
                         </div>
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Settings"><i class="fal fa-cog"></i></button>
                         <button class="text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><i class="fal fa-trash"></i></button>
@@ -1369,7 +1308,7 @@
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Add Image"><i class="fal fa-image"></i></button>
                       <div class="js-copy-btn-container inline-flex items-center" data-question-id="q2">
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" onclick="handleQuestionCopy('q2')"><i class="fal fa-copy"></i></button>
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Points"><i class="fal fa-bullseye"></i></button>
@@ -1581,7 +1520,7 @@
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Add Image"><i class="fal fa-image"></i></button>
                       <div class="js-copy-btn-container inline-flex items-center" data-question-id="q3">
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" onclick="handleQuestionCopy('q3')"><i class="fal fa-copy"></i></button>
+                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy"><i class="fal fa-copy"></i></button>
                       </div>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="eTest"><i class="fal fa-graduation-cap"></i></button>
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Points"><i class="fal fa-bullseye"></i></button>
@@ -5751,113 +5690,8 @@
 
     // REMOVED: closeAddQuestionModal() function has been removed
 
-    // Copy Question Modal Functions
-    let currentCopyQuestionId = null;
-    let currentCopyInsertionPoint = 'bottom';
+    // Copy Question Modal Functions - REMOVED
 
-    function openCopyQuestionModal(questionId) {
-      currentCopyQuestionId = questionId;
-      const modal = document.getElementById('copyQuestionModal');
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('modal-open');
-      
-      // Load saved preference
-      const savedPosition = localStorage.getItem('questionInsertionPoint') || 'bottom';
-      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
-      
-      // Set default state
-      currentCopyInsertionPoint = savedPosition;
-      
-      // Update UI
-      const radios = document.getElementsByName('copyInsertionPoint');
-      radios.forEach(radio => {
-        if (radio.value === savedPosition) radio.checked = true;
-      });
-      
-      const rememberCheckbox = document.getElementById('rememberCopyChoice');
-      if (rememberCheckbox) rememberCheckbox.checked = rememberChoice;
-    }
-
-    function closeCopyQuestionModal() {
-      const modal = document.getElementById('copyQuestionModal');
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-      document.body.classList.remove('modal-open');
-    }
-
-    function setCopyInsertionPoint(point) {
-      currentCopyInsertionPoint = point;
-      // Update radio button
-      const radios = document.getElementsByName('copyInsertionPoint');
-      radios.forEach(radio => {
-        if (radio.value === point) radio.checked = true;
-      });
-    }
-
-    function confirmCopyQuestion() {
-      const rememberCheckbox = document.getElementById('rememberCopyChoice');
-      if (rememberCheckbox && rememberCheckbox.checked) {
-        localStorage.setItem('rememberInsertionChoice', 'true');
-        localStorage.setItem('questionInsertionPoint', currentCopyInsertionPoint);
-      } else {
-        localStorage.setItem('rememberInsertionChoice', 'false');
-      }
-      
-      updateCopyButtonsState();
-      performQuestionCopy(currentCopyQuestionId, currentCopyInsertionPoint);
-      closeCopyQuestionModal();
-    }
-
-    function updateCopyButtonsState() {
-      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
-      const containers = document.querySelectorAll('.js-copy-btn-container');
-      
-      containers.forEach(container => {
-        const questionId = container.dataset.questionId;
-        
-        // Clean up existing elements first
-        const existingDropdown = container.querySelector('.js-copy-dropdown-trigger');
-        const existingSeparator = container.querySelector('.js-copy-separator');
-        
-        if (existingDropdown) existingDropdown.remove();
-        if (existingSeparator) existingSeparator.remove();
-        container.classList.remove('bg-webropol-gray-50', 'border', 'border-webropol-gray-300', 'border-webropol-primary-600', 'rounded-md', 'pr-1');
-        
-        if (rememberChoice) {
-          // Add separator
-          const separator = document.createElement('div');
-          separator.className = 'js-copy-separator w-px h-4 bg-webropol-gray-300 mx-0.5';
-          container.appendChild(separator);
-
-          // Add dropdown trigger
-          const dropdownBtn = document.createElement('button');
-          dropdownBtn.className = 'js-copy-dropdown-trigger text-webropol-gray-400 hover:text-webropol-primary-600 px-1 ml-0.5 h-6 flex items-center justify-center rounded hover:bg-webropol-primary-50 transition-colors';
-          dropdownBtn.title = 'Change copy settings';
-          dropdownBtn.innerHTML = '<i class="fal fa-chevron-down" style="font-size: 10px;"></i>';
-          dropdownBtn.onclick = (e) => {
-            e.stopPropagation();
-            openCopyQuestionModal(questionId);
-          };
-          container.appendChild(dropdownBtn);
-          
-          // Add visual grouping - Border only, no background
-          container.classList.add('border', 'border-webropol-primary-600', 'rounded-lg', 'pr-1');
-        }
-      });
-    }
-
-    // Initialize button state on load
-    document.addEventListener('DOMContentLoaded', () => {
-      updateCopyButtonsState();
-      // Re-run after a short delay to ensure DOM is settled and frameworks are initialized
-      setTimeout(updateCopyButtonsState, 100);
-    });
-    
-    // Also run on window load to be safe
-    window.addEventListener('load', () => {
-      updateCopyButtonsState();
-    });
 
     // Question Mode Modal Functions
     let currentQuestionIdForCopy = null;
@@ -5955,12 +5789,6 @@
         console.warn('Could not save insertion point preference:', e);
       }
       
-      // If copying a question, perform the copy action here
-      if (currentQuestionIdForCopy) {
-        performQuestionCopy(currentQuestionIdForCopy, selectedPosition);
-        currentQuestionIdForCopy = null;
-      }
-      
       // Close modal
       closeQuestionModeModal();
       
@@ -5977,7 +5805,7 @@
       notification.innerHTML = `
         <div class="flex items-center gap-2">
           <i class="fal fa-check-circle"></i>
-          <span>Question copied: ${positionLabels[selectedPosition] || 'Bottom of page'}</span>
+          <span>Insertion point saved: ${positionLabels[selectedPosition] || 'Bottom of page'}</span>
         </div>
       `;
       
@@ -5995,62 +5823,10 @@
           document.body.removeChild(notification);
         }, 300);
       }, 3000);
-      
-      // You could also trigger the Add Question modal here if desired
-      // setTimeout(() => openAddQuestionModal(), 300);
     }
 
-    // Handle question copy - check if user wants to remember choice
-    function handleQuestionCopy(questionId) {
-      const rememberChoice = localStorage.getItem('rememberInsertionChoice') === 'true';
-      
-      if (rememberChoice) {
-        // User has chosen to remember - use saved preference and copy directly
-        const savedPosition = localStorage.getItem('questionInsertionPoint') || 'bottom';
-        performQuestionCopy(questionId, savedPosition);
-        
-        // Show quick confirmation
-        const positionLabels = {
-          'top': 'Top of page',
-          'after': 'After current question',
-          'above': 'Above current question',
-          'bottom': 'Bottom of page'
-        };
-        
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[9998] transition-all transform translate-x-full';
-        notification.innerHTML = `
-          <div class="flex items-center gap-2">
-            <i class="fal fa-check-circle"></i>
-            <span>Question copied: ${positionLabels[savedPosition] || 'Bottom of page'}</span>
-          </div>
-        `;
-        
-        document.body.appendChild(notification);
-        setTimeout(() => notification.classList.remove('translate-x-full'), 100);
-        setTimeout(() => {
-          notification.classList.add('translate-x-full');
-          setTimeout(() => document.body.removeChild(notification), 300);
-        }, 3000);
-      } else {
-        // Show modal to choose insertion point
-        openCopyQuestionModal(questionId);
-      }
-    }
-
-    // Perform the actual question copy
-    function performQuestionCopy(questionId, position) {
-      console.log(`Copying question ${questionId} to position: ${position}`);
-      
-      // Here you would implement the actual copy logic
-      // This is a placeholder for the actual implementation
-      
-      // Example: You might want to clone the question DOM element,
-      // update its ID, and insert it at the specified position
-      
-      // For now, just log the action
-      console.log('Question copy would be performed here');
-    }
+    // REMOVED: handleQuestionCopy() function has been removed
+    // REMOVED: performQuestionCopy() function has been removed
 
     // REMOVED: selectQuestionType() function has been removed
 
