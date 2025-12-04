@@ -2397,14 +2397,6 @@
                         </div>
                     </div>
 
-                    <!-- Question Keywords -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                        <label class="text-sm font-medium text-webropol-gray-700">Question keyword(s):</label>
-                        <div class="md:col-span-2">
-                            <span class="text-sm text-webropol-gray-900" x-text="questionInfoData?.keywords || ''"></span>
-                        </div>
-                    </div>
-
                     <!-- Question Folder Name -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                         <label class="text-sm font-medium text-webropol-gray-700">Question folder name:</label>
@@ -2427,6 +2419,76 @@
                         <div class="md:col-span-2 flex items-center">
                             <input id="questionFrozenCheckbox" type="checkbox" :checked="questionInfoData?.isFrozen" @change="setQuestionFrozen(questionInfoData.id, $event.target.checked)" class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500 mr-3">
                             <span class="text-sm text-webropol-gray-600">Once frozen, it cannot be edited after being added to the survey.</span>
+                        </div>
+                    </div>
+
+                    <!-- Question Keywords (Read-only display) -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                        <label class="text-sm font-medium text-webropol-gray-700 pt-1">Question keyword(s):</label>
+                        <div class="md:col-span-2">
+                            <span class="text-sm text-webropol-gray-900" x-text="questionInfoData?.keywords || ''"></span>
+                        </div>
+                    </div>
+
+                    <!-- Keywords Section (Editable) -->
+                    <div class="col-span-full">
+                        <div class="border border-webropol-gray-200 rounded-lg overflow-hidden">
+                            <button @click="keywordsExpanded = !keywordsExpanded" 
+                                class="w-full flex items-center justify-between p-4 bg-webropol-gray-50 hover:bg-webropol-gray-100 transition-colors text-left">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-webropol-gray-700">Keywords</span>
+                                    <span class="text-xs text-webropol-gray-500" x-text="'(' + (questionInfoData?.keywordsList?.length || 0) + ')'"></span>
+                                </div>
+                                <i class="fal fa-chevron-down transition-transform duration-200" 
+                                   :class="keywordsExpanded ? 'rotate-180' : ''"></i>
+                            </button>
+                            
+                            <div x-show="keywordsExpanded" x-collapse>
+                                <div class="p-4 border-t border-webropol-gray-200">
+                                    <!-- Keyword Input -->
+                                    <div class="mb-4">
+                                        <div class="relative">
+                                            <input 
+                                                type="text" 
+                                                x-model="newKeyword"
+                                                @keydown.enter.prevent="addKeyword()"
+                                                placeholder="Add one keyword"
+                                                class="w-full px-4 py-2.5 pr-16 border border-webropol-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 transition-all text-sm"
+                                            >
+                                            <button 
+                                                @click="addKeyword()"
+                                                class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-webropol-primary-600 text-white text-xs font-medium rounded-md hover:bg-webropol-primary-700 transition-colors">
+                                                Add
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-webropol-gray-500 mt-2">
+                                            Keywords can be used to later search for this survey on Surveys -page.
+                                        </p>
+                                    </div>
+
+                                    <!-- Keywords Display -->
+                                    <div x-show="questionInfoData?.keywordsList && questionInfoData.keywordsList.length > 0" 
+                                         class="flex flex-wrap gap-2">
+                                        <template x-for="(keyword, index) in questionInfoData?.keywordsList" :key="index">
+                                            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-webropol-primary-50 text-webropol-primary-700 rounded-full text-sm border border-webropol-primary-200">
+                                                <span x-text="keyword"></span>
+                                                <button 
+                                                    @click="removeKeyword(index)"
+                                                    class="hover:text-red-600 transition-colors">
+                                                    <i class="fal fa-times text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <!-- Empty State -->
+                                    <div x-show="!questionInfoData?.keywordsList || questionInfoData.keywordsList.length === 0" 
+                                         class="text-center py-6 text-webropol-gray-400 text-sm">
+                                        <i class="fal fa-tags text-2xl mb-2"></i>
+                                        <p>No keywords added yet</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -2799,6 +2861,8 @@
                 // Question info modal state
                 questionInfoId: null,
                 questionInfoData: null,
+                newKeyword: '',
+                keywordsExpanded: false,
                 
                 // Edit question modal state
                 editQuestionId: null,
@@ -3467,7 +3531,15 @@
                     const question = this.questions.find(q => q.id === questionId);
                     if (question) {
                         this.questionInfoId = questionId;
-                        this.questionInfoData = question;
+                        this.questionInfoData = { ...question };
+                        // Initialize keywords list if not present
+                        if (!this.questionInfoData.keywordsList) {
+                            // Parse from comma-separated string if exists
+                            const keywordsStr = this.questionInfoData.keywords || '';
+                            this.questionInfoData.keywordsList = keywordsStr.split(',').map(k => k.trim()).filter(k => k);
+                        }
+                        this.newKeyword = '';
+                        this.keywordsExpanded = false;
                         this.showQuestionInfoModal = true;
                         this.showContextMenu = null;
                     }
@@ -3502,6 +3574,43 @@
                     // Update the survey data
                     if (this.surveyInfoData) {
                         this.surveyInfoData.keywords = [...this.surveyKeywords];
+                    }
+                },
+
+                addKeyword() {
+                    const keyword = this.newKeyword.trim();
+                    if (keyword && this.questionInfoData) {
+                        if (!this.questionInfoData.keywordsList) {
+                            this.questionInfoData.keywordsList = [];
+                        }
+                        if (!this.questionInfoData.keywordsList.includes(keyword)) {
+                            this.questionInfoData.keywordsList.push(keyword);
+                            // Update the comma-separated keywords string
+                            this.questionInfoData.keywords = this.questionInfoData.keywordsList.join(', ');
+                            this.newKeyword = '';
+                            
+                            // Update the question in the main array
+                            const question = this.questions.find(q => q.id === this.questionInfoId);
+                            if (question) {
+                                question.keywords = this.questionInfoData.keywords;
+                                question.keywordsList = [...this.questionInfoData.keywordsList];
+                            }
+                        }
+                    }
+                },
+
+                removeKeyword(index) {
+                    if (this.questionInfoData && this.questionInfoData.keywordsList) {
+                        this.questionInfoData.keywordsList.splice(index, 1);
+                        // Update the comma-separated keywords string
+                        this.questionInfoData.keywords = this.questionInfoData.keywordsList.join(', ');
+                        
+                        // Update the question in the main array
+                        const question = this.questions.find(q => q.id === this.questionInfoId);
+                        if (question) {
+                            question.keywords = this.questionInfoData.keywords;
+                            question.keywordsList = [...this.questionInfoData.keywordsList];
+                        }
                     }
                 },
 
