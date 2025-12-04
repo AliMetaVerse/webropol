@@ -11,6 +11,7 @@
     <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="../../design-system/components/forms/Dropdown.js" type="module"></script>
+    <script src="../../design-system/components/interactive/Accordion.js" type="module"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -2571,7 +2572,7 @@
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         <div @click.away="showEditQuestionModal = false"
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="ease-in duration-200"
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
@@ -2594,37 +2595,94 @@
                 </button>
             </div>
 
-            <!-- Modal Content -->
-            <div class="p-6">
+            <!-- Modal Content (scrollable) -->
+            <div class="flex-1 overflow-y-auto p-6">
                 <div class="space-y-4">
-                    <!-- Question Title -->
-                    <div>
-                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Question title</label>
-                        <div class="relative">
-                            <select x-model="editQuestionData.title" 
-                                class="w-full px-4 py-3 pr-10 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent bg-white appearance-none">
-                                <option value="Open ended">Open ended</option>
-                                <option value="Multiple choice">Multiple choice</option>
-                                <option value="Rating scale">Rating scale</option>
-                                <option value="Yes/No">Yes/No</option>
-                            </select>
-                            <i class="fal fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 pointer-events-none"></i>
+                    <!-- Question Title Accordion -->
+                    <webropol-accordion 
+                        title="Question title" 
+                        variant="elevated"
+                        expanded>
+                        <div class="p-4">
+                            <input type="text" x-model="editQuestionData.name" 
+                                class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent"
+                                placeholder="Enter question text...">
                         </div>
-                    </div>
+                    </webropol-accordion>
 
-                    <!-- Question Text -->
-                    <div>
-                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Question text</label>
-                        <input type="text" x-model="editQuestionData.name" 
-                            class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent"
-                            placeholder="Enter question text...">
-                    </div>
+                    <!-- Question Options (Left Rows) Accordion -->
+                    <webropol-accordion 
+                        title="Question options (left rows)" 
+                        variant="elevated"
+                        expanded>
+                        <div class="p-4 space-y-3">
+                            <template x-if="editQuestionData && editQuestionData.rows">
+                                <template x-for="(row, index) in editQuestionData.rows" :key="index">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" 
+                                            x-model="editQuestionData.rows[index]" 
+                                            class="flex-1 px-4 py-2.5 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent"
+                                            :placeholder="'Option ' + (index + 1)">
+                                        <button @click="editQuestionData.rows.splice(index, 1)"
+                                            class="w-9 h-9 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <i class="fal fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </template>
+                            <button @click="if (!editQuestionData.rows) editQuestionData.rows = []; editQuestionData.rows.push('')"
+                                class="w-full px-4 py-2.5 border-2 border-dashed border-webropol-primary-300 text-webropol-primary-600 rounded-lg hover:bg-webropol-primary-50 transition-all font-medium">
+                                <i class="fal fa-plus mr-2"></i>Add Row
+                            </button>
+                        </div>
+                    </webropol-accordion>
 
-                    <!-- Question is mandatory -->
-                    <div class="flex items-center">
-                        <input type="checkbox" x-model="editQuestionData.mandatory" id="mandatory" 
-                            class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500 mr-3">
-                        <label for="mandatory" class="text-sm font-medium text-webropol-gray-700">Question is mandatory</label>
+                    <!-- Question Columns Accordion -->
+                    <webropol-accordion 
+                        title="Question columns" 
+                        variant="elevated"
+                        expanded>
+                        <div class="p-4 space-y-3">
+                            <template x-if="editQuestionData && editQuestionData.columns">
+                                <template x-for="(col, index) in editQuestionData.columns" :key="index">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" 
+                                            x-model="editQuestionData.columns[index]" 
+                                            class="flex-1 px-4 py-2.5 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent"
+                                            :placeholder="'Column ' + (index + 1)">
+                                        <button @click="editQuestionData.columns.splice(index, 1)"
+                                            class="w-9 h-9 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                            <i class="fal fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </template>
+                            <button @click="if (!editQuestionData.columns) editQuestionData.columns = []; editQuestionData.columns.push('')"
+                                class="w-full px-4 py-2.5 border-2 border-dashed border-webropol-primary-300 text-webropol-primary-600 rounded-lg hover:bg-webropol-primary-50 transition-all font-medium">
+                                <i class="fal fa-plus mr-2"></i>Add Column
+                            </button>
+                        </div>
+                    </webropol-accordion>
+
+                    <!-- Question Settings -->
+                    <div class="bg-webropol-gray-50 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label for="mandatory" class="text-sm font-medium text-webropol-gray-700">Question is mandatory</label>
+                            <input type="checkbox" x-model="editQuestionData.mandatory" id="mandatory" 
+                                class="h-5 w-5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label for="applyToOthers" class="text-sm font-medium text-webropol-gray-700">Apply question text changes to other surveys</label>
+                            <div class="relative">
+                                <select id="applyToOthers"
+                                    class="px-4 py-2 pr-10 border border-webropol-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent bg-white appearance-none text-sm">
+                                    <option value="none">None selected</option>
+                                    <option value="all">All surveys</option>
+                                    <option value="selected">Selected surveys</option>
+                                </select>
+                                <i class="fal fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-webropol-gray-400 pointer-events-none text-sm"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2635,8 +2693,8 @@
                     class="px-6 py-2.5 text-webropol-gray-700 font-medium rounded-full hover:bg-webropol-primary-200 transition-all border border-webropol-primary-700">
                     Cancel
                 </button>
-                <button @click="showEditQuestionModal = false"
-                    class="px-6 py-2.5 bg-webropol-primary-700 hover:bg-webropol-primary-800 text-white font-medium rounded-full transition-all">
+                <button @click="applyQuestionChanges()"
+                    class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-full transition-all">
                     Apply
                 </button>
             </div>
@@ -3146,6 +3204,21 @@
                         questionType: 'Text Question',
                         options: []
                     },
+                    { 
+                        id: 11, 
+                        name: 'Testing matrix', 
+                        type: 'matrix', 
+                        language: 'en', 
+                        folderId: 1111,
+                        questionType: 'Matrix',
+                        keywords: 'matrix, question',
+                        folderPath: 'Organisation Library / Customer Satisfaction / Product Feedback / Software Products',
+                        createdBy: 'Ali Al-Zuhairi',
+                        title: 'Matrix question',
+                        mandatory: false,
+                        rows: ['Dog', 'Cat', 'Mouse'],
+                        columns: ['Very good', 'Good', 'Not so good', 'Bad', 'Very Bad']
+                    },
                     // Finnish translations of existing questions
                     { 
                         id: 11, 
@@ -3549,9 +3622,35 @@
                     const question = this.questions.find(q => q.id === questionId);
                     if (question) {
                         this.editQuestionId = questionId;
-                        this.editQuestionData = { ...question }; // Create a copy for editing
+                        // Create a deep copy for editing with default matrix data if needed
+                        this.editQuestionData = { 
+                            ...question,
+                            rows: question.rows || ['Dog', 'Cat', 'Mouse'],
+                            columns: question.columns || ['Very good', 'Good', 'Not so good', 'Bad', 'Very Bad']
+                        };
                         this.showEditQuestionModal = true;
                         this.showContextMenu = null;
+                    }
+                },
+
+                applyQuestionChanges() {
+                    if (this.editQuestionId && this.editQuestionData) {
+                        const question = this.questions.find(q => q.id === this.editQuestionId);
+                        if (question) {
+                            // Update the question with edited data
+                            Object.assign(question, this.editQuestionData);
+                            // Save to localStorage if needed
+                            this.saveQuestionsToStorage();
+                        }
+                        this.showEditQuestionModal = false;
+                    }
+                },
+
+                saveQuestionsToStorage() {
+                    try {
+                        localStorage.setItem('webropol_library_questions', JSON.stringify(this.questions));
+                    } catch (e) {
+                        console.error('Error saving questions to localStorage:', e);
                     }
                 },
 
