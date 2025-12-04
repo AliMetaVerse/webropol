@@ -131,6 +131,47 @@
     .question-card-highlighted{border-color:transparent !important;background:#fff !important;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#06b6d4,#a855f7,#06b6d4) border-box !important;animation:questionHighlightBorder 1.2s ease-in-out infinite alternate}
     @keyframes questionHighlightBorder{0%{box-shadow:0 0 0 0 rgba(6,182,212,.35)}100%{box-shadow:0 0 0 6px rgba(6,182,212,.05)}}
     
+    /* Drag handle styles */
+    .drag-handle {
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10;
+      cursor: grab;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    
+    .drag-handle:hover {
+      background: #f8fafc;
+      border-color: #06b6d4;
+    }
+    
+    .question-card:hover .drag-handle,
+    .question-card.selected .drag-handle {
+      opacity: 1;
+      right: -16px;
+    }
+    
+    .drag-handle i {
+      color: #64748b;
+      font-size: 16px;
+    }
+    
+    .drag-handle:hover i {
+      color: #06b6d4;
+    }
+    
     /* Custom range slider styles */
     .slider {
       -webkit-appearance: none;
@@ -1194,6 +1235,12 @@
                      <div x-data="{ selected: false, questionId: 'q1' }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
+                    
+                    <!-- Drag handle -->
+                    <div class="drag-handle" title="Drag to reorder">
+                      <i class="fal fa-grip-vertical"></i>
+                    </div>
+                    
                     <!-- Expanded header and toolbar (EDIT MODE) -->
                     <div x-show="selected" 
                          x-transition:enter="transition ease-out duration-200" 
@@ -1305,6 +1352,12 @@
                      <div x-data="{ selected: false, questionId: 'q2' }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
+                    
+                    <!-- Drag handle -->
+                    <div class="drag-handle" title="Drag to reorder">
+                      <i class="fal fa-grip-vertical"></i>
+                    </div>
+                    
                   <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
                   <div x-show="selected" 
                        x-transition:enter="transition ease-out duration-200" 
@@ -1484,6 +1537,12 @@
                      <div x-data="{ selected: false, questionId: 'q3-openended' }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
+                    
+                    <!-- Drag handle -->
+                    <div class="drag-handle" title="Drag to reorder">
+                      <i class="fal fa-grip-vertical"></i>
+                    </div>
+                    
                   <!-- Expanded header and toolbar (EDIT MODE) -->
                   <div x-show="selected" 
                        x-transition:enter="transition ease-out duration-200" 
@@ -1622,6 +1681,12 @@
                      <div x-data="{ selected: false, questionId: 'q3' }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
+                    
+                    <!-- Drag handle -->
+                    <div class="drag-handle" title="Drag to reorder">
+                      <i class="fal fa-grip-vertical"></i>
+                    </div>
+                    
                   <!-- Expanded header and toolbar (EDIT MODE - visible when selected=true) -->
                   <div x-show="selected" 
                        x-transition:enter="transition ease-out duration-200" 
