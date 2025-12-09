@@ -70,13 +70,28 @@ export class WebropolDropdown extends BaseComponent {
             <i class="fal fa-chevron-down text-webropol-gray-400 group-hover:text-purple-500 transition-transform duration-200 ${this.state.isOpen ? 'rotate-180' : ''}"></i>
           </button>
           
-          <div class="dropdown-menu absolute top-full left-0 right-0 ${currentSize.menu} bg-white border border-webropol-gray-100 transition-all duration-200 z-50 overflow-hidden ${this.state.isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}">
-            <div class="p-1 ${currentSize.maxHeight} overflow-y-auto custom-scrollbar">
+          <div class="dropdown-menu absolute top-full left-0 ${currentSize.menu} bg-white border border-webropol-gray-100 transition-all duration-200 z-50 overflow-hidden min-w-[180px] ${this.state.isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}">
+            <div class="p-1 ${currentSize.maxHeight} overflow-y-auto custom-scrollbar whitespace-nowrap">
               ${normalizedOptions.map(opt => {
                 const isOptSelected = opt.value === currentValue;
+                
+                // Icon mapping for common chart types
+                const iconMap = {
+                  'bar': 'fa-chart-bar',
+                  'pie': 'fa-chart-pie',
+                  'line': 'fa-chart-line',
+                  'area': 'fa-chart-area',
+                  'table': 'fa-table'
+                };
+                
+                const icon = opt.icon || iconMap[opt.value] || 'fa-circle';
+                
                 return `
                   <button type="button" class="dropdown-option w-full text-left ${currentSize.option} font-medium text-webropol-gray-600 hover:bg-purple-50 hover:text-purple-700 transition-colors flex items-center justify-between group ${isOptSelected ? 'bg-purple-50 text-purple-700 selected' : ''}" data-value="${opt.value}" data-label="${opt.label}">
-                    <span class="truncate">${opt.label}</span>
+                    <span class="flex items-center gap-2 flex-1">
+                      <i class="fal ${icon} w-4 text-center"></i>
+                      <span>${opt.label}</span>
+                    </span>
                     <i class="fal fa-check text-purple-600 ${isOptSelected ? '' : 'opacity-0'} group-[.selected]:opacity-100 transition-opacity flex-shrink-0 ml-2"></i>
                   </button>
                 `;
