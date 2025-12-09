@@ -198,6 +198,12 @@
     .drag-handle:hover i {
       color: #06b6d4;
     }
+
+    /* Question section highlight */
+    .question-section.highlighted {
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
+      border-color: #06b6d4 !important;
+    }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -455,10 +461,11 @@
                 <!-- Questions List -->
                 <div class="space-y-2">
                   <!-- Question 1 -->
-                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition">
+                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition cursor-pointer"
+                       @click="scrollToQuestion('question-1')">
                     <div class="flex items-start gap-3">
                       <!-- Drag handle -->
-                      <div class="drag-handle" title="Drag to reorder">
+                      <div class="drag-handle" title="Drag to reorder" @click.stop>
                         <i class="fal fa-grip-vertical"></i>
                       </div>
                       <div class="flex-1 min-w-0">
@@ -469,10 +476,11 @@
                   </div>
 
                   <!-- Question 2 -->
-                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition">
+                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition cursor-pointer"
+                       @click="scrollToQuestion('question-2')">
                     <div class="flex items-start gap-3">
                       <!-- Drag handle -->
-                      <div class="drag-handle" title="Drag to reorder">
+                      <div class="drag-handle" title="Drag to reorder" @click.stop>
                         <i class="fal fa-grip-vertical"></i>
                       </div>
                       <div class="flex-1 min-w-0">
@@ -483,10 +491,11 @@
                   </div>
 
                   <!-- Question 3 -->
-                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition">
+                  <div class="question-item w-full text-left p-3 rounded-lg hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition cursor-pointer"
+                       @click="scrollToQuestion('question-3')">
                     <div class="flex items-start gap-3">
                       <!-- Drag handle -->
-                      <div class="drag-handle" title="Drag to reorder">
+                      <div class="drag-handle" title="Drag to reorder" @click.stop>
                         <i class="fal fa-grip-vertical"></i>
                       </div>
                       <div class="flex-1 min-w-0">
@@ -526,7 +535,7 @@
               </div>
 
               <!-- AI Auto Detect card -->
-              <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100">
+              <div id="question-1" class="question-section bg-white rounded-2xl shadow-card border border-webropol-gray-100 transition-all duration-300">
                 <div class="p-5 border-b border-webropol-gray-100">
                   <h2 class="text-xl font-semibold text-webropol-gray-900">AI Auto Detect</h2>
                 </div>
@@ -536,7 +545,7 @@
               </div>
 
               <!-- NPS Widget -->
-              <div class="nps-widget">
+              <div id="question-2" class="question-section nps-widget transition-all duration-300">
                 <div class="flex items-start justify-between mb-4 pb-4 border-b border-webropol-gray-200">
                   <div class="flex-1">
                     <h3 class="text-base font-semibold text-webropol-gray-900 mb-1">Are you satisfied with the current product? Answer 1-10 where 1=Very unlikely, 10=Very likely</h3>
@@ -826,10 +835,10 @@
               </div>
 
               <!-- Rank Widget -->
-              <div class="rank-widget">
+              <div id="question-3" class="question-section rank-widget transition-all duration-300">
                 <div class="flex items-start justify-between mb-4 pb-4 border-b border-webropol-gray-200">
                   <div class="flex-1">
-                    <h3 class="text-base font-semibold text-webropol-gray-900 mb-1">Rank</h3>
+                    <h3 class="text-base font-semibold text-webropol-gray-900 mb-1">Please rank the following features by importance</h3>
                     <p class="text-sm text-webropol-gray-500">Number of respondents: 0</p>
                   </div>
                   <webropol-dashboard-config></webropol-dashboard-config>
@@ -2626,6 +2635,27 @@
         
         openSettings() {
           alert('Opening widget settings...');
+        },
+        
+        scrollToQuestion(questionId) {
+          const element = document.getElementById(questionId);
+          if (element) {
+            // Scroll to the question
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Remove highlight from all sections
+            document.querySelectorAll('.question-section').forEach(section => {
+              section.classList.remove('highlighted');
+            });
+            
+            // Add highlight to the clicked question
+            element.classList.add('highlighted');
+            
+            // Remove highlight after 2 seconds
+            setTimeout(() => {
+              element.classList.remove('highlighted');
+            }, 2000);
+          }
         }
       };
     }
