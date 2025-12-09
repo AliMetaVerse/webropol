@@ -768,6 +768,7 @@
 
                 <!-- Rank Chart -->
                 <div class="space-y-6">
+                  <!-- Rank Visualization Chart -->
                   <div class="chart-wrapper" style="position: relative;">
                     <!-- Floating Toolbar (appears when chart is selected) -->
                     <div x-show="selectedWidget === 'rank-chart-1'" 
@@ -790,8 +791,7 @@
                             "options": [
                               {"label": "Bar Chart", "value": "bar", "icon": "fal fa-chart-bar"},
                               {"label": "Pie Chart", "value": "pie", "icon": "fal fa-chart-pie"},
-                              {"label": "Line Chart", "value": "line", "icon": "fal fa-chart-line"},
-                              {"label": "Table View", "value": "table", "icon": "fal fa-table"}
+                              {"label": "Line Chart", "value": "line", "icon": "fal fa-chart-line"}
                             ]
                           },
                           {"type": "separator"},
@@ -846,6 +846,64 @@
                           <span class="text-xs text-webropol-gray-700">5</span>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  <!-- Rank Data Table -->
+                  <div class="chart-wrapper" style="position: relative;">
+                    <!-- Floating Toolbar (appears when table is selected) -->
+                    <div x-show="selectedWidget === 'rank-table-1'" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 -translate-y-2"
+                         x-transition:enter-end="opacity-1 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-1 translate-y-0"
+                         x-transition:leave-end="opacity-0 -translate-y-2"
+                         class="absolute top-0 left-1/2 -translate-x-1/2 z-10"
+                         style="display: none;"
+                         @click.stop>
+                      <webropol-floating-toolbar
+                        variant="default"
+                        size="medium"
+                        tools='[
+                          {
+                            "type": "dropdown",
+                            "label": "Table content",
+                            "options": [
+                              {"label": "Show all rows", "value": "all", "icon": "fal fa-eye"},
+                              {"label": "Show filtered", "value": "filtered", "icon": "fal fa-filter"},
+                              {"label": "Export data", "value": "export", "icon": "fal fa-download"}
+                            ]
+                          },
+                          {"type": "separator"},
+                          {
+                            "type": "button",
+                            "icon": "fal fa-copy",
+                            "action": "copy",
+                            "tooltip": "Copy"
+                          },
+                          {"type": "separator"},
+                          {
+                            "type": "button",
+                            "icon": "fal fa-trash",
+                            "action": "delete",
+                            "variant": "danger",
+                            "tooltip": "Delete"
+                          },
+                          {"type": "separator"},
+                          {
+                            "type": "button",
+                            "icon": "fal fa-cog",
+                            "action": "settings",
+                            "tooltip": "Settings"
+                          }
+                        ]'>
+                      </webropol-floating-toolbar>
+                    </div>
+                    
+                    <div class="chart-container overflow-x-auto" 
+                         :class="{ 'selected': selectedWidget === 'rank-table-1' }"
+                         @click="selectWidget('rank-table-1')">
 
                       <!-- Data Table -->
                       <div class="overflow-x-auto">
