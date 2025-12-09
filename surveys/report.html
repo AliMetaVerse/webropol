@@ -134,7 +134,7 @@
     <!-- Global Analytics Tracker -->
     <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
-<body x-data="surveyEditApp()" @click="if (toolbarVisible && !$event.target.closest('.nps-widget') && !$event.target.closest('.chart-floating-toolbar')) deselectWidget()">
+<body x-data="surveyEditApp()" @click="if (toolbarVisible && !$event.target.closest('.chart-container') && !$event.target.closest('.chart-floating-toolbar')) deselectWidget()">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -416,9 +416,7 @@
               </div>
 
               <!-- NPS Widget -->
-              <div class="nps-widget" 
-                   :class="{ 'selected': selectedWidget === 'nps-1' }"
-                   @click="selectWidget('nps-1')">
+              <div class="nps-widget">
                 <div class="flex items-start justify-between mb-4">
                   <div class="flex-1">
                     <h3 class="text-base font-semibold text-webropol-gray-900 mb-1">Are you satisfied with the current product? Answer 1-10 where 1=Very unlikely, 10=Very likely</h3>
@@ -455,7 +453,9 @@
                 <!-- Chart and Table Combined View -->
                 <div class="space-y-6">
                   <!-- NPS Bar Chart -->
-                  <div>
+                  <div class="chart-container" 
+                       :class="{ 'selected': selectedWidget === 'nps-chart-1' }"
+                       @click="selectWidget('nps-chart-1')">
                     <div class="nps-bar" style="border: 1px solid #cbd5e1;">
                       <div class="nps-segment nps-detractors" style="width: 40%;">
                         <div class="flex flex-col items-center">
@@ -507,7 +507,9 @@
                   </div>
 
                   <!-- Detailed Table -->
-                  <div class="overflow-x-auto">
+                  <div class="chart-container overflow-x-auto" 
+                       :class="{ 'selected': selectedWidget === 'nps-table-1' }"
+                       @click="selectWidget('nps-table-1')">
                     <table class="w-full border-collapse" style="font-size: 0.875rem;">
                       <thead>
                         <tr>
@@ -558,7 +560,9 @@
                   </div>
 
                   <!-- Summary Stats Table -->
-                  <div class="overflow-x-auto">
+                  <div class="chart-container overflow-x-auto" 
+                       :class="{ 'selected': selectedWidget === 'nps-summary-1' }"
+                       @click="selectWidget('nps-summary-1')">
                     <table class="w-full border-collapse" style="font-size: 0.875rem; max-width: 400px;">
                       <thead>
                         <tr style="background: #f1f5f9;">
@@ -1862,18 +1866,26 @@
       padding: 1.5rem;
       margin-bottom: 1.5rem;
       position: relative;
-      cursor: pointer;
       transition: all 0.3s ease;
     }
 
-    .nps-widget:hover {
-      border-color: #06b6d4;
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+    /* Chart Container Styles */
+    .chart-container {
+      cursor: pointer;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      margin: -0.75rem;
+      transition: all 0.3s ease;
     }
 
-    .nps-widget.selected {
-      border-color: #06b6d4;
-      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
+    .chart-container:hover {
+      background: rgba(6, 182, 212, 0.05);
+      box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3);
+    }
+
+    .chart-container.selected {
+      background: rgba(6, 182, 212, 0.1);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.5);
     }
 
     .nps-bar {
