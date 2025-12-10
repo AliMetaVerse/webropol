@@ -1674,11 +1674,11 @@ class WebropolMergePages extends BaseComponent {
         
         <!-- Content container -->
         <div class="relative flex justify-center items-center">
-          <!-- Page indicator - centered -->
-          <span class="px-6 py-2 bg-white text-webropol-gray-600 text-sm font-semibold rounded-full border-2 border-webropol-gray-300 shadow-sm">
-            <i class="${icon} mr-2"></i>
-            Page ${pageNumber}
-          </span>
+          <!-- Page indicator - static label design -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-webropol-gray-100 text-webropol-gray-700 text-xs font-medium uppercase tracking-wider rounded-md border border-webropol-gray-200">
+            <i class="${icon} text-webropol-gray-500"></i>
+            <span>Page ${pageNumber}</span>
+          </div>
           
           ${showMerge ? `
           <!-- Merge button - positioned on the right -->
