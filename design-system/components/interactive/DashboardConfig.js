@@ -42,7 +42,7 @@ export class WebropolDashboardConfig extends BaseComponent {
                 class="config-toggle-btn inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-1 transition-all"
                 aria-haspopup="true"
                 aria-expanded="false">
-          <i class="fal fa-cog"></i>
+          <i class="fa-light fa-square-sliders"></i>
           <span>Config</span>
           <i class="fal fa-chevron-down text-xs"></i>
         </button>
