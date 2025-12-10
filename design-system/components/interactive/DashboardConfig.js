@@ -50,15 +50,24 @@ export class WebropolDashboardConfig extends BaseComponent {
         <div class="config-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 py-1 z-50 hidden"
              role="menu"
              aria-orientation="vertical">
-          ${finalActions.map(action => `
-            <button type="button" 
-                    class="config-menu-item w-full flex items-center gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left"
-                    data-action="${action.id}"
-                    role="menuitem">
-              <i class="${action.icon} w-4 text-center"></i>
-              <span>${action.label || action.tooltip || action.id}</span>
-            </button>
-          `).join('')}
+          ${finalActions.map((action, index) => {
+            const isDanger = action.id === 'delete';
+            const needsSeparator = isDanger && index > 0;
+            const itemClass = isDanger 
+              ? 'config-menu-item w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left'
+              : 'config-menu-item w-full flex items-center gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left';
+            
+            return `
+              ${needsSeparator ? '<div class="border-t border-webropol-gray-200 my-1"></div>' : ''}
+              <button type="button" 
+                      class="${itemClass}"
+                      data-action="${action.id}"
+                      role="menuitem">
+                <i class="${action.icon} w-4 text-center"></i>
+                <span>${action.label || action.tooltip || action.id}</span>
+              </button>
+            `;
+          }).join('')}
         </div>
       </div>
     `;
