@@ -7,7 +7,8 @@ export class WebropolDashboardConfig extends BaseComponent {
 
   init() {
     this.state = {
-      activeAction: null
+      activeAction: null,
+      menuOpen: false
     };
   }
 
@@ -25,60 +26,105 @@ export class WebropolDashboardConfig extends BaseComponent {
 
     // Default action set
     const defaultActions = [
-      { id: 'chart', icon: 'fal fa-chart-column', tooltip: 'Chart' },
-      { id: 'settings', icon: 'fal fa-cog', tooltip: 'Settings' },
-      { id: 'copy', icon: 'fal fa-copy', tooltip: 'Copy' },
-      { id: 'filter', icon: 'fal fa-filter', tooltip: 'Filter' },
-      { id: 'group', icon: 'fal fa-users', tooltip: 'Group' },
-      { id: 'delete', icon: 'fa-light fa-trash-can', tooltip: 'Delete' }
+      { id: 'chart', icon: 'fal fa-chart-column', label: 'Chart' },
+      { id: 'settings', icon: 'fal fa-cog', label: 'Settings' },
+      { id: 'copy', icon: 'fal fa-copy', label: 'Copy' },
+      { id: 'filter', icon: 'fal fa-filter', label: 'Filter' },
+      { id: 'group', icon: 'fal fa-users', label: 'Group' },
+      { id: 'delete', icon: 'fa-light fa-trash-can', label: 'Delete' }
     ];
 
     const finalActions = actions.length > 0 ? actions : defaultActions;
 
-    // Size variants
-    const sizeClasses = {
-      small: {
-        button: 'p-1.5',
-        icon: 'text-base',
-        gap: 'gap-0.5'
-      },
-      medium: {
-        button: 'p-2',
-        icon: 'text-lg',
-        gap: 'gap-1'
-      },
-      large: {
-        button: 'p-3',
-        icon: 'text-xl',
-        gap: 'gap-2'
-      }
-    };
-
-    const currentSize = sizeClasses[size] || sizeClasses.medium;
-
     this.innerHTML = `
-      <div class="flex items-center ${currentSize.gap}">
-        ${finalActions.map(action => `
-          <button type="button" 
-                  class="dashboard-action-btn ${currentSize.button} text-webropol-gray-600 hover:bg-webropol-gray-100 rounded-lg transition-colors"
-                  data-action="${action.id}"
-                  title="${action.tooltip || action.label || ''}">
-            <i class="${action.icon} ${currentSize.icon}"></i>
-          </button>
-        `).join('')}
+      <div class="relative">
+        <button type="button" 
+                class="config-toggle-btn inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-webropol-gray-700 bg-white border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-1 transition-all"
+                aria-haspopup="true"
+                aria-expanded="false">
+          <i class="fal fa-cog"></i>
+          <span>Config</span>
+          <i class="fal fa-chevron-down text-xs"></i>
+        </button>
+        
+        <div class="config-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-webropol-gray-200 py-1 z-50 hidden"
+             role="menu"
+             aria-orientation="vertical">
+          ${finalActions.map(action => `
+            <button type="button" 
+                    class="config-menu-item w-full flex items-center gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left"
+                    data-action="${action.id}"
+                    role="menuitem">
+              <i class="${action.icon} w-4 text-center"></i>
+              <span>${action.label || action.tooltip || action.id}</span>
+            </button>
+          `).join('')}
+        </div>
       </div>
     `;
   }
 
   bindEvents() {
-    const buttons = this.querySelectorAll('.dashboard-action-btn');
-    buttons.forEach(button => {
-      button.addEventListener('click', (e) => {
+    const toggleBtn = this.querySelector('.config-toggle-btn');
+    const menu = this.querySelector('.config-menu');
+    const menuItems = this.querySelectorAll('.config-menu-item');
+
+    // Toggle menu
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = !menu.classList.contains('hidden');
+      
+      if (isOpen) {
+        this.closeMenu();
+      } else {
+        this.openMenu();
+      }
+    });
+
+    // Menu item clicks
+    menuItems.forEach(item => {
+      item.addEventListener('click', (e) => {
         e.stopPropagation();
-        const action = button.dataset.action;
+        const action = item.dataset.action;
         this.emit('action-click', { action });
+        this.closeMenu();
       });
     });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!this.contains(e.target)) {
+        this.closeMenu();
+      }
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+        this.closeMenu();
+        toggleBtn.focus();
+      }
+    });
+  }
+
+  openMenu() {
+    const toggleBtn = this.querySelector('.config-toggle-btn');
+    const menu = this.querySelector('.config-menu');
+    const chevron = toggleBtn.querySelector('.fa-chevron-down');
+    
+    menu.classList.remove('hidden');
+    toggleBtn.setAttribute('aria-expanded', 'true');
+    chevron.style.transform = 'rotate(180deg)';
+  }
+
+  closeMenu() {
+    const toggleBtn = this.querySelector('.config-toggle-btn');
+    const menu = this.querySelector('.config-menu');
+    const chevron = toggleBtn.querySelector('.fa-chevron-down');
+    
+    menu.classList.add('hidden');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    chevron.style.transform = 'rotate(0deg)';
   }
 }
 
