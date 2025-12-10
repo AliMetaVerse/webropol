@@ -81,6 +81,11 @@ design-system/
 ### Menu Components
 - **ContextMenu** - Vertical menu with icon-labeled actions, hover states, and danger variants
 
+### Interactive Components
+- **FloatingButton** - Floating action button with expandable menu
+- **MergePages** - Page separator with merge functionality for survey editing
+- **Accordion** - Collapsible content sections
+
 ### Navigation Components
 - **Sidebar** - Primary navigation with menu items and branding
 - **Header** - Top navigation bar with user controls and actions

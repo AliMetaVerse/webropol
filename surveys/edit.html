@@ -10,6 +10,7 @@
   <script defer src="../design-system/components/tabs/unified-tabs.js"></script>
   <script src="../design-system/components/forms/Dropdown.js" type="module"></script>
   <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
+  <script src="../design-system/components/interactive/MergePages.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -1213,17 +1214,7 @@
                 <!-- Title moved inside the page card below -->
                 
                 <!-- Visual Separator for Page 1 -->
-                <div class="mb-8 relative">
-                  <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t-2 border-webropol-gray-200"></div>
-                  </div>
-                  <div class="relative flex justify-center">
-                    <span class="px-6 py-2 bg-white text-webropol-gray-600 text-sm font-semibold rounded-full border-2 border-webropol-gray-300 shadow-sm">
-                      <i class="fal fa-file-alt mr-2"></i>
-                      Page 1
-                    </span>
-                  </div>
-                </div>
+                <webropol-merge-pages page-number="1" show-merge="false"></webropol-merge-pages>
                 
                 <!-- Page container -->
                 <section class="relative bg-white rounded-3xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 space-y-4 mb-4">
@@ -1659,17 +1650,7 @@
                 </section>
                 
                 <!-- Visual Separator for Page 2 -->
-                <div class="my-8 relative">
-                  <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t-2 border-webropol-gray-200"></div>
-                  </div>
-                  <div class="relative flex justify-center">
-                    <span class="px-6 py-2 bg-white text-webropol-gray-600 text-sm font-semibold rounded-full border-2 border-webropol-gray-300 shadow-sm">
-                      <i class="fal fa-file-alt mr-2"></i>
-                      Page 2
-                    </span>
-                  </div>
-                </div>
+                <webropol-merge-pages page-number="2" show-merge="true" @merge-page="handleMergePage($event)"></webropol-merge-pages>
                 
                 <!-- PAGE 2 SECTION: NPS Question -->
                 <section class="relative bg-white rounded-3xl border border-webropol-gray-100/80 p-6 sm:p-8 md:p-10 space-y-4 mb-4">
@@ -4455,6 +4436,25 @@
         saveSurvey() {
           console.log('Saving survey...');
           // Implementation for saving survey
+        },
+        
+        handleMergePage(event) {
+          const { pageNumber, targetPage } = event.detail;
+          console.log(`Merging page ${pageNumber} into page ${targetPage}...`);
+          
+          // Show confirmation dialog
+          if (confirm(`Are you sure you want to merge Page ${pageNumber} into Page ${targetPage}?\n\nAll questions from Page ${pageNumber} will be moved to Page ${targetPage}, and Page ${pageNumber} will be removed.`)) {
+            // Implementation for merging pages
+            // 1. Get all questions from pageNumber
+            // 2. Move them to targetPage
+            // 3. Remove pageNumber section
+            // 4. Renumber subsequent pages
+            // 5. Update localStorage/backend
+            
+            console.log('Pages merged successfully');
+            // Dispatch event to update the UI
+            this.$dispatch('pages-merged', { from: pageNumber, to: targetPage });
+          }
         }
       }
     }

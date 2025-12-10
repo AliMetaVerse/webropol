@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MergePages Component Demo | Webropol Design System</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="../components/interactive/MergePages.js" type="module"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 
+              50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 
+              400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 
+              800: '#155e75', 900: '#164e63' 
+            },
+            'webropol-gray': { 
+              50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 
+              400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 
+              800: '#1e293b', 900: '#0f172a' 
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .demo-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .page-content {
+      background: white;
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      padding: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .event-log {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+    }
+    
+    .event-item {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      border-left: 3px solid #06b6d4;
+      background: #f0fdff;
+    }
+  </style>
+</head>
+<body x-data="demoApp()" class="bg-webropol-gray-50">
+  
+  <!-- Header -->
+  <header class="demo-section text-white py-8 px-6">
+    <div class="container mx-auto">
+      <h1 class="text-4xl font-bold mb-2">MergePages Component</h1>
+      <p class="text-lg opacity-90">Visual page separator with merge functionality</p>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-12">
+    
+    <!-- Demo: Survey Pages -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Survey Page Example</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        
+        <!-- Page 1 -->
+        <div class="page-content">
+          <h3 class="text-xl font-semibold text-webropol-gray-800 mb-4">Page 1 - Welcome</h3>
+          <p class="text-webropol-gray-600">This is the first page of the survey. It cannot be merged because there's no page before it.</p>
+          <div class="mt-4 space-y-3">
+            <div class="border border-webropol-gray-200 rounded-lg p-3">
+              <label class="text-sm font-medium text-webropol-gray-700">Question 1: What's your name?</label>
+              <input type="text" class="w-full mt-2 px-3 py-2 border border-webropol-gray-300 rounded" placeholder="Enter your name">
+            </div>
+            <div class="border border-webropol-gray-200 rounded-lg p-3">
+              <label class="text-sm font-medium text-webropol-gray-700">Question 2: Your email?</label>
+              <input type="email" class="w-full mt-2 px-3 py-2 border border-webropol-gray-300 rounded" placeholder="Enter your email">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Page 1 Separator (NO merge button) -->
+        <webropol-merge-pages page-number="1" show-merge="false"></webropol-merge-pages>
+        
+        <!-- Page 2 -->
+        <div class="page-content">
+          <h3 class="text-xl font-semibold text-webropol-gray-800 mb-4">Page 2 - Feedback</h3>
+          <p class="text-webropol-gray-600">This page has a merge button. Click it to merge with Page 1.</p>
+          <div class="mt-4 space-y-3">
+            <div class="border border-webropol-gray-200 rounded-lg p-3">
+              <label class="text-sm font-medium text-webropol-gray-700">Question 3: How satisfied are you?</label>
+              <select class="w-full mt-2 px-3 py-2 border border-webropol-gray-300 rounded">
+                <option>Very Satisfied</option>
+                <option>Satisfied</option>
+                <option>Neutral</option>
+                <option>Dissatisfied</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Page 2 Separator (WITH merge button) -->
+        <webropol-merge-pages 
+          page-number="2" 
+          show-merge="true"
+          @merge-page="logEvent($event)"
+        ></webropol-merge-pages>
+        
+        <!-- Page 3 -->
+        <div class="page-content">
+          <h3 class="text-xl font-semibold text-webropol-gray-800 mb-4">Page 3 - Additional Comments</h3>
+          <p class="text-webropol-gray-600">This page can also be merged with Page 2.</p>
+          <div class="mt-4 space-y-3">
+            <div class="border border-webropol-gray-200 rounded-lg p-3">
+              <label class="text-sm font-medium text-webropol-gray-700">Question 4: Any comments?</label>
+              <textarea class="w-full mt-2 px-3 py-2 border border-webropol-gray-300 rounded" rows="4" placeholder="Your comments..."></textarea>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Page 3 Separator (WITH merge button) -->
+        <webropol-merge-pages 
+          page-number="3" 
+          show-merge="true"
+          @merge-page="logEvent($event)"
+        ></webropol-merge-pages>
+        
+        <!-- Thank You Page -->
+        <div class="page-content bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+          <div class="text-center">
+            <i class="fal fa-check-circle text-5xl text-green-600 mb-4"></i>
+            <h3 class="text-2xl font-bold text-green-800 mb-2">Thank You!</h3>
+            <p class="text-green-700">Your feedback has been submitted.</p>
+          </div>
+        </div>
+        
+      </div>
+    </section>
+    
+    <!-- Demo: Custom Icons -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Custom Icon Examples</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8 space-y-8">
+        
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Default Icon (File)</h3>
+          <webropol-merge-pages page-number="1" show-merge="false"></webropol-merge-pages>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Invoice Icon</h3>
+          <webropol-merge-pages 
+            page-number="2" 
+            show-merge="true" 
+            icon="fal fa-file-invoice"
+            @merge-page="logEvent($event)"
+          ></webropol-merge-pages>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Chart Icon</h3>
+          <webropol-merge-pages 
+            page-number="3" 
+            show-merge="true" 
+            icon="fal fa-chart-line"
+            @merge-page="logEvent($event)"
+          ></webropol-merge-pages>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Clipboard Icon</h3>
+          <webropol-merge-pages 
+            page-number="4" 
+            show-merge="true" 
+            icon="fal fa-clipboard-list"
+            @merge-page="logEvent($event)"
+          ></webropol-merge-pages>
+        </div>
+        
+      </div>
+    </section>
+    
+    <!-- Code Examples -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Code Examples</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-3">Page 1 (No Merge Button)</h3>
+          <pre class="bg-webropol-gray-900 text-white p-4 rounded-lg overflow-x-auto"><code>&lt;webropol-merge-pages page-number="1" show-merge="false"&gt;&lt;/webropol-merge-pages&gt;</code></pre>
+        </div>
+        
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-3">Page 2+ (With Merge Button)</h3>
+          <pre class="bg-webropol-gray-900 text-white p-4 rounded-lg overflow-x-auto"><code>&lt;webropol-merge-pages 
+  page-number="2" 
+  show-merge="true"
+  @merge-page="handleMergePage($event)"
+&gt;&lt;/webropol-merge-pages&gt;</code></pre>
+        </div>
+        
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-3">With Custom Icon</h3>
+          <pre class="bg-webropol-gray-900 text-white p-4 rounded-lg overflow-x-auto"><code>&lt;webropol-merge-pages 
+  page-number="3" 
+  show-merge="true"
+  icon="fal fa-chart-line"
+  @merge-page="handleMergePage($event)"
+&gt;&lt;/webropol-merge-pages&gt;</code></pre>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-3">Event Handler</h3>
+          <pre class="bg-webropol-gray-900 text-white p-4 rounded-lg overflow-x-auto"><code>function surveyApp() {
+  return {
+    handleMergePage(event) {
+      const { pageNumber, targetPage } = event.detail;
+      
+      if (confirm(`Merge Page ${pageNumber} into Page ${targetPage}?`)) {
+        // Perform merge logic here
+        console.log('Merging pages...');
+      }
+    }
+  }
+}</code></pre>
+        </div>
+        
+      </div>
+    </section>
+    
+    <!-- Attributes Reference -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Attributes Reference</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-webropol-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-webropol-gray-700">Attribute</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-webropol-gray-700">Type</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-webropol-gray-700">Default</th>
+              <th class="px-6 py-3 text-left text-sm font-semibold text-webropol-gray-700">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-webropol-gray-200">
+            <tr>
+              <td class="px-6 py-4 text-sm font-mono text-webropol-primary-600">page-number</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">string</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">"1"</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">The page number to display</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 text-sm font-mono text-webropol-primary-600">show-merge</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">boolean</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">true</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">Whether to show the merge button</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 text-sm font-mono text-webropol-primary-600">icon</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">string</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">"fal fa-file-alt"</td>
+              <td class="px-6 py-4 text-sm text-webropol-gray-600">FontAwesome icon class</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <!-- Events Reference -->
+    <section>
+      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Events</h2>
+      
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">merge-page</h3>
+        <p class="text-webropol-gray-600 mb-4">Emitted when the merge button is clicked.</p>
+        
+        <div class="bg-webropol-gray-50 rounded-lg p-4 border border-webropol-gray-200">
+          <p class="text-sm font-semibold text-webropol-gray-700 mb-2">Event Detail:</p>
+          <pre class="text-sm"><code>{
+  pageNumber: 2,    // The page being merged
+  targetPage: 1     // The page to merge into (pageNumber - 1)
+}</code></pre>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+  
+  <!-- Event Log -->
+  <div class="event-log" x-show="events.length > 0" x-cloak>
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="font-semibold text-webropol-gray-800">Event Log</h3>
+      <button 
+        @click="events = []" 
+        class="text-xs text-webropol-primary-600 hover:text-webropol-primary-700"
+      >
+        Clear
+      </button>
+    </div>
+    <div class="space-y-2">
+      <template x-for="(event, index) in events" :key="index">
+        <div class="event-item">
+          <div class="font-semibold text-webropol-primary-700 text-xs mb-1">merge-page</div>
+          <div class="text-xs text-webropol-gray-600">
+            Page <span class="font-mono font-semibold" x-text="event.pageNumber"></span> → 
+            Page <span class="font-mono font-semibold" x-text="event.targetPage"></span>
+          </div>
+          <div class="text-xs text-webropol-gray-400 mt-1" x-text="event.timestamp"></div>
+        </div>
+      </template>
+    </div>
+  </div>
+  
+  <script>
+    function demoApp() {
+      return {
+        events: [],
+        
+        logEvent(event) {
+          const { pageNumber, targetPage } = event.detail;
+          
+          this.events.unshift({
+            pageNumber,
+            targetPage,
+            timestamp: new Date().toLocaleTimeString()
+          });
+          
+          // Keep only last 10 events
+          if (this.events.length > 10) {
+            this.events.pop();
+          }
+          
+          console.log('Merge event:', event.detail);
+        }
+      }
+    }
+  </script>
+  
+</body>
+</html>

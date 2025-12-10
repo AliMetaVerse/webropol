@@ -1651,6 +1651,66 @@ class GlobalSettingsManager {
 // Create global instance
 window.globalSettingsManager = new GlobalSettingsManager();
 
+// ============================================================================
+// MergePages Component
+// ============================================================================
+
+class WebropolMergePages extends BaseComponent {
+  static get observedAttributes() {
+    return ['page-number', 'show-merge', 'icon'];
+  }
+  
+  render() {
+    const pageNumber = this.getAttr('page-number', '1');
+    const showMerge = this.getBoolAttr('show-merge');
+    const icon = this.getAttr('icon', 'fal fa-file-alt');
+    
+    this.innerHTML = `
+      <div class="my-8 relative">
+        <!-- Border line -->
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t-2 border-webropol-gray-200"></div>
+        </div>
+        
+        <!-- Content container -->
+        <div class="relative flex justify-center items-center">
+          <!-- Page indicator - centered -->
+          <span class="px-6 py-2 bg-white text-webropol-gray-600 text-sm font-semibold rounded-full border-2 border-webropol-gray-300 shadow-sm">
+            <i class="${icon} mr-2"></i>
+            Page ${pageNumber}
+          </span>
+          
+          ${showMerge ? `
+          <!-- Merge button - positioned on the right -->
+          <button 
+            class="merge-pages-btn absolute right-0 px-4 py-2 bg-white text-webropol-primary-600 text-sm font-medium rounded-full border-2 border-webropol-primary-300 shadow-sm hover:bg-webropol-primary-50 hover:border-webropol-primary-500 transition-all duration-200 flex items-center gap-2 group"
+            title="Merge this page with the previous page"
+            aria-label="Merge page ${pageNumber} with previous page">
+            <i class="fal fa-compress-arrows-alt group-hover:scale-110 transition-transform"></i>
+            <span>Merge Pages</span>
+          </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+  
+  bindEvents() {
+    const mergeBtn = this.querySelector('.merge-pages-btn');
+    if (mergeBtn) {
+      mergeBtn.addEventListener('click', () => {
+        const pageNumber = this.getAttr('page-number', '1');
+        this.emit('merge-page', { 
+          pageNumber: parseInt(pageNumber),
+          targetPage: parseInt(pageNumber) - 1 
+        });
+      });
+    }
+  }
+}
+
+customElements.define('webropol-merge-pages', WebropolMergePages);
+
 // Global Design System object
 window.WebropolDesignSystem = {
   version: '1.0.0',
@@ -1659,7 +1719,7 @@ window.WebropolDesignSystem = {
     'webropol-button', 'webropol-card', 'webropol-action-card', 'webropol-badge',
     'webropol-header', 'webropol-sidebar', 'webropol-list-card', 'webropol-video-card',
     'webropol-configurable-card', 'webropol-input', 'webropol-loading', 'webropol-tooltip',
-    'webropol-tabs', 'webropol-modal', 'webropol-settings-modal'
+    'webropol-tabs', 'webropol-modal', 'webropol-settings-modal', 'webropol-merge-pages'
   ],
   
   // Theme utilities
