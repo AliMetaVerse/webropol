@@ -24,7 +24,7 @@ A vertical context menu component with icon-labeled actions, hover states, and d
     {"id": "move", "label": "Move to a folder", "icon": "fal fa-folder-arrow-up"},
     {"id": "rights", "label": "Rights", "icon": "fal fa-key"},
     {"id": "properties", "label": "Properties, rights and log", "icon": "fal fa-list-ul"},
-    {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+    {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
   ]'
 ></webropol-context-menu>
 ```
@@ -53,7 +53,7 @@ JSON array of menu item objects. Each item supports:
   items='[
     {"id": "view", "label": "View", "icon": "fal fa-eye"},
     {"id": "edit", "label": "Edit", "icon": "fal fa-pen", "disabled": true},
-    {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+    {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can", "variant": "danger"}
   ]'
 ></webropol-context-menu>
 ```
@@ -131,7 +131,7 @@ function handleMenuClick(event) {
     {"id": "export", "label": "Export results", "icon": "fal fa-file-export"},
     {"id": "share", "label": "Share", "icon": "fal fa-share-nodes"},
     {"id": "archive", "label": "Archive", "icon": "fal fa-box-archive"},
-    {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+    {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can", "variant": "danger"}
   ]'
   width="md"
   @item-click="handleSurveyAction($event)"
@@ -176,7 +176,7 @@ function handleMenuClick(event) {
     {"id": "edit", "label": "Edit", "icon": "fal fa-pen", "disabled": true},
     {"id": "share", "label": "Share", "icon": "fal fa-share-nodes"},
     {"id": "download", "label": "Download", "icon": "fal fa-download", "disabled": true},
-    {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+    {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
   ]'
 ></webropol-context-menu>
 ```
@@ -195,7 +195,7 @@ function handleMenuClick(event) {
     <webropol-context-menu
       items='[
         {"id": "rename", "label": "Rename", "icon": "fal fa-pen"},
-        {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+        {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
       ]'
       @item-click="open = false; handleAction($event)"
     ></webropol-context-menu>
@@ -268,3 +268,4 @@ See the full interactive demo at: `design-system/demos/context-menu-demo.html`
 - Modern browsers (Chrome, Firefox, Safari, Edge)
 - ES6 modules support required
 - Custom Elements API required
+

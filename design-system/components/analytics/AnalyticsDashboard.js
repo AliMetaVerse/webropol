@@ -113,7 +113,7 @@ class WebropolAnalyticsDashboard extends HTMLElement {
             <i class="fas fa-download mr-2"></i>Export Data
           </button>
           <button id="btnClear" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold shadow">
-            <i class="fas fa-trash-alt mr-2"></i>Clear Data
+            <i class="fa-light fa-trash-can mr-2"></i>Clear Data
           </button>
           <button id="btnRealtime" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow">
             <i class="fas fa-bolt mr-2"></i>Real-Time View

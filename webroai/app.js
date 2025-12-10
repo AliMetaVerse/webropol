@@ -746,7 +746,7 @@ function createQuestionHTML(question, number) {
                         <i class="fal fa-lightbulb"></i> AI Suggest
                     </button>
                     <button class="btn-icon" onclick="deleteQuestion(${number})">
-                        <i class="fal fa-trash"></i>
+                        <i class="fa-light fa-trash-can"></i>
                     </button>
                 </div>
             </div>
@@ -1162,7 +1162,7 @@ function addUserToTable(user) {
                     <i class="fal fa-edit"></i>
                 </button>
                 <button class="action-btn delete" onclick="deleteUser('${user.email}')">
-                    <i class="fal fa-trash"></i>
+                    <i class="fa-light fa-trash-can"></i>
                 </button>
                 <button class="action-btn more" onclick="showUserMenu('${user.email}')">
                     <i class="fal fa-ellipsis-v"></i>
@@ -1356,3 +1356,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for global access
 window.WebropAI = WebropAI;
+

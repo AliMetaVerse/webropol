@@ -36,7 +36,7 @@ Quick examples showing how to integrate the context menu component into Webropol
         items='[
           {"id": "rename", "label": "Rename", "icon": "fal fa-pen"},
           {"id": "copy", "label": "Copy", "icon": "fal fa-copy"},
-          {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+          {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
         ]'
         @item-click="menuOpen = false; handleAction($event)"
       ></webropol-context-menu>
@@ -87,7 +87,7 @@ Quick examples showing how to integrate the context menu component into Webropol
               {"id": "preview", "label": "Preview", "icon": "fal fa-eye"},
               {"id": "duplicate", "label": "Duplicate", "icon": "fal fa-copy"},
               {"id": "export", "label": "Export results", "icon": "fal fa-file-export"},
-              {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+              {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
             ])'
             @item-click="survey.menuOpen = false; handleSurveyAction($event, survey)"
           ></webropol-context-menu>
@@ -179,7 +179,7 @@ Quick examples showing how to integrate the context menu component into Webropol
         {"id": "move", "label": "Move to folder", "icon": "fal fa-folder-arrow-up"},
         {"id": "rights", "label": "Rights", "icon": "fal fa-key"},
         {"id": "properties", "label": "Properties, rights and log", "icon": "fal fa-list-ul"},
-        {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+        {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can-alt", "variant": "danger"}
       ]'
       @item-click="showMenu = false; handleContextAction($event, selectedItem)"
     ></webropol-context-menu>
@@ -238,7 +238,7 @@ Quick examples showing how to integrate the context menu component into Webropol
                   {"id": "view", "label": "View details", "icon": "fal fa-eye"},
                   {"id": "edit", "label": "Edit", "icon": "fal fa-pen"},
                   {"id": "archive", "label": "Archive", "icon": "fal fa-box-archive"},
-                  {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+                  {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can", "variant": "danger"}
                 ]'
                 width="sm"
                 @item-click="row.menuOpen = false; handleRowAction($event, row)"
@@ -307,7 +307,7 @@ Quick examples showing how to integrate the context menu component into Webropol
           items.push({ 
             id: 'delete', 
             label: 'Delete', 
-            icon: 'fal fa-trash-alt', 
+            icon: 'fa-light fa-trash-can', 
             variant: 'danger' 
           });
         }
@@ -363,3 +363,4 @@ Use Alpine's `x-transition` for smooth animations:
 5. **Keyboard support** - Component handles keyboard navigation automatically
 6. **Accessibility** - Use proper ARIA attributes (handled by component)
 7. **Mobile considerations** - Ensure touch targets are large enough (44px minimum)
+

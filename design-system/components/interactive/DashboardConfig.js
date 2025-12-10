@@ -30,7 +30,7 @@ export class WebropolDashboardConfig extends BaseComponent {
       { id: 'copy', icon: 'fal fa-copy', tooltip: 'Copy' },
       { id: 'filter', icon: 'fal fa-filter', tooltip: 'Filter' },
       { id: 'group', icon: 'fal fa-users', tooltip: 'Group' },
-      { id: 'delete', icon: 'fal fa-trash', tooltip: 'Delete' }
+      { id: 'delete', icon: 'fa-light fa-trash-can', tooltip: 'Delete' }
     ];
 
     const finalActions = actions.length > 0 ? actions : defaultActions;

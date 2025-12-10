@@ -12,7 +12,7 @@ import { BaseComponent } from '../../utils/base-component.js';
  *     {"id": "move", "label": "Move to a folder", "icon": "fal fa-folder-arrow-up"},
  *     {"id": "rights", "label": "Rights", "icon": "fal fa-key"},
  *     {"id": "properties", "label": "Properties, rights and log", "icon": "fal fa-list-ul"},
- *     {"id": "delete", "label": "Delete", "icon": "fal fa-trash-alt", "variant": "danger"}
+ *     {"id": "delete", "label": "Delete", "icon": "fa-light fa-trash-can", "variant": "danger"}
  *   ]'
  *   width="auto"
  *   rounded="md"

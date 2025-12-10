@@ -37,7 +37,7 @@ A versatile floating toolbar component that can be positioned anywhere on the sc
     },
     {
       "type": "button",
-      "icon": "fal fa-trash",
+      "icon": "fa-light fa-trash-can",
       "action": "delete",
       "variant": "danger",
       "tooltip": "Delete"
@@ -236,7 +236,7 @@ toolbar.addEventListener('option-select', (e) => {
     {"type": "separator"},
     {
       "type": "button",
-      "icon": "fal fa-trash",
+      "icon": "fa-light fa-trash-can",
       "action": "delete",
       "variant": "danger",
       "tooltip": "Delete"
@@ -315,3 +315,4 @@ toolbar.addEventListener('option-select', (e) => {
 - Keyboard navigation supported
 - Click outside to close dropdowns
 - Semantic button elements used throughout
+

@@ -87,7 +87,7 @@ A reusable, accessible accordion component for collapsible content sections with
       Edit
     </button>
     <button class="px-5 py-2.5 bg-white text-red-600 border-2 border-red-600 rounded-full hover:bg-red-50 transition-all text-sm font-semibold">
-      <i class="fa-light fa-trash-alt"></i>
+      <i class="fa-light fa-trash-can"></i>
       Delete
     </button>
     <div class="w-px h-8 bg-webropol-gray-300 mx-1"></div>

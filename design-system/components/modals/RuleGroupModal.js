@@ -173,7 +173,7 @@ export class WebropolRuleGroupModal extends BaseComponent {
             </button>
             <button class="rule-delete-group-btn px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all text-xs font-medium flex items-center gap-2 shadow-sm hover:shadow-md"
                     data-group-name="${group.groupName}">
-              <i class="fa-light fa-trash-alt text-xs"></i>
+              <i class="fa-light fa-trash-can text-xs"></i>
               Delete
             </button>
           </div>
@@ -456,7 +456,7 @@ export class WebropolRuleGroupModal extends BaseComponent {
         <button class="rule-remove-condition-btn text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                 data-index="${index}"
                 title="Remove condition">
-          <i class="fa-light fa-trash-alt text-lg"></i>
+          <i class="fa-light fa-trash-can text-lg"></i>
         </button>
       </div>
     `;
@@ -572,7 +572,7 @@ export class WebropolRuleGroupModal extends BaseComponent {
           <button class="rule-remove-action-btn text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
                   data-index="${index}"
                   title="Remove action">
-            <i class="fa-light fa-trash-alt text-lg"></i>
+            <i class="fa-light fa-trash-can text-lg"></i>
           </button>
         </div>
       </div>
@@ -1028,3 +1028,4 @@ export class WebropolRuleGroupModal extends BaseComponent {
 
 // Register the component
 customElements.define('webropol-rule-group-modal', WebropolRuleGroupModal);
+
