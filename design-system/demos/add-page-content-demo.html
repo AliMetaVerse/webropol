@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Page Content - Webropol Design System</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#f0fdff',
+              100: '#ccfbff',
+              200: '#99f6ff',
+              300: '#5ce9ff',
+              400: '#1ad4f5',
+              500: '#06b6d4',
+              600: '#0891b2',
+              700: '#0e7490',
+              800: '#155e75',
+              900: '#164e63'
+            },
+            'webropol-gray': {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a'
+            }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="../components/interactive/AddPageContent.js" type="module"></script>
+</head>
+<body class="bg-gray-50" x-data="demoApp()">
+  <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="max-w-5xl mx-auto mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Page Content Component</h1>
+      <p class="text-gray-600">Interactive section for adding content to survey pages</p>
+    </div>
+
+    <!-- Demo Component -->
+    <div class="bg-white rounded-2xl shadow-md p-8">
+      <webropol-add-page-content 
+        page-number="4" 
+        @card-selected="handleCardSelected($event)"
+        @question-added="handleQuestionAdded($event)"
+        @previous-clicked="handlePrevious()"
+        @submit-clicked="handleSubmit()"
+        @info-clicked="handleInfo($event)">
+      </webropol-add-page-content>
+    </div>
+
+    <!-- Event Log -->
+    <div class="max-w-5xl mx-auto mt-8">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Event Log</h2>
+        <div class="space-y-2 max-h-64 overflow-y-auto">
+          <template x-for="event in events" :key="event.id">
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-sm text-gray-900" x-text="event.type"></span>
+                <span class="text-xs text-gray-500" x-text="event.time"></span>
+              </div>
+              <pre class="text-xs text-gray-600 mt-1" x-text="JSON.stringify(event.detail, null, 2)"></pre>
+            </div>
+          </template>
+          <div x-show="events.length === 0" class="text-center text-gray-500 py-4">
+            No events yet. Interact with the component above.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function demoApp() {
+      return {
+        events: [],
+        
+        init() {
+          console.log('Demo app initialized');
+        },
+        
+        logEvent(type, detail) {
+          this.events.unshift({
+            id: Date.now(),
+            type: type,
+            detail: detail,
+            time: new Date().toLocaleTimeString()
+          });
+          
+          // Keep only last 10 events
+          if (this.events.length > 10) {
+            this.events = this.events.slice(0, 10);
+          }
+        },
+        
+        handleCardSelected(event) {
+          this.logEvent('card-selected', event.detail);
+          console.log('Card selected:', event.detail);
+        },
+        
+        handleQuestionAdded(event) {
+          this.logEvent('question-added', event.detail);
+          console.log('Question added:', event.detail);
+        },
+        
+        handlePrevious() {
+          this.logEvent('previous-clicked', {});
+          console.log('Previous clicked');
+        },
+        
+        handleSubmit() {
+          this.logEvent('submit-clicked', {});
+          console.log('Submit clicked');
+        },
+        
+        handleInfo(event) {
+          this.logEvent('info-clicked', event.detail);
+          console.log('Info clicked:', event.detail);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

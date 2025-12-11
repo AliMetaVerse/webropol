@@ -30,6 +30,7 @@ export { WebropolBrand } from './navigation/Brand.js';
 export { WebropolFloatingButton } from './interactive/FloatingButton.js';
 export { WebropolAccordion } from './interactive/Accordion.js';
 export { PageQuickActions } from './interactive/PageQuickActions.js';
+export { WebropolAddPageContent } from './interactive/AddPageContent.js';
 
 // Menu components
 export { WebropolContextMenu } from './menus/ContextMenu.js';
@@ -50,6 +51,7 @@ export { WebropolAIAssistant } from './ai/AIAssistantPanel.js';
 export { Modal } from './modals/Modal.js';
 export { WebropolSettingsModal } from './modals/SettingsModal.js';
 export { WebropolSurveySettingsModal } from './modals/SurveySettingsModal.js';
+export { WebropolAddQuestionModal } from './modals/AddQuestionModal.js';
 
 // Auto-register all components when this module is imported
 import './buttons/Button.js';
@@ -69,6 +71,7 @@ import './navigation/Brand.js';
 import './interactive/FloatingButton.js';
 import './interactive/Accordion.js';
 import './interactive/PageQuickActions.js';
+import './interactive/AddPageContent.js';
 import './menus/ContextMenu.js';
 import './forms/Input.js';
 import './forms/RadioSpecial.js';
