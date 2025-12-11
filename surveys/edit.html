@@ -2012,6 +2012,58 @@
               </div>
             </label>
           </div>
+
+          <!-- Close Options (shown when Close is selected) -->
+          <div id="closeOptions" class="mt-6 hidden">
+            <!-- Warning Message -->
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg mb-4">
+              <div class="flex items-start gap-3">
+                <i class="fal fa-exclamation-triangle text-amber-600 text-xl mt-0.5"></i>
+                <div>
+                  <h4 class="font-semibold text-amber-900 mb-1">Warning</h4>
+                  <p class="text-sm text-amber-800">This will unpublish the survey and it will interrupt any responses in progress.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Close Options Checkboxes -->
+            <div class="space-y-3">
+              <h4 class="font-semibold text-webropol-gray-900 mb-3">Select distribution channels to close:</h4>
+              
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="email" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-envelope text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">Email survey - Private links</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close email invitations with unique private links</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="weblink" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-link text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">Weblink - Public link</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close public web link access to the survey</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="sms" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-sms text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">SMS survey - Private link</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close SMS invitations with unique private links</p>
+                </div>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -2697,6 +2749,7 @@
 
     // Survey Status Management
     let selectedStatus = null;
+    let selectedCloseChannels = [];
     
     window.selectSurveyStatus = function(status) {
       selectedStatus = status;
@@ -2705,15 +2758,46 @@
       radios.forEach(radio => {
         radio.checked = radio.value === status;
       });
+      
+      // Show/hide close options
+      const closeOptions = document.getElementById('closeOptions');
+      if (closeOptions) {
+        if (status === 'Close') {
+          closeOptions.classList.remove('hidden');
+        } else {
+          closeOptions.classList.add('hidden');
+          // Clear selected channels when not closing
+          selectedCloseChannels = [];
+          const checkboxes = document.querySelectorAll('input[name="closeChannel"]');
+          checkboxes.forEach(cb => cb.checked = false);
+        }
+      }
     };
     
     window.applySurveyStatus = function() {
       if (selectedStatus) {
         try {
+          // If closing, get selected channels
+          if (selectedStatus === 'Close') {
+            const checkboxes = document.querySelectorAll('input[name="closeChannel"]:checked');
+            selectedCloseChannels = Array.from(checkboxes).map(cb => cb.value);
+          }
+          
           localStorage.setItem('webropol_survey_status', selectedStatus);
+          
+          // Store close channels if applicable
+          if (selectedStatus === 'Close' && selectedCloseChannels.length > 0) {
+            localStorage.setItem('webropol_survey_close_channels', JSON.stringify(selectedCloseChannels));
+          }
+          
           // Trigger Alpine.js update if available
           if (window.Alpine) {
-            window.dispatchEvent(new CustomEvent('survey-status-changed', { detail: { status: selectedStatus } }));
+            window.dispatchEvent(new CustomEvent('survey-status-changed', { 
+              detail: { 
+                status: selectedStatus,
+                closeChannels: selectedCloseChannels
+              } 
+            }));
           }
           window.closeSurveyStatusModal();
         } catch (e) {
