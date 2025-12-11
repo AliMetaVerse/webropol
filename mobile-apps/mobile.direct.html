@@ -54,30 +54,68 @@
       position: relative;
     }
     
+    /* Dynamic Island */
     .mobile-frame::before {
       content: '';
       position: absolute;
-      top: 0;
+      top: 22px;
       left: 50%;
       transform: translateX(-50%);
-      width: 150px;
+      width: 100px;
       height: 30px;
       background: #000;
-      border-radius: 0 0 20px 20px;
-      z-index: 10;
+      border-radius: 16px;
+      z-index: 11;
+      box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.05),
+        0 2px 8px rgba(0, 0, 0, 0.5);
     }
     
-    .mobile-frame::after {
+    /* Dynamic Island elements */
+    .dynamic-island-camera {
+      position: absolute;
+      top: 31px;
+      left: 50%;
+      transform: translateX(-28px);
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, #1a3a52 0%, #0a0a0a 70%);
+      border-radius: 50%;
+      z-index: 12;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    }
+    
+    .dynamic-island-camera::after {
       content: '';
       position: absolute;
-      top: 10px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
+      transform: translate(-50%, -50%);
+      width: 6px;
       height: 6px;
-      background: #1a1a1a;
-      border-radius: 3px;
-      z-index: 11;
+      background: radial-gradient(circle at 30% 30%, #1a3a52 0%, #000 60%);
+      border-radius: 50%;
+      box-shadow: 0 0 2px rgba(26, 58, 82, 0.5);
+    }
+    
+    .dynamic-island-dot {
+      position: absolute;
+      top: 34px;
+      left: 50%;
+      transform: translateX(20px);
+      width: 4px;
+      height: 4px;
+      background: radial-gradient(circle, #4a1a8c 0%, #2a0a4c 100%);
+      border-radius: 50%;
+      z-index: 12;
+      box-shadow: 0 0 4px rgba(74, 26, 140, 0.6);
+      animation: pulse-dot 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
     }
     
     .mobile-screen {
@@ -100,7 +138,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 44px;
+      height: 50px;
       background: linear-gradient(to bottom, rgba(241, 245, 249, 0.98), transparent);
       display: flex;
       justify-content: space-between;
@@ -175,6 +213,10 @@
   
   <!-- Mobile Device Frame -->
   <div class="mobile-frame">
+    <!-- Dynamic Island Camera -->
+    <div class="dynamic-island-camera"></div>
+    <div class="dynamic-island-dot"></div>
+    
     <div class="mobile-screen">
       <!-- Status Bar -->
       <div class="status-bar">
