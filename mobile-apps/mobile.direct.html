@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#06b6d4">
+  <title>Webropol Survey - Add to Home Screen</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 500: '#06b6d4', 700: '#0e7490', 900: '#164e63' },
+            'webropol-cyan': { 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' },
+            'webropol-teal': { 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e' },
+            'webropol-orange': { 500: '#f97316', 600: '#ea580c' },
+            'webropol-green': { 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 500: '#64748b', 900: '#0f172a' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      overscroll-behavior: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .logo-gradient {
+      background: linear-gradient(135deg, #22d3ee 0%, #0891b2 25%, #f97316 50%, #4ade80 75%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .instruction-box {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .share-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #06b6d4;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #06b6d4;
+      font-weight: bold;
+      vertical-align: middle;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .delay-100 { animation-delay: 0.1s; animation-fill-mode: both; }
+    .delay-200 { animation-delay: 0.2s; animation-fill-mode: both; }
+    .delay-300 { animation-delay: 0.3s; animation-fill-mode: both; }
+  </style>
+</head>
+<body class="bg-webropol-gray-100 min-h-screen flex items-center justify-center p-6" x-data="mobileApp()" style="max-width: 430px; margin: 0 auto;">
+  
+  <!-- Main Container -->
+  <div class="max-w-md w-full space-y-8">
+    
+    <!-- Logo Section -->
+    <div class="text-center space-y-6 animate-fadeInUp">
+      <!-- Webropol "W" Logo -->
+      <div class="flex justify-center items-center">
+        <img src="../img/logo/W-logo-dark.svg" alt="Webropol Logo" class="w-32 h-auto">
+      </div>
+      
+      <!-- Welcome Text -->
+      <h1 class="text-4xl font-black text-webropol-gray-900">
+        Welcome!
+      </h1>
+    </div>
+    
+    <!-- Instructions Section -->
+    <div class="space-y-6 animate-fadeInUp delay-200">
+      <p class="text-xl font-bold text-center text-webropol-gray-900 leading-relaxed px-4">
+        Please follow the instructions below to add the survey's shortcut to Home screen.
+      </p>
+      
+      <!-- Instruction Box -->
+      <div class="instruction-box rounded-3xl p-6 shadow-lg border border-webropol-gray-200 animate-fadeInUp delay-300">
+        <p class="text-base text-webropol-gray-900 leading-relaxed">
+          <span class="font-semibold">Add survey's shortcut to Home screen:</span><br>
+          tap on 
+          <span class="share-icon">
+            <i class="fal fa-arrow-up"></i>
+          </span>
+          -icon on the bottom of screen and select 
+          <span class="font-semibold">'Add to home screen'</span>
+        </p>
+      </div>
+    </div>
+    
+    <!-- URL Display (Safari-style) -->
+    <div class="fixed bottom-6 left-6 right-6 animate-fadeInUp delay-300">
+      <div class="bg-white rounded-2xl shadow-xl px-6 py-4 flex items-center justify-between border border-webropol-gray-200">
+        <button class="text-webropol-gray-500">
+          <i class="fal fa-chevron-left text-xl"></i>
+        </button>
+        
+        <div class="flex items-center space-x-2 flex-1 mx-4">
+          <i class="fal fa-bars text-webropol-gray-900"></i>
+          <span class="text-sm font-medium text-webropol-gray-900" x-text="surveyUrl"></span>
+        </div>
+        
+        <button class="text-webropol-gray-500">
+          <i class="fal fa-sync text-lg"></i>
+        </button>
+        
+        <button class="text-webropol-gray-500 ml-2">
+          <i class="fal fa-ellipsis-h text-lg"></i>
+        </button>
+      </div>
+    </div>
+    
+  </div>
+  
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    function mobileApp() {
+      return {
+        surveyUrl: 'staging.web.app',
+        
+        init() {
+          // Detect if running as standalone app
+          if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('Running as standalone PWA');
+            // Could redirect to actual survey content here
+          }
+          
+          // Get URL from query parameter if provided
+          const urlParams = new URLSearchParams(window.location.search);
+          const customUrl = urlParams.get('url');
+          if (customUrl) {
+            this.surveyUrl = customUrl;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
