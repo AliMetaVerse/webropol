@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Question Modal Demo | Webropol Design System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  
+  <!-- Tailwind config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Import the component -->
+  <script type="module" src="../components/modals/AddQuestionModal.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-8 font-sans">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Question Modal</h1>
+      <p class="text-gray-600">A comprehensive modal for selecting question types, organized by category.</p>
+    </div>
+
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+      <div class="flex flex-col items-center justify-center py-12 space-y-6">
+        <div class="text-center">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">Try it out</h2>
+          <p class="text-gray-500 mb-6">Click the button below to open the modal</p>
+        </div>
+        
+        <button id="openModalBtn" class="flex items-center gap-2 px-6 py-3 bg-webropol-primary-500 hover:bg-webropol-primary-600 text-white rounded-full font-medium transition-colors shadow-lg shadow-webropol-primary-500/20">
+          <i class="fal fa-plus"></i>
+          <span>Add Question</span>
+        </button>
+      </div>
+      
+      <div class="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
+        <h3 class="text-sm font-semibold text-gray-900 mb-2">Event Log:</h3>
+        <div id="eventLog" class="font-mono text-xs text-gray-600 h-32 overflow-y-auto bg-white p-3 rounded border border-gray-200">
+          <div class="text-gray-400 italic">Events will appear here...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Component -->
+  <webropol-add-question-modal id="addQuestionModal"></webropol-add-question-modal>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('addQuestionModal');
+      const btn = document.getElementById('openModalBtn');
+      const log = document.getElementById('eventLog');
+
+      // Open modal
+      btn.addEventListener('click', () => {
+        modal.open();
+        logEvent('Modal opened');
+      });
+
+      // Listen for question selection
+      modal.addEventListener('question-added', (e) => {
+        logEvent(`Question added: ${e.detail.type}`);
+        
+        // Show a toast notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10000] transition-all transform translate-x-full flex items-center gap-2';
+        notification.innerHTML = `<i class="fal fa-check-circle"></i><span>Selected: ${e.detail.type}</span>`;
+        document.body.appendChild(notification);
+        
+        requestAnimationFrame(() => {
+          notification.classList.remove('translate-x-full');
+        });
+        
+        setTimeout(() => {
+          notification.classList.add('translate-x-full');
+          setTimeout(() => notification.remove(), 300);
+        }, 3000);
+      });
+
+      function logEvent(msg) {
+        const entry = document.createElement('div');
+        entry.className = 'mb-1 border-b border-gray-100 pb-1 last:border-0';
+        entry.innerHTML = `<span class="text-gray-400">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+        
+        if (log.querySelector('.italic')) {
+          log.innerHTML = '';
+        }
+        
+        log.prepend(entry);
+      }
+    });
+  </script>
+</body>
+</html>
