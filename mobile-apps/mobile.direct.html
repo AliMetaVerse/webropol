@@ -170,23 +170,65 @@
     }
     
     .instruction-box {
-      background: rgba(255, 255, 255, 0.95);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(34, 211, 238, 0.05) 100%);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      border: 2px solid rgba(6, 182, 212, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      border-radius: 10px;
+      font-size: 14px;
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
     }
     
     .share-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #06b6d4;
-      border-radius: 4px;
-      font-size: 12px;
-      color: #06b6d4;
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      border-radius: 8px;
+      font-size: 14px;
+      color: white;
       font-weight: bold;
       vertical-align: middle;
+      box-shadow: 
+        0 4px 12px rgba(6, 182, 212, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    }
+    
+    .highlight-text {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(34, 211, 238, 0.1));
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      color: #0e7490;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    .action-arrow {
+      display: inline-block;
+      color: #f97316;
+      font-size: 20px;
+      margin: 0 8px;
+      animation: bounce-horizontal 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce-horizontal {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
     }
     
     @keyframes fadeInUp {
@@ -207,6 +249,9 @@
     .delay-100 { animation-delay: 0.1s; animation-fill-mode: both; }
     .delay-200 { animation-delay: 0.2s; animation-fill-mode: both; }
     .delay-300 { animation-delay: 0.3s; animation-fill-mode: both; }
+    .delay-400 { animation-delay: 0.4s; animation-fill-mode: both; }
+    .delay-500 { animation-delay: 0.5s; animation-fill-mode: both; }
+    .delay-600 { animation-delay: 0.6s; animation-fill-mode: both; }
   </style>
 </head>
 <body x-data="mobileApp()">
@@ -232,37 +277,87 @@
       
       <!-- Screen Content -->
       <div class="screen-content">
-        <div class="max-w-md w-full mx-auto space-y-8">
+        <div class="max-w-md w-full mx-auto space-y-4">
           
           <!-- Logo Section -->
-          <div class="text-center space-y-6 animate-fadeInUp">
+          <div class="text-center space-y-2">
             <!-- Webropol "W" Logo -->
             <div class="flex justify-center items-center">
-              <img src="../img/logo/W-logo-dark.svg" alt="Webropol Logo" class="w-32 h-auto">
+              <img src="../img/logo/W-logo-dark.svg" alt="Webropol Logo" class="w-16 h-auto">
             </div>
             
             <!-- Welcome Text -->
-            <h1 class="text-4xl font-black text-webropol-gray-900">
+            <h1 class="text-xl font-semibold text-webropol-gray-900">
               Welcome!
             </h1>
           </div>
           
           <!-- Instructions Section -->
-          <div class="space-y-6 animate-fadeInUp delay-200">
-            <p class="text-xl font-bold text-center text-webropol-gray-900 leading-relaxed px-4">
-              Please follow the instructions below to add the survey's shortcut to Home screen.
-            </p>
+          <div class="space-y-3">
+            <div class="text-center space-y-1 px-4">
+              <h2 class="text-lg font-bold text-webropol-gray-900 leading-tight">
+                Add Survey to Your Home Screen
+              </h2>
+            </div>
             
-            <!-- Instruction Box -->
-            <div class="instruction-box rounded-3xl p-6 shadow-lg border border-webropol-gray-200 animate-fadeInUp delay-300">
-              <p class="text-base text-webropol-gray-900 leading-relaxed">
-                <span class="font-semibold">Add survey's shortcut to Home screen:</span><br>
-                tap on 
-                <span class="share-icon">
-                  <i class="fal fa-arrow-up"></i>
-                </span>
-                -icon on the bottom of screen and select 
-                <span class="font-semibold">'Add to home screen'</span>
+            <!-- Step-by-Step Instructions -->
+            <div class="space-y-3">
+              <!-- Step 1 -->
+              <div class="instruction-box rounded-xl p-4 shadow-lg">
+                <div class="flex gap-3">
+                  <div class="step-badge flex-shrink-0">1</div>
+                  <div class="flex-1 space-y-1">
+                    <p class="text-sm font-semibold text-webropol-gray-900">
+                      Tap the Share button
+                    </p>
+                    <p class="text-xs text-webropol-gray-700 leading-relaxed">
+                      Look for the 
+                      <span class="share-icon mx-1">
+                        <i class="fal fa-arrow-up"></i>
+                      </span>
+                      icon at the <span class="highlight-text whitespace-nowrap">bottom of your screen</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Step 2 -->
+              <div class="instruction-box rounded-xl p-4 shadow-lg">
+                <div class="flex gap-3">
+                  <div class="step-badge flex-shrink-0">2</div>
+                  <div class="flex-1 space-y-1">
+                    <p class="text-sm font-semibold text-webropol-gray-900">
+                      Select "Add to Home Screen"
+                    </p>
+                    <p class="text-xs text-webropol-gray-700 leading-relaxed">
+                      Scroll through the menu and tap 
+                      <span class="highlight-text whitespace-nowrap">"Add to Home Screen"</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Step 3 -->
+              <div class="instruction-box rounded-xl p-4 shadow-lg">
+                <div class="flex gap-3">
+                  <div class="step-badge flex-shrink-0">3</div>
+                  <div class="flex-1 space-y-1">
+                    <p class="text-sm font-semibold text-webropol-gray-900">
+                      Confirm and Add
+                    </p>
+                    <p class="text-xs text-webropol-gray-700 leading-relaxed">
+                      Tap <span class="highlight-text">"Add"</span> in the top-right corner to finish
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Success Message -->
+            <div class="bg-gradient-to-br from-webropol-green-400 to-webropol-green-600 rounded-xl p-4 shadow-lg text-white text-center">
+              <i class="fal fa-check-circle text-2xl mb-1"></i>
+              <p class="font-bold text-sm">
+                Done! The survey will appear on your home screen
               </p>
             </div>
           </div>
@@ -272,7 +367,7 @@
       </div>
       
       <!-- URL Display (Safari-style) - Fixed at bottom -->
-      <div class="absolute bottom-0 left-0 right-0 p-4 animate-fadeInUp delay-300">
+      <div class="absolute bottom-0 left-0 right-0 p-4">
         <div class="bg-white rounded-2xl shadow-xl px-6 py-4 flex items-center justify-between border border-webropol-gray-200">
           <button class="text-webropol-gray-500">
             <i class="fal fa-chevron-left text-xl"></i>
