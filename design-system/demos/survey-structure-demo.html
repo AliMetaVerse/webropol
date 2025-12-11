@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey Structure Components Demo | Webropol Design System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <!-- Import new components -->
+  <script src="../components/interactive/SurveyPageItem.js" type="module"></script>
+  <script src="../components/interactive/SurveyQuestionItem.js" type="module"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-webropol-gray-50 p-8" x-data="demoApp()">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Survey Structure Components Demo</h1>
+      <p class="text-webropol-gray-600">Interactive demonstration of SurveyPageItem and SurveyQuestionItem components</p>
+    </div>
+
+    <!-- Demo Controls -->
+    <div class="bg-white rounded-xl p-6 shadow-card mb-8">
+      <h2 class="text-xl font-semibold text-webropol-gray-900 mb-4">Demo Controls</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Event Log</label>
+          <div class="bg-webropol-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm h-40 overflow-y-auto" id="eventLog">
+            <div>// Event log - Component interactions will appear here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Component Demo -->
+    <div class="bg-white rounded-xl p-6 shadow-card">
+      <h2 class="text-xl font-semibold text-webropol-gray-900 mb-6">Survey Structure</h2>
+      
+      <div class="space-y-3">
+        <!-- Page 1 with Questions -->
+        <webropol-survey-page 
+          page-number="1" 
+          page-name="PAGE 1: Customer Information" 
+          question-count="4" 
+          expanded
+          @page-toggle="handleEvent('page-toggle', $event)"
+          @page-select="handleEvent('page-select', $event)"
+        >
+          <webropol-survey-question 
+            question-id="q1" 
+            question-text="What is your name?" 
+            question-type="text"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q2" 
+            question-text="Please fill in your contact details" 
+            question-type="contact"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q3" 
+            question-text="Select your country" 
+            question-type="dropdown"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q4" 
+            question-text="How did you hear about us?" 
+            question-type="radio"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+        </webropol-survey-page>
+
+        <!-- Page 2 with Questions -->
+        <webropol-survey-page 
+          page-number="2" 
+          page-name="PAGE 2: Feedback" 
+          question-count="3"
+          @page-toggle="handleEvent('page-toggle', $event)"
+          @page-select="handleEvent('page-select', $event)"
+        >
+          <webropol-survey-question 
+            question-id="q5" 
+            question-text="How would you rate our service?" 
+            question-type="rating"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q6" 
+            question-text="Net Promoter Score (NPS)" 
+            question-type="nps"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q7" 
+            question-text="Any additional comments?" 
+            question-type="textarea"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+        </webropol-survey-page>
+
+        <!-- Page 3 - Collapsed by default -->
+        <webropol-survey-page 
+          page-number="3" 
+          page-name="PAGE 3: Additional Information" 
+          question-count="2"
+          @page-toggle="handleEvent('page-toggle', $event)"
+          @page-select="handleEvent('page-select', $event)"
+        >
+          <webropol-survey-question 
+            question-id="q8" 
+            question-text="Upload supporting documents" 
+            question-type="file"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+          
+          <webropol-survey-question 
+            question-id="q9" 
+            question-text="Select a date for follow-up" 
+            question-type="date"
+            @question-settings="handleEvent('question-settings', $event)"
+            @question-delete="handleEvent('question-delete', $event)"
+            @question-select="handleEvent('question-select', $event)"
+          ></webropol-survey-question>
+        </webropol-survey-page>
+      </div>
+    </div>
+
+    <!-- Documentation -->
+    <div class="bg-white rounded-xl p-6 shadow-card mt-8">
+      <h2 class="text-xl font-semibold text-webropol-gray-900 mb-4">Component Documentation</h2>
+      
+      <div class="space-y-6">
+        <!-- SurveyPageItem -->
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-2">SurveyPageItem</h3>
+          <p class="text-webropol-gray-600 mb-3">Represents a survey page with collapsible question list</p>
+          
+          <div class="bg-webropol-gray-50 rounded-lg p-4 mb-3">
+            <h4 class="text-sm font-semibold text-webropol-gray-700 mb-2">Attributes</h4>
+            <ul class="space-y-1 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-2 py-0.5 rounded">page-number</code> - Page number (default: "1")</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">page-name</code> - Display name (default: "PAGE {number}")</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">question-count</code> - Number of questions (default: "0")</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">expanded</code> - Boolean to show/hide questions (default: false)</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">selected</code> - Boolean for checkbox state (default: false)</li>
+            </ul>
+          </div>
+          
+          <div class="bg-webropol-gray-50 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-webropol-gray-700 mb-2">Events</h4>
+            <ul class="space-y-1 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-2 py-0.5 rounded">page-toggle</code> - Fired when page is expanded/collapsed</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">page-select</code> - Fired when page checkbox is changed</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- SurveyQuestionItem -->
+        <div>
+          <h3 class="text-lg font-semibold text-webropol-gray-800 mb-2">SurveyQuestionItem</h3>
+          <p class="text-webropol-gray-600 mb-3">Represents a single survey question with neutral styling</p>
+          
+          <div class="bg-webropol-gray-50 rounded-lg p-4 mb-3">
+            <h4 class="text-sm font-semibold text-webropol-gray-700 mb-2">Attributes</h4>
+            <ul class="space-y-1 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-2 py-0.5 rounded">question-id</code> - Unique identifier</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">question-text</code> - Question display text</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">question-type</code> - Type (text, radio, checkbox, etc.)</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">selected</code> - Boolean for checkbox state (default: false)</li>
+            </ul>
+          </div>
+          
+          <div class="bg-webropol-gray-50 rounded-lg p-4">
+            <h4 class="text-sm font-semibold text-webropol-gray-700 mb-2">Events</h4>
+            <ul class="space-y-1 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-2 py-0.5 rounded">question-select</code> - Fired when checkbox is changed</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">question-settings</code> - Fired when settings button is clicked</li>
+              <li><code class="bg-white px-2 py-0.5 rounded">question-delete</code> - Fired when delete button is clicked</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function demoApp() {
+      return {
+        init() {
+          console.log('Demo initialized');
+          this.logEvent('Demo initialized', {});
+        },
+
+        handleEvent(eventName, event) {
+          console.log(`Event: ${eventName}`, event.detail);
+          this.logEvent(eventName, event.detail);
+          
+          // Special handling for certain events
+          if (eventName === 'question-delete') {
+            if (confirm(`Delete question ${event.detail.questionId}?`)) {
+              this.logEvent('Question deleted', event.detail);
+            }
+          }
+        },
+
+        logEvent(name, detail) {
+          const logEl = document.getElementById('eventLog');
+          const timestamp = new Date().toLocaleTimeString();
+          const entry = document.createElement('div');
+          entry.innerHTML = `<span class="text-webropol-gray-500">[${timestamp}]</span> <span class="text-yellow-400">${name}</span>: ${JSON.stringify(detail)}`;
+          logEl.appendChild(entry);
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+      }
+    }
+  </script>
+</body>
+</html>

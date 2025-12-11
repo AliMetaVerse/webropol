@@ -12,6 +12,8 @@
   <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
   <script src="../design-system/components/interactive/MergePages.js" type="module"></script>
   <script src="../design-system/components/modals/AddQuestionModal.js" type="module"></script>
+  <script src="../design-system/components/interactive/SurveyPageItem.js" type="module"></script>
+  <script src="../design-system/components/interactive/SurveyQuestionItem.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -543,116 +545,59 @@
                 </div>
                 
                 <!-- Survey Structure Tree - Pages Tab -->
-                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6" x-data="{ expandedPages: { page1: true }, selectedItems: { page1: false } }">
-                  <!-- Page 1 -->
-                  <div class="bg-webropol-primary-50 rounded-lg border border-webropol-primary-200">
-                    <div class="flex items-center space-x-3 p-3 cursor-pointer" @click="expandedPages.page1 = !expandedPages.page1">
-                      <input type="checkbox" x-model="selectedItems.page1" @click.stop class="w-4 h-4 text-webropol-primary-600 border-webropol-primary-300 rounded focus:ring-webropol-primary-500" id="page1-checkbox">
-                      <label for="page1-checkbox" class="flex-1 flex items-center space-x-3 cursor-pointer" @click.stop="selectedItems.page1 = !selectedItems.page1">
-                        <span class="font-medium text-webropol-primary-900">PAGE 1</span>
-                      </label>
-                      <div class="flex items-center space-x-2">
-                        <span class="px-2 py-1 text-xs bg-webropol-primary-100 text-webropol-primary-700 rounded-full">3 questions</span>
-                        <i class="fal transition-transform duration-200" :class="expandedPages.page1 ? 'fa-chevron-down text-webropol-primary-600' : 'fa-chevron-right text-webropol-primary-600'"></i>
-                      </div>
-                    </div>
+                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6">
+                  <!-- Page 1 using new component -->
+                  <webropol-survey-page 
+                    page-number="1" 
+                    page-name="PAGE 1" 
+                    question-count="3" 
+                    expanded
+                    @page-toggle="handlePageToggle"
+                    @page-select="handlePageSelect"
+                  >
+                    <webropol-survey-question 
+                      question-id="contactform" 
+                      question-text="Please fill in your details" 
+                      question-type="contact"
+                      @question-settings="openQuestionSettingsModal"
+                      @question-delete="handleQuestionDelete"
+                    ></webropol-survey-question>
                     
-                    <!-- Page 1 Questions (Collapsible) -->
-                    <div x-show="expandedPages.page1" x-transition class="pl-6 pb-3 pr-3 space-y-2" x-data="{ selectedQuestions: { contactForm: false, autosuggest: false, openEnded: false } }">
-                      <!-- Contact Form Question -->
-                      <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg border border-orange-200 cursor-pointer hover:bg-orange-100 transition-colors group">
-                        <input type="checkbox" x-model="selectedQuestions.contactForm" @click.stop class="w-4 h-4 text-orange-600 border-orange-300 rounded focus:ring-orange-500" id="contactform-checkbox">
-                        <label for="contactform-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.contactForm = !selectedQuestions.contactForm">
-                          <div>
-                            <span class="text-orange-900 font-medium text-sm">Please fill in your details</span>
-                          </div>
-                        </label>
-                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button class="w-6 h-6 rounded bg-orange-600 text-white text-xs hover:bg-orange-700 transition-colors" title="Settings">
-                            <i class="fal fa-cog"></i>
-                          </button>
-                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
-                            <i class="fa-light fa-trash-can"></i>
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <!-- Auto Suggest Question -->
-                      <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors group">
-                        <input type="checkbox" x-model="selectedQuestions.autosuggest" @click.stop class="w-4 h-4 text-blue-600 border-blue-300 rounded focus:ring-blue-500" id="autosuggest-checkbox">
-                        <label for="autosuggest-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.autosuggest = !selectedQuestions.autosuggest">
-                          <div>
-                            <span class="text-blue-900 font-medium text-sm">Auto Suggest</span>
-                          </div>
-                        </label>
-                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button class="w-6 h-6 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition-colors" onclick="openQuestionSettingsModal('autosuggest')" title="Settings">
-                            <i class="fal fa-cog"></i>
-                          </button>
-                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
-                            <i class="fa-light fa-trash-can"></i>
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <!-- Open-Ended Question -->
-                      <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200 cursor-pointer hover:bg-green-100 transition-colors group">
-                        <input type="checkbox" x-model="selectedQuestions.openEnded" @click.stop class="w-4 h-4 text-green-600 border-green-300 rounded focus:ring-green-500" id="openended-checkbox">
-                        <label for="openended-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.openEnded = !selectedQuestions.openEnded">
-                          <div>
-                            <span class="text-green-900 font-medium text-sm">What are your thoughts?</span>
-                          </div>
-                        </label>
-                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button class="w-6 h-6 rounded bg-green-600 text-white text-xs hover:bg-green-700 transition-colors" onclick="openQuestionSettingsModal('openended')" title="Settings">
-                            <i class="fal fa-cog"></i>
-                          </button>
-                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
-                            <i class="fa-light fa-trash-can"></i>
-                          </button>
-                        </div>
-                      </div>
-                      
-                    </div>
-                  </div>
+                    <webropol-survey-question 
+                      question-id="autosuggest" 
+                      question-text="Auto Suggest" 
+                      question-type="autosuggest"
+                      @question-settings="openQuestionSettingsModal"
+                      @question-delete="handleQuestionDelete"
+                    ></webropol-survey-question>
+                    
+                    <webropol-survey-question 
+                      question-id="openended" 
+                      question-text="What are your thoughts?" 
+                      question-type="textarea"
+                      @question-settings="openQuestionSettingsModal"
+                      @question-delete="handleQuestionDelete"
+                    ></webropol-survey-question>
+                  </webropol-survey-page>
                   
+                  <!-- Page 2 using new component -->
+                  <webropol-survey-page 
+                    page-number="2" 
+                    page-name="PAGE 2" 
+                    question-count="1"
+                    @page-toggle="handlePageToggle"
+                    @page-select="handlePageSelect"
+                  >
+                    <webropol-survey-question 
+                      question-id="nps" 
+                      question-text="Net Promoter Score (NPS)" 
+                      question-type="nps"
+                      @question-settings="openQuestionSettingsModal"
+                      @question-delete="handleQuestionDelete"
+                    ></webropol-survey-question>
+                  </webropol-survey-page>
+
                   <!-- Thank you page -->
-                  <!-- Page 2 -->
-                  <div class="bg-webropol-primary-50 rounded-lg border border-webropol-primary-200 mt-3">
-                    <div class="flex items-center space-x-3 p-3 cursor-pointer" @click="expandedPages.page2 = !expandedPages.page2">
-                      <input type="checkbox" x-model="selectedItems.page2" @click.stop class="w-4 h-4 text-webropol-primary-600 border-webropol-primary-300 rounded focus:ring-webropol-primary-500" id="page2-checkbox">
-                      <label for="page2-checkbox" class="flex-1 flex items-center space-x-3 cursor-pointer" @click.stop="selectedItems.page2 = !selectedItems.page2">
-                        <span class="font-medium text-webropol-primary-900">PAGE 2</span>
-                      </label>
-                      <div class="flex items-center space-x-2">
-                        <span class="px-2 py-1 text-xs bg-webropol-primary-100 text-webropol-primary-700 rounded-full">1 question</span>
-                        <i class="fal transition-transform duration-200" :class="expandedPages.page2 ? 'fa-chevron-down text-webropol-primary-600' : 'fa-chevron-right text-webropol-primary-600'"></i>
-                      </div>
-                    </div>
-
-                    <!-- Page 2 Questions (Collapsible) -->
-                    <div x-show="expandedPages.page2" x-transition class="pl-6 pb-3 pr-3 space-y-2" x-data="{ selectedQuestions: { nps: false } }">
-                      <!-- NPS Question -->
-                      <div class="flex items-center space-x-3 p-3 bg-purple-50 rounded-lg border border-purple-200 cursor-pointer hover:bg-purple-100 transition-colors group">
-                        <input type="checkbox" x-model="selectedQuestions.nps" @click.stop class="w-4 h-4 text-purple-600 border-purple-300 rounded focus:ring-purple-500" id="nps-checkbox">
-                        <label for="nps-checkbox" class="flex-1 cursor-pointer" @click.stop="selectedQuestions.nps = !selectedQuestions.nps">
-                          <div>
-                            <span class="text-purple-900 font-medium text-sm">Net Promoter Score (NPS)</span>
-                          </div>
-                        </label>
-                        <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button class="w-6 h-6 rounded bg-purple-600 text-white text-xs hover:bg-purple-700 transition-colors" title="Settings" onclick="openQuestionSettingsModal('nps')">
-                            <i class="fal fa-cog"></i>
-                          </button>
-                          <button class="w-6 h-6 rounded bg-red-500 text-white text-xs hover:bg-red-600 transition-colors" title="Delete">
-                            <i class="fa-light fa-trash-can"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Thank you page (moved below Page 2) -->
                   <div class="flex items-center space-x-3 p-3 hover:bg-webropol-gray-50 rounded-lg cursor-pointer transition-colors">
                     <i class="fal fa-heart text-green-600"></i>
                     <span class="text-webropol-gray-700">Thank you page</span>
@@ -4282,6 +4227,63 @@
           this.$watch('activeTab', (v) => {
             try { localStorage.setItem('edit-left-activeTab', v); } catch(e) {}
           });
+          
+          // Set up event listeners for web components
+          this.setupComponentListeners();
+        },
+        
+        setupComponentListeners() {
+          // Listen for page toggle events
+          document.addEventListener('page-toggle', (e) => {
+            console.log('Page toggled:', e.detail);
+          });
+          
+          // Listen for page selection events
+          document.addEventListener('page-select', (e) => {
+            console.log('Page selected:', e.detail);
+          });
+          
+          // Listen for question selection events
+          document.addEventListener('question-select', (e) => {
+            console.log('Question selected:', e.detail);
+          });
+          
+          // Listen for question settings events
+          document.addEventListener('question-settings', (e) => {
+            this.openQuestionSettingsModal(e.detail.questionId);
+          });
+          
+          // Listen for question delete events
+          document.addEventListener('question-delete', (e) => {
+            this.handleQuestionDelete(e.detail.questionId);
+          });
+        },
+        
+        handlePageToggle(event) {
+          console.log('Page toggle handler:', event.detail);
+        },
+        
+        handlePageSelect(event) {
+          console.log('Page select handler:', event.detail);
+        },
+        
+        openQuestionSettingsModal(questionId) {
+          console.log('Opening settings for question:', questionId);
+          // Trigger the AddQuestionModal with edit mode
+          const modal = document.querySelector('webropol-add-question-modal');
+          if (modal) {
+            modal.setAttribute('mode', 'edit');
+            modal.setAttribute('question-id', questionId);
+            modal.setAttribute('open', 'true');
+          }
+        },
+        
+        handleQuestionDelete(questionId) {
+          console.log('Delete question:', questionId);
+          if (confirm('Are you sure you want to delete this question?')) {
+            // Implement delete logic here
+            console.log('Question deleted:', questionId);
+          }
         },
         
         applySelectedStyle() {
