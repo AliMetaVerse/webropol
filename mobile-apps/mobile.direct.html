@@ -36,6 +36,92 @@
       overscroll-behavior: none;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 40px 20px;
+    }
+    
+    .mobile-frame {
+      max-width: 390px;
+      margin: 0 auto;
+      background: #000;
+      border-radius: 50px;
+      padding: 12px;
+      box-shadow: 
+        0 0 0 2px #1a1a1a,
+        0 0 0 4px #2d2d2d,
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    
+    .mobile-frame::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #000;
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+    
+    .mobile-frame::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 3px;
+      z-index: 11;
+    }
+    
+    .mobile-screen {
+      background: #f1f5f9;
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+      height: 844px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .screen-content {
+      height: 100%;
+      overflow-y: auto;
+      padding: 60px 24px 24px;
+    }
+    
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      background: linear-gradient(to bottom, rgba(241, 245, 249, 0.98), transparent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f172a;
+      z-index: 20;
+    }
+    
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     
     .logo-gradient {
@@ -85,66 +171,88 @@
     .delay-300 { animation-delay: 0.3s; animation-fill-mode: both; }
   </style>
 </head>
-<body class="bg-webropol-gray-100 min-h-screen flex items-center justify-center p-6" x-data="mobileApp()" style="max-width: 430px; margin: 0 auto;">
+<body x-data="mobileApp()">
   
-  <!-- Main Container -->
-  <div class="max-w-md w-full space-y-8">
-    
-    <!-- Logo Section -->
-    <div class="text-center space-y-6 animate-fadeInUp">
-      <!-- Webropol "W" Logo -->
-      <div class="flex justify-center items-center">
-        <img src="../img/logo/W-logo-dark.svg" alt="Webropol Logo" class="w-32 h-auto">
-      </div>
-      
-      <!-- Welcome Text -->
-      <h1 class="text-4xl font-black text-webropol-gray-900">
-        Welcome!
-      </h1>
-    </div>
-    
-    <!-- Instructions Section -->
-    <div class="space-y-6 animate-fadeInUp delay-200">
-      <p class="text-xl font-bold text-center text-webropol-gray-900 leading-relaxed px-4">
-        Please follow the instructions below to add the survey's shortcut to Home screen.
-      </p>
-      
-      <!-- Instruction Box -->
-      <div class="instruction-box rounded-3xl p-6 shadow-lg border border-webropol-gray-200 animate-fadeInUp delay-300">
-        <p class="text-base text-webropol-gray-900 leading-relaxed">
-          <span class="font-semibold">Add survey's shortcut to Home screen:</span><br>
-          tap on 
-          <span class="share-icon">
-            <i class="fal fa-arrow-up"></i>
-          </span>
-          -icon on the bottom of screen and select 
-          <span class="font-semibold">'Add to home screen'</span>
-        </p>
-      </div>
-    </div>
-    
-    <!-- URL Display (Safari-style) -->
-    <div class="fixed bottom-6 left-6 right-6 animate-fadeInUp delay-300">
-      <div class="bg-white rounded-2xl shadow-xl px-6 py-4 flex items-center justify-between border border-webropol-gray-200">
-        <button class="text-webropol-gray-500">
-          <i class="fal fa-chevron-left text-xl"></i>
-        </button>
-        
-        <div class="flex items-center space-x-2 flex-1 mx-4">
-          <i class="fal fa-bars text-webropol-gray-900"></i>
-          <span class="text-sm font-medium text-webropol-gray-900" x-text="surveyUrl"></span>
+  <!-- Mobile Device Frame -->
+  <div class="mobile-frame">
+    <div class="mobile-screen">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-left">
+          <span x-text="currentTime"></span>
         </div>
-        
-        <button class="text-webropol-gray-500">
-          <i class="fal fa-sync text-lg"></i>
-        </button>
-        
-        <button class="text-webropol-gray-500 ml-2">
-          <i class="fal fa-ellipsis-h text-lg"></i>
-        </button>
+        <div class="status-right">
+          <i class="fal fa-signal" style="font-size: 14px;"></i>
+          <span style="font-size: 13px;">5G</span>
+          <i class="fal fa-battery-full" style="font-size: 16px;"></i>
+        </div>
+      </div>
+      
+      <!-- Screen Content -->
+      <div class="screen-content">
+        <div class="max-w-md w-full mx-auto space-y-8">
+          
+          <!-- Logo Section -->
+          <div class="text-center space-y-6 animate-fadeInUp">
+            <!-- Webropol "W" Logo -->
+            <div class="flex justify-center items-center">
+              <img src="../img/logo/W-logo-dark.svg" alt="Webropol Logo" class="w-32 h-auto">
+            </div>
+            
+            <!-- Welcome Text -->
+            <h1 class="text-4xl font-black text-webropol-gray-900">
+              Welcome!
+            </h1>
+          </div>
+          
+          <!-- Instructions Section -->
+          <div class="space-y-6 animate-fadeInUp delay-200">
+            <p class="text-xl font-bold text-center text-webropol-gray-900 leading-relaxed px-4">
+              Please follow the instructions below to add the survey's shortcut to Home screen.
+            </p>
+            
+            <!-- Instruction Box -->
+            <div class="instruction-box rounded-3xl p-6 shadow-lg border border-webropol-gray-200 animate-fadeInUp delay-300">
+              <p class="text-base text-webropol-gray-900 leading-relaxed">
+                <span class="font-semibold">Add survey's shortcut to Home screen:</span><br>
+                tap on 
+                <span class="share-icon">
+                  <i class="fal fa-arrow-up"></i>
+                </span>
+                -icon on the bottom of screen and select 
+                <span class="font-semibold">'Add to home screen'</span>
+              </p>
+            </div>
+          </div>
+          
+          
+        </div>
+      </div>
+      
+      <!-- URL Display (Safari-style) - Fixed at bottom -->
+      <div class="absolute bottom-0 left-0 right-0 p-4 animate-fadeInUp delay-300">
+        <div class="bg-white rounded-2xl shadow-xl px-6 py-4 flex items-center justify-between border border-webropol-gray-200">
+          <button class="text-webropol-gray-500">
+            <i class="fal fa-chevron-left text-xl"></i>
+          </button>
+          
+          <div class="flex items-center space-x-2 flex-1 mx-4">
+            <i class="fal fa-bars text-webropol-gray-900"></i>
+            <span class="text-sm font-medium text-webropol-gray-900" x-text="surveyUrl"></span>
+          </div>
+          
+          <button class="text-webropol-gray-500">
+            <i class="fal fa-sync text-lg"></i>
+          </button>
+          
+          <button class="text-webropol-gray-500 ml-2">
+            <i class="fal fa-ellipsis-h text-lg"></i>
+          </button>
+        </div>
       </div>
     </div>
-    
+  </div>
+    </div>
   </div>
   
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -152,8 +260,13 @@
     function mobileApp() {
       return {
         surveyUrl: 'staging.web.app',
+        currentTime: '11:17',
         
         init() {
+          // Update time
+          this.updateTime();
+          setInterval(() => this.updateTime(), 60000);
+          
           // Detect if running as standalone app
           if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('Running as standalone PWA');
@@ -166,6 +279,13 @@
           if (customUrl) {
             this.surveyUrl = customUrl;
           }
+        },
+        
+        updateTime() {
+          const now = new Date();
+          const hours = now.getHours().toString().padStart(2, '0');
+          const minutes = now.getMinutes().toString().padStart(2, '0');
+          this.currentTime = `${hours}:${minutes}`;
         }
       }
     }
