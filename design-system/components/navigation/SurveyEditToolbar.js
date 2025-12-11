@@ -305,10 +305,22 @@ export class SurveyEditToolbar extends BaseComponent {
         // Emit custom event
         this.emit(action, { originalEvent: e });
         
-        // Handle specific legacy global functions if they exist
-        if (action === 'add-question' && typeof window.openAddQuestionModal === 'function') {
-          window.openAddQuestionModal();
+        // Handle Add Question - Open the modal
+        if (action === 'add-question') {
+          const addQuestionModal = document.getElementById('addQuestionModal');
+          if (addQuestionModal) {
+            console.log('Toolbar: Opening Add Question Modal');
+            addQuestionModal.open();
+          } else {
+            console.error('Add Question Modal not found');
+            // Fallback to legacy function if modal not available
+            if (typeof window.openAddQuestionModal === 'function') {
+              window.openAddQuestionModal();
+            }
+          }
         }
+        
+        // Handle Settings
         if (action === 'settings' && typeof window.openSurveySettingsModal === 'function') {
           window.openSurveySettingsModal();
         }
