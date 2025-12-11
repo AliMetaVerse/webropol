@@ -11,6 +11,7 @@
   <script src="../design-system/components/forms/Dropdown.js" type="module"></script>
   <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
   <script src="../design-system/components/interactive/MergePages.js" type="module"></script>
+  <script src="../design-system/components/modals/AddQuestionModal.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -1298,7 +1299,7 @@
                           <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">Quick Actions</span>
                           <div class="h-4 w-px bg-webropol-gray-300"></div>
                           <!-- Add Question -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
+                          <button type="button" class="add-question-trigger group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
                             <i class="fal fa-plus-circle text-webropol-primary-500 group-hover:text-webropol-primary-600"></i>
                             <span>Add Question</span>
                           </button>
@@ -1532,7 +1533,7 @@
                           <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">Quick Actions</span>
                           <div class="h-4 w-px bg-webropol-gray-300"></div>
                           <!-- Add Question -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
+                          <button type="button" class="add-question-trigger group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
                             <i class="fal fa-plus-circle text-webropol-primary-500 group-hover:text-webropol-primary-600"></i>
                             <span>Add Question</span>
                           </button>
@@ -4194,6 +4195,36 @@
               this.performAutoSave();
             }, 30000); // Auto-save every 30 seconds
           }
+          
+          // Add Question Modal event listeners - use nextTick to ensure DOM is ready
+          this.$nextTick(() => {
+            setTimeout(() => {
+              const addQuestionModal = document.getElementById('addQuestionModal');
+              const addQuestionBtns = document.querySelectorAll('.add-question-trigger');
+              
+              console.log('Modal element:', addQuestionModal);
+              console.log('Add Question buttons found:', addQuestionBtns.length);
+              
+              if (addQuestionModal) {
+                // Bind all Add Question buttons to open the modal
+                addQuestionBtns.forEach(btn => {
+                  btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('Add Question button clicked');
+                    addQuestionModal.open();
+                  });
+                });
+                
+                // Handle question selection
+                addQuestionModal.addEventListener('question-added', (e) => {
+                  console.log('Question added event:', e.detail);
+                  this.addQuestion(e.detail.type);
+                });
+              } else {
+                console.error('Add Question Modal not found');
+              }
+            }, 200);
+          });
         },
         
         performAutoSave() {
@@ -5888,6 +5919,9 @@
 
   <!-- Survey Settings Modal -->
   <webropol-survey-settings-modal></webropol-survey-settings-modal>
+  
+  <!-- Add Question Modal -->
+  <webropol-add-question-modal id="addQuestionModal"></webropol-add-question-modal>
 </body>
 </html>
 

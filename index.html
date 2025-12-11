@@ -635,6 +635,7 @@
     <script src="design-system/utils/spa-router.js?v=20250903-1" type="module"></script>
     <script src="scripts/contact-modals.js"></script>
     <script defer src="design-system/components/tabs/unified-tabs.js"></script>
+    <script src="design-system/components/modals/AddQuestionModal.js" type="module"></script>
     
     <!-- Global Analytics Tracker -->
     <script src="scripts/analytics-global-tracker.js"></script>
@@ -1957,6 +1958,34 @@
                     document.body.classList.toggle('mode-prompt', this.interfaceMode === 'prompt');
                     document.body.classList.toggle('mode-classic', this.interfaceMode === 'classic');
                     
+                    // Add Question Modal event listeners - delayed to ensure web components are ready
+                    setTimeout(() => {
+                        const addQuestionModal = document.getElementById('addQuestionModal');
+                        const addQuestionBtns = document.querySelectorAll('.add-question-trigger');
+                        
+                        if (addQuestionModal && addQuestionBtns.length > 0) {
+                            console.log('Add Question Modal initialized with', addQuestionBtns.length, 'buttons');
+                            
+                            // Bind all Add Question buttons to open the modal
+                            addQuestionBtns.forEach(btn => {
+                                btn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    console.log('Add Question button clicked');
+                                    addQuestionModal.open();
+                                });
+                            });
+                            
+                            // Handle question selection
+                            addQuestionModal.addEventListener('question-added', (e) => {
+                                console.log('Question type selected:', e.detail.type);
+                                // Dispatch event that SPA pages can listen to
+                                document.dispatchEvent(new CustomEvent('add-question-selected', {
+                                    detail: { type: e.detail.type }
+                                }));
+                            });
+                        }
+                    }, 100);
+                    
                     // Add keyboard listener for interface switching
                     document.addEventListener('keydown', (e) => {
                         // Ctrl/Cmd + Shift + I to toggle interface mode
@@ -2490,6 +2519,9 @@
 
     <!-- Survey Settings Modal (Global - accessible from all SPA routes) -->
     <webropol-survey-settings-modal></webropol-survey-settings-modal>
+    
+    <!-- Add Question Modal (Global - accessible from all SPA routes) -->
+    <webropol-add-question-modal id="addQuestionModal"></webropol-add-question-modal>
 
 </body>
 

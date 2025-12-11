@@ -2,9 +2,41 @@
   "projectContext": {
     "framework": "html",
     "icons": "FontAwesome Pro Icons",
-    "styling": "TailwindCSS"
+    "styling": "TailwindCSS",
+    "architecture": "Alpine.js SPA with Web Components",
+    "entryPoint": "index.html"
   },
   "rules": [
+    {
+      "id": "spa-architecture",
+      "description": "This is a Single Page Application (SPA) built with Alpine.js. The main entry point is index.html which uses Alpine.js for state management and routing. Some pages like surveys/edit.html are standalone pages that load independently.",
+      "example": "index.html contains the libraryApp() Alpine.js app; standalone pages have their own Alpine.js apps like surveyEditApp()"
+    },
+    {
+      "id": "alpine-integration",
+      "description": "Use Alpine.js for state management and DOM manipulation. Initialize Alpine apps with x-data on the body tag. Use Alpine's lifecycle methods like init(), $nextTick(), and event listeners.",
+      "example": "<body x-data=\"libraryApp()\">...\n\nfunction libraryApp() {\n  return {\n    init() {\n      // Initialize here\n    }\n  }\n}"
+    },
+    {
+      "id": "web-components-timing",
+      "description": "Web components (custom elements) need time to register. When adding event listeners for web components in Alpine.js init(), wrap them in setTimeout with at least 100-200ms delay to ensure components are ready.",
+      "example": "init() {\n  setTimeout(() => {\n    const modal = document.getElementById('myModal');\n    if (modal) {\n      modal.addEventListener('event', handler);\n    }\n  }, 200);\n}"
+    },
+    {
+      "id": "global-modals-spa",
+      "description": "For modals and components that need to be accessible across the SPA, add them to index.html before </body>. Import the component in the <head>, add the component element globally, and set up event listeners in libraryApp() init() method. Use CSS classes like 'add-question-trigger' to identify buttons that should trigger modals.",
+      "example": "<!-- In index.html head -->\n<script src=\"design-system/components/modals/MyModal.js\" type=\"module\"></script>\n\n<!-- Before </body> in index.html -->\n<webropol-my-modal id=\"myModal\"></webropol-my-modal>\n\n<!-- In libraryApp() init -->\nconst modal = document.getElementById('myModal');\ndocument.querySelectorAll('.modal-trigger').forEach(btn => {\n  btn.addEventListener('click', () => modal.open());\n});"
+    },
+    {
+      "id": "standalone-pages",
+      "description": "Pages like surveys/edit.html that are loaded as separate HTML files (not within the SPA) need their own component imports, modal instances, and event listeners. They cannot access global modals from index.html. Each standalone page has its own Alpine.js app (e.g., surveyEditApp()).",
+      "example": "<!-- In surveys/edit.html -->\n<script src=\"../design-system/components/modals/AddQuestionModal.js\" type=\"module\"></script>\n\n<!-- Before </body> -->\n<webropol-add-question-modal id=\"addQuestionModal\"></webropol-add-question-modal>\n\n<!-- In surveyEditApp() init -->\nthis.$nextTick(() => {\n  setTimeout(() => {\n    const modal = document.getElementById('addQuestionModal');\n    // Set up listeners\n  }, 200);\n});"
+    },
+    {
+      "id": "event-communication",
+      "description": "Use custom events for communication between components and pages. Modal components should emit custom events (e.g., 'question-added') that parent pages can listen to. For global events across the SPA, dispatch document-level custom events.",
+      "example": "// In modal component\nthis.emit('question-added', { type: 'selection' });\n\n// In page listening\nmodal.addEventListener('question-added', (e) => {\n  console.log(e.detail.type);\n});\n\n// Global event\ndocument.dispatchEvent(new CustomEvent('add-question-selected', {\n  detail: { type: 'selection' }\n}));"
+    },
     {
       "id": "use-tailwind",
       "description": "All styling should be done with TailwindCSS classes only.",
