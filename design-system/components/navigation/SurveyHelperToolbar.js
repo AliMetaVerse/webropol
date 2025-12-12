@@ -68,24 +68,24 @@ export class SurveyHelperToolbar extends BaseComponent {
     const configs = {
       draft: {
         text: 'Draft',
-        bgClass: 'bg-gradient-to-r from-webropol-gray-50 to-white',
-        borderClass: 'border-webropol-gray-200',
-        iconClass: 'bg-webropol-gray-100 text-webropol-gray-700',
-        textClass: 'text-webropol-gray-600'
+        bgClass: 'bg-gradient-to-r from-orange-50 to-amber-50',
+        borderClass: 'border-orange-200',
+        iconClass: 'bg-orange-100 text-orange-700',
+        textClass: 'text-orange-600'
       },
       active: {
-        text: 'Active',
-        bgClass: 'bg-gradient-to-r from-green-50 to-white',
+        text: 'Open',
+        bgClass: 'bg-gradient-to-r from-green-50 to-emerald-50',
         borderClass: 'border-green-200',
         iconClass: 'bg-green-100 text-green-700',
         textClass: 'text-green-600'
       },
       closed: {
-        text: 'Closed',
-        bgClass: 'bg-gradient-to-r from-orange-50 to-white',
-        borderClass: 'border-orange-200',
-        iconClass: 'bg-orange-100 text-orange-700',
-        textClass: 'text-orange-600'
+        text: 'Close',
+        bgClass: 'bg-gradient-to-r from-gray-50 to-slate-50',
+        borderClass: 'border-gray-200',
+        iconClass: 'bg-gray-100 text-gray-700',
+        textClass: 'text-gray-600'
       },
       archived: {
         text: 'Archived',
@@ -356,11 +356,24 @@ export class SurveyHelperToolbar extends BaseComponent {
         }
 
         .survey-helper-toolbar .status-name {
-          font-weight: 600;
-          color: #0f172a;
+          font-size: 11px;
+          font-weight: 500;
+          color: #475569;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        @media (max-width: 1024px) {
+          .survey-helper-toolbar .status-name {
+            max-width: 150px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .survey-helper-toolbar .status-name {
+            max-width: 80px;
+          }
         }
 
         .survey-helper-toolbar .divider {
@@ -437,7 +450,7 @@ export class SurveyHelperToolbar extends BaseComponent {
 
       <div class="survey-helper-toolbar">
         <div class="status-badge ${statusConfig.bgClass} ${statusConfig.borderClass} cursor-pointer hover:shadow-md transition-all" 
-             title="Click to change status: ${surveyName}" 
+             title="${surveyName}" 
              role="button" 
              tabindex="0"
              aria-label="Change survey status">
@@ -446,7 +459,7 @@ export class SurveyHelperToolbar extends BaseComponent {
           </span>
           <div class="status-text">
             <span class="status-label ${statusConfig.textClass}">${statusConfig.text}</span>
-            <span class="status-name" title="${surveyName}">${surveyName}</span>
+            <span class="status-name">${surveyName}</span>
           </div>
         </div>
         
