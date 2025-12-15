@@ -511,7 +511,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     if (this._mobileLayer && this._backdropEl && this._drawerEl) {
       if (isOpen) {
         // Enable interactions and bring layer to front
-        this._mobileLayer.style.zIndex = '2147483647';
+        this._mobileLayer.style.zIndex = '99999';
         this._mobileLayer.style.pointerEvents = 'auto';
         this._backdropEl.style.pointerEvents = 'auto';
         this._backdropEl.style.opacity = '1';
@@ -830,7 +830,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       position: 'fixed',
       top: '84px',
       left: '16px',
-      zIndex: '2147483646'
+      zIndex: '9000'
     });
     btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-webropol-gray-600 border border-webropol-gray-200 shadow-md hover:text-webropol-primary-600 hover:border-webropol-primary-300 hover:shadow-lg transition-all';
     btn.innerHTML = '<i class="fa-duotone fa-thin fa-bars"></i>';

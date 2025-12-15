@@ -310,7 +310,7 @@ export class WebropolHeader extends BaseComponent {
     layer.style.position = 'fixed';
     layer.style.inset = '0';
     layer.style.pointerEvents = 'none';
-    layer.style.zIndex = 'var(--z-mobile-header-dropdown, 2147483647)';
+    layer.style.zIndex = 'var(--z-mobile-header-dropdown, 9100)';
     document.body.appendChild(layer);
     this._dropdownLayer = layer;
     // Global listeners for outside click and ESC

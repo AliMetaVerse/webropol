@@ -14,7 +14,7 @@
     if (STATE.root) return STATE.root;
     const root = document.createElement('div');
     root.setAttribute('data-contact-modal-root','');
-    Object.assign(root.style, { position:'fixed', inset:'0', zIndex:'2147483647', display:'none' });
+    Object.assign(root.style, { position:'fixed', inset:'0', zIndex:'100000', display:'none' });
 
     const backdrop = document.createElement('div');
     Object.assign(backdrop.style, { position:'absolute', inset:'0', background:'linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(99, 102, 241, 0.15) 50%, rgba(139, 92, 246, 0.1) 100%)', backdropFilter:'blur(12px) saturate(180%)', opacity:'0', transition:'all 300ms cubic-bezier(0.4, 0, 0.2, 1)' });

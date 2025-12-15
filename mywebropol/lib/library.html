@@ -73,6 +73,29 @@
             box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
         }
 
+        /* Modal Stacking Fixes */
+        .modal-overlay {
+            z-index: 100000 !important;
+        }
+        
+        /* Ensure header stays behind modals when they're active */
+        webropol-header {
+            display: block;
+            position: relative;
+            z-index: 50;
+        }
+
+        body:has(.modal-overlay.active) webropol-header,
+        body:has(.modal-overlay.active) webropol-header-enhanced { 
+            z-index: 1 !important; 
+        }
+
+        /* Target inner header to be safe */
+        body:has(.modal-overlay.active) webropol-header header,
+        body:has(.modal-overlay.active) webropol-header-enhanced header {
+            z-index: 1 !important;
+        }
+
         /* Unified Rounded Tab System (surveys-style) */
         .webropol-tabs-wrapper {
             display: inline-flex;
@@ -983,7 +1006,8 @@
 
     <!-- Create Folder Modal -->
     <div x-show="showCreateFolder" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showCreateFolder }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1031,7 +1055,8 @@
 
     <!-- Move Folder Modal -->
     <div x-show="showMoveModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showMoveModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1173,7 +1198,8 @@
 
     <!-- Enhanced Preview Modal -->
     <div x-show="showPreviewModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showPreviewModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1443,7 +1469,8 @@
 
     <!-- Create New Modal -->
     <div x-show="showCreateModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showCreateModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1568,7 +1595,8 @@
 
     <!-- Freeze Survey Modal -->
     <div x-show="showFreezeModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showFreezeModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1821,7 +1849,8 @@
 
     <!-- Add Subfolder Modal -->
     <div x-show="showAddSubfolderModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showAddSubfolderModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1891,7 +1920,8 @@
 
     <!-- Rename Folder Modal -->
     <div x-show="showRenameModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showRenameModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -1955,7 +1985,8 @@
 
     <!-- Create Folder from Move Modal -->
     <div x-show="showCreateFolderFromMove" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showCreateFolderFromMove }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2033,7 +2064,8 @@
 
     <!-- Delete Confirmation Modal -->
     <div x-show="showDeleteModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showDeleteModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2109,7 +2141,8 @@
 
     <!-- Survey Information Modal -->
     <div x-show="showSurveyInfoModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showSurveyInfoModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2348,7 +2381,8 @@
 
     <!-- Question Information Modal -->
     <div x-show="showQuestionInfoModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showQuestionInfoModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2633,7 +2667,8 @@
 
     <!-- Edit Question Modal -->
     <div x-show="showEditQuestionModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showEditQuestionModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2790,7 +2825,8 @@
 
     <!-- Bulk Delete Confirmation Modal -->
     <div x-show="showBulkDeleteModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showBulkDeleteModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
@@ -2852,7 +2888,8 @@
 
     <!-- Bulk Freeze Confirmation Modal -->
     <div x-show="showBulkFreezeModal" x-cloak
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        :class="{ 'active': showBulkFreezeModal }"
+        class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
         x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">

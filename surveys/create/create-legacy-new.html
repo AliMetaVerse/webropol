@@ -71,6 +71,34 @@
       box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
+    /* Modal Stacking Fixes */
+    .modal-overlay,
+    webropol-modal {
+        z-index: 100000 !important;
+    }
+    
+    /* Ensure header stays behind modals when they're active */
+    webropol-header {
+        display: block;
+        position: relative;
+        z-index: 50;
+    }
+
+    body:has(.modal-overlay.active) webropol-header,
+    body:has(.modal-overlay.active) webropol-header-enhanced,
+    body:has(webropol-modal[open]) webropol-header,
+    body:has(webropol-modal[open]) webropol-header-enhanced { 
+        z-index: 1 !important; 
+    }
+
+    /* Target inner header to be safe */
+    body:has(.modal-overlay.active) webropol-header header,
+    body:has(.modal-overlay.active) webropol-header-enhanced header,
+    body:has(webropol-modal[open]) webropol-header header,
+    body:has(webropol-modal[open]) webropol-header-enhanced header {
+        z-index: 1 !important;
+    }
+
     /* Wizard Styles */
     .wizard-step {
       opacity: 0;
@@ -724,13 +752,14 @@
         <!-- Folder Selection Modal -->
         <div 
           x-show="showFolderModal" 
+          :class="{ 'active': showFolderModal }"
           x-transition:enter="transition ease-out duration-200"
           x-transition:enter-start="opacity-0"
           x-transition:enter-end="opacity-100"
           x-transition:leave="transition ease-in duration-150"
           x-transition:leave-start="opacity-100"
           x-transition:leave-end="opacity-0"
-          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
           @click="showFolderModal = false"
         >
           <div 
