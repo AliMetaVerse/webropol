@@ -728,7 +728,7 @@
                   </div>
 
                   <!-- Contact Form Question (Question 1) -->
-                     <div x-data="{ selected: false, questionId: 'q1' }" 
+                     <div x-data="{ selected: false, questionId: 'q1', isMandatory: false }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                     
@@ -756,7 +756,20 @@
                       </div>
                       <div class="flex items-center gap-1 question-card-toolbar">
                         <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Required field"><i class="fal fa-asterisk"></i></button>
+                        <div class="relative" x-data="{ mandatoryOpen: false }">
+                          <button @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false" 
+                            :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50'" 
+                            class="transition-colors px-2 py-1 rounded" title="Required field">
+                            <i class="fal fa-asterisk"></i>
+                          </button>
+                          <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
+                            <webropol-context-menu
+                              items='[{"id": "not-mandatory", "label": "Question is not mandatory", "showRadio": true, "radioGroup": "mandatory", "checked": true}, {"id": "mandatory", "label": "Question is mandatory", "icon": "fas fa-asterisk", "iconClass": "text-red-600", "iconPosition": "right", "showRadio": true, "radioGroup": "mandatory", "bgClass": "hover:bg-red-50"}]'
+                              width="auto"
+                              @item-click="isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
+                            ></webropol-context-menu>
+                          </div>
+                        </div>
                         <div class="relative" x-data="{ open: false }">
                           <button @click="open = !open" @click.outside="open = false" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Visibility">
                             <i class="fal fa-eye"></i>
@@ -849,7 +862,7 @@
                   </div>
 
                   <!-- Auto Suggest Question (Question 2) -->
-                     <div x-data="{ selected: false, questionId: 'q2' }" 
+                     <div x-data="{ selected: false, questionId: 'q2', isMandatory: false }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                     
@@ -877,7 +890,20 @@
                     </div>
                     <div class="flex items-center gap-1 question-card-toolbar">
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Required field"><i class="fal fa-asterisk"></i></button>
+                      <div class="relative" x-data="{ mandatoryOpen: false }">
+                        <button @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false" 
+                          :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50'" 
+                          class="transition-colors px-2 py-1 rounded" title="Required field">
+                          <i class="fal fa-asterisk"></i>
+                        </button>
+                        <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
+                          <webropol-context-menu
+                            items='[{"id": "not-mandatory", "label": "Question is not mandatory", "showRadio": true, "radioGroup": "mandatory", "checked": true}, {"id": "mandatory", "label": "Question is mandatory", "icon": "fal fa-asterisk", "iconPosition": "right", "showRadio": true, "radioGroup": "mandatory", "bgClass": "hover:bg-red-50"}]'
+                            width="auto"
+                            @item-click="isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
+                          ></webropol-context-menu>
+                        </div>
+                      </div>
                       <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" @click.outside="open = false" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Visibility">
                           <i class="fal fa-eye"></i>
@@ -1038,7 +1064,7 @@
                   </div>
 
                   <!-- Open-Ended Question (Question 3) -->
-                     <div x-data="{ selected: false, questionId: 'q3-openended' }" 
+                     <div x-data="{ selected: false, questionId: 'q3-openended', isMandatory: false }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                     
@@ -1066,7 +1092,20 @@
                     </div>
                     <div class="flex items-center gap-1 question-card-toolbar">
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Required field"><i class="fal fa-asterisk"></i></button>
+                      <div class="relative" x-data="{ mandatoryOpen: false }">
+                        <button @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false" 
+                          :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50'" 
+                          class="transition-colors px-2 py-1 rounded" title="Required field">
+                          <i class="fal fa-asterisk"></i>
+                        </button>
+                        <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
+                          <webropol-context-menu
+                            items='[{"id": "not-mandatory", "label": "Question is not mandatory", "showRadio": true, "radioGroup": "mandatory", "checked": true}, {"id": "mandatory", "label": "Question is mandatory", "icon": "fas fa-asterisk", "iconClass": "text-red-600", "iconPosition": "right", "showRadio": true, "radioGroup": "mandatory", "bgClass": "hover:bg-red-50"}]'
+                            width="auto"
+                            @item-click="isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
+                          ></webropol-context-menu>
+                        </div>
+                      </div>
                       <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" @click.outside="open = false" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Visibility">
                           <i class="fal fa-eye"></i>
@@ -1196,7 +1235,7 @@
                   </div>
 
                   <!-- NPS Question Card -->
-                     <div x-data="{ selected: false, questionId: 'q3' }" 
+                     <div x-data="{ selected: false, questionId: 'q3', isMandatory: false }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
                        class="question-card" :class="selected ? 'selected' : ''">
                     
@@ -1224,7 +1263,20 @@
                     </div>
                     <div class="flex items-center gap-1 question-card-toolbar">
                       <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
-                      <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Required field"><i class="fal fa-asterisk"></i></button>
+                      <div class="relative" x-data="{ mandatoryOpen: false }">
+                        <button @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false" 
+                          :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50'" 
+                          class="transition-colors px-2 py-1 rounded" title="Required field">
+                          <i class="fal fa-asterisk"></i>
+                        </button>
+                        <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
+                          <webropol-context-menu
+                            items='[{"id": "not-mandatory", "label": "Question is not mandatory", "showRadio": true, "radioGroup": "mandatory", "checked": true}, {"id": "mandatory", "label": "Question is mandatory", "icon": "fas fa-asterisk", "iconClass": "text-red-600", "iconPosition": "right", "showRadio": true, "radioGroup": "mandatory", "bgClass": "hover:bg-red-50"}]'
+                            width="auto"
+                            @item-click="isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
+                          ></webropol-context-menu>
+                        </div>
+                      </div>
                       <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" @click.outside="open = false" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Visibility">
                           <i class="fal fa-eye"></i>

@@ -58,25 +58,63 @@ export class WebropolContextMenu extends BaseComponent {
     const variant = item.variant || 'default';
     const disabled = item.disabled || false;
     const icon = item.icon || '';
+    const iconPosition = item.iconPosition || 'left';
     const label = item.label || '';
     const id = item.id || `item-${index}`;
+    const showRadio = item.showRadio || false;
+    const showCheckbox = item.showCheckbox || false;
+    const checked = item.checked || false;
+    const radioGroup = item.radioGroup || 'default';
+    const bgClass = item.bgClass || '';
+    const iconClass = item.iconClass || '';
 
     const variantClasses = this.getMenuItemVariantClasses(variant);
-    const hoverClasses = disabled ? '' : this.getMenuItemHoverClasses(variant);
+    const hoverClasses = disabled ? '' : (bgClass || this.getMenuItemHoverClasses(variant));
     const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
     
     // Only show separator before danger variant items
     const showSeparator = variant === 'danger' && index > 0;
+
+    // Build content based on icon position
+    let content = '';
+    
+    if (showRadio) {
+      // Radio button on the left
+      content = `
+        <div class="flex items-center justify-center w-4 h-4 border-2 rounded-full ${checked ? 'border-webropol-primary-600' : 'border-webropol-gray-400'}">
+          ${checked ? '<div class="w-2 h-2 bg-webropol-primary-600 rounded-full"></div>' : ''}
+        </div>
+      `;
+    } else if (showCheckbox) {
+      // Checkbox on the left
+      content = `
+        <div class="flex items-center justify-center w-4 h-4 border-2 rounded ${checked ? 'border-webropol-primary-600 bg-webropol-primary-600' : 'border-webropol-gray-400'}">
+          ${checked ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+        </div>
+      `;
+    } else if (icon && iconPosition === 'left') {
+      content = `<i class="${icon} text-lg ${variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-600'}"></i>`;
+    }
+    
+    // Label in the middle with icon on right if specified
+    if (icon && iconPosition === 'right') {
+      const defaultIconColor = variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-600';
+      const iconColorClass = iconClass || defaultIconColor;
+      content += `<span class="flex-1 text-sm font-medium ${variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900'}">${label}<i class="${icon} text-xs ${iconColorClass}"></i></span>`;
+    } else {
+      content += `<span class="flex-1 text-sm font-medium ${variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900'}">${label}</span>`;
+    }
 
     return `
       <div 
         class="flex items-center gap-3 px-4 py-3 transition-all duration-200 ${variantClasses} ${hoverClasses} ${disabledClasses} ${showSeparator ? 'border-t border-webropol-gray-200' : ''}"
         role="menuitem"
         data-item-id="${id}"
+        data-radio-group="${radioGroup}"
+        data-checked="${checked}"
         ${disabled ? 'aria-disabled="true"' : 'tabindex="0"'}
       >
-        ${icon ? `<i class="${icon} text-lg ${variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-600'}"></i>` : ''}
-        <span class="flex-1 text-sm font-medium ${variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900'}">${label}</span>
+        ${content}
       </div>
     `;
   }
