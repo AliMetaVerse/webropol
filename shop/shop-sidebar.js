@@ -214,7 +214,7 @@ class ShopSidebar extends HTMLElement {
       position: 'fixed',
       top: '140px',
       left: '16px',
-      zIndex: '2147483645'
+      zIndex: '10003'
     });
     btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 shadow-md hover:text-primary-600 hover:border-primary-300 hover:shadow-lg transition-all';
     btn.innerHTML = '<i class="fa-light fa-ellipsis-vertical"></i>';
@@ -249,7 +249,7 @@ class ShopSidebar extends HTMLElement {
       border: '1px solid rgba(203,213,225,0.8)',
       borderRadius: '12px',
       boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-      zIndex: '2147483645',
+      zIndex: '10003',
       display: 'none'
     });
     menu.innerHTML = `
