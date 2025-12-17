@@ -41,15 +41,15 @@ export class WebropolAlertInfo extends BaseComponent {
     const config = {
       bg: 'from-cyan-50 to-blue-50',
       border: '#06b6d4',
-      iconBg: 'bg-webropol-primary-50',
-      iconBorder: 'border-webropol-primary-200',
-      iconColor: 'text-webropol-primary-600',
+      iconBg: 'bg-cyan-100',
+      iconBorder: 'border-cyan-200',
+      iconColor: 'text-cyan-600',
       icon: 'fal fa-info-circle'
     };
     
     const icon = customIcon || config.icon;
 
-    this.className = `flex items-center gap-4 p-4 rounded-2xl bg-gradient-to-r ${config.bg} border shadow-sm`;
+    this.className = `flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r ${config.bg} border shadow-sm`;
     this.style.borderColor = config.border;
 
     this.innerHTML = `
