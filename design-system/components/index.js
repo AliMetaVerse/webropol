@@ -44,6 +44,9 @@ export { Badge } from './feedback/Badge.js';
 export { Loading } from './feedback/Loading.js';
 export { Tooltip } from './feedback/Tooltip.js';
 export { WebropolPromo } from './feedback/PromoToast.js';
+export { WebropolAlert } from './feedback/Alert.js';
+export { WebropolToast } from './feedback/Toast.js';
+
 // AI components
 export { WebropolAIAssistant } from './ai/AIAssistantPanel.js';
 
