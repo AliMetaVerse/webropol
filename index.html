@@ -152,6 +152,23 @@
             box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
         }
 
+        /* Blob animation for Magical view */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+
         /* Modern pill tab animations */
         @keyframes pill-bounce {
             0%, 100% { transform: scale(1); }
@@ -1139,124 +1156,99 @@
                          role="tabpanel"
                          aria-labelledby="magical-tab">
                         
-                        <!-- Magical Interface - Redesigned -->
-                        <div class="max-w-3xl mx-auto py-8">
+                        <!-- Magical Interface - Redesigned v2 -->
+                        <div class="max-w-4xl mx-auto py-12 relative">
                             
-                            <!-- Centered Hero with Subtle Animation -->
-                            <div class="text-center mb-12">
-                                <!-- Floating Icon with Glow -->
-                                <div class="relative inline-block mb-8">
-                                    <div class="absolute inset-0 bg-gradient-to-br from-violet-400 to-purple-600 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-                                    <div class="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 rounded-full shadow-2xl">
-                                        <i class="fal fa-wand-magic-sparkles text-white text-4xl"></i>
-                                    </div>
-                                </div>
-                                
-                                <!-- Headline -->
-                                <h2 class="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent mb-4">
-                                    What would you like to create?
+                            <!-- Ambient Background Glow -->
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-3xl -z-10">
+                                <div class="absolute top-20 left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                                <div class="absolute top-20 right-20 w-72 h-72 bg-violet-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                                <div class="absolute -bottom-8 left-1/2 w-72 h-72 bg-fuchsia-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+                            </div>
+
+                            <!-- Header -->
+                            <div class="text-center mb-10">
+                                <h2 class="text-4xl font-bold text-webropol-gray-900 mb-3 tracking-tight">
+                                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
+                                        Magic Creator
+                                    </span>
                                 </h2>
-                                <p class="text-lg text-webropol-gray-500 max-w-xl mx-auto">
-                                    Simply describe your idea. We will handle the rest.
+                                <p class="text-lg text-webropol-gray-500">
+                                    Select a type and describe your vision. AI will do the rest.
                                 </p>
                             </div>
 
-                            <!-- Type Selection Cards -->
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-                                <template x-for="type in surveyTypes.slice(0, 4)" :key="type.id">
-                                    <button @click="selectedSurveyType = type.id"
-                                        :class="selectedSurveyType === type.id 
-                                            ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-purple-200 border-transparent scale-105' 
-                                            : 'bg-white text-webropol-gray-700 border-webropol-gray-200 hover:border-purple-300 hover:shadow-md'"
-                                        class="relative flex flex-col items-center p-5 rounded-2xl border-2 transition-all duration-300 group">
-                                        <div :class="selectedSurveyType === type.id ? 'bg-white/20' : 'bg-purple-50 group-hover:bg-purple-100'"
-                                             class="w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors">
-                                            <i :class="[type.icon, selectedSurveyType === type.id ? 'text-white' : 'text-purple-600']" class="text-xl"></i>
-                                        </div>
-                                        <span class="font-semibold text-sm" x-text="type.name"></span>
-                                    </button>
-                                </template>
-                            </div>
-
-                            <!-- Main Prompt Area -->
-                            <div class="relative">
-                                <!-- Decorative Background -->
-                                <div class="absolute -inset-1 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 rounded-3xl opacity-20 blur-xl"></div>
+                            <!-- Main Card -->
+                            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden transition-all duration-300 hover:shadow-purple-500/10">
                                 
-                                <!-- Card -->
-                                <div class="relative bg-white rounded-3xl shadow-xl border border-purple-100 overflow-hidden">
-                                    <!-- Subtle Top Accent -->
-                                    <div class="h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500"></div>
-                                    
-                                    <div class="p-8">
-                                        <!-- Textarea -->
+                                <!-- Type Selector (Top Bar) -->
+                                <div class="grid grid-cols-4 divide-x divide-gray-100 border-b border-gray-100 bg-gray-50/50">
+                                    <template x-for="type in surveyTypes.slice(0, 4)" :key="type.id">
+                                        <button @click="selectedSurveyType = type.id"
+                                            class="relative py-4 px-2 group transition-all duration-200 hover:bg-white"
+                                            :class="selectedSurveyType === type.id ? 'bg-white' : ''">
+                                            
+                                            <div class="flex flex-col items-center gap-2">
+                                                <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
+                                                     :class="selectedSurveyType === type.id ? 'bg-violet-100 text-violet-600 scale-110' : 'text-gray-400 group-hover:text-gray-600 group-hover:bg-gray-100'">
+                                                    <i :class="type.icon" class="text-lg"></i>
+                                                </div>
+                                                <span class="text-xs font-semibold tracking-wide uppercase" 
+                                                      :class="selectedSurveyType === type.id ? 'text-violet-600' : 'text-gray-400 group-hover:text-gray-600'"
+                                                      x-text="type.name"></span>
+                                            </div>
+                                            
+                                            <!-- Active Indicator -->
+                                            <div class="absolute bottom-0 left-0 w-full h-0.5 bg-violet-500 transform scale-x-0 transition-transform duration-300"
+                                                 :class="selectedSurveyType === type.id ? 'scale-x-100' : ''"></div>
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <!-- Input Area -->
+                                <div class="p-8">
+                                    <div class="relative">
                                         <textarea 
                                             id="magical-prompt" 
                                             x-model="aiPrompt" 
-                                            rows="5" 
-                                            placeholder="Describe what you want to create...
-
-Example: Create a customer feedback survey for our coffee shop. Ask about drink quality, service speed, atmosphere, and overall satisfaction. Keep it short and friendly."
-                                            class="w-full text-lg border-0 focus:ring-0 resize-none text-webropol-gray-800 placeholder-webropol-gray-400 leading-relaxed bg-transparent"
+                                            rows="6" 
+                                            placeholder="Describe what you want to create..."
+                                            class="w-full text-xl font-light bg-transparent border-none focus:ring-0 p-0 resize-none placeholder-gray-300 text-gray-800 leading-relaxed"
                                             @input="updateCharCount()"></textarea>
                                         
-                                        <!-- Bottom Bar -->
-                                        <div class="flex items-center justify-between pt-6 border-t border-webropol-gray-100 mt-4">
-                                            <!-- Character Count -->
-                                            <div class="flex items-center space-x-4">
-                                                <span class="text-sm text-webropol-gray-400" x-text="aiPrompt.length + ' characters'"></span>
-                                                <button @click="clearPrompt()" 
-                                                    x-show="aiPrompt.length > 0"
-                                                    x-transition
-                                                    class="text-sm text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors flex items-center">
-                                                    <i class="fal fa-times mr-1"></i>
-                                                    Clear
-                                                </button>
-                                            </div>
-                                            
-                                            <!-- Generate Button -->
+                                        <!-- Floating Action Button for Generate -->
+                                        <div class="absolute bottom-0 right-0">
                                             <button @click="generateSurvey()" 
                                                 :disabled="!aiPrompt.trim() || isGenerating"
-                                                :class="(!aiPrompt.trim() || isGenerating) 
-                                                    ? 'opacity-40 cursor-not-allowed' 
-                                                    : 'hover:shadow-lg hover:scale-105 active:scale-100'"
-                                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-md">
-                                                <i :class="isGenerating ? 'fal fa-spinner-third fa-spin' : 'fal fa-sparkles'" class="mr-2"></i>
-                                                <span x-text="isGenerating ? 'Creating...' : 'Generate'"></span>
+                                                class="group flex items-center gap-2 pl-4 pr-2 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-fuchsia-500/30 disabled:opacity-50 disabled:cursor-not-allowed hover:pr-4 hover:scale-105">
+                                                <span class="font-medium" x-text="isGenerating ? 'Creating...' : 'Generate'"></span>
+                                                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-violet-600 transition-colors">
+                                                    <i :class="isGenerating ? 'fal fa-spinner-third fa-spin' : 'fal fa-arrow-right'"></i>
+                                                </div>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Quick Suggestions -->
-                            <div class="mt-10">
-                                <p class="text-sm text-webropol-gray-400 text-center mb-4">Try one of these</p>
-                                <div class="flex flex-wrap justify-center gap-2">
-                                    <button @click="aiPrompt = 'Create a quick customer satisfaction survey with 5 questions'"
-                                        class="px-4 py-2 bg-white border border-webropol-gray-200 text-webropol-gray-600 text-sm rounded-full hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-all">
-                                        Customer satisfaction
-                                    </button>
-                                    <button @click="aiPrompt = 'Design an employee engagement survey covering work environment and growth opportunities'"
-                                        class="px-4 py-2 bg-white border border-webropol-gray-200 text-webropol-gray-600 text-sm rounded-full hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-all">
-                                        Employee engagement
-                                    </button>
-                                    <button @click="aiPrompt = 'Create an event feedback form for a workshop or conference'"
-                                        class="px-4 py-2 bg-white border border-webropol-gray-200 text-webropol-gray-600 text-sm rounded-full hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-all">
-                                        Event feedback
-                                    </button>
-                                    <button @click="aiPrompt = 'Build a product feedback survey focusing on usability and features'"
-                                        class="px-4 py-2 bg-white border border-webropol-gray-200 text-webropol-gray-600 text-sm rounded-full hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 transition-all">
-                                        Product feedback
-                                    </button>
+                                
+                                <!-- Footer / Suggestions -->
+                                <div class="bg-gray-50/80 px-8 py-4 border-t border-gray-100 flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-4 text-gray-400">
+                                        <i class="fal fa-sparkles text-violet-400"></i>
+                                        <span>AI Suggestions:</span>
+                                    </div>
+                                    <div class="flex gap-2 overflow-x-auto no-scrollbar">
+                                        <button @click="aiPrompt = 'Customer satisfaction survey'" class="whitespace-nowrap px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors">Customer Satisfaction</button>
+                                        <button @click="aiPrompt = 'Employee engagement survey'" class="whitespace-nowrap px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors">Employee Engagement</button>
+                                        <button @click="aiPrompt = 'Event feedback form'" class="whitespace-nowrap px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors">Event Feedback</button>
+                                    </div>
                                 </div>
                             </div>
-
-                            <!-- Keyboard Hint -->
-                            <div class="mt-12 text-center">
-                                <span class="text-xs text-webropol-gray-400">
-                                    Press <kbd class="px-1.5 py-0.5 bg-webropol-gray-100 rounded text-webropol-gray-500 font-mono text-xs">Esc</kbd> to return to Classic view
-                                </span>
+                            
+                            <!-- Helper Text -->
+                            <div class="text-center mt-8">
+                                <p class="text-sm text-gray-400">
+                                    Press <kbd class="font-mono bg-gray-100 px-1 rounded">Enter</kbd> to generate or <kbd class="font-mono bg-gray-100 px-1 rounded">Esc</kbd> to cancel
+                                </p>
                             </div>
                         </div>
                     </div>
