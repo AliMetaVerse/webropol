@@ -1070,17 +1070,9 @@
                                     <button @click="generateSurvey()" 
                                         :disabled="!aiPrompt.trim() || isGenerating"
                                         :class="(!aiPrompt.trim() || isGenerating) ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-xl'"
-                                        class="px-8 py-4 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-bold rounded-full transition-all duration-300 flex items-center text-lg shadow-lg">
+                                        class="px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold rounded-full transition-all duration-300 flex items-center text-lg shadow-lg">
                                         <i :class="isGenerating ? 'fal fa-spinner fa-spin' : 'fal fa-magic'" class="mr-3 text-xl"></i>
                                         <span x-text="isGenerating ? 'Creating Magic...' : 'Create with AI'"></span>
-                                    </button>
-                                    
-                                    <button @click="previewPrompt()" 
-                                        :disabled="!aiPrompt.trim()"
-                                        :class="!aiPrompt.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-webropol-gray-50 hover:border-webropol-gray-300'"
-                                        class="px-6 py-4 bg-white border border-webropol-gray-200 text-webropol-gray-700 font-semibold rounded-full transition-all duration-200 flex items-center">
-                                        <i class="fal fa-eye mr-2"></i>
-                                        Preview
                                     </button>
                                 </div>
                             </div>
@@ -1088,16 +1080,16 @@
                             <!-- Quick Templates Row -->
                             <div class="mb-8">
                                 <h4 class="text-lg font-semibold text-webropol-gray-900 mb-4 text-center">
-                                    <i class="fal fa-rocket mr-2 text-webropol-primary-600"></i>
+                                    <i class="fal fa-rocket mr-2 text-violet-600"></i>
                                     Quick Start Templates
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                                     <template x-for="template in promptTemplates.slice(0, 3)" :key="template.id">
                                         <button @click="useTemplate(template.prompt)"
-                                            class="p-5 text-left bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-300 group shadow-sm">
+                                            class="p-5 text-left bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl hover:border-violet-300 hover:bg-violet-50 transition-all duration-300 group shadow-sm">
                                             <div class="flex items-start">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-100 to-webropol-primary-200 rounded-xl flex items-center justify-center mr-4 transition-transform">
-                                                    <i :class="template.icon" class="text-webropol-primary-600"></i>
+                                                <div class="w-10 h-10 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-xl flex items-center justify-center mr-4 transition-transform">
+                                                    <i :class="template.icon" class="text-violet-600"></i>
                                                 </div>
                                                 <div class="flex-1">
                                                     <h5 class="font-semibold text-webropol-gray-900 mb-1" x-text="template.title"></h5>
@@ -1114,7 +1106,7 @@
                                  class="bg-white/60 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
                                 <div class="flex items-center justify-between mb-4">
                                     <h4 class="font-semibold text-webropol-gray-900 flex items-center">
-                                        <i class="fal fa-history mr-2 text-webropol-primary-600"></i>
+                                        <i class="fal fa-history mr-2 text-violet-600"></i>
                                         Recent Prompts
                                     </h4>
                                     <button @click="clearRecentPrompts()" 
@@ -1125,10 +1117,47 @@
                                 <div class="space-y-3">
                                     <template x-for="prompt in recentPrompts.slice(0, 2)" :key="prompt.id">
                                         <button @click="useRecentPrompt(prompt.text)"
-                                            class="w-full p-4 text-left bg-white border border-webropol-gray-200 rounded-xl hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-all duration-200 group">
-                                            <p class="text-sm text-webropol-gray-900 line-clamp-2 group-hover:text-webropol-primary-700" x-text="prompt.text"></p>
+                                            class="w-full p-4 text-left bg-white border border-webropol-gray-200 rounded-xl hover:border-violet-300 hover:bg-violet-50 transition-all duration-200 group">
+                                            <p class="text-sm text-webropol-gray-900 line-clamp-2 group-hover:text-violet-700" x-text="prompt.text"></p>
                                             <span class="text-xs text-webropol-gray-500 mt-1 block" x-text="prompt.date"></span>
                                         </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- My Latest Activity (Magic View Specific) -->
+                            <div class="mt-12">
+                                <h3 class="text-xl font-bold mb-6 text-webropol-gray-900 flex items-center">
+                                    <i class="fal fa-sparkles text-violet-600 mr-2"></i>
+                                    My Latest Magic Creations
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <template x-for="activity in filteredActivities().slice(0, 4)" :key="activity.id">
+                                        <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-violet-200 transition-all duration-300 group cursor-pointer">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-fuchsia-50 flex items-center justify-center text-violet-600 group-hover:scale-110 transition-transform duration-300">
+                                                    <i :class="activity.type === 'surveys' ? 'fa-light fa-user-magnifying-glass' : 'fal fa-calendar-alt'" class="text-xl"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <h4 class="font-semibold text-webropol-gray-900 truncate group-hover:text-violet-700 transition-colors" x-text="activity.name"></h4>
+                                                    <div class="flex items-center gap-3 mt-1 text-xs text-webropol-gray-500">
+                                                        <span class="flex items-center gap-1">
+                                                            <i class="fal fa-clock"></i>
+                                                            2 days ago
+                                                        </span>
+                                                        <span class="flex items-center gap-1" x-show="activity.status === 'Open'">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                            Active
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button class="w-8 h-8 rounded-full bg-violet-50 text-violet-600 flex items-center justify-center hover:bg-violet-100">
+                                                        <i class="fal fa-arrow-right"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
@@ -1254,7 +1283,7 @@
                     </div>
 
                     <!-- My latest activity -->
-                    <div x-show="interfaceMode !== 'magical'">
+                    <div x-show="interfaceMode === 'classic'">
                     <h3 class="text-xl font-bold mb-6 text-webropol-gray-900">My latest activity</h3>
                         <!-- Unified Activity Tabs -->
                         <div class="flex mb-8 overflow-x-auto">
