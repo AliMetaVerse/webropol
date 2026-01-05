@@ -1053,13 +1053,17 @@
                                 </div>
                             </div>
                         </template>
-                    </div>      </div>                        class="text-webropol-primary-600 mb-6 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium">
-                        <i class="fa-light fa-plus"></i>
-                        Add new action
-                    </button>
-                    <p x-show="actions.length === 0" class="text-xs text-red-500 mt-1 mb-6">
-                        <i class="fa-light fa-exclamation-circle"></i> At least one action is required
-                    </p>
+
+                        <!-- Add New Action Button -->
+                        <button @click="addAction()"
+                            class="text-webropol-primary-600 mb-6 hover:bg-webropol-primary-50 px-4 py-2 rounded-full transition-colors flex items-center gap-2 text-sm font-medium">
+                            <i class="fa-light fa-plus"></i>
+                            Add new action
+                        </button>
+                        <p x-show="actions.length === 0" class="text-xs text-red-500 mt-1 mb-6">
+                            <i class="fa-light fa-exclamation-circle"></i> At least one action is required
+                        </p>
+                    </div>
 
                 </div>
 
@@ -1527,11 +1531,14 @@
                 },
 
                 toggleConditionSelection(index) {
+                    console.log('toggleConditionSelection called with index:', index);
                     const idx = this.selectedConditions.indexOf(index);
                     if (idx > -1) {
                         this.selectedConditions.splice(idx, 1);
+                        console.log('Removed from selection. New selectedConditions:', this.selectedConditions);
                     } else {
                         this.selectedConditions.push(index);
+                        console.log('Added to selection. New selectedConditions:', this.selectedConditions);
                     }
                     this.selectedConditions.sort((a, b) => a - b);
                 },
@@ -1609,6 +1616,12 @@
                 },
 
                 groupSelectedConditions() {
+                    console.log('groupSelectedConditions called', {
+                        selectedCount: this.selectedConditions.length,
+                        selectedIndices: this.selectedConditions,
+                        totalConditions: this.conditions.length
+                    });
+                    
                     if (this.selectedConditions.length < 2) {
                         this.showAlert('Selection Required', 'Please select at least 2 conditions to group.', 'fa-exclamation-triangle text-amber-500');
                         return;
@@ -1617,12 +1630,21 @@
                     // Pre-select AND as default for new groups
                     this.operatorChoice = 'AND';
                     
+                    console.log('Opening operator selection modal');
+                    
                     // Always ask for operator selection when grouping
                     this.selectGroupOperator().then((operator) => {
-                        if (!operator) return; // cancelled
+                        console.log('Operator selected:', operator);
+                        
+                        if (!operator) {
+                            console.log('Operator selection cancelled');
+                            return; // cancelled
+                        }
 
                         const groupId = this.nextGroupId;
                         this.nextGroupId++;
+
+                        console.log('Creating new group', { groupId, operator });
 
                         this.groups.push({
                             id: groupId,
@@ -1631,14 +1653,25 @@
                             nextLogic: this.globalConditionOperator || 'AND'
                         });
 
+                        // Validate and apply groupId to selected conditions
                         this.selectedConditions.forEach(index => {
-                            this.conditions[index].groupId = groupId;
+                            if (this.conditions[index]) {
+                                console.log(`Applying groupId ${groupId} to condition at index ${index}`);
+                                this.conditions[index].groupId = groupId;
+                            } else {
+                                console.warn(`Condition at index ${index} not found`);
+                            }
                         });
+
+                        console.log('Group created successfully', { groupId, conditionCount: this.selectedConditions.length });
 
                         // Clear selection and cleanup any groups with < 2 items
                         this.selectedConditions = [];
                         this.cleanupGroups();
                         this.persist();
+                    }).catch((error) => {
+                        console.error('Error in groupSelectedConditions:', error);
+                        this.showAlert('Error', 'An error occurred while grouping conditions. Please try again.', 'fa-exclamation-triangle text-red-500');
                     });
                 },
 
@@ -2142,22 +2175,28 @@
                 // Open operator modal and resolve with 'AND' | 'OR' or null if cancelled
                 // Open operator modal and resolve with 'AND' | 'OR' or null if cancelled
                 selectGroupOperator() {
+                    console.log('selectGroupOperator called');
                     return new Promise((resolve) => {
                         // Don't reset operatorChoice here - let the caller set it before calling this function
                         // this.operatorChoice = 'AND';
                         this.operatorResolve = resolve;
                         this.showOperatorModal = true;
+                        console.log('Operator modal opened, showOperatorModal:', this.showOperatorModal);
                     });
                 },
                 closeOperatorModal(confirm) {
+                    console.log('closeOperatorModal called', { confirm, operatorChoice: this.operatorChoice });
                     this.showOperatorModal = false;
                     if (this.operatorResolve) {
                         const result = confirm ? this.operatorChoice : null;
+                        console.log('Resolving with:', result);
                         if (confirm && this.operatorChoice) {
                             this.pendingGroupOperator = this.operatorChoice;
                         }
                         this.operatorResolve(result);
                         this.operatorResolve = null;
+                    } else {
+                        console.warn('closeOperatorModal called but no operatorResolve function found');
                     }
                 },
 
