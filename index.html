@@ -640,6 +640,7 @@
     <script src="design-system/components/navigation/SidebarEnhanced.js" type="module"></script>
     <script src="design-system/components/navigation/Header.js" type="module"></script>
     <script src="design-system/components/navigation/HeaderEnhanced.js" type="module"></script>
+    <script src="design-system/components/navigation/MagicalHeader.js" type="module"></script>
     <script src="design-system/components/navigation/Breadcrumbs.js" type="module"></script>
     <script src="design-system/components/interactive/FloatingButton.js" type="module"></script>
     <script src="design-system/components/forms/Toggle.js" type="module"></script>
@@ -673,7 +674,8 @@
                          active="home" base=""></webropol-sidebar-enhanced>
         <div class="flex-1 flex flex-col overflow-hidden main-content-transition mobile-main-content" 
              :class="(interfaceMode === 'prompt' || interfaceMode === 'magical') ? 'w-full' : ''">
-            <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
+            <webropol-magical-header x-show="interfaceMode === 'magical'" username="Ali Al-Zuhairi"></webropol-magical-header>
+            <webropol-header-enhanced x-show="interfaceMode !== 'magical'" username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
           <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4 relative mobile-breadcrumbs"
               :class="(interfaceMode === 'prompt' || interfaceMode === 'magical') ? 'px-4 sm:px-8' : ''">
                 <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
@@ -687,27 +689,8 @@
                     
                     
                     <!-- Interface Mode Tabs -->
-                    <div class="mb-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <h1 class="page-title mt-4">Hi, Ali!</h1>
-                            <div class="flex items-center space-x-3">
-                                <!-- Back to Interface Button (only in AI Prompt mode) -->
-                                <button x-show="interfaceMode === 'prompt' || interfaceMode === 'magical'" 
-                                        @click="switchInterface('classic')"
-                                        x-transition:enter="transition ease-out duration-400"
-                                        x-transition:enter-start="opacity-0 transform scale-90 -translate-x-4"
-                                        x-transition:enter-end="opacity-100 transform scale-100 translate-x-0"
-                                        x-transition:leave="transition ease-in duration-200"
-                                        x-transition:leave-start="opacity-100 transform scale-100 translate-x-0"
-                                        x-transition:leave-end="opacity-0 transform scale-90 -translate-x-4"
-                                        class="flex items-center px-4 py-2 text-sm font-medium text-webropol-gray-700 bg-white/70 border border-webropol-gray-200 rounded-xl hover:bg-white hover:shadow-md transition-all duration-200"
-                                        title="Back to Classic Interface">
-                                    <i class="fal fa-arrow-left mr-2"></i>
-                                    Back to Classic
-                                </button>
-                            </div>
-                        </div>
-                        
+                    <div class="mb-8" x-show="interfaceMode !== 'magical'">
+                       
                         <!-- Tab Navigation (Classic only) -->
                         <div class="flex mb-8" x-show="interfaceMode === 'classic'">
                             <div class="webropol-tabs-unified webropol-tabs-rounded-container" role="tablist" aria-label="Interface modes">
@@ -980,13 +963,22 @@
                         <!-- Compact Magic Interface -->
                         <div class="max-w-4xl mx-auto">
                             <!-- Hero Section -->
-                            <div class="text-center mb-8">
-                                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-webropol-primary-500 via-webropol-primary-600 to-webropol-primary-700 rounded-3xl mb-6 shadow-lg transition-transform duration-300">
-                                    <i class="fal fa-magic text-white text-3xl"></i>
-                                </div>
-                                <h3 class="text-3xl font-bold text-webropol-gray-900 mb-3">Create with AI Magic</h3>
-                                <p class="text-lg text-webropol-gray-600 max-w-2xl mx-auto leading-relaxed">
-                                    Simply describe what you want to create, and our AI will build it for you in seconds.
+                            <div class="flex items-center justify-between mb-8">
+                                <button @click="switchInterface('classic')" 
+                                        class="flex items-center px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-full hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm group">
+                                    <i class="fa-regular fa-arrow-left mr-2 text-slate-400 group-hover:text-slate-600 transition-colors"></i>
+                                    Back to Classic View
+                                </button>
+                            </div>
+
+                            <div class="text-center mb-12">
+                                <h2 class="text-5xl font-bold mb-4 tracking-tight">
+                                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-500">
+                                        Hi, Ali!
+                                    </span>
+                                </h2>
+                                <p class="text-xl text-slate-500 font-light">
+                                    Select a type and describe your vision. AI will do the rest.
                                 </p>
                             </div>
 
@@ -1196,13 +1188,21 @@
                             </div>
 
                             <!-- Header -->
-                            <div class="text-center mb-10">
-                                <h2 class="text-4xl font-bold text-webropol-gray-900 mb-3 tracking-tight">
-                                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">
-                                        Magic Creator
+                            <div class="flex items-center justify-between mb-16">
+                                <button @click="switchInterface('classic')" 
+                                        class="flex items-center px-5 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-full hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm group">
+                                    <i class="fa-regular fa-arrow-left mr-2 text-slate-400 group-hover:text-slate-600 transition-colors"></i>
+                                    Back to Classic View
+                                </button>
+                            </div>
+
+                            <div class="text-center mb-12">
+                                <h2 class="text-5xl font-bold mb-4 tracking-tight">
+                                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-500">
+                                        Hi, Ali!
                                     </span>
                                 </h2>
-                                <p class="text-lg text-webropol-gray-500">
+                                <p class="text-xl text-slate-500 font-light">
                                     Select a type and describe your vision. AI will do the rest.
                                 </p>
                             </div>
