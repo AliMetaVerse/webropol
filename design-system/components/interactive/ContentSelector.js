@@ -47,11 +47,11 @@ export class ContentSelector extends BaseComponent {
 
     // Create main container
     const container = document.createElement('div');
-    container.className = 'w-full bg-white rounded-2xl shadow-soft border border-webropol-gray-200 p-8';
+    container.className = 'w-full bg-white rounded-3xl shadow-soft border border-webropol-gray-100 p-8';
     
     // Create title
     const titleEl = document.createElement('h3');
-    titleEl.className = 'text-2xl font-semibold text-webropol-gray-900 text-center mb-8';
+    titleEl.className = 'text-sm font-semibold text-webropol-gray-500 text-center mb-8 uppercase tracking-widest';
     titleEl.textContent = title;
     container.appendChild(titleEl);
 
@@ -62,6 +62,12 @@ export class ContentSelector extends BaseComponent {
 
     // Add question types if enabled
     if (showQuestionTypes) {
+      // Separator
+      if (showMainActions) {
+        const separator = document.createElement('div');
+        separator.className = 'h-px w-full max-w-2xl mx-auto bg-gradient-to-r from-transparent via-webropol-gray-200 to-transparent my-8';
+        container.appendChild(separator);
+      }
       container.appendChild(this.createQuestionTypes());
     }
 
@@ -70,16 +76,17 @@ export class ContentSelector extends BaseComponent {
 
   createMainActions() {
     const grid = document.createElement('div');
-    grid.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 mb-8';
+    grid.className = 'grid grid-cols-1 md:grid-cols-3 gap-6 mb-8';
 
     // Add Question
     const addQuestionBtn = this.createActionButton(
       'add-question',
       'fas fa-plus-square',
       'Add More Question Type',
-      'from-red-50 to-red-100/50',
-      'border-red-200 hover:border-red-400',
-      'text-red-500'
+      'bg-red-50 hover:bg-red-100',
+      'border-red-100 hover:border-red-200',
+      'text-red-500',
+      'text-red-900'
     );
     grid.appendChild(addQuestionBtn);
 
@@ -88,9 +95,10 @@ export class ContentSelector extends BaseComponent {
       'import-library',
       'fal fa-books',
       'Import from Library',
-      'from-webropol-primary-50 to-webropol-primary-100/50',
-      'border-webropol-primary-200 hover:border-webropol-primary-400',
-      'text-webropol-primary-600'
+      'bg-webropol-primary-50 hover:bg-webropol-primary-100',
+      'border-webropol-primary-100 hover:border-webropol-primary-200',
+      'text-webropol-primary-600',
+      'text-webropol-primary-900'
     );
     grid.appendChild(importBtn);
 
@@ -99,27 +107,28 @@ export class ContentSelector extends BaseComponent {
       'free-text-media',
       'fal fa-block-quote',
       'Free Text & Media',
-      'from-purple-50 to-purple-100/50',
-      'border-purple-200 hover:border-purple-400',
-      'text-purple-600'
+      'bg-purple-50 hover:bg-purple-100',
+      'border-purple-100 hover:border-purple-200',
+      'text-purple-600',
+      'text-purple-900'
     );
     grid.appendChild(freeTextBtn);
 
     return grid;
   }
 
-  createActionButton(action, iconClass, label, bgGradient, borderClass, iconColor) {
+  createActionButton(action, iconClass, label, bgClass, borderClass, iconColor, textColor) {
     const btn = document.createElement('button');
     btn.setAttribute('data-action', action);
-    btn.className = `group p-6 bg-gradient-to-br ${bgGradient} rounded-xl border-2 ${borderClass} transition-all duration-300 hover:shadow-medium flex flex-col items-center gap-4 hover:-translate-y-1`;
+    btn.className = `group p-6 rounded-2xl border ${borderClass} ${bgClass} transition-all duration-300 hover:shadow-medium flex flex-col items-center gap-4 hover:-translate-y-1 w-full`;
 
     const iconDiv = document.createElement('div');
-    iconDiv.className = `text-5xl ${iconColor} group-hover:scale-110 transition-transform duration-300`;
+    iconDiv.className = `text-4xl ${iconColor} group-hover:scale-110 transition-transform duration-300`;
     iconDiv.innerHTML = `<i class="${iconClass}"></i>`;
     btn.appendChild(iconDiv);
 
     const labelSpan = document.createElement('span');
-    labelSpan.className = 'text-lg font-semibold text-webropol-gray-800';
+    labelSpan.className = `text-base font-medium ${textColor}`;
     labelSpan.textContent = label;
     btn.appendChild(labelSpan);
 
@@ -148,27 +157,27 @@ export class ContentSelector extends BaseComponent {
 
   createQuestionItem({ type, label, icon, color }) {
     const btn = document.createElement('div');
-    btn.className = `flex items-center justify-between p-2 transition-all border border-transparent cursor-pointer group rounded-lg hover:bg-${color}-50 hover:border-${color}-100`;
+    btn.className = `flex items-center justify-between p-3 transition-all border border-transparent cursor-pointer group rounded-xl hover:bg-${color}-50 hover:shadow-soft`;
     btn.setAttribute('data-type', type);
     btn.classList.add('question-type-btn'); // Marker class for event binding
 
     const leftContent = document.createElement('div');
-    leftContent.className = 'flex items-center gap-2 pointer-events-none';
+    leftContent.className = 'flex items-center gap-3 pointer-events-none';
     
     const iconContainer = document.createElement('div');
-    iconContainer.className = `flex items-center justify-center w-8 h-8 text-sm text-${color}-600 bg-${color}-100 rounded-md`;
+    iconContainer.className = `flex items-center justify-center w-10 h-10 text-base text-${color}-600 bg-${color}-100 rounded-lg group-hover:scale-105 transition-transform duration-200`;
     iconContainer.innerHTML = `<i class="fal fa-${icon}"></i>`;
     leftContent.appendChild(iconContainer);
 
     const labelSpan = document.createElement('span');
-    labelSpan.className = 'text-sm font-medium text-gray-700 group-hover:text-gray-900';
+    labelSpan.className = 'text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors';
     labelSpan.textContent = label;
     leftContent.appendChild(labelSpan);
 
     btn.appendChild(leftContent);
 
     const infoBtn = document.createElement('button');
-    infoBtn.className = 'text-gray-300 hover:text-webropol-primary-500 transition-colors info-btn';
+    infoBtn.className = 'text-gray-300 hover:text-webropol-primary-500 transition-colors info-btn opacity-0 group-hover:opacity-100 duration-200';
     infoBtn.title = 'Info';
     infoBtn.innerHTML = '<i class="fal fa-info-circle text-sm pointer-events-none"></i>';
     btn.appendChild(infoBtn);
