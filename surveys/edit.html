@@ -14,6 +14,7 @@
   <script src="../design-system/components/modals/AddQuestionModal.js" type="module"></script>
   <script src="../design-system/components/interactive/SurveyPageItem.js" type="module"></script>
   <script src="../design-system/components/interactive/SurveyQuestionItem.js" type="module"></script>
+  <script src="../design-system/components/interactive/PageQuickActions.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -126,7 +127,7 @@
     }
     /* Unified question card styling */
     .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
-    .question-card:hover{border-color:#fca5a5;box-shadow:0 2px 10px -2px rgba(239,68,68,.15)}
+    .question-card:hover{border-color:#d5dde6}
     .question-card.selected{border-color:#06b6d4;background:#f0fdff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
     .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
     .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
@@ -866,6 +867,15 @@
                     </button>
                   </div>
 
+                  <!-- Quick actions -->
+                  <webropol-page-quick-actions
+                    actions='[
+                      {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
+                      {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
+                    ]'
+                  ></webropol-page-quick-actions>
+
                   <!-- Auto Suggest Question (Question 2) -->
                      <div x-data="{ selected: false, questionId: 'q2', isMandatory: (function(){ try { const saved = JSON.parse(localStorage.getItem('webropol_survey_mandatory_questions') || '{}'); return saved['q2'] || false; } catch(e) { return false; } })() }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
@@ -1069,6 +1079,15 @@
                   </button>
                   </div>
 
+                  <!-- Quick actions -->
+                  <webropol-page-quick-actions
+                    actions='[
+                      {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
+                      {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
+                    ]'
+                  ></webropol-page-quick-actions>
+
                   <!-- Open-Ended Question (Question 3) -->
                      <div x-data="{ selected: false, questionId: 'q3-openended', isMandatory: (function(){ try { const saved = JSON.parse(localStorage.getItem('webropol_survey_mandatory_questions') || '{}'); return saved['q3-openended'] || false; } catch(e) { return false; } })() }" 
                        @click-question.window="if ($event.detail !== questionId) selected = false"
@@ -1191,37 +1210,15 @@
                   </button>
                   </div>
 
-                  <!-- Quick actions (outside bordered card) -->
-                  <div class="mt-8 mb-8 relative">
-                    <div class="absolute inset-0 flex items-center">
-                      <div class="w-full border-t border-dashed border-webropol-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center">
-                      <div class="bg-webropol-gray-50 px-6 py-3 rounded-full">
-                        <div class="flex items-center gap-3">
-                          <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">Quick Actions</span>
-                          <div class="h-4 w-px bg-webropol-gray-300"></div>
-                          <!-- Add Question -->
-                          <button type="button" class="add-question-trigger group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
-                            <i class="fas fa-square-plus text-red-500 group-hover:text-red-600"></i>
-                            <span>Add Question</span>
-                          </button>
-                          
-                          <!-- Add Free Text/Media -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-purple-300 rounded-lg text-sm text-webropol-gray-600 hover:text-purple-700 transition-all duration-200">
-                            <i class="fal fa-block-quote text-purple-500 group-hover:text-purple-600"></i>
-                            <span>Add Text/Media</span>
-                          </button>
-                          
-                          <!-- Add Page Break -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-orange-300 rounded-lg text-sm text-webropol-gray-600 hover:text-orange-700 transition-all duration-200">
-                            <i class="fal fa-file-dashed-line text-orange-500 group-hover:text-orange-600"></i>
-                            <span>Add Page Break</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <!-- Quick actions -->
+                  <webropol-page-quick-actions
+                    class="add-question-trigger"
+                    actions='[
+                      {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
+                      {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
+                    ]'
+                  ></webropol-page-quick-actions>
                   <!-- Submit Button -->
                   <div class="mt-8">
                   <button class="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full font-semibold hover:shadow-medium transition-all flex items-center space-x-2 mx-auto w-fit hover-lift">
@@ -1444,36 +1441,14 @@
                   </div>
 
                   <!-- Quick actions -->
-                  <div class="mt-8 mb-8 relative">
-                    <div class="absolute inset-0 flex items-center">
-                      <div class="w-full border-t border-dashed border-webropol-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center">
-                      <div class="bg-webropol-gray-50 px-6 py-3 rounded-full">
-                        <div class="flex items-center gap-3">
-                          <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">Quick Actions</span>
-                          <div class="h-4 w-px bg-webropol-gray-300"></div>
-                          <!-- Add Question -->
-                          <button type="button" class="add-question-trigger group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-webropol-primary-300 rounded-lg text-sm text-webropol-gray-600 hover:text-webropol-primary-700 transition-all duration-200">
-                            <i class="fal fa-plus-circle text-webropol-primary-500 group-hover:text-webropol-primary-600"></i>
-                            <span>Add Question</span>
-                          </button>
-                          
-                          <!-- Add Free Text/Media -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-purple-300 rounded-lg text-sm text-webropol-gray-600 hover:text-purple-700 transition-all duration-200">
-                            <i class="fal fa-text text-purple-500 group-hover:text-purple-600"></i>
-                            <span>Add Text/Media</span>
-                          </button>
-                          
-                          <!-- Add Page Break -->
-                          <button type="button" class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 hover:border-orange-300 rounded-lg text-sm text-webropol-gray-600 hover:text-orange-700 transition-all duration-200">
-                            <i class="fal fa-cut text-orange-500 group-hover:text-orange-600"></i>
-                            <span>Add Page Break</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <webropol-page-quick-actions
+                    class="add-question-trigger"
+                    actions='[
+                      {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
+                      {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
+                    ]'
+                  ></webropol-page-quick-actions>
                 </section>
                 
 
