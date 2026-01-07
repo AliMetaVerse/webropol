@@ -15,6 +15,7 @@
   <script src="../design-system/components/interactive/SurveyPageItem.js" type="module"></script>
   <script src="../design-system/components/interactive/SurveyQuestionItem.js" type="module"></script>
   <script src="../design-system/components/interactive/PageQuickActions.js" type="module"></script>
+  <script src="../design-system/components/interactive/ContentSelector.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -1452,6 +1453,11 @@
                 </section>
                 
 
+                </div>
+                
+                <!-- Content Selector Component -->
+                <div class="mt-12 mb-12">
+                  <webropol-content-selector class="relative block" show-main-actions show-question-types></webropol-content-selector>
                 </div>
                 
                 <!-- Visual Separator for Thank You Page -->
@@ -4022,6 +4028,43 @@
           window.addEventListener('survey-status-changed', (e) => {
             this.surveyStatus = e.detail.status;
           });
+          
+          // Listen for content selector events
+          document.addEventListener('content-type-selected', (e) => {
+            console.log('Content type selected:', e.detail);
+            this.handleContentSelection(e.detail);
+          });
+        },
+        
+        handleContentSelection(detail) {
+          const { type, category } = detail;
+          
+          if (category === 'main-action') {
+            switch(type) {
+              case 'add-question':
+                console.log('Opening add question modal...');
+                // Trigger existing add question modal if available
+                const addQuestionBtn = document.querySelector('[data-action="add-question"]');
+                if (addQuestionBtn) {
+                  addQuestionBtn.click();
+                }
+                break;
+              case 'import-library':
+                console.log('Opening library import...');
+                // Add library import functionality
+                alert('Import from Library feature coming soon!');
+                break;
+              case 'free-text-media':
+                console.log('Opening free text & media editor...');
+                // Add free text/media functionality
+                alert('Free Text & Media feature coming soon!');
+                break;
+            }
+          } else if (category === 'question-type') {
+            console.log(`Adding ${type} question...`);
+            // Add specific question type
+            alert(`Adding ${type} question - Feature in development`);
+          }
         },
         
         openStatusModal() {
