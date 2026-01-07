@@ -127,46 +127,50 @@ export class ContentSelector extends BaseComponent {
   }
 
   createQuestionTypes() {
-    const grid = document.createElement('div');
-    grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+    const container = document.createElement('div');
+    container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
 
-    const questionTypes = [
-      { type: 'matrix', icon: 'fal fa-th', label: 'Matrix (Scale selection)', color: 'from-blue-500 to-blue-600' },
-      { type: 'selection', icon: 'fal fa-list-ul', label: 'Selection', color: 'from-green-500 to-green-600' },
-      { type: 'multiselection', icon: 'fal fa-check-double', label: 'Multiselection', color: 'from-teal-500 to-teal-600' },
-      { type: 'open-ended', icon: 'fal fa-font', label: 'Open ended', color: 'from-orange-400 to-orange-500' },
-      { type: 'contact-form', icon: 'fal fa-address-card', label: 'Contact form', color: 'from-amber-500 to-amber-600' },
-      { type: 'csat', icon: 'fal fa-star', label: 'CSAT', color: 'from-purple-500 to-purple-600' }
+    const questions = [
+      { type: 'matrix', label: 'Matrix (Scale selection)', icon: 'table', color: 'green' },
+      { type: 'selection', label: 'Selection', icon: 'list-ul', color: 'blue' },
+      { type: 'multiselection', label: 'Multiselection', icon: 'list-check', color: 'blue' },
+      { type: 'open-ended', label: 'Open ended', icon: 'font-case', color: 'orange' },
+      { type: 'contact', label: 'Contact form', icon: 'address-card', color: 'orange' },
+      { type: 'csat', label: 'CSAT', icon: 'smile-heart', color: 'purple' }
     ];
 
-    questionTypes.forEach(qt => {
-      grid.appendChild(this.createQuestionTypeButton(qt.type, qt.icon, qt.label, qt.color));
+    questions.forEach(q => {
+      container.appendChild(this.createQuestionItem(q));
     });
 
-    return grid;
+    return container;
   }
 
-  createQuestionTypeButton(type, iconClass, label, colorGradient) {
-    const btn = document.createElement('button');
+  createQuestionItem({ type, label, icon, color }) {
+    const btn = document.createElement('div');
+    btn.className = `flex items-center justify-between p-2 transition-all border border-transparent cursor-pointer group rounded-lg hover:bg-${color}-50 hover:border-${color}-100`;
     btn.setAttribute('data-type', type);
-    btn.className = 'question-type-btn group p-5 bg-white rounded-xl border-2 border-webropol-gray-200 hover:border-webropol-primary-400 hover:bg-webropol-primary-50/30 transition-all duration-300 flex items-center gap-4 hover:shadow-card';
+    btn.classList.add('question-type-btn'); // Marker class for event binding
 
-    const iconDiv = document.createElement('div');
-    iconDiv.className = `w-12 h-12 rounded-lg bg-gradient-to-br ${colorGradient} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`;
-    iconDiv.innerHTML = `<i class="${iconClass} text-xl text-white"></i>`;
-    btn.appendChild(iconDiv);
+    const leftContent = document.createElement('div');
+    leftContent.className = 'flex items-center gap-2 pointer-events-none';
+    
+    const iconContainer = document.createElement('div');
+    iconContainer.className = `flex items-center justify-center w-8 h-8 text-sm text-${color}-600 bg-${color}-100 rounded-md`;
+    iconContainer.innerHTML = `<i class="fal fa-${icon}"></i>`;
+    leftContent.appendChild(iconContainer);
 
-    const textDiv = document.createElement('div');
-    textDiv.className = 'text-left flex-1';
-    const labelDiv = document.createElement('div');
-    labelDiv.className = 'font-semibold text-webropol-gray-900 mb-0.5';
-    labelDiv.textContent = label;
-    textDiv.appendChild(labelDiv);
-    btn.appendChild(textDiv);
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'text-sm font-medium text-gray-700 group-hover:text-gray-900';
+    labelSpan.textContent = label;
+    leftContent.appendChild(labelSpan);
+
+    btn.appendChild(leftContent);
 
     const infoBtn = document.createElement('button');
-    infoBtn.className = 'info-btn w-8 h-8 rounded-full border border-webropol-gray-300 flex items-center justify-center text-webropol-gray-500 hover:bg-webropol-gray-100 transition-colors duration-200';
-    infoBtn.innerHTML = '<i class="fal fa-info text-sm"></i>';
+    infoBtn.className = 'text-gray-300 hover:text-webropol-primary-500 transition-colors info-btn';
+    infoBtn.title = 'Info';
+    infoBtn.innerHTML = '<i class="fal fa-info-circle text-sm pointer-events-none"></i>';
     btn.appendChild(infoBtn);
 
     return btn;
