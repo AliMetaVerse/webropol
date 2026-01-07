@@ -75,11 +75,11 @@ export class ContentSelector extends BaseComponent {
     // Add Question
     const addQuestionBtn = this.createActionButton(
       'add-question',
-      'fal fa-plus-square',
+      'fas fa-plus-square',
       'Add More Question Type',
-      'from-orange-50 to-orange-100/50',
-      'border-orange-200 hover:border-orange-400',
-      'text-orange-500'
+      'from-red-50 to-red-100/50',
+      'border-red-200 hover:border-red-400',
+      'text-red-500'
     );
     grid.appendChild(addQuestionBtn);
 
@@ -97,7 +97,7 @@ export class ContentSelector extends BaseComponent {
     // Free Text & Media
     const freeTextBtn = this.createActionButton(
       'free-text-media',
-      'fal fa-align-left',
+      'fal fa-block-quote',
       'Free Text & Media',
       'from-purple-50 to-purple-100/50',
       'border-purple-200 hover:border-purple-400',
