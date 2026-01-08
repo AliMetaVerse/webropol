@@ -17,6 +17,9 @@ export { WebropolConfigurableCard } from './cards/ConfigurableCard.js';
 export { WebropolListCard } from './cards/ListCard.js';
 export { WebropolVideoCard } from './cards/VideoCard.js';
 
+// Survey components
+export { WebropolSurveyList } from './surveys/SurveyList.js';
+
 // Navigation components
 export { WebropolHeader } from './navigation/Header.js';
 export { WebropolHeader as WebropolHeaderEnhanced } from './navigation/HeaderEnhanced.js';
@@ -65,6 +68,7 @@ import './cards/ActionCard.js';
 import './cards/ConfigurableCard.js';
 import './cards/ListCard.js';
 import './cards/VideoCard.js';
+import './surveys/SurveyList.js';
 import './navigation/Header.js';
 import './navigation/HeaderEnhanced.js';
 import './navigation/Sidebar.js';
@@ -102,6 +106,7 @@ window.WebropolComponents = {
   ActionCard: 'webropol-action-card',
   ConfigurableCard: 'webropol-configurable-card',
   ListCard: 'webropol-list-card',
+  SurveyList: 'webropol-survey-list',
   VideoCard: 'webropol-video-card',
   Header: 'webropol-header',
   HeaderEnhanced: 'webropol-header-enhanced',
