@@ -624,11 +624,11 @@
                       
                       <div x-show="usePageBackground" x-transition class="p-4 space-y-5">
                         <!-- Image Upload -->
-                        <button @click=".imageInput.click()" class="w-full py-3 border-2 border-dashed border-webropol-gray-300 rounded-xl text-webropol-gray-500 hover:border-webropol-primary-400 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-all flex flex-col items-center justify-center gap-2 group">
+                        <button @click="$refs.imageInput.click()" class="w-full py-3 border-2 border-dashed border-webropol-gray-300 rounded-xl text-webropol-gray-500 hover:border-webropol-primary-400 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-all flex flex-col items-center justify-center gap-2 group">
                           <i class="fal fa-cloud-upload text-xl group-hover:scale-110 transition-transform"></i>
                           <span class="text-sm font-medium">Choose Image</span>
                         </button>
-                        <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload()">
+                        <input type="file" x-ref="imageInput" accept="image/*" class="hidden" @change="handleImageUpload($event)">
                         
                         <!-- Image Preview & Controls -->
                         <div x-show="selectedImage" class="space-y-4">
@@ -4453,7 +4453,8 @@
         },
         
         handleImageUpload(event) {
-          const file = event.target.files[0];
+          const fileInput = (event && event.target) ? event.target : this.$refs.imageInput;
+          const file = fileInput.files[0];
           if (!file) return;
           
           // Validate file type
@@ -4563,14 +4564,23 @@
           pageBackground.style.backgroundColor = `rgb(${this.pageColor.r}, ${this.pageColor.g}, ${this.pageColor.b})`;
           
           // Apply survey background image if selected (background behind pages)
-          // NOTE: Background images are intentionally not applied per request (we only honor solid page color)
           if (this.usePageBackground && this.selectedImage) {
-            // Intentionally do not apply an image to pageBackground; keep it as a solid color only
-            pageBackground.style.backgroundImage = 'none';
-            pageBackground.style.backgroundRepeat = 'no-repeat';
-            pageBackground.style.backgroundPosition = 'center center';
-            pageBackground.style.backgroundSize = '';
-            pageBackground.style.backgroundAttachment = 'initial';
+            pageBackground.style.backgroundImage = `url(${this.selectedImage})`;
+            pageBackground.style.backgroundRepeat = this.backgroundRepeat;
+            pageBackground.style.backgroundPosition = `${this.imagePositionHorizontal} ${this.imagePositionVertical}`;
+            
+            // Handle scale
+            if (this.backgroundScale === 'fit-width') {
+               pageBackground.style.backgroundSize = '100% auto';
+               pageBackground.style.backgroundAttachment = 'scroll';
+            } else if (this.backgroundScale === 'fixed') {
+               pageBackground.style.backgroundSize = 'cover';
+               pageBackground.style.backgroundAttachment = 'fixed';
+            } else { // original
+               pageBackground.style.backgroundSize = 'auto';
+               pageBackground.style.backgroundAttachment = 'scroll';
+            }
+            
             pageBackground.style.filter = 'none';
             pageBackground.style.transform = 'none';
           } else {
