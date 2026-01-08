@@ -23,6 +23,7 @@ export { WebropolHeader as WebropolHeaderEnhanced } from './navigation/HeaderEnh
 export { WebropolSidebar } from './navigation/Sidebar.js';
 export { WebropolSidebarEnhanced } from './navigation/SidebarEnhanced.js';
 export { WebropolBreadcrumbs } from './navigation/Breadcrumbs.js';
+export { WebropolFolderTree } from './navigation/FolderTree.js';
 export { Tabs } from './navigation/Tabs.js';
 export { WebropolBrand } from './navigation/Brand.js';
 
