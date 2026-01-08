@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../utils/base-component.js';
+import '../../menus/ContextMenu.js';
 
 export class WebropolFolderTree extends BaseComponent {
   static get observedAttributes() {
@@ -10,19 +11,26 @@ export class WebropolFolderTree extends BaseComponent {
       items: [],
       expandedIds: new Set(),
       selectedId: null,
-      showActions: false
+      showActions: false,
+      menu: {
+        open: false,
+        x: 0,
+        y: 0,
+        folderId: null
+      }
     };
+    
+    this.boundCloseMenu = this.closeMenu.bind(this);
   }
 
   connectedCallback() {
     super.connectedCallback();
+    document.addEventListener('click', this.boundCloseMenu);
     
-    // Parse initial items if present
     const itemsAttr = this.getAttribute('items');
     if (itemsAttr) {
       try {
         this.state.items = JSON.parse(itemsAttr);
-        // Expand root folders by default if needed, or leave collapsed
       } catch (e) {
         console.error('Error parsing items attribute:', e);
       }
@@ -32,6 +40,24 @@ export class WebropolFolderTree extends BaseComponent {
     this.state.showActions = this.hasAttribute('show-actions');
     
     this.render();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener('click', this.boundCloseMenu);
+  }
+
+  closeMenu(e) {
+    if (this.state.menu.open) {
+      // Check if click is inside the menu
+      const menuContainer = this.querySelector('[data-menu-container]');
+      if (menuContainer && menuContainer.contains(e.target)) {
+        return;
+      }
+
+      this.state.menu.open = false;
+      this.render();
+    }
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -46,7 +72,6 @@ export class WebropolFolderTree extends BaseComponent {
       }
     } else if (name === 'selected-id') {
       this.state.selectedId = newValue;
-      // Re-render to update selection styles
       this.render(); 
     } else if (name === 'show-actions') {
       this.state.showActions = newValue !== null;
@@ -59,12 +84,6 @@ export class WebropolFolderTree extends BaseComponent {
     const isExpanded = this.state.expandedIds.has(String(folder.id));
     const isSelected = String(this.state.selectedId) === String(folder.id);
     const hasChildren = folder.children && folder.children.length > 0;
-    
-    // Indentation class based on level (mimicking the ml-4, ml-6 pattern)
-    // Level 0: no margin
-    // Level 1: ml-4
-    // Level 2: ml-6
-    // We'll apply this to the children container
     
     // Icon logic
     let iconClass = 'fal fa-folder text-webropol-primary-600';
@@ -100,7 +119,7 @@ export class WebropolFolderTree extends BaseComponent {
 
           <!-- Context Menu / Actions -->
           ${this.state.showActions ? `
-            <button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-black/5 rounded text-webropol-gray-500 transition-opacity ml-2"
+            <button class="opacity-0 group-hover:opacity-100 p-1 hover:bg-black/5 rounded text-webropol-gray-500 transition-opacity ml-2 ${this.state.menu.open && String(this.state.menu.folderId) === String(folder.id) ? 'opacity-100' : ''}"
                     data-action="context-menu" 
                     data-id="${folder.id}"
                     aria-label="Folder actions">
@@ -120,30 +139,57 @@ export class WebropolFolderTree extends BaseComponent {
   }
 
   render() {
-    if (!this.state.items || this.state.items.length === 0) {
-      this.innerHTML = `
+    const treeContent = (!this.state.items || this.state.items.length === 0) ? `
         <div class="p-4 text-center text-webropol-gray-500 text-sm">
           No folders found
         </div>
-      `;
-      return;
-    }
-
-    this.innerHTML = `
+      ` : `
       <div class="flex flex-col space-y-0.5" role="tree">
         ${this.state.items.map(folder => this.renderFolder(folder)).join('')}
       </div>
     `;
-    
-    // Re-bind events after render since DOM changed
+
+    const menuItems = [
+      {id: 'rename', label: 'Rename folder', icon: 'fal fa-pen'},
+      {id: 'move', label: 'Move to a folder', icon: 'fal fa-folder-tree'},
+      {id: 'add-sub', label: 'Add a subfolder', icon: 'fal fa-folder-plus'},
+      {id: 'rights', label: 'Folder rights', icon: 'fal fa-key'},
+      {id: 'properties', label: 'Folder properties', icon: 'fal fa-sliders-h'},
+      {id: 'delete', label: 'Delete', icon: 'fal fa-trash-alt', variant: 'danger'}
+    ];
+
+    const menuContent = this.state.menu.open ? `
+      <div class="fixed z-50 text-left"
+           style="top: ${this.state.menu.y}px; left: ${this.state.menu.x}px"
+           data-menu-container>
+        <webropol-context-menu
+          width="md"
+          items='${JSON.stringify(menuItems)}'
+        ></webropol-context-menu>
+      </div>
+    ` : '';
+
+    this.innerHTML = treeContent + menuContent;
     this.bindDynamicEvents();
   }
 
+  bindDynamicEvents() {
+    const contextMenu = this.querySelector('webropol-context-menu');
+    if (contextMenu) {
+        contextMenu.addEventListener('item-click', (e) => {
+            const action = e.detail.id;
+            this.emit('folder-menu-action', { 
+                action: action, 
+                folderId: this.state.menu.folderId 
+            });
+            this.state.menu.open = false;
+            this.render();
+        });
+    }
+  }
+
   bindEvents() {
-    // Initial static binding if needed
-    // But mostly we listen to clicks on the container and delegate
     this.addEventListener('click', (e) => {
-      // Find closest element with data attributes
       const toggleBtn = e.target.closest('[data-action="toggle"]');
       const actionBtn = e.target.closest('[data-action="context-menu"]');
       const folderItem = e.target.closest('[data-id]');
@@ -155,27 +201,35 @@ export class WebropolFolderTree extends BaseComponent {
       } else if (actionBtn) {
         e.stopPropagation();
         const id = actionBtn.dataset.id;
-        this.emit('folder-action', { id, originalEvent: e });
+        this.openMenu(id, actionBtn);
       } else if (folderItem) {
         const id = folderItem.dataset.id;
-        
-        // If clicking the row but not the specific toggle button, 
-        // we might still want to select it.
-        // If it has children, should we expand? 
-        // Standard tree behavior: click selects, chevron expands.
-        // Webropol behavior: verify library.html.
-        // library.html: <div @click="toggleFolder(folder.id)"> which toggles selection AND expansion in some logic, 
-        // but let's separate for better UX unless specified.
-        // "if (this.selectedFolderId === folderId) { ... } else { this.selectedFolderId = folderId; }"
-        // It seems clicking selects it. 
-        
         this.selectFolder(id);
       }
     });
   }
 
-  bindDynamicEvents() {
-    // Nothing specific needed here as we use delegation in bindEvents
+  openMenu(folderId, triggerElement) {
+      const rect = triggerElement.getBoundingClientRect();
+      let x = rect.right + 5;
+      let y = rect.top;
+      
+      if (x + 250 > window.innerWidth) {
+          x = rect.left - 255;
+      }
+      
+      // Keep within vertical bounds
+      if (y + 300 > window.innerHeight) {
+          y = window.innerHeight - 310;
+      }
+
+      this.state.menu = {
+          open: true,
+          x,
+          y,
+          folderId
+      };
+      this.render();
   }
 
   toggleFolder(id) {
@@ -192,12 +246,8 @@ export class WebropolFolderTree extends BaseComponent {
     if (this.state.selectedId !== id) {
       this.state.selectedId = id;
       this.setAttribute('selected-id', id);
-      this.render(); // Update visual state
+      this.render();
       this.emit('folder-select', { id });
-    } else {
-        // Double click or re-click behavior?
-        // library.html toggles expansion on re-click of same folder sometimes, or deselects.
-        // We'll just keep it selected.
     }
   }
 }
