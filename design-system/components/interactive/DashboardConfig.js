@@ -181,47 +181,62 @@ export class WebropolDashboardConfig extends BaseComponent {
             const hasChildren = !!action.children;
             const hasVariants = !!action.variants;
             const needsSeparator = isDanger && index > 0;
+            const isChartContext = this.state.currentMenu === 'chart';
             
             // Render row with variants
             if (hasVariants) {
                 return `
                   ${needsSeparator ? '<div class="border-t border-webropol-gray-200 my-1"></div>' : ''}
-                  <div class="config-menu-item w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left" role="menuitem">
-                     <div class="flex items-center justify-start flex-1 min-w-0">
-                        <div class="flex items-center gap-1 mr-3 flex-shrink-0">
+                  <div class="w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left" role="menuitem">
+                     <div class="flex items-center w-full">
+                        <!-- Fixed width container for icons to align text -->
+                        <div class="flex items-center gap-1 mr-3 flex-shrink-0 w-16">
                             ${action.variants.map(v => `
                                 <button type="button" 
-                                        class="variant-btn w-8 h-8 flex items-center justify-center rounded hover:bg-webropol-primary-100 text-webropol-gray-600 hover:text-webropol-primary-700 transition-colors border border-transparent hover:border-webropol-primary-200" 
+                                        class="variant-btn w-7 h-7 flex items-center justify-center rounded hover:bg-webropol-primary-100 text-webropol-gray-600 hover:text-webropol-primary-700 transition-colors border border-transparent hover:border-webropol-primary-300" 
                                         data-action="${v.id}"
                                         title="${v.title || ''}">
                                     <i class="${v.icon} text-lg"></i>
                                 </button>
                             `).join('')}
                         </div>
-                        <span class="truncate">${action.label}</span>
+                        <span class="truncate font-medium">${action.label}</span>
                      </div>
                   </div>
                 `;
             }
 
-            // Render standard item
+            // Render standard item with icon button alignment
             const itemClass = isDanger 
-              ? 'config-menu-item w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left'
-              : 'config-menu-item w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left';
+              ? 'config-menu-item w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left group'
+              : 'config-menu-item w-full flex items-center justify-between gap-3 px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 transition-colors text-left group';
             
             return `
               ${needsSeparator ? '<div class="border-t border-webropol-gray-200 my-1"></div>' : ''}
-              <button type="button" 
-                      class="${itemClass}"
+              <div class="${itemClass} cursor-pointer"
                       data-action="${action.id}"
                       data-has-children="${hasChildren}"
-                      role="menuitem">
-                <div class="flex items-center gap-3">
-                    ${action.icon ? `<i class="${action.icon} w-8 text-center text-lg"></i>` : '<div class="w-8"></div>'}
-                    <span>${action.label || action.tooltip || action.id}</span>
+                      role="menuitem"
+                      tabindex="0">
+                <div class="flex items-center w-full">
+                    <div class="flex items-center gap-1 mr-3 flex-shrink-0 ${isChartContext ? 'w-16' : 'w-7'}">
+                        ${action.icon ? (isChartContext ? `
+                            <button type="button" 
+                                    class="variant-btn w-7 h-7 flex items-center justify-center rounded hover:bg-webropol-primary-100 text-webropol-gray-600 hover:text-webropol-primary-700 transition-colors border border-transparent hover:border-webropol-primary-300"
+                                    data-action="${action.id}"
+                                    title="${action.label || ''}">
+                                <i class="${action.icon} text-lg"></i>
+                            </button>
+                        ` : `
+                            <div class="w-7 h-7 flex items-center justify-center text-webropol-gray-600">
+                                <i class="${action.icon} text-lg"></i>
+                            </div>
+                        `) : '<div class="w-7 h-7"></div>'}
+                    </div>
+                    <span class="font-medium truncate">${action.label || action.tooltip || action.id}</span>
                 </div>
                 ${hasChildren ? '<i class="fal fa-chevron-right text-xs text-webropol-gray-400"></i>' : ''}
-              </button>
+              </div>
             `;
           }).join('')}
         </div>
@@ -231,8 +246,8 @@ export class WebropolDashboardConfig extends BaseComponent {
 
   bindEvents() {
     const toggleBtn = this.querySelector('.config-toggle-btn');
-    const menuItems = this.querySelectorAll('button[role="menuitem"].config-menu-item');
-    const variantBtns = this.querySelectorAll('.variant-btn');
+    const menuItems = this.querySelectorAll('.config-menu-item[role="menuitem"]');
+    const variantBtns = this.querySelectorAll('.variant-btn:not(.pointer-events-none)');
     const backBtn = this.querySelector('.back-btn');
 
     // Toggle menu
