@@ -129,7 +129,7 @@ export class WebropolDashboardConfig extends BaseComponent {
       },
       { id: 'copy', icon: 'fal fa-copy', label: 'Copy' },
       { id: 'filter', icon: 'fal fa-filter', label: 'Filter' },
-      { id: 'group', icon: 'fal fa-users', label: 'Group' },
+      { id: 'group', icon: 'fa-light fa-object-group', label: 'Compare groups' },
       { id: 'delete', icon: 'fa-light fa-trash-can', label: 'Delete' }
     ];
 
