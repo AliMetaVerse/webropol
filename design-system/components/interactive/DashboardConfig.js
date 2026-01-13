@@ -119,6 +119,7 @@ export class WebropolDashboardConfig extends BaseComponent {
         icon: 'fal fa-cog', 
         label: 'Settings',
         children: [
+            { id: 'add_options', icon: 'fa-light fa-grid-2-plus', label: 'Add and edit new options' },
             { id: 'configure_index', icon: 'fal fa-table-cells', label: 'Define Index Colours and Legend Table' },
             { id: 'toggle_viz', icon: 'fal fa-eye-slash', label: 'Show/hide chart, table, options or scale values' },
             { id: 'fonts', icon: 'fal fa-font', label: 'Fonts' },
@@ -228,7 +229,7 @@ export class WebropolDashboardConfig extends BaseComponent {
                                 <i class="${action.icon} text-lg"></i>
                             </button>
                         ` : `
-                            <div class="w-7 h-7 flex items-center justify-center text-webropol-gray-600">
+                            <div class="w-7 h-7 flex items-center justify-center ${isDanger ? 'text-inherit' : 'text-webropol-gray-600'}">
                                 <i class="${action.icon} text-lg"></i>
                             </div>
                         `) : '<div class="w-7 h-7"></div>'}
