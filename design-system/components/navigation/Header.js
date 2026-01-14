@@ -46,7 +46,7 @@ export class WebropolHeader extends BaseComponent {
     const allThemes = ThemeManager.getAllThemes();
 
     this.innerHTML = `
-  <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative z-40">
+  <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative">
   <div class="flex items-center space-x-4">
       <!-- Hamburger visible only when main sidebar is collapsed (desktop only) -->
       <button class="collapsed-hamburger hidden md:flex w-10 h-10 items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all"
