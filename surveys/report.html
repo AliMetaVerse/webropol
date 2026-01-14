@@ -1504,7 +1504,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      /* Use CSS variable with fallback so we can centrally tune layering. */
+      z-index: var(--webropol-page-modal-z, 16000) !important;
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s ease;
@@ -1516,9 +1517,20 @@
       visibility: visible;
     }
 
+    /* Force all modal overlays to appear above everything */
+    .modal-overlay { }
+
+    /* Ensure header stays behind modals when they're active */
+    /* Primary (modern) :has selector */
+    body:has(.modal-overlay.active) webropol-header,
+    /* Fallback when JS toggles .modal-open on body */
+    body.modal-open webropol-header,
+    body:has(.modal-overlay.active) webropol-header header,
+    body.modal-open webropol-header header { z-index: 10 !important; }
+
     /* Ensure Upload modal can appear above Question Settings modal */
     #uploadModal {
-      z-index: 1000;
+      z-index: 99999 !important;
     }
 
     #uploadModal.above-settings {
@@ -2602,6 +2614,187 @@
     }, true); // Use capture phase to catch the event early
   </script>
   
+  <!-- Survey Status Change Modal (copied from edit.html) -->
+  <div id="surveyStatusModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 660px;">
+      <div class="modal-header">
+        <h2 class="modal-title flex items-center gap-3">
+          <div class="w-10 h-10 bg-webropol-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <i class="fal fa-toggle-on text-webropol-primary-600 text-lg"></i>
+          </div>
+          <span>Change Survey Status (Demo Only)</span>
+        </h2>
+        <button class="modal-close" onclick="closeSurveyStatusModal()" aria-label="Close modal">
+          <i class="fal fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h3 class="section-title">
+            <i class="fal fa-list-check"></i>
+            <span>Select Status</span>
+          </h3>
+          <p class="text-sm text-webropol-gray-600 mb-4">Choose the current status for your survey</p>
+          
+          <div class="space-y-3">
+            <!-- Open Status -->
+            <label class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" onclick="selectSurveyStatus('Open')">
+              <input type="radio" name="surveyStatus" value="Open" class="w-5 h-5 text-green-600 border-green-300 focus:ring-green-500">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-flex w-8 h-8 rounded-full bg-green-100 text-green-700 items-center justify-center">
+                    <i class="fal fa-lock-open"></i>
+                  </span>
+                  <span class="font-semibold text-green-900">Open</span>
+                </div>
+                <p class="text-xs text-green-700 ml-10">Survey is active and accepting responses</p>
+              </div>
+            </label>
+
+            <!-- Draft Status -->
+            <label class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md bg-gradient-to-r from-orange-50 to-amber-50 border-orange-200" onclick="selectSurveyStatus('Draft')">
+              <input type="radio" name="surveyStatus" value="Draft" class="w-5 h-5 text-orange-600 border-orange-300 focus:ring-orange-500">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-flex w-8 h-8 rounded-full bg-orange-100 text-orange-700 items-center justify-center">
+                    <i class="fal fa-pen-to-square"></i>
+                  </span>
+                  <span class="font-semibold text-orange-900">Draft</span>
+                </div>
+                <p class="text-xs text-orange-700 ml-10">Survey is in progress and not yet published</p>
+              </div>
+            </label>
+
+            <!-- Close Status -->
+            <label class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all hover:shadow-md bg-gradient-to-r from-gray-50 to-slate-50 border-gray-200" onclick="selectSurveyStatus('Close')">
+              <input type="radio" name="surveyStatus" value="Close" class="w-5 h-5 text-gray-600 border-gray-300 focus:ring-gray-500">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="inline-flex w-8 h-8 rounded-full bg-gray-100 text-gray-700 items-center justify-center">
+                    <i class="fal fa-lock"></i>
+                  </span>
+                  <span class="font-semibold text-gray-900">Close</span>
+                </div>
+                <p class="text-xs text-gray-700 ml-10">Survey is closed and no longer accepting responses</p>
+              </div>
+            </label>
+          </div>
+
+          <!-- Close Options (shown when Close is selected) -->
+          <div id="closeOptions" class="mt-6 hidden">
+            <!-- Warning Message -->
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg mb-4">
+              <div class="flex items-start gap-3">
+                <i class="fal fa-exclamation-triangle text-amber-600 text-xl mt-0.5"></i>
+                <div>
+                  <h4 class="font-semibold text-amber-900 mb-1">Warning</h4>
+                  <p class="text-sm text-amber-800">This will unpublish the survey and it will interrupt any responses in progress.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Close Options Checkboxes -->
+            <div class="space-y-3">
+              <h4 class="font-semibold text-webropol-gray-900 mb-3">Select distribution channels to close:</h4>
+              
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="email" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-envelope text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">Email survey - Private links</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close email invitations with unique private links</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="weblink" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-link text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">Weblink - Public link</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close public web link access to the survey</p>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 p-3 rounded-lg border border-webropol-gray-200 hover:bg-webropol-gray-50 cursor-pointer transition-colors">
+                <input type="checkbox" name="closeChannel" value="sms" class="w-5 h-5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500 mt-0.5">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <i class="fal fa-sms text-webropol-primary-600"></i>
+                    <span class="font-medium text-webropol-gray-900">SMS survey - Private link</span>
+                  </div>
+                  <p class="text-xs text-webropol-gray-600">Close SMS invitations with unique private links</p>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-actions">
+          <button class="btn btn-secondary" onclick="closeSurveyStatusModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="applySurveyStatus()">
+            <i class="fal fa-check"></i>
+            <span>Apply Status</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const MODAL_IDS = ['surveyStatusModal'];
+
+    function portal(el){ if(!el) return; if(el.parentElement !== document.body) document.body.appendChild(el); }
+
+    function refreshBodyState(){
+      const anyActive = MODAL_IDS.some(id => document.getElementById(id)?.classList.contains('active'));
+      if(anyActive){ document.body.classList.add('modal-open'); } else { document.body.classList.remove('modal-open'); }
+    }
+
+    function openModal(id){
+      const m = document.getElementById(id); if(!m){ console.error('Modal not found:', id); return; }
+      portal(m);
+      requestAnimationFrame(()=>{ m.classList.add('active'); refreshBodyState(); });
+    }
+
+    function closeModal(id){ const m = document.getElementById(id); if(!m) return; m.classList.remove('active'); refreshBodyState(); }
+
+    window.openSurveyStatusModal = () => openModal('surveyStatusModal');
+    window.closeSurveyStatusModal = () => closeModal('surveyStatusModal');
+
+    // State for survey status selection
+    let selectedStatus = null;
+    let selectedCloseChannels = [];
+
+    window.selectSurveyStatus = function(status){
+      selectedStatus = status;
+      const radios = document.querySelectorAll('input[name="surveyStatus"]');
+      radios.forEach(r => { r.checked = r.value === status; });
+      const closeOptions = document.getElementById('closeOptions');
+      if(closeOptions){ if(status === 'Close'){ closeOptions.classList.remove('hidden'); } else { closeOptions.classList.add('hidden'); selectedCloseChannels = []; const checkboxes = document.querySelectorAll('input[name="closeChannel"]'); checkboxes.forEach(cb => cb.checked = false); } }
+    };
+
+    window.applySurveyStatus = function(){
+      if(selectedStatus){ try { if(selectedStatus === 'Close'){ const boxes = document.querySelectorAll('input[name="closeChannel"]:checked'); selectedCloseChannels = Array.from(boxes).map(cb => cb.value); }
+        localStorage.setItem('webropol_survey_status', selectedStatus);
+        if(selectedStatus === 'Close' && selectedCloseChannels.length > 0){ localStorage.setItem('webropol_survey_close_channels', JSON.stringify(selectedCloseChannels)); }
+        if(window.Alpine){ window.dispatchEvent(new CustomEvent('survey-status-changed',{ detail: { status: selectedStatus, closeChannels: selectedCloseChannels } })); }
+        window.closeSurveyStatusModal(); } catch(e){ console.error('Error saving survey status:', e); } }
+    };
+
+    // Initial portal
+    MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
+
+    // Close when clicking outside content
+    document.addEventListener('click', (e)=>{ const overlay = e.target.closest('.modal-overlay.active'); if(overlay && !e.target.closest('.modal-content')){ overlay.classList.remove('active'); refreshBodyState(); } });
+  })();
+  </script>
+
   <!-- Compare Groups Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': compareGroupsOpen }" @click.self="compareGroupsOpen = false" @keydown.window.escape="compareGroupsOpen = false" role="dialog" aria-modal="true" aria-labelledby="compareGroupsTitle">
     <div class="modal-content" style="max-width: 800px;">
@@ -2671,48 +2864,6 @@
             </div>
           </div>
 
-          <!-- Right Column: Info & Help -->
-          <div class="space-y-6 pt-2 md:border-l md:border-gray-200 md:pl-8">
-            <!-- Info Section -->
-            <div>
-              <h4 class="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm">
-                <i class="fal fa-circle-info text-cyan-600"></i> Info:
-              </h4>
-              <p class="text-xs text-gray-600 leading-relaxed">
-                Filter Question will apply the filter to this question only.
-                <button class="inline-flex align-middle ml-0.5 text-cyan-600 hover:text-cyan-700 transition-colors focus:outline-none" title="If you wish to filter the more than one question or the whole report, select the filter icon in the toolbar menu at the top of the page.">
-                  <i class="fal fa-circle-info"></i>
-                </button>
-              </p>
-            </div>
-            
-            <!-- Video Section -->
-            <div>
-              <h4 class="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-sm">
-                <i class="fal fa-video text-cyan-600"></i> Video:
-              </h4>
-              <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:border-cyan-200 transition-colors cursor-pointer group">
-                <div class="flex items-start gap-3">
-                  <div class="w-10 h-10 rounded bg-white border border-gray-200 flex items-center justify-center flex-shrink-0 group-hover:border-cyan-200 group-hover:text-cyan-600 transition-colors shadow-sm">
-                    <i class="fal fa-play text-gray-500 group-hover:text-cyan-600 text-sm"></i>
-                  </div>
-                  <div>
-                    <p class="text-xs font-semibold text-gray-900 group-hover:text-cyan-700 line-clamp-1">Video tutorial (10s)</p>
-                    <p class="text-[11px] text-gray-500 mt-0.5 leading-snug">How do I filter the report to only show respondents that responded in a certain way?</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer" style="justify-content: flex-end;">
-        <button class="btn btn-secondary" @click="compareGroupsOpen = false">Cancel</button>
-        <button class="btn btn-primary" @click="console.log('Compare groups option selected:', compareGroupsOption); compareGroupsOpen = false;">Apply</button>
-      </div>
-    </div>
-  </div>
-  
-</body>
-</html>
+  </body>
+  </html>
 
