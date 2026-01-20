@@ -133,7 +133,7 @@
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
                     >
                         <i class="fas fa-sparkles text-xs mr-1"></i>
-                        New Features <span class="ml-1 text-xs opacity-75">(12)</span>
+                        New Features <span class="ml-1 text-xs opacity-75" x-text="'(' + categoryCounts.features + ')'"></span>
                     </button>
                     <button 
                         @click="selectedCategory = 'updates'"
@@ -141,7 +141,7 @@
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
                     >
                         <i class="fas fa-sync text-xs mr-1"></i>
-                        Updates <span class="ml-1 text-xs opacity-75">(24)</span>
+                        Updates <span class="ml-1 text-xs opacity-75" x-text="'(' + categoryCounts.updates + ')'"></span>
                     </button>
                     <button 
                         @click="selectedCategory = 'blog'"
@@ -149,7 +149,7 @@
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
                     >
                         <i class="fas fa-pen-nib text-xs mr-1"></i>
-                        Blog <span class="ml-1 text-xs opacity-75">(18)</span>
+                        Blog <span class="ml-1 text-xs opacity-75" x-text="'(' + categoryCounts.blog + ')'"></span>
                     </button>
                     <button 
                         @click="selectedCategory = 'bugs'"
@@ -157,7 +157,7 @@
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
                     >
                         <i class="fas fa-bug text-xs mr-1"></i>
-                        Bug Fixes <span class="ml-1 text-xs opacity-75">(8)</span>
+                        Bug Fixes <span class="ml-1 text-xs opacity-75" x-text="'(' + categoryCounts.bugs + ')'"></span>
                     </button>
                     <button 
                         @click="selectedCategory = 'maintenance'"
@@ -165,7 +165,7 @@
                         class="px-4 py-2 rounded-full text-sm font-medium transition-all border border-webropol-gray-200"
                     >
                         <i class="fas fa-tools text-xs mr-1"></i>
-                        Maintenance <span class="ml-1 text-xs opacity-75">(3)</span>
+                        Maintenance <span class="ml-1 text-xs opacity-75" x-text="'(' + categoryCounts.maintenance + ')'"></span>
                     </button>
                 </div>
 
@@ -173,7 +173,11 @@
                     <!-- Main News Feed -->
                     <div class="lg:col-span-2 space-y-4">
                         <!-- Featured Blog Post -->
-                        <article x-data="{ expanded: false }" class="news-article bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl p-6 shadow-sm border border-orange-200 hover:shadow-md hover:border-orange-300 group">
+                        <article 
+                            x-show="selectedCategory === 'all' || selectedCategory === 'blog'"
+                            x-data="{ expanded: false }" 
+                            class="news-article bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl p-6 shadow-sm border border-orange-200 hover:shadow-md hover:border-orange-300 group"
+                        >
                             <div class="flex items-start gap-4">
                                 <!-- Date Badge -->
                                 <div class="flex-shrink-0 w-16 text-center">
@@ -250,7 +254,7 @@
 
                         <!-- Recent Articles -->
                         <div class="space-y-3">
-                            <template x-for="article in recentArticles" :key="article.id">
+                            <template x-for="article in filteredArticles" :key="article.id">
                                 <article x-data="{ expanded: false }" class="news-article bg-white rounded-xl p-6 shadow-sm border border-webropol-gray-100 hover:shadow-md hover:border-webropol-primary-200 group">
                                     <div class="flex items-start gap-4">
                                         <!-- Date Badge -->
@@ -400,6 +404,44 @@
             return {
                 searchQuery: '',
                 selectedCategory: 'all',
+                get filteredArticles() {
+                    const query = this.searchQuery.toLowerCase();
+                    let articles = this.recentArticles;
+
+                    // Filter by Category
+                    if (this.selectedCategory !== 'all') {
+                        const categoryMap = {
+                            'features': 'feature',
+                            'updates': 'update',
+                            'maintenance': 'maintenance',
+                            'bugs': 'bug',
+                            'blog': 'blog'
+                        };
+                        const targetCategory = categoryMap[this.selectedCategory] || this.selectedCategory;
+                        articles = articles.filter(article => article.category === targetCategory);
+                    }
+
+                    // Filter by Search Query
+                    if (query) {
+                        articles = articles.filter(article => 
+                            article.title.toLowerCase().includes(query) || 
+                            article.excerpt.toLowerCase().includes(query) ||
+                            article.fullContent.toLowerCase().includes(query)
+                        );
+                    }
+
+                    return articles;
+                },
+                get categoryCounts() {
+                    const articles = this.recentArticles;
+                    return {
+                        features: articles.filter(a => a.category === 'feature').length,
+                        updates: articles.filter(a => a.category === 'update').length,
+                        blog: 1 + articles.filter(a => a.category === 'blog').length, // +1 for static featured post
+                        bugs: articles.filter(a => a.category === 'bug').length,
+                        maintenance: articles.filter(a => a.category === 'maintenance').length
+                    };
+                },
                 recentArticles: [
                     {
                         id: 1,
