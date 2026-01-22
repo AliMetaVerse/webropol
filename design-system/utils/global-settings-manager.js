@@ -74,7 +74,7 @@ export class GlobalSettingsManager {
   shopEnabled: false,
   eventsEnabled: false,
       mywebropolEnabled: true,
-  newsEnabled: false,
+  newsEnabled: true,
   trainingEnabled: false,
   smsEnabled: false,
   exwEnabled: false,
