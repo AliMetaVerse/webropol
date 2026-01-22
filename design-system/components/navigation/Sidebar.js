@@ -29,6 +29,19 @@ export class WebropolSidebar extends BaseComponent {
       }
     }
     
+    // Get module visibility from global settings
+    const getModuleVisible = (key, defaultVal=true) => {
+        try {
+            if (window.globalSettingsManager) {
+                const s = window.globalSettingsManager.getAllSettings();
+                return s?.modules?.[key] !== false;
+            }
+            return defaultVal;
+        } catch { return defaultVal; }
+    };
+
+    const showBrandingModule = getModuleVisible('brandingEnabled');
+
     // Helper to prefix base to links - ensure proper path concatenation
     const link = (path) => {
       if (!base) return path;
@@ -170,7 +183,7 @@ export class WebropolSidebar extends BaseComponent {
                           group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">MyWebropol</span>
             </a>
             
-            <a href="#/branding" data-route="/branding" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+            <a href="#/branding" data-route="/branding" class="nav-item ${showBrandingModule ? 'flex' : 'hidden'} items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                             xl:px-4 px-3
                                                             group-hover:px-4
                                                             py-3

@@ -234,6 +234,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     if (h.startsWith('#/case-management')) return 'case-management';
     if (h.startsWith('#/news')) return 'news';
     if (h.startsWith('#/mywebropol')) return 'mywebropol';
+    if (h.startsWith('#/branding')) return 'branding';
     if (h.startsWith('#/admin-tools')) return 'admin-tools';
     if (h.startsWith('#/training-videos')) return 'training-videos';
     if (h.startsWith('#/shop')) return 'shop';
@@ -337,6 +338,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         label: 'MyWebropol',
         active: active === 'mywebropol',
         moduleKey: 'mywebropolEnabled'
+      },
+      {
+        id: 'branding',
+        href: '#/branding',
+        icon: 'fa-duotone fa-thin fa-palette',
+        label: 'Branding',
+        active: active === 'branding',
+        moduleKey: 'brandingEnabled'
       },
       {
         id: 'admin-tools',

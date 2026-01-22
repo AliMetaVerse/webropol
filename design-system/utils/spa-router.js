@@ -50,12 +50,14 @@ class WebropolSPA {
       ['/create', 'create/index.html'],
       ['/design-system', 'design-system/index.html'],
   ['/promo', 'promo/index.html'],
+  ['/branding', 'branding/branding.html'],
     ]);
 
     // Labels for breadcrumb generation
     this.labels = {
       '': 'Home',
       home: 'Home',
+      branding: 'Branding',
       surveys: 'Surveys',
       events: 'Events',
       sms: '2-Way SMS',
