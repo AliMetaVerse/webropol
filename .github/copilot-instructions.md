@@ -145,6 +145,68 @@ function moduleName() {
 - **Preserve existing data**: Read full object, merge changes, then write back
 - **Error handling**: Wrap in try/catch (quota limits, private browsing)
 
+### 5. Modal Z-Index Management (⚠️ CRITICAL - DO NOT MODIFY)
+**Problem**: When pages are loaded via SPA routing (`index.html#/surveys/report`), header components can appear above modal overlays.
+
+**Required Implementation**:
+
+1. **In `index.html` (SPA container)** - Header z-index management:
+```css
+/* Base z-index for headers - DO NOT use !important here */
+header,
+webropol-header,
+webropol-header-enhanced,
+webropol-magical-header {
+    position: relative;
+    z-index: 40;
+}
+
+/* CRITICAL: Lower header when modal is active */
+body:has(.modal-overlay.active) webropol-header,
+body:has(.modal-overlay.active) webropol-header-enhanced,
+body:has(.modal-overlay.active) webropol-magical-header,
+body.modal-open webropol-header,
+body.modal-open webropol-header-enhanced,
+body.modal-open webropol-magical-header {
+    z-index: 1 !important;
+}
+```
+
+2. **In page files with modals** - Modal overlay z-index:
+```css
+.modal-overlay {
+    position: fixed;
+    z-index: 2147483640 !important; /* Max safe integer */
+}
+```
+
+3. **In Alpine.js apps with modals** - Add body class toggle:
+```javascript
+function surveyEditApp() {
+    return {
+        init() {
+            // Watch modal states and toggle body class
+            this.$watch('exportShareOpen', value => this.toggleModal(value));
+            this.$watch('sharePublicLinkOpen', value => this.toggleModal(value));
+        },
+        toggleModal(isOpen) {
+            if (isOpen) document.body.classList.add('modal-open');
+            else {
+                // Only remove if NO modals are open
+                if (!this.exportShareOpen && !this.sharePublicLinkOpen) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+        }
+    }
+}
+```
+
+**⚠️ WARNING**: 
+- NEVER set header z-index above 100 in `index.html`
+- NEVER use `z-index: 9000 !important` on headers
+- ALWAYS test modals in both standalone mode (`/surveys/report.html`) AND SPA mode (`/#/surveys/report`)
+
 ```javascript
 // CORRECT pattern
 try {

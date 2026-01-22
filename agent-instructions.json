@@ -95,6 +95,20 @@
       "id": "preserve-localstorage",
       "description": "Data stored in localStorage should remain unchanged, and any updates should be applied without disrupting or affecting the existing localStorage functionality.",
       "action": "preserve"
+    },
+    {
+      "id": "modal-z-index-critical",
+      "importance": "CRITICAL",
+      "description": "Modal overlay z-index management is critical for SPA routing. Headers in index.html must have base z-index of 40 and be lowered to z-index 1 when modals are active. Modal overlays must use z-index 2147483640. Alpine.js apps with modals must toggle 'modal-open' class on body element.",
+      "rules": [
+        "NEVER set header z-index above 100 in index.html",
+        "NEVER use z-index: 9000 !important on header components",
+        "ALWAYS use body:has(.modal-overlay.active) and body.modal-open selectors to lower header z-index to 1",
+        "ALWAYS set .modal-overlay z-index to 2147483640 !important",
+        "ALWAYS add/remove 'modal-open' class on body when modals open/close in Alpine.js",
+        "ALWAYS test modals in both standalone (/page.html) and SPA (/#/page) modes"
+      ],
+      "example": "/* In index.html */\nwebropol-header-enhanced { z-index: 40; }\nbody.modal-open webropol-header-enhanced { z-index: 1 !important; }\n\n/* In page with modals */\n.modal-overlay { z-index: 2147483640 !important; }\n\n// In Alpine.js\ninit() { this.$watch('modalOpen', v => v ? document.body.classList.add('modal-open') : document.body.classList.remove('modal-open')); }"
     }
   ]
 }
