@@ -170,6 +170,20 @@ export class WebropolSidebar extends BaseComponent {
                           group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">MyWebropol</span>
             </a>
             
+            <a href="#/branding" data-route="/branding" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+                                                            xl:px-4 px-3
+                                                            group-hover:px-4
+                                                            py-3
+                                                            ${active==='branding' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
+              <i class="fa-duotone fa-thin fa-palette w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+                       xl:mr-4 mr-0
+                       group-hover:mr-4"></i>
+              <span class="font-medium overflow-hidden transition-all duration-300
+                          xl:opacity-100 xl:w-auto
+                          opacity-0 w-0
+                          group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Branding</span>
+            </a>
+            
             <a href="#/admin-tools" data-route="/admin-tools" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                               xl:px-4 px-3
                                                               group-hover:px-4
