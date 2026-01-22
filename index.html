@@ -605,15 +605,26 @@
         }
 
         /* ===== HEADER Z-INDEX OVERRIDES ===== */
-        /* Ensure header and all its menus overlay everything */
+        /* Ensure header has a base z-index but can be overridden by modals */
         header,
         webropol-header,
-        webropol-header-enhanced {
+        webropol-header-enhanced,
+        webropol-magical-header {
             position: relative;
-            z-index: 9000 !important;
+            z-index: 40;
         }
 
-        /* All header dropdowns and menus must be above header */
+        /* When a modal is open (from SPA content), lower the header's z-index */
+        body:has(.modal-overlay.active) webropol-header,
+        body:has(.modal-overlay.active) webropol-header-enhanced,
+        body:has(.modal-overlay.active) webropol-magical-header,
+        body.modal-open webropol-header,
+        body.modal-open webropol-header-enhanced,
+        body.modal-open webropol-magical-header {
+            z-index: 1 !important;
+        }
+
+        /* All header dropdowns and menus must be above header but below modals */
         header .create-menu-dropdown,
         header .theme-dropdown,
         header .feedback-dropdown,
@@ -621,14 +632,14 @@
         header [data-dropdown],
         [data-header-layer],
         [data-header-layer] > * {
-            z-index: 9100 !important;
+            z-index: 50 !important;
         }
 
         /* Ensure breadcrumbs and other elements don't interfere */
         #breadcrumbs-fix-wrapper,
         webropol-breadcrumbs {
             position: relative;
-            z-index: 1000;
+            z-index: 30;
         }
 
         /* Main content and sidebar below header */
