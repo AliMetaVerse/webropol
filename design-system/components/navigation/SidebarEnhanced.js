@@ -342,7 +342,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       {
         id: 'branding',
         href: '#/branding',
-        icon: 'fa-duotone fa-thin fa-palette',
+        icon: 'fa-duotone fa-thin fa-swatchbook',
         label: 'Branding',
         active: active === 'branding',
         moduleKey: 'brandingEnabled'

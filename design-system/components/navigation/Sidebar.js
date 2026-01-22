@@ -188,7 +188,7 @@ export class WebropolSidebar extends BaseComponent {
                                                             group-hover:px-4
                                                             py-3
                                                             ${active==='branding' ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white shadow-medium' : 'text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700'}">
-              <i class="fa-duotone fa-thin fa-palette w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
+              <i class="fa-duotone fa-thin fa-swatchbook w-5 flex-shrink-0 group-hover/item:scale-110 transition-transform
                        xl:mr-4 mr-0
                        group-hover:mr-4"></i>
               <span class="font-medium overflow-hidden transition-all duration-300
