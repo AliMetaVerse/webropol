@@ -73,7 +73,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       try { this.render(); } catch (_) {}
       try { this.style.visibility = ''; } catch (_) {}
     };
-    document.addEventListener('webropol-settings-applied', this._settingsAppliedHandler);
+    window.addEventListener('webropol-settings-applied', this._settingsAppliedHandler);
     // Sync active item from current route and listen for changes
     window.addEventListener('hashchange', this.handleHashChange);
     // Initialize active attribute if missing
@@ -112,7 +112,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       this._onWindowLoad = null;
     }
     if (this._settingsAppliedHandler) {
-      try { document.removeEventListener('webropol-settings-applied', this._settingsAppliedHandler); } catch {}
+      try { window.removeEventListener('webropol-settings-applied', this._settingsAppliedHandler); } catch {}
       this._settingsAppliedHandler = null;
     }
     if (this._headerObserver) {
