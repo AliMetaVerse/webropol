@@ -271,7 +271,11 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     const modules = getModuleSettings();
     
     // Default all modules to enabled if settings don't exist
-    const isModuleEnabled = (moduleKey) => modules[moduleKey] !== false;
+    const isModuleEnabled = (moduleKey) => {
+      // Branding is hidden by default (must be explicitly true)
+      if (moduleKey === 'brandingEnabled') return modules[moduleKey] === true;
+      return modules[moduleKey] !== false;
+    };
 
     const allItems = [
       {

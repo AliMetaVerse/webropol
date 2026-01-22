@@ -40,7 +40,7 @@ export class WebropolSidebar extends BaseComponent {
         } catch { return defaultVal; }
     };
 
-    const showBrandingModule = getModuleVisible('brandingEnabled');
+    const showBrandingModule = getModuleVisible('brandingEnabled', false);
 
     // Helper to prefix base to links - ensure proper path concatenation
     const link = (path) => {

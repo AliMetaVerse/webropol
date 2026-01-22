@@ -71,6 +71,7 @@ export class GlobalSettingsManager {
       surveysEnabled: true,
   dashboardsEnabled: false,
   adminToolsEnabled: false,
+  brandingEnabled: false,
   shopEnabled: false,
   eventsEnabled: false,
       mywebropolEnabled: true,
