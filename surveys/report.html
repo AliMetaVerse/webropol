@@ -314,7 +314,7 @@
                 </div>
               </div>
 
-              <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareOpen = true" title="Export & Share">
+              <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareModeSelectOpen = true" title="Export & Share">
                 <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
               </button>
             </div>
@@ -1019,7 +1019,61 @@
 
   <!-- Modals removed as requested -->
 
-  <!-- Export & Share Modal -->
+  <!-- Export & Share Mode Selection Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': exportShareModeSelectOpen }" @click.self="exportShareModeSelectOpen = false" @keydown.window.escape="exportShareModeSelectOpen = false" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <i class="fal fa-share-square text-orange-600 text-2xl mr-2"></i>
+            <span class="text-2xl font-semibold text-gray-800">Choose Export & Share View</span>
+          </div>
+        </div>
+        <button class="modal-close text-gray-400 hover:text-gray-600" aria-label="Close" @click="exportShareModeSelectOpen = false"><i class="fal fa-times text-xl"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-gray-600 mb-6 text-center">Select how you'd like to view export and share options</p>
+        <div class="grid grid-cols-2 gap-4">
+          <!-- Accordion Mode -->
+          <button @click="exportShareMode = 'accordion'; exportShareModeSelectOpen = false; exportShareOpen = true" class="group relative p-6 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-lg transition-all duration-300 text-center">
+            <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-webropol-primary-500 transition-colors" :class="{ 'bg-webropol-primary-500 border-webropol-primary-500': exportShareMode === 'accordion' }">
+              <i x-show="exportShareMode === 'accordion'" class="fas fa-check text-white text-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+            </div>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i class="fal fa-list-ul text-3xl text-blue-600"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Accordion View</h3>
+            <p class="text-sm text-gray-600">All options in collapsible sections on one page</p>
+            <div class="mt-4 text-xs text-gray-500 flex items-center justify-center gap-1">
+              <i class="fas fa-star text-yellow-500"></i>
+              <span>Classic</span>
+            </div>
+          </button>
+
+          <!-- Modal Mode -->
+          <button @click="exportShareMode = 'modal'; exportShareModeSelectOpen = false; exportShareOpen = true" class="group relative p-6 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-lg transition-all duration-300 text-center">
+            <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-webropol-primary-500 transition-colors" :class="{ 'bg-webropol-primary-500 border-webropol-primary-500': exportShareMode === 'modal' }">
+              <i x-show="exportShareMode === 'modal'" class="fas fa-check text-white text-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+            </div>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <i class="fal fa-window text-3xl text-purple-600"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Modal View</h3>
+            <p class="text-sm text-gray-600">Step-by-step focused dialogs for each format</p>
+            <div class="mt-4 text-xs text-gray-500 flex items-center justify-center gap-1">
+              <i class="fas fa-sparkles text-purple-500"></i>
+              <span>Modern</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer bg-white border-t border-gray-200 py-3 px-6 flex justify-end">
+        <button class="rounded-full px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="exportShareModeSelectOpen = false">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export & Share Modal (Accordion Mode) -->
   <div class="modal-overlay" x-cloak :class="{ 'active': exportShareOpen }" @click.self="exportShareOpen = false" @keydown.window.escape="exportShareOpen = false" role="dialog" aria-modal="true" aria-labelledby="exportShareTitle">
     <div class="modal-content" style="max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-header">
@@ -1033,6 +1087,8 @@
       </div>
       
       <div class="modal-body p-0 flex flex-col min-h-0 bg-white">
+        <!-- Accordion Mode Content -->
+        <div x-show="exportShareMode === 'accordion'">
         <!-- Banner -->
          <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -1461,6 +1517,108 @@
                 </div>
             </div>
         </div>
+        </div>
+        <!-- End Accordion Mode Content -->
+
+        <!-- Modal Mode Content -->
+        <div x-show="exportShareMode === 'modal'" class="p-6">
+          <div class="grid grid-cols-2 gap-6">
+            <!-- Export Section -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fal fa-download text-orange-600"></i>
+                <span>Export</span>
+              </h3>
+              <div class="grid grid-cols-2 gap-3">
+                <!-- PowerPoint Button -->
+                <button @click="activeExportModal = 'ppt'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-orange-500 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-orange-50 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-file-powerpoint text-orange-600 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">PowerPoint</span>
+                </button>
+
+                <!-- Excel Button -->
+                <button @click="activeExportModal = 'excel'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-green-600 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-file-excel text-green-700 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">Excel</span>
+                </button>
+
+                <!-- CSV Button -->
+                <button @click="activeExportModal = 'csv'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-file-csv text-green-600 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">CSV</span>
+                </button>
+
+                <!-- PDF Button -->
+                <button @click="activeExportModal = 'pdf'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-red-600 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">PDF</span>
+                </button>
+
+                <!-- Word Button -->
+                <button @click="activeExportModal = 'word'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-blue-700 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-file-word text-blue-800 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">Word</span>
+                </button>
+
+                <!-- SPSS Button -->
+                <button @click="activeExportModal = 'spss'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-cyan-700 hover:shadow-md transition-all text-center">
+                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-cyan-50 group-hover:bg-cyan-100 flex items-center justify-center transition-colors">
+                    <i class="fas fa-table text-cyan-800 text-2xl"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">SPSS</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Share Section -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fal fa-share-nodes text-webropol-primary-600"></i>
+                <span>Share Reports</span>
+              </h3>
+              <div class="space-y-3">
+                <button @click="sharePublicLinkOpen = true" class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
+                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
+                    <i class="fal fa-globe text-webropol-primary-600 text-xl"></i>
+                  </div>
+                  <span class="font-medium text-gray-700">Share as public link</span>
+                </button>
+
+                <button @click="showPublicLinksOpen = true" class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
+                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
+                    <i class="fal fa-link text-webropol-primary-600 text-xl"></i>
+                  </div>
+                  <span class="font-medium text-gray-700">Show public links</span>
+                </button>
+
+                <button disabled class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl opacity-50 cursor-not-allowed text-left">
+                  <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <i class="fal fa-envelope text-gray-400 text-xl"></i>
+                  </div>
+                  <span class="font-medium text-gray-400">Schedule sharing</span>
+                </button>
+
+                <button class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
+                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
+                    <i class="fal fa-file-alt text-webropol-primary-600 text-xl"></i>
+                  </div>
+                  <span class="font-medium text-gray-700">Exported reports</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Modal Mode Content -->
       </div>
       <div class="modal-footer bg-white border-t border-gray-200 py-3 px-6 flex justify-end">
           <button class="rounded-full px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="exportShareOpen = false">Close</button>
@@ -1814,6 +1972,413 @@
             Combine
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Individual Export Format Modals (for Modal Mode) -->
+  <!-- PowerPoint Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'ppt' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center mr-3">
+              <i class="fas fa-file-powerpoint text-orange-600 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export PowerPoint</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <!-- Chart Type Section -->
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Chart Type</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="pptType" value="editable" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <div>
+                        <span class="text-gray-800 text-sm font-medium">Editable charts</span>
+                        <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Recommended</span>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="pptType" value="non-editable-low" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-gray-700 text-sm">Non-editable charts <span class="text-gray-500">(Low resolution)</span></span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="pptType" value="non-editable-high" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-gray-700 text-sm">Non-editable charts <span class="text-gray-500">(High resolution)</span></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Display Options Section -->
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                        <option>Portrait</option>
+                        <option>Landscape</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                    </label>
+                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                            <option>Select reports</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export PowerPoint</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Note: Other export format modals (Excel, CSV, PDF, Word, SPSS) would follow the same pattern -->
+  <!-- For brevity, I'm showing one complete example. You can duplicate and modify for other formats. -->
+
+  <!-- Excel Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'excel' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+              <i class="fas fa-file-excel text-green-700 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export Excel</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Export Format</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="excelType" value="numbers" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                    <div class="flex-1">
+                        <span class="text-gray-800 text-sm font-medium">Answers as numbers</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Raw data in rows</p>
+                    </div>
+                </label>
+                <div x-show="exportExcelType === 'numbers'" x-collapse class="pl-9">
+                    <a href="#" class="text-sm text-webropol-primary-600 font-medium hover:underline flex items-center gap-1">
+                        <i class="fal fa-cog"></i>
+                        <span>Advanced settings</span>
+                        <i class="fal fa-chevron-right text-xs"></i>
+                    </a>
+                </div>
+                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="excelType" value="text" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                    <div class="flex-1">
+                        <span class="text-gray-800 text-sm font-medium">Answers as text</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Raw data in rows</p>
+                    </div>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="excelType" value="sheets" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                    <div class="flex-1">
+                        <span class="text-gray-800 text-sm font-medium">Each question on own sheet</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Including charts (report format)</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                        <option>Portrait</option>
+                        <option>Landscape</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                    </label>
+                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                            <option>Select reports</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export Excel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSV Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'csv' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center mr-3">
+              <i class="fas fa-file-csv text-green-600 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export CSV</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Answer Format</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="csvType" value="numbers" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-gray-700 text-sm">Show answers as number</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="radio" name="csvType" value="text" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-gray-700 text-sm">Show answers as text</span>
+                </label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Additional Options</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-sm text-gray-700">1=selected, 0=blank option</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-sm text-gray-700">Show blank cells as zeros</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-sm text-gray-700">Response time</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span class="text-sm text-gray-700">Show respondent email (personal link only)</span>
+                </label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                <span class="text-sm text-gray-700">Export multiple reports</span>
+            </label>
+            <div x-show="exportMultiple" x-collapse class="mt-2">
+                <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                    <option>Select reports</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'pdf' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center mr-3">
+              <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export PDF</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportOneQuestionPerPage" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                        <option>Portrait</option>
+                        <option>Landscape</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                    </label>
+                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                            <option>Select reports</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Word Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'word' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+              <i class="fas fa-file-word text-blue-800 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export Word</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                        <option>Portrait</option>
+                        <option>Landscape</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                    </label>
+                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                            <option>Select reports</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export Word</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPSS Export Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'spss' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title">
+            <div class="w-10 h-10 rounded-lg bg-cyan-100 flex items-center justify-center mr-3">
+              <i class="fas fa-table text-cyan-800 text-xl"></i>
+            </div>
+            <span class="text-2xl font-semibold text-gray-800">Export SPSS</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="activeExportModal = null"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-white rounded-lg p-4 border border-gray-200 mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Export Options</h4>
+            <div class="space-y-2.5">
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssVariableLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Variable labels</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssValueLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Value labels</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssEmail" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show respondent email (personal link only)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssTag" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Use question export tag</span></label>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg p-4 border border-gray-200">
+            <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                <span class="text-sm text-gray-700">Export multiple reports</span>
+            </label>
+            <div x-show="exportMultiple" x-collapse class="mt-2">
+                <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                    <option>Select reports</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="rounded-lg px-6 py-2 border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors" @click="activeExportModal = null">Cancel</button>
+        <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+          <i class="fal fa-download"></i>
+          <span>Export SPSS</span>
+        </button>
       </div>
     </div>
   </div>
@@ -2790,6 +3355,9 @@
     function surveyEditApp() {
       return {
         exportShareOpen: false,
+        exportShareModeSelectOpen: false,
+        exportShareMode: 'accordion', // 'accordion' or 'modal'
+        activeExportModal: null, // for modal-based exports
         
         // Export State
         activeExport: null,
