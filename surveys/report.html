@@ -1049,285 +1049,364 @@
                 <h3 class="text-lg font-medium text-gray-800 mb-4">Export</h3>
                 <div class="space-y-2">
                    <!-- PowerPoint -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'ppt' ? null : 'ppt'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                        <i class="fas fa-file-powerpoint text-orange-600 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">PowerPoint</span>
-                        <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'ppt' }"></i>
-                     </button>
-                     <div x-show="activeExport === 'ppt'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                        <!-- Options for PPT -->
-                        <div class="space-y-2 pt-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="pptType" value="editable" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Editable charts (Recommended)</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="pptType" value="non-editable-low" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Non-editable charts (Low resolution)</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="pptType" value="non-editable-high" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Non-editable charts (High resolution)</span>
-                            </label>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'ppt' }">
+                     <button @click="activeExport = activeExport === 'ppt' ? null : 'ppt'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'ppt' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'ppt' ? 'bg-orange-100' : 'bg-orange-50'">
+                          <i class="fas fa-file-powerpoint text-orange-600 text-lg"></i>
                         </div>
-                        <div class="space-y-2 pt-2">
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">PowerPoint</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'ppt' }"></i>
+                     </button>
+                     <div x-show="activeExport === 'ppt'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <!-- Chart Type Section -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Chart Type</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="pptType" value="editable" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                    <div>
+                                        <span class="text-gray-800 text-sm font-medium">Editable charts</span>
+                                        <span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Recommended</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="pptType" value="non-editable-low" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                    <span class="text-gray-700 text-sm">Non-editable charts <span class="text-gray-500">(Low resolution)</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="pptType" value="non-editable-high" x-model="exportPptType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                    <span class="text-gray-700 text-sm">Non-editable charts <span class="text-gray-500">(High resolution)</span></span>
+                                </label>
+                            </div>
                         </div>
                         
-                        <!-- Common Settings -->
-                        <div class="pt-4 border-t border-gray-100 space-y-4">
-                            <div class="flex items-center gap-4">
-                                <label class="text-sm text-gray-700 min-w-[120px]">Report orientation</label>
-                                <select x-model="exportOrientation" class="flex-1 text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-1.5">
-                                    <option>Portrait</option>
-                                    <option>Landscape</option>
-                                </select>
+                        <!-- Display Options Section -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
                             </div>
-                            <!-- Export Multiple -->
-                             <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
-                                </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
+                        </div>
+                        
+                        <!-- Settings Section -->
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                                        <option>Portrait</option>
+                                        <option>Landscape</option>
                                     </select>
                                 </div>
-                             </div>
-                             <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
+                                <div>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                                    </label>
+                                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                            <option>Select reports</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <!-- Export Button -->
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export PowerPoint</span>
+                            </button>
                         </div>
                      </div>
                    </div>
 
                    <!-- Excel -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'excel' ? null : 'excel'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                         <i class="fas fa-file-excel text-green-700 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">Excel</span>
-                        <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'excel' }"></i>
-                     </button>
-                      <div x-show="activeExport === 'excel'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                        <div class="space-y-3 pt-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="excelType" value="numbers" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Answers <strong>as numbers</strong> in rows (raw data)</span>
-                            </label>
-                            <div x-show="exportExcelType === 'numbers'" class="pl-6 pb-1">
-                                <a href="#" class="text-sm text-webropol-primary-600 font-medium hover:underline flex items-center gap-1">Advanced settings <i class="fal fa-chevron-right text-xs"></i></a>
-                            </div>
-
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="excelType" value="text" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Answers <strong>as text</strong> in rows (raw data)</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="excelType" value="sheets" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm"><strong>Each question on its own sheet</strong> including charts (report)</span>
-                            </label>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'excel' }">
+                     <button @click="activeExport = activeExport === 'excel' ? null : 'excel'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'excel' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'excel' ? 'bg-green-100' : 'bg-green-50'">
+                          <i class="fas fa-file-excel text-green-700 text-lg"></i>
                         </div>
-                        <!-- Common -->
-                         <div class="pt-4 border-t border-gray-100 space-y-4">
-                            <div class="flex items-center gap-4">
-                                <label class="text-sm text-gray-700 min-w-[120px]">Report orientation</label>
-                                <select x-model="exportOrientation" class="flex-1 text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-1.5">
-                                    <option>Portrait</option>
-                                    <option>Landscape</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">Excel</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'excel' }"></i>
+                     </button>
+                      <div x-show="activeExport === 'excel'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Export Format</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="excelType" value="numbers" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                                    <div class="flex-1">
+                                        <span class="text-gray-800 text-sm font-medium">Answers as numbers</span>
+                                        <p class="text-xs text-gray-500 mt-0.5">Raw data in rows</p>
+                                    </div>
                                 </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
+                                <div x-show="exportExcelType === 'numbers'" x-collapse class="pl-9">
+                                    <a href="#" class="text-sm text-webropol-primary-600 font-medium hover:underline flex items-center gap-1">
+                                        <i class="fal fa-cog"></i>
+                                        <span>Advanced settings</span>
+                                        <i class="fal fa-chevron-right text-xs"></i>
+                                    </a>
+                                </div>
+                                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="excelType" value="text" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                                    <div class="flex-1">
+                                        <span class="text-gray-800 text-sm font-medium">Answers as text</span>
+                                        <p class="text-xs text-gray-500 mt-0.5">Raw data in rows</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="excelType" value="sheets" x-model="exportExcelType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4 mt-0.5">
+                                    <div class="flex-1">
+                                        <span class="text-gray-800 text-sm font-medium">Each question on own sheet</span>
+                                        <p class="text-xs text-gray-500 mt-0.5">Including charts (report format)</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                                        <option>Portrait</option>
+                                        <option>Landscape</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                                    </label>
+                                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                            <option>Select reports</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
-                            </div>
-                         </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export Excel</span>
+                            </button>
+                        </div>
                       </div>
                    </div>
 
                    <!-- CSV -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'csv' ? null : 'csv'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                        <i class="fas fa-file-csv text-green-600 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">CSV</span>
-                        <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'csv' }"></i>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'csv' }">
+                     <button @click="activeExport = activeExport === 'csv' ? null : 'csv'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'csv' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'csv' ? 'bg-green-100' : 'bg-green-50'">
+                          <i class="fas fa-file-csv text-green-600 text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">CSV</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'csv' }"></i>
                      </button>
-                     <div x-show="activeExport === 'csv'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                         <div class="space-y-3 pt-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="csvType" value="numbers" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Show answers as number</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" name="csvType" value="text" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                <span class="text-gray-700 text-sm">Show answers as text</span>
-                            </label>
-                            <div class="pt-2 mt-2 border-t border-gray-100 space-y-2">
-                                <label class="flex items-center gap-2 cursor-pointer">
+                     <div x-show="activeExport === 'csv'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Answer Format</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="csvType" value="numbers" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                    <span class="text-gray-700 text-sm">Show answers as number</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" name="csvType" value="text" x-model="exportCsvType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                    <span class="text-gray-700 text-sm">Show answers as text</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Additional Options</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                     <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
                                     <span class="text-sm text-gray-700">1=selected, 0=blank option</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                     <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
                                     <span class="text-sm text-gray-700">Show blank cells as zeros</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                     <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
                                     <span class="text-sm text-gray-700">Response time</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
                                     <input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
                                     <span class="text-sm text-gray-700">Show respondent email (personal link only)</span>
                                 </label>
                             </div>
-                         </div>
-                         <div class="pt-4 border-t border-gray-100">
-                             <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
-                                </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                <span class="text-sm text-gray-700">Export multiple reports</span>
+                            </label>
+                            <div x-show="exportMultiple" x-collapse class="mt-2">
+                                <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                    <option>Select reports</option>
+                                </select>
                             </div>
-                             <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
-                             </div>
-                         </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export CSV</span>
+                            </button>
+                        </div>
                      </div>
                    </div>
 
                    <!-- PDF -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'pdf' ? null : 'pdf'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                        <i class="fas fa-file-pdf text-red-600 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">PDF</span>
-                        <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'pdf' }"></i>
-                     </button>
-                     <div x-show="activeExport === 'pdf'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                        <div class="space-y-2 pt-2">
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportOneQuestionPerPage" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'pdf' }">
+                     <button @click="activeExport = activeExport === 'pdf' ? null : 'pdf'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'pdf' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'pdf' ? 'bg-red-100' : 'bg-red-50'">
+                          <i class="fas fa-file-pdf text-red-600 text-lg"></i>
                         </div>
-                        <div class="pt-4 border-t border-gray-100 space-y-4">
-                             <div class="flex items-center gap-4">
-                                <label class="text-sm text-gray-700 min-w-[120px]">Report orientation</label>
-                                <select x-model="exportOrientation" class="flex-1 text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-1.5">
-                                    <option>Portrait</option>
-                                    <option>Landscape</option>
-                                </select>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">PDF</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'pdf' }"></i>
+                     </button>
+                     <div x-show="activeExport === 'pdf'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportOneQuestionPerPage" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowTextAnswers" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowSurveyName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportName" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowReportTitle" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportShowLogo" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
                             </div>
-                            <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
-                                </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                                        <option>Portrait</option>
+                                        <option>Landscape</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                                    </label>
+                                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                            <option>Select reports</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
-                            </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export PDF</span>
+                            </button>
                         </div>
                      </div>
                    </div>
 
                    <!-- Word -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'word' ? null : 'word'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                        <i class="fas fa-file-word text-blue-800 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">Word</span>
-                         <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'word' }"></i>
-                     </button>
-                     <div x-show="activeExport === 'word'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                        <div class="space-y-2 pt-2">
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'word' }">
+                     <button @click="activeExport = activeExport === 'word' ? null : 'word'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'word' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'word' ? 'bg-blue-100' : 'bg-blue-50'">
+                          <i class="fas fa-file-word text-blue-800 text-lg"></i>
                         </div>
-                        <div class="pt-4 border-t border-gray-100 space-y-4">
-                             <div class="flex items-center gap-4">
-                                <label class="text-sm text-gray-700 min-w-[120px]">Report orientation</label>
-                                <select x-model="exportOrientation" class="flex-1 text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-1.5">
-                                    <option>Portrait</option>
-                                    <option>Landscape</option>
-                                </select>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">Word</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'word' }"></i>
+                     </button>
+                     <div x-show="activeExport === 'word'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Display Options</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show one question per page</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show text answers</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show survey name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report name</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show report title</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" checked class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show logo in report</span></label>
                             </div>
-                            <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
-                                </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Settings</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Report orientation</label>
+                                    <select x-model="exportOrientation" class="w-full text-sm border-gray-300 rounded-lg focus:border-webropol-primary-500 focus:ring-webropol-primary-500 py-2">
+                                        <option>Portrait</option>
+                                        <option>Landscape</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                        <span class="text-sm text-gray-700">Export multiple reports</span>
+                                    </label>
+                                    <div x-show="exportMultiple" x-collapse class="mt-2">
+                                        <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                            <option>Select reports</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
-                            </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export Word</span>
+                            </button>
                         </div>
                      </div>
                    </div>
 
                    <!-- SPSS -->
-                   <div>
-                     <button @click="activeExport = activeExport === 'spss' ? null : 'spss'" class="w-full flex items-center gap-2 py-2 hover:bg-gray-50 transition-colors text-left group">
-                        <i class="fas fa-table text-cyan-800 text-xl w-8 text-center"></i>
-                        <span class="font-medium text-webropol-primary-600 flex-1 group-hover:text-webropol-primary-700">SPSS</span>
-                        <i class="fal fa-chevron-right text-webropol-primary-600 transform transition-transform text-sm" :class="{ 'rotate-90': activeExport === 'spss' }"></i>
-                     </button>
-                      <div x-show="activeExport === 'spss'" x-collapse class="pl-10 pr-2 pb-4 space-y-4">
-                        <div class="space-y-2 pt-2">
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportSpssVariableLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Variable labels</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportSpssValueLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Value labels</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportSpssEmail" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show respondent email (personal link only)</span></label>
-                             <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" x-model="exportSpssTag" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Use question export tag</span></label>
+                   <div class="border border-gray-200 rounded-xl overflow-hidden transition-all" :class="{ 'ring-2 ring-webropol-primary-200 border-webropol-primary-300': activeExport === 'spss' }">
+                     <button @click="activeExport = activeExport === 'spss' ? null : 'spss'" class="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-webropol-gray-50 transition-all text-left group" :class="{ 'bg-webropol-primary-50': activeExport === 'spss' }">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-all" :class="activeExport === 'spss' ? 'bg-cyan-100' : 'bg-cyan-50'">
+                          <i class="fas fa-table text-cyan-800 text-lg"></i>
                         </div>
-                        <div class="pt-4 border-t border-gray-100">
-                             <div>
-                                <label class="flex items-center gap-2 cursor-pointer mb-2">
-                                    <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
-                                    <span class="text-sm text-gray-700">Export multiple reports</span>
-                                </label>
-                                <div x-show="exportMultiple" class="pl-6">
-                                    <select class="w-full text-sm border-gray-300 rounded-md bg-white py-1.5">
-                                        <option>Select reports</option>
-                                    </select>
-                                </div>
+                        <span class="font-semibold text-gray-800 flex-1 text-base">SPSS</span>
+                        <i class="fal fa-chevron-down text-gray-400 transform transition-transform duration-200" :class="{ 'rotate-180': activeExport === 'spss' }"></i>
+                     </button>
+                      <div x-show="activeExport === 'spss'" x-collapse class="px-4 pb-5 pt-2 bg-gradient-to-b from-webropol-gray-50/50 to-white">
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Export Options</h4>
+                            <div class="space-y-2.5">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssVariableLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Variable labels</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssValueLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Value labels</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssEmail" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Show respondent email (personal link only)</span></label>
+                                <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors"><input type="checkbox" x-model="exportSpssTag" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4"><span class="text-sm text-gray-700">Use question export tag</span></label>
                             </div>
-                            <div class="flex justify-end pt-2">
-                                <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2 rounded-full font-medium transition-colors shadow-sm text-sm">Export</button>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="checkbox" x-model="exportMultiple" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 w-4 h-4">
+                                <span class="text-sm text-gray-700">Export multiple reports</span>
+                            </label>
+                            <div x-show="exportMultiple" x-collapse class="mt-2">
+                                <select class="w-full text-sm border-gray-300 rounded-lg bg-white py-2">
+                                    <option>Select reports</option>
+                                </select>
                             </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button class="bg-[#d35400] hover:bg-[#a04000] text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-sm hover:shadow text-sm flex items-center gap-2">
+                                <i class="fal fa-download"></i>
+                                <span>Export SPSS</span>
+                            </button>
                         </div>
                       </div>
                    </div>
@@ -1336,37 +1415,32 @@
             </div>
 
             <!-- Right: Share Reports -->
-            <div class="p-6 bg-white">
+            <div class="p-6 bg-white overflow-y-auto">
                 <h3 class="text-lg font-medium text-gray-800 mb-4">Share Reports</h3>
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <!-- Link 1 -->
-                    <div>
-                        <button @click="sharePublicLinkOpen = true" class="btn btn-tertiary w-full justify-start gap-3">
-                            <i class="fal fa-globe text-xl"></i>
-                            <span>Share report as a public link</span>
-                        </button>
-                    </div>
+                    <button @click="sharePublicLinkOpen = true" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
+                        <i class="fal fa-globe text-xl"></i>
+                        <span class="font-medium">Share report as a public link</span>
+                    </button>
+                    
                     <!-- Link 2 -->
-                    <div>
-                        <button @click="showPublicLinksOpen = true" class="btn btn-tertiary w-full justify-start gap-3">
-                            <i class="fal fa-link text-xl"></i>
-                            <span>Show public report links</span>
-                        </button>
-                    </div>
-                     <!-- Link 3 -->
-                    <div>
-                        <button class="btn btn-tertiary w-full justify-start gap-3" disabled>
-                            <i class="fal fa-envelope text-xl"></i>
-                            <span>Schedule sharing of reports</span>
-                        </button>
-                    </div>
-                     <!-- Link 4 -->
-                    <div>
-                        <button class="btn btn-tertiary w-full justify-start gap-3">
-                            <i class="fal fa-file-alt text-xl"></i>
-                            <span>Exported reports</span>
-                        </button>
-                    </div>
+                    <button @click="showPublicLinksOpen = true" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
+                        <i class="fal fa-link text-xl"></i>
+                        <span class="font-medium">Show public report links</span>
+                    </button>
+                    
+                    <!-- Link 3 -->
+                    <button disabled class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-gray-400 cursor-not-allowed text-left border border-transparent opacity-50">
+                        <i class="fal fa-envelope text-xl"></i>
+                        <span class="font-medium">Schedule sharing of reports</span>
+                    </button>
+                    
+                    <!-- Link 4 -->
+                    <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
+                        <i class="fal fa-file-alt text-xl"></i>
+                        <span class="font-medium">Exported reports</span>
+                    </button>
                 </div>
             </div>
         </div>
