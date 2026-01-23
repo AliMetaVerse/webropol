@@ -373,51 +373,106 @@
                                 </div>
                                 Archive
                             </h3>
-                            <div class="space-y-1" x-data="{ openYear: '2025' }">
-                                <div>
-                                    <button 
-                                        @click="openYear = openYear === '2025' ? '' : '2025'"
-                                        class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all"
-                                    >
-                                        <span class="font-semibold text-webropol-gray-800">2025</span>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs text-webropol-gray-500">12 posts</span>
-                                            <i class="fas fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': openYear === '2025' }"></i>
+                            <div class="space-y-1" x-data="{ 
+                                openYear: '2025',
+                                visibleYears: 3,
+                                allYears: [
+                                    { year: '2025', posts: 12, months: [
+                                        { name: 'May', count: 5 },
+                                        { name: 'April', count: 4 },
+                                        { name: 'March', count: 3 }
+                                    ]},
+                                    { year: '2024', posts: 36, months: [
+                                        { name: 'December', count: 8 },
+                                        { name: 'November', count: 10 },
+                                        { name: 'October', count: 12 },
+                                        { name: 'September', count: 6 }
+                                    ]},
+                                    { year: '2023', posts: 24, months: [
+                                        { name: 'December', count: 6 },
+                                        { name: 'November', count: 5 },
+                                        { name: 'October', count: 4 },
+                                        { name: 'September', count: 3 },
+                                        { name: 'August', count: 2 },
+                                        { name: 'July', count: 4 }
+                                    ]},
+                                    { year: '2022', posts: 18, months: [
+                                        { name: 'December', count: 4 },
+                                        { name: 'November', count: 3 },
+                                        { name: 'October', count: 5 },
+                                        { name: 'September', count: 6 }
+                                    ]},
+                                    { year: '2021', posts: 15, months: [
+                                        { name: 'December', count: 3 },
+                                        { name: 'November', count: 4 },
+                                        { name: 'October', count: 5 },
+                                        { name: 'September', count: 3 }
+                                    ]},
+                                    { year: '2020', posts: 12, months: [
+                                        { name: 'December', count: 2 },
+                                        { name: 'November', count: 3 },
+                                        { name: 'October', count: 4 },
+                                        { name: 'September', count: 3 }
+                                    ]}
+                                ],
+                                get displayedYears() {
+                                    return this.allYears.slice(0, this.visibleYears);
+                                },
+                                get hasMoreYears() {
+                                    return this.visibleYears < this.allYears.length;
+                                },
+                                get canShowLess() {
+                                    return this.visibleYears > 3;
+                                },
+                                loadMoreYears() {
+                                    this.visibleYears = Math.min(this.visibleYears + 3, this.allYears.length);
+                                },
+                                showLessYears() {
+                                    this.visibleYears = 3;
+                                }
+                            }">
+                                <template x-for="yearData in displayedYears" :key="yearData.year">
+                                    <div>
+                                        <button 
+                                            @click="openYear = openYear === yearData.year ? '' : yearData.year"
+                                            class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all"
+                                        >
+                                            <span class="font-semibold text-webropol-gray-800" x-text="yearData.year"></span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs text-webropol-gray-500" x-text="yearData.posts + ' posts'"></span>
+                                                <i class="fas fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': openYear === yearData.year }"></i>
+                                            </div>
+                                        </button>
+                                        <div x-show="openYear === yearData.year" x-transition class="ml-4 space-y-1 mt-1">
+                                            <template x-for="month in yearData.months" :key="month.name">
+                                                <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all" x-text="`${month.name} (${month.count})`"></a>
+                                            </template>
                                         </div>
-                                    </button>
-                                    <div x-show="openYear === '2025'" x-transition class="ml-4 space-y-1 mt-1">
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">May (5)</a>
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">April (4)</a>
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">March (3)</a>
                                     </div>
+                                </template>
+                                
+                                <!-- Load More Years Button -->
+                                <div x-show="hasMoreYears" class="pt-2">
+                                    <button 
+                                        @click="loadMoreYears"
+                                        class="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-webropol-gray-50 hover:bg-webropol-primary-50 text-webropol-gray-700 hover:text-webropol-primary-700 font-medium text-sm transition-all border border-webropol-gray-200 hover:border-webropol-primary-200"
+                                    >
+                                        <i class="fas fa-history text-xs"></i>
+                                        <span>View Older Archives</span>
+                                        <span class="text-xs opacity-75" x-text="`(${allYears.length - visibleYears} more)`"></span>
+                                    </button>
                                 </div>
                                 
-                                <div>
+                                <!-- Show Less Button -->
+                                <div x-show="canShowLess" class="pt-2">
                                     <button 
-                                        @click="openYear = openYear === '2024' ? '' : '2024'"
-                                        class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all"
+                                        @click="showLessYears"
+                                        class="w-full flex items-center justify-center gap-2 p-3 rounded-lg bg-white hover:bg-webropol-gray-50 text-webropol-gray-600 hover:text-webropol-gray-700 font-medium text-sm transition-all border border-webropol-gray-200"
                                     >
-                                        <span class="font-semibold text-webropol-gray-800">2024</span>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs text-webropol-gray-500">36 posts</span>
-                                            <i class="fas fa-chevron-down text-webropol-gray-400 text-xs transition-transform" :class="{ 'rotate-180': openYear === '2024' }"></i>
-                                        </div>
+                                        <i class="fas fa-chevron-up text-xs"></i>
+                                        <span>Show Less</span>
                                     </button>
-                                    <div x-show="openYear === '2024'" x-transition class="ml-4 space-y-1 mt-1">
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">December (8)</a>
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">November (10)</a>
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">October (12)</a>
-                                        <a href="#" class="archive-link block p-2 text-sm text-webropol-gray-600 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 rounded-md transition-all">September (6)</a>
-                                    </div>
                                 </div>
-
-                                <button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-webropol-gray-50 transition-all">
-                                    <span class="font-semibold text-webropol-gray-800">2023</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs text-webropol-gray-500">24 posts</span>
-                                        <i class="fas fa-chevron-down text-webropol-gray-400 text-xs"></i>
-                                    </div>
-                                </button>
                             </div>
                         </div>
                     </div>
