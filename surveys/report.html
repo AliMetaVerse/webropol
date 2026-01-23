@@ -247,17 +247,111 @@
           <br>
           <!-- Toolbar row: moved directly under main tabs, full width -->
           <div class="flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
-            <div class="flex items-center gap-3">
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
-                <span class="font-semibold">(Edited)</span>
-                <span>Basic report</span>
-                <i class="fal fa-angle-down ml-1"></i>
+            <div class="flex items-center gap-3 flex-1">
+              <!-- Report Dropdown -->
+              <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                <button @click="dropdownOpen = !dropdownOpen" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-50 hover:bg-webropol-primary-100 text-webropol-primary-800 border border-webropol-primary-200 hover:border-webropol-primary-300 transition-all font-medium">
+                  <span x-show="isSavedReport && hasUnsavedChanges" class="font-semibold text-xs">(Edited)</span>
+                  <span x-text="currentReportName"></span>
+                  <i class="fal fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': dropdownOpen }"></i>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div x-show="dropdownOpen" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute top-full left-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-webropol-gray-200 z-50 overflow-hidden"
+                     style="display: none;">
+                  
+                  <!-- Basic Report -->
+                  <div class="border-b border-webropol-gray-100">
+                    <button @click="switchToReport('Basic report', false); dropdownOpen = false" 
+                            class="w-full px-4 py-3 text-left hover:bg-webropol-gray-50 transition-colors flex items-center justify-between group"
+                            :class="{ 'bg-webropol-primary-50': !isSavedReport }">
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-webropol-gray-100 flex items-center justify-center">
+                          <i class="fal fa-file-chart-line text-webropol-gray-600"></i>
+                        </div>
+                        <div>
+                          <div class="font-medium text-webropol-gray-900">Basic report</div>
+                          <div class="text-xs text-webropol-gray-500">Original unfiltered data</div>
+                        </div>
+                      </div>
+                      <i x-show="!isSavedReport" class="fal fa-check text-webropol-primary-600"></i>
+                    </button>
+                  </div>
+                  
+                  <!-- Saved Reports Section -->
+                  <div class="p-2">
+                    <div class="px-2 py-1.5 text-xs font-semibold text-webropol-gray-500 uppercase tracking-wide">Saved Reports</div>
+                    
+                    <!-- Dynamic Saved Reports List -->
+                    <template x-for="report in savedReports" :key="report.name">
+                      <div class="flex items-center gap-2 px-3 py-2 hover:bg-webropol-primary-50 transition-colors rounded-lg group">
+                        <button @click="switchToReport(report.name, true); dropdownOpen = false" 
+                                class="flex items-center gap-3 flex-1 min-w-0 text-left"
+                                :class="{ 'font-semibold': isSavedReport && currentReportName === report.name }">
+                          <div class="w-8 h-8 rounded-lg bg-webropol-primary-100 flex items-center justify-center flex-shrink-0">
+                            <i class="fal fa-chart-bar text-webropol-primary-600"></i>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <div class="font-medium text-webropol-gray-900 truncate" x-text="report.name"></div>
+                            <div class="text-xs text-webropol-gray-500" x-text="formatDate(report.timestamp)"></div>
+                          </div>
+                        </button>
+                        
+                        <!-- Action Icons - Always Visible on Right -->
+                        <div class="flex items-center gap-1 flex-shrink-0">
+                          <button @click.stop="deleteReport(report.name)" 
+                                  class="w-7 h-7 rounded-md hover:bg-red-50 flex items-center justify-center text-webropol-gray-400 hover:text-red-600 transition-colors" 
+                                  title="Delete">
+                            <i class="fal fa-trash-alt text-sm"></i>
+                          </button>
+                          <button @click.stop="duplicateReport(report.name)" 
+                                  class="w-7 h-7 rounded-md hover:bg-blue-50 flex items-center justify-center text-webropol-gray-400 hover:text-blue-600 transition-colors" 
+                                  title="Duplicate">
+                            <i class="fal fa-copy text-sm"></i>
+                          </button>
+                          <button @click.stop="renameReport(report.name)" 
+                                  class="w-7 h-7 rounded-md hover:bg-green-50 flex items-center justify-center text-webropol-gray-400 hover:text-green-600 transition-colors" 
+                                  title="Rename">
+                            <i class="fal fa-pen text-sm"></i>
+                          </button>
+                          <button @click.stop="toggleReportLock(report.name)" 
+                                  class="w-7 h-7 rounded-md hover:bg-purple-50 flex items-center justify-center text-webropol-gray-400 hover:text-purple-600 transition-colors" 
+                                  title="Lock/Unlock">
+                            <i class="fal text-sm" :class="report.locked ? 'fa-lock' : 'fa-lock-open'"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                    
+                    <!-- Empty State -->
+                    <div x-show="savedReports.length === 0" class="px-3 py-4 text-center text-sm text-webropol-gray-500">
+                      <i class="fal fa-inbox text-2xl mb-2 block"></i>
+                      No saved reports yet
+                    </div>
+                  </div>
+                  
+                  <!-- Save As Button -->
+                  <div class="border-t border-webropol-gray-100 p-2">
+                    <button @click="saveAsModalOpen = true; dropdownOpen = false" 
+                            class="w-full px-3 py-2 text-left hover:bg-webropol-gray-50 transition-colors flex items-center gap-2 rounded-lg text-webropol-primary-600 hover:text-webropol-primary-700 font-medium">
+                      <i class="fal fa-plus-circle"></i>
+                      <span>Save current view as...</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button class="px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
+              
+              <!-- Save Button (only for saved reports) -->
+              <button @click="saveReport()" x-show="isSavedReport && hasUnsavedChanges" x-cloak
+                      class="px-4 py-2 rounded-lg bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white border border-webropol-primary-700 transition-all font-medium shadow-sm">
                 <i class="fal fa-save mr-2"></i>Save
-              </button>
-              <button class="px-3 py-1.5 rounded-full bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 border border-webropol-gray-200">
-                <i class="fal fa-save mr-2"></i>Save as
               </button>
             </div>
             <div class="flex items-center gap-8 text-webropol-gray-700">
@@ -2003,6 +2097,100 @@
     </div>
   </div>
 
+  <!-- Rename Report Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': renameModalOpen }" @click.self="renameModalOpen = false" @keydown.window.escape="renameModalOpen = false" role="dialog" aria-modal="true" aria-labelledby="renameModalTitle">
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title" id="renameModalTitle">
+            <span class="inline-flex w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-blue-600"><i class="fal fa-edit text-lg"></i></span>
+            <span>Rename Report</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="renameModalOpen = false"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">New report name</label>
+            <input 
+              type="text" 
+              x-model="newRenameValue" 
+              @keydown.enter="confirmRename()"
+              class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" 
+              placeholder="Enter new name"
+              autofocus>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div></div>
+        <div class="footer-actions">
+          <button class="btn btn-secondary" @click="renameModalOpen = false">Cancel</button>
+          <button class="btn btn-primary" @click="confirmRename()">
+            <i class="fal fa-check mr-2"></i>
+            Rename
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save As Modal -->
+  <div class="modal-overlay" x-cloak :class="{ 'active': saveAsModalOpen }" @click.self="cancelSaveAs()" @keydown.window.escape="cancelSaveAs()" role="dialog" aria-modal="true" aria-labelledby="saveAsModalTitle">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <div class="modal-title" id="saveAsModalTitle">
+            <span class="inline-flex w-10 h-10 rounded-full bg-webropol-primary-100 items-center justify-center text-webropol-primary-600"><i class="fal fa-save text-lg"></i></span>
+            <span>Save Report As</span>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Close" @click="cancelSaveAs()"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="space-y-4">
+          <p class="text-sm text-webropol-gray-600">Enter a name for your report. This will save all current filters, settings, and customizations.</p>
+          
+          <div>
+            <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Report name <span class="text-red-500">*</span></label>
+            <input 
+              type="text" 
+              x-model="newReportName" 
+              @keydown.enter="saveAsReport()"
+              class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-webropol-primary-500 outline-none" 
+              placeholder="Enter report name"
+              autofocus>
+          </div>
+          
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div class="flex gap-2">
+              <i class="fal fa-info-circle text-blue-600 mt-0.5"></i>
+              <div class="text-sm text-blue-800">
+                <p class="font-medium mb-1">Saved reports include:</p>
+                <ul class="list-disc list-inside space-y-1 text-blue-700">
+                  <li>Current filters and comparisons</li>
+                  <li>Layout and display settings</li>
+                  <li>Custom report configurations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div></div>
+        <div class="footer-actions">
+          <button class="btn btn-secondary" @click="cancelSaveAs()">Cancel</button>
+          <button class="btn btn-primary" @click="saveAsReport()">
+            <i class="fal fa-save mr-2"></i>
+            Save Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Individual Export Format Modals (for Modal Mode) -->
   <!-- PowerPoint Export Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': activeExportModal === 'ppt' }" @click.self="activeExportModal = null" @keydown.window.escape="activeExportModal = null" role="dialog" aria-modal="true">
@@ -3381,6 +3569,17 @@
     // Minimal Alpine state for Export & Share modal
     function surveyEditApp() {
       return {
+        // Report State
+        isSavedReport: false, // true if report has been saved with a name
+        hasUnsavedChanges: false, // true if changes made since last save
+        currentReportName: 'Basic report',
+        saveAsModalOpen: false,
+        newReportName: '',
+        savedReports: [], // Array of saved reports
+        renameModalOpen: false,
+        reportToRename: '',
+        newRenameValue: '',
+        
         exportShareOpen: false,
         exportShareModeSelectOpen: false,
         exportShareMode: 'accordion', // 'accordion' or 'modal'
@@ -3498,6 +3697,226 @@
           console.log('Compare groups option selected:', this.compareGroupsOption);
           // Implement compare groups logic here
           this.closeCompareGroups();
+        },
+        
+        // Initialize and load saved reports
+        init() {
+          this.loadSavedReports();
+        },
+        
+        loadSavedReports() {
+          this.savedReports = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('webropol_saved_report_')) {
+              try {
+                const reportData = JSON.parse(localStorage.getItem(key));
+                this.savedReports.push(reportData);
+              } catch (e) {
+                console.error('Error loading report:', e);
+              }
+            }
+          }
+          // Sort by timestamp, newest first
+          this.savedReports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        },
+        
+        switchToReport(reportName, isSaved) {
+          this.currentReportName = reportName;
+          this.isSavedReport = isSaved;
+          this.hasUnsavedChanges = false;
+          console.log('Switched to report:', reportName);
+          
+          if (isSaved) {
+            // Load report data from localStorage
+            try {
+              const reportData = localStorage.getItem(`webropol_saved_report_${reportName}`);
+              if (reportData) {
+                const report = JSON.parse(reportData);
+                console.log('Loaded report data:', report);
+                // Apply report settings here
+              }
+            } catch (e) {
+              console.error('Error loading report:', e);
+            }
+          } else {
+            // Reset to basic report (clear all filters)
+            console.log('Reset to basic report');
+          }
+        },
+        
+        formatDate(timestamp) {
+          if (!timestamp) return '';
+          const date = new Date(timestamp);
+          return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        },
+        
+        renameReport(reportName) {
+          this.reportToRename = reportName;
+          this.newRenameValue = reportName;
+          this.renameModalOpen = true;
+        },
+        
+        confirmRename() {
+          if (!this.newRenameValue.trim() || this.newRenameValue === this.reportToRename) {
+            this.renameModalOpen = false;
+            return;
+          }
+          
+          try {
+            // Get old report data
+            const oldKey = `webropol_saved_report_${this.reportToRename}`;
+            const reportData = localStorage.getItem(oldKey);
+            
+            if (reportData) {
+              const report = JSON.parse(reportData);
+              report.name = this.newRenameValue;
+              
+              // Save with new name
+              localStorage.setItem(`webropol_saved_report_${this.newRenameValue}`, JSON.stringify(report));
+              
+              // Delete old entry
+              localStorage.removeItem(oldKey);
+              
+              // Update current report name if it's the active one
+              if (this.currentReportName === this.reportToRename) {
+                this.currentReportName = this.newRenameValue;
+              }
+              
+              // Reload reports list
+              this.loadSavedReports();
+              
+              alert(`Report renamed to "${this.newRenameValue}"`);
+            }
+          } catch (e) {
+            console.error('Error renaming report:', e);
+            alert('Failed to rename report');
+          }
+          
+          this.renameModalOpen = false;
+        },
+        
+        duplicateReport(reportName) {
+          try {
+            const reportData = localStorage.getItem(`webropol_saved_report_${reportName}`);
+            if (reportData) {
+              const report = JSON.parse(reportData);
+              const copyName = `${reportName} (Copy)`;
+              
+              report.name = copyName;
+              report.timestamp = new Date().toISOString();
+              
+              localStorage.setItem(`webropol_saved_report_${copyName}`, JSON.stringify(report));
+              this.loadSavedReports();
+              
+              alert(`Report duplicated as "${copyName}"`);
+            }
+          } catch (e) {
+            console.error('Error duplicating report:', e);
+            alert('Failed to duplicate report');
+          }
+        },
+        
+        deleteReport(reportName) {
+          if (!confirm(`Are you sure you want to delete "${reportName}"?`)) {
+            return;
+          }
+          
+          try {
+            localStorage.removeItem(`webropol_saved_report_${reportName}`);
+            
+            // If deleted report is active, switch to basic report
+            if (this.currentReportName === reportName) {
+              this.switchToReport('Basic report', false);
+            }
+            
+            this.loadSavedReports();
+            alert('Report deleted successfully');
+          } catch (e) {
+            console.error('Error deleting report:', e);
+            alert('Failed to delete report');
+          }
+        },
+        
+        toggleReportLock(reportName) {
+          try {
+            const reportData = localStorage.getItem(`webropol_saved_report_${reportName}`);
+            if (reportData) {
+              const report = JSON.parse(reportData);
+              report.locked = !report.locked;
+              
+              localStorage.setItem(`webropol_saved_report_${reportName}`, JSON.stringify(report));
+              this.loadSavedReports();
+              
+              const status = report.locked ? 'locked' : 'unlocked';
+              console.log(`Report "${reportName}" ${status}`);
+            }
+          } catch (e) {
+            console.error('Error toggling report lock:', e);
+            alert('Failed to update report lock status');
+          }
+        },
+        
+        // Save Report Functions
+        saveReport() {
+          if (this.isSavedReport) {
+            // Save current report with existing name
+            console.log('Saving report:', this.currentReportName);
+            try {
+              const reportData = {
+                name: this.currentReportName,
+                timestamp: new Date().toISOString(),
+                // Add other report data here
+              };
+              localStorage.setItem(`webropol_saved_report_${this.currentReportName}`, JSON.stringify(reportData));
+              this.hasUnsavedChanges = false;
+              alert(`Report "${this.currentReportName}" saved successfully!`);
+            } catch (e) {
+              console.error('Error saving report:', e);
+              alert('Failed to save report. Please try again.');
+            }
+          }
+        },
+        
+        saveAsReport() {
+          if (!this.newReportName.trim()) {
+            alert('Please enter a report name');
+            return;
+          }
+          
+          console.log('Saving report as:', this.newReportName);
+          try {
+            const reportData = {
+              name: this.newReportName,
+              timestamp: new Date().toISOString(),
+              // Add other report data here
+            };
+            localStorage.setItem(`webropol_saved_report_${this.newReportName}`, JSON.stringify(reportData));
+            
+            // Update state to saved report
+            this.currentReportName = this.newReportName;
+            this.isSavedReport = true;
+            this.hasUnsavedChanges = false;
+            this.saveAsModalOpen = false;
+            this.newReportName = '';
+            
+            alert(`Report saved as "${this.currentReportName}"!`);
+          } catch (e) {
+            console.error('Error saving report:', e);
+            alert('Failed to save report. Please try again.');
+          }
+        },
+        
+        cancelSaveAs() {
+          this.saveAsModalOpen = false;
+          this.newReportName = '';
+        },
+        
+        markAsEdited() {
+          // Call this whenever user makes changes to the report
+          if (this.isSavedReport) {
+            this.hasUnsavedChanges = true;
+          }
         }
       };
     }
