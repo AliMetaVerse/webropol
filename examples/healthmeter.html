@@ -76,22 +76,22 @@
                     </div>
 
                     <!-- Main Card -->
-                    <div class="bg-white p-12 rounded-2xl shadow-lg border border-webropol-gray-100 transition-all duration-300">
+                    <div class="bg-white p-12 rounded-3xl shadow-xl transition-all duration-300 ring-1 ring-black/5 hover:shadow-2xl">
                         
                         <!-- Header Section -->
-                        <div class="mb-8 border-b border-webropol-gray-100 pb-6">
+                        <div class="mb-10 pl-2">
                             <!-- Edit Mode: Inputs -->
                             <template x-if="mode === 'edit'">
-                                <div class="space-y-3">
-                                    <input type="text" x-model="texts.title" class="w-full text-3xl font-bold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-gray-200 focus:border-webropol-primary-500 focus:outline-none transition-colors bg-transparent placeholder-webropol-gray-300">
-                                    <input type="text" x-model="texts.subtitle" class="w-full text-webropol-gray-500 font-medium text-lg border-b-2 border-transparent hover:border-webropol-gray-200 focus:border-webropol-primary-500 focus:outline-none transition-colors bg-transparent">
+                                <div class="space-y-4">
+                                    <input type="text" x-model="texts.title" class="w-full text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
+                                    <input type="text" x-model="texts.subtitle" class="w-full text-webropol-primary-600 font-semibold text-lg border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent pb-1">
                                 </div>
                             </template>
                             <!-- Respond Mode: Text -->
                             <template x-if="mode === 'respond'">
-                                <div>
-                                    <h1 class="text-3xl font-bold text-webropol-gray-900 tracking-tight" x-text="texts.title"></h1>
-                                    <p class="text-webropol-gray-500 mt-2 font-medium text-lg" x-text="texts.subtitle"></p>
+                                <div class="space-y-2">
+                                    <h1 class="text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
+                                    <p class="text-webropol-primary-600 font-semibold text-lg" x-text="texts.subtitle"></p>
                                 </div>
                             </template>
                         </div>
@@ -105,54 +105,61 @@
                                  :class="orientation === 'vertical' ? 'flex-col' : 'flex-row justify-between items-start gap-12'">
                                 
                                 <!-- Instructions List -->
-                                <div class="prose prose-lg text-webropol-gray-600 max-w-none"
+                                <div class="prose prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
                                      :class="orientation === 'horizontal' ? 'flex-1' : ''">
                                     
                                     <!-- Edit Mode: Single Textarea -->
-                                    <div x-show="mode === 'edit'" class="w-full">
+                                    <div x-show="mode === 'edit'" class="w-full relative group">
                                         <textarea x-model="texts.instructions" 
-                                                  class="w-full min-h-[200px] bg-transparent border border-transparent hover:border-webropol-gray-200 focus:border-webropol-primary-500 rounded p-2 -m-2 resize-none focus:outline-none leading-relaxed"
+                                                  class="w-full min-h-[300px] bg-gray-50/50 border-2 border-transparent hover:border-webropol-primary-200 focus:border-webropol-primary-500 rounded-xl p-6 resize-none focus:outline-none leading-loose text-webropol-gray-700 transition-all duration-200 shadow-inner"
                                                   placeholder="Enter instructions, one per line..."></textarea>
+                                        <div class="absolute top-4 right-4 text-xs font-semibold text-webropol-primary-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-wide">Editable Text</div>
                                     </div>
 
                                     <!-- Respond Mode: List -->
-                                    <ul x-show="mode === 'respond'" class="list-none pl-0 space-y-4">
+                                    <ul x-show="mode === 'respond'" class="list-none pl-2 space-y-5">
                                         <template x-for="(item, index) in texts.instructions ? texts.instructions.split('\n') : []" :key="index">
-                                            <li x-show="item.trim().length > 0" class="flex items-start gap-3 group">
-                                                <div class="w-1.5 h-1.5 rounded-full bg-webropol-primary-500 mt-2.5 flex-shrink-0 group-hover:bg-webropol-primary-400 transition-colors"></div>
-                                                <div x-html="item"></div>
+                                            <li x-show="item.trim().length > 0" class="flex items-start gap-4 group">
+                                                <div class="w-2 h-2 rounded-full bg-webropol-primary-400 mt-2.5 flex-shrink-0 group-hover:scale-125 group-hover:bg-webropol-primary-500 transition-all duration-300 shadow-sm ring-2 ring-transparent group-hover:ring-webropol-primary-100"></div>
+                                                <div x-html="item" class="text-webropol-gray-700 leading-relaxed font-medium transition-colors group-hover:text-webropol-gray-900"></div>
                                             </li>
                                         </template>
                                     </ul>
                                 </div>
 
                                 <!-- "Your Health" Black Box Display -->
-                                <div class="bg-black text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 flex-shrink-0"
-                                     :class="orientation === 'vertical' ? 'mt-12 w-56 h-72' : 'mt-0 w-64 h-48 py-8'">
+                                <div class="bg-black text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 flex-shrink-0 relative overflow-hidden group rounded-sm"
+                                     :class="orientation === 'vertical' ? 'mt-12 w-56 h-72' : 'mt-0 w-64 h-56 py-8'">
                                     
+                                    <!-- Subtle gradient overlay for depth without losing pure black feel -->
+                                    <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+
                                     <template x-if="mode === 'edit'">
-                                        <div class="flex flex-col items-center text-center">
-                                            <input x-model="texts.boxLabel1" class="bg-transparent text-center text-white text-sm font-bold tracking-[0.2em] mb-1 w-32 border-b border-transparent hover:border-white/20 focus:outline-none">
-                                            <input x-model="texts.boxLabel2" class="bg-transparent text-center text-white text-sm font-bold tracking-[0.2em] mb-2 w-32 border-b border-transparent hover:border-white/20 focus:outline-none">
-                                            <input x-model="texts.boxLabel3" class="bg-transparent text-center text-white text-sm font-bold tracking-[0.2em] mb-4 w-32 border-b border-transparent hover:border-white/20 focus:outline-none">
+                                        <div class="flex flex-col items-center text-center relative z-10">
+                                            <input x-model="texts.boxLabel1" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-2 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
+                                            <input x-model="texts.boxLabel2" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-2 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
+                                            <input x-model="texts.boxLabel3" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-6 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
                                         </div>
                                     </template>
                                     <template x-if="mode === 'respond'">
-                                        <div class="flex flex-col items-center text-center">
-                                            <span class="text-sm font-bold tracking-[0.2em] mb-2" x-text="texts.boxLabel1"></span>
-                                            <span class="text-sm font-bold tracking-[0.2em] mb-2" x-text="texts.boxLabel2"></span>
-                                            <span class="text-sm font-bold tracking-[0.2em]" :class="orientation === 'vertical' ? 'mb-10' : 'mb-4'" x-text="texts.boxLabel3"></span>
+                                        <div class="flex flex-col items-center text-center relative z-10 transition-transform duration-300 group-hover:-translate-y-1">
+                                            <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel1"></span>
+                                            <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel2"></span>
+                                            <span class="text-xs font-bold tracking-[0.3em] text-white/90 uppercase" :class="orientation === 'vertical' ? 'mb-12' : 'mb-6'" x-text="texts.boxLabel3"></span>
                                         </div>
                                     </template>
 
-                                    <input type="number" 
-                                           x-model="value"
-                                           @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
-                                           class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-colors p-0 shadow-none ring-0 appearance-none"
-                                           :class="[
-                                                orientation === 'vertical' ? 'text-7xl' : 'text-6xl',
-                                                mode === 'respond' ? 'hover:border-white/30 focus:border-webropol-primary-500 cursor-text' : 'pointer-events-none'
-                                           ]">
+                                    <!-- Number Input / Display -->
+                                    <div class="relative z-10 w-full px-4">
+                                        <input type="number" 
+                                               x-model="value"
+                                               @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
+                                               class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter"
+                                               :class="[
+                                                    orientation === 'vertical' ? 'text-7xl' : 'text-7xl',
+                                                    mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none'
+                                               ]">
+                                    </div>
                                 </div>
                             </div>
 
@@ -213,7 +220,7 @@
                                                     <span x-text="Math.round(value)"></span>
                                                     <div class="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[14px] border-l-[#5c7ae0]"></div>
                                                 </div>
-                                                <div class="absolute right-[4px] top-1/2 -translate-y-1/2 w-6 h-6 bg-[#ee4036] rounded-full shadow-md z-30 ring-2 ring-white scale-125"></div>
+                                                <div class="absolute right-[4px] top-1/2 -translate-y-1/2 w-6 h-6 bg-[#ee4036] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.3)] z-30 ring-2 ring-white scale-125 transition-transform hover:scale-150"></div>
                                             </div>
                                         </div>
                                         
