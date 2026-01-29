@@ -32,14 +32,16 @@
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
     <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
 </head>
-<body x-data="moduleApp()">
+<body x-data="moduleApp()" @toggle-fullscreen.window="fullscreen = $event.detail">
     <div class="flex h-screen bg-webropol-gray-50">
-        <webropol-sidebar active="examples" base="../"></webropol-sidebar>
+        <webropol-sidebar active="examples" base="../" x-show="!fullscreen" class="transition-all duration-300"></webropol-sidebar>
         
         <div class="flex-1 flex flex-col overflow-hidden">
-            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector 
+                             x-show="!fullscreen" class="transition-all duration-300"></webropol-header>
             
-            <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 transition-all duration-300"
+                 x-show="!fullscreen">
                 <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
             </div>
             
@@ -55,12 +57,12 @@
                     <div class="flex justify-between items-center mb-6">
                         <!-- Mode Tabs -->
                         <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex">
-                            <button @click="mode = 'edit'" 
+                            <button @click="mode = 'edit'; $dispatch('toggle-fullscreen', false)" 
                                     :class="mode === 'edit' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
                                 <i class="fa-light fa-pen-to-square mr-2"></i>Edit
                             </button>
-                            <button @click="mode = 'respond'" 
+                            <button @click="mode = 'respond'; $dispatch('toggle-fullscreen', true)" 
                                     :class="mode === 'respond' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
                                 <i class="fa-light fa-eye mr-2"></i>Respond
@@ -380,6 +382,7 @@
     <script>
         function moduleApp() {
             return {
+                fullscreen: false,
                 init() { console.log('App initialized'); }
             }
         }
