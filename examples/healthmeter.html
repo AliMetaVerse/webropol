@@ -105,18 +105,20 @@
                                 <!-- Instructions List -->
                                 <div class="prose prose-lg text-webropol-gray-600 max-w-none"
                                      :class="orientation === 'horizontal' ? 'flex-1' : ''">
-                                    <ul class="list-none pl-0 space-y-4">
-                                        <template x-for="(item, index) in texts.instructions" :key="index">
-                                            <li class="flex items-start gap-3 group">
+                                    
+                                    <!-- Edit Mode: Single Textarea -->
+                                    <div x-show="mode === 'edit'" class="w-full">
+                                        <textarea x-model="texts.instructions" 
+                                                  class="w-full min-h-[200px] bg-transparent border border-transparent hover:border-webropol-gray-200 focus:border-webropol-primary-500 rounded p-2 -m-2 resize-none focus:outline-none leading-relaxed"
+                                                  placeholder="Enter instructions, one per line..."></textarea>
+                                    </div>
+
+                                    <!-- Respond Mode: List -->
+                                    <ul x-show="mode === 'respond'" class="list-none pl-0 space-y-4">
+                                        <template x-for="(item, index) in texts.instructions ? texts.instructions.split('\n') : []" :key="index">
+                                            <li x-show="item.trim().length > 0" class="flex items-start gap-3 group">
                                                 <div class="w-1.5 h-1.5 rounded-full bg-webropol-primary-500 mt-2.5 flex-shrink-0 group-hover:bg-webropol-primary-400 transition-colors"></div>
-                                                
-                                                <!-- Edit Mode Item -->
-                                                <div x-show="mode === 'edit'" class="w-full">
-                                                    <textarea x-model="texts.instructions[index]" rows="2" class="w-full bg-transparent border border-transparent hover:border-webropol-gray-200 focus:border-webropol-primary-500 rounded p-1 -m-1 resize-none focus:outline-none"></textarea>
-                                                </div>
-                                                
-                                                <!-- Respond Mode Item -->
-                                                <div x-show="mode === 'respond'" x-html="item"></div> <!-- Using HTML to support <strong> tags inside strings if needed, though simple text is safer -->
+                                                <div x-html="item"></div>
                                             </li>
                                         </template>
                                     </ul>
@@ -383,13 +385,11 @@
                 texts: {
                     title: 'Health State Today',
                     subtitle: 'EQ-5D Visual Analogue Scale',
-                    instructions: [
-                        'We would like to know how good or bad your health is TODAY.',
-                        'You will see a scale numbered from 0 to 100.',
-                        '100 means the best health you can imagine.',
-                        '0 means the worst health you can imagine.',
-                        'Please indicate on the scale how your health is TODAY.'
-                    ],
+                    instructions: `We would like to know how good or bad your health is TODAY.
+You will see a scale numbered from 0 to 100.
+100 means the best health you can imagine.
+0 means the worst health you can imagine.
+Please indicate on the scale how your health is TODAY.`,
                     boxLabel1: 'YOUR',
                     boxLabel2: 'HEALTH',
                     boxLabel3: 'TODAY',
