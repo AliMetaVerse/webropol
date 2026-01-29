@@ -45,7 +45,7 @@
                 <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
             </div>
             
-            <main class="flex-1 overflow-y-auto px-6 py-12" role="main">
+            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12" role="main">
                 
                 <!-- Use 'x-cloak' to avoid flicker but we removed it per instructions unless styled. 
                      We will manage state via Alpine. -->
@@ -54,7 +54,7 @@
                 <div class="max-w-6xl mx-auto" x-data="healthSlider()">
 
                     <!-- Top Bar: Mode Switcher & Settings -->
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <!-- Mode Tabs -->
                         <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex">
                             <button @click="mode = 'edit'; $dispatch('toggle-fullscreen', false)" 
@@ -76,36 +76,36 @@
                     </div>
 
                     <!-- Main Card -->
-                    <div class="bg-white p-12 rounded-3xl shadow-xl transition-all duration-300 ring-1 ring-black/5 hover:shadow-2xl">
+                    <div class="bg-white p-6 md:p-12 rounded-3xl shadow-xl transition-all duration-300 ring-1 ring-black/5 hover:shadow-2xl">
                         
                         <!-- Header Section -->
                         <div class="mb-10 pl-2">
                             <!-- Edit Mode: Inputs -->
                             <template x-if="mode === 'edit'">
                                 <div class="space-y-4">
-                                    <input type="text" x-model="texts.title" class="w-full text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
-                                    <input type="text" x-model="texts.subtitle" class="w-full text-webropol-primary-600 font-semibold text-lg border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent pb-1">
+                                    <input type="text" x-model="texts.title" class="w-full text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
+                                    <input type="text" x-model="texts.subtitle" class="w-full text-webropol-primary-600 font-semibold text-base md:text-lg border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent pb-1">
                                 </div>
                             </template>
                             <!-- Respond Mode: Text -->
                             <template x-if="mode === 'respond'">
                                 <div class="space-y-2">
-                                    <h1 class="text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
-                                    <p class="text-webropol-primary-600 font-semibold text-lg" x-text="texts.subtitle"></p>
+                                    <h1 class="text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
+                                    <p class="text-webropol-primary-600 font-semibold text-base md:text-lg" x-text="texts.subtitle"></p>
                                 </div>
                             </template>
                         </div>
 
                         <!-- Content Area (Flex determines layout) -->
-                        <div class="flex gap-16 transition-all duration-500"
+                        <div class="flex gap-8 md:gap-16 transition-all duration-500"
                              :class="orientation === 'vertical' ? 'flex-col md:flex-row' : 'flex-col'">
                             
                             <!-- Instructions & Display Box -->
                             <div class="flex-1 pt-4 flex transition-all duration-500"
-                                 :class="orientation === 'vertical' ? 'flex-col' : 'flex-row justify-between items-start gap-12'">
+                                 :class="orientation === 'vertical' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
                                 
                                 <!-- Instructions List -->
-                                <div class="prose prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
+                                <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
                                      :class="orientation === 'horizontal' ? 'flex-1' : ''">
                                     
                                     <!-- Edit Mode: Single Textarea -->
@@ -129,7 +129,7 @@
 
                                 <!-- "Your Health" Black Box Display -->
                                 <div class="bg-black text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 flex-shrink-0 relative overflow-hidden group rounded-sm"
-                                     :class="orientation === 'vertical' ? 'mt-12 w-56 h-72' : 'mt-0 w-64 h-56 py-8'">
+                                     :class="orientation === 'vertical' ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 h-72 mx-auto md:mx-0' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 h-56 py-8 mx-auto md:mx-0'">
                                     
                                     <!-- Subtle gradient overlay for depth without losing pure black feel -->
                                     <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
@@ -156,7 +156,7 @@
                                                @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
                                                class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter"
                                                :class="[
-                                                    orientation === 'vertical' ? 'text-7xl' : 'text-7xl',
+                                                    orientation === 'vertical' ? 'text-5xl md:text-7xl' : 'text-5xl md:text-7xl',
                                                     mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none'
                                                ]">
                                     </div>
@@ -165,7 +165,7 @@
 
                             <!-- Scale Section -->
                             <div class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
-                                 :class="orientation === 'vertical' ? 'w-80 pt-2' : 'w-full mt-12'">
+                                 :class="orientation === 'vertical' ? 'w-full md:w-80 pt-2' : 'w-full mt-8 md:mt-12'">
                                 
                                 <!-- Vertical Layout -->
                                 <template x-if="orientation === 'vertical'">
@@ -194,7 +194,7 @@
                                         </div>
                                         
                                         <!-- Vertical Track -->
-                                        <div class="relative h-[600px] w-full" 
+                                        <div class="relative h-[400px] sm:h-[600px] w-full" 
                                              @mousedown="startDrag"
                                              @touchstart.prevent="startDrag"
                                              x-ref="trackVertical">
@@ -251,11 +251,11 @@
 
                                 <!-- Horizontal Layout -->
                                 <template x-if="orientation === 'horizontal'">
-                                    <div class="w-full pt-10 px-16 relative">
+                                    <div class="w-full pt-10 px-4 md:px-16 relative">
                                         <!-- Horizontal Label Row for Icons -->
                                         <div class="flex justify-between items-end mb-4 relative z-0">
                                             <!-- Worst Label (Left) -->
-                                            <div class="flex flex-col items-center gap-2 -ml-8">
+                                            <div class="flex flex-col items-center gap-2 ml-0 md:-ml-8">
                                                 <div class="w-12 h-12 rounded-full bg-webropol-gray-50 text-webropol-gray-900 flex items-center justify-center border border-webropol-gray-200 shadow-sm">
                                                     <i class="fa-regular fa-face-frown text-2xl"></i>
                                                 </div>
@@ -267,7 +267,7 @@
                                             </div>
                                             
                                             <!-- Best Label (Right) -->
-                                            <div class="flex flex-col items-center gap-2 -mr-8">
+                                            <div class="flex flex-col items-center gap-2 mr-0 md:-mr-8">
                                                 <div class="w-12 h-12 rounded-full bg-webropol-primary-50 text-webropol-primary-700 flex items-center justify-center border border-webropol-primary-100 shadow-sm">
                                                     <i class="fa-regular fa-face-smile text-2xl"></i>
                                                 </div>
