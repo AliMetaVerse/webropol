@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Meter Example</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Tailwind config with Webropol tokens -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': { 50: '#f0fdff', 500: '#06b6d4', 700: '#0e7490', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 500: '#64748b', 900: '#0f172a' }
+                    },
+                    fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Design system components -->
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+</head>
+<body x-data="moduleApp()">
+    <div class="flex h-screen bg-webropol-gray-50">
+        <webropol-sidebar active="examples" base="../"></webropol-sidebar>
+        
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+            
+            <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
+            </div>
+            
+            <main class="flex-1 overflow-y-auto px-6 py-12" role="main">
+                
+                <!-- Health Meter Component -->
+                <div class="max-w-5xl mx-auto bg-white p-12 rounded-xl shadow-sm border border-gray-100" x-data="healthSlider()">
+                    <div class="flex flex-col md:flex-row gap-16">
+                        
+                        <!-- Left Column: Instructions & Display -->
+                        <div class="flex-1 pt-4">
+                            <ul class="space-y-6 text-webropol-gray-900 text-lg leading-relaxed list-disc pl-5 marker:text-webropol-gray-900">
+                                <li>We would like to know how good or bad your health is TODAY.</li>
+                                <li>You will see a scale numbered from 0 to 100.</li>
+                                <li>100 means the best health you can imagine.</li>
+                                <li>0 means the worst health you can imagine.</li>
+                                <li>Please indicate on the scale how your health is TODAY.</li>
+                            </ul>
+
+                            <div class="mt-12 bg-black text-white w-48 h-56 flex flex-col items-center justify-center shadow-lg">
+                                <span class="text-xl tracking-widest mb-1">YOUR</span>
+                                <span class="text-xl tracking-widest mb-1">HEALTH</span>
+                                <span class="text-xl tracking-widest mb-6">TODAY</span>
+                                <span class="text-5xl font-bold" x-text="Math.round(value)"></span>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: The Scale -->
+                        <div class="flex-shrink-0 w-64 pt-2 select-none">
+                            <div class="font-bold text-black text-right mb-2 pr-8 text-lg leading-tight w-40 ml-auto">The best health you can imagine</div>
+                            
+                            <!-- Scale Container -->
+                            <div class="relative h-[600px] w-full" 
+                                 @mousedown="startDrag"
+                                 @touchstart.prevent="startDrag"
+                                 x-ref="track">
+                                
+                                <!-- Vertical Line -->
+                                <!-- We don't need a main vertical line, the ticks create the visual. Or maybe a thin guide line? 
+                                     The image shows mostly ticks. Let's create the ticks. -->
+                                
+                                <!-- Ticks and Numbers -->
+                                <template x-for="i in 101">
+                                    <div class="absolute right-0 w-full flex items-center justify-end pointer-events-none"
+                                         :style="`top: ${100 - (i-1)}%; transform: translateY(50%);`">
+                                        
+                                        <!-- Number (every 10) -->
+                                        <span x-show="(i-1) % 10 === 0" 
+                                              class="mr-4 text-webropol-gray-500 font-medium text-lg w-8 text-right"
+                                              x-text="i-1"></span>
+                                        
+                                        <!-- Tick Mark -->
+                                        <div class="h-px bg-gray-400"
+                                             :class="(i-1) % 10 === 0 ? 'w-10 bg-gray-500' : 'w-5'"></div>
+                                    </div>
+                                </template>
+
+                                <!-- Interactive Area Overlay -->
+                                <div class="absolute inset-y-0 right-0 w-24 cursor-pointer z-10"
+                                     @mousemove="onDrag"
+                                     @touchmove.prevent="onDrag"
+                                     @mouseup.window="stopDrag"
+                                     @touchend.window="stopDrag"
+                                     @click="updateValue"></div>
+
+                                <!-- Indicators Container (Moves with value) -->
+                                <div class="absolute w-full pointer-events-none transition-all duration-75 ease-out"
+                                     :style="`top: ${100 - value}%; transform: translateY(-50%);`">
+                                     
+                                    <!-- Dashed Line -->
+                                    <div class="absolute right-6 top-1/2 -translate-y-1/2 w-32 border-t font-semibold border-black border-dashed opacity-30"></div>
+
+                                    <!-- Value Label (Blue Text) next to pointer -->
+                                    <div class="absolute right-[110px] top-1/2 -translate-y-1/2 text-3xl text-[#5c7ae0] font-normal pr-2 flex items-center gap-2">
+                                        <span x-text="Math.round(value)"></span>
+                                        <!-- Blue Triangle Pointer -->
+                                        <div class="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[16px] border-l-[#5c7ae0]"></div>
+                                    </div>
+
+                                    <!-- Red Circle Handle on the scale -->
+                                    <div class="absolute right-[36px] top-1/2 -translate-y-1/2 w-5 h-5 bg-red-500 rounded-full shadow-sm"></div>
+
+                                </div>
+                            </div>
+                            
+                            <div class="font-bold text-black text-right mt-2 pr-8 text-lg leading-tight w-40 ml-auto">The worst health you can imagine</div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function moduleApp() {
+            return {
+                init() { console.log('App initialized'); }
+            }
+        }
+
+        function healthSlider() {
+            return {
+                value: 50,
+                dragging: false,
+                
+                updateFromEvent(e) {
+                    const track = this.$refs.track;
+                    const rect = track.getBoundingClientRect();
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    
+                    // Calculate percentage from bottom (100 is top, 0 is bottom)
+                    // Top of rect is 100%, Bottom of rect is 0%
+                    // Position relative to top:
+                    let relativeY = clientY - rect.top;
+                    
+                    // Constrain
+                    if (relativeY < 0) relativeY = 0;
+                    if (relativeY > rect.height) relativeY = rect.height;
+                    
+                    // Convert to 0-100 scale
+                    // 0px (top) -> 100
+                    // height (bottom) -> 0
+                    const percent = 100 - (relativeY / rect.height * 100);
+                    this.value = Math.round(percent); // Snap to integer? Image shows integer.
+                },
+                
+                startDrag(e) {
+                    this.dragging = true;
+                    this.updateFromEvent(e);
+                },
+                
+                onDrag(e) {
+                    if (!this.dragging) return;
+                    this.updateFromEvent(e);
+                },
+                
+                stopDrag() {
+                    this.dragging = false;
+                },
+                
+                updateValue(e) {
+                    this.updateFromEvent(e);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
