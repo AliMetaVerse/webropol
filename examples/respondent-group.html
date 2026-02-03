@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipient Groups - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Tailwind config with Webropol tokens -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': { 50: '#f0fdff', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 500: '#64748b', 600: '#475569', 900: '#0f172a' }
+                    },
+                    fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Design system components -->
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <script src="../design-system/components/inputs/Input.js" type="module"></script>
+    <script src="../design-system/components/buttons/Button.js" type="module"></script>
+    <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+    <script src="../design-system/components/interactive/Tabs.js" type="module"></script>
+    <script src="../design-system/components/feedback/Badge.js" type="module"></script>
+</head>
+<body x-data="recipientGroupApp()" class="bg-gray-50 text-slate-800">
+    <div class="flex h-screen">
+        <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
+        
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+            
+            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 border-b border-gray-200">
+                <webropol-breadcrumbs trail='[
+                    {"label":"Home","url":"../index.html"},
+                    {"label":"Surveys","url":"#"},
+                    {"label":"Recipient Groups","url":"#"}
+                ]'></webropol-breadcrumbs>
+            </div>
+
+            <main class="flex-1 overflow-y-auto p-4 md:p-6" role="main">
+                <div class="max-w-7xl mx-auto space-y-4">
+                    
+                    <!-- Accordion Section 1: Recipient Groups -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ expanded: true }">
+                        <!-- Header -->
+                        <div class="bg-webropol-primary-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center cursor-pointer" @click="expanded = !expanded">
+                            <h2 class="text-webropol-gray-900 font-semibold">Recipient Groups (<span x-text="groups.length"></span>)</h2>
+                            <i class="fal fa-chevron-down transform transition-transform duration-200 text-webropol-gray-500" :class="{ 'rotate-180': expanded }"></i>
+                        </div>
+
+                        <!-- Content -->
+                        <div x-show="expanded" class="p-4 space-y-6">
+                            
+                            <!-- Top Actions -->
+                            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-gray-100 pb-4">
+                                <div class="flex items-center gap-4 w-full sm:w-auto">
+                                    <webropol-button variant="primary" icon="fal fa-plus" label="Recipient Groups" class="w-full sm:w-auto"></webropol-button>
+                                    <div class="text-sm text-slate-600">
+                                        Survey recipients: <span class="font-semibold">6 recipients</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Tabs -->
+                            <div class="border-b border-gray-200">
+                                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                                    <button class="border-webropol-primary-500 text-webropol-primary-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                                        Recipient groups (2)
+                                    </button>
+                                    <button class="border-transparent text-slate-500 hover:text-slate-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                                        All recipients (6)
+                                    </button>
+                                    <button class="border-transparent text-slate-500 hover:text-slate-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                                        Demographic information
+                                    </button>
+                                </nav>
+                            </div>
+
+                            <!-- Global Sort & Search -->
+                            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50 p-3 rounded-lg">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="text-slate-600">Sort by:</span>
+                                    <select class="form-select text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 bg-white shadow-sm">
+                                        <option>Modification time</option>
+                                        <option>Name</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <input type="text" placeholder="Search..." class="flex-1 form-input text-sm border-gray-300 rounded-md focus:border-webropol-primary-500 focus:ring-webropol-primary-500 shadow-sm sm:w-64">
+                                    <webropol-button variant="secondary" label="Search" size="small"></webropol-button>
+                                    <button class="text-green-600 hover:text-green-700 p-2"><i class="fal fa-file-excel text-lg"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Group List (Loop) -->
+                            <div class="space-y-8">
+                                <template x-for="group in groups" :key="group.id">
+                                    <div class="border border-gray-200 rounded-lg p-4 relative group hover:border-webropol-primary-200 transition-colors">
+                                        <!-- Group Header -->
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <h3 class="text-lg font-bold text-slate-800" x-text="group.name"></h3>
+                                            <button class="text-webropol-primary-500 hover:text-webropol-primary-700 transition-colors"><i class="fas fa-pencil-alt"></i></button>
+                                            <button class="text-webropol-primary-500 hover:text-webropol-primary-700 transition-colors"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+
+                                        <!-- Group Leaders Table -->
+                                        <div class="bg-blue-50/50 rounded-md border border-blue-100 mb-6 max-w-2xl">
+                                            <table class="w-full text-sm text-left">
+                                                <thead class="text-xs text-slate-500 uppercase border-b border-blue-100 bg-blue-50/50">
+                                                    <tr>
+                                                        <th class="px-4 py-2 font-semibold">Group leaders</th>
+                                                        <th class="px-4 py-2 font-semibold w-24 text-center">Sent</th>
+                                                        <th class="px-4 py-2 font-semibold w-24 text-center">Responses</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="bg-white">
+                                                        <td class="px-4 py-2 text-slate-700" x-text="group.leader"></td>
+                                                        <td class="px-4 py-2 text-center text-slate-600">0</td>
+                                                        <td class="px-4 py-2 text-center text-slate-600">0</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Group Action Bar -->
+                                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
+                                            <!-- Custom Orange Delete Button per reference image -->
+                                            <button class="bg-[#d68b64] hover:bg-[#c07a55] text-white text-sm px-4 py-1.5 rounded-sm shadow-sm transition-colors font-medium">Delete</button>
+                                            
+                                            <div class="flex flex-wrap items-center gap-2 text-sm bg-gray-50 p-2 rounded-md w-full lg:w-auto">
+                                                <span class="text-slate-600 whitespace-nowrap">Search By:</span>
+                                                <select class="border-gray-300 rounded text-xs py-1.5 focus:border-webropol-primary-500"><option>First name</option></select>
+                                                <select class="border-gray-300 rounded text-xs py-1.5 focus:border-webropol-primary-500"><option>Contains</option></select>
+                                                <input type="text" class="border-gray-300 rounded text-xs py-1.5 w-32 focus:border-webropol-primary-500">
+                                                <webropol-button variant="primary" label="Search" size="small"></webropol-button>
+                                                <webropol-button variant="secondary" label="Show all" size="small"></webropol-button>
+                                                <button class="text-green-600 hover:text-green-700"><i class="fal fa-file-excel"></i></button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Members Table -->
+                                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                                            <table class="w-full text-sm text-left whitespace-nowrap">
+                                                <thead class="bg-gray-50 text-xs uppercase text-slate-500 font-semibold">
+                                                    <tr>
+                                                        <th class="px-4 py-3 w-4"><i class="fal fa-edit"></i></th>
+                                                        <th class="px-4 py-3 w-4"><input type="checkbox" class="rounded border-gray-300"></th>
+                                                        <th class="px-4 py-3 cursor-pointer hover:text-webropol-primary-600">Email <i class="fas fa-sort"></i></th>
+                                                        <th class="px-4 py-3 text-center cursor-pointer hover:text-webropol-primary-600">Sent <i class="fas fa-sort"></i></th>
+                                                        <th class="px-4 py-3 text-center cursor-pointer hover:text-webropol-primary-600">Responses <i class="fas fa-sort"></i></th>
+                                                        <th class="px-4 py-3 text-center cursor-pointer hover:text-webropol-primary-600">Updated <i class="fas fa-sort"></i></th>
+                                                        <th class="px-4 py-3 text-center cursor-pointer hover:text-webropol-primary-600">Valid <i class="fas fa-sort"></i></th>
+                                                        <th class="px-4 py-3 cursor-pointer hover:text-webropol-primary-600">Recipient group <i class="fas fa-sort"></i></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-100">
+                                                    <template x-for="member in group.members" :key="member.email">
+                                                        <tr class="hover:bg-gray-50 transition-colors">
+                                                            <td class="px-4 py-2 text-webropol-primary-500 cursor-pointer"><i class="fal fa-pencil"></i></td>
+                                                            <td class="px-4 py-2"><input type="checkbox" class="rounded border-gray-300 text-webropol-primary-600"></td>
+                                                            <td class="px-4 py-2 text-slate-700 font-medium" x-text="member.email"></td>
+                                                            <td class="px-4 py-2 text-center" x-text="member.sent"></td>
+                                                            <td class="px-4 py-2 text-center" x-text="member.responses"></td>
+                                                            <td class="px-4 py-2 text-center text-green-500"><i class="fal fa-check"></i></td>
+                                                            <td class="px-4 py-2 text-center">
+                                                                <span class="text-red-500" title="Valid"><i class="fal fa-envelope-open-text"></i></span>
+                                                            </td>
+                                                            <td class="px-4 py-2 text-slate-500 text-xs">
+                                                                <span class="flex items-center gap-2">
+                                                                    <i class="fal fa-users text-red-400"></i>
+                                                                    <span x-text="group.name"></span>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- Pagination -->
+                                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-xs text-slate-500">
+                                            <div class="flex gap-2">
+                                                <button disabled class="hover:text-webropol-primary-600 disabled:opacity-50"><i class="fas fa-step-backward"></i></button>
+                                                <button disabled class="hover:text-webropol-primary-600 disabled:opacity-50"><i class="fas fa-caret-left"></i> Previous</button>
+                                                <span>Page 1 / 2</span>
+                                                <button class="hover:text-webropol-primary-600">Next <i class="fas fa-caret-right"></i></button>
+                                                <button class="hover:text-webropol-primary-600"><i class="fas fa-step-forward"></i></button>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span>Show on page</span>
+                                                <div class="flex gap-1">
+                                                    <button class="font-bold text-webropol-primary-600">5</button>
+                                                    <button class="hover:text-webropol-primary-600">20</button>
+                                                    <button class="hover:text-webropol-primary-600">50</button>
+                                                    <button class="hover:text-webropol-primary-600">100</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Section 2: Send Email -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" x-data="{ expanded: false }">
+                        <div class="bg-webropol-primary-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center cursor-pointer" @click="expanded = !expanded">
+                            <h2 class="text-webropol-gray-900 font-semibold">Send email survey / Add email survey schedules</h2>
+                            <i class="fal fa-chevron-down transform transition-transform duration-200 text-webropol-gray-500" :class="{ 'rotate-180': expanded }"></i>
+                        </div>
+                        <div x-show="expanded" class="p-6">
+                            <p class="text-slate-500 text-center py-4">Scheduler settings would appear here.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <webropol-floating-button position="bottom-right" theme="primary" items='[
+        {"label": "Add Recipient Group", "icon": "fal fa-users-medical", "action": "add"}
+    ]'></webropol-floating-button>
+
+    <script>
+        function recipientGroupApp() {
+            return {
+                groups: [
+                    {
+                        id: 1,
+                        name: 'Groupo recipiento numero dos',
+                        leader: 'henrik.romar@webropol.com',
+                        members: [
+                            { email: 'henrik+1000@webropol.com', sent: 0, responses: 0 },
+                            { email: 'henrik+2000@webropol.com', sent: 0, responses: 0 }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: 'Group of recipients numero Uno',
+                        leader: 'henrik+1@webropol.com',
+                        members: [
+                            { email: 'henrik+2@webropol.com', sent: 1, responses: 0 },
+                            { email: 'henrik+4@webropol.com', sent: 1, responses: 1 },
+                            { email: 'henrik+3@webropol.com', sent: 0, responses: 0 }
+                        ]
+                    }
+                ],
+                
+                init() {
+                    console.log('Recipient Groups Initialized');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
