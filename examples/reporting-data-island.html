@@ -267,15 +267,14 @@
 
                             <!-- Chart Visual -->
                             <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
-                                <div class="w-16 sm:w-24 bg-red-400 rounded-t-lg h-[25%] relative group cursor-pointer transition-all hover:opacity-90">
-                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">25%</div>
-                                </div>
-                                <div class="w-16 sm:w-24 bg-yellow-400 rounded-t-lg h-[40%] relative group cursor-pointer transition-all hover:opacity-90">
-                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">40%</div>
-                                </div>
-                                <div class="w-16 sm:w-24 bg-green-500 rounded-t-lg h-[35%] relative group cursor-pointer transition-all hover:opacity-90">
-                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">35%</div>
-                                </div>
+                                <template x-for="(bar, index) in w1ChartData" :key="index">
+                                    <div class="w-16 sm:w-24 rounded-t-lg relative group cursor-pointer transition-all hover:opacity-90"
+                                         :style="`height: ${bar.percent}%; background-color: ${bar.color}`"
+                                         :class="(selectionType === 'element' && selectedElementIndex === index) ? 'ring-2 ring-offset-2 ring-blue-500 z-10' : ''"
+                                         @click.stop="select('element', 'w1', $el, index)">
+                                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700" x-text="bar.percent + '%'"></div>
+                                    </div>
+                                </template>
                             </div>
                             <!-- Legend -->
                             <div class="flex justify-center gap-6 mt-4">
@@ -549,6 +548,30 @@
                         </button>
                     </div>
                 </template>
+
+                <!-- Element Specific Tools -->
+                <template x-if="selectionType === 'element'">
+                    <div class="flex items-center gap-1">
+                        <!-- Color Picker -->
+                        <div class="relative" x-data="{ showColors: false }">
+                            <button @click="showColors = !showColors" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Change Color">
+                                <i class="fal fa-palette"></i>
+                            </button>
+                            <div x-show="showColors" @click.away="showColors = false" class="absolute bottom-full left-0 mb-2 p-2 bg-white rounded-lg shadow-xl border border-gray-100 flex gap-1 z-50">
+                                <button @click="changeElementColor('#f87171'); showColors = false" class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform"></button>
+                                <button @click="changeElementColor('#facc15'); showColors = false" class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform"></button>
+                                <button @click="changeElementColor('#22c55e'); showColors = false" class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform"></button>
+                                <button @click="changeElementColor('#3b82f6'); showColors = false" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform"></button>
+                                <button @click="changeElementColor('#a855f7'); showColors = false" class="w-6 h-6 rounded-full bg-purple-500 hover:scale-110 transition-transform"></button>
+                            </div>
+                        </div>
+
+                        <!-- Filter -->
+                        <button @click="filterByColor()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Filter by this color">
+                            <i class="fal fa-filter"></i>
+                        </button>
+                    </div>
+                </template>
                 
                 <!-- Shared Delete -->
                  <div class="h-8 w-px bg-gray-200 mx-1"></div>
@@ -566,11 +589,19 @@
     <script>
         function contextApp() {
             return {
-                selectionType: null, // 'chart', 'table', 'widget'
+                selectionType: null, // 'chart', 'table', 'widget', 'element'
                 selectedWidgetId: null,
+                selectedElementIndex: null,
 
-                select(type, id, el) {
-                    if (this.selectionType === type && this.selectedWidgetId === id) {
+                // Data for W1 Chart
+                w1ChartData: [
+                    { label: 'Dissatisfied', percent: 25, color: '#f87171' }, // red-400
+                    { label: 'Neutral', percent: 40, color: '#facc15' },      // yellow-400
+                    { label: 'Satisfied', percent: 35, color: '#22c55e' }     // green-500
+                ],
+
+                select(type, id, el, index = null) {
+                    if (this.selectionType === type && this.selectedWidgetId === id && this.selectedElementIndex === index) {
                         return; // Already selected
                     }
                     
@@ -584,11 +615,27 @@
 
                     this.selectionType = type;
                     this.selectedWidgetId = id;
+                    this.selectedElementIndex = index;
                 },
 
                 deselect() {
                     this.selectionType = null;
                     this.selectedWidgetId = null;
+                    this.selectedElementIndex = null;
+                },
+
+                changeElementColor(color) {
+                    if (this.selectedElementIndex !== null) {
+                        this.w1ChartData[this.selectedElementIndex].color = color;
+                    }
+                },
+
+                filterByColor() {
+                     if (this.selectedElementIndex !== null) {
+                        const color = this.w1ChartData[this.selectedElementIndex].color;
+                        alert(`Filtering by color: ${color}`);
+                        // Implement actual filter logic here
+                    }
                 },
 
                 handleClickBackground(event) {
@@ -615,18 +662,21 @@
                 getContextTitle() {
                     if (this.selectionType === 'chart') return 'Chart';
                     if (this.selectionType === 'table') return 'Table';
+                    if (this.selectionType === 'element') return 'Element';
                     return 'Widget';
                 },
                 
                 getContextIcon() {
                     if (this.selectionType === 'chart') return 'fa-chart-bar';
                     if (this.selectionType === 'table') return 'fa-table';
+                    if (this.selectionType === 'element') return 'fa-square';
                     return 'fa-cube';
                 },
                 
                 getContextColor() {
                     if (this.selectionType === 'chart') return 'text-blue-600';
                     if (this.selectionType === 'table') return 'text-green-600';
+                    if (this.selectionType === 'element') return 'text-purple-600';
                     return 'text-gray-600';
                 }
             }
