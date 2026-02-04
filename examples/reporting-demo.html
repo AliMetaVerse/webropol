@@ -274,7 +274,7 @@
                     
                     <div class="p-2 space-y-1">
                         <!-- Active Item (Q1) -->
-                        <div class="group flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 shadow-sm cursor-pointer hover:border-gray-300 transition-all relative overflow-hidden" onclick="document.getElementById('w1-container').scrollIntoView({behavior: 'smooth'})">
+                        <div class="group flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 shadow-sm cursor-pointer hover:border-gray-300 transition-all relative overflow-hidden" @click="goToWidget('w1')">
                             <div class="w-1 h-full absolute left-0 top-0 bg-webropol-primary-500"></div>
                             <div class="text-gray-400 cursor-grab active:cursor-grabbing"><i class="fas fa-grip-vertical"></i></div>
                             <div class="flex-1 min-w-0">
@@ -284,7 +284,7 @@
                         </div>
 
                         <!-- Item (Q4) -->
-                         <div class="group flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 cursor-pointer transition-all" onclick="document.getElementById('w2-container').scrollIntoView({behavior: 'smooth'})">
+                         <div class="group flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 cursor-pointer transition-all" @click="goToWidget('w2')">
                              <div class="text-gray-300 group-hover:text-gray-400 cursor-grab"><i class="fas fa-grip-vertical"></i></div>
                              <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-gray-600 group-hover:text-gray-900 truncate">Department Matrix</p>
@@ -293,7 +293,7 @@
                         </div>
                         
                         <!-- Item (Q5) -->
-                        <div class="group flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 cursor-pointer transition-all" onclick="document.getElementById('w3-container').scrollIntoView({behavior: 'smooth'})">
+                        <div class="group flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200 cursor-pointer transition-all" @click="goToWidget('w3')">
                              <div class="text-gray-300 group-hover:text-gray-400 cursor-grab"><i class="fas fa-grip-vertical"></i></div>
                              <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-gray-600 group-hover:text-gray-900 truncate">Project Phases</p>
@@ -313,8 +313,7 @@
                 </div>
                 
                 <!-- Main Widget Container 1 (Existing) -->
-                 <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
-                      :class="selectedWidgetId === 'w1' ? 'selected' : ''"
+                 <div id="w1-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
                       @click.stop="select('widget', 'w1')">
                     
                     <div class="flex items-center justify-between mb-8 px-2">
@@ -413,7 +412,7 @@
 
 
                  <!-- NEW: Matrix Chart Widget -->
-                 <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
+                 <div id="w2-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
                       :class="selectedWidgetId === 'w2' ? 'selected' : ''"
                       @click.stop="select('widget', 'w2')">
                     
@@ -472,7 +471,7 @@
                  </div>
 
                  <!-- NEW: Gantt Chart Widget -->
-                 <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
+                 <div id="w3-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
                       :class="selectedWidgetId === 'w3' ? 'selected' : ''"
                       @click.stop="select('widget', 'w3')">
                     
@@ -488,17 +487,18 @@
                     
                     <div class="space-y-8">
                         <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 relative bg-white overflow-x-auto"
+                        <div class="chart-zone p-6 relative bg-white"
                              :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'selected' : ''"
                              @click.stop="select('chart', 'w3')">
                             
-                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
+                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity z-10"
                                  :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'opacity-100' : ''">
                                 CHART
                             </div>
 
                             <!-- Gantt Visual -->
-                            <div class="min-w-[600px]">
+                            <div class="min-w-full overflow-x-auto pb-1">
+                                <div class="min-w-[600px]">
                                 <!-- Header -->
                                 <div class="flex border-b border-gray-200 pb-2 mb-4">
                                     <div class="w-1/4 text-xs font-bold text-gray-500 uppercase">Phase</div>
@@ -535,6 +535,7 @@
                                     </div>
                                 </div>
                             </div>
+                           </div>
                         </div>
                     </div>
                  </div>
@@ -568,6 +569,14 @@
                     // Check if click is on the main background
                     if (event.target.tagName === 'MAIN' || event.target.classList.contains('px-6')) {
                         this.deselect();
+                    }
+                },
+
+                goToWidget(id) {
+                    const element = document.getElementById(id + '-container');
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        this.select('widget', id); // Select the widget
                     }
                 },
                 
