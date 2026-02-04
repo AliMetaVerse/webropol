@@ -194,9 +194,7 @@
 
                                 <!-- Dynamic Label -->
                                 <div class="flex items-center gap-3 animate-fade-in" :class="getContextColor()">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-current opacity-10">
-                                        <i class="fal text-xl" :class="getContextIcon()"></i>
-                                    </div>
+                                    <i class="fal text-xl" :class="getContextIcon()"></i>
                                     <div class="flex flex-col">
                                         <h3 class="font-bold text-gray-900 leading-tight" x-text="getContextTitle()"></h3>
                                         <p class="text-xs text-gray-500 font-medium">Editing settings</p>
@@ -596,6 +594,11 @@
             return {
                 selectionType: null, // 'chart', 'table', 'widget'
                 selectedWidgetId: null,
+                widgetTitles: {
+                    'w1': 'Q1. How satisfied are you with our service?',
+                    'w2': 'Q4. Rate the following departments',
+                    'w3': 'Q5. Project Phases Timeline'
+                },
 
                 select(type, id) {
                     if (this.selectionType === type && this.selectedWidgetId === id) {
@@ -627,6 +630,9 @@
                 
                 // Helper for Dynamic Labels
                 getContextTitle() {
+                    if (this.selectedWidgetId && this.widgetTitles[this.selectedWidgetId]) {
+                        return this.widgetTitles[this.selectedWidgetId];
+                    }
                     if (this.selectionType === 'chart') return 'Chart Settings';
                     if (this.selectionType === 'table') return 'Table Settings';
                     return 'Widget Settings';
