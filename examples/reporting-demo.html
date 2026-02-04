@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporting UX Context Bar | Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 500: '#64748b', 600: '#475569', 900: '#0f172a' },
+            'webropol-sidebar': '#323a45',
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+           boxShadow: {
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+            'float': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+             'selected': '0 0 0 2px #06b6d4, 0 4px 12px rgba(6, 182, 212, 0.2)',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/tokens.css" rel="stylesheet">
+
+  <style>
+      body { background-color: #f3f4f6; }
+      
+      /* Smooth transitions for toolbar items */
+      .toolbar-item {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .toolbar-enter {
+          animation: slideInRight 0.3s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+      }
+      .toolbar-leave {
+          display: none; 
+      }
+      
+      @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(10px); }
+          to { opacity: 1; transform: translateX(0); }
+      }
+
+       /* Widget Selection Styles */
+      .widget-frame {
+          transition: all 0.2s ease;
+          border: 2px solid transparent;
+      }
+      .widget-frame:hover { border-color: #e2e8f0; }
+      .widget-frame.selected {
+          border-color: #cbd5e1;
+          background-color: #ffffff;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+          z-index: 10;
+      }
+
+      .chart-zone, .table-zone {
+          transition: all 0.2s;
+          border: 2px dashed transparent;
+          border-radius: 8px;
+      }
+      .chart-zone:hover, .table-zone:hover {
+          background: #f8fafc;
+          border-color: #e2e8f0;
+      }
+      
+      .chart-zone.selected {
+          border-color: #60a5fa; /* Blue for chart */
+          background-color: #eff6ff;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+      }
+      
+      .table-zone.selected {
+          border-color: #4ade80; /* Green for table */
+          background-color: #f0fdf4;
+          box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.1);
+      }
+
+      [x-cloak] { display: none !important; }
+  </style>
+
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
+</head>
+<body x-data="contextApp()" class="h-screen flex text-slate-800">
+    
+    <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
+
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+        <webropol-header username="Ali Al-Zuhairi"></webropol-header>
+        
+        <main class="flex-1 flex flex-col overflow-y-auto" @click="handleClickBackground($event)">
+            <!-- Header Section with Navigation -->
+            <div class="sticky top-0 z-30 pb-4 pt-2 shadow-sm border-b border-gray-200">
+                <div class="px-6 w-full max-w-[1600px] mx-auto">
+                    <!-- Top Navigation Tabs (Row 1) -->
+                    <div class="flex items-center justify-between mb-2">
+                        <webropol-survey-action-tabs active="report"></webropol-survey-action-tabs>
+                        <div class="text-sm font-semibold text-gray-700">Survey: AI Text Analysis Survey</div>
+                    </div>
+
+                    <!-- DYNAMIC TOOLBAR (Row 2) - Changes based on context -->
+                    <div class="h-16 bg-white rounded-xl shadow-sm border border-gray-200 px-4 flex items-center justify-between transition-all duration-300 relative overflow-hidden">
+                        
+                        <!-- DEFAULT STATE: Report Global Tools -->
+                        <div x-show="!selectionType" 
+                             class="flex items-center justify-between w-full toolbar-item"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0 transform -translate-y-2"
+                             x-transition:enter-end="opacity-100 transform translate-y-0">
+                            
+                            <!-- Left: Report Selector -->
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <button class="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 transition-colors">
+                                        <span class="text-xs font-bold text-orange-600">(Edited)</span>
+                                        <span>Basic report</span>
+                                        <i class="fal fa-chevron-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="h-8 w-px bg-gray-200 mx-2"></div>
+                                <div class="flex gap-2">
+                                    <button class="px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200"><i class="fal fa-save mr-1"></i> Save</button>
+                                    <button class="px-3 py-1.5 text-sm font-medium border border-gray-300 text-gray-600 rounded hover:bg-gray-50"><i class="fal fa-pen mr-1"></i> Save as</button>
+                                </div>
+                            </div>
+
+                            <!-- Right: Global Actions -->
+                            <div class="flex items-center gap-6 text-gray-600">
+                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
+                                    <i class="fal fa-filter text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-medium">Filter</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
+                                    <i class="fal fa-chart-line text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-medium">Compare</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
+                                    <i class="fal fa-users text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-medium">Respondents</span>
+                                </button>
+                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
+                                    <i class="fal fa-palette text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-medium">Layout</span>
+                                </button>
+                                <div class="h-10 w-px bg-gray-200"></div>
+                                <button class="flex flex-col items-center gap-1 text-red-700 hover:text-red-800 group">
+                                    <i class="fal fa-share-square text-xl group-hover:scale-110 transition-transform"></i>
+                                    <span class="text-xs font-bold">Export & Share</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- CONTEXT STATE: Specific Tools (Chart/Table) -->
+                        <div x-show="selectionType" 
+                             class="flex items-center justify-between w-full absolute inset-0 px-4 bg-white z-10"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                             x-cloak>
+                            
+                            <!-- Left: Context Title & Back Button -->
+                            <div class="flex items-center gap-4">
+                                <button @click="deselect()" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <i class="fal fa-arrow-left text-lg"></i>
+                                    <span class="text-sm font-semibold">Done</span>
+                                </button>
+                                
+                                <div class="h-8 w-px bg-gray-200"></div>
+
+                                <!-- Dynamic Label -->
+                                <div class="flex items-center gap-3 animate-fade-in" :class="getContextColor()">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-current opacity-10">
+                                        <i class="fal text-xl" :class="getContextIcon()"></i>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <h3 class="font-bold text-gray-900 leading-tight" x-text="getContextTitle()"></h3>
+                                        <p class="text-xs text-gray-500 font-medium">Editing settings</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Contextual Actions -->
+                            <div class="flex items-center gap-6 pr-2">
+                                
+                                <!-- Chart Specific Tools -->
+                                <template x-if="selectionType === 'chart'">
+                                    <div class="flex items-center gap-6">
+                                        <!-- Chart Types -->
+                                        <div class="flex bg-gray-100 p-1 rounded-lg">
+                                            <button class="w-9 h-9 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600 transition-all"><i class="fal fa-chart-bar"></i></button>
+                                            <button class="w-9 h-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:shadow-sm transition-all"><i class="fal fa-chart-pie"></i></button>
+                                            <button class="w-9 h-9 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:shadow-sm transition-all"><i class="fal fa-chart-line"></i></button>
+                                        </div>
+                                        
+                                        <button class="flex flex-col items-center gap-1 hover:text-blue-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-sort-amount-down text-xl"></i>
+                                            <span class="text-xs font-medium">Sort</span>
+                                        </button>
+                                        <button class="flex flex-col items-center gap-1 hover:text-blue-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-exchange-alt text-xl"></i>
+                                            <span class="text-xs font-medium">Swap Axis</span>
+                                        </button>
+                                        <button class="flex flex-col items-center gap-1 hover:text-blue-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-palette text-xl"></i>
+                                            <span class="text-xs font-medium">Colors</span>
+                                        </button>
+                                        
+                                        <div class="h-10 w-px bg-gray-200"></div>
+                                        
+                                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm">
+                                            Apply Changes
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <!-- Table Specific Tools -->
+                                <template x-if="selectionType === 'table'">
+                                    <div class="flex items-center gap-6">
+                                        <button class="flex flex-col items-center gap-1 hover:text-green-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-eye text-xl"></i>
+                                            <span class="text-xs font-medium">Show All</span>
+                                        </button>
+                                        <button class="flex flex-col items-center gap-1 hover:text-green-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-filter text-xl"></i>
+                                            <span class="text-xs font-medium">Filter Rows</span>
+                                        </button>
+                                        <button class="flex flex-col items-center gap-1 hover:text-green-600 text-gray-600 transition-colors">
+                                            <i class="fal fa-table text-xl"></i>
+                                            <span class="text-xs font-medium">Columns</span>
+                                        </button>
+                                        <button class="flex flex-col items-center gap-1 text-red-500 hover:text-red-700 transition-colors">
+                                            <i class="fal fa-trash-alt text-xl"></i>
+                                            <span class="text-xs font-medium">Delete</span>
+                                        </button>
+                                        
+                                        <div class="h-10 w-px bg-gray-200"></div>
+                                        
+                                        <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow-sm">
+                                            Apply Changes
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Canvas -->
+            <div class="px-6 w-full max-w-[1600px] mx-auto py-8 text-center space-y-8 pb-32">
+                
+                <div class="max-w-4xl mx-auto mb-10">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Q1. How satisfied are you with our service?</h1>
+                    <p class="text-gray-500">Click on the chart or table below. Notice how the toolbar above adapts to your selection.</p>
+                </div>
+                
+                <!-- Main Widget Container -->
+                 <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group"
+                      :class="selectedWidgetId === 'w1' ? 'selected' : ''"
+                      @click.stop="select('widget', 'w1')">
+                    
+                    <div class="flex items-center justify-between mb-8 px-2">
+                        <div class="text-left">
+                            <h2 class="text-lg font-bold text-gray-900">Service Satisfaction Score</h2>
+                            <p class="text-sm text-gray-500">Number of respondents: 1,240</p>
+                        </div>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                             <button class="p-2 text-gray-400 hover:text-gray-600"><i class="fal fa-ellipsis-h text-xl"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        
+                        <!-- CHART COMPONENT -->
+                        <div class="chart-zone p-6 relative"
+                             :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'selected' : ''"
+                             @click.stop="select('chart', 'w1')">
+                            
+                            <!-- Selection Label -->
+                            <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
+                                 :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
+                                CHART
+                            </div>
+
+                            <!-- Chart Visual -->
+                            <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
+                                <div class="w-16 sm:w-24 bg-red-400 rounded-t-lg h-[25%] relative group cursor-pointer transition-all hover:opacity-90">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">25%</div>
+                                </div>
+                                <div class="w-16 sm:w-24 bg-yellow-400 rounded-t-lg h-[40%] relative group cursor-pointer transition-all hover:opacity-90">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">40%</div>
+                                </div>
+                                <div class="w-16 sm:w-24 bg-green-500 rounded-t-lg h-[35%] relative group cursor-pointer transition-all hover:opacity-90">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700">35%</div>
+                                </div>
+                            </div>
+                            <!-- Legend -->
+                            <div class="flex justify-center gap-6 mt-4">
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-red-400"></div><span class="text-sm text-gray-600">Dissatisfied</span></div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-yellow-400"></div><span class="text-sm text-gray-600">Neutral</span></div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-sm text-gray-600">Satisfied</span></div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100"></div>
+
+                        <!-- TABLE COMPONENT -->
+                        <div class="table-zone p-6 relative"
+                             :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'selected' : ''"
+                             @click.stop="select('table', 'w1')">
+                             
+                            <!-- Selection Label -->
+                            <div class="absolute -top-3 left-4 px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
+                                 :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
+                                TABLE
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="bg-gray-50 text-gray-600 font-semibold uppercase text-xs">
+                                        <tr>
+                                            <th class="px-4 py-3 rounded-l-lg">Answer Option</th>
+                                            <th class="px-4 py-3 text-right">Count</th>
+                                            <th class="px-4 py-3 text-right rounded-r-lg">Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50">
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3 font-medium text-gray-800">Satisfied</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">434</td>
+                                            <td class="px-4 py-3 text-right font-bold text-gray-800">35.0%</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3 font-medium text-gray-800">Neutral</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">496</td>
+                                            <td class="px-4 py-3 text-right font-bold text-gray-800">40.0%</td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3 font-medium text-gray-800">Dissatisfied</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">310</td>
+                                            <td class="px-4 py-3 text-right font-bold text-gray-800">25.0%</td>
+                                        </tr>
+                                        <tr class="bg-gray-50 font-bold border-t-2 border-gray-100">
+                                            <td class="px-4 py-3">Total</td>
+                                            <td class="px-4 py-3 text-right">1,240</td>
+                                            <td class="px-4 py-3 text-right">100%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                 </div>
+
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function contextApp() {
+            return {
+                selectionType: null, // 'chart', 'table', 'widget'
+                selectedWidgetId: null,
+
+                select(type, id) {
+                    if (this.selectionType === type && this.selectedWidgetId === id) {
+                        return; // Already selected
+                    }
+                    this.selectionType = type;
+                    this.selectedWidgetId = id;
+                },
+
+                deselect() {
+                    this.selectionType = null;
+                    this.selectedWidgetId = null;
+                },
+
+                handleClickBackground(event) {
+                    // Check if click is on the main background
+                    if (event.target.tagName === 'MAIN' || event.target.classList.contains('px-6')) {
+                        this.deselect();
+                    }
+                },
+                
+                // Helper for Dynamic Labels
+                getContextTitle() {
+                    if (this.selectionType === 'chart') return 'Chart Settings';
+                    if (this.selectionType === 'table') return 'Table Settings';
+                    return 'Widget Settings';
+                },
+                
+                getContextIcon() {
+                    if (this.selectionType === 'chart') return 'fa-chart-bar';
+                    if (this.selectionType === 'table') return 'fa-table';
+                    return 'fa-cube';
+                },
+                
+                getContextColor() {
+                    if (this.selectionType === 'chart') return 'text-blue-600';
+                    if (this.selectionType === 'table') return 'text-green-600';
+                    return 'text-gray-600';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
