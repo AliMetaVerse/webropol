@@ -586,9 +586,113 @@
 
 
 
+    <!-- Intro Modal -->
+    <div x-show="showIntro" 
+         class="fixed inset-0 z-[2147483640] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;"> <!-- Hidden by default to prevent FOUC, shown by Alpine -->
+        
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden" @click.away="showIntro = false">
+            
+            <div class="p-8 bg-gradient-to-br from-webropol-primary-50 to-white border-b border-gray-100">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Introducing Setting Island</h2>
+                        <h3 class="text-sm font-semibold tracking-widest mb-1">New: Context-Aware Editing</h3>
+                    </div>
+                    <button @click="closeIntro()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fal fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <p class="text-gray-600 mb-6 text-lg">We've introduced 4 levels of granular control for your reports. Start by clicking specifically on what you want to edit.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Level 1: Widget -->
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 hover:border-gray-300 hover:shadow-md transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-gray-200 text-gray-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fal fa-cube text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">1. Widget Level</h3>
+                    <p class="text-xs text-gray-500 mb-3">The container</p>
+                    <p class="text-sm text-gray-600">Control overall hierarchy, weighting, and widget-wide settings.</p>
+                </div>
+
+                <!-- Level 2: Chart -->
+                <div class="bg-blue-50 rounded-xl p-5 border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fal fa-chart-bar text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">2. Chart Level</h3>
+                    <p class="text-xs text-blue-500 mb-3">The visualization</p>
+                    <p class="text-sm text-gray-600">Change chart types, sort order, and axis configurations.</p>
+                </div>
+
+                <!-- Level 3: Table -->
+                <div class="bg-green-50 rounded-xl p-5 border border-green-100 hover:border-green-300 hover:shadow-md transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fal fa-table text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">3. Table Level</h3>
+                    <p class="text-xs text-green-500 mb-3">The data grid</p>
+                    <p class="text-sm text-gray-600">Filter rows, show/hide columns, and adjust table layouts.</p>
+                </div>
+
+                <!-- Level 4: Element -->
+                <div class="bg-purple-50 rounded-xl p-5 border border-purple-100 hover:border-purple-300 hover:shadow-md transition-all group">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fal fa-square text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">4. Element Level</h3>
+                    <p class="text-xs text-purple-500 mb-3">Individual data points</p>
+                    <p class="text-sm text-gray-600">Click a specific bar to change its color or filter by that value.</p>
+                </div>
+            </div>
+            </div>
+
+            <div class="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 select-none hover:text-gray-800 transition-colors">
+                    <input type="checkbox" x-model="dontShowAgain" class="rounded border-gray-300 text-webropol-primary-500 focus:ring-webropol-primary-500 w-4 h-4">
+                    <span>Don't show this again</span>
+                </label>
+                <button @click="closeIntro()" 
+                        class="px-6 py-2.5 bg-webropol-primary-500 hover:bg-webropol-primary-600 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all">
+                    Got it
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function contextApp() {
             return {
+                showIntro: false,
+                dontShowAgain: false,
+                
+                init() {
+                    const seen = localStorage.getItem('webropol_reporting_intro_seen');
+                    if (!seen) {
+                        this.showIntro = true;
+                    }
+                },
+                
+                closeIntro() {
+                    if (this.dontShowAgain) {
+                         try {
+                            localStorage.setItem('webropol_reporting_intro_seen', 'true');
+                        } catch (e) {
+                            console.error('LocalStorage error:', e);
+                        }
+                    }
+                    this.showIntro = false;
+                },
+
                 selectionType: null, // 'chart', 'table', 'widget', 'element'
                 selectedWidgetId: null,
                 selectedElementIndex: null,
