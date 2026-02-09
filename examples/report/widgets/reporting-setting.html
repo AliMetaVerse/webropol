@@ -242,23 +242,72 @@
                       :class="(selectedWidgetId === 'w1' && selectionType === 'widget') ? 'selected' : ''"
                       @click.stop="select('widget', 'w1', $el)">
                     
-                    <div class="flex items-center justify-between mb-8 px-2">
+                    <!-- Static Widget Settings Toolbar -->
+                    <div class="absolute right-0 top-0 bottom-0 w-16 py-8 flex flex-col items-center gap-3 bg-gray-50 border-l border-gray-100 rounded-r-2xl z-20 transition-all duration-300 transform"
+                         :class="(selectedWidgetId === 'w1') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0'">
+                         <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 rotate-90 mb-6 mt-4 whitespace-nowrap select-none">Settings</div>
+                         
+                         <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Chart Type">
+                            <i class="fal fa-chart-bar text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Settings">
+                            <i class="fal fa-cog text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Weighting">
+                            <i class="fal fa-balance-scale text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Hierarchy">
+                            <i class="fal fa-sitemap text-lg"></i>
+                        </button>
+                        
+                        <div class="flex-1"></div>
+
+                        <div class="h-px w-8 bg-gray-200 my-1"></div>
+                        
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-50 hover:text-red-600 hover:shadow-md text-gray-400 transition-all mb-2" title="Delete">
+                            <i class="fal fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
                         <div class="text-left">
                             <h2 class="text-lg font-bold text-gray-900">How easy or difficult has it been to use Webropol's services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.</h2>
                             <p class="text-sm text-gray-500">Number of respondents: 1,240</p>
-                        </div>
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button class="p-2 text-gray-400 hover:text-gray-600"><i class="fal fa-ellipsis-h text-xl"></i></button>
                         </div>
                     </div>
                     
                     <div class="space-y-8">
                         
                         <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 relative"
+                        <div class="chart-zone p-6 relative group/chart"
                              :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'selected' : ''"
                              @click.stop="select('chart', 'w1', $el)">
                             
+                            <!-- Static Chart Toolbar (Left Side) -->
+                            <div class="absolute left-2 top-2 z-20 group/toolbar">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
+                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'max-w-[400px] pr-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pr-2'">
+                                    
+                                    <!-- Anchor -->
+                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <i class="fal fa-ellipsis-v"></i>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pl-1">
+                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                                        
+                                        <div class="flex bg-gray-100 p-0.5 rounded-lg mr-1">
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
+                                        </div>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Selection Label -->
                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
                                  :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
@@ -287,10 +336,31 @@
                         <div class="border-t border-gray-100"></div>
 
                         <!-- TABLE COMPONENT -->
-                        <div class="table-zone p-6 relative"
+                        <div class="table-zone p-6 relative group/table"
                              :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'selected' : ''"
                              @click.stop="select('table', 'w1', $el)">
                              
+                            <!-- Static Table Toolbar (Left Side) -->
+                            <div class="absolute left-2 top-2 z-20 group/toolbar">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
+                                     :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'max-w-[400px] pr-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pr-2'">
+                                    
+                                    <!-- Anchor -->
+                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <i class="fal fa-ellipsis-v"></i>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pl-1">
+                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                                        
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Show All"><i class="fal fa-eye"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Filter Rows"><i class="fal fa-filter"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Columns"><i class="fal fa-table"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Selection Label -->
                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
                                  :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
@@ -336,27 +406,75 @@
                  </div>
 
 
-                 <!-- NEW: Matrix Chart Widget -->
                  <div id="w2-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 widget-frame group relative"
                       :class="(selectedWidgetId === 'w2' && selectionType === 'widget') ? 'selected' : ''"
                       @click.stop="select('widget', 'w2', $el)">
                     
-                    <div class="flex items-center justify-between mb-8 px-2">
+                    <!-- Static Widget Settings Toolbar -->
+                    <div class="absolute right-0 top-0 bottom-0 w-16 py-8 flex flex-col items-center gap-3 bg-gray-50 border-l border-gray-100 rounded-r-2xl z-20 transition-all duration-300 transform"
+                         :class="(selectedWidgetId === 'w2') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0'">
+                         <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 rotate-90 mb-6 mt-4 whitespace-nowrap select-none">Settings</div>
+                         
+                         <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Chart Type">
+                            <i class="fal fa-chart-bar text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Settings">
+                            <i class="fal fa-cog text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Weighting">
+                            <i class="fal fa-balance-scale text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Hierarchy">
+                            <i class="fal fa-sitemap text-lg"></i>
+                        </button>
+                        
+                        <div class="flex-1"></div>
+
+                        <div class="h-px w-8 bg-gray-200 my-1"></div>
+                        
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-50 hover:text-red-600 hover:shadow-md text-gray-400 transition-all mb-2" title="Delete">
+                            <i class="fal fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
                         <div class="text-left">
                             <h2 class="text-lg font-bold text-gray-900">Q4. Rate the following departments</h2>
                             <p class="text-sm text-gray-500">Matrix Scale 1-5  •  Respondents: 892</p>
-                        </div>
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button class="p-2 text-gray-400 hover:text-gray-600"><i class="fal fa-ellipsis-h text-xl"></i></button>
                         </div>
                     </div>
                     
                     <div class="space-y-8">
                         <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 relative bg-white"
+                        <div class="chart-zone p-6 relative bg-white group/chart"
                              :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'selected' : ''"
                              @click.stop="select('chart', 'w2', $el)">
                             
+                             <!-- Static Chart Toolbar (Left Side) -->
+                            <div class="absolute left-2 top-2 z-20 group/toolbar">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
+                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'max-w-[400px] pr-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pr-2'">
+                                    
+                                    <!-- Anchor -->
+                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <i class="fal fa-ellipsis-v"></i>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pl-1">
+                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                                        
+                                        <div class="flex bg-gray-100 p-0.5 rounded-lg mr-1">
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
+                                        </div>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
                              <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
                                  :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'opacity-100' : ''">
                                 CHART
@@ -400,22 +518,71 @@
                       :class="(selectedWidgetId === 'w3' && selectionType === 'widget') ? 'selected' : ''"
                       @click.stop="select('widget', 'w3', $el)">
                     
-                    <div class="flex items-center justify-between mb-8 px-2">
+                    <!-- Static Widget Settings Toolbar -->
+                    <div class="absolute right-0 top-0 bottom-0 w-16 py-8 flex flex-col items-center gap-3 bg-gray-50 border-l border-gray-100 rounded-r-2xl z-20 transition-all duration-300 transform"
+                         :class="(selectedWidgetId === 'w3') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0'">
+                         <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 rotate-90 mb-6 mt-4 whitespace-nowrap select-none">Settings</div>
+                         
+                         <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Chart Type">
+                            <i class="fal fa-chart-bar text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Settings">
+                            <i class="fal fa-cog text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Weighting">
+                            <i class="fal fa-balance-scale text-lg"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:text-blue-600 hover:shadow-md text-gray-500 transition-all" title="Hierarchy">
+                            <i class="fal fa-sitemap text-lg"></i>
+                        </button>
+                        
+                        <div class="flex-1"></div>
+
+                        <div class="h-px w-8 bg-gray-200 my-1"></div>
+                        
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-50 hover:text-red-600 hover:shadow-md text-gray-400 transition-all mb-2" title="Delete">
+                            <i class="fal fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
                         <div class="text-left">
                             <h2 class="text-lg font-bold text-gray-900">Q5. Project Phases Timeline</h2>
                             <p class="text-sm text-gray-500">Gantt View  •  Q3 2024</p>
-                        </div>
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button class="p-2 text-gray-400 hover:text-gray-600"><i class="fal fa-ellipsis-h text-xl"></i></button>
                         </div>
                     </div>
                     
                     <div class="space-y-8">
                         <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 relative bg-white"
+                        <div class="chart-zone p-6 relative bg-white group/chart"
                              :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'selected' : ''"
                              @click.stop="select('chart', 'w3', $el)">
                             
+                             <!-- Static Chart Toolbar (Left Side) -->
+                            <div class="absolute left-2 top-2 z-20 group/toolbar">
+                                <div class="flex items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
+                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'max-w-[400px] pr-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pr-2'">
+                                    
+                                    <!-- Anchor -->
+                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <i class="fal fa-ellipsis-v"></i>
+                                    </div>
+
+                                    <!-- Content -->
+                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pl-1">
+                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                                        
+                                        <div class="flex bg-gray-100 p-0.5 rounded-lg mr-1">
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
+                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
+                                        </div>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
+                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
                              <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity z-10"
                                  :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'opacity-100' : ''">
                                 CHART
@@ -469,118 +636,6 @@
             
             </div> <!-- End Content Container -->
         
-    <!-- FLOATING DYNAMIC ISLAND -->
-    <div id="dynamic-island" 
-         x-ref="island"
-         x-show="selectionType" 
-         class="absolute z-50 transition-all duration-300 ease-out transform pointer-events-none top-0 left-1/2 -translate-x-1/2 -translate-y-full -mt-4 origin-bottom"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-         x-cloak>
-         
-        <div class="bg-white/90 hover:bg-white hover:bg-opacity-100 transition-colors duration-200 rounded-2xl shadow-float border border-gray-200/50 backdrop-blur-xl bg-opacity-95 p-1.5 flex items-center gap-2 pointer-events-auto">
-           
-           <!-- Title -->
-           <div class="pl-3 pr-2 flex items-center gap-3">
-                <div class="flex flex-col">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400" x-text="selectionType"></span>
-                    <span class="text-sm font-bold text-gray-900 leading-none">Settings</span>
-                </div>
-           </div>
-
-           <div class="h-8 w-px bg-gray-200"></div>
-
-           <!-- Tools -->
-            <div class="flex items-center gap-1 pr-1">
-                
-                <!-- Chart Specific Tools -->
-                <template x-if="selectionType === 'chart'">
-                     <div class="flex items-center gap-1">
-                        <div class="flex bg-gray-100 p-0.5 rounded-lg mr-1">
-                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
-                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
-                        </div>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Sort">
-                            <i class="fal fa-sort-amount-down"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Swap Axis">
-                            <i class="fal fa-exchange-alt"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Colors">
-                            <i class="fal fa-palette"></i>
-                        </button>
-                     </div>
-                </template>
-
-                <!-- Table Specific Tools -->
-                <template x-if="selectionType === 'table'">
-                    <div class="flex items-center gap-1">
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Show All">
-                            <i class="fal fa-eye"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Filter Rows">
-                            <i class="fal fa-filter"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Columns">
-                            <i class="fal fa-table"></i>
-                        </button>
-                    </div>
-                </template>
-
-                <!-- Widget Specific Tools -->
-                <template x-if="selectionType === 'widget'">
-                    <div class="flex items-center gap-1">
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Chart Type">
-                            <i class="fal fa-chart-bar"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Settings">
-                            <i class="fal fa-cog"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Weighting">
-                            <i class="fal fa-balance-scale"></i>
-                        </button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Hierarchy">
-                            <i class="fal fa-sitemap"></i>
-                        </button>
-                    </div>
-                </template>
-
-                <!-- Element Specific Tools -->
-                <template x-if="selectionType === 'element'">
-                    <div class="flex items-center gap-1">
-                        <!-- Color Picker -->
-                        <div class="relative" x-data="{ showColors: false }">
-                            <button @click="showColors = !showColors" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Change Color">
-                                <i class="fal fa-palette"></i>
-                            </button>
-                            <div x-show="showColors" @click.away="showColors = false" class="absolute bottom-full left-0 mb-2 p-2 bg-white rounded-lg shadow-xl border border-gray-100 flex gap-1 z-50">
-                                <button @click="changeElementColor('#f87171'); showColors = false" class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform"></button>
-                                <button @click="changeElementColor('#facc15'); showColors = false" class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform"></button>
-                                <button @click="changeElementColor('#22c55e'); showColors = false" class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform"></button>
-                                <button @click="changeElementColor('#3b82f6'); showColors = false" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform"></button>
-                                <button @click="changeElementColor('#a855f7'); showColors = false" class="w-6 h-6 rounded-full bg-purple-500 hover:scale-110 transition-transform"></button>
-                            </div>
-                        </div>
-
-                        <!-- Filter -->
-                        <button @click="filterByColor()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Filter by this color">
-                            <i class="fal fa-filter"></i>
-                        </button>
-                    </div>
-                </template>
-                
-                <!-- Shared Delete -->
-                 <div class="h-8 w-px bg-gray-200 mx-1"></div>
-                <button @click.stop="deselect()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-50 text-gray-400 hover:text-red-600 transition-colors">
-                    <i class="fal fa-times"></i>
-                </button>
-            </div>
-        </div>
-    </div>
         </main>
     </div>
 
@@ -712,14 +767,6 @@
                         return; // Already selected
                     }
                     
-                    // Move layout island to the selected element
-                    if (el) {
-                        const island = this.$refs.island;
-                        if (island) {
-                            el.appendChild(island);
-                        }
-                    }
-
                     this.selectionType = type;
                     this.selectedWidgetId = id;
                     this.selectedElementIndex = index;
@@ -747,11 +794,6 @@
 
                 handleClickBackground(event) {
                     // Check if click is on the main background
-                    // We also need to check if we clicked INSIDE the island
-                    if (this.$refs.island && this.$refs.island.contains(event.target)) {
-                        return;
-                    }
-
                     if (event.target.tagName === 'MAIN' || event.target.classList.contains('px-6')) {
                         this.deselect();
                     }
