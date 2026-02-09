@@ -317,9 +317,38 @@
                                 <template x-for="(bar, index) in w1ChartData" :key="index">
                                     <div class="w-16 sm:w-24 rounded-t-lg relative group cursor-pointer transition-all hover:opacity-90"
                                          :style="`height: ${bar.percent}%; background-color: ${bar.color}`"
-                                         :class="(selectionType === 'element' && selectedElementIndex === index) ? 'ring-2 ring-offset-2 ring-blue-500 z-10' : ''"
-                                         @click.stop="select('element', 'w1', $el, index)">
+                                         :class="(selectedWidgetId === 'w1' && selectedElementIndex === index) ? 'ring-2 ring-offset-2 ring-blue-500 z-10' : ''"
+                                         @click.stop="select('chart', 'w1', $el, index)">
                                         <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700" x-text="bar.percent + '%'"></div>
+
+                                        <!-- Element Popup Actions -->
+                                        <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-xl p-2 z-50 flex items-center gap-2 border border-gray-100"
+                                             x-show="selectedWidgetId === 'w1' && selectedElementIndex === index"
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 translate-y-2"
+                                             x-transition:enter-end="opacity-100 translate-y-0">
+                                            
+                                            <!-- Color Picker -->
+                                            <div class="flex items-center gap-1 p-1 bg-gray-50 rounded">
+                                                <button @click.stop="changeElementColor('#f87171')" class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
+                                                <button @click.stop="changeElementColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
+                                                <button @click.stop="changeElementColor('#22c55e')" class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
+                                                <button @click.stop="changeElementColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
+                                                <!-- Custom Color -->
+                                                <button class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-110 transition-transform hover:border-blue-400 hover:text-blue-500 text-gray-400" title="Custom Color">
+                                                    <i class="fal fa-palette text-[10px]"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="h-6 w-px bg-gray-200"></div>
+
+                                            <!-- Filter Action -->
+                                            <button @click.stop="filterByColor()" 
+                                                    class="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-50 text-gray-600 hover:text-blue-600 transition-colors text-xs font-medium whitespace-nowrap">
+                                                <i class="fal fa-filter"></i>
+                                                Filter by this option
+                                            </button>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
