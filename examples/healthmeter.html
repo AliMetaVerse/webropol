@@ -108,23 +108,50 @@
                                 <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
                                      :class="orientation === 'horizontal' ? 'flex-1' : ''">
                                     
-                                    <!-- Edit Mode: Single Textarea -->
+                                    <!-- Edit Mode: Simple WYSIWYG Editor -->
                                     <div x-show="mode === 'edit'" class="w-full relative group">
-                                        <textarea x-model="texts.instructions" 
-                                                  class="w-full min-h-[300px] bg-gray-50/50 border-2 border-transparent hover:border-webropol-primary-200 focus:border-webropol-primary-500 rounded-xl p-6 resize-none focus:outline-none leading-loose text-webropol-gray-700 transition-all duration-200 shadow-inner"
-                                                  placeholder="Enter instructions, one per line..."></textarea>
-                                        <div class="absolute top-4 right-4 text-xs font-semibold text-webropol-primary-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-wide">Editable Text</div>
+                                        <div class="border-2 border-transparent hover:border-webropol-primary-200 focus-within:border-webropol-primary-500 rounded-xl bg-gray-50/50 transition-all duration-200 shadow-inner overflow-hidden flex flex-col min-h-[300px]">
+                                            <!-- Simple Toolbar -->
+                                            <div class="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-100/50 sticky top-0 z-10">
+                                                <button @click="document.execCommand('bold');" 
+                                                        class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-white rounded transition-colors" title="Bold">
+                                                    <i class="fa-regular fa-bold"></i>
+                                                </button>
+                                                <button @click="document.execCommand('italic');" 
+                                                        class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-white rounded transition-colors" title="Italic">
+                                                    <i class="fa-regular fa-italic"></i>
+                                                </button>
+                                                <div class="w-px h-4 bg-gray-300 mx-1"></div>
+                                                <button @click="document.execCommand('insertUnorderedList');" 
+                                                        class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-white rounded transition-colors" title="Bullet List">
+                                                    <i class="fa-regular fa-list-ul"></i>
+                                                </button>
+                                                <button @click="document.execCommand('insertOrderedList');" 
+                                                        class="p-2 text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-white rounded transition-colors" title="Numbered List">
+                                                    <i class="fa-regular fa-list-ol"></i>
+                                                </button>
+                                            </div>
+                                            <!-- Editable Area -->
+                                            <div contenteditable="true" 
+                                                 class="flex-1 p-6 focus:outline-none leading-loose text-webropol-gray-700 editor-content [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1"
+                                                 @input="texts.instructions = $el.innerHTML"
+                                                 x-init="$el.innerHTML = texts.instructions"
+                                                 >
+                                            </div>
+                                        </div>
+                                        <div class="absolute top-14 right-4 text-xs font-semibold text-webropol-primary-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-wide">Editable Text</div>
                                     </div>
 
-                                    <!-- Respond Mode: List -->
-                                    <ul x-show="mode === 'respond'" class="list-none pl-2 space-y-5">
-                                        <template x-for="(item, index) in texts.instructions ? texts.instructions.split('\n') : []" :key="index">
-                                            <li x-show="item.trim().length > 0" class="flex items-start gap-4 group">
-                                                <div class="w-2 h-2 rounded-full bg-webropol-primary-400 mt-2.5 flex-shrink-0 group-hover:scale-125 group-hover:bg-webropol-primary-500 transition-all duration-300 shadow-sm ring-2 ring-transparent group-hover:ring-webropol-primary-100"></div>
-                                                <div x-html="item" class="text-webropol-gray-700 leading-relaxed font-medium transition-colors group-hover:text-webropol-gray-900"></div>
-                                            </li>
-                                        </template>
-                                    </ul>
+                                    <!-- Respond Mode: HTML Content -->
+                                    <div x-show="mode === 'respond'" 
+                                         class="text-webropol-gray-700 leading-relaxed font-medium 
+                                                [&_ul]:list-none [&_ul]:pl-1 [&_ul]:space-y-4 
+                                                [&_li]:relative [&_li]:pl-6 
+                                                [&_li::before]:content-[''] [&_li::before]:absolute [&_li::before]:left-0 [&_li::before]:top-[0.7em] [&_li::before]:w-2 [&_li::before]:h-2 [&_li::before]:bg-webropol-primary-400 [&_li::before]:rounded-full [&_li::before]:shadow-sm
+                                                [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2
+                                                [&_b]:font-bold [&_i]:italic"
+                                         x-html="texts.instructions">
+                                    </div>
                                 </div>
 
                                 <!-- "Your Health" Black Box Display -->
@@ -172,25 +199,22 @@
                                 <template x-if="orientation === 'vertical'">
                                     <div>
                                         <!-- Top Label (Best) -->
-                                        <div class="flex items-center justify-end gap-4 mb-8 pr-2 group">
-                                            <div class="flex flex-col items-end text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
+                                        <div class="flex items-center justify-start gap-4 mb-8 pl-2 group">
+                                            <div class="flex flex-col items-start text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
                                                 <template x-if="mode === 'edit'">
-                                                    <div class="flex flex-col items-end gap-1">
-                                                        <input x-model="texts.bestLabel1" class="text-right bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
-                                                        <input x-model="texts.bestLabel2" class="text-right bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
-                                                        <input x-model="texts.bestLabel3" class="text-right bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                    <div class="flex flex-col items-start gap-1">
+                                                        <input x-model="texts.bestLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                        <input x-model="texts.bestLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                        <input x-model="texts.bestLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
                                                     </div>
                                                 </template>
                                                 <template x-if="mode === 'respond'">
-                                                    <div class="flex flex-col items-end">
+                                                    <div class="flex flex-col items-start">
                                                         <span x-text="texts.bestLabel1"></span>
                                                         <span x-text="texts.bestLabel2"></span>
                                                         <span x-text="texts.bestLabel3"></span>
                                                     </div>
                                                 </template>
-                                            </div>
-                                            <div class="w-12 h-12 rounded-full bg-webropol-primary-50 text-webropol-primary-700 flex items-center justify-center border border-webropol-primary-100 shadow-sm transition-transform group-hover:scale-105">
-                                                <i class="fa-regular fa-face-smile text-2xl"></i>
                                             </div>
                                         </div>
                                         
@@ -202,7 +226,7 @@
                                             
                                             <!-- Interaction Hint -->
                                             <div x-show="value === null" 
-                                                 class="absolute right-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
+                                                 class="absolute left-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse" 
                                                      style="writing-mode: vertical-rl; transform: rotate(180deg);">
@@ -212,49 +236,46 @@
 
                                             <!-- Ticks -->
                                             <template x-for="i in 101">
-                                                <div class="absolute right-0 w-full flex items-center justify-end pointer-events-none"
+                                                <div class="absolute left-0 w-full flex items-center justify-start pointer-events-none"
                                                      :style="`top: ${100 - (i-1)}%; transform: translateY(-50%);`">
-                                                    <span x-show="(i-1) % 10 === 0" class="mr-4 text-webropol-gray-500 font-medium text-lg w-8 text-right tabular-nums select-none" x-text="i-1"></span>
                                                     <div class="h-px bg-gray-400" :class="(i-1) % 10 === 0 ? 'w-8 bg-gray-500' : 'w-4'"></div>
+                                                    <span x-show="(i-1) % 10 === 0" class="ml-4 text-webropol-gray-500 font-medium text-lg w-8 text-left tabular-nums select-none" x-text="i-1"></span>
                                                 </div>
                                             </template>
 
                                             <!-- Click Area -->
-                                            <div class="absolute inset-y-0 right-0 w-32 cursor-pointer z-10"
+                                            <div class="absolute inset-y-0 left-0 w-32 cursor-pointer z-10"
                                                  @mousemove="onDrag" @touchmove.prevent="onDrag" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValue"></div>
 
                                             <!-- Vertical Indicators -->
                                             <div x-show="value !== null" class="absolute w-full pointer-events-none transition-all duration-75 ease-out z-20"
                                                  :style="`top: ${100 - (value ?? 50)}%; transform: translateY(-50%);`">
-                                                <div class="absolute right-4 top-1/2 -translate-y-1/2 w-48 border-t-2 border-webropol-gray-400 border-dotted"></div>
-                                                <div class="absolute right-[190px] top-1/2 -translate-y-1/2 text-5xl text-[#5c7ae0] font-medium pr-1 flex items-center gap-1">
+                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 w-48 border-t-2 border-webropol-gray-400 border-dotted"></div>
+                                                <div class="absolute left-[190px] top-1/2 -translate-y-1/2 text-5xl text-[#5c7ae0] font-medium pl-1 flex items-center gap-1">
+                                                    <div class="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[14px] border-r-[#5c7ae0]"></div>
                                                     <span x-text="Math.round(value)"></span>
-                                                    <div class="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-l-[14px] border-l-[#5c7ae0]"></div>
                                                 </div>
-                                                <div class="absolute right-[4px] top-1/2 -translate-y-1/2 w-6 h-6 bg-[#ee4036] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.3)] z-30 ring-2 ring-white scale-125 transition-transform hover:scale-150"></div>
+                                                <div class="absolute left-[4px] top-1/2 -translate-y-1/2 w-6 h-6 bg-[#ee4036] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.3)] z-30 ring-2 ring-white scale-125 transition-transform hover:scale-150"></div>
                                             </div>
                                         </div>
                                         
                                         <!-- Bottom Label (Worst) -->
-                                        <div class="flex items-center justify-end gap-4 mt-8 pr-2 group">
-                                            <div class="flex flex-col items-end text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
+                                        <div class="flex items-center justify-start gap-4 mt-8 pl-2 group">
+                                            <div class="flex flex-col items-start text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
                                                 <template x-if="mode === 'edit'">
-                                                    <div class="flex flex-col items-end gap-1">
-                                                        <input x-model="texts.worstLabel1" class="text-right bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
-                                                        <input x-model="texts.worstLabel2" class="text-right bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
-                                                        <input x-model="texts.worstLabel3" class="text-right bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                    <div class="flex flex-col items-start gap-1">
+                                                        <input x-model="texts.worstLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                        <input x-model="texts.worstLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                        <input x-model="texts.worstLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
                                                     </div>
                                                 </template>
                                                 <template x-if="mode === 'respond'">
-                                                    <div class="flex flex-col items-end">
+                                                    <div class="flex flex-col items-start">
                                                         <span x-text="texts.worstLabel1"></span>
                                                         <span x-text="texts.worstLabel2"></span>
                                                         <span x-text="texts.worstLabel3"></span>
                                                     </div>
                                                 </template>
-                                            </div>
-                                            <div class="w-12 h-12 rounded-full bg-webropol-gray-50 text-webropol-gray-900 flex items-center justify-center border border-webropol-gray-200 shadow-sm transition-transform group-hover:scale-105">
-                                                <i class="fa-regular fa-face-frown text-2xl"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -425,11 +446,13 @@
                 texts: {
                     title: 'Health State Today',
                     subtitle: 'EQ-5D Visual Analogue Scale',
-                    instructions: `We would like to know how good or bad your health is TODAY.
-You will see a scale numbered from 0 to 100.
-100 means the best health you can imagine.
-0 means the worst health you can imagine.
-Please indicate on the scale how your health is TODAY.`,
+                    instructions: `<ul>
+<li>We would like to know how good or bad your health is TODAY.</li>
+<li>You will see a scale numbered from 0 to 100.</li>
+<li>100 means the best health you can imagine.</li>
+<li>0 means the worst health you can imagine.</li>
+<li>Please indicate on the scale how your health is TODAY.</li>
+</ul>`,
                     boxLabel1: 'YOUR',
                     boxLabel2: 'HEALTH',
                     boxLabel3: 'TODAY',
