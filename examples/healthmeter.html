@@ -261,7 +261,7 @@
                                             
                                             <!-- Interaction Hint -->
                                             <div x-show="value === null" 
-                                                 class="absolute left-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
+                                                 class="absolute left-16 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse" 
                                                      style="writing-mode: vertical-rl; transform: rotate(180deg);">
@@ -271,26 +271,27 @@
 
                                             <!-- Ticks -->
                                             <template x-for="i in 101">
-                                                <div class="absolute left-0 w-full flex items-center justify-start pointer-events-none"
+                                                <div class="absolute left-0 right-0 flex items-center pointer-events-none pl-0"
                                                      :style="`top: ${100 - (i-1)}%; transform: translateY(-50%);`">
-                                                    <div class="h-px bg-gray-400" :class="(i-1) % 10 === 0 ? 'w-8 bg-gray-500' : 'w-4'"></div>
-                                                    <span x-show="(i-1) % 10 === 0" class="ml-4 text-webropol-gray-500 font-medium text-lg w-8 text-left tabular-nums select-none" x-text="i-1"></span>
+                                                    <div class="h-px bg-gray-400 ml-0" :class="(i-1) % 10 === 0 ? 'w-8 bg-gray-500' : 'w-4'"></div>
+                                                    <span x-show="(i-1) % 10 === 0" class="ml-auto mr-0 text-webropol-gray-500 font-medium text-lg tabular-nums select-none" x-text="i-1"></span>
                                                 </div>
                                             </template>
 
                                             <!-- Click Area -->
-                                            <div class="absolute inset-y-0 left-0 w-32 cursor-pointer z-10"
+                                            <div class="absolute inset-y-0 left-0 right-0 cursor-pointer z-10"
                                                  @mousemove="onDrag" @touchmove.prevent="onDrag" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValue"></div>
 
                                             <!-- Vertical Indicators -->
                                             <div x-show="value !== null" class="absolute w-full pointer-events-none transition-all duration-75 ease-out z-20"
                                                  :style="`top: ${100 - (value ?? 50)}%; transform: translateY(-50%);`">
-                                                <div class="absolute left-4 top-1/2 -translate-y-1/2 w-48 border-t-2 border-webropol-gray-400 border-dotted"></div>
-                                                <div class="absolute left-[190px] top-1/2 -translate-y-1/2 text-5xl text-[#5c7ae0] font-medium pl-1 flex items-center gap-1">
-                                                    <div class="w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[14px] border-r-[#5c7ae0]"></div>
+                                                <!-- Value and Arrow on Left -->
+                                                <div class="absolute left-[-80px] top-1/2 -translate-y-1/2 text-3xl text-[#5c7ae0] font-bold flex items-center gap-2">
                                                     <span x-text="Math.round(value)"></span>
+                                                    <div class="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[16px] border-l-[#5c7ae0]"></div>
                                                 </div>
-                                                <div class="absolute left-[4px] top-1/2 -translate-y-1/2 w-6 h-6 bg-[#ee4036] rounded-full shadow-[0_4px_6px_rgba(0,0,0,0.3)] z-30 ring-2 ring-white scale-125 transition-transform hover:scale-150"></div>
+                                                <!-- Red Dot on Scale -->
+                                                <div class="absolute left-[1px] top-1/2 -translate-y-1/2 w-3 h-3 bg-[#ee4036] rounded-full z-30 ring-2 ring-white"></div>
                                             </div>
                                         </div>
                                         
