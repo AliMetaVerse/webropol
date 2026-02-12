@@ -74,67 +74,69 @@
                     </div>
 
                     <!-- Main Card -->
-                    <div class="bg-white p-6 md:p-12 rounded-3xl shadow-xl transition-all duration-300 ring-1 ring-black/5 hover:shadow-2xl relative">
+                    <div class="question-card transition-all duration-300 relative" 
+                         :class="mode === 'edit' ? 'selected' : 'bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-transparent'">
                         
-                        <!-- Header Section -->
-                        <div class="mb-10 pl-2">
-                        
-                            <!-- Question Toolbar (Edit Mode) -->
-                            <div class="flex items-center justify-between mb-8 pb-2" x-show="mode === 'edit'">
-                                <!-- Left: Type Badge -->
-                                <div class="bg-[#FFF8DD] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
-                                    <i class="fa-light fa-sliders text-lg"></i>
-                                    <span>Numeric slider</span>
-                                </div>
-
-                                <!-- Right: Actions -->
-                                <div class="flex items-center gap-1">
-                                    <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Mandatory">
-                                        <i class="fa-light fa-asterisk text-lg"></i>
-                                    </button>
-                                    <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Randomize">
-                                        <i class="fa-light fa-shuffle text-lg"></i>
-                                    </button>
-                                    <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Add media">
-                                        <div class="relative">
-                                            <i class="fa-light fa-image text-lg"></i>
-                                            <i class="fa-solid fa-plus absolute -top-1 -right-1 text-[10px] bg-white rounded-full"></i>
-                                        </div>
-                                    </button>
-                                    <button @click="showSettings = true" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Settings">
-                                        <i class="fa-light fa-gear text-lg"></i>
-                                    </button>
-                                    <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Copy">
-                                        <i class="fa-light fa-copy text-lg"></i>
-                                    </button>
-                                    <div class="w-px h-6 bg-gray-300 mx-2"></div>
-                                    <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-red-600 bg-gray-100/80 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                        <i class="fa-light fa-trash-can text-lg"></i>
-                                    </button>
-                                </div>
+                        <!-- Header Section (Toolbar) - Only in Edit Mode -->
+                        <div class="question-card-header" x-show="mode === 'edit'">
+                            <!-- Left: Type Badge -->
+                            <div class="bg-[#FFF8DD] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
+                                <i class="fa-light fa-sliders text-lg"></i>
+                                <span>Numeric slider</span>
                             </div>
 
-                            <!-- Edit Mode: Inputs -->
-                            <template x-if="mode === 'edit'">
-                                <div class="space-y-4">
-                                    <input type="text" x-model="texts.title" class="w-full text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
-                                </div>
-                            </template>
-                            <!-- Respond Mode: Text -->
-                            <template x-if="mode === 'respond'">
-                                <div class="space-y-2">
-                                    <h1 class="text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
-                                </div>
-                            </template>
+                            <!-- Right: Actions -->
+                            <div class="flex items-center gap-1">
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Mandatory">
+                                    <i class="fa-light fa-asterisk text-lg"></i>
+                                </button>
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Randomize">
+                                    <i class="fa-light fa-shuffle text-lg"></i>
+                                </button>
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Add media">
+                                    <div class="relative">
+                                        <i class="fa-light fa-image text-lg"></i>
+                                        <i class="fa-solid fa-plus absolute -top-1 -right-1 text-[10px] bg-white rounded-full"></i>
+                                    </div>
+                                </button>
+                                <button @click="showSettings = true" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Settings">
+                                    <i class="fa-light fa-gear text-lg"></i>
+                                </button>
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Copy">
+                                    <i class="fa-light fa-copy text-lg"></i>
+                                </button>
+                                <div class="w-px h-6 bg-gray-300 mx-2"></div>
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-red-600 bg-gray-100/80 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                    <i class="fa-light fa-trash-can text-lg"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Content Area (Flex determines layout) -->
-                        <div class="flex gap-8 md:gap-16 transition-all duration-500"
-                             :class="orientation === 'vertical' ? 'flex-col md:flex-row' : 'flex-col'">
+                        <!-- Card Body -->
+                        <div class="p-6 md:p-12">
+                            <!-- Title Section -->
+                            <div class="mb-10 pl-2">
+                                <!-- Edit Mode: Inputs -->
+                                <template x-if="mode === 'edit'">
+                                    <div class="space-y-4">
+                                        <input type="text" x-model="texts.title" class="w-full text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
+                                    </div>
+                                </template>
+                                <!-- Respond Mode: Text -->
+                                <template x-if="mode === 'respond'">
+                                    <div class="space-y-2">
+                                        <h1 class="text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Content Area (Flex determines layout) -->
+                            <div class="flex gap-8 md:gap-16 transition-all duration-500"
+                                 :class="orientation === 'vertical' ? 'flex-col md:flex-row' : 'flex-col'">
                             
-                            <!-- Instructions & Display Box -->
-                            <div class="flex-1 pt-4 flex transition-all duration-500"
-                                 :class="orientation === 'vertical' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
+                                <!-- Instructions & Display Box -->
+                                <div class="flex-1 pt-4 flex transition-all duration-500"
+                                     :class="orientation === 'vertical' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
                                 
                                 <!-- Instructions List -->
                                 <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
@@ -401,6 +403,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
                     <!-- Settings Modal (Restored to fixed overlay) -->
                     <div x-show="showSettings" 
@@ -642,6 +645,13 @@
 
     <!-- Override modal z-index when active per instructions -->
     <style>
+        /* Unified question card styling from surveys/edit.html */
+        .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
+        .question-card:hover{border-color:#d5dde6}
+        .question-card.selected{border-color:#06b6d4;background:#f0fdff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
+        .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
+        .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
+
         /* Hide number input spinners */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
