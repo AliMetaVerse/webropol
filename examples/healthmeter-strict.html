@@ -187,9 +187,13 @@
                                     </div>
                                 </div>
 
-                                <!-- "Your Health" Black Box Display -->
-                                <div class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 flex-shrink-0 relative overflow-hidden group rounded-xl"
-                                     :class="orientation === 'vertical' ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 h-72 mx-auto md:mx-0' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 h-56 py-8 mx-auto md:mx-0'">
+                                <!-- Score Display Wrapper -->
+                                <div class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500"
+                                     :class="orientation === 'vertical' ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0'">
+                                     
+                                    <!-- "Your Health" Black Box -->
+                                    <div class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 relative overflow-hidden group rounded-xl w-full"
+                                         :class="orientation === 'vertical' ? 'h-72' : 'h-56 py-8'">
                                     
                                     <!-- Subtle gradient overlay for depth without losing pure black feel -->
                                     <div class="absolute inset-0 bg-gradient-to-br from-[#7c3aed]/20 to-transparent pointer-events-none"></div>
@@ -223,6 +227,25 @@
                                                ]">
                                     </div>
                                 </div>
+
+                                <!-- "I don't know" Checkbox -->
+                                <div x-show="settings.showDontKnow" class="w-full" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                    <label class="flex items-center justify-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-gray-100/50 transition-colors border border-transparent hover:border-gray-200" :class="dontKnow ? 'bg-gray-50 border-gray-200' : ''">
+                                        <div class="relative flex items-center">
+                                            <input type="checkbox" x-model="dontKnow" class="peer sr-only">
+                                            <div class="w-5 h-5 border-2 border-gray-400 rounded bg-white peer-checked:bg-webropol-primary-600 peer-checked:border-webropol-primary-600 transition-all duration-200 flex items-center justify-center shadow-sm">
+                                                <i class="fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity transform scale-75 peer-checked:scale-100"></i>
+                                            </div>
+                                        </div>
+                                        <template x-if="mode === 'edit'">
+                                            <input x-model="settings.dontKnowLabel" class="text-sm font-bold text-webropol-gray-500 uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-300 focus:outline-none w-full max-w-[120px]">
+                                        </template>
+                                        <template x-if="mode === 'respond'">
+                                            <span class="text-sm font-bold text-webropol-gray-500 uppercase tracking-widest select-none" x-text="settings.dontKnowLabel"></span>
+                                        </template>
+                                    </label>
+                                </div>
+                            </div>
                             </div>
 
                             <!-- Scale Section -->
@@ -260,7 +283,7 @@
                                              x-ref="trackVertical">
                                             
                                             <!-- Interaction Hint -->
-                                            <div x-show="value === null" 
+                                            <div x-show="value === null && !dontKnow" 
                                                  class="absolute left-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse" 
@@ -355,7 +378,7 @@
                                              x-ref="trackHorizontal">
                                             
                                             <!-- Interaction Hint -->
-                                            <div x-show="value === null" 
+                                            <div x-show="value === null && !dontKnow" 
                                                  class="absolute top-32 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse whitespace-nowrap">
@@ -710,7 +733,22 @@
                 get orientation() { return this.settings.orientation; },
                 set orientation(val) { this.settings.orientation = val; },
 
+                init() {
+                    this.$watch('dontKnow', (val) => {
+                        if (val) {
+                            if (this.value !== null) this.originalValue = this.value;
+                            this.value = null;
+                        } else {
+                            if (this.value === null && this.originalValue !== null) {
+                                this.value = this.originalValue;
+                            }
+                        }
+                    });
+                },
+
                 value: null,
+                originalValue: null,
+                dontKnow: false,
                 dragging: false,
                 
                 texts: {
@@ -735,6 +773,7 @@
                 
                 // Vertical Logic
                 updateFromEvent(e) {
+                    if (this.dontKnow) { this.dontKnow = false; }
                     const track = this.$refs.trackVertical;
                     if (!track) return;
                     const rect = track.getBoundingClientRect();
@@ -750,6 +789,7 @@
 
                 // Horizontal Logic
                 updateFromEventHorizontal(e) {
+                    if (this.dontKnow) { this.dontKnow = false; }
                     const track = this.$refs.trackHorizontal;
                     if (!track) return;
                     const rect = track.getBoundingClientRect();
