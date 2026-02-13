@@ -153,11 +153,11 @@
 
                             <!-- Content Area (Flex determines layout) -->
                             <div class="flex gap-8 md:gap-16 transition-all duration-500"
-                                 :class="(orientation === 'vertical' || questionType === 'slider') ? 'flex-col' : 'flex-col md:flex-row'">
+                                 :class="(orientation === 'vertical' && questionType === 'health-slider') ? 'flex-col md:flex-row' : 'flex-col'">
                             
                                 <!-- Instructions & Display Box -->
                                 <div class="flex-1 pt-4 flex transition-all duration-500"
-                                     :class="(orientation === 'vertical' || questionType === 'slider') ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
+                                     :class="(orientation === 'vertical' && questionType === 'health-slider') || questionType === 'slider' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
                                 
                                 <!-- Instructions List -->
                                 <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
@@ -210,7 +210,11 @@
 
                                 <!-- Score Display Wrapper -->
                                 <div class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500"
-                                     :class="(orientation === 'vertical' || questionType === 'slider') ? 'mt-8 md:mt-12 w-full mx-auto md:mx-0 max-w-full' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0'">
+                                     :class="questionType === 'slider' 
+                                        ? 'mt-8 md:mt-12 w-full mx-auto max-w-lg' 
+                                        : (orientation === 'vertical' 
+                                            ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0' 
+                                            : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0')">
                                      
                                     <!-- "Your Health" Black Box -->
                                     <div x-show="questionType === 'health-slider'"
@@ -256,6 +260,7 @@
                                         <!-- Vertical Slider -->
                                         <div x-show="orientation === 'vertical'"
                                              class="relative w-16 h-72 mx-auto flex justify-center py-4 select-none mb-4"
+                                             :class="{'pointer-events-none opacity-60': mode === 'edit'}"
                                              @mousedown="startDrag"
                                              @touchstart.prevent="startDrag"
                                              x-ref="trackVertical">
@@ -304,6 +309,7 @@
                                         <!-- Horizontal Slider -->
                                         <div x-show="orientation === 'horizontal'"
                                              class="relative w-full h-16 flex items-center select-none mb-4"
+                                             :class="{'pointer-events-none opacity-60': mode === 'edit'}"
                                              @mousedown="startDragHorizontal"
                                              @touchstart.prevent="startDragHorizontal"
                                              x-ref="trackHorizontal">
@@ -352,8 +358,8 @@
                                 </template>
 
                                 <!-- "I don't know" Checkbox -->
-                                <div x-show="settings.showDontKnow" class="w-full mt-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden" 
+                                <div x-show="settings.showDontKnow" class="w-auto mt-4 px-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
                                            :class="[
                                                dontKnow 
                                                ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
