@@ -771,10 +771,13 @@
                     visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                 },
 
+                // Mobile detection
+                isMobile: false,
+
                 // Sync orientation proxy with mobile detection
                 get orientation() { 
                     // Force horizontal on mobile devices (screens < 768px)
-                    if (window.innerWidth < 768) {
+                    if (this.isMobile) {
                         return 'horizontal';
                     }
                     return this.settings.orientation; 
@@ -782,7 +785,7 @@
                 set orientation(val) { this.settings.orientation = val; },
 
                 init() {
-                    // Force horizontal on mobile on init
+                    // Check if mobile on init
                     this.checkMobileOrientation();
                     
                     // Listen for window resize to update orientation
@@ -803,17 +806,9 @@
                 },
                 
                 checkMobileOrientation() {
-                    // Force horizontal on mobile, but allow selected orientation on desktop
-                    if (window.innerWidth < 768) {
-                        // On mobile, force horizontal
-                        this.mobileOverride = true;
-                    } else {
-                        // On desktop, use selected orientation
-                        this.mobileOverride = false;
-                    }
+                    // Update reactive mobile state
+                    this.isMobile = window.innerWidth < 768;
                 },
-                
-                mobileOverride: false,
 
                 value: null,
                 originalValue: null,
