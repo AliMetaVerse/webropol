@@ -771,11 +771,25 @@
                     visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                 },
 
-                // Sync orientation proxy
-                get orientation() { return this.settings.orientation; },
+                // Sync orientation proxy with mobile detection
+                get orientation() { 
+                    // Force horizontal on mobile devices (screens < 768px)
+                    if (window.innerWidth < 768) {
+                        return 'horizontal';
+                    }
+                    return this.settings.orientation; 
+                },
                 set orientation(val) { this.settings.orientation = val; },
 
                 init() {
+                    // Force horizontal on mobile on init
+                    this.checkMobileOrientation();
+                    
+                    // Listen for window resize to update orientation
+                    window.addEventListener('resize', () => {
+                        this.checkMobileOrientation();
+                    });
+                    
                     this.$watch('dontKnow', (val) => {
                         if (val) {
                             if (this.value !== null) this.originalValue = this.value;
@@ -787,6 +801,19 @@
                         }
                     });
                 },
+                
+                checkMobileOrientation() {
+                    // Force horizontal on mobile, but allow selected orientation on desktop
+                    if (window.innerWidth < 768) {
+                        // On mobile, force horizontal
+                        this.mobileOverride = true;
+                    } else {
+                        // On desktop, use selected orientation
+                        this.mobileOverride = false;
+                    }
+                },
+                
+                mobileOverride: false,
 
                 value: null,
                 originalValue: null,
