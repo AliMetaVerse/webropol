@@ -250,7 +250,9 @@
                                 <div class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500"
                                      :class="[
                                         questionType === 'slider'
-                                            ? (effectiveIsMobile ? 'mt-8 w-full mx-auto max-w-lg' : 'mt-8 md:mt-12 w-full mx-auto max-w-lg')
+                                            ? (effectiveIsMobile
+                                                ? 'mt-8 w-full mx-auto max-w-lg'
+                                                : (orientation === 'horizontal' ? 'mt-8 md:mt-12 w-full' : 'mt-8 md:mt-12 w-full mx-auto max-w-lg'))
                                             : (orientation === 'vertical'
                                                 ? (effectiveIsMobile ? 'mt-8 w-full max-w-[14rem] mx-auto' : 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0 mr-8 lg:mr-12')
                                                 : (effectiveIsMobile ? 'mt-8 w-full max-w-[16rem] mx-auto' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0 mr-8 lg:mr-12'))
@@ -298,12 +300,20 @@
                                 <template x-if="questionType === 'slider'">
                                     <div class="w-full">
                                         <!-- Vertical Slider -->
-                                        <div x-show="orientation === 'vertical'"
-                                             class="relative w-16 h-72 mx-auto flex justify-center py-4 select-none mb-4"
-                                             :class="{'pointer-events-none opacity-60': mode === 'edit'}"
-                                             @mousedown="startDrag"
-                                             @touchstart.prevent="startDrag"
-                                             x-ref="trackVertical">
+                                        <div x-show="orientation === 'vertical'" class="w-full">
+                                            <div x-show="settings.showLabels" class="flex items-center justify-start gap-4 mb-6 pl-2 group">
+                                                <div class="flex flex-col items-start text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
+                                                    <span x-text="texts.bestLabel1"></span>
+                                                    <span x-text="texts.bestLabel2"></span>
+                                                    <span x-text="texts.bestLabel3"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="relative w-16 h-72 mx-auto flex justify-center py-4 select-none mb-4"
+                                                 :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                 @mousedown="startDrag"
+                                                 @touchstart.prevent="startDrag"
+                                                 x-ref="trackVertical">
                                              
                                              <!-- Track Line -->
                                              <div class="absolute inset-y-0 w-2 bg-gray-200 rounded-full left-1/2 -translate-x-1/2"></div>
@@ -344,15 +354,38 @@
                                              <!-- Click Area using -inset to expand tap target -->
                                              <div class="absolute -inset-x-6 inset-y-0 cursor-pointer z-10"
                                                   @mousemove="onDrag" @touchmove.prevent="onDrag" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValue"></div>
+                                            </div>
+
+                                            <div x-show="settings.showLabels" class="flex items-center justify-start gap-4 mt-6 pl-2 group">
+                                                <div class="flex flex-col items-start text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
+                                                    <span x-text="texts.worstLabel1"></span>
+                                                    <span x-text="texts.worstLabel2"></span>
+                                                    <span x-text="texts.worstLabel3"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Horizontal Slider -->
-                                        <div x-show="orientation === 'horizontal'"
-                                             class="relative w-full h-16 flex items-center select-none mb-4"
-                                             :class="{'pointer-events-none opacity-60': mode === 'edit'}"
-                                             @mousedown="startDragHorizontal"
-                                             @touchstart.prevent="startDragHorizontal"
-                                             x-ref="trackHorizontal">
+                                        <div x-show="orientation === 'horizontal'" class="w-full relative transition-all duration-300"
+                                             :class="effectiveIsMobile ? 'px-2 pt-6 pb-2' : 'px-4 md:px-16 pt-6'">
+                                            <div x-show="settings.showLabels" class="flex justify-between items-end relative z-0 mb-4">
+                                                <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                    <span x-text="texts.worstLabel1"></span>
+                                                    <span x-text="texts.worstLabel2"></span>
+                                                    <span x-text="texts.worstLabel3"></span>
+                                                </div>
+                                                <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                    <span x-text="texts.bestLabel1"></span>
+                                                    <span x-text="texts.bestLabel2"></span>
+                                                    <span x-text="texts.bestLabel3"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="relative w-full h-16 flex items-center select-none mb-4"
+                                                 :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                 @mousedown="startDragHorizontal"
+                                                 @touchstart.prevent="startDragHorizontal"
+                                                 x-ref="trackHorizontal">
                                              
                                              <!-- Track Line -->
                                              <div class="absolute w-full h-2 bg-gray-200 rounded-full top-1/2 -translate-y-1/2"></div>
@@ -393,12 +426,13 @@
                                              <!-- Click Area -->
                                              <div class="absolute -inset-y-4 inset-x-0 cursor-pointer z-10"
                                                   @mousemove="onDragHorizontal" @touchmove.prevent="onDragHorizontal" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValueHorizontal"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
 
-                                <!-- "I don't know" Checkbox -->
-                                <div x-show="settings.showDontKnow && questionType === 'health-slider'" 
+                                  <!-- "I don't know" Checkbox -->
+                                  <div x-show="settings.showDontKnow" 
                                      class="w-auto px-4 transition-all duration-300" 
                                      :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-4'"
                                      x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
@@ -442,7 +476,7 @@
                             </div>
 
                             <!-- Scale Section -->
-                            <div class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
+                               <div x-show="questionType === 'health-slider'" class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
                                  :class="orientation === 'vertical' ? 'w-full md:w-80 pt-2' : 'w-full mt-8 md:mt-12'">
                                 
                                 <!-- Vertical Layout -->
@@ -619,48 +653,6 @@
                         </div>
                     </div>
                 </div>
-
-                                <!-- "I don't know" Checkbox for standard Slider or fallback -->
-                                <div x-show="settings.showDontKnow && questionType === 'slider'" 
-                                     class="w-auto px-4 transition-all duration-300 mx-auto" 
-                                     :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-12'"
-                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
-                                           :class="[
-                                               dontKnow 
-                                               ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
-                                               : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
-                                               mode === 'edit' ? 'pointer-events-none opacity-60' : ''
-                                           ]">
-                                        
-                                        <!-- Active background pattern -->
-                                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                                             :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
-
-                                        <div class="relative flex items-center">
-                                            <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
-                                            
-                                            <!-- Custom Checkbox -->
-                                            <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
-                                                 :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
-                                                <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
-                                                   :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="relative z-10">
-                                            <template x-if="mode === 'edit'">
-                                                <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
-                                                       :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
-                                            </template>
-                                            <template x-if="mode === 'respond'">
-                                                <span class="text-sm font-bold uppercase tracking-widest" 
-                                                      :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
-                                                      x-text="settings.dontKnowLabel"></span>
-                                            </template>
-                                        </div>
-                                    </label>
-                                </div>
 
                     <!-- Settings Modal (Restored to fixed overlay) -->
                     <div x-show="showSettings" 
