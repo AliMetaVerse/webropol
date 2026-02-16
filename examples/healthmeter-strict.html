@@ -1059,7 +1059,9 @@
                     // Auto-save changes
                     this.$watch('mode', () => this.saveToLocalStorage());
                     this.$watch('questionType', () => this.saveToLocalStorage());
-                    this.$watch('value', () => this.saveToLocalStorage());
+                    this.$watch('value', () => {
+                        if (!this.dragging) this.saveToLocalStorage();
+                    });
                     this.$watch('dontKnow', () => this.saveToLocalStorage());
                     
                     // Watch objects deeply (Alpine v3 watches reactive objects deeply by default in some contexts, 
@@ -1126,6 +1128,10 @@
                 originalValue: null,
                 dontKnow: false,
                 dragging: false,
+                dragFrame: null,
+                pendingClient: null,
+                pendingAxis: null,
+                activeTrackRect: null,
                 
                 texts: {
                     title: 'On a scale from 0 to 100, how would you rate your overall health today?',
@@ -1147,47 +1153,113 @@
                     worstLabel3: 'imagine'
                 },
                 
+                getClientPosition(e, axis) {
+                    if (e && e.touches && e.touches[0]) {
+                        return axis === 'vertical' ? e.touches[0].clientY : e.touches[0].clientX;
+                    }
+                    return axis === 'vertical' ? e.clientY : e.clientX;
+                },
+
+                getTrackRect(axis) {
+                    if (this.dragging && this.activeTrackRect) return this.activeTrackRect;
+                    const track = axis === 'vertical' ? this.$refs.trackVertical : this.$refs.trackHorizontal;
+                    return track ? track.getBoundingClientRect() : null;
+                },
+
+                applyValueFromClient(axis, clientPos) {
+                    if (this.dontKnow || clientPos === null || clientPos === undefined) return;
+                    const rect = this.getTrackRect(axis);
+                    if (!rect) return;
+
+                    let nextValue;
+
+                    if (axis === 'vertical') {
+                        let relativeY = clientPos - rect.top;
+                        if (relativeY < 0) relativeY = 0;
+                        if (relativeY > rect.height) relativeY = rect.height;
+                        const percent = 100 - (relativeY / rect.height * 100);
+                        nextValue = Math.round(percent);
+                    } else {
+                        let relativeX = clientPos - rect.left;
+                        if (relativeX < 0) relativeX = 0;
+                        if (relativeX > rect.width) relativeX = rect.width;
+                        const percent = (relativeX / rect.width * 100);
+                        nextValue = Math.round(percent);
+                    }
+
+                    if (nextValue !== this.value) {
+                        this.value = nextValue;
+                    }
+                },
+
+                queueValueUpdate(axis, clientPos) {
+                    this.pendingAxis = axis;
+                    this.pendingClient = clientPos;
+                    if (this.dragFrame !== null) return;
+
+                    this.dragFrame = requestAnimationFrame(() => {
+                        const pendingAxis = this.pendingAxis;
+                        const pendingClient = this.pendingClient;
+                        this.dragFrame = null;
+                        this.pendingAxis = null;
+                        this.pendingClient = null;
+                        this.applyValueFromClient(pendingAxis, pendingClient);
+                    });
+                },
+
                 // Vertical Logic
                 updateFromEvent(e) {
-                    if (this.dontKnow) return;
-                    const track = this.$refs.trackVertical;
-                    if (!track) return;
-                    const rect = track.getBoundingClientRect();
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    
-                    let relativeY = clientY - rect.top;
-                    if (relativeY < 0) relativeY = 0;
-                    if (relativeY > rect.height) relativeY = rect.height;
-                    
-                    const percent = 100 - (relativeY / rect.height * 100);
-                    this.value = Math.round(percent);
+                    const clientY = this.getClientPosition(e, 'vertical');
+                    this.applyValueFromClient('vertical', clientY);
                 },
 
                 // Horizontal Logic
                 updateFromEventHorizontal(e) {
-                    if (this.dontKnow) return;
-                    const track = this.$refs.trackHorizontal;
-                    if (!track) return;
-                    const rect = track.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    
-                    // Left is 0, Right is 100
-                    let relativeX = clientX - rect.left;
-                    if (relativeX < 0) relativeX = 0;
-                    if (relativeX > rect.width) relativeX = rect.width;
-                    
-                    const percent = (relativeX / rect.width * 100);
-                    this.value = Math.round(percent);
+                    const clientX = this.getClientPosition(e, 'horizontal');
+                    this.applyValueFromClient('horizontal', clientX);
                 },
-                
-                startDrag(e) { this.dragging = true; this.updateFromEvent(e); },
-                startDragHorizontal(e) { this.dragging = true; this.updateFromEventHorizontal(e); },
-                
-                onDrag(e) { if (!this.dragging) return; this.updateFromEvent(e); },
-                onDragHorizontal(e) { if (!this.dragging) return; this.updateFromEventHorizontal(e); },
-                
-                stopDrag() { this.dragging = false; },
-                
+
+                startDrag(e) {
+                    if (this.dontKnow) return;
+                    this.dragging = true;
+                    const track = this.$refs.trackVertical;
+                    this.activeTrackRect = track ? track.getBoundingClientRect() : null;
+                    this.queueValueUpdate('vertical', this.getClientPosition(e, 'vertical'));
+                },
+
+                startDragHorizontal(e) {
+                    if (this.dontKnow) return;
+                    this.dragging = true;
+                    const track = this.$refs.trackHorizontal;
+                    this.activeTrackRect = track ? track.getBoundingClientRect() : null;
+                    this.queueValueUpdate('horizontal', this.getClientPosition(e, 'horizontal'));
+                },
+
+                onDrag(e) {
+                    if (!this.dragging) return;
+                    this.queueValueUpdate('vertical', this.getClientPosition(e, 'vertical'));
+                },
+
+                onDragHorizontal(e) {
+                    if (!this.dragging) return;
+                    this.queueValueUpdate('horizontal', this.getClientPosition(e, 'horizontal'));
+                },
+
+                stopDrag() {
+                    const wasDragging = this.dragging;
+                    this.dragging = false;
+                    this.activeTrackRect = null;
+                    this.pendingAxis = null;
+                    this.pendingClient = null;
+                    if (this.dragFrame !== null) {
+                        cancelAnimationFrame(this.dragFrame);
+                        this.dragFrame = null;
+                    }
+                    if (wasDragging) {
+                        this.saveToLocalStorage();
+                    }
+                },
+
                 updateValue(e) { this.updateFromEvent(e); },
                 updateValueHorizontal(e) { this.updateFromEventHorizontal(e); }
             }
