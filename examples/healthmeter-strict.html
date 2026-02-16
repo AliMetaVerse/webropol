@@ -182,8 +182,8 @@
                             <!-- Content Area (Flex determines layout) -->
                             <div class="flex gap-8 transition-all duration-500"
                                  :class="[
-                                    effectiveIsMobile ? 'flex-col' : 'flex-col md:flex-row md:gap-16',
-                                    (orientation === 'vertical' && questionType === 'health-slider' && !effectiveIsMobile) ? 'flex-col md:flex-row' : 'flex-col'
+                                    effectiveIsMobile || (orientation === 'horizontal' && questionType === 'health-slider') ? 'flex-col' : 'flex-col md:flex-row md:gap-16',
+                                    (orientation === 'vertical' && questionType === 'health-slider' && !effectiveIsMobile) ? 'flex-col md:flex-row' : ''
                                  ]">
                             
                                 <!-- Instructions & Display Box -->
@@ -252,8 +252,8 @@
                                         questionType === 'slider'
                                             ? (effectiveIsMobile ? 'mt-8 w-full mx-auto max-w-lg' : 'mt-8 md:mt-12 w-full mx-auto max-w-lg')
                                             : (orientation === 'vertical'
-                                                ? (effectiveIsMobile ? 'mt-8 w-full max-w-[14rem] mx-auto' : 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0')
-                                                : (effectiveIsMobile ? 'mt-8 w-full max-w-[16rem] mx-auto' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0'))
+                                                ? (effectiveIsMobile ? 'mt-8 w-full max-w-[14rem] mx-auto' : 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0 mr-8 lg:mr-12')
+                                                : (effectiveIsMobile ? 'mt-8 w-full max-w-[16rem] mx-auto' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0 mr-8 lg:mr-12'))
                                      ]">
                                      
                                     <!-- "Your Health" Black Box -->
@@ -398,7 +398,10 @@
                                 </template>
 
                                 <!-- "I don't know" Checkbox -->
-                                <div x-show="settings.showDontKnow" class="w-auto mt-4 px-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                <div x-show="settings.showDontKnow && questionType === 'health-slider'" 
+                                     class="w-auto px-4 transition-all duration-300" 
+                                     :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-4'"
+                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
                                     <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
                                            :class="[
                                                dontKnow 
@@ -532,9 +535,11 @@
 
                                 <!-- Horizontal Layout -->
                                 <template x-if="orientation === 'horizontal' && questionType === 'health-slider'">
-                                    <div class="w-full pt-10 px-4 md:px-16 relative">
+                                    <div class="w-full relative transition-all duration-300"
+                                         :class="effectiveIsMobile ? 'px-2 pt-16 pb-8' : 'px-4 md:px-16 pt-10'">
                                         <!-- Horizontal Label Row -->
-                                        <div class="flex justify-between items-end mb-4 relative z-0">
+                                        <div class="flex justify-between items-end relative z-0"
+                                             :class="effectiveIsMobile ? 'mb-12' : 'mb-4'">
                                             <!-- Worst Label (Left) -->
                                             <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
                                                 <span x-text="texts.worstLabel1"></span>
@@ -573,7 +578,10 @@
                                                     <!-- Tick Mark -->
                                                     <div class="w-px bg-gray-400" :class="(i-1) % 10 === 0 ? 'h-8 bg-gray-500' : 'h-4'"></div>
                                                     <!-- Number -->
-                                                    <span x-show="(i-1) % 10 === 0" class="mt-0.5 text-webropol-gray-500 font-medium text-lg text-center tabular-nums select-none" x-text="i-1"></span>
+                                                    <span x-show="(i-1) % 10 === 0" 
+                                                          class="mt-1 font-medium text-center tabular-nums select-none text-webropol-gray-500"
+                                                          :class="effectiveIsMobile ? 'text-[10px]' : 'text-lg'"
+                                                          x-text="i-1"></span>
                                                 </div>
                                             </template>
 
@@ -586,11 +594,14 @@
                                                  :style="`left: ${value ?? 50}%; transform: translateX(-50%);`"> <!-- 0 is left -->
                                                 
                                                 <!-- Dotted line up -->
-                                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 h-24 border-l-2 border-webropol-gray-400 border-dotted"></div>
+                                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 border-l-2 border-webropol-gray-400 border-dotted"
+                                                     :class="effectiveIsMobile ? 'h-16' : 'h-24'"></div>
                                                 
                                                 <!-- Value Box -->
-                                                <div class="absolute bottom-[232px] left-1/2 -translate-x-1/2 flex flex-col items-center">
-                                                    <div class="text-5xl text-[#5c7ae0] font-medium flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-gray-50">
+                                                <div class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
+                                                     :class="effectiveIsMobile ? 'bottom-[180px]' : 'bottom-[232px]'">
+                                                    <div class="text-[#5c7ae0] font-medium flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-gray-50"
+                                                         :class="effectiveIsMobile ? 'text-4xl' : 'text-5xl'">
                                                         <span x-text="Math.round(value)"></span>
                                                     </div>
                                                     <!-- Triangle Pointing Down -->
@@ -608,6 +619,48 @@
                         </div>
                     </div>
                 </div>
+
+                                <!-- "I don't know" Checkbox for standard Slider or fallback -->
+                                <div x-show="settings.showDontKnow && questionType === 'slider'" 
+                                     class="w-auto px-4 transition-all duration-300 mx-auto" 
+                                     :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-12'"
+                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
+                                           :class="[
+                                               dontKnow 
+                                               ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
+                                               : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
+                                               mode === 'edit' ? 'pointer-events-none opacity-60' : ''
+                                           ]">
+                                        
+                                        <!-- Active background pattern -->
+                                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                                             :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
+
+                                        <div class="relative flex items-center">
+                                            <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
+                                            
+                                            <!-- Custom Checkbox -->
+                                            <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
+                                                 :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
+                                                <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
+                                                   :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="relative z-10">
+                                            <template x-if="mode === 'edit'">
+                                                <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
+                                                       :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
+                                            </template>
+                                            <template x-if="mode === 'respond'">
+                                                <span class="text-sm font-bold uppercase tracking-widest" 
+                                                      :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
+                                                      x-text="settings.dontKnowLabel"></span>
+                                            </template>
+                                        </div>
+                                    </label>
+                                </div>
 
                     <!-- Settings Modal (Restored to fixed overlay) -->
                     <div x-show="showSettings" 
