@@ -34,39 +34,66 @@
 </head>
 <body x-data="moduleApp()" @toggle-fullscreen.window="fullscreen = $event.detail">
     <div class="flex h-screen bg-webropol-gray-50">
-        <webropol-sidebar active="examples" base="../" x-show="!fullscreen" class="transition-all duration-300"></webropol-sidebar>
+        <webropol-sidebar active="examples" base="../" x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-sidebar>
         
         <div class="flex-1 flex flex-col overflow-hidden">
             <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector 
-                             x-show="!fullscreen" class="transition-all duration-300"></webropol-header>
+                             x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-header>
             
             <div class="bg-white/70 backdrop-blur px-0 sm:px-4 transition-all duration-300"
-                 x-show="!fullscreen">
+                 x-show="!fullscreen && mode !== 'respond'">
                 <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
             </div>
             
-            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12" role="main">
+            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12 relative" role="main">
                 
                 <!-- Use 'x-cloak' to avoid flicker but we removed it per instructions unless styled. 
                      We will manage state via Alpine. -->
                 
                 <!-- Health Meter App Container -->
-                <div class="max-w-6xl mx-auto" x-data="healthSlider()">
+                <div class="transition-all duration-300" 
+                     :class="containerClass"
+                     x-data="healthSlider()"
+                     :style="mode === 'respond' ? 'padding-top: 60px;' : ''">
 
                     <!-- Top Bar: Mode Switcher & Settings -->
                     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <!-- Mode Tabs -->
-                        <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex">
+                        <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex items-center" 
+                             :class="mode === 'respond' ? 'fixed top-4 left-4 z-[60] shadow-md border border-gray-200' : ''">
                             <button @click="mode = 'edit'; value = null; $dispatch('toggle-fullscreen', false)" 
                                     :class="mode === 'edit' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
-                                <i class="fa-light fa-pen-to-square mr-2"></i>Edit
+                                <i class="fa-light fa-pen-to-square mr-2"></i> Edit
                             </button>
                             <button @click="mode = 'respond'; $dispatch('toggle-fullscreen', true)" 
                                     :class="mode === 'respond' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
-                                <i class="fa-light fa-eye mr-2"></i>Responding
+                                <i class="fa-light fa-eye mr-2"></i> Responding
                             </button>
+                            
+                            <!-- Device Switcher (Visible only in Respond Mode) -->
+                            <div x-show="mode === 'respond'" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 class="flex items-center ml-2 border-l border-gray-300 pl-2 space-x-1">
+                                <button @click="previewDevice = 'desktop'" 
+                                        :class="previewDevice === 'desktop' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Desktop view">
+                                    <i class="fa-light fa-desktop"></i>
+                                </button>
+                                <button @click="previewDevice = 'tablet'" 
+                                        :class="previewDevice === 'tablet' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Tablet view">
+                                    <i class="fa-light fa-tablet-screen-button"></i>
+                                </button>
+                                <button @click="previewDevice = 'mobile'" 
+                                        :class="previewDevice === 'mobile' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Mobile view">
+                                    <i class="fa-light fa-mobile-screen-button"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Settings Button -->
@@ -78,7 +105,7 @@
                          :class="mode === 'edit' ? 'selected' : 'bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-transparent'">
                         
                         <!-- Header Section (Toolbar) - Only in Edit Mode -->
-                        <div class="question-card-header" x-show="mode === 'edit'">
+                        <div class="question-card-header" x-show="mode === 'edit' && !effectiveIsMobile">
                             <!-- Left: Type Badge and Health Indicator -->
                             <div class="flex items-center gap-2">
                                 <div class="bg-[#FFFFFF] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
@@ -134,7 +161,8 @@
                         </div>
 
                         <!-- Card Body -->
-                        <div class="p-6 md:p-12">
+                        <div class="p-6 transition-all duration-300" 
+                             :class="effectiveIsMobile ? '' : 'md:p-12'">
                             <!-- Title Section -->
                             <div class="mb-10 pl-2">
                                 <!-- Edit Mode: Inputs -->
@@ -152,16 +180,26 @@
                             </div>
 
                             <!-- Content Area (Flex determines layout) -->
-                            <div class="flex gap-8 md:gap-16 transition-all duration-500"
-                                 :class="(orientation === 'vertical' && questionType === 'health-slider') ? 'flex-col md:flex-row' : 'flex-col'">
+                            <div class="flex gap-8 transition-all duration-500"
+                                 :class="[
+                                    effectiveIsMobile ? 'flex-col' : 'flex-col md:flex-row md:gap-16',
+                                    (orientation === 'vertical' && questionType === 'health-slider' && !effectiveIsMobile) ? 'flex-col md:flex-row' : 'flex-col'
+                                 ]">
                             
                                 <!-- Instructions & Display Box -->
                                 <div class="flex-1 pt-4 flex transition-all duration-500"
-                                     :class="(orientation === 'vertical' && questionType === 'health-slider') || questionType === 'slider' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
+                                     :class="[
+                                        (orientation === 'vertical' && questionType === 'health-slider') || questionType === 'slider' 
+                                            ? 'flex-col' 
+                                            : (effectiveIsMobile ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12')
+                                     ]">
                                 
                                 <!-- Instructions List -->
-                                <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
-                                     :class="orientation === 'horizontal' ? 'flex-1' : ''">
+                                <div class="prose prose-base text-webropol-gray-600 max-w-none transition-opacity duration-300"
+                                     :class="[
+                                        effectiveIsMobile ? '' : 'md:prose-lg',
+                                        orientation === 'horizontal' ? 'flex-1' : ''
+                                     ]">
                                     
                                     <!-- Edit Mode: Simple WYSIWYG Editor -->
                                     <div x-show="mode === 'edit'" class="w-full relative group">
@@ -210,11 +248,13 @@
 
                                 <!-- Score Display Wrapper -->
                                 <div class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500"
-                                     :class="questionType === 'slider' 
-                                        ? 'mt-8 md:mt-12 w-full mx-auto max-w-lg' 
-                                        : (orientation === 'vertical' 
-                                            ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0' 
-                                            : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0')">
+                                     :class="[
+                                        questionType === 'slider'
+                                            ? (effectiveIsMobile ? 'mt-8 w-full mx-auto max-w-lg' : 'mt-8 md:mt-12 w-full mx-auto max-w-lg')
+                                            : (orientation === 'vertical'
+                                                ? (effectiveIsMobile ? 'mt-8 w-full max-w-[14rem] mx-auto' : 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0')
+                                                : (effectiveIsMobile ? 'mt-8 w-full max-w-[16rem] mx-auto' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0'))
+                                     ]">
                                      
                                     <!-- "Your Health" Black Box -->
                                     <div x-show="questionType === 'health-slider'"
@@ -246,9 +286,9 @@
                                                readonly
                                                placeholder="&mdash;"
                                                @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
-                                               class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20"
+                                               class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20 text-5xl"
                                                :class="[
-                                                    orientation === 'vertical' ? 'text-5xl md:text-7xl' : 'text-5xl md:text-7xl',
+                                                    effectiveIsMobile ? 'text-5xl' : 'text-5xl md:text-7xl',
                                                     mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none'
                                                ]">
                                     </div>
@@ -834,7 +874,22 @@
         .question-card.selected{border-color:#06b6d4;background:#fff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
         .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
         .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
-
+        
+        /* Force Mobile Styles in Mobile Preview */
+        .mobile-view .md\:p-12 { padding: 1.5rem !important; }
+        .mobile-view .md\:px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
+        .mobile-view .md\:py-12 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+        .mobile-view .md\:flex-row { flex-direction: column !important; }
+        .mobile-view .md\:gap-12 { gap: 2rem !important; }
+        .mobile-view .md\:gap-16 { gap: 2rem !important; }
+        .mobile-view .md\:mt-12 { margin-top: 2rem !important; }
+        .mobile-view .md\:mx-0 { margin-left: auto !important; margin-right: auto !important; }
+        .mobile-view .md\:w-56 { width: 100% !important; max-width: 14rem !important; }
+        .mobile-view .md\:text-2xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+        .mobile-view .md\:text-7xl { font-size: 3rem !important; line-height: 1 !important; }
+        .mobile-view .md\:w-64 { width: 100% !important; max-width: 16rem !important; }
+        .mobile-view .md\:prose-lg { font-size: 1rem !important; line-height: 1.5 !important; }
+        
         /* Hide number input spinners */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -890,18 +945,38 @@
                     visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                 },
 
-                // Mobile detection
+                // Mobile detection & Preview
                 isMobile: false,
+                previewDevice: 'desktop', // 'desktop', 'tablet', 'mobile'
+
+                get effectiveIsMobile() {
+                    // Start simple: Mobile preview counts as mobile
+                    if (this.mode === 'respond' && this.previewDevice === 'mobile') {
+                        return true;
+                    }
+                    // If native mobile, it's mobile
+                    return this.isMobile;
+                },
+
+                get containerClass() {
+                    if (this.mode !== 'respond') return 'max-w-6xl mx-auto';
+                    
+                    switch(this.previewDevice) {
+                        case 'mobile': return 'max-w-[393px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[852px] transition-all duration-300 rounded-[3rem] my-8 border-[8px] border-gray-800 mobile-view';
+                        case 'tablet': return 'max-w-[820px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[1180px] transition-all duration-300 rounded-[2rem] my-8 border-[12px] border-gray-800 tablet-view';
+                        default: return 'max-w-6xl mx-auto transition-all duration-300';
+                    }
+                },
 
                 get orientation() { 
                     // Use force layout settings based on device
-                    if (this.isMobile) {
+                    if (this.effectiveIsMobile) {
                         return this.settings.orientationMobile || 'horizontal';
                     }
                     return this.settings.orientationDesktop || 'vertical'; 
                 },
                 set orientation(val) { 
-                    if (this.isMobile) {
+                    if (this.effectiveIsMobile) {
                         this.settings.orientationMobile = val;
                     } else {
                         this.settings.orientationDesktop = val;
