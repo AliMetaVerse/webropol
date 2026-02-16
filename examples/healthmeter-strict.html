@@ -507,7 +507,7 @@
                                              :class="{'pointer-events-none': mode === 'edit'}"
                                              @mousedown="startDrag"
                                              @touchstart.prevent="startDrag"
-                                             x-ref="trackVertical">
+                                            x-ref="trackVerticalHealth">
                                             
                                             <!-- Interaction Hint -->
                                             <div x-show="value === null && !dontKnow" 
@@ -594,7 +594,7 @@
                                              :class="{'pointer-events-none': mode === 'edit'}"
                                              @mousedown="startDragHorizontal"
                                              @touchstart.prevent="startDragHorizontal"
-                                             x-ref="trackHorizontal">
+                                            x-ref="trackHorizontalHealth">
                                             
                                             <!-- Interaction Hint -->
                                             <div x-show="value === null && !dontKnow" 
@@ -1152,9 +1152,21 @@
                     return axis === 'vertical' ? e.clientY : e.clientX;
                 },
 
+                getTrackElement(axis) {
+                    const isHealthSlider = this.questionType === 'health-slider';
+                    if (axis === 'vertical') {
+                        return isHealthSlider
+                            ? (this.$refs.trackVerticalHealth || this.$refs.trackVertical)
+                            : (this.$refs.trackVertical || this.$refs.trackVerticalHealth);
+                    }
+                    return isHealthSlider
+                        ? (this.$refs.trackHorizontalHealth || this.$refs.trackHorizontal)
+                        : (this.$refs.trackHorizontal || this.$refs.trackHorizontalHealth);
+                },
+
                 getTrackRect(axis) {
                     if (this.dragging && this.activeTrackRect) return this.activeTrackRect;
-                    const track = axis === 'vertical' ? this.$refs.trackVertical : this.$refs.trackHorizontal;
+                    const track = this.getTrackElement(axis);
                     return track ? track.getBoundingClientRect() : null;
                 },
 
@@ -1214,7 +1226,7 @@
                 startDrag(e) {
                     if (this.dontKnow) return;
                     this.dragging = true;
-                    const track = this.$refs.trackVertical;
+                    const track = this.getTrackElement('vertical');
                     this.activeTrackRect = track ? track.getBoundingClientRect() : null;
                     this.queueValueUpdate('vertical', this.getClientPosition(e, 'vertical'));
                 },
@@ -1222,7 +1234,7 @@
                 startDragHorizontal(e) {
                     if (this.dontKnow) return;
                     this.dragging = true;
-                    const track = this.$refs.trackHorizontal;
+                    const track = this.getTrackElement('horizontal');
                     this.activeTrackRect = track ? track.getBoundingClientRect() : null;
                     this.queueValueUpdate('horizontal', this.getClientPosition(e, 'horizontal'));
                 },
