@@ -709,18 +709,38 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Slider Placement -->
+                                    <!-- Slider Placement (Orientation) -->
                                     <div>
-                                         <h4 class="text-sm text-gray-500 mb-3">Slider placement</h4>
-                                         <div class="space-y-3">
-                                            <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                                <input type="radio" name="orientation" value="horizontal" x-model="settings.orientation" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                                <span class="text-sm text-gray-700">Horizontally</span>
-                                            </label>
-                                            <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                                <input type="radio" name="orientation" value="vertical" x-model="settings.orientation" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                                <span class="text-sm text-gray-700">Vertically</span>
-                                            </label>
+                                         <h4 class="text-sm text-gray-500 mb-3">Orientation</h4>
+                                         
+                                         <!-- Desktop Orientation -->
+                                         <div class="mb-4">
+                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Desktop</span>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_desktop" value="horizontal" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Horizontal</span>
+                                                </label>
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_desktop" value="vertical" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Vertical</span>
+                                                </label>
+                                            </div>
+                                         </div>
+
+                                         <!-- Mobile Orientation -->
+                                         <div>
+                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Mobile</span>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Horizontal</span>
+                                                </label>
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_mobile" value="vertical" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Vertical</span>
+                                                </label>
+                                            </div>
                                          </div>
                                     </div>
                                 </div>
@@ -859,7 +879,8 @@
                     
                     // Positions
                     direction: 'min-max', // 'min-max' | 'max-min'
-                    orientation: 'vertical', // 'horizontal' | 'vertical'
+                    orientationDesktop: 'vertical', // 'horizontal' | 'vertical'
+                    orientationMobile: 'horizontal', // 'horizontal' | 'vertical'
                     
                     // Description
                     showDescription: true,
@@ -872,15 +893,20 @@
                 // Mobile detection
                 isMobile: false,
 
-                // Sync orientation proxy with mobile detection
                 get orientation() { 
-                    // Force horizontal on mobile devices (screens < 768px)
+                    // Use force layout settings based on device
                     if (this.isMobile) {
-                        return 'horizontal';
+                        return this.settings.orientationMobile || 'horizontal';
                     }
-                    return this.settings.orientation; 
+                    return this.settings.orientationDesktop || 'vertical'; 
                 },
-                set orientation(val) { this.settings.orientation = val; },
+                set orientation(val) { 
+                    if (this.isMobile) {
+                        this.settings.orientationMobile = val;
+                    } else {
+                        this.settings.orientationDesktop = val;
+                    }
+                },
 
                 init() {
                     // Load saved state
@@ -925,7 +951,18 @@
                             const parsed = JSON.parse(data);
                             if (parsed.mode) this.mode = parsed.mode;
                             if (parsed.questionType) this.questionType = parsed.questionType;
-                            if (parsed.settings) this.settings = { ...this.settings, ...parsed.settings };
+                            if (parsed.settings) {
+                                this.settings = { ...this.settings, ...parsed.settings };
+                                
+                                // Migrate old orientation
+                                if (parsed.settings.orientation && !parsed.settings.orientationDesktop) {
+                                    this.settings.orientationDesktop = parsed.settings.orientation;
+                                }
+                                
+                                // Ensure defaults
+                                if (!this.settings.orientationDesktop) this.settings.orientationDesktop = 'vertical';
+                                if (!this.settings.orientationMobile) this.settings.orientationMobile = 'horizontal';
+                            }
                             if (parsed.texts) this.texts = { ...this.texts, ...parsed.texts };
                             if (Object.prototype.hasOwnProperty.call(parsed, 'value')) this.value = parsed.value;
                             if (Object.prototype.hasOwnProperty.call(parsed, 'dontKnow')) this.dontKnow = parsed.dontKnow;
