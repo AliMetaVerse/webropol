@@ -355,7 +355,10 @@ export class NumericSlider extends BaseComponent {
                     
                     <!-- Drag Handle (Edit Mode) -->
                     <template x-if="mode === 'edit'">
-                        <div class="drag-handle" title="Drag to reorder">
+                        <div x-show="selected" class="drag-handle" title="Drag to reorder" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100">
                             <i class="fal fa-arrows-alt"></i>
                         </div>
                     </template>
@@ -414,45 +417,23 @@ export class NumericSlider extends BaseComponent {
                         </div>
                     </div>
 
-                    <!-- Collapsed Preview (Edit Mode Only) -->
-                    <template x-if="mode === 'edit'">
-                        <div x-show="!selected" 
-                             class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl"
-                             x-transition:enter="transition ease-out duration-200"
-                             x-transition:enter-start="opacity-0"
-                             x-transition:enter-end="opacity-100">
-                             
-                            <div class="mb-4 flex justify-between items-start">
-                                <h3 class="text-base font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors truncate pr-4" x-text="texts.title || 'Question Title'"></h3>
-                                <div class="flex items-center gap-2">
-                                     <span class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity">Slider</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Simplified visual representation -->
-                            <div class="h-2 w-full bg-gray-100 rounded-full relative overflow-hidden">
-                                <div class="absolute left-0 top-0 bottom-0 bg-gray-300 w-1/3"></div>
-                            </div>
-                        </div>
-                    </template>
-
                     <!-- Expanded Body (Editor) & Respond Mode -->
                     <div class="transition-all duration-300" 
-                         :class="[effectiveIsMobile ? '' : (mode === 'edit' ? 'bg-white rounded-b-3xl' : 'md:p-12'), (mode === 'edit' && !selected) ? 'hidden' : 'block']">
+                         :class="[effectiveIsMobile ? '' : (mode === 'edit' ? 'bg-white rounded-b-3xl' : 'md:p-12'), 'block']">
                          
                          <div :class="mode === 'edit' ? 'p-6' : ''">
                         <!-- Title Section -->
                         <div class="mb-10 pl-2">
-                            <!-- Edit Mode: Inputs -->
-                            <template x-if="mode === 'edit'">
+                            <!-- Edit Mode: Inputs (When Selected) -->
+                            <template x-if="mode === 'edit' && selected">
                                 <div class="space-y-4">
                                     <textarea x-model="texts.title" rows="1" @input="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'" class="w-full text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2 resize-none overflow-hidden"></textarea>
                                 </div>
                             </template>
-                            <!-- Respond Mode: Text -->
-                            <template x-if="mode === 'respond'">
+                            <!-- View Mode: Text (When Not Selected OR Respond Mode) -->
+                            <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                 <div class="space-y-2">
-                                    <h2 class="text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h2>
+                                    <h2 class="text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title || 'Question Title'"></h2>
                                 </div>
                             </template>
                         </div>
@@ -479,8 +460,8 @@ export class NumericSlider extends BaseComponent {
                                     orientation === 'horizontal' ? 'flex-1' : ''
                                     ]">
                                 
-                                <!-- Edit Mode: Simple WYSIWYG Editor -->
-                                <div x-show="mode === 'edit'" class="w-full relative group">
+                                <!-- Edit Mode: Simple WYSIWYG Editor (When Selected) -->
+                                <div x-show="mode === 'edit' && selected" class="w-full relative group">
                                     <div class="border-2 border-transparent hover:border-webropol-primary-200 focus-within:border-webropol-primary-500 rounded-xl bg-gray-50/50 transition-all duration-200 shadow-inner overflow-hidden flex flex-col min-h-[300px]">
                                         <!-- Simple Toolbar -->
                                         <div class="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-100/50 sticky top-0 z-10">
@@ -513,8 +494,8 @@ export class NumericSlider extends BaseComponent {
                                     <div class="absolute top-14 right-4 text-xs font-semibold text-webropol-primary-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none uppercase tracking-wide">Editable Text</div>
                                 </div>
 
-                                <!-- Respond Mode: HTML Content -->
-                                <div x-show="mode === 'respond'" 
+                                <!-- Read-Only / Respond Mode: HTML Content -->
+                                <div x-show="mode === 'respond' || (mode === 'edit' && !selected)" 
                                         class="text-webropol-gray-700 leading-relaxed font-medium 
                                             [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1
                                             [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-1
@@ -544,14 +525,14 @@ export class NumericSlider extends BaseComponent {
                                 <!-- Subtle gradient overlay for depth without losing pure black feel -->
                                 <div class="absolute inset-0 bg-gradient-to-br from-[#7c3aed]/20 to-transparent pointer-events-none"></div>
 
-                                <template x-if="mode === 'edit'">
+                                <template x-if="mode === 'edit' && selected">
                                     <div class="flex flex-col items-center text-center relative z-10">
                                         <input x-model="texts.boxLabel1" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-2 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
                                         <input x-model="texts.boxLabel2" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-2 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
                                         <input x-model="texts.boxLabel3" class="bg-transparent text-center text-white/90 text-sm font-bold tracking-[0.25em] mb-6 w-36 border-b border-transparent hover:border-white/40 focus:border-white focus:outline-none transition-all uppercase placeholder-white/30">
                                     </div>
                                 </template>
-                                <template x-if="mode === 'respond'">
+                                <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                     <div class="flex flex-col items-center text-center relative z-10 transition-transform duration-300 group-hover:-translate-y-1">
                                         <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel1"></span>
                                         <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel2"></span>
@@ -588,7 +569,7 @@ export class NumericSlider extends BaseComponent {
                                         </div>
 
                                         <div class="relative w-16 h-72 mx-auto flex justify-center py-4 select-none mb-4"
-                                                :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                :class="{'pointer-events-none opacity-60': mode === 'edit' && selected}"
                                                 @mousedown="startDrag"
                                                 @touchstart.prevent="startDrag"
                                                 x-ref="trackVertical">
@@ -660,7 +641,7 @@ export class NumericSlider extends BaseComponent {
                                         </div>
 
                                         <div class="relative w-full h-16 flex items-center select-none mb-4"
-                                                :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                :class="{'pointer-events-none opacity-60': mode === 'edit' && selected}"
                                                 @mousedown="startDragHorizontal"
                                                 @touchstart.prevent="startDragHorizontal"
                                                 x-ref="trackHorizontal">
@@ -738,11 +719,11 @@ export class NumericSlider extends BaseComponent {
                                     </div>
                                     
                                     <div class="relative z-10">
-                                        <template x-if="mode === 'edit'">
+                                        <template x-if="mode === 'edit' && selected">
                                             <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
                                                     :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
                                         </template>
-                                        <template x-if="mode === 'respond'">
+                                        <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                             <span class="text-sm font-bold uppercase tracking-widest" 
                                                     :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
                                                     x-text="settings.dontKnowLabel"></span>
@@ -763,14 +744,14 @@ export class NumericSlider extends BaseComponent {
                                     <!-- Top Label (Best) -->
                                     <div class="flex items-center justify-start gap-4 mb-8 pl-2 group">
                                         <div class="flex flex-col items-start text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
-                                            <template x-if="mode === 'edit'">
+                                            <template x-if="mode === 'edit' && selected">
                                                 <div class="flex flex-col items-start gap-1">
                                                     <input x-model="texts.bestLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
                                                     <input x-model="texts.bestLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
                                                     <input x-model="texts.bestLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
                                                 </div>
                                             </template>
-                                            <template x-if="mode === 'respond'">
+                                            <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                                 <div class="flex flex-col items-start">
                                                     <span x-text="texts.bestLabel1"></span>
                                                     <span x-text="texts.bestLabel2"></span>
@@ -782,7 +763,7 @@ export class NumericSlider extends BaseComponent {
                                     
                                     <!-- Vertical Track -->
                                     <div class="relative h-[400px] sm:h-[600px] w-full" 
-                                            :class="{'pointer-events-none': mode === 'edit'}"
+                                            :class="{'pointer-events-none': mode === 'edit' && selected}"
                                             @mousedown="startDrag"
                                             @touchstart.prevent="startDrag"
                                         x-ref="trackVerticalHealth">
@@ -826,14 +807,14 @@ export class NumericSlider extends BaseComponent {
                                     <!-- Bottom Label (Worst) -->
                                     <div class="flex items-center justify-start gap-4 mt-8 pl-2 group">
                                         <div class="flex flex-col items-start text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
-                                            <template x-if="mode === 'edit'">
+                                            <template x-if="mode === 'edit' && selected">
                                                 <div class="flex flex-col items-start gap-1">
                                                     <input x-model="texts.worstLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
                                                     <input x-model="texts.worstLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
                                                     <input x-model="texts.worstLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
                                                 </div>
                                             </template>
-                                            <template x-if="mode === 'respond'">
+                                            <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                                 <div class="flex flex-col items-start">
                                                     <span x-text="texts.worstLabel1"></span>
                                                     <span x-text="texts.worstLabel2"></span>
