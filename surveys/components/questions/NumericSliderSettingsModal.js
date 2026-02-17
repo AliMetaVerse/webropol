@@ -65,12 +65,12 @@ export class NumericSliderSettingsModal extends BaseComponent {
                                 <input type="radio" name="qtype" value="health-slider" x-model="questionType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
                                 <span class="font-medium text-sm text-gray-700 flex items-center gap-2">
                                     <i class="fa-light fa-heart-pulse text-gray-400"></i>
-                                    Health Slider
+                                    Quality Meter
                                 </span>
                             </label>
                             </div>
                             
-                            <!-- Disable switch for Health Slider -->
+                            <!-- Disable switch for Quality Meter -->
                             <div x-show="false" class="mt-4 pt-4 border-t border-gray-200/60" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
                             <label class="inline-flex items-center gap-3 cursor-pointer select-none group">
                                     <div class="relative">
