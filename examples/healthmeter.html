@@ -34,39 +34,66 @@
 </head>
 <body x-data="moduleApp()" @toggle-fullscreen.window="fullscreen = $event.detail">
     <div class="flex h-screen bg-webropol-gray-50">
-        <webropol-sidebar active="examples" base="../" x-show="!fullscreen" class="transition-all duration-300"></webropol-sidebar>
+        <webropol-sidebar active="examples" base="../" x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-sidebar>
         
         <div class="flex-1 flex flex-col overflow-hidden">
             <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector 
-                             x-show="!fullscreen" class="transition-all duration-300"></webropol-header>
+                             x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-header>
             
             <div class="bg-white/70 backdrop-blur px-0 sm:px-4 transition-all duration-300"
-                 x-show="!fullscreen">
+                 x-show="!fullscreen && mode !== 'respond'">
                 <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
             </div>
             
-            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12" role="main">
+            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12 relative" role="main">
                 
                 <!-- Use 'x-cloak' to avoid flicker but we removed it per instructions unless styled. 
                      We will manage state via Alpine. -->
                 
                 <!-- Health Meter App Container -->
-                <div class="max-w-6xl mx-auto" x-data="healthSlider()">
+                <div class="transition-all duration-300" 
+                     :class="containerClass"
+                     x-data="healthSlider()"
+                     :style="mode === 'respond' ? 'padding-top: 60px;' : ''">
 
                     <!-- Top Bar: Mode Switcher & Settings -->
                     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <!-- Mode Tabs -->
-                        <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex">
+                        <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex items-center" 
+                             :class="mode === 'respond' ? 'fixed top-4 left-4 z-[60] shadow-md border border-gray-200' : ''">
                             <button @click="mode = 'edit'; value = null; $dispatch('toggle-fullscreen', false)" 
                                     :class="mode === 'edit' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
-                                <i class="fa-light fa-pen-to-square mr-2"></i>Edit
+                                <i class="fa-light fa-pen-to-square mr-2"></i> Edit
                             </button>
                             <button @click="mode = 'respond'; $dispatch('toggle-fullscreen', true)" 
                                     :class="mode === 'respond' ? 'bg-white shadow-sm text-webropol-primary-700 font-semibold' : 'text-webropol-gray-500 hover:text-webropol-gray-700'"
                                     class="px-4 py-2 rounded-md text-sm transition-all duration-200">
-                                <i class="fa-light fa-eye mr-2"></i>Respond
+                                <i class="fa-light fa-eye mr-2"></i> Responding
                             </button>
+                            
+                            <!-- Device Switcher (Visible only in Respond Mode) -->
+                            <div x-show="mode === 'respond'" 
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 class="flex items-center ml-2 border-l border-gray-300 pl-2 space-x-1">
+                                <button @click="previewDevice = 'desktop'" 
+                                        :class="previewDevice === 'desktop' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Desktop view">
+                                    <i class="fa-light fa-desktop"></i>
+                                </button>
+                                <button @click="previewDevice = 'tablet'" 
+                                        :class="previewDevice === 'tablet' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Tablet view">
+                                    <i class="fa-light fa-tablet-screen-button"></i>
+                                </button>
+                                <button @click="previewDevice = 'mobile'" 
+                                        :class="previewDevice === 'mobile' ? 'bg-white shadow-sm text-webropol-primary-700' : 'text-gray-400 hover:text-gray-600'"
+                                        class="p-2 rounded-md transition-all duration-200" title="Mobile view">
+                                    <i class="fa-light fa-mobile-screen-button"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Settings Button -->
@@ -78,11 +105,28 @@
                          :class="mode === 'edit' ? 'selected' : 'bg-white rounded-3xl shadow-xl hover:shadow-2xl border border-transparent'">
                         
                         <!-- Header Section (Toolbar) - Only in Edit Mode -->
-                        <div class="question-card-header" x-show="mode === 'edit'">
-                            <!-- Left: Type Badge -->
-                            <div class="bg-[#FFF8DD] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
-                                <i class="fa-light fa-sliders text-lg"></i>
-                                <span>Numeric slider</span>
+                        <div class="question-card-header" x-show="mode === 'edit' && !effectiveIsMobile">
+                            <!-- Left: Type Badge and Health Indicator -->
+                            <div class="flex items-center gap-2">
+                                <div class="bg-[#FFFFFF] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
+                                    <span class="w-6 h-6 rounded-sm bg-amber-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fa-light fa-sliders text-sm text-gray-700"></i>
+                                    </span>
+                                    <span>Numeric slider</span>
+                                </div>
+                                
+                                <!-- Health Meter Indicator -->
+                                <div x-show="questionType === 'health-slider'" 
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="w-10 h-10 flex items-center justify-center hidden"
+                                     title="Health Meter">
+                                    <i class="fa-light fa-heart-pulse text-red-500 text-lg"></i>
+                                </div>
                             </div>
 
                             <!-- Right: Actions -->
@@ -94,13 +138,17 @@
                                     <i class="fa-light fa-shuffle text-lg"></i>
                                 </button>
                                 <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Add media">
-                                    <div class="relative">
-                                        <i class="fa-light fa-image text-lg"></i>
-                                        <i class="fa-solid fa-plus absolute -top-1 -right-1 text-[10px] bg-white rounded-full"></i>
-                                    </div>
-                                </button>
-                                <button @click="showSettings = true" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Settings">
+                                    <i class="fa-light fa-image-circle-plus"></i>                                </button>
+                                <button @click="showSettings = true" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors relative" title="Settings">
                                     <i class="fa-light fa-gear text-lg"></i>
+                                    <!-- Health Meter Badge -->
+                                    <span x-show="questionType === 'health-slider'" 
+                                          x-transition:enter="transition ease-out duration-200"
+                                          x-transition:enter-start="opacity-0 scale-0"
+                                          x-transition:enter-end="opacity-100 scale-100"
+                                          class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                        <i class="fa-solid fa-heart-pulse text-white text-[8px]"></i>
+                                    </span>
                                 </button>
                                 <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Copy">
                                     <i class="fa-light fa-copy text-lg"></i>
@@ -113,34 +161,45 @@
                         </div>
 
                         <!-- Card Body -->
-                        <div class="p-6 md:p-12">
+                        <div class="p-6 transition-all duration-300" 
+                             :class="effectiveIsMobile ? '' : 'md:p-12'">
                             <!-- Title Section -->
                             <div class="mb-10 pl-2">
                                 <!-- Edit Mode: Inputs -->
                                 <template x-if="mode === 'edit'">
                                     <div class="space-y-4">
-                                        <input type="text" x-model="texts.title" class="w-full text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2">
+                                        <textarea x-model="texts.title" rows="1" @input="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'" class="w-full text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2 resize-none overflow-hidden"></textarea>
                                     </div>
                                 </template>
                                 <!-- Respond Mode: Text -->
                                 <template x-if="mode === 'respond'">
                                     <div class="space-y-2">
-                                        <h1 class="text-2xl md:text-4xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h1>
+                                        <h2 class="text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title"></h2>
                                     </div>
                                 </template>
                             </div>
 
                             <!-- Content Area (Flex determines layout) -->
-                            <div class="flex gap-8 md:gap-16 transition-all duration-500"
-                                 :class="orientation === 'vertical' ? 'flex-col md:flex-row' : 'flex-col'">
+                            <div class="flex gap-8 transition-all duration-500"
+                                 :class="[
+                                    effectiveIsMobile || (orientation === 'horizontal' && questionType === 'health-slider') ? 'flex-col' : 'flex-col md:flex-row md:gap-16',
+                                    (orientation === 'vertical' && questionType === 'health-slider' && !effectiveIsMobile) ? 'flex-col md:flex-row' : ''
+                                 ]">
                             
                                 <!-- Instructions & Display Box -->
                                 <div class="flex-1 pt-4 flex transition-all duration-500"
-                                     :class="orientation === 'vertical' ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12'">
+                                     :class="[
+                                        (orientation === 'vertical' && questionType === 'health-slider') || questionType === 'slider' 
+                                            ? 'flex-col' 
+                                            : (effectiveIsMobile ? 'flex-col' : 'flex-col md:flex-row justify-between items-start gap-8 md:gap-12')
+                                     ]">
                                 
                                 <!-- Instructions List -->
-                                <div class="prose prose-base md:prose-lg text-webropol-gray-600 max-w-none transition-opacity duration-300"
-                                     :class="orientation === 'horizontal' ? 'flex-1' : ''">
+                                <div class="prose prose-base text-webropol-gray-600 max-w-none transition-opacity duration-300"
+                                     :class="[
+                                        effectiveIsMobile ? '' : 'md:prose-lg',
+                                        orientation === 'horizontal' ? 'flex-1' : ''
+                                     ]">
                                     
                                     <!-- Edit Mode: Simple WYSIWYG Editor -->
                                     <div x-show="mode === 'edit'" class="w-full relative group">
@@ -187,9 +246,22 @@
                                     </div>
                                 </div>
 
-                                <!-- "Your Health" Black Box Display -->
-                                <div class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 flex-shrink-0 relative overflow-hidden group rounded-xl"
-                                     :class="orientation === 'vertical' ? 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 h-72 mx-auto md:mx-0' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 h-56 py-8 mx-auto md:mx-0'">
+                                <!-- Score Display Wrapper -->
+                                <div class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500"
+                                     :class="[
+                                        questionType === 'slider'
+                                            ? (effectiveIsMobile
+                                                ? 'mt-8 w-full mx-auto max-w-lg'
+                                                : (orientation === 'horizontal' ? 'mt-8 md:mt-12 w-full' : 'mt-8 md:mt-12 w-full mx-auto max-w-lg'))
+                                            : (orientation === 'vertical'
+                                                ? (effectiveIsMobile ? 'mt-8 w-full max-w-[14rem] mx-auto' : 'mt-8 md:mt-12 w-full max-w-[14rem] md:w-56 mx-auto md:mx-0 mr-8 lg:mr-12')
+                                                : (effectiveIsMobile ? 'mt-8 w-full max-w-[16rem] mx-auto' : 'mt-8 md:mt-0 w-full max-w-[16rem] md:w-64 mx-auto md:mx-0 mr-8 lg:mr-12'))
+                                     ]">
+                                     
+                                    <!-- "Your Health" Black Box -->
+                                    <div x-show="questionType === 'health-slider'"
+                                         class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 relative overflow-hidden group rounded-xl w-full"
+                                         :class="orientation === 'vertical' ? 'h-72' : 'h-56 py-8'">
                                     
                                     <!-- Subtle gradient overlay for depth without losing pure black feel -->
                                     <div class="absolute inset-0 bg-gradient-to-br from-[#7c3aed]/20 to-transparent pointer-events-none"></div>
@@ -216,21 +288,199 @@
                                                readonly
                                                placeholder="&mdash;"
                                                @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
-                                               class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20"
+                                               class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20 text-5xl"
                                                :class="[
-                                                    orientation === 'vertical' ? 'text-5xl md:text-7xl' : 'text-5xl md:text-7xl',
+                                                    effectiveIsMobile ? 'text-5xl' : 'text-5xl md:text-7xl',
                                                     mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none'
                                                ]">
                                     </div>
                                 </div>
+
+                                <!-- Generic Slider Layout -->
+                                <template x-if="questionType === 'slider'">
+                                    <div class="w-full">
+                                        <!-- Vertical Slider -->
+                                        <div x-show="orientation === 'vertical'" class="w-full">
+                                            <div x-show="settings.showLabels" class="flex items-center justify-center mb-6 group">
+                                                <div class="flex flex-col items-center text-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
+                                                    <span x-text="texts.bestLabel1"></span>
+                                                    <span x-text="texts.bestLabel2"></span>
+                                                    <span x-text="texts.bestLabel3"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="relative w-16 h-72 mx-auto flex justify-center py-4 select-none mb-4"
+                                                 :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                 @mousedown="startDrag"
+                                                 @touchstart.prevent="startDrag"
+                                                 x-ref="trackVertical">
+                                             
+                                             <!-- Track Line -->
+                                             <div class="absolute inset-y-0 w-2 bg-gray-200 rounded-full left-1/2 -translate-x-1/2"></div>
+                                             
+                                             <!-- Filled Track (Bottom up) -->
+                                             <div class="absolute bottom-0 w-2 bg-[#4a7288] rounded-b-full left-1/2 -translate-x-1/2 transition-all duration-75"
+                                                  :style="`height: calc(${value ?? 0}%);`"
+                                                  x-show="value !== null"></div>
+
+                                             <!-- Top/Bottom Ticks -->
+                                             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-gray-400"></div>
+                                             <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-gray-400"></div>
+
+                                             <!-- Labels -->
+                                             <div class="absolute top-0 left-full ml-3 text-xs font-bold text-gray-400 -mt-1.5">100</div>
+                                             <div class="absolute bottom-0 left-full ml-3 text-xs font-bold text-gray-400 -mb-1.5">0</div>
+
+                                             <!-- Handle & Tooltip -->
+                                             <div x-show="value !== null" 
+                                                  class="absolute left-1/2 -translate-x-1/2 pointer-events-none transition-all duration-75 ease-out z-20"
+                                                  :style="`top: ${100 - (value ?? 50)}%;`">
+                                                  
+                                                  <!-- Tooltip (Left) -->
+                                                  <div class="absolute right-full mr-5 top-0 -translate-y-1/2">
+                                                      <div class="bg-[#4a7288] text-white font-bold py-1 px-3 rounded shadow-md text-sm relative whitespace-nowrap">
+                                                          <span x-text="Math.round(value)"></span>
+                                                          <!-- Arrow -->
+                                                          <div class="absolute top-1/2 left-full -translate-y-1/2 border-y-[6px] border-y-transparent border-l-[6px] border-l-[#4a7288]"></div>
+                                                      </div>
+                                                  </div>
+
+                                                  <!-- Square Handle -->
+                                                  <div class="w-6 h-6 bg-[#4a7288] rounded shadow-sm ring-2 ring-white flex items-center justify-center -translate-y-1/2 cursor-grab">
+                                                      <div class="w-3 h-0.5 bg-white/50 rounded-full"></div>
+                                                  </div>
+                                             </div>
+
+                                             <!-- Click Area using -inset to expand tap target -->
+                                             <div class="absolute -inset-x-6 inset-y-0 cursor-pointer z-10"
+                                                  @mousemove="onDrag" @touchmove.prevent="onDrag" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValue"></div>
+                                            </div>
+
+                                            <div x-show="settings.showLabels" class="flex items-center justify-center mt-6 group">
+                                                <div class="flex flex-col items-center text-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
+                                                    <span x-text="texts.worstLabel1"></span>
+                                                    <span x-text="texts.worstLabel2"></span>
+                                                    <span x-text="texts.worstLabel3"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Horizontal Slider -->
+                                        <div x-show="orientation === 'horizontal'" class="w-full relative transition-all duration-300"
+                                             :class="effectiveIsMobile ? 'px-2 pt-6 pb-2' : 'px-4 md:px-16 pt-6'">
+                                            <div x-show="settings.showLabels" class="flex justify-between items-end relative z-0 mb-4">
+                                                <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                    <span x-text="texts.worstLabel1"></span>
+                                                    <span x-text="texts.worstLabel2"></span>
+                                                    <span x-text="texts.worstLabel3"></span>
+                                                </div>
+                                                <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                    <span x-text="texts.bestLabel1"></span>
+                                                    <span x-text="texts.bestLabel2"></span>
+                                                    <span x-text="texts.bestLabel3"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="relative w-full h-16 flex items-center select-none mb-4"
+                                                 :class="{'pointer-events-none opacity-60': mode === 'edit'}"
+                                                 @mousedown="startDragHorizontal"
+                                                 @touchstart.prevent="startDragHorizontal"
+                                                 x-ref="trackHorizontal">
+                                             
+                                             <!-- Track Line -->
+                                             <div class="absolute w-full h-2 bg-gray-200 rounded-full top-1/2 -translate-y-1/2"></div>
+                                             
+                                             <!-- Filled Track (Left to Right) -->
+                                             <div class="absolute left-0 h-2 bg-[#4a7288] rounded-l-full top-1/2 -translate-y-1/2 transition-all duration-75"
+                                                  :style="`width: ${value ?? 0}%;`"
+                                                  x-show="value !== null"></div>
+
+                                             <!-- Left/Right Ticks -->
+                                             <div class="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 bg-gray-400"></div>
+                                             <div class="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-0.5 bg-gray-400"></div>
+
+                                             <!-- Labels -->
+                                             <div class="absolute top-full mt-2 left-0 text-xs font-bold text-gray-400 -ml-1">0</div>
+                                             <div class="absolute top-full mt-2 right-0 text-xs font-bold text-gray-400 -mr-2">100</div>
+
+                                             <!-- Handle & Tooltip -->
+                                             <div x-show="value !== null" 
+                                                  class="absolute top-1/2 -translate-y-1/2 w-0 pointer-events-none transition-all duration-75 ease-out z-20"
+                                                  :style="`left: ${value ?? 50}%;`">
+                                                  
+                                                  <!-- Tooltip (Top) -->
+                                                  <div class="absolute bottom-full mb-4 left-0 -translate-x-1/2">
+                                                      <div class="bg-[#4a7288] text-white font-bold py-1 px-3 rounded shadow-md text-sm relative whitespace-nowrap">
+                                                          <span x-text="Math.round(value)"></span>
+                                                          <!-- Arrow -->
+                                                          <div class="absolute top-full left-1/2 -translate-x-1/2 border-x-[6px] border-x-transparent border-t-[6px] border-t-[#4a7288]"></div>
+                                                      </div>
+                                                  </div>
+
+                                                  <!-- Square Handle -->
+                                                  <div class="w-6 h-6 bg-[#4a7288] rounded shadow-sm ring-2 ring-white flex items-center justify-center -translate-x-1/2 cursor-grab">
+                                                      <div class="h-3 w-0.5 bg-white/50 rounded-full"></div>
+                                                  </div>
+                                             </div>
+
+                                             <!-- Click Area -->
+                                             <div class="absolute -inset-y-4 inset-x-0 cursor-pointer z-10"
+                                                  @mousemove="onDragHorizontal" @touchmove.prevent="onDragHorizontal" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValueHorizontal"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                  <!-- "I don't know" Checkbox -->
+                                  <div x-show="settings.showDontKnow" 
+                                     class="w-auto px-4 transition-all duration-300" 
+                                     :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-4'"
+                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
+                                           :class="[
+                                               dontKnow 
+                                               ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
+                                               : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
+                                               mode === 'edit' ? 'pointer-events-none opacity-60' : ''
+                                           ]">
+                                        
+                                        <!-- Active background pattern -->
+                                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                                             :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
+
+                                        <div class="relative flex items-center">
+                                            <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
+                                            
+                                            <!-- Custom Checkbox -->
+                                            <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
+                                                 :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
+                                                <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
+                                                   :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="relative z-10">
+                                            <template x-if="mode === 'edit'">
+                                                <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
+                                                       :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
+                                            </template>
+                                            <template x-if="mode === 'respond'">
+                                                <span class="text-sm font-bold uppercase tracking-widest" 
+                                                      :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
+                                                      x-text="settings.dontKnowLabel"></span>
+                                            </template>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                             </div>
 
                             <!-- Scale Section -->
-                            <div class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
+                               <div x-show="questionType === 'health-slider'" class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
                                  :class="orientation === 'vertical' ? 'w-full md:w-80 pt-2' : 'w-full mt-8 md:mt-12'">
                                 
                                 <!-- Vertical Layout -->
-                                <template x-if="orientation === 'vertical'">
+                                <template x-if="orientation === 'vertical' && questionType === 'health-slider'">
                                     <div>
                                         <!-- Top Label (Best) -->
                                         <div class="flex items-center justify-start gap-4 mb-8 pl-2 group">
@@ -257,10 +507,10 @@
                                              :class="{'pointer-events-none': mode === 'edit'}"
                                              @mousedown="startDrag"
                                              @touchstart.prevent="startDrag"
-                                             x-ref="trackVertical">
+                                            x-ref="trackVerticalHealth">
                                             
                                             <!-- Interaction Hint -->
-                                            <div x-show="value === null" 
+                                            <div x-show="value === null && !dontKnow" 
                                                  class="absolute left-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse" 
@@ -318,32 +568,24 @@
                                 </template>
 
                                 <!-- Horizontal Layout -->
-                                <template x-if="orientation === 'horizontal'">
-                                    <div class="w-full pt-10 px-4 md:px-16 relative">
-                                        <!-- Horizontal Label Row for Icons -->
-                                        <div class="flex justify-between items-end mb-4 relative z-0">
+                                <template x-if="orientation === 'horizontal' && questionType === 'health-slider'">
+                                    <div class="w-full relative transition-all duration-300"
+                                         :class="effectiveIsMobile ? 'px-2 pt-16 pb-8' : 'px-4 md:px-16 pt-10'">
+                                        <!-- Horizontal Label Row -->
+                                        <div class="flex justify-between items-end relative z-0"
+                                             :class="effectiveIsMobile ? 'mb-12' : 'mb-4'">
                                             <!-- Worst Label (Left) -->
-                                            <div class="flex flex-col items-center gap-2 ml-0 md:-ml-8">
-                                                <div class="w-12 h-12 rounded-full bg-webropol-gray-50 text-webropol-gray-900 flex items-center justify-center border border-webropol-gray-200 shadow-sm">
-                                                    <i class="fa-regular fa-face-frown text-2xl"></i>
-                                                </div>
-                                                <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
-                                                    <span x-text="texts.worstLabel1"></span>
-                                                    <span x-text="texts.worstLabel2"></span>
-                                                    <span x-text="texts.worstLabel3"></span>
-                                                </div>
+                                            <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                <span x-text="texts.worstLabel1"></span>
+                                                <span x-text="texts.worstLabel2"></span>
+                                                <span x-text="texts.worstLabel3"></span>
                                             </div>
                                             
                                             <!-- Best Label (Right) -->
-                                            <div class="flex flex-col items-center gap-2 mr-0 md:-mr-8">
-                                                <div class="w-12 h-12 rounded-full bg-webropol-primary-50 text-webropol-primary-700 flex items-center justify-center border border-webropol-primary-100 shadow-sm">
-                                                    <i class="fa-regular fa-face-smile text-2xl"></i>
-                                                </div>
-                                                <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
-                                                    <span x-text="texts.bestLabel1"></span>
-                                                    <span x-text="texts.bestLabel2"></span>
-                                                    <span x-text="texts.bestLabel3"></span>
-                                                </div>
+                                            <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                <span x-text="texts.bestLabel1"></span>
+                                                <span x-text="texts.bestLabel2"></span>
+                                                <span x-text="texts.bestLabel3"></span>
                                             </div>
                                         </div>
 
@@ -352,10 +594,10 @@
                                              :class="{'pointer-events-none': mode === 'edit'}"
                                              @mousedown="startDragHorizontal"
                                              @touchstart.prevent="startDragHorizontal"
-                                             x-ref="trackHorizontal">
+                                            x-ref="trackHorizontalHealth">
                                             
                                             <!-- Interaction Hint -->
-                                            <div x-show="value === null" 
+                                            <div x-show="value === null && !dontKnow" 
                                                  class="absolute top-32 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse whitespace-nowrap">
@@ -370,7 +612,10 @@
                                                     <!-- Tick Mark -->
                                                     <div class="w-px bg-gray-400" :class="(i-1) % 10 === 0 ? 'h-8 bg-gray-500' : 'h-4'"></div>
                                                     <!-- Number -->
-                                                    <span x-show="(i-1) % 10 === 0" class="mt-0.5 text-webropol-gray-500 font-medium text-lg text-center tabular-nums select-none" x-text="i-1"></span>
+                                                    <span x-show="(i-1) % 10 === 0" 
+                                                          class="mt-1 font-medium text-center tabular-nums select-none text-webropol-gray-500"
+                                                          :class="effectiveIsMobile ? 'text-[10px]' : 'text-lg'"
+                                                          x-text="i-1"></span>
                                                 </div>
                                             </template>
 
@@ -383,11 +628,14 @@
                                                  :style="`left: ${value ?? 50}%; transform: translateX(-50%);`"> <!-- 0 is left -->
                                                 
                                                 <!-- Dotted line up -->
-                                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 h-24 border-l-2 border-webropol-gray-400 border-dotted"></div>
+                                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 border-l-2 border-webropol-gray-400 border-dotted"
+                                                     :class="effectiveIsMobile ? 'h-16' : 'h-24'"></div>
                                                 
                                                 <!-- Value Box -->
-                                                <div class="absolute bottom-[232px] left-1/2 -translate-x-1/2 flex flex-col items-center">
-                                                    <div class="text-5xl text-[#5c7ae0] font-medium flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-gray-50">
+                                                <div class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
+                                                     :class="effectiveIsMobile ? 'bottom-[180px]' : 'bottom-[232px]'">
+                                                    <div class="text-[#5c7ae0] font-medium flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-gray-50"
+                                                         :class="effectiveIsMobile ? 'text-4xl' : 'text-5xl'">
                                                         <span x-text="Math.round(value)"></span>
                                                     </div>
                                                     <!-- Triangle Pointing Down -->
@@ -458,7 +706,7 @@
                                  </div>
                                  
                                  <!-- Disable switch for Health Slider -->
-                                 <div x-show="questionType === 'health-slider'" class="mt-4 pt-4 border-t border-gray-200/60" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                 <div x-show="false" class="mt-4 pt-4 border-t border-gray-200/60" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
                                     <label class="inline-flex items-center gap-3 cursor-pointer select-none group">
                                          <div class="relative">
                                              <input type="checkbox" x-model="settingsDisabled" class="peer sr-only">
@@ -470,10 +718,10 @@
                             </div>
                             
                             <!-- Detailed Settings Form -->
-                            <div class="space-y-6 px-2" :class="{'opacity-40 grayscale pointer-events-none select-none': questionType === 'health-slider' && settingsDisabled}">
+                            <div class="space-y-6 px-2">
                                 
                                 <!-- Slider Values Section -->
-                                <div>
+                                <div x-show="questionType !== 'health-slider'">
                                     <h4 class="font-bold text-gray-700 mb-4 text-sm">Slider Values</h4>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-4">
                                         <!-- Min Value -->
@@ -521,7 +769,7 @@
                                 </div>
 
                                 <!-- Slider Labels Section -->
-                                <div>
+                                <div x-show="questionType !== 'health-slider'">
                                     <h4 class="font-bold text-gray-700 mb-2 text-sm">Slider Labels</h4>
                                     <label class="flex items-center gap-2 cursor-pointer w-fit">
                                         <input type="checkbox" x-model="settings.showLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
@@ -532,7 +780,7 @@
                                 <!-- Positioning Section -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <!-- Min/Max Position -->
-                                    <div>
+                                    <div x-show="questionType !== 'health-slider'">
                                         <h4 class="text-sm text-gray-500 mb-3">Min. and Max. value position</h4>
                                         <div class="space-y-3">
                                             <label class="flex items-center gap-2 cursor-pointer w-fit">
@@ -546,26 +794,46 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Slider Placement -->
+                                    <!-- Slider Placement (Orientation) -->
                                     <div>
-                                         <h4 class="text-sm text-gray-500 mb-3">Slider placement</h4>
-                                         <div class="space-y-3">
-                                            <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                                <input type="radio" name="orientation" value="horizontal" x-model="settings.orientation" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                                <span class="text-sm text-gray-700">Horizontally</span>
-                                            </label>
-                                            <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                                <input type="radio" name="orientation" value="vertical" x-model="settings.orientation" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                                <span class="text-sm text-gray-700">Vertically</span>
-                                            </label>
+                                         <h4 class="text-sm text-gray-500 mb-3">Orientation</h4>
+                                         
+                                         <!-- Desktop Orientation -->
+                                         <div class="mb-4">
+                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Desktop</span>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_desktop" value="horizontal" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Horizontal</span>
+                                                </label>
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_desktop" value="vertical" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Vertical</span>
+                                                </label>
+                                            </div>
+                                         </div>
+
+                                         <!-- Mobile Orientation -->
+                                         <div>
+                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Mobile</span>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Horizontal</span>
+                                                </label>
+                                                <label class="flex items-center gap-2 cursor-pointer w-fit">
+                                                    <input type="radio" name="orientation_mobile" value="vertical" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                    <span class="text-sm text-gray-700">Vertical</span>
+                                                </label>
+                                            </div>
                                          </div>
                                     </div>
                                 </div>
 
-                                <div class="border-t border-gray-100"></div>
+                                <div class="border-t border-gray-100" x-show="questionType !== 'health-slider'"></div>
 
                                 <!-- Description Section -->
-                                <div>
+                                <div x-show="questionType !== 'health-slider'">
                                     <div class="flex items-center gap-2 mb-3">
                                         <input type="checkbox" x-model="settings.showDescription" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
                                         <div class="flex items-center gap-2">
@@ -651,7 +919,22 @@
         .question-card.selected{border-color:#06b6d4;background:#fff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
         .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
         .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
-
+        
+        /* Force Mobile Styles in Mobile Preview */
+        .mobile-view .md\:p-12 { padding: 1.5rem !important; }
+        .mobile-view .md\:px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
+        .mobile-view .md\:py-12 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+        .mobile-view .md\:flex-row { flex-direction: column !important; }
+        .mobile-view .md\:gap-12 { gap: 2rem !important; }
+        .mobile-view .md\:gap-16 { gap: 2rem !important; }
+        .mobile-view .md\:mt-12 { margin-top: 2rem !important; }
+        .mobile-view .md\:mx-0 { margin-left: auto !important; margin-right: auto !important; }
+        .mobile-view .md\:w-56 { width: 100% !important; max-width: 14rem !important; }
+        .mobile-view .md\:text-2xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+        .mobile-view .md\:text-7xl { font-size: 3rem !important; line-height: 1 !important; }
+        .mobile-view .md\:w-64 { width: 100% !important; max-width: 16rem !important; }
+        .mobile-view .md\:prose-lg { font-size: 1rem !important; line-height: 1.5 !important; }
+        
         /* Hide number input spinners */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -696,7 +979,8 @@
                     
                     // Positions
                     direction: 'min-max', // 'min-max' | 'max-min'
-                    orientation: 'vertical', // 'horizontal' | 'vertical'
+                    orientationDesktop: 'vertical', // 'horizontal' | 'vertical'
+                    orientationMobile: 'horizontal', // 'horizontal' | 'vertical'
                     
                     // Description
                     showDescription: true,
@@ -706,15 +990,143 @@
                     visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                 },
 
-                // Sync orientation proxy
-                get orientation() { return this.settings.orientation; },
-                set orientation(val) { this.settings.orientation = val; },
+                // Mobile detection & Preview
+                isMobile: false,
+                previewDevice: 'desktop', // 'desktop', 'tablet', 'mobile'
+
+                get effectiveIsMobile() {
+                    // Start simple: Mobile preview counts as mobile
+                    if (this.mode === 'respond' && this.previewDevice === 'mobile') {
+                        return true;
+                    }
+                    // If native mobile, it's mobile
+                    return this.isMobile;
+                },
+
+                get containerClass() {
+                    if (this.mode !== 'respond') return 'max-w-6xl mx-auto';
+                    
+                    switch(this.previewDevice) {
+                        case 'mobile': return 'max-w-[393px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[852px] transition-all duration-300 rounded-[3rem] my-8 border-[8px] border-gray-800 mobile-view';
+                        case 'tablet': return 'max-w-[820px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[1180px] transition-all duration-300 rounded-[2rem] my-8 border-[12px] border-gray-800 tablet-view';
+                        default: return 'max-w-6xl mx-auto transition-all duration-300';
+                    }
+                },
+
+                get orientation() { 
+                    // Use force layout settings based on device
+                    if (this.effectiveIsMobile) {
+                        return this.settings.orientationMobile || 'horizontal';
+                    }
+                    return this.settings.orientationDesktop || 'vertical'; 
+                },
+                set orientation(val) { 
+                    if (this.effectiveIsMobile) {
+                        this.settings.orientationMobile = val;
+                    } else {
+                        this.settings.orientationDesktop = val;
+                    }
+                },
+
+                init() {
+                    // Load saved state
+                    this.loadFromLocalStorage();
+
+                    // Check if mobile on init
+                    this.checkMobileOrientation();
+                    
+                    // Listen for window resize to update orientation
+                    window.addEventListener('resize', () => {
+                        this.checkMobileOrientation();
+                    });
+                    
+                    this.$watch('dontKnow', (val) => {
+                        if (val) {
+                            this.value = null;
+                            // Clear saved value so unchecking starts fresh
+                            this.originalValue = null; 
+                        }
+                    });
+
+                    // Auto-save changes
+                    this.$watch('mode', () => this.saveToLocalStorage());
+                    this.$watch('questionType', () => this.saveToLocalStorage());
+                    this.$watch('value', () => {
+                        if (!this.dragging) this.saveToLocalStorage();
+                    });
+                    this.$watch('dontKnow', () => this.saveToLocalStorage());
+                    
+                    // Watch objects deeply (Alpine v3 watches reactive objects deeply by default in some contexts, 
+                    // or we rely on top-level triggering. If not, specific property edits will need their own watchers.
+                    // For now, we trust the reactivity system).
+                    this.$watch('settings', () => this.saveToLocalStorage());
+                    this.$watch('texts', () => this.saveToLocalStorage());
+                },
+
+                loadFromLocalStorage() {
+                    try {
+                        const data = localStorage.getItem('webropol_healthmeter_strict');
+                        if (data) {
+                            const parsed = JSON.parse(data);
+                            if (parsed.mode) this.mode = parsed.mode;
+                            if (parsed.questionType) this.questionType = parsed.questionType;
+                            if (parsed.settings) {
+                                this.settings = { ...this.settings, ...parsed.settings };
+                                
+                                // Migrate old orientation
+                                if (parsed.settings.orientation && !parsed.settings.orientationDesktop) {
+                                    this.settings.orientationDesktop = parsed.settings.orientation;
+                                }
+                                
+                                // Ensure defaults
+                                if (!this.settings.orientationDesktop) this.settings.orientationDesktop = 'vertical';
+                                if (!this.settings.orientationMobile) this.settings.orientationMobile = 'horizontal';
+                            }
+                            if (parsed.texts) this.texts = { ...this.texts, ...parsed.texts };
+                            if (Object.prototype.hasOwnProperty.call(parsed, 'value')) this.value = parsed.value;
+                            if (Object.prototype.hasOwnProperty.call(parsed, 'dontKnow')) this.dontKnow = parsed.dontKnow;
+                        }
+                    } catch (e) {
+                        console.error('Failed to load settings:', e);
+                    }
+                },
+
+                saveTimeout: null,
+                saveToLocalStorage() {
+                    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+                    this.saveTimeout = setTimeout(() => {
+                        try {
+                            const data = {
+                                mode: this.mode,
+                                questionType: this.questionType,
+                                settings: this.settings,
+                                texts: this.texts,
+                                value: this.value,
+                                dontKnow: this.dontKnow
+                            };
+                            localStorage.setItem('webropol_healthmeter_strict', JSON.stringify(data));
+                        } catch (e) {
+                            console.error('Failed to save settings:', e);
+                        }
+                    }, 500); // Debounce save
+                },
+                
+                checkMobileOrientation() {
+                    // Update reactive mobile state
+                    this.isMobile = window.innerWidth < 768;
+                },
 
                 value: null,
+                originalValue: null,
+                dontKnow: false,
                 dragging: false,
+                dragFrame: null,
+                pendingClient: null,
+                pendingAxis: null,
+                activeTrackRect: null,
                 
                 texts: {
-                    title: 'Health State Today',
+                    title: 'On a scale from 0 to 100, how would you rate your overall health today?',
                     instructions: `<ul>
 <li>We would like to know how good or bad your health is TODAY.</li>
 <li>You will see a scale numbered from 0 to 100.</li>
@@ -733,45 +1145,125 @@
                     worstLabel3: 'imagine'
                 },
                 
+                getClientPosition(e, axis) {
+                    if (e && e.touches && e.touches[0]) {
+                        return axis === 'vertical' ? e.touches[0].clientY : e.touches[0].clientX;
+                    }
+                    return axis === 'vertical' ? e.clientY : e.clientX;
+                },
+
+                getTrackElement(axis) {
+                    const isHealthSlider = this.questionType === 'health-slider';
+                    if (axis === 'vertical') {
+                        return isHealthSlider
+                            ? (this.$refs.trackVerticalHealth || this.$refs.trackVertical)
+                            : (this.$refs.trackVertical || this.$refs.trackVerticalHealth);
+                    }
+                    return isHealthSlider
+                        ? (this.$refs.trackHorizontalHealth || this.$refs.trackHorizontal)
+                        : (this.$refs.trackHorizontal || this.$refs.trackHorizontalHealth);
+                },
+
+                getTrackRect(axis) {
+                    if (this.dragging && this.activeTrackRect) return this.activeTrackRect;
+                    const track = this.getTrackElement(axis);
+                    return track ? track.getBoundingClientRect() : null;
+                },
+
+                applyValueFromClient(axis, clientPos) {
+                    if (this.dontKnow || clientPos === null || clientPos === undefined) return;
+                    const rect = this.getTrackRect(axis);
+                    if (!rect) return;
+
+                    let nextValue;
+
+                    if (axis === 'vertical') {
+                        let relativeY = clientPos - rect.top;
+                        if (relativeY < 0) relativeY = 0;
+                        if (relativeY > rect.height) relativeY = rect.height;
+                        const percent = 100 - (relativeY / rect.height * 100);
+                        nextValue = Math.round(percent);
+                    } else {
+                        let relativeX = clientPos - rect.left;
+                        if (relativeX < 0) relativeX = 0;
+                        if (relativeX > rect.width) relativeX = rect.width;
+                        const percent = (relativeX / rect.width * 100);
+                        nextValue = Math.round(percent);
+                    }
+
+                    if (nextValue !== this.value) {
+                        this.value = nextValue;
+                    }
+                },
+
+                queueValueUpdate(axis, clientPos) {
+                    this.pendingAxis = axis;
+                    this.pendingClient = clientPos;
+                    if (this.dragFrame !== null) return;
+
+                    this.dragFrame = requestAnimationFrame(() => {
+                        const pendingAxis = this.pendingAxis;
+                        const pendingClient = this.pendingClient;
+                        this.dragFrame = null;
+                        this.pendingAxis = null;
+                        this.pendingClient = null;
+                        this.applyValueFromClient(pendingAxis, pendingClient);
+                    });
+                },
+
                 // Vertical Logic
                 updateFromEvent(e) {
-                    const track = this.$refs.trackVertical;
-                    if (!track) return;
-                    const rect = track.getBoundingClientRect();
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    
-                    let relativeY = clientY - rect.top;
-                    if (relativeY < 0) relativeY = 0;
-                    if (relativeY > rect.height) relativeY = rect.height;
-                    
-                    const percent = 100 - (relativeY / rect.height * 100);
-                    this.value = Math.round(percent);
+                    const clientY = this.getClientPosition(e, 'vertical');
+                    this.applyValueFromClient('vertical', clientY);
                 },
 
                 // Horizontal Logic
                 updateFromEventHorizontal(e) {
-                    const track = this.$refs.trackHorizontal;
-                    if (!track) return;
-                    const rect = track.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    
-                    // Left is 0, Right is 100
-                    let relativeX = clientX - rect.left;
-                    if (relativeX < 0) relativeX = 0;
-                    if (relativeX > rect.width) relativeX = rect.width;
-                    
-                    const percent = (relativeX / rect.width * 100);
-                    this.value = Math.round(percent);
+                    const clientX = this.getClientPosition(e, 'horizontal');
+                    this.applyValueFromClient('horizontal', clientX);
                 },
-                
-                startDrag(e) { this.dragging = true; this.updateFromEvent(e); },
-                startDragHorizontal(e) { this.dragging = true; this.updateFromEventHorizontal(e); },
-                
-                onDrag(e) { if (!this.dragging) return; this.updateFromEvent(e); },
-                onDragHorizontal(e) { if (!this.dragging) return; this.updateFromEventHorizontal(e); },
-                
-                stopDrag() { this.dragging = false; },
-                
+
+                startDrag(e) {
+                    if (this.dontKnow) return;
+                    this.dragging = true;
+                    const track = this.getTrackElement('vertical');
+                    this.activeTrackRect = track ? track.getBoundingClientRect() : null;
+                    this.queueValueUpdate('vertical', this.getClientPosition(e, 'vertical'));
+                },
+
+                startDragHorizontal(e) {
+                    if (this.dontKnow) return;
+                    this.dragging = true;
+                    const track = this.getTrackElement('horizontal');
+                    this.activeTrackRect = track ? track.getBoundingClientRect() : null;
+                    this.queueValueUpdate('horizontal', this.getClientPosition(e, 'horizontal'));
+                },
+
+                onDrag(e) {
+                    if (!this.dragging) return;
+                    this.queueValueUpdate('vertical', this.getClientPosition(e, 'vertical'));
+                },
+
+                onDragHorizontal(e) {
+                    if (!this.dragging) return;
+                    this.queueValueUpdate('horizontal', this.getClientPosition(e, 'horizontal'));
+                },
+
+                stopDrag() {
+                    const wasDragging = this.dragging;
+                    this.dragging = false;
+                    this.activeTrackRect = null;
+                    this.pendingAxis = null;
+                    this.pendingClient = null;
+                    if (this.dragFrame !== null) {
+                        cancelAnimationFrame(this.dragFrame);
+                        this.dragFrame = null;
+                    }
+                    if (wasDragging) {
+                        this.saveToLocalStorage();
+                    }
+                },
+
                 updateValue(e) { this.updateFromEvent(e); },
                 updateValueHorizontal(e) { this.updateFromEventHorizontal(e); }
             }
