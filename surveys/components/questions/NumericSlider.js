@@ -9,11 +9,11 @@ export class NumericSlider extends BaseComponent {
         this.mode = this.getAttribute('mode') || 'edit';
         
         // Expose Alpine data function globally so x-data can find it. 
-        // Using a unique name based on the component or a standard convention is safer.
         if (!window.numericSliderData) {
             window.numericSliderData = (initialMode) => {
                 return {
-                    mode: initialMode || 'edit', // 'edit' | 'respond'
+                    mode: initialMode || 'edit',
+                    selected: initialMode !== 'edit', // Default selected true in respond mode
                     
                     // Settings
                     showSettings: false,
@@ -61,7 +61,7 @@ export class NumericSlider extends BaseComponent {
                     },
 
                     get containerClass() {
-                        if (this.mode !== 'respond') return 'max-w-4xl mx-auto question-card p-0 shadow-lg';
+                        if (this.mode !== 'respond') return 'w-full p-0 transition-all duration-300';
                         
                         switch(this.previewDevice) {
                             case 'mobile': return 'max-w-[393px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[852px] transition-all duration-300 rounded-[3rem] my-8 border-[8px] border-gray-800 mobile-view';
@@ -97,19 +97,6 @@ export class NumericSlider extends BaseComponent {
 
                         // Check if mobile on init
                         this.checkMobileOrientation();
-                        
-                        // Listen for window resize to update orientation
-                        window.addEventListener('resize', () => {
-                            this.checkMobileOrientation();
-                        });
-                        
-                        this.$watch('dontKnow', (val) => {
-                            if (val) {
-                                this.value = null;
-                                // Clear saved value so unchecking starts fresh
-                                this.originalValue = null; 
-                            }
-                        });
                     },
 
                     checkMobileOrientation() {
@@ -270,15 +257,33 @@ export class NumericSlider extends BaseComponent {
     }
 
     render() {
+        // We use a light DOM approach so outer Alpine scopes work if needed, 
+        // but we also have our own internal scope. To bridge them, we can use 
+        // an internal variable that syncs or just use the internal one for UI state.
+        
         this.innerHTML = `
             <style>
                 /* Unified question card styling */
                 .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
                 .question-card:hover{border-color:#d5dde6}
                 .question-card.selected{border-color:#06b6d4;background:#fff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
+                
                 .question-card-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;background:#f8fafc;border-radius:1.25rem 1.25rem 0 0}
                 .question-card.selected .question-card-header{background:#e0f7fb;border-color:#bae8f1}
                 
+                .drag-handle {
+                    position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+                    opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease;
+                    z-index: 10; cursor: move; background: white; border: 1px solid #cbd5e1;
+                    border-radius: 8px; padding: 8px 6px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+                .question-card:hover .drag-handle, .question-card.selected .drag-handle { opacity: 1; right: -16px; }
+                .drag-handle i { color: #64748b; font-size: 16px; }
+                .drag-handle:hover i { color: #06b6d4; }
+
+                /* Collapsed Preview */
+                .question-card-collapsed:hover { background: #f8fafc; }
+
                 /* Force Mobile Styles in Mobile Preview */
                 .mobile-view .md\\:p-12 { padding: 1.5rem !important; }
                 .mobile-view .md\\:px-6 { padding-left: 1rem !important; padding-right: 1rem !important; }
@@ -299,15 +304,18 @@ export class NumericSlider extends BaseComponent {
                 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
                 input[type=number] { -moz-appearance: textfield; }
 
-                body:has(.fixed.z-\\[200\\]) webropol-header,
-                body:has(.fixed.z-\\[200\\]) webropol-sidebar {
+                /* Z-index fix for header overlapping modals */
+                body:has(.modal-overlay.active) webropol-header,
+                body.modal-open webropol-header {
                     z-index: 1 !important;
                 }
             </style>
 
-            <div x-data="numericSliderData('${this.mode}')" class="w-full">
+            <div x-data="numericSliderData('${this.mode}')" class="w-full"
+                 x-effect="if($el.closest('webropol-numeric-slider').hasAttribute('settings-open')) { showSettings = true; selected = true; }"
+                 @click.outside="if(mode === 'edit') { selected = false; showSettings = false; }">
                
-                 <!-- Top Bar: Mode Switcher (only for respond mode testing inside component if needed, usually passed via prop) -->
+                 <!-- Top Bar: Mode Switcher (only for respond mode testing inside component if needed) -->
                  <template x-if="mode === 'respond'">
                     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <div class="bg-webropol-gray-100 p-1 rounded-lg inline-flex items-center">
@@ -332,69 +340,100 @@ export class NumericSlider extends BaseComponent {
                     </div>
                 </template>
 
-               <!-- Main Card -->
-                <div class="question-card transition-all duration-300 relative" 
-                     :class="containerClass">
+               <!-- Main Card Wrapper -->
+                <div class="transition-all duration-300 relative question-card" 
+                     :class="[containerClass, (mode === 'edit' && selected) ? 'selected' : '']"
+                     @click="if(mode === 'edit') selected = true"
+                     >
                     
-                    <!-- Header Section (Toolbar) - Only in Edit Mode -->
-                    <div class="question-card-header" x-show="mode === 'edit' && !effectiveIsMobile">
-                        <!-- Left: Type Badge and Health Indicator -->
+                    <!-- Drag Handle (Edit Mode) -->
+                    <template x-if="mode === 'edit'">
+                        <div class="drag-handle" title="Drag to reorder">
+                            <i class="fal fa-arrows-alt"></i>
+                        </div>
+                    </template>
+
+
+                    <!-- Header Section (Toolbar) - Expanded View -->
+                    <div class="question-card-header" 
+                         x-show="mode === 'edit' && selected && !effectiveIsMobile"
+                         x-transition:enter="transition ease-out duration-200" 
+                         x-transition:enter-start="opacity-0 -translate-y-2" 
+                         x-transition:enter-end="opacity-100 translate-y-0">
+                         
+                        <!-- Left: Type Badge -->
                         <div class="flex items-center gap-2">
-                            <div class="bg-[#FFFFFF] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-3 text-sm font-semibold shadow-sm">
-                                <span class="w-6 h-6 rounded-sm bg-amber-100 flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-light fa-sliders text-sm text-gray-700"></i>
+                            <div class="bg-white px-1 py-1 rounded-lg border border-gray-100 flex items-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-amber-100 flex items-center justify-center text-amber-600">
+                                    <i class="fa-light fa-sliders text-xs"></i>
                                 </span>
-                                <span>Numeric slider</span>
-                            </div>
-                            
-                            <!-- Health Meter Indicator -->
-                            <div x-show="questionType === 'health-slider'" 
-                                    x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0 scale-95"
-                                    x-transition:enter-end="opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100 scale-100"
-                                    x-transition:leave-end="opacity-0 scale-95"
-                                    class="w-10 h-10 flex items-center justify-center hidden"
-                                    title="Health Meter">
-                                <i class="fa-light fa-heart-pulse text-red-500 text-lg"></i>
+                                <span class="text-xs font-medium text-gray-700">Numeric slider</span>
                             </div>
                         </div>
 
                         <!-- Right: Actions -->
-                        <div class="flex items-center gap-1">
-                            <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Mandatory">
-                                <i class="fa-light fa-asterisk text-lg"></i>
+                        <div class="flex items-center gap-1 question-card-toolbar">
+                             <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Rules">
+                                <i class="fal fa-shuffle"></i>
                             </button>
-                            <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Randomize">
-                                <i class="fa-light fa-shuffle text-lg"></i>
+                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Mandatory">
+                                <i class="fal fa-asterisk"></i>
                             </button>
-                            <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Add media">
-                                <i class="fa-light fa-image-circle-plus"></i>                                </button>
-                            <button @click="showSettings = true" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors relative" title="Settings">
-                                <i class="fa-light fa-gear text-lg"></i>
-                                <!-- Health Meter Badge -->
+                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Visibility">
+                                <i class="fal fa-eye"></i>
+                            </button>
+                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Add Image">
+                                <i class="fal fa-image-circle-plus"></i>
+                            </button>
+                            
+                            <div class="w-px h-4 bg-gray-300 mx-1"></div>
+                            
+                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Copy">
+                                <i class="fal fa-copy"></i>
+                            </button>
+                            <button @click.stop="showSettings = !showSettings" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded relative" title="Settings">
+                                <i class="fal fa-cog"></i>
                                 <span x-show="questionType === 'health-slider'" 
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 scale-0"
-                                        x-transition:enter-end="opacity-100 scale-100"
-                                        class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                      x-transition:enter="transition ease-out duration-200"
+                                      x-transition:enter-start="opacity-0 scale-0"
+                                      x-transition:enter-end="opacity-100 scale-100"
+                                      class="absolute -top-1 -right-1 w-4 h-4 bg-webropol-primary-500 rounded-full flex items-center justify-center">
                                     <i class="fa-solid fa-heart-pulse text-white text-[8px]"></i>
                                 </span>
                             </button>
-                            <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-webropol-primary-600 rounded-full hover:bg-gray-100 transition-colors" title="Copy">
-                                <i class="fa-light fa-copy text-lg"></i>
-                            </button>
-                            <div class="w-px h-6 bg-gray-300 mx-2"></div>
-                            <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-red-600 bg-gray-100/80 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                                <i class="fa-light fa-trash-can text-lg"></i>
+                            <button class="text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors p-2 rounded" title="Delete">
+                                <i class="fa-light fa-trash-can"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="p-6 transition-all duration-300" 
-                            :class="effectiveIsMobile ? '' : 'md:p-12'">
+                    <!-- Collapsed Preview (Edit Mode Only) -->
+                    <template x-if="mode === 'edit'">
+                        <div x-show="!selected" 
+                             class="p-6 cursor-pointer group question-card-collapsed transition-colors rounded-3xl"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100">
+                             
+                            <div class="mb-4 flex justify-between items-start">
+                                <h3 class="text-base font-semibold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors truncate pr-4" x-text="texts.title || 'Question Title'"></h3>
+                                <div class="flex items-center gap-2">
+                                     <span class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-full font-medium opacity-0 group-hover:opacity-100 transition-opacity">Slider</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Simplified visual representation -->
+                            <div class="h-2 w-full bg-gray-100 rounded-full relative overflow-hidden">
+                                <div class="absolute left-0 top-0 bottom-0 bg-gray-300 w-1/3"></div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Expanded Body (Editor) & Respond Mode -->
+                    <div class="transition-all duration-300" 
+                         :class="[effectiveIsMobile ? '' : (mode === 'edit' ? 'bg-white rounded-b-3xl' : 'md:p-12'), (mode === 'edit' && !selected) ? 'hidden' : 'block']">
+                         
+                         <div :class="mode === 'edit' ? 'p-6' : ''">
                         <!-- Title Section -->
                         <div class="mb-10 pl-2">
                             <!-- Edit Mode: Inputs -->
