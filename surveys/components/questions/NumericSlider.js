@@ -562,7 +562,8 @@ export class NumericSlider extends BaseComponent {
                                             class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20 text-5xl"
                                             :class="[
                                                 effectiveIsMobile ? 'text-5xl' : 'text-5xl md:text-7xl',
-                                                mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none'
+                                                mode === 'respond' ? 'hover:text-white focus:border-webropol-primary-400 cursor-text' : 'pointer-events-none',
+                                                mode === 'edit' ? 'text-transparent placeholder-transparent' : ''
                                             ]">
                                 </div>
                             </div>
@@ -775,13 +776,13 @@ export class NumericSlider extends BaseComponent {
                                     
                                     <!-- Vertical Track -->
                                     <div class="relative h-[400px] sm:h-[600px] w-full" 
-                                            :class="{'pointer-events-none': mode === 'edit' && selected}"
+                                            :class="{'pointer-events-none': mode === 'edit'}"
                                             @mousedown="startDrag"
                                             @touchstart.prevent="startDrag"
                                         x-ref="trackVerticalHealth">
                                         
                                         <!-- Interaction Hint -->
-                                        <div x-show="value === null && !dontKnow" 
+                                        <div x-show="mode !== 'edit' && value === null && !dontKnow" 
                                                 class="absolute left-28 top-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 hidden sm:block"
                                                 x-transition:leave="duration-500">
                                             <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse" 
@@ -804,7 +805,7 @@ export class NumericSlider extends BaseComponent {
                                                 @mousemove="onDrag" @touchmove.prevent="onDrag" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValue"></div>
 
                                         <!-- Vertical Indicators -->
-                                        <div x-show="value !== null" class="absolute w-full pointer-events-none transition-all duration-75 ease-out z-20"
+                                        <div x-show="mode !== 'edit' && value !== null" class="absolute w-full pointer-events-none transition-all duration-75 ease-out z-20"
                                                 :style="\`top: \${100 - (value ?? 50)}%; transform: translateY(-50%);\`">
                                             <!-- Value and Arrow on Left -->
                                             <div class="absolute left-[-80px] top-1/2 -translate-y-1/2 text-3xl text-[#5c7ae0] font-bold flex items-center gap-2">
@@ -868,7 +869,7 @@ export class NumericSlider extends BaseComponent {
                                         x-ref="trackHorizontalHealth">
                                         
                                         <!-- Interaction Hint -->
-                                        <div x-show="value === null && !dontKnow" 
+                                        <div x-show="mode !== 'edit' && value === null && !dontKnow" 
                                                 class="absolute top-32 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500"
                                                 x-transition:leave="duration-500">
                                             <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse whitespace-nowrap">
@@ -895,7 +896,7 @@ export class NumericSlider extends BaseComponent {
                                                 @mousemove="onDragHorizontal" @touchmove.prevent="onDragHorizontal" @mouseup.window="stopDrag" @touchend.window="stopDrag" @click="updateValueHorizontal"></div>
 
                                         <!-- Horizontal Indicators -->
-                                        <div x-show="value !== null" class="absolute h-full pointer-events-none transition-all duration-75 ease-out z-20"
+                                        <div x-show="mode !== 'edit' && value !== null" class="absolute h-full pointer-events-none transition-all duration-75 ease-out z-20"
                                                 :style="\`left: \${value ?? 50}%; transform: translateX(-50%);\`"> <!-- 0 is left -->
                                             
                                             <!-- Dotted line up -->
