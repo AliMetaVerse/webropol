@@ -8,12 +8,14 @@ export class NumericSlider extends BaseComponent {
 
     init() {
         this.mode = this.getAttribute('mode') || 'edit';
+        this.questionId = this.getAttribute('question-id') || Math.random().toString(36).substring(2, 15);
         
         // Expose Alpine data function globally so x-data can find it. 
         if (!window.numericSliderData) {
-            window.numericSliderData = (initialMode) => {
+            window.numericSliderData = (initialMode, qId) => {
                 return {
                     mode: initialMode || 'edit',
+                    questionId: qId,
                     selected: initialMode !== 'edit', // Default selected true in respond mode
                     
                     // Settings
@@ -91,6 +93,15 @@ export class NumericSlider extends BaseComponent {
                         this.$watch('showSettings', value => {
                             if (value) document.body.classList.add('modal-open');
                             else document.body.classList.remove('modal-open');
+                        });
+
+                        // Watch selection state
+                        this.$watch('selected', value => {
+                            if (value && this.mode === 'edit') {
+                                window.dispatchEvent(new CustomEvent('question-selected', { 
+                                    detail: { id: this.questionId }
+                                }));
+                            }
                         });
 
                         // Watch for attribute changes on the host element should be handled via observedAttributes on the web component,
@@ -271,7 +282,7 @@ export class NumericSlider extends BaseComponent {
         this.innerHTML = `
             <style>
                 /* Unified question card styling */
-                .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
+                .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease;overflow:hidden}
                 .question-card:hover{border-color:#d5dde6}
                 .question-card.selected{border-color:#06b6d4;background:#fff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
                 
@@ -318,7 +329,8 @@ export class NumericSlider extends BaseComponent {
                 }
             </style>
 
-            <div x-data="numericSliderData('${this.mode}')" class="w-full"
+            <div x-data="numericSliderData('${this.mode}', '${this.questionId}')" class="w-full"
+                 @question-selected.window="if(mode === 'edit' && $event.detail.id !== questionId) { selected = false; showSettings = false; }"
                  x-effect="if($el.closest('webropol-numeric-slider').hasAttribute('settings-open')) { showSettings = true; selected = true; }"
                  @click.outside="if(mode === 'edit') { selected = false; showSettings = false; }">
                
