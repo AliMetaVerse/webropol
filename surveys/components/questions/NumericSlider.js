@@ -282,7 +282,7 @@ export class NumericSlider extends BaseComponent {
         this.innerHTML = `
             <style>
                 /* Unified question card styling */
-                .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease;overflow:hidden}
+                .question-card{border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;position:relative;transition:box-shadow .18s ease,border-color .18s ease,background-color .18s ease}
                 .question-card:hover{border-color:#d5dde6}
                 .question-card.selected{border-color:#06b6d4;background:#fff;box-shadow:0 6px 18px -4px rgba(6,182,212,.25)}
                 
@@ -431,7 +431,7 @@ export class NumericSlider extends BaseComponent {
 
                     <!-- Expanded Body (Editor) & Respond Mode -->
                     <div class="transition-all duration-300" 
-                         :class="[effectiveIsMobile ? '' : (mode === 'edit' ? 'bg-white rounded-b-3xl' : 'md:p-12'), 'block']">
+                         :class="[effectiveIsMobile ? '' : (mode === 'edit' ? 'bg-white rounded-3xl' : 'md:p-12'), 'block']">
                          
                          <div :class="mode === 'edit' ? 'p-6' : ''">
                         <!-- Title Section -->
