@@ -28,24 +28,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Design system components -->
-    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
-    <script src="../design-system/components/navigation/Header.js" type="module"></script>
-    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <!-- Navigation components removed as per user request -->
 </head>
-<body x-data="moduleApp()" @toggle-fullscreen.window="fullscreen = $event.detail">
-    <div class="flex h-screen bg-webropol-gray-50">
-        <webropol-sidebar active="examples" base="../" x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-sidebar>
-        
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector 
-                             x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-header>
-            
-            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 transition-all duration-300"
-                 x-show="!fullscreen && mode !== 'respond'">
-                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Health Meter","url":"#"}]'></webropol-breadcrumbs>
-            </div>
-            
-            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12 relative" role="main">
+<body x-data="moduleApp()" class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl mx-auto">
+        <!-- Main Content Area -->
+        <main class="relative" role="main">
                 
                 <!-- Use 'x-cloak' to avoid flicker but we removed it per instructions unless styled. 
                      We will manage state via Alpine. -->
@@ -54,7 +42,7 @@
                 <div class="transition-all duration-300" 
                      :class="containerClass"
                      x-data="healthSlider()"
-                     :style="mode === 'respond' ? 'padding-top: 60px;' : ''">
+                     >
 
                     <!-- Top Bar: Mode Switcher & Settings -->
                     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
@@ -907,8 +895,7 @@
                         </div>
                     </div>
 
-            </main>
-        </div>
+        </main>
     </div>
 
     <!-- Override modal z-index when active per instructions -->
@@ -1004,12 +991,12 @@
                 },
 
                 get containerClass() {
-                    if (this.mode !== 'respond') return 'max-w-6xl mx-auto';
+                    if (this.mode !== 'respond') return 'max-w-4xl mx-auto question-card p-0 shadow-lg';
                     
                     switch(this.previewDevice) {
                         case 'mobile': return 'max-w-[393px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[852px] transition-all duration-300 rounded-[3rem] my-8 border-[8px] border-gray-800 mobile-view';
                         case 'tablet': return 'max-w-[820px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[1180px] transition-all duration-300 rounded-[2rem] my-8 border-[12px] border-gray-800 tablet-view';
-                        default: return 'max-w-6xl mx-auto transition-all duration-300';
+                        default: return 'max-w-4xl mx-auto question-card p-0 shadow-lg transition-all duration-300';
                     }
                 },
 
