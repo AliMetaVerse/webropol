@@ -87,6 +87,12 @@ export class NumericSlider extends BaseComponent {
                     },
 
                     init() {
+                        // Watch modal state for body scroll lock
+                        this.$watch('showSettings', value => {
+                            if (value) document.body.classList.add('modal-open');
+                            else document.body.classList.remove('modal-open');
+                        });
+
                         // Watch for attribute changes on the host element should be handled via observedAttributes on the web component,
                         // and pushed to this state if needed. But for self-contained logic, this is fine.
                         
