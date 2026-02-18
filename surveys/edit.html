@@ -397,7 +397,7 @@
           <br>
 
           <!-- Toolbar -->
-          <webropol-survey-edit-toolbar></webropol-survey-edit-toolbar>
+          <webropol-survey-edit-toolbar @preview="previewSurvey"></webropol-survey-edit-toolbar>
           <br>
 
           <!-- Survey Editor Layout -->
@@ -4154,6 +4154,9 @@
         
         init() {
           console.log('Survey Editor initialized');
+
+          // SPA-safe global hook for toolbar preview action fallback
+          window.previewSurvey = () => this.previewSurvey();
           
           // Auto-save functionality
           if (this.autoSave) {
@@ -4215,7 +4218,109 @@
         
         previewSurvey() {
           console.log('Previewing survey...');
-          // Implementation for previewing survey
+          
+          const surveyData = {
+            title: document.querySelector('title')?.innerText.replace('Edit Survey - ', '') || 'Survey Preview',
+            description: 'Preview of your survey',
+            pages: []
+          };
+
+          // Scrape pages
+          const pages = document.querySelectorAll('webropol-survey-page');
+          pages.forEach((page, index) => {
+            const pageData = {
+              number: page.getAttribute('page-number'),
+              name: page.getAttribute('page-name'),
+              questions: []
+            };
+
+            // Scrape questions within page
+            const questions = page.querySelectorAll('webropol-survey-question');
+            questions.forEach(q => {
+              // Basic Data
+              const qData = {
+                id: q.getAttribute('question-id'),
+                text: q.getAttribute('question-text'),
+                type: q.getAttribute('question-type'),
+                required: false, // Default, can't easily scrape without attribute
+                options: [] 
+              };
+              
+              // Attempt to scrape options for choice questions if visible in text
+              // This is a best-effort scraping since data isn't in a clean model
+              if (['radio', 'single-choice', 'checkbox', 'multi-choice', 'dropdown', 'autosuggest'].includes(qData.type)) {
+                 // For now, add dummy options if none found, or try to find them if they were rendered in the slot
+                 qData.options = ['Option 1', 'Option 2', 'Option 3'];
+              }
+
+              pageData.questions.push(qData);
+            });
+            
+            surveyData.pages.push(pageData);
+          });
+
+          // Include numeric slider from main canvas (it is not part of webropol-survey-page structure)
+          const numericSlider = document.querySelector('webropol-numeric-slider');
+          if (numericSlider) {
+            if (!surveyData.pages.length) {
+              surveyData.pages.push({ number: '1', name: 'PAGE 1', questions: [] });
+            }
+
+            const sliderQuestion = {
+              id: numericSlider.getAttribute('question-id') || 'numeric-slider-1',
+              text: 'Numeric Slider',
+              type: 'numeric-slider',
+              required: false,
+              options: [],
+              settings: {
+                min: 0,
+                max: 10,
+                step: 1,
+                start: 0,
+                direction: 'min-max',
+                showDontKnow: false,
+                dontKnowLabel: "I don't know",
+                showValue: true,
+                quantity: ''
+              }
+            };
+
+            try {
+              const rootWithXData = numericSlider.querySelector('[x-data]');
+              if (rootWithXData && window.Alpine && typeof window.Alpine.$data === 'function') {
+                const sliderData = window.Alpine.$data(rootWithXData);
+                if (sliderData && sliderData.settings) {
+                  sliderQuestion.text = sliderData.texts?.title || sliderQuestion.text;
+                  sliderQuestion.settings = {
+                    min: Number(sliderData.settings.min ?? 0),
+                    max: Number(sliderData.settings.max ?? 10),
+                    step: Number(sliderData.settings.step ?? 1),
+                    start: Number(sliderData.settings.start ?? 0),
+                    direction: sliderData.settings.direction || 'min-max',
+                    showDontKnow: Boolean(sliderData.settings.showDontKnow),
+                    dontKnowLabel: sliderData.settings.dontKnowLabel || "I don't know",
+                    showValue: sliderData.settings.showValue !== false,
+                    quantity: sliderData.settings.quantity || ''
+                  };
+                }
+              }
+            } catch (e) {
+              console.warn('Could not read numeric slider settings for preview:', e);
+            }
+
+            surveyData.pages[0].questions.push(sliderQuestion);
+          }
+
+          // Save to localStorage
+          localStorage.setItem('webropol_survey_preview_data', JSON.stringify(surveyData));
+
+          // Open preview (handle both SPA and file contexts)
+          // tailored for /surveys/edit.html -> /surveys/preview.html 
+          let previewPath = 'surveys/preview.html';
+          if (document.location.pathname.endsWith('edit.html')) {
+             previewPath = 'preview.html';
+          }
+          window.open(previewPath, '_blank');
         },
         
         saveSurvey() {
