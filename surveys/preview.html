@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Preview | Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+        .survey-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .question-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+        .input-text {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .input-text:focus {
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        }
+        /* Page styling */
+        .page-break {
+            margin: 30px 0;
+            border-top: 1px dashed #cbd5e1;
+            position: relative;
+        }
+        .page-break::after {
+            content: "Next Page";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f8fafc;
+            padding: 0 10px;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body x-data="previewApp()">
+    <div class="survey-container">
+        <!-- Survey Title/Description (Optional) -->
+        <div class="mb-8 text-center" x-show="surveyData.title">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2" x-text="surveyData.title"></h1>
+            <p class="text-gray-600" x-text="surveyData.description"></p>
+        </div>
+
+        <!-- Questions Rendering -->
+        <template x-for="(page, pageIndex) in surveyData.pages" :key="pageIndex">
+            <div>
+                <!-- Page Break Indicator (if not first page) -->
+                <div class="page-break" x-show="pageIndex > 0"></div>
+                
+                <template x-for="(question, qIndex) in page.questions" :key="question.id || qIndex">
+                    <div class="question-card">
+                        <div class="question-text">
+                            <span x-text="getQuestionNumber(pageIndex, qIndex) + '.'"></span>
+                            <span x-text="question.text"></span>
+                            <span x-show="question.required" class="text-red-500 ml-1">*</span>
+                        </div>
+
+                        <!-- Render based on question type -->
+                        
+                        <!-- Text Input / Contact -->
+                        <div x-show="['text', 'contact', 'email', 'phone'].includes(question.type)">
+                            <input type="text" class="input-text" :placeholder="question.placeholder || 'Your answer'">
+                        </div>
+
+                        <!-- Textarea -->
+                        <div x-show="question.type === 'textarea' || question.type === 'openended'">
+                            <textarea class="input-text" rows="4" :placeholder="question.placeholder || 'Your answer'"></textarea>
+                        </div>
+
+                        <!-- Radio / Choice -->
+                        <div x-show="question.type === 'radio' || question.type === 'single-choice'" class="space-y-2">
+                            <template x-for="(option, oIndex) in question.options" :key="oIndex">
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-50">
+                                    <input type="radio" :name="'q_' + question.id" class="w-4 h-4 text-webropol-primary-600 border-gray-300 focus:ring-webropol-primary-500">
+                                    <span class="text-gray-700" x-text="option.text || option"></span>
+                                </label>
+                            </template>
+                        </div>
+
+                        <!-- Checkbox / Multiple Choice -->
+                        <div x-show="question.type === 'checkbox' || question.type === 'multi-choice'" class="space-y-2">
+                            <template x-for="(option, oIndex) in question.options" :key="oIndex">
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-50">
+                                    <input type="checkbox" :name="'q_' + question.id" class="w-4 h-4 text-webropol-primary-600 border-gray-300 rounded focus:ring-webropol-primary-500">
+                                    <span class="text-gray-700" x-text="option.text || option"></span>
+                                </label>
+                            </template>
+                        </div>
+
+                        <!-- NPS -->
+                        <div x-show="question.type === 'nps'" class="flex flex-wrap gap-1 justify-center mt-4">
+                            <template x-for="n in 11" :key="n">
+                                <button class="w-10 h-10 rounded-full border border-gray-300 hover:border-webropol-primary-500 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 transition-colors text-sm font-medium text-gray-700"
+                                    x-text="n-1">
+                                </button>
+                            </template>
+                            <div class="w-full flex justify-between text-xs text-gray-500 mt-2 px-2">
+                                <span>Not likely at all</span>
+                                <span>Extremely likely</span>
+                            </div>
+                        </div>
+
+                        <!-- Autosuggest/Dropdown -->
+                        <div x-show="question.type === 'autosuggest' || question.type === 'dropdown'">
+                             <select class="input-text cursor-pointer">
+                                <option value="" disabled selected>Select an option...</option>
+                                <template x-for="(option, oIndex) in question.options" :key="oIndex">
+                                    <option x-text="option.text || option"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Submit Button Mockup -->
+        <div class="mt-8 flex justify-center">
+            <button class="bg-webropol-primary-600 hover:bg-webropol-primary-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-transform transform hover:-translate-y-0.5" onclick="alert('This is a preview mode. Submissions are disabled.')">
+                Submit Survey
+            </button>
+        </div>
+        
+        <div class="mt-12 text-center text-gray-400 text-sm">
+            <p>Preview Mode • Webropol</p>
+        </div>
+    </div>
+
+    <script>
+        function previewApp() {
+            return {
+                surveyData: {
+                    title: 'Survey Preview',
+                    description: 'This is a preview of how respondents will see your survey.',
+                    pages: []
+                },
+                
+                init() {
+                    this.loadSurveyData();
+                },
+
+                loadSurveyData() {
+                    try {
+                        const storedData = localStorage.getItem('webropol_survey_preview_data');
+                        if (storedData) {
+                            this.surveyData = JSON.parse(storedData);
+                            console.log('Survey data loaded:', this.surveyData);
+                            
+                            // Apply theme/colors if present
+                            if (this.surveyData.theme) {
+                                // Apply logic to update CSS variables or classes based on theme
+                            }
+                        } else {
+                            console.warn('No preview data found in localStorage');
+                            // Fallback mock data for testing direct file opening
+                            this.surveyData.pages = [
+                                {
+                                    questions: [
+                                        { id: 'q1', type: 'text', text: 'This is a sample question (no data found)', required: true }
+                                    ]
+                                }
+                            ];
+                        }
+                    } catch (e) {
+                        console.error('Error loading survey data:', e);
+                    }
+                },
+
+                getQuestionNumber(pageIndex, qIndex) {
+                    let count = 1;
+                    for (let i = 0; i < pageIndex; i++) {
+                        count += this.surveyData.pages[i].questions.length;
+                    }
+                    return count + qIndex;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
