@@ -324,6 +324,11 @@ export class SurveyEditToolbar extends BaseComponent {
         if (action === 'settings' && typeof window.openSurveySettingsModal === 'function') {
           window.openSurveySettingsModal();
         }
+
+        // Handle Preview & Test (SPA-safe fallback)
+        if (action === 'preview' && typeof window.previewSurvey === 'function') {
+          window.previewSurvey();
+        }
       });
     });
   }
