@@ -203,9 +203,9 @@ export class NPSQuestion extends BaseComponent {
                         </template>
                         <template id="npsTemplateSmileys">
                             <div class="flex justify-center gap-4" role="radiogroup" aria-label="NPS Smileys">
-                                <button type="button" data-nps-smiley="detractor" class="nps-smiley" aria-pressed="false" title="Detractor (0-6)">??</button>
-                                <button type="button" data-nps-smiley="passive" class="nps-smiley" aria-pressed="false" title="Passive (7-8)">??</button>
-                                <button type="button" data-nps-smiley="promoter" class="nps-smiley" aria-pressed="false" title="Promoter (9-10)">??</button>
+                                <button type="button" data-nps-smiley="detractor" class="nps-smiley" aria-pressed="false" title="Detractor (0-6)"><i class="fal fa-face-frown"></i></button>
+                                <button type="button" data-nps-smiley="passive" class="nps-smiley" aria-pressed="false" title="Passive (7-8)"><i class="fal fa-face-meh"></i></button>
+                                <button type="button" data-nps-smiley="promoter" class="nps-smiley" aria-pressed="false" title="Promoter (9-10)"><i class="fal fa-face-smile"></i></button>
                             </div>
                             <div class="text-center mt-3 text-xs text-webropol-gray-500" id="npsSmileyHint">Select a mood</div>
                         </template>

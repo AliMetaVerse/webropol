@@ -274,12 +274,19 @@
                     if (tagName === 'webropol-nps') {
                         const titleEl = element.querySelector('label.block.text-lg.font-semibold');
                         const questionText = titleEl?.textContent?.trim() || 'How likely are you to recommend our product to a friend or colleague?';
+                        let npsAppearance = 'radiobuttons';
+                        try {
+                            npsAppearance = openerWindow?.localStorage?.getItem('nps-appearance') || 'radiobuttons';
+                        } catch (e) {}
                         return {
                             id: questionId,
                             text: questionText.replace(/^\d+\.\s*/, ''),
                             type: 'nps',
                             required: Boolean(data?.isMandatory),
-                            options: []
+                            options: [],
+                            settings: {
+                                appearance: npsAppearance
+                            }
                         };
                     }
 
@@ -443,6 +450,67 @@
                 },
 
                 applyNPSPreview(containerEl, question, questionNumber) {
+                    const renderNPSAppearance = (npsEl, style) => {
+                        const target = npsEl.querySelector('#npsRenderContainer');
+                        if (!target) return;
+
+                        const buildRadioScale = () => {
+                            const wrap = document.createElement('div');
+                            wrap.className = 'flex flex-wrap gap-2';
+                            for (let index = 0; index <= 10; index += 1) {
+                                const label = document.createElement('label');
+                                label.className = 'cursor-pointer';
+                                label.innerHTML = `<input type="radio" name="npsScorePreview" value="${index}" class="sr-only peer"><div class='w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border border-webropol-gray-300 text-webropol-gray-700 bg-white peer-checked:bg-gradient-to-br peer-checked:from-webropol-primary-500 peer-checked:to-webropol-primary-600 peer-checked:text-white peer-checked:border-webropol-primary-600 hover:border-webropol-primary-400 transition-all shadow-sm hover:shadow'>${index}</div>`;
+                                wrap.appendChild(label);
+                            }
+                            const legendRow = document.createElement('div');
+                            legendRow.className = 'flex justify-between text-xs text-webropol-gray-500 mt-3 px-1 w-full';
+                            legendRow.innerHTML = '<span>Not at all likely</span><span>Extremely likely</span>';
+                            const fieldset = document.createElement('fieldset');
+                            fieldset.appendChild(wrap);
+                            fieldset.appendChild(legendRow);
+                            return fieldset;
+                        };
+
+                        const buildSlider = () => {
+                            const fragment = document.createElement('div');
+                            fragment.className = 'space-y-3';
+                            fragment.innerHTML = `<input id='npsSliderPreview' type='range' min='0' max='10' value='0' class='w-full h-2 rounded-lg appearance-none slider bg-webropol-gray-200'><div class='flex justify-between text-[11px] text-webropol-gray-500'>${Array.from({length:11},(_,i)=>`<span>${i}</span>`).join('')}</div><div class='text-xs text-webropol-primary-700 font-medium'><span id='npsSliderValuePreview'>Selected: 0</span></div>`;
+                            const slider = fragment.querySelector('#npsSliderPreview');
+                            const output = fragment.querySelector('#npsSliderValuePreview');
+                            if (slider && output) {
+                                slider.addEventListener('input', () => {
+                                    output.textContent = `Selected: ${slider.value}`;
+                                });
+                            }
+                            return fragment;
+                        };
+
+                        const buildSmileys = () => {
+                            const fragment = document.createElement('div');
+                            fragment.innerHTML = `<div class='flex justify-center gap-4' role='radiogroup' aria-label='NPS Smileys'><button type='button' data-nps-smiley='detractor' class='nps-smiley' aria-pressed='false' title='Detractor (0-6)'><i class='fal fa-face-frown'></i></button><button type='button' data-nps-smiley='passive' class='nps-smiley' aria-pressed='false' title='Passive (7-8)'><i class='fal fa-face-meh'></i></button><button type='button' data-nps-smiley='promoter' class='nps-smiley' aria-pressed='false' title='Promoter (9-10)'><i class='fal fa-face-smile'></i></button></div><div class='text-center mt-3 text-xs text-webropol-gray-500' id='npsSmileyHintPreview'>Select a mood</div>`;
+                            const hint = fragment.querySelector('#npsSmileyHintPreview');
+                            fragment.querySelectorAll('.nps-smiley').forEach((button) => {
+                                button.addEventListener('click', () => {
+                                    fragment.querySelectorAll('.nps-smiley').forEach(item => item.setAttribute('aria-pressed', 'false'));
+                                    button.setAttribute('aria-pressed', 'true');
+                                    if (hint) {
+                                        const labels = { detractor: 'Detractor (0-6)', passive: 'Passive (7-8)', promoter: 'Promoter (9-10)' };
+                                        hint.textContent = labels[button.dataset.npsSmiley] || 'Selected';
+                                    }
+                                });
+                            });
+                            return fragment;
+                        };
+
+                        target.innerHTML = '';
+                        let node;
+                        if (style === 'slider') node = buildSlider();
+                        else if (style === 'smileys') node = buildSmileys();
+                        else node = buildRadioScale();
+                        target.appendChild(node);
+                    };
+
                     const applyState = () => {
                         try {
                             const npsEl = containerEl.querySelector('webropol-nps');
@@ -470,6 +538,10 @@
                             if (expandedLabel) {
                                 expandedLabel.textContent = questionText;
                             }
+
+                            const style = question.settings?.appearance || 'radiobuttons';
+                            npsEl.setAttribute('data-nps-style', style);
+                            renderNPSAppearance(npsEl, style);
 
                             return true;
                         } catch (error) {
