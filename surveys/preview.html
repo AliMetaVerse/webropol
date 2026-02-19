@@ -106,9 +106,19 @@
 
                         <!-- Render based on question type -->
                         
-                        <!-- Text Input / Contact -->
-                        <div x-show="['text', 'contact', 'email', 'phone'].includes(question.type)">
+                        <!-- Text Input -->
+                        <div x-show="['text', 'email', 'phone'].includes(question.type)">
                             <input type="text" class="input-text" :placeholder="question.placeholder || 'Your answer'">
+                        </div>
+
+                        <!-- Contact -->
+                        <div x-show="question.type === 'contact'" class="space-y-3">
+                            <template x-for="(field, fieldIndex) in (question.fields || [])" :key="field.key || fieldIndex">
+                                <div class="flex items-center gap-3">
+                                    <label class="text-sm text-webropol-gray-700 w-28" x-text="field.label || 'Field'"></label>
+                                    <input :type="field.type || 'text'" class="input-text" :placeholder="field.placeholder || 'Your answer'">
+                                </div>
+                            </template>
                         </div>
 
                         <!-- Textarea -->
@@ -154,8 +164,13 @@
                             <webropol-numeric-slider mode="respond" class="block"></webropol-numeric-slider>
                         </div>
 
-                        <!-- Autosuggest/Dropdown -->
-                        <div x-show="question.type === 'autosuggest' || question.type === 'dropdown'">
+                        <!-- Autosuggest -->
+                        <div x-show="question.type === 'autosuggest'">
+                            <input type="text" class="input-text" :placeholder="question.placeholder || 'Type to see suggestions...'">
+                        </div>
+
+                        <!-- Dropdown -->
+                        <div x-show="question.type === 'dropdown'">
                              <select class="input-text cursor-pointer">
                                 <option value="" disabled selected>Select an option...</option>
                                 <template x-for="(option, oIndex) in question.options" :key="oIndex">
@@ -189,11 +204,11 @@
                     description: 'This is a preview of how respondents will see your survey.',
                     pages: []
                 },
-                
+
                 init() {
                     this.loadSurveyData();
-                    this.syncNumericSliderFromOpener();
-                    this.retrySyncNumericSlider();
+                    this.syncQuestionsFromOpener();
+                    this.retrySyncQuestionsFromOpener();
                 },
 
                 loadSurveyData() {
@@ -201,15 +216,7 @@
                         const storedData = localStorage.getItem('webropol_survey_preview_data');
                         if (storedData) {
                             this.surveyData = JSON.parse(storedData);
-                            console.log('Survey data loaded:', this.surveyData);
-                            
-                            // Apply theme/colors if present
-                            if (this.surveyData.theme) {
-                                // Apply logic to update CSS variables or classes based on theme
-                            }
                         } else {
-                            console.warn('No preview data found in localStorage');
-                            // Fallback mock data for testing direct file opening
                             this.surveyData.pages = [
                                 {
                                     questions: [
@@ -223,51 +230,167 @@
                     }
                 },
 
-                syncNumericSliderFromOpener() {
+                getAlpineDataFromElement(openerWindow, element) {
                     try {
-                        const extractor = window.webropolPreviewQuestions?.numericSlider?.extractFromOpener;
-                        if (typeof extractor !== 'function') return false;
-                        const sliderQuestion = extractor(window.opener);
-                        if (!sliderQuestion) return false;
+                        const rootWithXData = element?.querySelector('[x-data]');
+                        if (!rootWithXData || !openerWindow?.Alpine || typeof openerWindow.Alpine.$data !== 'function') {
+                            return null;
+                        }
+                        return openerWindow.Alpine.$data(rootWithXData) || null;
+                    } catch (e) {
+                        return null;
+                    }
+                },
 
-                        let existingSliderQuestion = null;
-                        let existingSliderPage = null;
-                        (this.surveyData.pages || []).forEach(page => {
-                            (page.questions || []).forEach(question => {
-                                if (question.type === 'numeric-slider' && !existingSliderQuestion) {
-                                    existingSliderQuestion = question;
-                                    existingSliderPage = page;
-                                }
-                            });
+                extractQuestionFromElement(openerWindow, element) {
+                    const tagName = (element?.tagName || '').toLowerCase();
+                    const questionId = element?.getAttribute('question-id') || Math.random().toString(36).substring(2, 12);
+                    const data = this.getAlpineDataFromElement(openerWindow, element);
+
+                    if (tagName === 'webropol-contact-form') {
+                        return {
+                            id: questionId,
+                            text: data?.title || 'Please fill in your details.',
+                            type: 'contact',
+                            required: Boolean(data?.isMandatory),
+                            fields: Array.isArray(data?.fields) ? data.fields : []
+                        };
+                    }
+
+                    if (tagName === 'webropol-autosuggest-text-field') {
+                        return {
+                            id: questionId,
+                            text: data?.title || 'Auto Suggest',
+                            type: 'autosuggest',
+                            required: Boolean(data?.isMandatory),
+                            options: [],
+                            placeholder: 'Type to see suggestions...'
+                        };
+                    }
+
+                    if (tagName === 'webropol-open-ended') {
+                        return {
+                            id: questionId,
+                            text: data?.title || 'What are your thoughts?',
+                            type: 'openended',
+                            required: Boolean(data?.isMandatory),
+                            placeholder: data?.placeholder || 'Please share your thoughts here...'
+                        };
+                    }
+
+                    if (tagName === 'webropol-nps') {
+                        const titleEl = element.querySelector('label.block.text-lg.font-semibold');
+                        const questionText = titleEl?.textContent?.trim() || 'How likely are you to recommend our product to a friend or colleague?';
+                        return {
+                            id: questionId,
+                            text: questionText.replace(/^\d+\.\s*/, ''),
+                            type: 'nps',
+                            required: Boolean(data?.isMandatory),
+                            options: []
+                        };
+                    }
+
+                    if (tagName === 'webropol-numeric-slider') {
+                        const settings = data?.settings || {};
+                        const texts = data?.texts || {};
+                        return {
+                            id: questionId,
+                            text: texts.title || 'Numeric Slider',
+                            type: 'numeric-slider',
+                            required: Boolean(data?.isMandatory),
+                            options: [],
+                            settings: {
+                                min: Number(settings.min ?? 0),
+                                max: Number(settings.max ?? 10),
+                                step: Number(settings.step ?? 1),
+                                start: Number(settings.start ?? 0),
+                                questionType: data?.questionType || 'slider',
+                                direction: settings.direction || 'min-max',
+                                showDontKnow: Boolean(settings.showDontKnow),
+                                dontKnowLabel: settings.dontKnowLabel || "I don't know",
+                                showValue: settings.showValue !== false,
+                                quantity: settings.quantity || '',
+                                showLabels: settings.showLabels !== false,
+                                orientationDesktop: settings.orientationDesktop || 'vertical',
+                                orientationMobile: settings.orientationMobile || 'horizontal',
+                                showDescription: settings.showDescription !== false,
+                                descPlacement: settings.descPlacement || 'below'
+                            },
+                            texts: {
+                                title: texts.title || 'On a scale from 0 to 100, how would you rate your overall health today?',
+                                instructions: texts.instructions || '',
+                                boxLabel1: texts.boxLabel1 || 'YOUR',
+                                boxLabel2: texts.boxLabel2 || 'HEALTH',
+                                boxLabel3: texts.boxLabel3 || 'TODAY',
+                                bestLabel1: texts.bestLabel1 || 'Best health',
+                                bestLabel2: texts.bestLabel2 || 'you can',
+                                bestLabel3: texts.bestLabel3 || 'imagine',
+                                worstLabel1: texts.worstLabel1 || 'Worst health',
+                                worstLabel2: texts.worstLabel2 || 'you can',
+                                worstLabel3: texts.worstLabel3 || 'imagine'
+                            }
+                        };
+                    }
+
+                    return null;
+                },
+
+                buildOrderedPagesFromOpener() {
+                    try {
+                        const openerWindow = window.opener;
+                        const openerDoc = openerWindow?.document;
+                        if (!openerDoc) return null;
+
+                        const pageSections = Array.from(openerDoc.querySelectorAll('section')).filter(section =>
+                            section.querySelector('webropol-contact-form, webropol-autosuggest-text-field, webropol-open-ended, webropol-numeric-slider, webropol-nps')
+                        );
+                        if (!pageSections.length) return null;
+
+                        const pages = [];
+                        pageSections.forEach((section, index) => {
+                            const questionElements = Array.from(
+                                section.querySelectorAll('webropol-contact-form, webropol-autosuggest-text-field, webropol-open-ended, webropol-numeric-slider, webropol-nps')
+                            );
+                            const questions = questionElements
+                                .map(el => this.extractQuestionFromElement(openerWindow, el))
+                                .filter(Boolean);
+
+                            if (questions.length) {
+                                pages.push({
+                                    number: String(index + 1),
+                                    name: `PAGE ${index + 1}`,
+                                    questions
+                                });
+                            }
                         });
 
-                        if (existingSliderQuestion) {
-                            if (window.webropolPreviewQuestions?.numericSlider?.mergeQuestion) {
-                                window.webropolPreviewQuestions.numericSlider.mergeQuestion(existingSliderQuestion, sliderQuestion);
-                            } else {
-                                Object.assign(existingSliderQuestion, sliderQuestion);
-                            }
-                        } else {
-                            if (!this.surveyData.pages || !this.surveyData.pages.length) {
-                                this.surveyData.pages = [{ number: '1', name: 'PAGE 1', questions: [] }];
-                            }
-                            (existingSliderPage || this.surveyData.pages[0]).questions.push(sliderQuestion);
-                        }
+                        return pages.length ? pages : null;
+                    } catch (e) {
+                        console.warn('Could not build ordered pages from opener:', e);
+                        return null;
+                    }
+                },
+
+                syncQuestionsFromOpener() {
+                    try {
+                        const orderedPages = this.buildOrderedPagesFromOpener();
+                        if (!orderedPages) return false;
+                        this.surveyData.pages = orderedPages;
                         return true;
                     } catch (e) {
-                        console.warn('Could not sync numeric slider from opener:', e);
+                        console.warn('Could not sync questions from opener:', e);
                         return false;
                     }
                 },
 
-                retrySyncNumericSlider() {
+                retrySyncQuestionsFromOpener() {
                     let attempts = 0;
                     const maxAttempts = 12;
                     const intervalMs = 250;
 
                     const timer = setInterval(() => {
                         attempts += 1;
-                        const synced = this.syncNumericSliderFromOpener();
+                        const synced = this.syncQuestionsFromOpener();
                         if (synced || attempts >= maxAttempts) {
                             clearInterval(timer);
                         }
@@ -292,24 +415,13 @@
                             sliderData.selected = false;
                             sliderData.showSettings = false;
                             sliderData.questionType = question.settings?.questionType || 'slider';
-
-                            sliderData.settings = {
-                                ...(sliderData.settings || {}),
-                                ...(question.settings || {})
-                            };
-
+                            sliderData.settings = { ...(sliderData.settings || {}), ...(question.settings || {}) };
                             if (question.texts) {
-                                sliderData.texts = {
-                                    ...(sliderData.texts || {}),
-                                    ...(question.texts || {})
-                                };
+                                sliderData.texts = { ...(sliderData.texts || {}), ...(question.texts || {}) };
                             }
 
                             if (!question.texts?.title && question.text) {
-                                sliderData.texts = {
-                                    ...(sliderData.texts || {}),
-                                    title: `${questionNumber}. ${question.text}`
-                                };
+                                sliderData.texts = { ...(sliderData.texts || {}), title: `${questionNumber}. ${question.text}` };
                             } else if (sliderData.texts?.title) {
                                 sliderData.texts.title = `${questionNumber}. ${sliderData.texts.title.replace(/^\d+\.\s*/, '')}`;
                             }
@@ -317,7 +429,6 @@
                             if (sliderData.value === null || sliderData.value === undefined) {
                                 sliderData.value = Number(sliderData.settings?.start ?? sliderData.settings?.min ?? 0);
                             }
-
                             sliderData.dontKnow = false;
                             return true;
                         } catch (error) {
