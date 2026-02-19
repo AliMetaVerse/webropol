@@ -1,5 +1,5 @@
 import { BaseComponent } from '../../../design-system/utils/base-component.js';
-import './AutoSuggestSettingsModal.js';
+import './settings/AutoSuggestSettingsModal.js';
 
 export class AutoSuggestTextField extends BaseComponent {
     static get observedAttributes() {

@@ -1,5 +1,5 @@
 import { BaseComponent } from '../../../design-system/utils/base-component.js';
-import './NumericSliderSettingsModal.js';
+import './settings/NumericSliderSettingsModal.js';
 
 export class NumericSlider extends BaseComponent {
     static get observedAttributes() {
