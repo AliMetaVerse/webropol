@@ -98,8 +98,8 @@ export class NumericSlider extends BaseComponent {
                         // Watch selection state
                         this.$watch('selected', value => {
                             if (value && this.mode === 'edit') {
-                                window.dispatchEvent(new CustomEvent('question-selected', { 
-                                    detail: { id: this.questionId }
+                                window.dispatchEvent(new CustomEvent('click-question', {
+                                    detail: this.questionId
                                 }));
                             }
                         });
@@ -329,8 +329,8 @@ export class NumericSlider extends BaseComponent {
                 }
             </style>
 
-            <div x-data="numericSliderData('${this.mode}', '${this.questionId}')" class="w-full"
-                 @question-selected.window="if(mode === 'edit' && $event.detail.id !== questionId) { selected = false; showSettings = false; }"
+              <div x-data="numericSliderData('${this.mode}', '${this.questionId}')" class="w-full"
+                  @click-question.window="if(mode === 'edit' && $event.detail !== questionId) { selected = false; showSettings = false; }"
                  x-effect="if($el.closest('webropol-numeric-slider').hasAttribute('settings-open')) { showSettings = true; selected = true; }"
                  @click.outside="if(mode === 'edit') { selected = false; showSettings = false; }">
                
