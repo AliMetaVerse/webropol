@@ -8,6 +8,7 @@
     <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script type="module" src="../preview/questions/index.js"></script>
+    <script src="./components/questions/NumericSlider.js" type="module"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
@@ -97,7 +98,7 @@
                 
                 <template x-for="(question, qIndex) in page.questions" :key="question.id || qIndex">
                     <div class="question-card">
-                        <div class="question-text">
+                        <div class="question-text" x-show="question.type !== 'numeric-slider'">
                             <span x-text="getQuestionNumber(pageIndex, qIndex) + '.'"></span>
                             <span x-text="question.text"></span>
                             <span x-show="question.required" class="text-red-500 ml-1">*</span>
@@ -148,55 +149,9 @@
                             </div>
                         </div>
 
-                        <!-- Numeric Slider -->
-                        <div x-show="question.type === 'numeric-slider'" x-data="{ sliderValue: Number(question.settings?.start ?? question.settings?.min ?? 0) }" class="mt-3">
-                            <template x-if="question.settings?.questionType === 'health-slider'">
-                                <div class="space-y-4">
-                                    <div class="mx-auto w-full max-w-sm rounded-xl border-2 border-purple-800 bg-[#1a0b2e] px-6 py-6 text-center text-white shadow-lg">
-                                        <div class="text-xs font-bold tracking-[0.25em] text-white/85">YOUR</div>
-                                        <div class="text-xs font-bold tracking-[0.25em] text-white/85">HEALTH</div>
-                                        <div class="text-xs font-bold tracking-[0.25em] text-white/85 mb-4">TODAY</div>
-                                        <div class="text-5xl font-extrabold tabular-nums" x-text="sliderValue"></div>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        class="w-full h-2 bg-webropol-gray-200 rounded-lg appearance-none cursor-pointer accent-webropol-primary-600"
-                                        :min="Number(question.settings?.min ?? 0)"
-                                        :max="Number(question.settings?.max ?? 10)"
-                                        :step="Number(question.settings?.step ?? 1)"
-                                        x-model.number="sliderValue"
-                                    >
-                                    <div class="mt-2 flex items-center justify-between text-xs text-webropol-gray-500">
-                                        <span>Worst health you can imagine</span>
-                                        <span>Best health you can imagine</span>
-                                    </div>
-                                </div>
-                            </template>
-
-                            <template x-if="question.settings?.questionType !== 'health-slider'">
-                                <div>
-                                    <input
-                                        type="range"
-                                        class="w-full h-2 bg-webropol-gray-200 rounded-lg appearance-none cursor-pointer accent-webropol-primary-600"
-                                        :min="Number(question.settings?.min ?? 0)"
-                                        :max="Number(question.settings?.max ?? 10)"
-                                        :step="Number(question.settings?.step ?? 1)"
-                                        x-model.number="sliderValue"
-                                    >
-                                    <div class="mt-2 flex items-center justify-between text-xs text-webropol-gray-500">
-                                        <span x-text="(question.settings?.direction === 'max-min') ? (question.settings?.max ?? 10) : (question.settings?.min ?? 0)"></span>
-                                        <span class="font-semibold text-webropol-gray-900" x-text="sliderValue"></span>
-                                        <span x-text="(question.settings?.direction === 'max-min') ? (question.settings?.min ?? 0) : (question.settings?.max ?? 10)"></span>
-                                    </div>
-                                    <div class="mt-2 text-xs text-webropol-gray-500" x-show="question.settings?.showValue !== false && question.settings?.quantity">
-                                        Unit: <span x-text="question.settings?.quantity"></span>
-                                    </div>
-                                    <label class="mt-3 inline-flex items-center gap-2 text-sm text-webropol-gray-700" x-show="question.settings?.showDontKnow">
-                                        <input type="checkbox" class="w-4 h-4 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-webropol-primary-500">
-                                        <span x-text="question.settings?.dontKnowLabel || \"I don't know\""></span>
-                                    </label>
-                                </div>
-                            </template>
+                        <!-- Numeric Slider (full respond component) -->
+                        <div x-show="question.type === 'numeric-slider'" class="mt-3" x-init="$nextTick(() => applyNumericSliderPreview($el, question, getQuestionNumber(pageIndex, qIndex)))">
+                            <webropol-numeric-slider mode="respond" class="block"></webropol-numeric-slider>
                         </div>
 
                         <!-- Autosuggest/Dropdown -->
@@ -317,6 +272,70 @@
                             clearInterval(timer);
                         }
                     }, intervalMs);
+                },
+
+                applyNumericSliderPreview(containerEl, question, questionNumber) {
+                    const applyState = () => {
+                        try {
+                            const sliderEl = containerEl.querySelector('webropol-numeric-slider');
+                            if (!sliderEl) return false;
+
+                            const rootWithXData = sliderEl.querySelector('[x-data]');
+                            if (!rootWithXData || !window.Alpine || typeof window.Alpine.$data !== 'function') {
+                                return false;
+                            }
+
+                            const sliderData = window.Alpine.$data(rootWithXData);
+                            if (!sliderData) return false;
+
+                            sliderData.mode = 'respond';
+                            sliderData.selected = false;
+                            sliderData.showSettings = false;
+                            sliderData.questionType = question.settings?.questionType || 'slider';
+
+                            sliderData.settings = {
+                                ...(sliderData.settings || {}),
+                                ...(question.settings || {})
+                            };
+
+                            if (question.texts) {
+                                sliderData.texts = {
+                                    ...(sliderData.texts || {}),
+                                    ...(question.texts || {})
+                                };
+                            }
+
+                            if (!question.texts?.title && question.text) {
+                                sliderData.texts = {
+                                    ...(sliderData.texts || {}),
+                                    title: `${questionNumber}. ${question.text}`
+                                };
+                            } else if (sliderData.texts?.title) {
+                                sliderData.texts.title = `${questionNumber}. ${sliderData.texts.title.replace(/^\d+\.\s*/, '')}`;
+                            }
+
+                            if (sliderData.value === null || sliderData.value === undefined) {
+                                sliderData.value = Number(sliderData.settings?.start ?? sliderData.settings?.min ?? 0);
+                            }
+
+                            sliderData.dontKnow = false;
+                            return true;
+                        } catch (error) {
+                            console.warn('Failed to apply numeric slider preview state:', error);
+                            return true;
+                        }
+                    };
+
+                    if (applyState()) return;
+
+                    let attempts = 0;
+                    const maxAttempts = 16;
+                    const timer = setInterval(() => {
+                        attempts += 1;
+                        if (applyState() || attempts >= maxAttempts) {
+                            clearInterval(timer);
+                        }
+                    }, 150);
                 },
 
                 getQuestionNumber(pageIndex, qIndex) {

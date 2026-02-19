@@ -14,7 +14,34 @@ function normalizeSettings(settings = {}) {
     showDontKnow: Boolean(settings.showDontKnow),
     dontKnowLabel: settings.dontKnowLabel || "I don't know",
     showValue: settings.showValue !== false,
-    quantity: settings.quantity || ''
+    quantity: settings.quantity || '',
+    showLabels: settings.showLabels !== false,
+    orientationDesktop: settings.orientationDesktop || 'vertical',
+    orientationMobile: settings.orientationMobile || 'horizontal',
+    showDescription: settings.showDescription !== false,
+    descPlacement: settings.descPlacement || 'below'
+  };
+}
+
+function normalizeTexts(texts = {}) {
+  return {
+    title: texts.title || 'On a scale from 0 to 100, how would you rate your overall health today?',
+    instructions: texts.instructions || `<ul>
+<li>We would like to know how good or bad your health is TODAY.</li>
+<li>You will see a scale numbered from 0 to 100.</li>
+<li>100 means the best health you can imagine.</li>
+<li>0 means the worst health you can imagine.</li>
+<li>Please indicate on the scale how your health is TODAY.</li>
+</ul>`,
+    boxLabel1: texts.boxLabel1 || 'YOUR',
+    boxLabel2: texts.boxLabel2 || 'HEALTH',
+    boxLabel3: texts.boxLabel3 || 'TODAY',
+    bestLabel1: texts.bestLabel1 || 'Best health',
+    bestLabel2: texts.bestLabel2 || 'you can',
+    bestLabel3: texts.bestLabel3 || 'imagine',
+    worstLabel1: texts.worstLabel1 || 'Worst health',
+    worstLabel2: texts.worstLabel2 || 'you can',
+    worstLabel3: texts.worstLabel3 || 'imagine'
   };
 }
 
@@ -32,7 +59,8 @@ export function extractFromOpener(openerWindow) {
       type: 'numeric-slider',
       required: false,
       options: [],
-      settings: normalizeSettings()
+      settings: normalizeSettings(),
+      texts: normalizeTexts()
     };
 
     const rootWithXData = sliderEl.querySelector('[x-data]');
@@ -44,6 +72,7 @@ export function extractFromOpener(openerWindow) {
           ...(sliderData.settings || {}),
           questionType: sliderData.questionType || 'slider'
         });
+        question.texts = normalizeTexts(sliderData.texts || {});
       }
     }
 
@@ -62,5 +91,6 @@ export function mergeQuestion(target, incoming) {
   target.required = incoming.required;
   target.options = incoming.options || [];
   target.settings = { ...(target.settings || {}), ...(incoming.settings || {}) };
+  target.texts = { ...(target.texts || {}), ...(incoming.texts || {}) };
   return target;
 }
