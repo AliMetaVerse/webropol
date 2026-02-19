@@ -28,12 +28,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Design system components -->
-    <!-- Navigation components removed as per user request -->
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
 </head>
-<body x-data="moduleApp()" class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-4xl mx-auto">
-        <!-- Main Content Area -->
-        <main class="relative" role="main">
+<body x-data="moduleApp()" @toggle-fullscreen.window="fullscreen = $event.detail">
+    <div class="flex h-screen bg-webropol-gray-50">
+        <webropol-sidebar active="examples" base="../" x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-sidebar>
+        
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <webropol-header username="User" show-notifications show-help show-user-menu show-theme-selector 
+                             x-show="!fullscreen && mode !== 'respond'" class="transition-all duration-300"></webropol-header>
+            
+            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 transition-all duration-300"
+                 x-show="!fullscreen && mode !== 'respond'">
+                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Examples","url":"#"}, {"label":"Quality Meter","url":"#"}]'></webropol-breadcrumbs>
+            </div>
+            
+            <main class="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-12 relative" role="main">
                 
                 <!-- Use 'x-cloak' to avoid flicker but we removed it per instructions unless styled. 
                      We will manage state via Alpine. -->
@@ -42,7 +54,7 @@
                 <div class="transition-all duration-300" 
                      :class="containerClass"
                      x-data="healthSlider()"
-                     >
+                     :style="mode === 'respond' ? 'padding-top: 60px;' : ''">
 
                     <!-- Top Bar: Mode Switcher & Settings -->
                     <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
@@ -134,7 +146,7 @@
                                           x-transition:enter="transition ease-out duration-200"
                                           x-transition:enter-start="opacity-0 scale-0"
                                           x-transition:enter-end="opacity-100 scale-100"
-                                          class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                          class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-webropol-primary-500 rounded-full flex items-center justify-center">
                                         <i class="fa-solid fa-heart-pulse text-white text-[8px]"></i>
                                     </span>
                                 </button>
@@ -247,7 +259,7 @@
                                      ]">
                                      
                                     <!-- "Your Health" Black Box -->
-                                    <div x-show="questionType === 'health-slider'"
+                                     <div x-show="questionType === 'health-slider' && !(mode === 'respond' && effectiveIsMobile)"
                                          class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 relative overflow-hidden group rounded-xl w-full"
                                          :class="orientation === 'vertical' ? 'h-72' : 'h-56 py-8'">
                                     
@@ -419,69 +431,28 @@
                                     </div>
                                 </template>
 
-                                  <!-- "I don't know" Checkbox -->
-                                  <div x-show="settings.showDontKnow" 
-                                     class="w-auto px-4 transition-all duration-300" 
-                                     :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-4'"
-                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
-                                           :class="[
-                                               dontKnow 
-                                               ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
-                                               : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
-                                               mode === 'edit' ? 'pointer-events-none opacity-60' : ''
-                                           ]">
-                                        
-                                        <!-- Active background pattern -->
-                                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                                             :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
-
-                                        <div class="relative flex items-center">
-                                            <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
-                                            
-                                            <!-- Custom Checkbox -->
-                                            <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
-                                                 :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
-                                                <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
-                                                   :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="relative z-10">
-                                            <template x-if="mode === 'edit'">
-                                                <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
-                                                       :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
-                                            </template>
-                                            <template x-if="mode === 'respond'">
-                                                <span class="text-sm font-bold uppercase tracking-widest" 
-                                                      :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
-                                                      x-text="settings.dontKnowLabel"></span>
-                                            </template>
-                                        </div>
-                                    </label>
-                                </div>
                             </div>
                             </div>
 
                             <!-- Scale Section -->
-                               <div x-show="questionType === 'health-slider'" class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
-                                 :class="orientation === 'vertical' ? 'w-full md:w-80 pt-2' : 'w-full mt-8 md:mt-12'">
+                                                             <div x-show="questionType === 'health-slider'" class="flex-shrink-0 select-none transition-all duration-500 ease-in-out"
+                                                                 :class="orientation === 'vertical' ? 'w-full md:w-80 pt-2' : 'w-full mt-4 md:mt-12'">
                                 
                                 <!-- Vertical Layout -->
                                 <template x-if="orientation === 'vertical' && questionType === 'health-slider'">
                                     <div>
                                         <!-- Top Label (Best) -->
-                                        <div class="flex items-center justify-start gap-4 mb-8 pl-2 group">
-                                            <div class="flex flex-col items-start text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
+                                        <div class="flex items-center justify-center mb-4 md:mb-6 group">
+                                            <div class="flex flex-col items-center text-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight">
                                                 <template x-if="mode === 'edit'">
-                                                    <div class="flex flex-col items-start gap-1">
-                                                        <input x-model="texts.bestLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
-                                                        <input x-model="texts.bestLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
-                                                        <input x-model="texts.bestLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                    <div class="flex flex-col items-center gap-1">
+                                                        <input x-model="texts.bestLabel1" class="text-center bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                        <input x-model="texts.bestLabel2" class="text-center bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
+                                                        <input x-model="texts.bestLabel3" class="text-center bg-transparent border-b border-transparent hover:border-webropol-primary-200 focus:outline-none w-24">
                                                     </div>
                                                 </template>
                                                 <template x-if="mode === 'respond'">
-                                                    <div class="flex flex-col items-start">
+                                                    <div class="flex flex-col items-center">
                                                         <span x-text="texts.bestLabel1"></span>
                                                         <span x-text="texts.bestLabel2"></span>
                                                         <span x-text="texts.bestLabel3"></span>
@@ -491,10 +462,11 @@
                                         </div>
                                         
                                         <!-- Vertical Track -->
+                                        <div class="w-24 sm:w-28 border border-gray-300 rounded-2xl py-6 mx-auto">
                                         <div class="relative h-[400px] sm:h-[600px] w-full" 
-                                             :class="{'pointer-events-none': mode === 'edit'}"
-                                             @mousedown="startDrag"
-                                             @touchstart.prevent="startDrag"
+                                            :class="{'pointer-events-none': mode === 'edit'}"
+                                            @mousedown="startDrag"
+                                            @touchstart.prevent="startDrag"
                                             x-ref="trackVerticalHealth">
                                             
                                             <!-- Interaction Hint -->
@@ -532,19 +504,20 @@
                                                 <div class="absolute left-[1px] top-1/2 -translate-y-1/2 w-3 h-3 bg-[#ee4036] rounded-full z-30 ring-2 ring-white"></div>
                                             </div>
                                         </div>
+                                        </div>
                                         
                                         <!-- Bottom Label (Worst) -->
-                                        <div class="flex items-center justify-start gap-4 mt-8 pl-2 group">
-                                            <div class="flex flex-col items-start text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
+                                        <div class="flex items-center justify-center mt-4 md:mt-6 group">
+                                            <div class="flex flex-col items-center text-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight">
                                                 <template x-if="mode === 'edit'">
-                                                    <div class="flex flex-col items-start gap-1">
-                                                        <input x-model="texts.worstLabel1" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
-                                                        <input x-model="texts.worstLabel2" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
-                                                        <input x-model="texts.worstLabel3" class="text-left bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                    <div class="flex flex-col items-center gap-1">
+                                                        <input x-model="texts.worstLabel1" class="text-center bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                        <input x-model="texts.worstLabel2" class="text-center bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
+                                                        <input x-model="texts.worstLabel3" class="text-center bg-transparent border-b border-transparent hover:border-webropol-gray-300 focus:outline-none w-24">
                                                     </div>
                                                 </template>
                                                 <template x-if="mode === 'respond'">
-                                                    <div class="flex flex-col items-start">
+                                                    <div class="flex flex-col items-center">
                                                         <span x-text="texts.worstLabel1"></span>
                                                         <span x-text="texts.worstLabel2"></span>
                                                         <span x-text="texts.worstLabel3"></span>
@@ -558,35 +531,24 @@
                                 <!-- Horizontal Layout -->
                                 <template x-if="orientation === 'horizontal' && questionType === 'health-slider'">
                                     <div class="w-full relative transition-all duration-300"
-                                         :class="effectiveIsMobile ? 'px-2 pt-16 pb-8' : 'px-4 md:px-16 pt-10'">
-                                        <!-- Horizontal Label Row -->
-                                        <div class="flex justify-between items-end relative z-0"
-                                             :class="effectiveIsMobile ? 'mb-12' : 'mb-4'">
-                                            <!-- Worst Label (Left) -->
-                                            <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
-                                                <span x-text="texts.worstLabel1"></span>
-                                                <span x-text="texts.worstLabel2"></span>
-                                                <span x-text="texts.worstLabel3"></span>
-                                            </div>
-                                            
-                                            <!-- Best Label (Right) -->
-                                            <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
-                                                <span x-text="texts.bestLabel1"></span>
-                                                <span x-text="texts.bestLabel2"></span>
-                                                <span x-text="texts.bestLabel3"></span>
-                                            </div>
-                                        </div>
+                                         :class="effectiveIsMobile ? 'px-2 pt-3 pb-2' : 'px-4 md:px-16 pt-10'">
 
                                         <!-- Horizontal Track -->
-                                        <div class="relative w-full h-32" 
-                                             :class="{'pointer-events-none': mode === 'edit'}"
-                                             @mousedown="startDragHorizontal"
-                                             @touchstart.prevent="startDragHorizontal"
+                                        <div class="w-full border border-gray-300 rounded-2xl px-4 md:px-6">
+                                        <div class="relative w-full" 
+                                            :class="[
+                                                effectiveIsMobile ? 'h-20' : 'h-32',
+                                                mode === 'edit' ? 'pointer-events-none' : ''
+                                            ]"
+                                            @mousedown="startDragHorizontal"
+                                            @touchstart.prevent="startDragHorizontal"
                                             x-ref="trackHorizontalHealth">
                                             
                                             <!-- Interaction Hint -->
                                             <div x-show="value === null && !dontKnow" 
-                                                 class="absolute top-32 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500"
+                                                 :class="effectiveIsMobile
+                                                    ? 'absolute -top-8 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500'
+                                                    : 'absolute top-32 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500'"
                                                  x-transition:leave="duration-500">
                                                 <div class="text-webropol-gray-400 font-bold tracking-[0.25em] text-xs uppercase opacity-70 animate-pulse whitespace-nowrap">
                                                     Tap scale to select value
@@ -617,11 +579,11 @@
                                                 
                                                 <!-- Dotted line up -->
                                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 border-l-2 border-webropol-gray-400 border-dotted"
-                                                     :class="effectiveIsMobile ? 'h-16' : 'h-24'"></div>
+                                                       :class="effectiveIsMobile ? 'h-8' : 'h-24'"></div>
                                                 
                                                 <!-- Value Box -->
                                                 <div class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center"
-                                                     :class="effectiveIsMobile ? 'bottom-[180px]' : 'bottom-[232px]'">
+                                                       :class="effectiveIsMobile ? 'bottom-full mb-1' : 'bottom-[232px]'">
                                                     <div class="text-[#5c7ae0] font-medium flex items-center gap-1 bg-white px-2 py-1 rounded shadow-sm border border-gray-50"
                                                          :class="effectiveIsMobile ? 'text-4xl' : 'text-5xl'">
                                                         <span x-text="Math.round(value)"></span>
@@ -634,8 +596,94 @@
                                                 <div class="absolute top-0 left-1/2 -translate-x-1/2 -mt-[4px] w-6 h-6 bg-[#ee4036] rounded-full shadow-md z-30 ring-2 ring-white scale-125"></div>
                                             </div>
                                         </div>
+                                        </div>
+
+                                        <!-- Horizontal Label Row (Below meter) -->
+                                        <div class="flex justify-between items-end relative z-0 px-4 md:px-6"
+                                            :class="effectiveIsMobile ? 'mt-3' : 'mt-6'">
+                                            <!-- Worst Label (Left) -->
+                                            <div class="flex flex-col items-center text-webropol-gray-500 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                <span x-text="texts.worstLabel1"></span>
+                                                <span x-text="texts.worstLabel2"></span>
+                                                <span x-text="texts.worstLabel3"></span>
+                                            </div>
+                                            
+                                            <!-- Best Label (Right) -->
+                                            <div class="flex flex-col items-center text-webropol-primary-700 font-bold text-xs tracking-widest uppercase leading-tight text-center">
+                                                <span x-text="texts.bestLabel1"></span>
+                                                <span x-text="texts.bestLabel2"></span>
+                                                <span x-text="texts.bestLabel3"></span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </template>
+
+                                <!-- Mobile Respond: "Your Health" box placed after meter -->
+                                <div x-show="questionType === 'health-slider' && mode === 'respond' && effectiveIsMobile"
+                                     class="flex-shrink-0 flex flex-col items-center gap-4 transition-all duration-500 w-full mt-6"
+                                     :class="orientation === 'vertical' ? 'max-w-[14rem] mx-auto' : 'max-w-[16rem] mx-auto'">
+                                    <div class="bg-[#1a0b2e] border-2 border-[#4c1d95] text-white flex flex-col items-center justify-center shadow-2xl transition-all duration-500 relative overflow-hidden group rounded-xl w-full"
+                                         :class="orientation === 'vertical' ? 'h-72' : 'h-56 py-8'">
+                                        <div class="absolute inset-0 bg-gradient-to-br from-[#7c3aed]/20 to-transparent pointer-events-none"></div>
+
+                                        <div class="flex flex-col items-center text-center relative z-10 transition-transform duration-300 group-hover:-translate-y-1">
+                                            <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel1"></span>
+                                            <span class="text-xs font-bold tracking-[0.3em] mb-2 text-white/90 uppercase" x-text="texts.boxLabel2"></span>
+                                            <span class="text-xs font-bold tracking-[0.3em] text-white/90 uppercase" :class="orientation === 'vertical' ? 'mb-12' : 'mb-6'" x-text="texts.boxLabel3"></span>
+                                        </div>
+
+                                        <div class="relative z-10 w-full px-4">
+                                            <input type="number" 
+                                                   x-model="value"
+                                                   readonly
+                                                   placeholder="&mdash;"
+                                                   @input="if($el.value > 100) value = 100; if($el.value < 0) value = 0;"
+                                                   class="bg-transparent text-white font-bold tabular-nums leading-none tracking-tighter text-center w-full focus:outline-none border-b-2 border-transparent transition-all duration-200 p-0 shadow-none ring-0 appearance-none font-inter placeholder-white/20 text-5xl hover:text-white focus:border-webropol-primary-400 cursor-text">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- "I don't know" Checkbox -->
+                                <div x-show="settings.showDontKnow" 
+                                     class="w-full px-4 flex justify-center transition-all duration-300" 
+                                      :class="effectiveIsMobile ? 'mt-6 mb-12' : 'mt-6'"
+                                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                                    <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
+                                           :class="[
+                                               dontKnow 
+                                               ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
+                                               : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
+                                               mode === 'edit' ? 'pointer-events-none opacity-60' : ''
+                                           ]">
+                                        
+                                        <!-- Active background pattern -->
+                                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                                             :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
+
+                                        <div class="relative flex items-center">
+                                            <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
+                                            
+                                            <!-- Custom Checkbox -->
+                                            <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
+                                                 :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
+                                                <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
+                                                   :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="relative z-10">
+                                            <template x-if="mode === 'edit'">
+                                                <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
+                                                       :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
+                                            </template>
+                                            <template x-if="mode === 'respond'">
+                                                <span class="text-sm font-bold uppercase tracking-widest" 
+                                                      :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
+                                                      x-text="settings.dontKnowLabel"></span>
+                                            </template>
+                                        </div>
+                                    </label>
+                                </div>
 
                             </div>
                         </div>
@@ -745,14 +793,6 @@
                                             <input type="checkbox" x-model="settings.showValue" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
                                             <span class="text-sm text-gray-700">Show value for the respondent</span>
                                         </label>
-                                        
-                                        <div class="flex flex-wrap items-center gap-4">
-                                             <label class="flex items-center gap-2 cursor-pointer">
-                                                <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                                <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
-                                            </label>
-                                            <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
-                                        </div>
                                     </div>
                                 </div>
 
@@ -784,6 +824,13 @@
                                     
                                     <!-- Slider Placement (Orientation) -->
                                     <div>
+                                         <div class="flex flex-nowrap items-center gap-4 mb-5">
+                                             <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                                                <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                                <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
+                                            </label>
+                                            <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                        </div>
                                          <h4 class="text-sm text-gray-500 mb-3">Orientation</h4>
                                          
                                          <!-- Desktop Orientation -->
@@ -803,7 +850,7 @@
 
                                          <!-- Mobile Orientation -->
                                          <div>
-                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Mobile</span>
+                                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Mobile (will be removed)</span>
                                             <div class="space-y-2">
                                                 <label class="flex items-center gap-2 cursor-pointer w-fit">
                                                     <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
@@ -895,7 +942,8 @@
                         </div>
                     </div>
 
-        </main>
+            </main>
+        </div>
     </div>
 
     <!-- Override modal z-index when active per instructions -->
@@ -991,12 +1039,12 @@
                 },
 
                 get containerClass() {
-                    if (this.mode !== 'respond') return 'max-w-4xl mx-auto question-card p-0 shadow-lg';
+                    if (this.mode !== 'respond') return 'max-w-6xl mx-auto';
                     
                     switch(this.previewDevice) {
                         case 'mobile': return 'max-w-[393px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[852px] transition-all duration-300 rounded-[3rem] my-8 border-[8px] border-gray-800 mobile-view';
                         case 'tablet': return 'max-w-[820px] mx-auto border-x border-gray-200 shadow-xl bg-white min-h-[1180px] transition-all duration-300 rounded-[2rem] my-8 border-[12px] border-gray-800 tablet-view';
-                        default: return 'max-w-4xl mx-auto question-card p-0 shadow-lg transition-all duration-300';
+                        default: return 'max-w-6xl mx-auto transition-all duration-300';
                     }
                 },
 
