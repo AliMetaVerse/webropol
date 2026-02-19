@@ -122,14 +122,6 @@ export class NumericSliderSettingsModal extends BaseComponent {
                                     <input type="checkbox" x-model="settings.showValue" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
                                     <span class="text-sm text-gray-700">Show value for the respondent</span>
                                 </label>
-                                
-                                <div class="flex flex-wrap items-center gap-4">
-                                        <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
-                                    </label>
-                                    <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
-                                </div>
                             </div>
                         </div>
 
@@ -161,6 +153,13 @@ export class NumericSliderSettingsModal extends BaseComponent {
                             
                             <!-- Slider Placement (Orientation) -->
                             <div>
+                                    <div class="flex flex-nowrap items-center gap-4 mb-5">
+                                        <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                                        <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
+                                        <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
+                                    </label>
+                                    <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                </div>
                                     <h4 class="text-sm text-gray-500 mb-3">Orientation</h4>
                                     
                                     <!-- Desktop Orientation -->
