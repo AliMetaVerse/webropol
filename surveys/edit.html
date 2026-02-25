@@ -384,6 +384,61 @@
       background: #fecaca;
     }
   .survey-action-btn { width:40px; height:40px; flex-shrink:0; }
+
+  .survey-structure-resizer {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .survey-editor-layout {
+      grid-template-columns: var(--survey-structure-width, 320px) minmax(0, 1fr) !important;
+    }
+
+    .survey-structure-pane {
+      position: relative;
+      min-width: 280px;
+      max-width: 560px;
+    }
+
+    .survey-structure-resizer {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 14px;
+      height: 100%;
+      cursor: col-resize;
+      z-index: 35;
+      background: linear-gradient(to right, transparent 0%, rgba(148, 163, 184, 0.12) 100%);
+      border: 0;
+      padding: 0;
+      touch-action: none;
+      pointer-events: auto;
+    }
+
+    .survey-structure-resizer::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      height: 72px;
+      transform: translateY(-50%);
+      left: 6px;
+      width: 2px;
+      border-radius: 9999px;
+      background: #cbd5e1;
+      transition: background-color 0.2s ease;
+    }
+
+    .survey-structure-resizer:hover::before,
+    body.is-resizing-structure .survey-structure-resizer::before {
+      background: #06b6d4;
+    }
+
+    body.is-resizing-structure {
+      cursor: col-resize;
+      user-select: none;
+    }
+  }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -432,9 +487,9 @@
           <webropol-survey-edit-toolbar></webropol-survey-edit-toolbar>
 
           <!-- Survey Editor Layout -->
-          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 flex-1 min-h-0">
+          <div id="surveyEditorLayout" class="survey-editor-layout grid grid-cols-1 gap-6 pt-6 flex-1 min-h-0">
             <!-- Left Sidebar - Survey Structure -->
-            <div class="lg:col-span-1 lg:min-h-0" x-data="surveyStructureApp()">
+            <div id="surveyStructurePane" class="survey-structure-pane lg:min-h-0" x-data="surveyStructureApp()">
               <div class="rounded-3xl p-6 shadow-xl border border-white hover-lift lg:h-full flex flex-col">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-semibold text-webropol-gray-900">Survey structure</h3>
@@ -741,10 +796,11 @@
                 </div>
                 </div>
               </div>
+              <button id="surveyStructureResizer" class="survey-structure-resizer" type="button" aria-label="Resize survey structure panel" title="Resize panel"></button>
             </div>
             
             <!-- Main Canvas Area -->
-            <div class="lg:col-span-3 min-h-0 overflow-y-auto survey-scroll-area lg:pr-2">
+            <div class="min-h-0 overflow-y-auto survey-scroll-area lg:pr-2 lg:min-w-0">
               <!-- Survey Background Wrapper -->
               <div id="surveyBackgroundWrapper" class="survey-background-wrapper min-h-full relative p-6">
                 <!-- Page Background Layer (placed above wrapper background) -->
@@ -5099,6 +5155,8 @@
             });
           }
         } catch(e) {}
+
+        try { initSurveyStructureResize(); } catch(e) {}
       }
 
       // Initialize now if DOM is ready, else on DOMContentLoaded
@@ -5145,6 +5203,93 @@
           questionStatus.innerHTML = `<i class="fal fa-spinner fa-spin"></i><span>Uploading...</span>`; // default text
         }
       }
+    }
+
+    function initSurveyStructureResize() {
+      if (window.innerWidth < 1024) return;
+
+      const layout = document.getElementById('surveyEditorLayout');
+      const pane = document.getElementById('surveyStructurePane');
+      const resizer = document.getElementById('surveyStructureResizer');
+      if (!layout || !pane || !resizer) return;
+      if (resizer.dataset.bound === '1') return;
+
+      const STORAGE_KEY = 'webropol_survey_structure_width';
+      const MIN_WIDTH = 280;
+      const MAX_WIDTH = 560;
+
+      const clamp = (value) => Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, value));
+      const applyWidth = (width) => {
+        const clamped = clamp(width);
+        layout.style.setProperty('--survey-structure-width', `${clamped}px`);
+        layout.style.gridTemplateColumns = `${clamped}px minmax(0, 1fr)`;
+      };
+
+      let savedWidth = null;
+      try { savedWidth = Number(localStorage.getItem(STORAGE_KEY)); } catch (_) {}
+
+      if (Number.isFinite(savedWidth) && savedWidth > 0) {
+        applyWidth(savedWidth);
+      } else {
+        applyWidth(pane.getBoundingClientRect().width || 320);
+      }
+
+      let dragging = false;
+      let startX = 0;
+      let startWidth = 0;
+
+      const onPointerMove = (event) => {
+        if (!dragging) return;
+        const nextWidth = startWidth + (event.clientX - startX);
+        applyWidth(nextWidth);
+      };
+
+      const onPointerUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.classList.remove('is-resizing-structure');
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', onPointerUp);
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
+
+        const finalWidth = pane.getBoundingClientRect().width;
+        try { localStorage.setItem(STORAGE_KEY, String(Math.round(clamp(finalWidth)))); } catch (_) {}
+      };
+
+      const onMouseMove = (event) => {
+        if (!dragging) return;
+        const nextWidth = startWidth + (event.clientX - startX);
+        applyWidth(nextWidth);
+      };
+
+      const onMouseUp = () => {
+        onPointerUp();
+      };
+
+      resizer.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        dragging = true;
+        startX = event.clientX;
+        startWidth = pane.getBoundingClientRect().width;
+        document.body.classList.add('is-resizing-structure');
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        event.preventDefault();
+      });
+
+      resizer.addEventListener('mousedown', (event) => {
+        if (event.button !== 0) return;
+        dragging = true;
+        startX = event.clientX;
+        startWidth = pane.getBoundingClientRect().width;
+        document.body.classList.add('is-resizing-structure');
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        event.preventDefault();
+      });
+
+      resizer.dataset.bound = '1';
     }
 
     function setUploadingIndicator(isUploading) {
