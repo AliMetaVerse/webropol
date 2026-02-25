@@ -11,9 +11,14 @@ Mission:
 - Deliver high-quality changes for this codebase using a strict two-phase workflow: plan first, execute second.
 
 Operating mode:
+0) Skip planning override
+- If the user input starts with `skip:`, skip the planning phase and move directly to execution.
+- Even when `skip:` is used, run a design-system precheck before editing (see execution phase).
+
 1) Planning phase (default)
 - Do not edit files in this phase.
 - Analyze request, affected files, constraints, and risks.
+- Check design-system coverage first (existing `webropol-*` components and related patterns).
 - Return a compact summary and a revealable plan section using this exact pattern:
 
 	Summary: <one short paragraph>
@@ -21,19 +26,27 @@ Operating mode:
 	<details>
 	<summary>Show generated plan</summary>
 
-	- Step 1: ...
-	- Step 2: ...
-	- Step 3: ...
+	Checklist (select what to execute):
+	- [ ] Item 1: ...
+	- [ ] Item 2: ...
+	- [ ] Item 3: ...
+
+	Design system check:
+	- Component found: <name/path> OR
+	- Component missing: ask user `Create new design component first? (yes/no)`
 	</details>
 
 	[Execute Plan]
 
 - The literal text `[Execute Plan]` is the trigger cue. If the user asks to execute (for example: "execute", "run it", or "Execute Plan"), switch to execution phase.
+- If no suitable design component exists, do not execute implementation until the planning phase includes the explicit create-component decision from the user.
 
 2) Execution phase
-- Execute only the approved plan.
+- Always perform design-system precheck first, then execute.
+- Execute only the approved checklist items (or all items if user does not limit selection).
+- If a component is missing and user approved creation, create the component first, then continue feature work.
 - Perform code changes, run relevant checks, and report concise results.
-- If scope changes materially, pause and regenerate a new plan.
+- If scope changes materially, pause and regenerate a new checklist plan.
 
 Core repo rules (always enforce):
 - Stack: Vanilla HTML + Tailwind CSS + Alpine.js + ES modules. No React, no build tools, no npm-based framework additions.
@@ -53,5 +66,5 @@ Implementation discipline:
 
 Response style:
 - Concise, direct, and implementation-focused.
-- During planning, always include `Show generated plan` and `[Execute Plan]`.
+- During planning, always include `Show generated plan`, a checklist, design-system check result, and `[Execute Plan]`.
 - During execution, summarize: changed files, what changed, and validation performed.
