@@ -404,12 +404,12 @@
       display: block;
       position: absolute;
       top: 0;
-      right: 0;
-      width: 14px;
+      right: -12px;
+      width: 24px;
       height: 100%;
-      cursor: col-resize;
+      cursor: ew-resize;
       z-index: 35;
-      background: linear-gradient(to right, transparent 0%, rgba(148, 163, 184, 0.12) 100%);
+      background: transparent;
       border: 0;
       padding: 0;
       touch-action: none;
@@ -419,24 +419,53 @@
     .survey-structure-resizer::before {
       content: '';
       position: absolute;
-      top: 50%;
-      height: 72px;
-      transform: translateY(-50%);
-      left: 6px;
+      top: 12px;
+      bottom: 12px;
+      left: 11px;
       width: 2px;
       border-radius: 9999px;
-      background: #cbd5e1;
-      transition: background-color 0.2s ease;
+      background: linear-gradient(to bottom, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.55), rgba(148, 163, 184, 0.1));
+      transition: background 0.2s ease;
+    }
+
+    .survey-structure-resizer::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 4px;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 64px;
+      border-radius: 9999px;
+      border: 1px solid #cbd5e1;
+      background-color: #ffffff;
+      background-image: radial-gradient(circle, #94a3b8 1.2px, transparent 1.2px);
+      background-size: 6px 10px;
+      background-position: center;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.12);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
 
     .survey-structure-resizer:hover::before,
     body.is-resizing-structure .survey-structure-resizer::before {
-      background: #06b6d4;
+      background: linear-gradient(to bottom, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.7), rgba(6, 182, 212, 0.1));
+    }
+
+    .survey-structure-resizer:hover::after,
+    body.is-resizing-structure .survey-structure-resizer::after {
+      border-color: #06b6d4;
+      background-color: #f0fdff;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.22);
+      transform: translateY(-50%) scale(1.03);
     }
 
     body.is-resizing-structure {
-      cursor: col-resize;
+      cursor: ew-resize;
       user-select: none;
+    }
+
+    body.is-resizing-structure * {
+      cursor: ew-resize !important;
     }
   }
   </style>
