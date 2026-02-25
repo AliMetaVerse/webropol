@@ -1805,7 +1805,11 @@
       window.closeColorPickerModal = () => closeModal('colorPickerModal');
       window.openQuestionModeModal = () => openModal('questionModeModal');
       window.closeQuestionModeModal = () => closeModal('questionModeModal');
-      window.openSurveyStatusModal = () => openModal('surveyStatusModal');
+      window.openSurveyStatusModal = (options = {}) => {
+        const source = options && options.source;
+        if (source !== 'status-button') return;
+        openModal('surveyStatusModal');
+      };
       window.closeSurveyStatusModal = () => closeModal('surveyStatusModal');
       // Initial portal (in case HTML loaded before script runs)
       MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
