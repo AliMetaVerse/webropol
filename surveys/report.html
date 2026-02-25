@@ -3628,6 +3628,7 @@
         editReportLinkOpen: false,
         combineReportsOpen: false,
         compareGroupsOpen: false,
+        surveyStatusModalOpen: false,
         compareGroupsOption: 'report',
         reportName: 'Ali\'s Survey Link',
         reportPassword: '',
@@ -4005,8 +4006,8 @@
     }, true); // Use capture phase to catch the event early
   </script>
   
-  <!-- Survey Status Change Modal (copied from edit.html) -->
-  <div id="surveyStatusModal" class="modal-overlay">
+  <!-- Survey Status Change Modal -->
+  <div id="surveyStatusModal" class="modal-overlay" x-cloak :class="{ 'active': surveyStatusModalOpen }" @click.self="surveyStatusModalOpen = false" @keydown.window.escape="surveyStatusModalOpen = false">
     <div class="modal-content" style="max-width: 660px;">
       <div class="modal-header">
         <h2 class="modal-title flex items-center gap-3">
@@ -4072,7 +4073,7 @@
           </div>
 
           <!-- Close Options (shown when Close is selected) -->
-          <div id="closeOptions" class="mt-6 hidden">
+          <div id="surveyStatusCloseOptions" class="mt-6 hidden">
             <!-- Warning Message -->
             <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg mb-4">
               <div class="flex items-start gap-3">
@@ -4137,53 +4138,55 @@
   </div>
 
   <script>
-  (function(){
-    const MODAL_IDS = ['surveyStatusModal'];
+    (function() {
+      var _selectedStatus = null;
 
-    function portal(el){ if(!el) return; if(el.parentElement !== document.body) document.body.appendChild(el); }
+      function _getAlpineData() {
+        var el = document.querySelector('[x-data="surveyEditApp()"]');
+        return (el && window.Alpine && Alpine.$data) ? Alpine.$data(el) : null;
+      }
 
-    function refreshBodyState(){
-      const anyActive = MODAL_IDS.some(id => document.getElementById(id)?.classList.contains('active'));
-      if(anyActive){ document.body.classList.add('modal-open'); } else { document.body.classList.remove('modal-open'); }
-    }
+      window.selectSurveyStatus = function(status) {
+        _selectedStatus = status;
+        document.querySelectorAll('input[name="surveyStatus"]').forEach(function(r) { r.checked = r.value === status; });
+        var closeOpts = document.getElementById('surveyStatusCloseOptions');
+        if (closeOpts) { closeOpts.classList.toggle('hidden', status !== 'Close'); }
+        if (status !== 'Close') {
+          document.querySelectorAll('input[name="closeChannel"]').forEach(function(cb) { cb.checked = false; });
+        }
+      };
 
-    function openModal(id){
-      const m = document.getElementById(id); if(!m){ console.error('Modal not found:', id); return; }
-      portal(m);
-      requestAnimationFrame(()=>{ m.classList.add('active'); refreshBodyState(); });
-    }
+      window.openSurveyStatusModal = function() {
+        var data = _getAlpineData();
+        if (data) {
+          data.surveyStatusModalOpen = true;
+        } else {
+          // Fallback: direct class manipulation
+          var el = document.getElementById('surveyStatusModal');
+          if (el) { el.classList.add('active'); document.body.classList.add('modal-open'); }
+        }
+      };
 
-    function closeModal(id){ const m = document.getElementById(id); if(!m) return; m.classList.remove('active'); refreshBodyState(); }
+      window.closeSurveyStatusModal = function() {
+        var data = _getAlpineData();
+        if (data) {
+          data.surveyStatusModalOpen = false;
+        } else {
+          var el = document.getElementById('surveyStatusModal');
+          if (el) { el.classList.remove('active'); document.body.classList.remove('modal-open'); }
+        }
+      };
 
-    window.openSurveyStatusModal = () => openModal('surveyStatusModal');
-    window.closeSurveyStatusModal = () => closeModal('surveyStatusModal');
-
-    // State for survey status selection
-    let selectedStatus = null;
-    let selectedCloseChannels = [];
-
-    window.selectSurveyStatus = function(status){
-      selectedStatus = status;
-      const radios = document.querySelectorAll('input[name="surveyStatus"]');
-      radios.forEach(r => { r.checked = r.value === status; });
-      const closeOptions = document.getElementById('closeOptions');
-      if(closeOptions){ if(status === 'Close'){ closeOptions.classList.remove('hidden'); } else { closeOptions.classList.add('hidden'); selectedCloseChannels = []; const checkboxes = document.querySelectorAll('input[name="closeChannel"]'); checkboxes.forEach(cb => cb.checked = false); } }
-    };
-
-    window.applySurveyStatus = function(){
-      if(selectedStatus){ try { if(selectedStatus === 'Close'){ const boxes = document.querySelectorAll('input[name="closeChannel"]:checked'); selectedCloseChannels = Array.from(boxes).map(cb => cb.value); }
-        localStorage.setItem('webropol_survey_status', selectedStatus);
-        if(selectedStatus === 'Close' && selectedCloseChannels.length > 0){ localStorage.setItem('webropol_survey_close_channels', JSON.stringify(selectedCloseChannels)); }
-        if(window.Alpine){ window.dispatchEvent(new CustomEvent('survey-status-changed',{ detail: { status: selectedStatus, closeChannels: selectedCloseChannels } })); }
-        window.closeSurveyStatusModal(); } catch(e){ console.error('Error saving survey status:', e); } }
-    };
-
-    // Initial portal
-    MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
-
-    // Close when clicking outside content
-    document.addEventListener('click', (e)=>{ const overlay = e.target.closest('.modal-overlay.active'); if(overlay && !e.target.closest('.modal-content')){ overlay.classList.remove('active'); refreshBodyState(); } });
-  })();
+      window.applySurveyStatus = function() {
+        if (_selectedStatus) {
+          try {
+            localStorage.setItem('webropol_survey_status', _selectedStatus);
+            window.dispatchEvent(new CustomEvent('survey-status-changed', { detail: { status: _selectedStatus } }));
+            window.closeSurveyStatusModal();
+          } catch(e) { console.error('Error saving survey status:', e); }
+        }
+      };
+    })();
   </script>
 
   <!-- Compare Groups Modal -->
