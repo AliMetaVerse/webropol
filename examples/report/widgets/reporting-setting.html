@@ -330,14 +330,32 @@
                                             
                                             <!-- Color Picker -->
                                             <div class="flex items-center gap-1 p-1 bg-gray-50 rounded">
-                                                <button @click.stop="changeElementColor('#f87171')" class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
-                                                <button @click.stop="changeElementColor('#facc15')" class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
-                                                <button @click.stop="changeElementColor('#22c55e')" class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
-                                                <button @click.stop="changeElementColor('#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform ring-1 ring-transparent hover:ring-gray-300"></button>
+                                                <button @click.stop="changeElementColor('#f87171')" 
+                                                        class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform ring-offset-1"
+                                                        :class="w1ChartData[index].color === '#f87171' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                                <button @click.stop="changeElementColor('#facc15')" 
+                                                        class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform ring-offset-1"
+                                                        :class="w1ChartData[index].color === '#facc15' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                                <button @click.stop="changeElementColor('#22c55e')" 
+                                                        class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform ring-offset-1"
+                                                        :class="w1ChartData[index].color === '#22c55e' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                                <button @click.stop="changeElementColor('#3b82f6')" 
+                                                        class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform ring-offset-1"
+                                                        :class="w1ChartData[index].color === '#3b82f6' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
                                                 <!-- Custom Color -->
-                                                <button class="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-110 transition-transform hover:border-blue-400 hover:text-blue-500 text-gray-400" title="Custom Color">
-                                                    <i class="fal fa-palette text-[10px]"></i>
-                                                </button>
+                                                <label @click.stop
+                                                       class="w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
+                                                       :class="!['#f87171','#facc15','#22c55e','#3b82f6'].includes(w1ChartData[index].color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
+                                                       :style="!['#f87171','#facc15','#22c55e','#3b82f6'].includes(w1ChartData[index].color) ? `background-color: ${w1ChartData[index].color}` : ''"
+                                                       title="Custom Color">
+                                                    <input type="color"
+                                                           class="sr-only"
+                                                           :value="w1ChartData[index].color"
+                                                           @input.stop="changeElementColor($event.target.value)"
+                                                           @change.stop="changeElementColor($event.target.value)">
+                                                    <i class="fal fa-palette text-[10px] pointer-events-none"
+                                                       :class="!['#f87171','#facc15','#22c55e','#3b82f6'].includes(w1ChartData[index].color) ? 'text-white' : ''"></i>
+                                                </label>
                                             </div>
 
                                             <div class="h-6 w-px bg-gray-200"></div>
