@@ -703,47 +703,6 @@ export class NumericSlider extends BaseComponent {
                                 </div>
                             </template>
 
-                                <!-- "I don't know" Checkbox -->
-                                <div x-show="settings.showDontKnow" 
-                                    class="w-auto px-4 transition-all duration-300" 
-                                    :class="effectiveIsMobile ? 'mt-8 mb-12' : 'mt-4'"
-                                    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                                <label class="relative flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden min-w-[200px]" 
-                                        :class="[
-                                            dontKnow 
-                                            ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500' 
-                                            : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
-                                            mode === 'edit' ? 'pointer-events-none opacity-60' : ''
-                                        ]">
-                                    
-                                    <!-- Active background pattern -->
-                                    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                                            :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
-
-                                    <div class="relative flex items-center">
-                                        <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
-                                        
-                                        <!-- Custom Checkbox -->
-                                        <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
-                                                :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
-                                            <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform" 
-                                                :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="relative z-10">
-                                        <template x-if="mode === 'edit' && selected">
-                                            <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
-                                                    :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
-                                        </template>
-                                        <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
-                                            <span class="text-sm font-bold uppercase tracking-widest" 
-                                                    :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
-                                                    x-text="settings.dontKnowLabel"></span>
-                                        </template>
-                                    </div>
-                                </label>
-                            </div>
                         </div>
                         </div>
 
@@ -922,6 +881,54 @@ export class NumericSlider extends BaseComponent {
                             </template>
 
                         </div>
+                    </div>
+
+                    <!-- "I don't know" Checkbox -->
+                    <div x-show="settings.showDontKnow"
+                        class="transition-all duration-300"
+                        :class="[
+                            effectiveIsMobile
+                                ? 'mt-8 mb-12 px-4 flex justify-center'
+                                : ((questionType === 'health-slider' && orientation === 'vertical')
+                                    ? 'mt-8 px-4 md:px-0 md:w-80 md:ml-auto flex justify-center'
+                                    : 'mt-8 px-4 flex justify-center')
+                        ]"
+                        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                        <label class="relative inline-flex items-center justify-center gap-3 cursor-pointer group p-4 rounded-xl transition-all duration-200 border-2 select-none overflow-hidden w-fit max-w-full"
+                                :class="[
+                                    dontKnow
+                                    ? 'bg-webropol-primary-50 border-webropol-primary-500 shadow-md ring-1 ring-webropol-primary-500'
+                                    : 'bg-white border-gray-200 hover:border-webropol-primary-300 hover:shadow-sm',
+                                    mode === 'edit' ? 'pointer-events-none opacity-60' : ''
+                                ]">
+
+                            <!-- Active background pattern -->
+                            <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+                                    :class="dontKnow ? 'bg-[radial-gradient(#06b6d4_1px,transparent_1px)] [background-size:16px_16px]' : ''"></div>
+
+                            <div class="relative flex items-center">
+                                <input type="checkbox" x-model="dontKnow" :disabled="mode === 'edit'" class="peer sr-only">
+
+                                <!-- Custom Checkbox -->
+                                <div class="w-6 h-6 rounded-md border-2 transition-all duration-200 flex items-center justify-center shadow-sm"
+                                        :class="dontKnow ? 'bg-webropol-primary-500 border-webropol-primary-500' : 'bg-white border-gray-300 group-hover:border-webropol-primary-500'">
+                                    <i class="fa-solid fa-check text-white text-xs transition-all duration-200 transform"
+                                        :class="dontKnow ? 'opacity-100 scale-100' : 'opacity-0 scale-50'"></i>
+                                </div>
+                            </div>
+
+                            <div class="relative z-10">
+                                <template x-if="mode === 'edit' && selected">
+                                    <input x-model="settings.dontKnowLabel" class="text-sm font-bold uppercase tracking-widest text-center bg-transparent border-b border-transparent focus:border-webropol-primary-500 focus:outline-none w-full max-w-[140px] transition-colors"
+                                            :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'">
+                                </template>
+                                <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
+                                    <span class="text-sm font-bold uppercase tracking-widest"
+                                            :class="dontKnow ? 'text-webropol-primary-900' : 'text-webropol-gray-600'"
+                                            x-text="settings.dontKnowLabel"></span>
+                                </template>
+                            </div>
+                        </label>
                     </div>
                 </div>
             </div>
