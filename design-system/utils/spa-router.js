@@ -222,6 +222,7 @@ class WebropolSPA {
   }
 
   async load(path) {
+    this.applyRouteLayoutState(path);
     const file = this.pathToFile(path);
     if (!file) return;
   // Compute absolute URL and base directory URL for the fetched document
@@ -421,6 +422,16 @@ class WebropolSPA {
       this.container.innerHTML = `<div class="p-6 rounded-xl bg-red-50 border border-red-200 text-red-700">Failed to load ${path}</div>`;
     } finally {
       this.setLoading(false);
+    }
+  }
+
+  applyRouteLayoutState(path) {
+    try {
+      const purePath = (path || '').split('?')[0] || '/';
+      const isSurveyEditRoute = purePath === '/surveys/edit';
+      document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
+    } catch (_) {
+      // ignore
     }
   }
 

@@ -100,6 +100,8 @@
     }
 
     body {
+      margin: 0;
+      overflow: hidden;
       scrollbar-width: thin;
       scrollbar-color: #cbd5e1 #f8fafc;
       font-family: 'Inter', sans-serif;
@@ -116,6 +118,33 @@
     body::-webkit-scrollbar-thumb {
       background-color: #cbd5e1;
       border-radius: 6px;
+    }
+
+    .survey-scroll-area {
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+
+    .survey-scroll-area::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    .survey-scroll-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .survey-scroll-area::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    .survey-scroll-area::-webkit-scrollbar-thumb:hover {
+      background-color: #94a3b8;
     }
 
     .glass-effect {
@@ -381,8 +410,8 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header>
 
-      <main class="flex-1 overflow-y-auto px-2 py-2 lg:px-1" role="main">
-        <div class="w-full mx-auto">
+      <main class="flex-1 overflow-hidden px-2 py-2 lg:px-1" role="main">
+        <div class="w-full mx-auto h-full flex flex-col min-h-0">
           <!-- Survey Editor Header -->
           <div class="mb-0">
             <!-- Action Tabs -->
@@ -398,17 +427,15 @@
               </webropol-survey-helper-toolbar>
             </div>
           </div>
-          <br>
 
           <!-- Toolbar -->
           <webropol-survey-edit-toolbar></webropol-survey-edit-toolbar>
-          <br>
 
           <!-- Survey Editor Layout -->
-          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-6 flex-1 min-h-0">
             <!-- Left Sidebar - Survey Structure -->
-            <div class="lg:col-span-1" x-data="surveyStructureApp()">
-              <div class="rounded-3xl p-6 shadow-xl border border-white hover-lift">
+            <div class="lg:col-span-1 lg:min-h-0" x-data="surveyStructureApp()">
+              <div class="rounded-3xl p-6 shadow-xl border border-white hover-lift lg:h-full flex flex-col">
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="font-semibold text-webropol-gray-900">Survey structure</h3>
                   <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
@@ -454,6 +481,7 @@
                   </button>
                 </div>
                 
+                <div class="lg:flex-1 lg:min-h-0 lg:overflow-y-auto survey-scroll-area lg:pr-2">
                 <!-- Survey Structure Tree - Pages Tab -->
                 <div x-show="activeTab === 'pages'" class="space-y-3 mb-6">
                   <!-- Page 1 using new component -->
@@ -711,13 +739,14 @@
                     </button>
                   </div>
                 </div>
+                </div>
               </div>
             </div>
             
             <!-- Main Canvas Area -->
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-3 min-h-0 overflow-y-auto survey-scroll-area lg:pr-2">
               <!-- Survey Background Wrapper -->
-              <div id="surveyBackgroundWrapper" class="survey-background-wrapper min-h-screen relative p-6">
+              <div id="surveyBackgroundWrapper" class="survey-background-wrapper min-h-full relative p-6">
                 <!-- Page Background Layer (placed above wrapper background) -->
                 <div id="pageBackground" class="absolute inset-0 z-0 pointer-events-none"></div>
                 
