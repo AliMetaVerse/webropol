@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do-Not-Contact List - Admin Tools - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50:'#f0fdff', 100:'#ccf7fe', 200:'#99effd', 500:'#06b6d4', 600:'#0891b2', 700:'#0e7490', 900:'#164e63' },
+            'webropol-gray':    { 50:'#f8fafc', 100:'#f1f5f9', 200:'#e2e8f0', 300:'#cbd5e1', 400:'#94a3b8', 500:'#64748b', 600:'#475569', 700:'#334155', 900:'#0f172a' },
+            'webropol-red':     { 50:'#fff1f2', 100:'#ffe4e6', 500:'#ef4444', 600:'#dc2626', 700:'#b91c1c' },
+            'webropol-green':   { 50:'#f0fdf4', 100:'#dcfce7', 500:'#22c55e', 600:'#16a34a' },
+          },
+          fontFamily: { 'sans': ['Inter','system-ui','sans-serif'] },
+          boxShadow: {
+            'soft':   '0 2px 15px -3px rgba(0,0,0,.07),0 10px 20px -2px rgba(0,0,0,.04)',
+            'medium': '0 4px 25px -5px rgba(0,0,0,.10),0 10px 10px -5px rgba(0,0,0,.04)',
+            'card':   '0 1px 3px 0 rgba(0,0,0,.10),0 1px 2px 0 rgba(0,0,0,.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <script src="../design-system/components/navigation/Sidebar.js"            type="module"></script>
+  <script src="../design-system/components/navigation/Header.js"             type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js"        type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js"    type="module"></script>
+  <script src="../design-system/components/forms/Checkbox.js"                type="module"></script>
+  <script src="../design-system/utils/theme-manager.js"                      type="module"></script>
+  <style>
+    [x-cloak] { display:none !important; }
+    body { font-family:'Inter',sans-serif; scrollbar-width:thin; scrollbar-color:#cbd5e1 #f8fafc; }
+    body::-webkit-scrollbar { width:6px; }
+    body::-webkit-scrollbar-track { background:#f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color:#cbd5e1; border-radius:6px; }
+
+    /* ── Custom checkbox visual (Alpine-driven, no Tailwind JIT dependency) ── */
+    .dnc-cb-wrap {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .dnc-cb-wrap input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .dnc-cb-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      flex-shrink: 0;
+      transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+    .dnc-cb-wrap:hover .dnc-cb-box { border-color: #06b6d4; }
+    .dnc-cb-box--sm { width:1rem;   height:1rem;   }
+    .dnc-cb-box--md { width:1.25rem; height:1.25rem; }
+    .dnc-cb-box--checked      { background:#06b6d4; border-color:#06b6d4; }
+    .dnc-cb-box--indeterminate { background:#06b6d4; border-color:#06b6d4; }
+
+    /* Tab active indicator bar */
+    .tab-active-email { border-bottom: 2px solid #06b6d4; }
+    .tab-active-sms   { border-bottom: 2px solid #8b5cf6; }
+
+    /* Row hover */
+    .dnc-row:hover { background: #f8fafc; }
+    .dnc-row:last-child { border-bottom: none; }
+  </style>
+</head>
+
+<body x-data="doNotContactApp()" x-cloak>
+  <div class="flex h-screen">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header>
+
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs
+          trail='[{"label":"Home","url":"../index.html"},{"label":"Admin Tools","url":"index.html"},{"label":"Do-Not-Contact List","url":"do-not-contact.html"}]'>
+        </webropol-breadcrumbs>
+      </div>
+
+      <main class="flex-1 overflow-y-auto px-6 py-8" role="main">
+        <div class="max-w-4xl mx-auto">
+
+          <!-- ── Page header ── -->
+          <div class="mb-6 flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-semibold text-webropol-gray-900">Do-Not-Contact List</h1>
+              <p class="text-sm text-webropol-gray-500 mt-0.5">Contacts blocked from receiving any communication</p>
+            </div>
+          </div>
+
+          <!-- ── Card ── -->
+          <div class="bg-white rounded-2xl shadow-card overflow-hidden border border-webropol-gray-100">
+
+            <!-- ── Tabs ── -->
+            <div class="flex border-b border-webropol-gray-100">
+
+              <!-- Email tab -->
+              <button
+                @click="switchTab('email')"
+                :class="activeTab === 'email'
+                  ? 'text-webropol-primary-600 tab-active-email bg-webropol-primary-50/60'
+                  : 'text-webropol-gray-500 border-b-2 border-transparent hover:text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                class="flex items-center gap-2.5 px-6 py-4 text-sm font-medium transition-all duration-150 focus:outline-none">
+                <span class="flex items-center justify-center w-8 h-8 rounded-lg"
+                  :class="activeTab === 'email'
+                    ? 'bg-webropol-primary-100 text-webropol-primary-600'
+                    : 'bg-webropol-gray-100 text-webropol-gray-500'">
+                  <i class="fal fa-envelope text-base"></i>
+                </span>
+                <span>Email</span>
+                <span class="ml-0.5 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                  :class="activeTab === 'email'
+                    ? 'bg-webropol-primary-100 text-webropol-primary-700'
+                    : 'bg-webropol-gray-100 text-webropol-gray-600'"
+                  x-text="emailItems.length.toLocaleString()">
+                </span>
+              </button>
+
+              <!-- SMS tab -->
+              <button
+                @click="switchTab('sms')"
+                :class="activeTab === 'sms'
+                  ? 'text-violet-600 tab-active-sms bg-violet-50/60'
+                  : 'text-webropol-gray-500 border-b-2 border-transparent hover:text-webropol-gray-700 hover:bg-webropol-gray-50'"
+                class="flex items-center gap-2.5 px-6 py-4 text-sm font-medium transition-all duration-150 focus:outline-none">
+                <span class="flex items-center justify-center w-8 h-8 rounded-lg"
+                  :class="activeTab === 'sms'
+                    ? 'bg-violet-100 text-violet-600'
+                    : 'bg-webropol-gray-100 text-webropol-gray-500'">
+                  <i class="fal fa-comment-sms text-base"></i>
+                </span>
+                <span>SMS</span>
+                <span class="ml-0.5 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                  :class="activeTab === 'sms'
+                    ? 'bg-violet-100 text-violet-700'
+                    : 'bg-webropol-gray-100 text-webropol-gray-600'"
+                  x-text="smsItems.length.toLocaleString()">
+                </span>
+              </button>
+
+            </div>
+
+            <!-- ── Toolbar ── -->
+            <div class="px-5 py-3 border-b border-webropol-gray-100 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <!-- Delete button – only active when entries selected -->
+                <button
+                  @click="deleteSelected()"
+                  :disabled="activeSelected.length === 0"
+                  :class="activeSelected.length > 0
+                    ? 'bg-webropol-red-50 text-webropol-red-600 border-webropol-red-200 hover:bg-webropol-red-100 cursor-pointer'
+                    : 'bg-webropol-gray-50 text-webropol-gray-400 border-webropol-gray-200 cursor-not-allowed'"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg border transition-colors">
+                  <i class="fal fa-trash-alt text-sm"></i>
+                  <span>Delete</span>
+                  <span x-show="activeSelected.length > 0" class="inline-flex items-center justify-center min-w-5 h-5 px-1 rounded-full text-xs font-bold bg-webropol-red-500 text-white" x-text="activeSelected.length"></span>
+                </button>
+
+                <!-- Add to list -->
+                <button
+                  @click="openAdd = true"
+                  :class="activeTab === 'email'
+                    ? 'bg-webropol-primary-500 hover:bg-webropol-primary-600 ring-webropol-primary-200'
+                    : 'bg-violet-500 hover:bg-violet-600 ring-violet-200'"
+                  class="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg text-white shadow-sm hover:shadow transition-all focus:outline-none focus:ring-2">
+                  <i class="fal fa-plus text-sm"></i>
+                  <span>Add to list</span>
+                </button>
+              </div>
+
+              <!-- Selection summary -->
+              <p class="text-xs text-webropol-gray-400" x-show="activeSelected.length > 0">
+                <span x-text="activeSelected.length"></span> selected
+              </p>
+            </div>
+
+            <!-- ── Table ── -->
+            <div>
+
+              <!-- Table header -->
+              <div class="grid items-center px-5 py-2.5 bg-webropol-gray-50 border-b border-webropol-gray-100"
+                :style="activeTab === 'email' ? 'grid-template-columns:2.5rem 1fr 2.5rem' : 'grid-template-columns:2.5rem 1fr 2.5rem'">
+
+                <!-- Select-all checkbox (Alpine-managed visual) -->
+                <div>
+                  <label class="dnc-cb-wrap">
+                    <input
+                      type="checkbox"
+                      :checked="isAllSelected()"
+                      @change="toggleSelectAll($event)"
+                      x-ref="selectAllCb"
+                      aria-label="Select all"
+                    />
+                    <span
+                      class="dnc-cb-box dnc-cb-box--md"
+                      :class="{
+                        'dnc-cb-box--checked':       isAllSelected(),
+                        'dnc-cb-box--indeterminate': isSomeSelected() && !isAllSelected()
+                      }">
+                      <!-- Checkmark -->
+                      <svg x-show="isAllSelected()" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                        <polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <!-- Indeterminate dash -->
+                      <svg x-show="isSomeSelected() && !isAllSelected()" width="11" height="11" viewBox="0 0 12 12" fill="none">
+                        <line x1="2" y1="6" x2="10" y2="6" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                  </label>
+                </div>
+
+                <!-- Column label -->
+                <div class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wide flex items-center gap-1.5">
+                  <i :class="activeTab === 'email' ? 'fal fa-envelope' : 'fal fa-comment-sms'"
+                    :style="activeTab === 'email' ? 'color:#06b6d4' : 'color:#8b5cf6'"
+                    class="text-sm"></i>
+                  <span x-text="activeTab === 'email' ? 'Email Address' : 'Phone Number'"></span>
+                </div>
+
+                <!-- Actions label -->
+                <div class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-wide text-right">Edit</div>
+              </div>
+
+              <!-- ── Email rows ── -->
+              <div x-show="activeTab === 'email'">
+                <template x-for="item in emailItems" :key="item.id">
+                  <div class="dnc-row grid items-center px-5 py-3 border-b border-webropol-gray-50 transition-colors"
+                    style="grid-template-columns:2.5rem 1fr 2.5rem">
+
+                    <div>
+                      <label class="dnc-cb-wrap">
+                        <input type="checkbox" :value="item.value" x-model="selectedEmail" aria-label="Select row" />
+                        <span
+                          class="dnc-cb-box dnc-cb-box--sm"
+                          :class="selectedEmail.includes(item.value) ? 'dnc-cb-box--checked' : ''">
+                          <svg x-show="selectedEmail.includes(item.value)" width="9" height="9" viewBox="0 0 12 12" fill="none">
+                            <polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="flex items-center gap-2 min-w-0">
+                      <i class="fal fa-envelope text-webropol-primary-400 flex-none text-sm"></i>
+                      <span class="text-sm text-webropol-gray-700 truncate" x-text="item.value"></span>
+                    </div>
+
+                    <div class="text-right">
+                      <button class="w-7 h-7 rounded-lg text-webropol-gray-400 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 flex items-center justify-center transition-colors ml-auto" aria-label="Edit">
+                        <i class="fal fa-pen text-xs"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                </template>
+                <div x-show="emailItems.length === 0" class="px-5 py-10 text-center text-sm text-webropol-gray-400">
+                  <i class="fal fa-inbox text-3xl mb-2 block text-webropol-gray-300"></i>
+                  No email addresses in the list.
+                </div>
+              </div>
+
+              <!-- ── SMS rows ── -->
+              <div x-show="activeTab === 'sms'">
+                <template x-for="item in smsItems" :key="item.id">
+                  <div class="dnc-row grid items-center px-5 py-3 border-b border-webropol-gray-50 transition-colors"
+                    style="grid-template-columns:2.5rem 1fr 2.5rem">
+
+                    <div>
+                      <label class="dnc-cb-wrap">
+                        <input type="checkbox" :value="item.value" x-model="selectedSms" aria-label="Select row" />
+                        <span
+                          class="dnc-cb-box dnc-cb-box--sm"
+                          :class="selectedSms.includes(item.value) ? 'dnc-cb-box--checked' : ''">
+                          <svg x-show="selectedSms.includes(item.value)" width="9" height="9" viewBox="0 0 12 12" fill="none">
+                            <polyline points="1.5,6 5,9.5 10.5,2.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </label>
+                    </div>
+
+                    <div class="flex items-center gap-2 min-w-0">
+                      <i class="fal fa-mobile-alt text-violet-400 flex-none text-sm"></i>
+                      <span class="text-sm text-webropol-gray-700 truncate" x-text="item.value"></span>
+                    </div>
+
+                    <div class="text-right">
+                      <button class="w-7 h-7 rounded-lg text-webropol-gray-400 hover:text-violet-600 hover:bg-violet-50 flex items-center justify-center transition-colors ml-auto" aria-label="Edit">
+                        <i class="fal fa-pen text-xs"></i>
+                      </button>
+                    </div>
+
+                  </div>
+                </template>
+                <div x-show="smsItems.length === 0" class="px-5 py-10 text-center text-sm text-webropol-gray-400">
+                  <i class="fal fa-comment-slash text-3xl mb-2 block text-webropol-gray-300"></i>
+                  No phone numbers in the list.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ── Pagination ── -->
+            <div class="px-5 py-3 flex items-center justify-between border-t border-webropol-gray-100 bg-webropol-gray-50/50">
+              <div class="flex items-center gap-1">
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-webropol-gray-400 hover:bg-webropol-gray-100 transition-colors text-sm" aria-label="Previous page">
+                  <i class="fal fa-chevron-left"></i>
+                </button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold bg-webropol-primary-500 text-white shadow-sm">1</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors">2</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors">3</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors">4</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors">5</button>
+                <span class="text-webropol-gray-400 text-sm px-1">…</span>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-600 hover:bg-webropol-gray-100 transition-colors">421</button>
+                <button class="w-8 h-8 flex items-center justify-center rounded-lg text-sm text-webropol-gray-400 hover:bg-webropol-gray-100 transition-colors" aria-label="Next page">
+                  <i class="fal fa-chevron-right"></i>
+                </button>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-webropol-gray-500">
+                <span>Show on page</span>
+                <select x-model="perPage" class="border border-webropol-gray-200 rounded-lg px-2.5 py-1.5 text-sm text-webropol-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-webropol-primary-400">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ── Add to list modal (simple inline) ── -->
+  <div x-show="openAdd" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" @keydown.escape.window="openAdd=false">
+    <div class="absolute inset-0 bg-black/40" @click="openAdd=false"></div>
+    <div class="relative bg-white rounded-2xl shadow-medium w-full max-w-sm p-6">
+      <h2 class="text-lg font-semibold text-webropol-gray-900 mb-4">
+        Add to <span x-text="activeTab === 'email' ? 'Email' : 'SMS'"></span> List
+      </h2>
+      <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">
+        <span x-text="activeTab === 'email' ? 'Email address' : 'Phone number'"></span>
+      </label>
+      <div class="relative mb-4">
+        <i :class="activeTab === 'email' ? 'fal fa-envelope' : 'fal fa-mobile-alt'"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 text-sm"></i>
+        <input
+          x-model="newEntry"
+          :placeholder="activeTab === 'email' ? 'name@example.com' : '+358 40 000 0000'"
+          :type="activeTab === 'email' ? 'email' : 'tel'"
+          class="w-full pl-9 pr-4 py-2.5 border border-webropol-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-400"
+          @keydown.enter="addEntry()"
+        />
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button @click="openAdd=false" class="px-4 py-2 text-sm font-medium text-webropol-gray-600 bg-webropol-gray-100 rounded-xl hover:bg-webropol-gray-200 transition-colors">Cancel</button>
+        <button @click="addEntry()"
+          :disabled="!newEntry.trim()"
+          :class="!newEntry.trim() ? 'opacity-50 cursor-not-allowed' : ''"
+          class="px-4 py-2 text-sm font-medium text-white bg-webropol-primary-500 rounded-xl hover:bg-webropol-primary-600 transition-colors">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function doNotContactApp() {
+      return {
+        activeTab: 'email',
+        openAdd:   false,
+        newEntry:  '',
+        perPage:   '5',
+
+        emailItems: [
+          { id: 1,  value: 'janne+dnc1@webropol.com'    },
+          { id: 2,  value: 'janne+dnc10@webropol.com'   },
+          { id: 3,  value: 'janne+dnc100@webropol.com'  },
+          { id: 4,  value: 'janne+dnc1000@webropol.com' },
+          { id: 5,  value: 'janne+dnc1001@webropol.com' },
+          { id: 6,  value: 'markus@example.com'         },
+          { id: 7,  value: 'test.user@company.org'      },
+        ],
+        selectedEmail: [],
+
+        smsItems: [
+          { id: 1, value: '+358 40 123 4567' },
+          { id: 2, value: '+358 50 987 6543' },
+          { id: 3, value: '+358 44 555 7890' },
+          { id: 4, value: '+44 7700 900123'  },
+          { id: 5, value: '+1 555 867 5309'  },
+        ],
+        selectedSms: [],
+
+        // ── Helpers ──────────────────────────────────────────────────
+        get activeItems()    { return this.activeTab === 'email' ? this.emailItems    : this.smsItems;    },
+        get activeSelected() { return this.activeTab === 'email' ? this.selectedEmail : this.selectedSms; },
+
+        isAllSelected()  { return this.activeItems.length > 0 && this.activeSelected.length === this.activeItems.length; },
+        isSomeSelected() { return this.activeSelected.length > 0 && this.activeSelected.length < this.activeItems.length; },
+
+        // ── Methods ──────────────────────────────────────────────────
+        switchTab(tab) {
+          this.activeTab = tab;
+        },
+
+        toggleSelectAll(e) {
+          const all = this.activeItems.map(i => i.value);
+          if (this.activeTab === 'email') this.selectedEmail = e.target.checked ? all : [];
+          else                            this.selectedSms   = e.target.checked ? all : [];
+        },
+
+        deleteSelected() {
+          if (this.activeTab === 'email') {
+            this.emailItems    = this.emailItems.filter(i => !this.selectedEmail.includes(i.value));
+            this.selectedEmail = [];
+          } else {
+            this.smsItems    = this.smsItems.filter(i => !this.selectedSms.includes(i.value));
+            this.selectedSms = [];
+          }
+        },
+
+        addEntry() {
+          const v = this.newEntry.trim();
+          if (!v) return;
+          const id = Date.now();
+          if (this.activeTab === 'email') this.emailItems.push({ id, value: v });
+          else                            this.smsItems.push({ id, value: v });
+          this.newEntry = '';
+          this.openAdd  = false;
+        },
+      };
+    }
+  </script>
+</body>
+</html>
