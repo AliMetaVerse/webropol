@@ -429,7 +429,9 @@ class WebropolSPA {
     try {
       const purePath = (path || '').split('?')[0] || '/';
       const isSurveyEditRoute = purePath === '/surveys/edit';
+      const isSurveyReportRoute = purePath === '/surveys/report';
       document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
+      document.body.classList.toggle('route-surveys-report', isSurveyReportRoute);
     } catch (_) {
       // ignore
     }
