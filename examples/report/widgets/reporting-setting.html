@@ -50,40 +50,39 @@
           to { opacity: 1; transform: translateX(0); }
       }
 
-       /* Widget Selection Styles */
-      .widget-frame {
+       /* ── Widget / Zone selection styles (web component versions) ── */
+      webropol-report-widget {
+          display: block;
           transition: all 0.2s ease;
           border: 2px solid transparent;
       }
-      .widget-frame:hover { border-color: #e2e8f0; }
-      .widget-frame.selected {
+      webropol-report-widget:hover { border-color: #e2e8f0; }
+      webropol-report-widget.selected {
           border-color: #94a3b8;
           background-color: #ffffff;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          box-shadow: 0 25px 50px -12px rgba(0,0,0,.25);
           transform: translateY(-8px);
           z-index: 40;
       }
 
-      .chart-zone, .table-zone {
+      webropol-report-chart,
+      webropol-report-table {
+          display: block;
           transition: all 0.2s;
           border: 2px dashed transparent;
           border-radius: 8px;
       }
-      .chart-zone:hover, .table-zone:hover {
-          background: #f8fafc;
-          border-color: #e2e8f0;
+      webropol-report-chart:hover  { background: #f8fafc; border-color: #e2e8f0; }
+      webropol-report-table:hover  { background: #f8fafc; border-color: #e2e8f0; }
+      webropol-report-chart.selected {
+          border-color: #60a5fa;
+          background-color: rgba(59,130,246,.02);
+          box-shadow: 0 0 0 2px rgba(59,130,246,.1);
       }
-      
-      .chart-zone.selected {
-          border-color: #60a5fa; /* Blue for chart */
-          background-color: rgba(59, 130, 246, 0.02);
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-      }
-      
-      .table-zone.selected {
-          border-color: #4ade80; /* Green for table */
-          background-color: rgba(74, 222, 128, 0.02);
-          box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.1);
+      webropol-report-table.selected {
+          border-color: #4ade80;
+          background-color: rgba(74,222,128,.02);
+          box-shadow: 0 0 0 2px rgba(74,222,128,.1);
       }
 
       [x-cloak] { display: none !important; }
@@ -92,88 +91,84 @@
   <script src="../../../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../../../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../../../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
+
+  <!-- Report widget design system components -->
+  <script src="../../../design-system/components/report/ReportWidget.js" type="module"></script>
+  <script src="../../../design-system/components/report/ReportChart.js" type="module"></script>
+  <script src="../../../design-system/components/report/ReportTable.js" type="module"></script>
 </head>
 <body x-data="contextApp()" class="h-screen flex text-slate-800">
     
-    <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
+    <webropol-sidebar active="surveys" base="../../../"></webropol-sidebar>
 
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         <webropol-header username="Ali Al-Zuhairi"></webropol-header>
         
         <main class="flex-1 flex flex-col overflow-y-auto relative" @click="handleClickBackground($event)">
-            <!-- Header Section with Navigation -->
-            <div class="sticky bg-ocean-to-br top-0 z-30 pb-4 pt-2">
-                <div class="px-6 w-full max-w-[1600px] mx-auto">
-                    <!-- Top Navigation Tabs (Row 1) -->
-                    <div class="flex items-center justify-between pb-1 mb-4 border-b border-gray-200">
+            <!-- ── Sticky header + dynamic toolbar ── -->
+            <div class="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm px-6 py-3">
+                <div class="w-full max-w-[1600px] mx-auto space-y-3">
+
+                    <!-- Row 1: Survey tabs -->
+                    <div class="flex items-center justify-between border-b border-gray-200 pb-2">
                         <webropol-survey-action-tabs active="report"></webropol-survey-action-tabs>
                         <div class="text-sm font-semibold text-gray-700">Survey: AI Text Analysis Survey</div>
                     </div>
 
-                    <!-- DYNAMIC TOOLBAR (Row 2) - Changes based on context -->
-                    <div class="h-16 bg-white rounded-xl shadow-sm border border-gray-200 px-4 flex items-center justify-between transition-all duration-300 relative overflow-hidden">
-                        
-                        <!-- DEFAULT STATE: Report Global Tools -->
-                        <div class="flex items-center justify-between w-full toolbar-item"
-                            
-                            <!-- Left: Report Selector -->
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <button class="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 transition-colors">
-                                        <span class="text-xs font-bold text-orange-600">(Edited)</span>
-                                        <span>Basic report</span>
-                                        <i class="fal fa-chevron-down text-xs"></i>
-                                    </button>
-                                </div>
-                                <div class="h-8 w-px bg-gray-200 mx-2"></div>
-                                <div class="flex gap-2">
-                                    <button class="px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200"><i class="fal fa-save mr-1"></i> Save</button>
-                                    <button class="px-3 py-1.5 text-sm font-medium border border-gray-300 text-gray-600 rounded hover:bg-gray-50"><i class="fal fa-pen mr-1"></i> Save as</button>
-                                </div>
-                            </div>
+                    <!-- Row 2: Context toolbar -->
+                    <div class="h-14 bg-white rounded-xl border border-gray-200 px-4 flex items-center justify-between">
 
-                            <!-- Right: Global Actions -->
-                            <div class="flex items-center gap-6 text-gray-600">
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-filter text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Filter</span>
+                        <!-- Left: Report selector + save -->
+                        <div class="flex items-center gap-3">
+                            <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                                <button @click="open = !open"
+                                        class="flex items-center gap-2 px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 transition-colors">
+                                    <span class="text-xs font-bold text-orange-600">(Edited)</span>
+                                    <span>Basic report</span>
+                                    <i class="fal fa-chevron-down text-xs"></i>
                                 </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-chart-bar text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Compare</span>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-users text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Respondents</span>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-palette text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Layout</span>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-plus-square text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Add Elements</span>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <i class="fal fa-chart-line text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-medium">Analytics</span>
-                                </button>
-                                <button class="flex flex-col items-center gap-1 hover:text-cyan-600 group">
-                                    <div class="border-2 border-current rounded px-1 py-0.5">
-                                        <i class="fal fa-ellipsis-v text-xs group-hover:scale-110 transition-transform"></i>
-                                    </div>
-                                    <span class="text-xs font-medium">More</span>
-                                </button>
-                                <div class="h-10 w-px bg-gray-200"></div>
-                                <button class="flex flex-col items-center gap-1 text-red-700 hover:text-red-800 group">
-                                    <i class="fal fa-share-square text-xl group-hover:scale-110 transition-transform"></i>
-                                    <span class="text-xs font-bold">Export & Share</span>
-                                </button>
+                            </div>
+                            <div class="h-8 w-px bg-gray-200"></div>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"><i class="fal fa-save mr-1"></i> Save</button>
+                                <button class="px-3 py-1.5 text-sm font-medium border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition-colors"><i class="fal fa-pen mr-1"></i> Save as</button>
                             </div>
                         </div>
 
-                        <!-- CONTEXT STATE: Moved to Floating Island -->
+                        <!-- Right: Global report actions -->
+                        <div class="flex items-center gap-5 text-gray-600">
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-filter text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Filter</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-chart-bar text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Compare</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-users text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Respondents</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-palette text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Layout</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-plus-square text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Add Elements</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-0.5 hover:text-webropol-primary-600 group">
+                                <i class="fal fa-chart-line text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-medium">Analytics</span>
+                            </button>
+                            <div class="h-10 w-px bg-gray-200"></div>
+                            <button class="flex flex-col items-center gap-0.5 text-red-700 hover:text-red-800 group">
+                                <i class="fal fa-share-square text-lg group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-bold">Export &amp; Share</span>
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -189,550 +184,228 @@
                         </div>
                     </div>
                     
+                    <!-- Dynamic navigator items from widgets data -->
                     <div class="p-2 space-y-1">
-                        <!-- Active Item (Q1) -->
-                        <div class="group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all relative overflow-hidden" 
-                             :class="selectedWidgetId === 'w1' ? 'bg-white border border-gray-200 shadow-sm hover:border-gray-300' : 'hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200'"
-                             @click="goToWidget('w1')">
-                            <div class="w-1 h-full absolute left-0 top-0 bg-webropol-primary-500" x-show="selectedWidgetId === 'w1'"></div>
-                            <div class="cursor-grab active:cursor-grabbing" :class="selectedWidgetId === 'w1' ? 'text-gray-400' : 'text-gray-300 group-hover:text-gray-400'"><i class="fas fa-grip-vertical"></i></div>
-                            <div class="flex-1 min-w-0">
-                                <p class="truncate" :class="selectedWidgetId === 'w1' ? 'text-sm font-semibold text-gray-900' : 'text-sm font-medium text-gray-600 group-hover:text-gray-900'">Service Satisfaction</p>
-                                <p class="truncate" :class="selectedWidgetId === 'w1' ? 'text-xs text-gray-500' : 'text-xs text-gray-400'">Q1. How satisfied are...</p>
-                            </div>
-                        </div>
-
-                        <!-- Item (Q4) -->
-                         <div class="group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all relative overflow-hidden" 
-                              :class="selectedWidgetId === 'w2' ? 'bg-white border border-gray-200 shadow-sm hover:border-gray-300' : 'hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200'"
-                              @click="goToWidget('w2')">
-                             <div class="w-1 h-full absolute left-0 top-0 bg-webropol-primary-500" x-show="selectedWidgetId === 'w2'"></div>
-                             <div class="cursor-grab active:cursor-grabbing" :class="selectedWidgetId === 'w2' ? 'text-gray-400' : 'text-gray-300 group-hover:text-gray-400'"><i class="fas fa-grip-vertical"></i></div>
-                             <div class="flex-1 min-w-0">
-                                <p class="truncate" :class="selectedWidgetId === 'w2' ? 'text-sm font-semibold text-gray-900' : 'text-sm font-medium text-gray-600 group-hover:text-gray-900'">Department Matrix</p>
-                                <p class="truncate" :class="selectedWidgetId === 'w2' ? 'text-xs text-gray-500' : 'text-xs text-gray-400'">Q4. Rate the followi...</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Item (Q5) -->
-                        <div class="group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all relative overflow-hidden" 
-                             :class="selectedWidgetId === 'w3' ? 'bg-white border border-gray-200 shadow-sm hover:border-gray-300' : 'hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200'"
-                             @click="goToWidget('w3')">
-                             <div class="w-1 h-full absolute left-0 top-0 bg-webropol-primary-500" x-show="selectedWidgetId === 'w3'"></div>
-                             <div class="cursor-grab active:cursor-grabbing" :class="selectedWidgetId === 'w3' ? 'text-gray-400' : 'text-gray-300 group-hover:text-gray-400'"><i class="fas fa-grip-vertical"></i></div>
-                             <div class="flex-1 min-w-0">
-                                <p class="truncate" :class="selectedWidgetId === 'w3' ? 'text-sm font-semibold text-gray-900' : 'text-sm font-medium text-gray-600 group-hover:text-gray-900'">Project Phases</p>
-                                <p class="truncate" :class="selectedWidgetId === 'w3' ? 'text-xs text-gray-500' : 'text-xs text-gray-400'">Q5. Project Phases...</p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Main Content Canvas (Existing) -->
-                <div class="flex-1 overflow-y-auto px-6 py-8 text-center space-y-12 pb-32 bg-gray-50/30">
-                
-                <div class="max-w-4xl mx-auto mb-10">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Q1. How satisfied are you with our service?</h1>
-                    <p class="text-gray-500">Click on any chart or table to activate the "Context Aware Toolbar".</p>
-                </div>
-                
-                <!-- Main Widget Container 1 (Existing) -->
-                 <div id="w1-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 pt-10 md:pt-14 widget-frame group relative"
-                      :class="(selectedWidgetId === 'w1') ? 'selected' : ''"
-                      @click.stop="select('widget', 'w1', $el)">
-                    
-                    <!-- Static Widget Settings Toolbar (Right Side) -->
-                    <div class="absolute right-2 top-2 z-20 group/widget-toolbar">
-                        <div class="flex flex-row-reverse items-center bg-gray-50 border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                             :class="(selectedWidgetId === 'w1') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/widget-toolbar:max-w-[400px] group-hover/widget-toolbar:pl-2'">
-                             
-                             <!-- Anchor -->
-                             <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                 <i class="fal fa-ellipsis-v"></i>
-                             </div>
-
-                             <!-- Content -->
-                             <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Chart Type"><i class="fal fa-chart-bar"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Settings"><i class="fal fa-cog"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Weighting"><i class="fal fa-balance-scale"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Hierarchy"><i class="fal fa-sitemap"></i></button>
-                                
-                                <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 hover:text-red-600 transition-all" title="Delete"><i class="fal fa-trash-alt"></i></button>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
-                        <div class="text-left">
-                            <h2 class="text-lg font-bold text-gray-900">How easy or difficult has it been to use Webropol's services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.</h2>
-                            <p class="text-sm text-gray-500">Number of respondents: 1,240</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-8">
-                        
-                        <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 pt-12 relative group/chart"
-                             :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'selected' : ''"
-                             @click.stop="select('chart', 'w1', $el)">
-                            
-                            <!-- Static Chart Toolbar (Right Side) -->
-                            <div class="absolute right-2 top-2 z-20 group/toolbar">
-                                <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pl-2'">
-                                    
-                                    <!-- Anchor -->
-                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                        <i class="fal fa-ellipsis-v"></i>
-                                    </div>
-
-                                    <!-- Content -->
-                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
-                                        
-                                        <div class="flex bg-gray-100 p-0.5 rounded-lg ml-1">
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
-                                        </div>
-                                        
-                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                    </div>
+                        <template x-for="widget in widgets" :key="widget.id">
+                            <div class="group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all relative overflow-hidden"
+                                 :class="selectedWidgetId === widget.id
+                                   ? 'bg-white border border-gray-200 shadow-sm hover:border-gray-300'
+                                   : 'hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-200'"
+                                 @click="goToWidget(widget.id)">
+                                <div class="w-1 h-full absolute left-0 top-0 bg-webropol-primary-500 transition-opacity"
+                                     :class="selectedWidgetId === widget.id ? 'opacity-100' : 'opacity-0'"></div>
+                                <div class="cursor-grab active:cursor-grabbing"
+                                     :class="selectedWidgetId === widget.id ? 'text-gray-400' : 'text-gray-300 group-hover:text-gray-400'">
+                                    <i class="fas fa-grip-vertical"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="truncate"
+                                       :class="selectedWidgetId === widget.id ? 'text-sm font-semibold text-gray-900' : 'text-sm font-medium text-gray-600 group-hover:text-gray-900'"
+                                       x-text="widget.navTitle || widget.question"></p>
+                                    <p class="truncate"
+                                       :class="selectedWidgetId === widget.id ? 'text-xs text-gray-500' : 'text-xs text-gray-400'"
+                                       x-text="widget.meta"></p>
                                 </div>
                             </div>
+                        </template>
+                    </div>
+                </div>
 
-                            <!-- Selection Label -->
-                            <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
-                                 :class="(selectionType === 'chart' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
-                                CHART
-                            </div>
+                <!-- Dynamic Widget Canvas -->
+                <div class="flex-1 overflow-y-auto px-6 py-8 space-y-12 pb-40 bg-gray-50/30"
+                     @click.self="deselect()">
 
-                            <!-- Chart Visual -->
-                            <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
-                                <template x-for="(bar, index) in w1ChartData" :key="index">
-                                    <div class="w-16 sm:w-24 rounded-t-lg relative group cursor-pointer transition-all hover:opacity-90"
-                                         :style="`height: ${bar.percent}%; background-color: ${bar.color}`"
-                                         :class="(selectedWidgetId === 'w1' && selectedElementIndex === index) ? 'ring-2 ring-offset-2 ring-blue-500 z-10' : ''"
-                                         @click.stop="select('chart', 'w1', $el, index)">
-                                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700" x-text="bar.percent + '%'"></div>
+                  <p class="text-center text-gray-500 max-w-xl mx-auto text-sm pt-2">
+                    Click on any chart or table to activate the <strong>Context Aware Toolbar</strong>.
+                  </p>
 
-                                        <!-- Element Popup Actions -->
-                                        <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-xl z-50 border border-gray-100 overflow-hidden"
-                                             x-show="selectedWidgetId === 'w1' && selectedElementIndex === index"
-                                             x-transition:enter="transition ease-out duration-200"
-                                             x-transition:enter-start="opacity-0 translate-y-2"
-                                             x-transition:enter-end="opacity-100 translate-y-0">
+                  <template x-for="widget in widgets" :key="widget.id">
+                    <webropol-report-widget class="block max-w-5xl mx-auto"
+                      :id="widget.id + '-container'"
+                      :widget-id="widget.id"
+                      :selected="selectedWidgetId === widget.id && selectionType === 'widget'"
+                      @click.stop="select('widget', widget.id)">
 
-                                            <!-- Accessibility Mode Header -->
-                                            <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
-                                                 :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
-                                                <span class="text-[10px] font-bold uppercase tracking-wide"
-                                                      :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
-                                                      x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
-                                                <button @click.stop="toggleAccessibility()"
-                                                        class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
-                                                        :class="accessibilityMode
-                                                            ? 'bg-amber-500 text-white shadow-sm'
-                                                            : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'"
-                                                        title="Toggle color-blind accessible palette">
-                                                    <i class="fal fa-universal-access"></i>
-                                                    <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
-                                                </button>
+                      <!-- Widget header -->
+                      <div class="px-2 md:px-6 pt-10 md:pt-12 pb-4 pr-14 text-left">
+                        <h2 class="text-lg font-bold text-gray-900" x-text="widget.question"></h2>
+                        <p class="text-sm text-gray-500 mt-0.5" x-text="widget.meta"></p>
+                      </div>
+
+                      <div class="px-2 md:px-6 pb-8 space-y-8">
+
+                        <!-- Chart component -->
+                        <webropol-report-chart class="block"
+                          :widget-id="widget.id"
+                          :selected="selectionType === 'chart' && selectedWidgetId === widget.id"
+                          @click.stop="select('chart', widget.id)">
+
+                          <!-- Bar chart -->
+                          <template x-if="widget.chartType === 'bar'">
+                            <div>
+                              <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
+                                <template x-for="(bar, index) in widget.chartData" :key="index">
+                                  <div class="w-16 sm:w-24 rounded-t-lg relative cursor-pointer transition-all hover:opacity-90"
+                                       :style="`height: ${bar.percent}%; background-color: ${bar.color}`"
+                                       :class="(selectedWidgetId === widget.id && selectedElementIndex === index) ? 'ring-2 ring-offset-2 ring-blue-500 z-10' : ''"
+                                       @click.stop="select('element', widget.id, null, index)">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700 text-sm" x-text="bar.percent + '%'"></div>
+                                    <!-- Element Popup -->
+                                    <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white rounded-xl shadow-xl z-50 border border-gray-100 overflow-hidden"
+                                         x-show="selectedWidgetId === widget.id && selectedElementIndex === index && selectionType === 'element'"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 translate-y-2"
+                                         x-transition:enter-end="opacity-100 translate-y-0">
+                                      <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
+                                           :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                                        <span class="text-[10px] font-bold uppercase tracking-wide"
+                                              :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
+                                              x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
+                                        <button @click.stop="toggleAccessibility(widget.id)"
+                                                class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
+                                                :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
+                                          <i class="fal fa-universal-access"></i>
+                                          <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
+                                        </button>
+                                      </div>
+                                      <div class="flex items-center gap-2 p-2">
+                                        <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                          <template x-if="!accessibilityMode">
+                                            <div class="flex items-center gap-1">
+                                              <template x-for="c in standardColors" :key="c">
+                                                <button @click.stop="changeBarColor(widget.id, index, c)"
+                                                        class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                        :style="`background-color: ${c}`"
+                                                        :class="bar.color === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                              </template>
                                             </div>
-
-                                            <!-- Color Picker + Filter Row -->
-                                            <div class="flex items-center gap-2 p-2">
-
-                                                <!-- Palette Swatches -->
-                                                <div class="flex items-center gap-1 p-1 rounded transition-colors"
-                                                     :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
-
-                                                    <!-- Standard palette (shown when accessibilityMode = false) -->
-                                                    <template x-if="!accessibilityMode">
-                                                        <div class="flex items-center gap-1">
-                                                            <button @click.stop="changeElementColor('#f87171')"
-                                                                    class="w-6 h-6 rounded-full bg-red-400 hover:scale-110 transition-transform ring-offset-1"
-                                                                    :class="w1ChartData[index].color === '#f87171' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"
-                                                                    title="Red"></button>
-                                                            <button @click.stop="changeElementColor('#facc15')"
-                                                                    class="w-6 h-6 rounded-full bg-yellow-400 hover:scale-110 transition-transform ring-offset-1"
-                                                                    :class="w1ChartData[index].color === '#facc15' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"
-                                                                    title="Yellow"></button>
-                                                            <button @click.stop="changeElementColor('#22c55e')"
-                                                                    class="w-6 h-6 rounded-full bg-green-500 hover:scale-110 transition-transform ring-offset-1"
-                                                                    :class="w1ChartData[index].color === '#22c55e' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"
-                                                                    title="Green"></button>
-                                                            <button @click.stop="changeElementColor('#3b82f6')"
-                                                                    class="w-6 h-6 rounded-full bg-blue-500 hover:scale-110 transition-transform ring-offset-1"
-                                                                    :class="w1ChartData[index].color === '#3b82f6' ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"
-                                                                    title="Blue"></button>
-                                                        </div>
-                                                    </template>
-
-                                                    <!-- Accessible palette — Wong's 8-color set (shown when accessibilityMode = true) -->
-                                                    <template x-if="accessibilityMode">
-                                                        <div class="flex items-center gap-1">
-                                                            <button @click.stop="changeElementColor('#0072B2')"
-                                                                    class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                                    style="background-color:#0072B2"
-                                                                    :class="w1ChartData[index].color === '#0072B2' ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"
-                                                                    title="Blue (accessible)"></button>
-                                                            <button @click.stop="changeElementColor('#E69F00')"
-                                                                    class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                                    style="background-color:#E69F00"
-                                                                    :class="w1ChartData[index].color === '#E69F00' ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"
-                                                                    title="Orange (accessible)"></button>
-                                                            <button @click.stop="changeElementColor('#009E73')"
-                                                                    class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                                    style="background-color:#009E73"
-                                                                    :class="w1ChartData[index].color === '#009E73' ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"
-                                                                    title="Bluish green (accessible)"></button>
-                                                            <button @click.stop="changeElementColor('#D55E00')"
-                                                                    class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                                    style="background-color:#D55E00"
-                                                                    :class="w1ChartData[index].color === '#D55E00' ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"
-                                                                    title="Vermillion (accessible)"></button>
-                                                        </div>
-                                                    </template>
-
-                                                    <!-- Custom Color (always available) -->
-                                                    <label @click.stop
-                                                           class="w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
-                                                           :class="isCustomColor(w1ChartData[index].color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
-                                                           :style="isCustomColor(w1ChartData[index].color) ? `background-color: ${w1ChartData[index].color}` : ''"
-                                                           title="Custom Color">
-                                                        <input type="color"
-                                                               class="sr-only"
-                                                               :value="w1ChartData[index].color"
-                                                               @input.stop="changeElementColor($event.target.value)"
-                                                               @change.stop="changeElementColor($event.target.value)">
-                                                        <i class="fal fa-palette text-[10px] pointer-events-none"
-                                                           :class="isCustomColor(w1ChartData[index].color) ? 'text-white' : ''"></i>
-                                                    </label>
-                                                </div>
-
-                                                <div class="h-6 w-px bg-gray-200"></div>
-
-                                                <!-- Filter Action -->
-                                                <button @click.stop="filterByColor()"
-                                                        class="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-50 text-gray-600 hover:text-blue-600 transition-colors text-xs font-medium whitespace-nowrap">
-                                                    <i class="fal fa-filter"></i>
-                                                    Filter by this option
-                                                </button>
+                                          </template>
+                                          <template x-if="accessibilityMode">
+                                            <div class="flex items-center gap-1">
+                                              <template x-for="c in accessibleColors" :key="c">
+                                                <button @click.stop="changeBarColor(widget.id, index, c)"
+                                                        class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                        :style="`background-color: ${c}`"
+                                                        :class="bar.color === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
+                                              </template>
                                             </div>
+                                          </template>
+                                          <label @click.stop
+                                                 class="w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
+                                                 :class="isCustomColor(bar.color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
+                                                 :style="isCustomColor(bar.color) ? `background-color: ${bar.color}` : ''">
+                                            <input type="color" class="sr-only" :value="bar.color"
+                                                   @input.stop="changeBarColor(widget.id, index, $event.target.value)"
+                                                   @change.stop="changeBarColor(widget.id, index, $event.target.value)">
+                                            <i class="fal fa-palette text-[10px] pointer-events-none"
+                                               :class="isCustomColor(bar.color) ? 'text-white' : ''"></i>
+                                          </label>
                                         </div>
+                                        <div class="h-6 w-px bg-gray-200"></div>
+                                        <button @click.stop="filterByBar(widget.id, index)"
+                                                class="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-50 text-gray-600 hover:text-blue-600 transition-colors text-xs font-medium whitespace-nowrap">
+                                          <i class="fal fa-filter"></i> Filter by this option
+                                        </button>
+                                      </div>
                                     </div>
+                                  </div>
                                 </template>
+                              </div>
+                              <!-- Legend -->
+                              <div class="flex justify-center gap-6 mt-4 flex-wrap">
+                                <template x-for="bar in widget.chartData" :key="bar.label">
+                                  <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full" :style="`background-color: ${bar.color}`"></div>
+                                    <span class="text-sm text-gray-600" x-text="bar.label"></span>
+                                  </div>
+                                </template>
+                              </div>
                             </div>
-                            <!-- Legend -->
-                            <div class="flex justify-center gap-6 mt-4">
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-red-400"></div><span class="text-sm text-gray-600">Dissatisfied</span></div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-yellow-400"></div><span class="text-sm text-gray-600">Neutral</span></div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-sm text-gray-600">Satisfied</span></div>
-                            </div>
-                        </div>
+                          </template>
 
-                        <div class="border-t border-gray-100"></div>
-
-                        <!-- TABLE COMPONENT -->
-                        <div class="table-zone p-6 pt-12 relative group/table"
-                             :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'selected' : ''"
-                             @click.stop="select('table', 'w1', $el)">
-                             
-                            <!-- Static Table Toolbar (Right Side) -->
-                            <div class="absolute right-2 top-2 z-20 group/toolbar">
-                                <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                                     :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pl-2'">
-                                    
-                                    <!-- Anchor -->
-                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                        <i class="fal fa-ellipsis-v"></i>
-                                    </div>
-
-                                    <!-- Content -->
-                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Show All"><i class="fal fa-eye"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Filter Rows"><i class="fal fa-filter"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Columns"><i class="fal fa-table"></i></button>
-                                        
-                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Selection Label -->
-                            <div class="absolute -top-3 left-4 px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
-                                 :class="(selectionType === 'table' && selectedWidgetId === 'w1') ? 'opacity-100' : ''">
-                                TABLE
-                            </div>
-
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm text-left">
-                                    <thead class="bg-gray-50 text-gray-600 font-semibold uppercase text-xs">
-                                        <tr>
-                                            <th class="px-4 py-3 rounded-l-lg">Answer Option</th>
-                                            <th class="px-4 py-3 text-right">Count</th>
-                                            <th class="px-4 py-3 text-right rounded-r-lg">Percentage</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-50">
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-4 py-3 font-medium text-gray-800">Satisfied</td>
-                                            <td class="px-4 py-3 text-right text-gray-600">434</td>
-                                            <td class="px-4 py-3 text-right font-bold text-gray-800">35.0%</td>
-                                        </tr>
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-4 py-3 font-medium text-gray-800">Neutral</td>
-                                            <td class="px-4 py-3 text-right text-gray-600">496</td>
-                                            <td class="px-4 py-3 text-right font-bold text-gray-800">40.0%</td>
-                                        </tr>
-                                        <tr class="hover:bg-gray-50 transition-colors">
-                                            <td class="px-4 py-3 font-medium text-gray-800">Dissatisfied</td>
-                                            <td class="px-4 py-3 text-right text-gray-600">310</td>
-                                            <td class="px-4 py-3 text-right font-bold text-gray-800">25.0%</td>
-                                        </tr>
-                                        <tr class="bg-gray-50 font-bold border-t-2 border-gray-100">
-                                            <td class="px-4 py-3">Total</td>
-                                            <td class="px-4 py-3 text-right">1,240</td>
-                                            <td class="px-4 py-3 text-right">100%</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>
-                 </div>
-
-
-                 <div id="w2-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 pt-10 md:pt-14 widget-frame group relative"
-                      :class="(selectedWidgetId === 'w2') ? 'selected' : ''"
-                      @click.stop="select('widget', 'w2', $el)">
-                    
-                    <!-- Static Widget Settings Toolbar (Right Side) -->
-                    <div class="absolute right-2 top-2 z-20 group/widget-toolbar">
-                        <div class="flex flex-row-reverse items-center bg-gray-50 border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                             :class="(selectedWidgetId === 'w2') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/widget-toolbar:max-w-[400px] group-hover/widget-toolbar:pl-2'">
-                             
-                             <!-- Anchor -->
-                             <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                 <i class="fal fa-ellipsis-v"></i>
-                             </div>
-
-                             <!-- Content -->
-                             <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Chart Type"><i class="fal fa-chart-bar"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Settings"><i class="fal fa-cog"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Weighting"><i class="fal fa-balance-scale"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Hierarchy"><i class="fal fa-sitemap"></i></button>
-                                
-                                <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 hover:text-red-600 transition-all" title="Delete"><i class="fal fa-trash-alt"></i></button>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
-                        <div class="text-left">
-                            <h2 class="text-lg font-bold text-gray-900">Q4. Rate the following departments</h2>
-                            <p class="text-sm text-gray-500">Matrix Scale 1-5  •  Respondents: 892</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-8">
-                        <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 pt-12 relative bg-white group/chart"
-                             :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'selected' : ''"
-                             @click.stop="select('chart', 'w2', $el)">
-                            
-                             <!-- Static Chart Toolbar (Right Side) -->
-                            <div class="absolute right-2 top-2 z-20 group/toolbar">
-                                <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pl-2'">
-                                    
-                                    <!-- Anchor -->
-                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                        <i class="fal fa-ellipsis-v"></i>
-                                    </div>
-
-                                    <!-- Content -->
-                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
-                                        
-                                        <div class="flex bg-gray-100 p-0.5 rounded-lg ml-1">
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
-                                        </div>
-                                        
-                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity"
-                                 :class="(selectionType === 'chart' && selectedWidgetId === 'w2') ? 'opacity-100' : ''">
-                                CHART
-                            </div>
-
+                          <!-- Matrix bar chart -->
+                          <template x-if="widget.chartType === 'matrix-bar'">
                             <div class="space-y-4">
-                                <!-- Row 1 -->
+                              <template x-for="row in widget.matrixRows" :key="row.label">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-32 text-sm font-medium text-gray-600 text-right">Customer Support</div>
-                                    <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
-                                        <div class="w-[15%] bg-red-400"></div>
-                                        <div class="w-[25%] bg-yellow-400"></div>
-                                        <div class="w-[60%] bg-green-500 flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner">4.2</div>
-                                    </div>
+                                  <div class="w-36 text-sm font-medium text-gray-600 text-right" x-text="row.label"></div>
+                                  <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
+                                    <template x-for="(seg, si) in row.segments" :key="si">
+                                      <div :style="`width: ${seg.pct}%; background-color: ${seg.color}`"
+                                           :class="si === row.segments.length - 1 ? 'flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner' : ''"
+                                           x-text="si === row.segments.length - 1 ? row.score : ''"></div>
+                                    </template>
+                                  </div>
                                 </div>
-                                <!-- Row 2 -->
-                                <div class="flex items-center gap-4">
-                                    <div class="w-32 text-sm font-medium text-gray-600 text-right">Product Team</div>
-                                    <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
-                                        <div class="w-[10%] bg-red-400"></div>
-                                        <div class="w-[20%] bg-yellow-400"></div>
-                                        <div class="w-[70%] bg-green-500 flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner">4.5</div>
-                                    </div>
-                                </div>
-                                <!-- Row 3 -->
-                                <div class="flex items-center gap-4">
-                                    <div class="w-32 text-sm font-medium text-gray-600 text-right">Sales</div>
-                                    <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
-                                        <div class="w-[30%] bg-red-400"></div>
-                                        <div class="w-[40%] bg-yellow-400"></div>
-                                        <div class="w-[30%] bg-green-500 flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner">3.1</div>
-                                    </div>
-                                </div>
+                              </template>
                             </div>
-                        </div>
-                    </div>
-                 </div>
+                          </template>
 
-                 <!-- NEW: Gantt Chart Widget -->
-                 <div id="w3-container" class="max-w-5xl mx-auto bg-white rounded-2xl shadow-card p-2 md:p-8 pt-10 md:pt-14 widget-frame group relative"
-                      :class="(selectedWidgetId === 'w3') ? 'selected' : ''"
-                      @click.stop="select('widget', 'w3', $el)">
-                    
-                    <!-- Static Widget Settings Toolbar (Right Side) -->
-                    <div class="absolute right-2 top-2 z-20 group/widget-toolbar">
-                        <div class="flex flex-row-reverse items-center bg-gray-50 border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                             :class="(selectedWidgetId === 'w3') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/widget-toolbar:max-w-[400px] group-hover/widget-toolbar:pl-2'">
-                             
-                             <!-- Anchor -->
-                             <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                 <i class="fal fa-ellipsis-v"></i>
-                             </div>
-
-                             <!-- Content -->
-                             <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Chart Type"><i class="fal fa-chart-bar"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Settings"><i class="fal fa-cog"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Weighting"><i class="fal fa-balance-scale"></i></button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white text-gray-500 hover:text-blue-600 transition-all" title="Hierarchy"><i class="fal fa-sitemap"></i></button>
-                                
-                                <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                
-                                <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 hover:text-red-600 transition-all" title="Delete"><i class="fal fa-trash-alt"></i></button>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between mb-8 px-2 pr-14">
-                        <div class="text-left">
-                            <h2 class="text-lg font-bold text-gray-900">Q5. Project Phases Timeline</h2>
-                            <p class="text-sm text-gray-500">Gantt View  •  Q3 2024</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-8">
-                        <!-- CHART COMPONENT -->
-                        <div class="chart-zone p-6 pt-12 relative bg-white group/chart"
-                             :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'selected' : ''"
-                             @click.stop="select('chart', 'w3', $el)">
-                            
-                             <!-- Static Chart Toolbar (Right Side) -->
-                            <div class="absolute right-2 top-2 z-20 group/toolbar">
-                                <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
-                                     :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pl-2'">
-                                    
-                                    <!-- Anchor -->
-                                    <div class="w-9 h-full flex flex-shrink-0 items-center justify-center cursor-pointer text-gray-400 hover:text-gray-600">
-                                        <i class="fal fa-ellipsis-v"></i>
-                                    </div>
-
-                                    <!-- Content -->
-                                    <div class="flex items-center gap-1 flex-nowrap whitespace-nowrap pr-1">
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Sort"><i class="fal fa-sort-amount-down"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Swap"><i class="fal fa-exchange-alt"></i></button>
-                                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-blue-600 transition-all" title="Colors"><i class="fal fa-palette"></i></button>
-                                        
-                                        <div class="flex bg-gray-100 p-0.5 rounded-lg ml-1">
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md bg-white shadow-sm text-blue-600"><i class="fal fa-chart-bar"></i></button>
-                                            <button class="w-7 h-7 flex items-center justify-center rounded-md text-gray-500 hover:bg-white hover:text-blue-600 transition-colors"><i class="fal fa-chart-pie"></i></button>
-                                        </div>
-                                        
-                                        <div class="h-4 w-px bg-gray-200 mx-1"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                             <div class="absolute -top-3 left-4 px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded shadow-sm opacity-0 transition-opacity z-10"
-                                 :class="(selectionType === 'chart' && selectedWidgetId === 'w3') ? 'opacity-100' : ''">
-                                CHART
-                            </div>
-
-                            <!-- Gantt Visual -->
+                          <!-- Gantt chart -->
+                          <template x-if="widget.chartType === 'gantt'">
                             <div class="min-w-full overflow-x-auto pb-1">
-                                <div class="min-w-[600px]">
-                                <!-- Header -->
+                              <div class="min-w-[600px]">
                                 <div class="flex border-b border-gray-200 pb-2 mb-4">
-                                    <div class="w-1/4 text-xs font-bold text-gray-500 uppercase">Phase</div>
-                                    <div class="flex-1 flex justify-between text-xs text-gray-400">
-                                        <span>July</span><span>August</span><span>September</span>
-                                    </div>
+                                  <div class="w-1/4 text-xs font-bold text-gray-500 uppercase">Phase</div>
+                                  <div class="flex-1 flex justify-between text-xs text-gray-400">
+                                    <template x-for="month in widget.ganttMonths" :key="month">
+                                      <span x-text="month"></span>
+                                    </template>
+                                  </div>
                                 </div>
-                                
-                                <!-- Bar 1 -->
-                                <div class="relative h-10 mb-2 flex items-center">
-                                    <div class="w-1/4 text-sm font-semibold text-gray-700">Planning</div>
+                                <template x-for="bar in widget.ganttBars" :key="bar.label">
+                                  <div class="relative h-10 mb-2 flex items-center">
+                                    <div class="w-1/4 text-sm font-semibold text-gray-700" x-text="bar.label"></div>
                                     <div class="flex-1 relative h-full">
-                                        <div class="absolute left-0 w-[40%] top-2 bottom-2 bg-purple-500 rounded-md shadow-sm opacity-80 flex items-center px-2">
-                                            <span class="text-xs text-white font-medium truncate">4 weeks</span>
-                                        </div>
+                                      <div class="absolute top-2 bottom-2 rounded-md shadow-sm opacity-80 flex items-center px-2"
+                                           :style="`left: ${bar.left}%; width: ${bar.width}%; background-color: ${bar.color}`">
+                                        <span class="text-xs text-white font-medium truncate" x-text="bar.duration"></span>
+                                      </div>
                                     </div>
-                                </div>
-                                <!-- Bar 2 -->
-                                <div class="relative h-10 mb-2 flex items-center">
-                                    <div class="w-1/4 text-sm font-semibold text-gray-700">Development</div>
-                                    <div class="flex-1 relative h-full">
-                                        <div class="absolute left-[35%] w-[50%] top-2 bottom-2 bg-blue-500 rounded-md shadow-sm opacity-80 flex items-center px-2">
-                                            <span class="text-xs text-white font-medium truncate">6 weeks</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Bar 3 -->
-                                <div class="relative h-10 mb-2 flex items-center">
-                                    <div class="w-1/4 text-sm font-semibold text-gray-700">Testing</div>
-                                    <div class="flex-1 relative h-full">
-                                        <div class="absolute left-[80%] w-[20%] top-2 bottom-2 bg-orange-400 rounded-md shadow-sm opacity-80 flex items-center px-2">
-                                            <span class="text-xs text-white font-medium truncate">2 weeks</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                  </div>
+                                </template>
+                              </div>
                             </div>
-                           </div>
-                        </div>
-                    </div>
-                 </div>
+                          </template>
 
-            </div> <!-- End Content Canvas -->
+                        </webropol-report-chart>
+
+                        <!-- Table component (optional) -->
+                        <template x-if="widget.hasTable">
+                          <webropol-report-table class="block"
+                            :widget-id="widget.id"
+                            :selected="selectionType === 'table' && selectedWidgetId === widget.id"
+                            @click.stop="select('table', widget.id)">
+                            <div class="overflow-x-auto">
+                              <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50 text-gray-600 font-semibold uppercase text-xs">
+                                  <tr>
+                                    <template x-for="(col, ci) in widget.tableColumns" :key="ci">
+                                      <th class="px-4 py-3" x-text="col"
+                                          :class="ci === 0 ? 'rounded-l-lg' : (ci === widget.tableColumns.length - 1 ? 'text-right rounded-r-lg' : 'text-right')"></th>
+                                    </template>
+                                  </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50">
+                                  <template x-for="(row, ri) in widget.tableRows" :key="ri">
+                                    <tr :class="ri === widget.tableRows.length - 1 ? 'bg-gray-50 font-bold border-t-2 border-gray-100' : 'hover:bg-gray-50 transition-colors'">
+                                      <template x-for="(cell, ci) in row" :key="ci">
+                                        <td class="px-4 py-3 text-gray-700" x-text="cell"
+                                            :class="ci > 0 ? 'text-right' : 'font-medium text-gray-800'"></td>
+                                      </template>
+                                    </tr>
+                                  </template>
+                                </tbody>
+                              </table>
+                            </div>
+                          </webropol-report-table>
+                        </template>
+
+                      </div>
+                    </webropol-report-widget>
+                  </template>
+
+                </div><!-- / canvas -->
             
             </div> <!-- End Content Container -->
         
@@ -832,117 +505,153 @@
             return {
                 showIntro: false,
                 dontShowAgain: false,
-                
+
                 init() {
                     const seen = localStorage.getItem('webropol_reporting_intro_seen');
-                    if (!seen) {
-                        this.showIntro = true;
-                    }
+                    if (!seen) this.showIntro = true;
                 },
-                
+
                 closeIntro() {
                     if (this.dontShowAgain) {
-                         try {
-                            localStorage.setItem('webropol_reporting_intro_seen', 'true');
-                        } catch (e) {
-                            console.error('LocalStorage error:', e);
-                        }
+                        try { localStorage.setItem('webropol_reporting_intro_seen', 'true'); }
+                        catch (e) { console.error('LocalStorage error:', e); }
                     }
                     this.showIntro = false;
                 },
 
-                selectionType: null, // 'chart', 'table', 'widget', 'element'
+                // ── Selection state ───────────────────────────────────────────
+                selectionType: null,        // 'widget' | 'chart' | 'table' | 'element'
                 selectedWidgetId: null,
                 selectedElementIndex: null,
 
-                // Color palettes
+                // ── Color palettes ────────────────────────────────────────────
                 accessibilityMode: false,
-                standardColors:    ['#f87171', '#facc15', '#22c55e', '#3b82f6'],
-                accessibleColors:  ['#0072B2', '#E69F00', '#009E73', '#D55E00'], // Wong's palette
+                standardColors:   ['#f87171', '#facc15', '#22c55e', '#3b82f6'],
+                accessibleColors: ['#0072B2', '#E69F00', '#009E73', '#D55E00'], // Wong palette
 
-                // Data for W1 Chart
-                w1ChartData: [
-                    { label: 'Dissatisfied', percent: 25, color: '#f87171' }, // red-400
-                    { label: 'Neutral', percent: 40, color: '#facc15' },      // yellow-400
-                    { label: 'Satisfied', percent: 35, color: '#22c55e' }     // green-500
+                // ── Widget data ───────────────────────────────────────────────
+                widgets: [
+                    {
+                        id: 'w1',
+                        navTitle: 'Q1. Satisfaction',
+                        question: 'How easy or difficult has it been to use Webropol\'s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.',
+                        meta: 'Number of respondents: 1,240',
+                        chartType: 'bar',
+                        hasTable: true,
+                        chartData: [
+                            { label: 'Dissatisfied', percent: 25, color: '#f87171' },
+                            { label: 'Neutral',      percent: 40, color: '#facc15' },
+                            { label: 'Satisfied',    percent: 35, color: '#22c55e' }
+                        ],
+                        tableColumns: ['Answer Option', 'Count', 'Percentage'],
+                        tableRows: [
+                            ['Satisfied',    '434',   '35.0%'],
+                            ['Neutral',      '496',   '40.0%'],
+                            ['Dissatisfied', '310',   '25.0%'],
+                            ['Total',        '1,240', '100%']
+                        ]
+                    },
+                    {
+                        id: 'w2',
+                        navTitle: 'Q4. Departments',
+                        question: 'Q4. Rate the following departments',
+                        meta: 'Matrix Scale 1-5  •  Respondents: 892',
+                        chartType: 'matrix-bar',
+                        hasTable: false,
+                        matrixRows: [
+                            { label: 'Customer Support', score: '4.2', segments: [{ pct: 15, color: '#f87171' }, { pct: 25, color: '#facc15' }, { pct: 60, color: '#22c55e' }] },
+                            { label: 'Product Team',     score: '4.5', segments: [{ pct: 10, color: '#f87171' }, { pct: 20, color: '#facc15' }, { pct: 70, color: '#22c55e' }] },
+                            { label: 'Sales',            score: '3.1', segments: [{ pct: 30, color: '#f87171' }, { pct: 40, color: '#facc15' }, { pct: 30, color: '#22c55e' }] }
+                        ]
+                    },
+                    {
+                        id: 'w3',
+                        navTitle: 'Q5. Timeline',
+                        question: 'Q5. Project Phases Timeline',
+                        meta: 'Gantt View  •  Q3 2024',
+                        chartType: 'gantt',
+                        hasTable: false,
+                        ganttMonths: ['July', 'August', 'September'],
+                        ganttBars: [
+                            { label: 'Planning',    duration: '4 weeks', left: 0,  width: 40, color: '#a855f7' },
+                            { label: 'Development', duration: '6 weeks', left: 35, width: 50, color: '#3b82f6' },
+                            { label: 'Testing',     duration: '2 weeks', left: 80, width: 20, color: '#fb923c' }
+                        ]
+                    }
                 ],
 
-                select(type, id, el, index = null) {
-                    if (this.selectionType === type && this.selectedWidgetId === id && this.selectedElementIndex === index) {
-                        return; // Already selected
-                    }
-                    
-                    this.selectionType = type;
-                    this.selectedWidgetId = id;
+                // ── Selection ─────────────────────────────────────────────────
+                select(type, widgetId, el = null, index = null) {
+                    if (this.selectionType === type && this.selectedWidgetId === widgetId && this.selectedElementIndex === index) return;
+                    this.selectionType        = type;
+                    this.selectedWidgetId     = widgetId;
                     this.selectedElementIndex = index;
                 },
 
                 deselect() {
-                    this.selectionType = null;
-                    this.selectedWidgetId = null;
+                    this.selectionType        = null;
+                    this.selectedWidgetId     = null;
                     this.selectedElementIndex = null;
                 },
 
-                toggleAccessibility() {
-                    this.accessibilityMode = !this.accessibilityMode;
-                    const palette = this.accessibilityMode ? this.accessibleColors : this.standardColors;
-                    this.w1ChartData.forEach((bar, i) => {
-                        bar.color = palette[i % palette.length];
-                    });
-                },
-
-                isCustomColor(color) {
-                    const palette = this.accessibilityMode ? this.accessibleColors : this.standardColors;
-                    return !palette.includes(color);
-                },
-
-                changeElementColor(color) {
-                    if (this.selectedElementIndex !== null) {
-                        this.w1ChartData[this.selectedElementIndex].color = color;
-                    }
-                },
-
-                filterByColor() {
-                     if (this.selectedElementIndex !== null) {
-                        const color = this.w1ChartData[this.selectedElementIndex].color;
-                        alert(`Filtering by color: ${color}`);
-                        // Implement actual filter logic here
-                    }
-                },
-
-                handleClickBackground(event) {
-                    // Check if click is on the main background
-                    if (event.target.tagName === 'MAIN' || event.target.classList.contains('px-6')) {
-                        this.deselect();
-                    }
+                // ── Widget actions ────────────────────────────────────────────
+                deleteWidget(widgetId) {
+                    this.widgets = this.widgets.filter(w => w.id !== widgetId);
+                    this.deselect();
                 },
 
                 goToWidget(id) {
-                    const element = document.getElementById(id + '-container');
-                    if (element) {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        this.select('widget', id, element); 
+                    const el = document.getElementById(id + '-container');
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        this.select('widget', id);
                     }
                 },
-                
-                // Helper for Dynamic Labels
+
+                // ── Chart / element actions ───────────────────────────────────
+                changeBarColor(widgetId, index, color) {
+                    const w = this.widgets.find(w => w.id === widgetId);
+                    if (w && w.chartData) w.chartData[index].color = color;
+                },
+
+                toggleAccessibility(widgetId) {
+                    this.accessibilityMode = !this.accessibilityMode;
+                    const palette = this.accessibilityMode ? this.accessibleColors : this.standardColors;
+                    const w = this.widgets.find(w => w.id === widgetId);
+                    if (w && w.chartData) {
+                        w.chartData.forEach((bar, i) => { bar.color = palette[i % palette.length]; });
+                    }
+                },
+
+                isCustomColor(color) {
+                    return ![...this.standardColors, ...this.accessibleColors].includes(color);
+                },
+
+                filterByBar(widgetId, index) {
+                    const w = this.widgets.find(w => w.id === widgetId);
+                    if (w && w.chartData && index !== null) {
+                        alert(`Filtering by: ${w.chartData[index].label}`);
+                    }
+                },
+
+                // ── Context label helpers ─────────────────────────────────────
                 getContextTitle() {
-                    if (this.selectionType === 'chart') return 'Chart';
-                    if (this.selectionType === 'table') return 'Table';
+                    if (this.selectionType === 'chart')   return 'Chart';
+                    if (this.selectionType === 'table')   return 'Table';
                     if (this.selectionType === 'element') return 'Element';
                     return 'Widget';
                 },
-                
+
                 getContextIcon() {
-                    if (this.selectionType === 'chart') return 'fa-chart-bar';
-                    if (this.selectionType === 'table') return 'fa-table';
+                    if (this.selectionType === 'chart')   return 'fa-chart-bar';
+                    if (this.selectionType === 'table')   return 'fa-table';
                     if (this.selectionType === 'element') return 'fa-square';
                     return 'fa-cube';
                 },
-                
+
                 getContextColor() {
-                    if (this.selectionType === 'chart') return 'text-blue-600';
-                    if (this.selectionType === 'table') return 'text-green-600';
+                    if (this.selectionType === 'chart')   return 'text-blue-600';
+                    if (this.selectionType === 'table')   return 'text-green-600';
                     if (this.selectionType === 'element') return 'text-purple-600';
                     return 'text-gray-600';
                 }
