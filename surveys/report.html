@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -12,6 +12,7 @@
   <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingToolbar.js" type="module"></script>
   <script src="../design-system/components/interactive/DashboardConfig.js" type="module"></script>
+  <script src="../design-system/components/report/ChartColoursModal.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -367,9 +368,68 @@
               <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-users text-xl mb-1"></i><span>Respondents</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
-                <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
-              </button>
+              <!-- Layout Dropdown -->
+              <div class="relative" @click.away="layoutOpen = false">
+                <button @click="layoutOpen = !layoutOpen" class="flex flex-col items-center text-sm hover:text-webropol-primary-700" :class="{ 'text-webropol-primary-700': layoutOpen }">
+                  <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
+                </button>
+                <div x-show="layoutOpen"
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="absolute right-0 top-full mt-2 w-96 bg-white border border-webropol-gray-200 rounded-xl shadow-medium z-50 py-1 overflow-hidden">
+                  <!-- Report's Chart Types -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-chart-bar w-5 text-webropol-gray-500"></i>
+                    <span>Report's Chart Types</span>
+                  </button>
+                  <!-- Fonts -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-font w-5 text-webropol-gray-500"></i>
+                    <span>Fonts</span>
+                  </button>
+                  <!-- Colours for chart, mean & index -->
+                  <button @click="window.dispatchEvent(new CustomEvent('webropol:open-chart-colours')); layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-palette w-5 text-webropol-gray-500"></i>
+                    <span>Colours for chart, mean &amp; index</span>
+                  </button>
+                  <!-- Total respondent count -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-hashtag w-5 text-webropol-gray-500"></i>
+                    <span>Total respondent count</span>
+                  </button>
+                  <!-- Question numbering -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-list-ol w-5 text-webropol-gray-500"></i>
+                    <span>Question numbering</span>
+                  </button>
+                  <!-- Texts & languages -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-language w-5 text-webropol-gray-500"></i>
+                    <span>Texts &amp; languages</span>
+                  </button>
+                  <!-- Question order and visibility -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-sort-amount-down w-5 text-webropol-gray-500"></i>
+                    <span>Question order and visibility</span>
+                  </button>
+                  <!-- Divider -->
+                  <div class="border-t border-webropol-gray-100 my-1"></div>
+                  <!-- Use layout template -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-file-alt w-5 text-webropol-gray-500"></i>
+                    <span>Use layout template</span>
+                  </button>
+                  <!-- Save this layout as template -->
+                  <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-save w-5 text-webropol-gray-500"></i>
+                    <span>Save this layout as template</span>
+                  </button>
+                </div>
+              </div>
               <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-plus-square text-xl mb-1"></i><span>Add Elements</span>
               </button>
@@ -1863,7 +1923,9 @@
     </div>
   </div>
 
-  <!-- Combine Reports Modal -->
+  <!-- Colours modal: rendered by <webropol-chart-colours-modal> in index.html shell -->
+
+    <!-- Combine Reports Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': combineReportsOpen }" @click.self="combineReportsOpen = false" @keydown.window.escape="combineReportsOpen = false" role="dialog" aria-modal="true" aria-labelledby="combineReportsTitle">
     <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
@@ -3501,6 +3563,7 @@
         showPublicLinksOpen: false,
         editReportLinkOpen: false,
         combineReportsOpen: false,
+        layoutOpen: false,
         compareGroupsOpen: false,
         surveyStatusModalOpen: false,
         compareGroupsOption: 'report',
