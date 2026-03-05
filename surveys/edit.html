@@ -2044,6 +2044,20 @@
     /* Fallback when JS toggles .modal-open on body */
     body.modal-open webropol-header { z-index: 10 !important; }
 
+    /* Keep survey structure resizer behind/hidden while modal is open */
+    body:has(.modal-overlay.active) .survey-structure-resizer,
+    body.modal-open .survey-structure-resizer {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    body:has(.modal-overlay.active) .survey-structure-resizer::before,
+    body:has(.modal-overlay.active) .survey-structure-resizer::after,
+    body.modal-open .survey-structure-resizer::before,
+    body.modal-open .survey-structure-resizer::after {
+      opacity: 0 !important;
+    }
+
     /* Ensure Upload modal can appear above Question Settings modal */
     #uploadModal {
       z-index: 99999 !important;
@@ -4832,6 +4846,7 @@
     function openQuestionSettingsModal(type) {
       const modal = document.getElementById('questionSettingsModal');
       if(!modal) return;
+      document.body.classList.remove('is-resizing-structure');
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
