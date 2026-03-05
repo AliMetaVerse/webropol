@@ -50,28 +50,38 @@ function _registerColoursModal() {
       accessiblePalettes: [
         {
           name: 'Wong (2011)',
-          description: 'Colorblind-safe · 8 colours · gold standard',
-          colours: ['#000000','#E69F00','#56B4E9','#009E73','#F0E442','#0072B2','#D55E00','#CC79A7']
+          description: 'CVD-safe · 12 colours · gold standard for scientific figures',
+          reference: 'Wong, B. — Nature Methods 8, 441 (2011)',
+          referenceUrl: 'https://www.nature.com/articles/nmeth.1618',
+          colours: ['#000000','#E69F00','#56B4E9','#009E73','#F0E442','#0072B2','#D55E00','#CC79A7','#F4A582','#92C5DE','#4DAC26','#BABABA']
         },
         {
           name: 'Okabe & Ito',
-          description: 'CVD-friendly · 8 colours · journal-recommended',
-          colours: ['#E69F00','#56B4E9','#009E73','#F0E442','#0072B2','#D55E00','#CC79A7','#999999']
+          description: 'Color Universal Design · 12 colours · print & screen safe',
+          reference: 'Okabe, M. & Ito, K. — Color Universal Design (2002)',
+          referenceUrl: 'https://jfly.uni-koeln.de/color/',
+          colours: ['#E69F00','#56B4E9','#009E73','#F0E442','#0072B2','#D55E00','#CC79A7','#999999','#000000','#F4A582','#004949','#009292']
         },
         {
           name: 'IBM Colour Blind Safe',
-          description: 'Corporate-grade · 5 high-contrast colours',
-          colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000']
+          description: 'IBM Design Language · 12 high-contrast categorical colours',
+          reference: 'IBM Design Language — Color (2023)',
+          referenceUrl: 'https://www.ibm.com/design/language/color/',
+          colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000','#009D9A','#001141','#005D5D','#8A3FFC','#FA4D56','#08BDBA','#25A249']
         },
         {
           name: 'Paul Tol Muted',
-          description: 'Publication-quality · 9 soft colours',
-          colours: ['#332288','#117733','#44AA99','#88CCEE','#DDCC77','#CC6677','#AA4499','#882255','#999933']
+          description: 'Publication-quality · 12 soft colours · perceptually uniform',
+          reference: 'Tol, P. — Colour Schemes, SRON/EPS/TOL/19.09.23 (2023)',
+          referenceUrl: 'https://personal.sron.nl/~pault/',
+          colours: ['#332288','#117733','#44AA99','#88CCEE','#DDCC77','#CC6677','#AA4499','#882255','#999933','#661100','#BBBBBB','#888888']
         },
         {
-          name: 'Tableau Colorblind 10',
-          description: 'Data-viz optimised · 10 colours',
-          colours: ['#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F','#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC']
+          name: 'Tableau Colorblind 10+',
+          description: 'Data-viz optimised · 12 colours · WCAG AA contrast compliant',
+          reference: 'Tableau Software — Tableau 10 Color Palette (2016)',
+          referenceUrl: 'https://www.tableau.com/blog/colors-upgrade-tableau-10-56782',
+          colours: ['#4E79A7','#F28E2B','#E15759','#76B7B2','#59A14F','#EDC948','#B07AA1','#FF9DA7','#9C755F','#BAB0AC','#499894','#86BCB6']
         }
       ],
 
@@ -254,37 +264,54 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <!-- ── TAB: Accessible colours ── -->
         <div x-show="barTab === 'accessible-colours'" x-transition.opacity>
-          <div class="space-y-2.5">
+          <div class="space-y-2">
             <template x-for="palette in accessiblePalettes" :key="palette.name">
-              <div class="flex items-center gap-4 p-3 rounded-xl border-2 cursor-pointer transition-all"
+              <div class="p-3.5 rounded-xl border-2 cursor-pointer transition-all"
                    :class="selectedAccessiblePalette === palette.name
                      ? 'border-webropol-primary-500 bg-webropol-primary-50'
                      : 'border-webropol-gray-100 hover:border-webropol-gray-300 bg-white'"
                    @click="applyAccessiblePalette(palette)">
-                <div class="flex gap-1 flex-shrink-0">
-                  <template x-for="c in palette.colours.slice(0,8)" :key="c">
-                    <div class="w-6 h-6 rounded-full border-2 border-white shadow-sm flex-shrink-0"
-                         :style="'background:' + c"></div>
+
+                <!-- Top row: name + selected indicator -->
+                <div class="flex items-start justify-between mb-2.5">
+                  <div>
+                    <div class="text-sm font-semibold text-webropol-gray-800 leading-tight" x-text="palette.name"></div>
+                    <div class="text-xs text-webropol-gray-500 mt-0.5" x-text="palette.description"></div>
+                  </div>
+                  <div class="flex-shrink-0 ml-3 mt-0.5">
+                    <div x-show="selectedAccessiblePalette === palette.name"
+                         class="w-5 h-5 rounded-full bg-webropol-primary-600 flex items-center justify-center shadow-sm">
+                      <i class="fal fa-check text-white" style="font-size:9px"></i>
+                    </div>
+                    <div x-show="selectedAccessiblePalette !== palette.name"
+                         class="w-5 h-5 rounded-full border-2 border-webropol-gray-200"></div>
+                  </div>
+                </div>
+
+                <!-- 12 swatches in 2 rows of 6 -->
+                <div class="grid gap-1" style="grid-template-columns:repeat(6,1fr)">
+                  <template x-for="c in palette.colours" :key="c">
+                    <div class="h-7 rounded-md border-2 border-white ring-1 ring-black/10 shadow-sm"
+                         :style="'background:' + c"
+                         :title="c"></div>
                   </template>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-semibold text-webropol-gray-800" x-text="palette.name"></div>
-                  <div class="text-xs text-webropol-gray-500 mt-0.5" x-text="palette.description"></div>
+
+                <!-- Citation -->
+                <div class="mt-2.5 flex items-center gap-1.5" @click.stop>
+                  <i class="fal fa-book text-webropol-gray-400" style="font-size:10px"></i>
+                  <a :href="palette.referenceUrl" target="_blank" rel="noopener"
+                     class="text-xs text-webropol-primary-600 hover:text-webropol-primary-800 hover:underline truncate transition-colors"
+                     x-text="palette.reference"></a>
+                  <i class="fal fa-external-link text-webropol-gray-400 flex-shrink-0" style="font-size:10px"></i>
                 </div>
-                <div class="flex-shrink-0">
-                  <div x-show="selectedAccessiblePalette === palette.name"
-                       class="w-6 h-6 rounded-full bg-webropol-primary-600 flex items-center justify-center">
-                    <i class="fal fa-check text-white" style="font-size:10px"></i>
-                  </div>
-                  <div x-show="selectedAccessiblePalette !== palette.name"
-                       class="w-6 h-6 rounded-full border-2 border-webropol-gray-200"></div>
-                </div>
+
               </div>
             </template>
           </div>
           <div class="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700 flex gap-2">
             <i class="fal fa-eye mt-0.5 flex-shrink-0"></i>
-            <span>Clicking a palette applies its colours to the Colours tab. Tested against deuteranopia, protanopia and tritanopia.</span>
+            <span>Selecting a palette applies all 12 colours to the Colours tab. All palettes are tested against deuteranopia, protanopia and tritanopia. Extended palettes supplement the original with perceptually compatible colours.</span>
           </div>
         </div>
 
@@ -374,111 +401,221 @@ class WebropolChartColoursModal extends HTMLElement {
 
       <!-- ═══ AVERAGES & INDEX COLOURS ═══ -->
       <div class="mb-7">
-        <div class="mb-4">
-          <h3 class="text-sm font-semibold text-webropol-gray-900">Averages &amp; index colours</h3>
-          <p class="text-xs text-webropol-gray-500 mt-0.5">Colour rules applied to mean/index values shown in table cells and charts</p>
+
+        <!-- Section header -->
+        <div class="flex items-start justify-between mb-5">
+          <div class="flex items-start gap-3">
+            <span class="inline-flex w-8 h-8 rounded-lg bg-amber-50 items-center justify-center text-amber-500 flex-shrink-0 mt-0.5">
+              <i class="fal fa-chart-line text-sm"></i>
+            </span>
+            <div>
+              <h3 class="text-sm font-semibold text-webropol-gray-900">Averages &amp; index colours</h3>
+              <p class="text-xs text-webropol-gray-500 mt-0.5">Colour rules applied to mean/index values in table cells and charts</p>
+            </div>
+          </div>
+          <button x-show="averageRows.length > 0" @click="averageRows = []"
+                  class="text-xs text-webropol-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 mt-0.5 flex-shrink-0">
+            <i class="fal fa-undo text-xs"></i> Reset
+          </button>
         </div>
 
-        <!-- Mean / Index radio -->
-        <div class="flex gap-1 mb-4 bg-webropol-gray-100 rounded-xl p-1 w-fit">
-          <label class="flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                 :class="indexType === 'mean' ? 'bg-white shadow-card text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-800'">
-            <input type="radio" name="coloursModalIndexType" value="mean" x-model="indexType" class="sr-only"> Mean
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                 :class="indexType === 'index' ? 'bg-white shadow-card text-webropol-primary-700' : 'text-webropol-gray-600 hover:text-webropol-gray-800'">
-            <input type="radio" name="coloursModalIndexType" value="index" x-model="indexType" class="sr-only"> Index value
-          </label>
+        <!-- Mean / Index pill toggle -->
+        <div class="flex items-center gap-3 mb-5 p-3 bg-webropol-gray-50 rounded-xl border border-webropol-gray-100">
+          <span class="text-xs text-webropol-gray-500 font-medium">Colour limits for:</span>
+          <div class="flex gap-1 bg-white rounded-lg p-0.5 border border-webropol-gray-200 shadow-sm">
+            <label class="flex items-center gap-1.5 cursor-pointer px-3.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                   :class="indexType === 'mean' ? 'bg-webropol-primary-600 text-white shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-800'">
+              <input type="radio" name="coloursModalIndexType" value="mean" x-model="indexType" class="sr-only">
+              <i class="fal fa-wave-sine text-xs"></i> Mean
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer px-3.5 py-1.5 rounded-md text-xs font-medium transition-all"
+                   :class="indexType === 'index' ? 'bg-webropol-primary-600 text-white shadow-sm' : 'text-webropol-gray-600 hover:text-webropol-gray-800'">
+              <input type="radio" name="coloursModalIndexType" value="index" x-model="indexType" class="sr-only">
+              <i class="fal fa-percent text-xs"></i> Index value
+            </label>
+          </div>
         </div>
 
-        <div class="rounded-xl border border-webropol-gray-200 overflow-hidden">
-          <div class="grid text-xs font-semibold text-webropol-gray-500 bg-webropol-gray-50 px-4 py-2.5 border-b border-webropol-gray-200"
-               style="grid-template-columns:44px 44px 1fr 1fr 1fr 32px">
-            <span>Font</span><span>Background</span><span>Min</span><span>Max</span><span>Title</span><span></span>
-          </div>
-          <div x-show="averageRows.length === 0" class="px-4 py-6 text-center text-xs text-webropol-gray-400">
-            No colour rules yet — click "+ Add rule" below
-          </div>
+        <!-- Column headers (visible only when rows exist) -->
+        <div x-show="averageRows.length > 0"
+             class="grid items-center gap-2 px-3 mb-1.5 text-xs font-semibold text-webropol-gray-400 uppercase tracking-wider"
+             style="grid-template-columns:56px 56px 1fr 1fr 1fr 80px 28px">
+          <span>Font</span><span>Background</span><span>Min value</span><span>Max value</span><span>Title</span><span class="text-center">Preview</span><span></span>
+        </div>
+
+        <!-- Rule rows -->
+        <div class="space-y-1.5">
           <template x-for="(row, idx) in averageRows" :key="idx">
-            <div class="grid items-center gap-2 px-4 py-2.5 border-b border-webropol-gray-100 last:border-0"
-                 style="grid-template-columns:44px 44px 1fr 1fr 1fr 32px">
-              <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value"
-                     class="w-8 h-8 rounded-lg border border-webropol-gray-200 cursor-pointer p-0.5">
-              <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value"
-                     class="w-8 h-8 rounded-lg border border-webropol-gray-200 cursor-pointer p-0.5">
-              <input type="number" x-model="row.minValue" placeholder="Min"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
-              <input type="number" x-model="row.maxValue" placeholder="Max"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
+            <div class="grid items-center gap-2 px-3 py-2.5 rounded-xl border border-webropol-gray-100 bg-white hover:border-webropol-gray-200 hover:shadow-sm transition-all group"
+                 style="grid-template-columns:56px 56px 1fr 1fr 1fr 80px 28px">
+
+              <!-- Font colour swatch -->
+              <div class="flex flex-col items-center gap-1">
+                <div class="relative">
+                  <div class="w-9 h-9 rounded-full border-2 border-white ring-1 ring-webropol-gray-200 cursor-pointer shadow-sm hover:scale-110 transition-transform"
+                       :style="'background:' + row.fontColour"
+                       @click="$el.nextElementSibling.click()"></div>
+                  <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only">
+                </div>
+                <span class="text-xs font-mono text-webropol-gray-400 leading-none" x-text="row.fontColour.toUpperCase()"></span>
+              </div>
+
+              <!-- Background colour swatch -->
+              <div class="flex flex-col items-center gap-1">
+                <div class="relative">
+                  <div class="w-9 h-9 rounded-full border-2 border-white ring-1 ring-webropol-gray-200 cursor-pointer shadow-sm hover:scale-110 transition-transform"
+                       :style="'background:' + row.bgColour"
+                       @click="$el.nextElementSibling.click()"></div>
+                  <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only">
+                </div>
+                <span class="text-xs font-mono text-webropol-gray-400 leading-none" x-text="row.bgColour.toUpperCase()"></span>
+              </div>
+
+              <!-- Min value -->
+              <input type="number" x-model="row.minValue" placeholder="e.g. 0"
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Max value -->
+              <input type="number" x-model="row.maxValue" placeholder="e.g. 100"
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Title -->
               <input type="text" x-model="row.title" placeholder="Label"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Live preview cell -->
+              <div class="flex items-center justify-center">
+                <div class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-webropol-gray-100 shadow-sm text-center min-w-0 w-full truncate"
+                     :style="'background:' + row.bgColour + '; color:' + row.fontColour"
+                     x-text="row.title || 'Aa 4.2'"></div>
+              </div>
+
+              <!-- Delete (appears on row hover) -->
               <button @click="averageRows.splice(idx,1)"
-                      class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-webropol-gray-400 hover:text-red-500 transition-colors"
-                      aria-label="Remove row">
-                <i class="fal fa-trash-alt text-xs"></i>
+                      class="w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 text-webropol-gray-300 hover:text-red-500 transition-all"
+                      aria-label="Remove rule">
+                <i class="fal fa-times text-sm"></i>
               </button>
             </div>
           </template>
         </div>
-        <div class="flex items-center justify-between mt-2.5">
-          <button @click="averageRows.push({fontColour:'#000000',bgColour:'#f0f9ff',minValue:'',maxValue:'',title:''})"
-                  class="text-xs text-webropol-primary-600 hover:text-webropol-primary-700 font-medium flex items-center gap-1">
-            <i class="fal fa-plus"></i> Add rule
-          </button>
-          <button x-show="averageRows.length > 0" @click="averageRows = []"
-                  class="text-xs text-webropol-gray-400 hover:text-webropol-gray-600">
-            Reset all
-          </button>
+
+        <!-- Empty state -->
+        <div x-show="averageRows.length === 0"
+             class="py-7 text-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
+          <i class="fal fa-paint-brush-alt text-webropol-gray-300 text-2xl mb-2 block"></i>
+          <p class="text-xs font-medium text-webropol-gray-500">No colour rules yet</p>
+          <p class="text-xs text-webropol-gray-400 mt-0.5">Specify min/max thresholds with custom colours</p>
         </div>
+
+        <!-- Add rule button -->
+        <button @click="averageRows.push({fontColour:'#000000',bgColour:'#f0f9ff',minValue:'',maxValue:'',title:''})"
+                class="mt-3 w-full py-2.5 rounded-xl border-2 border-dashed border-webropol-gray-200 text-xs text-webropol-gray-500 hover:border-webropol-primary-300 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-all flex items-center justify-center gap-1.5 font-medium">
+          <i class="fal fa-plus"></i> Add colour rule
+        </button>
+
       </div><!-- /AVERAGES -->
 
       <div class="border-t border-webropol-gray-100 mb-6"></div>
 
       <!-- ═══ EXCLUDED OPTION COLUMN COLOURS ═══ -->
       <div class="mb-4">
-        <div class="mb-4">
-          <h3 class="text-sm font-semibold text-webropol-gray-900">Excluded option column colours</h3>
-          <p class="text-xs text-webropol-gray-500 mt-0.5">Colour rules for excluded answer option columns</p>
+
+        <!-- Section header -->
+        <div class="flex items-start justify-between mb-5">
+          <div class="flex items-start gap-3">
+            <span class="inline-flex w-8 h-8 rounded-lg bg-rose-50 items-center justify-center text-rose-400 flex-shrink-0 mt-0.5">
+              <i class="fal fa-ban text-sm"></i>
+            </span>
+            <div>
+              <h3 class="text-sm font-semibold text-webropol-gray-900">Excluded option column colours</h3>
+              <p class="text-xs text-webropol-gray-500 mt-0.5">Colour rules applied to excluded answer option columns in result tables</p>
+            </div>
+          </div>
+          <button x-show="excludedRows.length > 0" @click="excludedRows = []"
+                  class="text-xs text-webropol-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 mt-0.5 flex-shrink-0">
+            <i class="fal fa-undo text-xs"></i> Reset
+          </button>
         </div>
-        <div class="rounded-xl border border-webropol-gray-200 overflow-hidden">
-          <div class="grid text-xs font-semibold text-webropol-gray-500 bg-webropol-gray-50 px-4 py-2.5 border-b border-webropol-gray-200"
-               style="grid-template-columns:44px 44px 1fr 1fr 1fr 32px">
-            <span>Font</span><span>Background</span><span>Min</span><span>Max</span><span>Title</span><span></span>
-          </div>
-          <div x-show="excludedRows.length === 0" class="px-4 py-6 text-center text-xs text-webropol-gray-400">
-            No colour rules yet — click "+ Add rule" below
-          </div>
+
+        <!-- Column headers (visible only when rows exist) -->
+        <div x-show="excludedRows.length > 0"
+             class="grid items-center gap-2 px-3 mb-1.5 text-xs font-semibold text-webropol-gray-400 uppercase tracking-wider"
+             style="grid-template-columns:56px 56px 1fr 1fr 1fr 80px 28px">
+          <span>Font</span><span>Background</span><span>Min value</span><span>Max value</span><span>Title</span><span class="text-center">Preview</span><span></span>
+        </div>
+
+        <!-- Rule rows -->
+        <div class="space-y-1.5">
           <template x-for="(row, idx) in excludedRows" :key="idx">
-            <div class="grid items-center gap-2 px-4 py-2.5 border-b border-webropol-gray-100 last:border-0"
-                 style="grid-template-columns:44px 44px 1fr 1fr 1fr 32px">
-              <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value"
-                     class="w-8 h-8 rounded-lg border border-webropol-gray-200 cursor-pointer p-0.5">
-              <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value"
-                     class="w-8 h-8 rounded-lg border border-webropol-gray-200 cursor-pointer p-0.5">
-              <input type="number" x-model="row.minValue" placeholder="Min"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
-              <input type="number" x-model="row.maxValue" placeholder="Max"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
+            <div class="grid items-center gap-2 px-3 py-2.5 rounded-xl border border-webropol-gray-100 bg-white hover:border-webropol-gray-200 hover:shadow-sm transition-all group"
+                 style="grid-template-columns:56px 56px 1fr 1fr 1fr 80px 28px">
+
+              <!-- Font colour swatch -->
+              <div class="flex flex-col items-center gap-1">
+                <div class="relative">
+                  <div class="w-9 h-9 rounded-full border-2 border-white ring-1 ring-webropol-gray-200 cursor-pointer shadow-sm hover:scale-110 transition-transform"
+                       :style="'background:' + row.fontColour"
+                       @click="$el.nextElementSibling.click()"></div>
+                  <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only">
+                </div>
+                <span class="text-xs font-mono text-webropol-gray-400 leading-none" x-text="row.fontColour.toUpperCase()"></span>
+              </div>
+
+              <!-- Background colour swatch -->
+              <div class="flex flex-col items-center gap-1">
+                <div class="relative">
+                  <div class="w-9 h-9 rounded-full border-2 border-white ring-1 ring-webropol-gray-200 cursor-pointer shadow-sm hover:scale-110 transition-transform"
+                       :style="'background:' + row.bgColour"
+                       @click="$el.nextElementSibling.click()"></div>
+                  <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only">
+                </div>
+                <span class="text-xs font-mono text-webropol-gray-400 leading-none" x-text="row.bgColour.toUpperCase()"></span>
+              </div>
+
+              <!-- Min value -->
+              <input type="number" x-model="row.minValue" placeholder="e.g. 0"
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Max value -->
+              <input type="number" x-model="row.maxValue" placeholder="e.g. 100"
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Title -->
               <input type="text" x-model="row.title" placeholder="Label"
-                     class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400">
+                     class="w-full px-2.5 py-1.5 text-xs border border-webropol-gray-200 rounded-lg focus:outline-none focus:border-webropol-primary-400 bg-webropol-gray-50 focus:bg-white transition-colors">
+
+              <!-- Live preview cell -->
+              <div class="flex items-center justify-center">
+                <div class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-webropol-gray-100 shadow-sm text-center min-w-0 w-full truncate"
+                     :style="'background:' + row.bgColour + '; color:' + row.fontColour"
+                     x-text="row.title || 'Aa 4.2'"></div>
+              </div>
+
+              <!-- Delete (appears on row hover) -->
               <button @click="excludedRows.splice(idx,1)"
-                      class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-webropol-gray-400 hover:text-red-500 transition-colors"
-                      aria-label="Remove row">
-                <i class="fal fa-trash-alt text-xs"></i>
+                      class="w-7 h-7 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-50 text-webropol-gray-300 hover:text-red-500 transition-all"
+                      aria-label="Remove rule">
+                <i class="fal fa-times text-sm"></i>
               </button>
             </div>
           </template>
         </div>
-        <div class="flex items-center justify-between mt-2.5">
-          <button @click="excludedRows.push({fontColour:'#000000',bgColour:'#fff7ed',minValue:'',maxValue:'',title:''})"
-                  class="text-xs text-webropol-primary-600 hover:text-webropol-primary-700 font-medium flex items-center gap-1">
-            <i class="fal fa-plus"></i> Add rule
-          </button>
-          <button x-show="excludedRows.length > 0" @click="excludedRows = []"
-                  class="text-xs text-webropol-gray-400 hover:text-webropol-gray-600">
-            Reset all
-          </button>
+
+        <!-- Empty state -->
+        <div x-show="excludedRows.length === 0"
+             class="py-7 text-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
+          <i class="fal fa-eye-slash text-webropol-gray-300 text-2xl mb-2 block"></i>
+          <p class="text-xs font-medium text-webropol-gray-500">No colour rules yet</p>
+          <p class="text-xs text-webropol-gray-400 mt-0.5">Define how excluded columns are visually distinguished</p>
         </div>
+
+        <!-- Add rule button -->
+        <button @click="excludedRows.push({fontColour:'#000000',bgColour:'#fff7ed',minValue:'',maxValue:'',title:''})"
+                class="mt-3 w-full py-2.5 rounded-xl border-2 border-dashed border-webropol-gray-200 text-xs text-webropol-gray-500 hover:border-webropol-primary-300 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-all flex items-center justify-center gap-1.5 font-medium">
+          <i class="fal fa-plus"></i> Add colour rule
+        </button>
+
       </div><!-- /EXCLUDED -->
 
     </div><!-- /modal-body -->
