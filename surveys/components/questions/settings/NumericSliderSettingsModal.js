@@ -19,262 +19,473 @@ export class NumericSliderSettingsModal extends BaseComponent {
         // if this element is placed inside the parent's x-data region.
         
         this.innerHTML = `
+            <style>
+                .ns-type-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px 16px;
+                    border-radius: 10px;
+                    border: 1.5px solid #e2e8f0;
+                    cursor: pointer;
+                    background: #fff;
+                    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+                    user-select: none;
+                    min-width: 160px;
+                }
+                .ns-type-card:hover {
+                    border-color: #06b6d4;
+                    background: #f0fdff;
+                }
+                .ns-type-card.selected {
+                    border-color: #0e7490;
+                    background: #ecfeff;
+                    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+                }
+                .ns-type-card input[type="radio"] {
+                    accent-color: #0e7490;
+                    width: 18px;
+                    height: 18px;
+                    flex-shrink: 0;
+                }
+                .ns-type-card .card-icon {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 8px;
+                    background: #e0f2fe;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #0e7490;
+                    font-size: 15px;
+                    flex-shrink: 0;
+                }
+                .ns-type-card.selected .card-icon {
+                    background: #cffafe;
+                    color: #0e7490;
+                }
+                .ns-type-card .card-label {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                }
+
+                .ns-orient-pill {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 7px 18px;
+                    border-radius: 999px;
+                    border: 1.5px solid #e2e8f0;
+                    cursor: pointer;
+                    background: #fff;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+                    user-select: none;
+                }
+                .ns-orient-pill:hover {
+                    border-color: #06b6d4;
+                    background: #f0fdff;
+                }
+                .ns-orient-pill.selected {
+                    border-color: #0e7490;
+                    background: #ecfeff;
+                    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+                    color: #0e7490;
+                }
+                .ns-orient-pill input[type="radio"] {
+                    accent-color: #0e7490;
+                    width: 16px;
+                    height: 16px;
+                    flex-shrink: 0;
+                }
+
+                .ns-vis-pill {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 7px 18px;
+                    border-radius: 999px;
+                    border: 1.5px solid #e2e8f0;
+                    cursor: pointer;
+                    background: #fff;
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+                    user-select: none;
+                }
+                .ns-vis-pill:hover {
+                    border-color: #06b6d4;
+                    background: #f0fdff;
+                }
+                .ns-vis-pill.selected {
+                    border-color: #0e7490;
+                    background: #ecfeff;
+                    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+                    color: #0e7490;
+                }
+                .ns-vis-pill input[type="radio"] {
+                    accent-color: #0e7490;
+                    width: 16px;
+                    height: 16px;
+                    flex-shrink: 0;
+                }
+
+                .ns-dontknow-input {
+                    border: 1.5px solid #d1d5db;
+                    border-radius: 8px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    color: #374151;
+                    background: #fff;
+                    outline: none;
+                    transition: border-color 0.15s;
+                    width: 160px;
+                }
+                .ns-dontknow-input:focus {
+                    border-color: #06b6d4;
+                    box-shadow: 0 0 0 3px rgba(6,182,212,0.10);
+                }
+                .ns-dontknow-input:disabled {
+                    background: #f3f4f6;
+                    color: #9ca3af;
+                }
+
+                .ns-save-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 8px 22px;
+                    border-radius: 999px;
+                    border: 1.5px solid #0e7490;
+                    background: #fff;
+                    color: #0e7490;
+                    font-size: 14px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background 0.15s, box-shadow 0.15s;
+                }
+                .ns-save-btn:hover {
+                    background: #f0fdff;
+                    box-shadow: 0 0 0 3px rgba(6,182,212,0.12);
+                }
+                .ns-save-link {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0e7490;
+                    cursor: pointer;
+                    text-decoration: none;
+                    margin-top: 6px;
+                    display: inline-block;
+                }
+                .ns-save-link:hover {
+                    text-decoration: underline;
+                }
+                .ns-all-settings-link {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #0e7490;
+                    cursor: pointer;
+                    display: inline-block;
+                    margin-bottom: 14px;
+                }
+                .ns-all-settings-link:hover { text-decoration: underline; }
+
+                .ns-section-label {
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #6b7280;
+                    margin-bottom: 10px;
+                    margin-top: 4px;
+                    display: block;
+                }
+            </style>
+
             <!-- Settings Modal -->
-            <div x-show="showSettings" 
-                    class="fixed inset-0 z-[2147483640] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity"
-                    x-transition:enter="transition ease-out duration-300" 
-                    x-transition:enter-start="opacity-0" 
+            <div x-show="showSettings"
+                    class="fixed inset-0 z-[2147483640] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    x-transition:leave="transition ease-in duration-200" 
-                    x-transition:leave-start="opacity-100" 
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                     style="display: none;">
-                
+
                 <!-- Modal Content -->
-                <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col relative z-10 max-h-[90vh]"
+                <div class="bg-white rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col relative max-h-[92vh]"
+                        :style="questionType !== 'health-slider' ? 'max-width:640px' : 'max-width:520px'"
                         @click.away="showSettings = false"
                         x-show="showSettings"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0 scale-95"
-                        x-transition:enter-end="opacity-100 scale-100"
-                        x-transition:leave="transition ease-in duration-200" 
-                        x-transition:leave-start="opacity-100 scale-100" 
-                        x-transition:leave-end="opacity-0 scale-95">
-                
-                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 flex-shrink-0">
-                        <h3 class="font-bold text-lg text-webropol-gray-900">Question settings</h3>
-                        <button @click="showSettings = false" class="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-200/50 rounded-full"><i class="fa-light fa-times text-xl"></i></button>
-                    </div>
-                    
-                    <div class="p-6 overflow-y-auto flex-1">
-                        <!-- Slider Type Selector -->
-                    <div class="bg-gray-50/80 p-5 rounded-xl border border-gray-100 mb-6 shadow-sm">
-                            <h4 class="font-bold text-base text-webropol-gray-800 mb-4 flex items-center gap-2">
-                            Slider Type
-                            </h4>
-                            
-                            <div class="flex flex-col gap-3 pt-2 pl-1">
-                            <label class="flex items-center gap-2 cursor-pointer relative z-10">
-                                <input type="radio" name="qtype" value="slider" x-model="questionType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                <span class="font-medium text-sm text-gray-700 flex items-center gap-2">
-                                    <i class="fa-light fa-sliders text-gray-400"></i>
-                                    Slider
-                                </span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer relative z-10">
-                                <input type="radio" name="qtype" value="health-slider" x-model="questionType" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                <span class="font-medium text-sm text-gray-700 flex items-center gap-2">
-                                    <i class="fa-light fa-heart-pulse text-gray-400"></i>
-                                    Quality Meter
-                                </span>
-                            </label>
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 scale-95 translate-y-2">
+
+                    <!-- Header -->
+                    <div class="px-6 py-5 flex justify-between items-center flex-shrink-0">
+                        <div class="flex items-center gap-3">
+                            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#fee2e2,#fecaca);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="fa-light fa-gear" style="color:#dc2626;font-size:20px;"></i>
                             </div>
-                            
-                            <!-- Disable switch for Quality Meter -->
-                            <div x-show="false" class="mt-4 pt-4 border-t border-gray-200/60" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                            <label class="inline-flex items-center gap-3 cursor-pointer select-none group">
-                                    <div class="relative">
-                                        <input type="checkbox" x-model="settingsDisabled" class="peer sr-only">
-                                        <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-webropol-primary-50 rounded-full peer transition-all duration-200 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:shadow-sm peer-checked:bg-webropol-primary-500 peer-checked:shadow-inner"></div>
-                                    </div>
-                                    <span class="text-sm font-medium text-gray-700 group-hover:text-webropol-primary-700 transition-colors">Use default settings (disable customization)</span>
-                            </label>
-                            </div>
+                            <span style="font-size:18px;font-weight:700;color:#111827;">Question settings</span>
+                        </div>
+                        <button @click="showSettings = false"
+                                style="width:32px;height:32px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9ca3af;transition:background 0.15s,color 0.15s;"
+                                onmouseover="this.style.background='#f3f4f6';this.style.color='#374151'"
+                                onmouseout="this.style.background='transparent';this.style.color='#9ca3af'">
+                            <i class="fa-light fa-times" style="font-size:18px;"></i>
+                        </button>
                     </div>
-                    
-                    <!-- Detailed Settings Form -->
-                    <div class="space-y-6 px-2">
-                        
-                        <!-- Slider Values Section -->
+
+                    <!-- Body -->
+                    <div class="overflow-y-auto flex-1 px-6 pb-2">
+
+                        <!-- Slider Type Card Selector -->
+                        <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:14px;padding:18px 20px;margin-bottom:20px;">
+                            <span style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:14px;letter-spacing:0.01em;">Slider Type</span>
+                            <div style="display:flex;flex-direction:column;gap:10px;">
+                                <label class="ns-type-card" :class="questionType !== 'health-slider' ? 'selected' : ''">
+                                    <input type="radio" name="qtype" value="slider" x-model="questionType">
+                                    <div class="card-icon"><i class="fa-light fa-sliders"></i></div>
+                                    <span class="card-label">Numeric Slider</span>
+                                </label>
+                                <label class="ns-type-card" :class="questionType === 'health-slider' ? 'selected' : ''">
+                                    <input type="radio" name="qtype" value="health-slider" x-model="questionType">
+                                    <div class="card-icon"><i class="fa-light fa-heart-pulse"></i></div>
+                                    <span class="card-label">Quality Meter</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- ══════════════════════════════════════════
+                             NUMERIC SLIDER ONLY SECTIONS
+                             ══════════════════════════════════════════ -->
                         <div x-show="questionType !== 'health-slider'">
-                            <h4 class="font-bold text-gray-700 mb-4 text-sm">Slider Values</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-4">
-                                <!-- Min Value -->
-                                <div class="flex items-center justify-between">
-                                    <label class="text-sm text-gray-600">Minimum value</label>
-                                    <input type="number" x-model="settings.min" class="w-24 border-gray-300 rounded px-2 py-1 text-sm focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+
+                            <!-- Slider Values -->
+                            <span class="ns-section-label" style="font-weight:600;color:#374151;font-size:13px;">Slider Values</span>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:16px;">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                    <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Minimum value</label>
+                                    <input type="number" x-model="settings.min" style="width:80px;border:1.5px solid #d1d5db;border-radius:8px;padding:5px 10px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#06b6d4'" onblur="this.style.borderColor='#d1d5db'">
                                 </div>
-                                <!-- Unit increase -->
-                                <div class="flex items-center justify-between">
-                                    <label class="text-sm text-gray-600">Unit increase</label>
-                                    <input type="number" x-model="settings.step" class="w-24 border-gray-300 rounded px-2 py-1 text-sm focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                    <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Unit increase</label>
+                                    <input type="number" x-model="settings.step" style="width:80px;border:1.5px solid #d1d5db;border-radius:8px;padding:5px 10px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#06b6d4'" onblur="this.style.borderColor='#d1d5db'">
                                 </div>
-                                <!-- Max Value -->
-                                <div class="flex items-center justify-between">
-                                    <label class="text-sm text-gray-600">Maximum value</label>
-                                    <input type="number" x-model="settings.max" class="w-24 border-gray-300 rounded px-2 py-1 text-sm focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                    <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Maximum value</label>
+                                    <input type="number" x-model="settings.max" style="width:80px;border:1.5px solid #d1d5db;border-radius:8px;padding:5px 10px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#06b6d4'" onblur="this.style.borderColor='#d1d5db'">
                                 </div>
-                                <!-- Starting point -->
-                                <div class="flex items-center justify-between">
-                                    <label class="text-sm text-gray-600">Starting point</label>
-                                    <input type="number" x-model="settings.start" class="w-24 border-gray-300 rounded px-2 py-1 text-sm focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                                    <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Starting point</label>
+                                    <input type="number" x-model="settings.start" style="width:80px;border:1.5px solid #d1d5db;border-radius:8px;padding:5px 10px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#06b6d4'" onblur="this.style.borderColor='#d1d5db'">
                                 </div>
-                                <!-- Value quantity -->
-                                <div class="flex items-center justify-between col-span-1 md:col-span-2 md:w-full">
-                                        <label class="text-sm text-gray-600 mr-4">Value quantity (%, $, N...)</label>
-                                        <input type="text" x-model="settings.quantity" class="w-24 border-gray-300 rounded px-2 py-1 text-sm focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;grid-column:span 2;">
+                                    <label style="font-size:13px;color:#6b7280;white-space:nowrap;">Value quantity (%, $, N...)</label>
+                                    <input type="text" x-model="settings.quantity" style="width:80px;border:1.5px solid #d1d5db;border-radius:8px;padding:5px 10px;font-size:13px;outline:none;" onfocus="this.style.borderColor='#06b6d4'" onblur="this.style.borderColor='#d1d5db'">
                                 </div>
                             </div>
-                            
+
                             <!-- Checkboxes -->
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                    <input type="checkbox" x-model="settings.showValue" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                    <span class="text-sm text-gray-700">Show value for the respondent</span>
+                            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+                                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                    <input type="checkbox" x-model="settings.showValue" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                    <span style="font-size:14px;color:#374151;">Show value for the respondent</span>
                                 </label>
-                                <div class="flex flex-nowrap items-center gap-4" x-show="questionType !== 'health-slider'">
-                                    <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                                        <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
+                                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+                                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                        <input type="checkbox" x-model="settings.showDontKnow" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                        <span style="font-size:14px;color:#374151;">Show "I don't know" option for the respondent</span>
                                     </label>
-                                    <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
+                                    <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="ns-dontknow-input" placeholder="I don't know">
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Slider Labels Section -->
-                        <div x-show="questionType !== 'health-slider'">
-                            <h4 class="font-bold text-gray-700 mb-2 text-sm">Slider Labels</h4>
-                            <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                <input type="checkbox" x-model="settings.showLabels" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                <span class="text-sm text-gray-700">Show labels</span>
+                            <div style="height:1px;background:#f1f5f9;margin-bottom:16px;"></div>
+
+                            <!-- Slider Labels -->
+                            <span class="ns-section-label" style="font-weight:600;color:#374151;font-size:13px;">Slider Labels</span>
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:18px;">
+                                <input type="checkbox" x-model="settings.showLabels" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                <span style="font-size:14px;color:#374151;">Show labels</span>
                             </label>
-                        </div>
 
-                        <!-- Positioning Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <!-- Min/Max Position -->
-                            <div x-show="questionType !== 'health-slider'">
-                                <h4 class="text-sm text-gray-500 mb-3">Min. and Max. value position</h4>
-                                <div class="space-y-3">
-                                    <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                        <input type="radio" name="min-max-pos" value="min-max" x-model="settings.direction" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-700">Min. <i class="fa-regular fa-arrow-right text-xs mx-1"></i> Max.</span>
+                            <div style="height:1px;background:#f1f5f9;margin-bottom:16px;"></div>
+
+                            <!-- Min/Max position + Orientation side by side -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:18px;">
+                                <!-- Min/Max position -->
+                                <div>
+                                    <span class="ns-section-label">Min. and Max. value position</span>
+                                    <div style="display:flex;flex-direction:column;gap:8px;">
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="min-max-pos" value="min-max" x-model="settings.direction" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Min. &rarr; Max.</span>
+                                        </label>
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="min-max-pos" value="max-min" x-model="settings.direction" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Max. &rarr; Min.</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Orientation (desktop + mobile) -->
+                                <div>
+                                    <span class="ns-section-label">Orientation</span>
+                                    <span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Desktop</span>
+                                    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="orientation_desktop" value="horizontal" x-model="settings.orientationDesktop" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Horizontal</span>
+                                        </label>
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="orientation_desktop" value="vertical" x-model="settings.orientationDesktop" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Vertical</span>
+                                        </label>
+                                    </div>
+                                    <span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Mobile (will be removed)</span>
+                                    <div style="display:flex;flex-direction:column;gap:6px;">
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Horizontal</span>
+                                        </label>
+                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                            <input type="radio" name="orientation_mobile" value="vertical" x-model="settings.orientationMobile" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                            <span style="font-size:14px;color:#374151;">Vertical</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="height:1px;background:#f1f5f9;margin-bottom:16px;"></div>
+
+                            <!-- Description -->
+                            <div style="margin-bottom:18px;">
+                                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:10px;">
+                                    <input type="checkbox" x-model="settings.showDescription" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                    <span style="font-size:14px;font-weight:500;color:#374151;">Show question description</span>
+                                    <i class="fa-regular fa-circle-question" style="color:#111827;font-size:16px;"></i>
+                                </label>
+                                <div style="padding-left:24px;display:flex;flex-direction:column;gap:8px;" :style="!settings.showDescription ? 'opacity:0.45;pointer-events:none' : ''">
+                                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                        <span style="font-size:13px;color:#9ca3af;width:72px;text-align:right;flex-shrink:0;">Placement:</span>
+                                        <input type="radio" name="desc-place" value="below" x-model="settings.descPlacement" style="width:15px;height:15px;accent-color:#0e7490;flex-shrink:0;">
+                                        <span style="font-size:14px;color:#374151;">Show below question title</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                        <input type="radio" name="min-max-pos" value="max-min" x-model="settings.direction" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-700">Max. <i class="fa-regular fa-arrow-right text-xs mx-1"></i> Min.</span>
+                                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                        <span style="width:72px;flex-shrink:0;"></span>
+                                        <input type="radio" name="desc-place" value="above" x-model="settings.descPlacement" style="width:15px;height:15px;accent-color:#0e7490;flex-shrink:0;">
+                                        <span style="font-size:14px;color:#374151;">Show above question title</span>
                                     </label>
                                 </div>
                             </div>
-                            
-                            <!-- Slider Placement (Orientation) -->
-                            <div>
-                                    <div class="flex flex-nowrap items-center gap-4 mb-5" x-show="questionType === 'health-slider'">
-                                        <label class="flex items-center gap-2 cursor-pointer whitespace-nowrap">
-                                        <input type="checkbox" x-model="settings.showDontKnow" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-700">Show "I don't know" option for respondent</span>
-                                    </label>
-                                    <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="flex-1 max-w-[200px] bg-gray-50 border-gray-300 text-gray-700 rounded px-3 py-1 text-sm disabled:opacity-50 disabled:bg-gray-100 focus:ring-webropol-primary-500 focus:border-webropol-primary-500">
-                                </div>
-                                    <h4 class="text-sm text-gray-500 mb-3">Orientation</h4>
-                                    
-                                    <!-- Desktop Orientation -->
-                                    <div class="mb-4">
-                                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Desktop</span>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                            <input type="radio" name="orientation_desktop" value="horizontal" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                            <span class="text-sm text-gray-700">Horizontal</span>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                            <input type="radio" name="orientation_desktop" value="vertical" x-model="settings.orientationDesktop" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                            <span class="text-sm text-gray-700">Vertical</span>
-                                        </label>
-                                    </div>
-                                    </div>
 
-                                    <!-- Mobile Orientation -->
-                                    <div>
-                                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Mobile (will be removed)</span>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                            <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                            <span class="text-sm text-gray-700">Horizontal</span>
-                                        </label>
-                                        <label class="flex items-center gap-2 cursor-pointer w-fit">
-                                            <input type="radio" name="orientation_mobile" value="vertical" x-model="settings.orientationMobile" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                            <span class="text-sm text-gray-700">Vertical</span>
-                                        </label>
-                                    </div>
-                                    </div>
-                            </div>
                         </div>
+                        <!-- ── end numeric-only ── -->
 
-                        <div class="border-t border-gray-100" x-show="questionType !== 'health-slider'"></div>
+                        <!-- ══════════════════════════════════════════
+                             QUALITY METER ONLY SECTIONS
+                             ══════════════════════════════════════════ -->
+                        <div x-show="questionType === 'health-slider'">
 
-                        <!-- Description Section -->
-                        <div x-show="questionType !== 'health-slider'">
-                            <div class="flex items-center gap-2 mb-3">
-                                <input type="checkbox" x-model="settings.showDescription" class="rounded text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm text-gray-700 font-medium">Show question description</span>
-                                    <i class="fa-regular fa-circle-question text-black text-lg"></i>
-                                </div>
+                            <!-- I don't know (Quality Meter) -->
+                            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:18px;">
+                                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                    <input type="checkbox" x-model="settings.showDontKnow" style="width:16px;height:16px;accent-color:#0e7490;flex-shrink:0;">
+                                    <span style="font-size:14px;color:#374151;">Show "I don't know" option for the respondent</span>
+                                </label>
+                                <input type="text" x-model="settings.dontKnowLabel" :disabled="!settings.showDontKnow" class="ns-dontknow-input" placeholder="I don't know">
                             </div>
-                            
-                            <div class="pl-7 grid grid-rows-2 gap-2" :class="!settings.showDescription ? 'opacity-50 pointer-events-none' : ''">
-                                    <div class="flex items-center gap-4">
-                                    <span class="text-sm text-gray-400 w-20 text-right">Placement:</span>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="desc-place" value="below" x-model="settings.descPlacement" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-600">Show below question title</span>
-                                    </label>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <span class="w-20"></span>
-                                        <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="desc-place" value="above" x-model="settings.descPlacement" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                        <span class="text-sm text-gray-600">Show above question title</span>
-                                    </label>
-                                    </div>
+
+                            <!-- Orientation (Quality Meter) -->
+                            <span class="ns-section-label">Orientation</span>
+                            <span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Desktop</span>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+                                <label class="ns-orient-pill" :class="settings.orientationDesktop === 'horizontal' ? 'selected' : ''">
+                                    <input type="radio" name="orientation_desktop" value="horizontal" x-model="settings.orientationDesktop">
+                                    <i class="fa-light fa-arrows-left-right" style="font-size:14px;"></i>
+                                    Horizontal
+                                </label>
+                                <label class="ns-orient-pill" :class="settings.orientationDesktop === 'vertical' ? 'selected' : ''">
+                                    <input type="radio" name="orientation_desktop" value="vertical" x-model="settings.orientationDesktop">
+                                    <i class="fa-light fa-arrows-up-down" style="font-size:14px;"></i>
+                                    Vertical
+                                </label>
                             </div>
+                            <span style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:6px;">Mobile (will be removed)</span>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+                                <label class="ns-orient-pill" :class="settings.orientationMobile === 'horizontal' ? 'selected' : ''">
+                                    <input type="radio" name="orientation_mobile" value="horizontal" x-model="settings.orientationMobile">
+                                    <i class="fa-light fa-arrows-left-right" style="font-size:14px;"></i>
+                                    Horizontal
+                                </label>
+                                <label class="ns-orient-pill" :class="settings.orientationMobile === 'vertical' ? 'selected' : ''">
+                                    <input type="radio" name="orientation_mobile" value="vertical" x-model="settings.orientationMobile">
+                                    <i class="fa-light fa-arrows-up-down" style="font-size:14px;"></i>
+                                    Vertical
+                                </label>
+                            </div>
+
                         </div>
+                        <!-- ── end quality-meter-only ── -->
 
-                        <div class="border-t border-gray-100"></div>
+                        <div style="height:1px;background:#f1f5f9;margin-bottom:16px;"></div>
 
-                        <!-- Visibility Section -->
-                        <div class="flex items-center gap-8">
-                            <div class="flex items-center gap-2 text-gray-500">
-                                <i class="fa-light fa-eye-slash text-2xl"></i>
-                                <span class="font-medium text-gray-600">Visibility</span>
-                            </div>
-                            
-                            <div class="flex items-center gap-8">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="visibility" value="visible" x-model="settings.visibility" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Visible</span>
+                        <!-- Visibility (both) -->
+                        <div class="mb-5">
+                            <span class="ns-section-label">Visibility</span>
+                            <div style="display:flex;flex-wrap:wrap;gap:10px;">
+                                <label class="ns-vis-pill" :class="settings.visibility === 'visible' ? 'selected' : ''">
+                                    <input type="radio" name="nss_visibility" value="visible" x-model="settings.visibility">
+                                    <i class="fa-light fa-eye" style="font-size:14px;"></i>
+                                    Visible
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="visibility" value="hidden" x-model="settings.visibility" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                    <span class="text-sm font-medium text-gray-600">Hidden</span>
+                                <label class="ns-vis-pill" :class="settings.visibility === 'hidden' ? 'selected' : ''">
+                                    <input type="radio" name="nss_visibility" value="hidden" x-model="settings.visibility">
+                                    <i class="fa-light fa-eye-slash" style="font-size:14px;"></i>
+                                    Hidden
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="visibility" value="disabled" x-model="settings.visibility" class="text-webropol-primary-600 focus:ring-webropol-primary-500 border-gray-300">
-                                    <span class="text-sm font-medium text-gray-600">Disabled</span>
+                                <label class="ns-vis-pill" :class="settings.visibility === 'disabled' ? 'selected' : ''">
+                                    <input type="radio" name="nss_visibility" value="disabled" x-model="settings.visibility">
+                                    <i class="fa-light fa-ban" style="font-size:14px;"></i>
+                                    Disabled
                                 </label>
                             </div>
                         </div>
 
-                        <div class="border-t border-gray-100 mb-2"></div>
+                        <!-- Save to library (both) -->
+                        <div style="margin-bottom:6px;">
+                            <button class="ns-save-btn">Save question to library</button>
+                        </div>
+                        <a href="#" class="ns-save-link" @click.prevent>Save question to library (as it is for now)</a>
 
-                        <!-- Footer Buttons -->
-                        <div class="flex items-center justify-between pb-2">
-                            <button class="px-5 py-2 rounded-full border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-                                Save question to library
-                            </button>
+                        <!-- Keywords (both) -->
+                        <div style="display:flex;align-items:center;gap:6px;margin-top:14px;color:#0e7490;font-size:14px;font-weight:500;cursor:pointer;" @click.prevent>
+                            <span>Keywords (0)</span>
+                            <i class="fa-solid fa-chevron-right" style="font-size:11px;"></i>
+                            <i class="fa-regular fa-circle-question" style="font-size:16px;color:#111827;"></i>
                         </div>
 
-                        <div class="flex items-center gap-2 text-webropol-primary-700 font-medium text-sm cursor-pointer hover:underline">
-                            Keywords (0) <i class="fa-solid fa-chevron-right text-xs"></i> <i class="fa-regular fa-circle-question ml-1 text-lg"></i>
-                        </div>
-
+                        <div style="height:14px;"></div>
                     </div>
-                </div>
-                
-                <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 text-right flex justify-end gap-2 flex-shrink-0">
-                        <button @click="showSettings = false" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-full font-medium transition-colors">Cancel</button>
-                    <button @click="showSettings = false" class="px-4 py-2 bg-webropol-primary-700 hover:bg-webropol-primary-800 text-white rounded-full font-medium transition-colors">Apply</button>
+
+                    <!-- Footer -->
+                    <div style="padding:16px 24px;border-top:1.5px solid #f1f5f9;display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:#fff;">
+                        <button @click="showSettings = false"
+                                style="padding:9px 24px;border-radius:999px;border:1.5px solid #d1d5db;background:#fff;color:#374151;font-size:14px;font-weight:500;cursor:pointer;transition:background 0.15s,border-color 0.15s;"
+                                onmouseover="this.style.background='#f9fafb'"
+                                onmouseout="this.style.background='#fff'">Cancel</button>
+                        <button @click="showSettings = false"
+                                style="padding:9px 28px;border-radius:999px;border:none;background:#0e7490;color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.15s;"
+                                onmouseover="this.style.background='#0c6781'"
+                                onmouseout="this.style.background='#0e7490'">Apply</button>
+                    </div>
                 </div>
             </div>
         `;
