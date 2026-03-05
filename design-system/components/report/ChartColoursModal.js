@@ -502,8 +502,8 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <!-- Empty state -->
         <div x-show="averageRows.length === 0"
-             class="py-7 text-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
-          <i class="fal fa-paint-brush-alt text-webropol-gray-300 text-2xl mb-2 block"></i>
+             class="py-7 flex flex-col items-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
+          <i class="fal fa-paint-brush-alt text-webropol-gray-300 text-2xl mb-2"></i>
           <p class="text-xs font-medium text-webropol-gray-500">No colour rules yet</p>
           <p class="text-xs text-webropol-gray-400 mt-0.5">Specify min/max thresholds with custom colours</p>
         </div>
@@ -604,8 +604,8 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <!-- Empty state -->
         <div x-show="excludedRows.length === 0"
-             class="py-7 text-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
-          <i class="fal fa-eye-slash text-webropol-gray-300 text-2xl mb-2 block"></i>
+             class="py-7 flex flex-col items-center rounded-xl border-2 border-dashed border-webropol-gray-200 bg-webropol-gray-50">
+          <i class="fal fa-eye-slash text-webropol-gray-300 text-2xl mb-2"></i>
           <p class="text-xs font-medium text-webropol-gray-500">No colour rules yet</p>
           <p class="text-xs text-webropol-gray-400 mt-0.5">Define how excluded columns are visually distinguished</p>
         </div>
