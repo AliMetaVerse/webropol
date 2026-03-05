@@ -280,7 +280,7 @@ export class SurveyHelperToolbar extends BaseComponent {
     const activePage = this.getAttr('active-page', 'edit');
     
     const statusConfig = this.getStatusConfig(this.currentStatus);
-    const menuWidth = activePage === 'edit' ? 'w-80' : 'w-64';
+    const menuWidth = activePage === 'edit' ? 'w-80' : 'w-96';
 
     this.innerHTML = `
       <style>
