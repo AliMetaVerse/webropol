@@ -266,6 +266,22 @@
 <body x-data="surveyEditApp()" 
       @click="if (colorPopupTarget && !$event.target.closest('.color-popup') && !$event.target.closest('.chart-element-clickable')) colorPopupTarget = null; if (toolbarVisible && !$event.target.closest('.chart-container') && !$event.target.closest('.chart-floating-toolbar')) deselectWidget()"
       @action-click.window="if ($event.detail.action === 'group') { compareGroupsOpen = true; console.log('Compare groups modal opened'); }">
+
+  <!-- ── Accessible chart patterns (always in DOM for url(#id) references) ── -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden;pointer-events:none">
+    <defs>
+      <pattern id="hc-pat-0" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11" stroke="white" stroke-width="2.5" fill="none"/></pattern>
+      <pattern id="hc-pat-1" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9" stroke="white" stroke-width="2.5" fill="none"/></pattern>
+      <pattern id="hc-pat-2" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/></pattern>
+      <pattern id="hc-pat-3" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 0 L 5 10 L 10 0" stroke="white" stroke-width="1.5" fill="none"/></pattern>
+      <pattern id="hc-pat-4" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 2.5 0 L 2.5 10 M 7.5 0 L 7.5 10" stroke="white" stroke-width="2" fill="none"/></pattern>
+      <pattern id="hc-pat-5" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/></pattern>
+      <pattern id="hc-pat-6" patternUnits="userSpaceOnUse" width="8" height="8"><rect x="1" y="1" width="3" height="3" fill="white"/><rect x="5" y="5" width="3" height="3" fill="white"/></pattern>
+      <pattern id="hc-pat-7" patternUnits="userSpaceOnUse" width="10" height="10"><circle cx="5" cy="5" r="3.5" stroke="white" stroke-width="1.5" fill="none"/></pattern>
+      <pattern id="hc-pat-8" patternUnits="userSpaceOnUse" width="6" height="6"><circle cx="3" cy="3" r="2" fill="white"/></pattern>
+      <pattern id="hc-pat-9" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7" stroke="white" stroke-width="2" fill="none"/></pattern>
+    </defs>
+  </svg>
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -414,7 +430,13 @@
               <!-- Layout Dropdown -->
               <div class="relative" @click.away="layoutOpen = false">
                 <button @click="layoutOpen = !layoutOpen" class="flex flex-col items-center text-sm hover:text-webropol-primary-700" :class="{ 'text-webropol-primary-700': layoutOpen }">
-                  <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
+                  <span class="relative inline-block mb-1">
+                    <i class="fal fa-palette text-xl"></i>
+                    <span x-show="activePatterns.length > 0" style="display:none"
+                          class="absolute -top-1.5 -right-2.5 bg-purple-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center leading-none px-0.5"
+                          x-text="activePatterns.length"></span>
+                  </span>
+                  <span>Layout</span>
                 </button>
                 <div x-show="layoutOpen"
                      x-transition:enter="transition ease-out duration-100"
@@ -716,7 +738,7 @@
                     <div class="nps-bar" style="border: 1px solid #cbd5e1;">
                       <template x-for="(seg, si) in npsSegments" :key="seg.key">
                         <div class="nps-segment chart-bar-animate chart-element-clickable"
-                             :style="`width: ${seg.percent}%; background-color: ${seg.color}; animation-delay: ${0.1 + si*0.1}s;`"
+                             :style="`width: ${seg.percent}%; background-color: ${getPatternColor(si, seg.color)}; animation-delay: ${0.1 + si*0.1}s${getPatternBg(si)}`"
                              :class="colorPopupTarget === 'nps-' + si ? 'ring-active' : ''"
                              @click.stop="toggleColorPopup('nps-' + si)">
                           <div class="flex flex-col items-center">
@@ -742,8 +764,16 @@
                                 <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
                               </button>
                             </div>
+                            <!-- Pattern active notice -->
+                            <div x-show="activePatterns.length > 0" style="display:none"
+                                 class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
+                              <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                              <span class="text-[10px] font-semibold text-purple-700"
+                                    x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                            </div>
                             <div class="flex items-center gap-2 p-2">
-                              <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                              <div class="flex items-center gap-1 p-1 rounded transition-opacity"
+                                   :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
                                 <template x-if="!accessibilityMode">
                                   <div class="swatch-grid">
                                     <template x-for="c in standardColors" :key="c">
@@ -992,7 +1022,7 @@
                             <div class="flex-1 flex gap-1 mx-4">
                               <template x-for="(pct, bi) in row.bars" :key="bi">
                                 <div class="h-6 chart-bar-animate chart-element-clickable relative"
-                                     :style="`width: ${pct}%; background-color: ${rankColors[bi]}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s;`"
+                                     :style="`width: ${pct}%; background-color: ${getPatternColor(bi, rankColors[bi])}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s${getPatternBg(bi)}`"
                                      :class="colorPopupTarget === 'rank-' + ri + '-' + bi ? 'ring-active' : ''"
                                      @click.stop="toggleColorPopup('rank-' + ri + '-' + bi)">
                                   <!-- Color Popup -->
@@ -1014,8 +1044,16 @@
                                         <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
                                       </button>
                                     </div>
+                                    <!-- Pattern active notice -->
+                                    <div x-show="activePatterns.length > 0" style="display:none"
+                                         class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
+                                      <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                                      <span class="text-[10px] font-semibold text-purple-700"
+                                            x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                    </div>
                                     <div class="flex items-center gap-2 p-2">
-                                      <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                      <div class="flex items-center gap-1 p-1 rounded transition-opacity"
+                                           :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
                                         <template x-if="!accessibilityMode">
                                           <div class="swatch-grid">
                                             <template x-for="c in standardColors" :key="c">
@@ -1221,7 +1259,7 @@
                       <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
                         <template x-for="(bar, index) in barChartData" :key="'bar-'+index">
                           <div class="w-16 sm:w-24 rounded-t-lg chart-element-clickable relative"
-                               :style="`height: ${bar.percent}%; background-color: ${bar.color}`"
+                               :style="`height: ${bar.percent}%; background-color: ${getPatternColor(index, bar.color)}${getPatternBg(index)}`"
                                :class="colorPopupTarget === 'barchart-' + index ? 'ring-active' : ''"
                                @click.stop="toggleColorPopup('barchart-' + index)">
                             <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700 text-sm" x-text="bar.percent + '%'"></div>
@@ -1244,8 +1282,16 @@
                                   <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
                                 </button>
                               </div>
+                              <!-- Pattern active notice -->
+                              <div x-show="activePatterns.length > 0" style="display:none"
+                                   class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
+                                <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                                <span class="text-[10px] font-semibold text-purple-700"
+                                      x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                              </div>
                               <div class="flex items-center gap-2 p-2">
-                                <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                <div class="flex items-center gap-1 p-1 rounded transition-opacity"
+                                     :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
                                   <template x-if="!accessibilityMode">
                                     <div class="swatch-grid">
                                       <template x-for="c in standardColors" :key="c">
@@ -1381,13 +1427,13 @@
                           <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
                             <template x-for="(seg, si) in row.segments" :key="si">
                               <div class="chart-element-clickable relative"
-                                   :style="`width: ${seg.pct}%; background-color: ${seg.color}`"
+                                   :style="`width: ${seg.pct}%; background-color: ${getPatternColor(si, seg.color)}${getPatternBg(si)}`"
                                    :class="[
                                      si === row.segments.length - 1 ? 'flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner' : '',
                                      colorPopupTarget === 'matrix-' + ri + '-' + si ? 'ring-active' : ''
                                    ]"
-                                   @click.stop="toggleColorPopup('matrix-' + ri + '-' + si)"
-                                   x-text="si === row.segments.length - 1 ? row.score : ''">
+                                   @click.stop="toggleColorPopup('matrix-' + ri + '-' + si)">
+                                <span x-text="si === row.segments.length - 1 ? row.score : ''"></span>
                               </div>
                             </template>
                           </div>
@@ -1411,8 +1457,16 @@
                                     <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
                                   </button>
                                 </div>
+                                <!-- Pattern active notice -->
+                                <div x-show="activePatterns.length > 0" style="display:none"
+                                     class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
+                                  <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                                  <span class="text-[10px] font-semibold text-purple-700"
+                                        x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                </div>
                                 <div class="flex items-center gap-2 p-2">
-                                  <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                  <div class="flex items-center gap-1 p-1 rounded transition-opacity"
+                                       :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
                                     <template x-if="!accessibilityMode">
                                       <div class="swatch-grid">
                                         <template x-for="c in standardColors" :key="c">
@@ -1499,7 +1553,7 @@
                             <div class="w-1/4 text-sm font-semibold text-webropol-gray-700" x-text="bar.label"></div>
                             <div class="flex-1 relative h-full">
                               <div class="absolute top-2 bottom-2 rounded-md shadow-sm opacity-80 flex items-center px-2 chart-element-clickable"
-                                   :style="`left: ${bar.left}%; width: ${bar.width}%; background-color: ${bar.color}`"
+                                   :style="`left: ${bar.left}%; width: ${bar.width}%; background-color: ${getPatternColor(gi, bar.color)}${getPatternBg(gi)}`"
                                    :class="colorPopupTarget === 'gantt-' + gi ? 'ring-active opacity-100' : ''"
                                    @click.stop="toggleColorPopup('gantt-' + gi)">
                                 <span class="text-xs text-white font-medium truncate" x-text="bar.duration"></span>
@@ -1523,8 +1577,16 @@
                                       <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
                                     </button>
                                   </div>
+                                  <!-- Pattern active notice -->
+                                  <div x-show="activePatterns.length > 0" style="display:none"
+                                       class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
+                                    <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                                    <span class="text-[10px] font-semibold text-purple-700"
+                                          x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                  </div>
                                   <div class="flex items-center gap-1 p-2">
-                                    <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                    <div class="flex items-center gap-1 p-1 rounded transition-opacity"
+                                         :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
                                       <template x-if="!accessibilityMode">
                                         <div class="swatch-grid">
                                           <template x-for="c in standardColors" :key="c">
@@ -4149,6 +4211,14 @@
         // ── Color popup state ─────────────────────────────────
         colorPopupTarget: null,  // e.g. 'nps-0', 'rank-1-2'
         accessibilityMode: false,
+        activePatterns: [],      // pattern IDs from ChartColoursModal
+        // Colours assigned to each pattern in ChartColoursModal (mirrors accessiblePatterns)
+        patternColorMap: {
+          'hc-pat-0': '#1a5276', 'hc-pat-1': '#e55e1e', 'hc-pat-2': '#27ae60',
+          'hc-pat-3': '#d4ac0d', 'hc-pat-4': '#1abc9c', 'hc-pat-5': '#c0392b',
+          'hc-pat-6': '#7f8c9a', 'hc-pat-7': '#2e4ba0', 'hc-pat-8': '#1a7d60',
+          'hc-pat-9': '#e91e8c'
+        },
 
         // Generic 12-colour palette from "Colours for chart, mean & index" modal
         standardColors: [
@@ -4287,6 +4357,41 @@
           return ![...this.standardColors, ...this.accessibleColors].includes(color);
         },
 
+        // Returns the pattern ID for a given bar index (cycles through active patterns)
+        getBarPattern(index) {
+          if (!this.activePatterns || this.activePatterns.length === 0) return null;
+          return this.activePatterns[index % this.activePatterns.length];
+        },
+
+        // Returns CSS background-image string for the active pattern at `index`.
+        // Pure CSS gradients — no SVG overlay needed.
+        getPatternBg(index) {
+          if (!this.activePatterns || this.activePatterns.length === 0) return '';
+          const patId = this.activePatterns[index % this.activePatterns.length];
+          const map = {
+            'hc-pat-0': 'background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.55) 3px,rgba(255,255,255,.55) 5.5px)',
+            'hc-pat-1': 'background-image:repeating-linear-gradient(-45deg,transparent,transparent 3px,rgba(255,255,255,.55) 3px,rgba(255,255,255,.55) 5.5px)',
+            'hc-pat-2': 'background-image:repeating-linear-gradient(180deg,transparent,transparent 3.5px,rgba(255,255,255,.5) 3.5px,rgba(255,255,255,.5) 5.5px)',
+            'hc-pat-3': 'background-image:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,.45) 2px,rgba(255,255,255,.45) 3.5px),repeating-linear-gradient(-45deg,transparent,transparent 2px,rgba(255,255,255,.45) 2px,rgba(255,255,255,.45) 3.5px)',
+            'hc-pat-4': 'background-image:repeating-linear-gradient(90deg,transparent,transparent 3.5px,rgba(255,255,255,.5) 3.5px,rgba(255,255,255,.5) 5.5px)',
+            'hc-pat-5': 'background-image:repeating-linear-gradient(180deg,transparent,transparent 4px,rgba(255,255,255,.45) 4px,rgba(255,255,255,.45) 6px)',
+            'hc-pat-6': 'background-image:repeating-conic-gradient(rgba(255,255,255,.4) 0% 25%,transparent 0% 50%);background-size:8px 8px',
+            'hc-pat-7': 'background-image:radial-gradient(circle,transparent 3px,rgba(255,255,255,.45) 3px,rgba(255,255,255,.45) 4.5px,transparent 4.5px);background-size:10px 10px',
+            'hc-pat-8': 'background-image:radial-gradient(circle,rgba(255,255,255,.6) 2px,transparent 2.5px);background-size:6px 6px',
+            'hc-pat-9': 'background-image:linear-gradient(rgba(255,255,255,.45) 2px,transparent 2px),linear-gradient(90deg,rgba(255,255,255,.45) 2px,transparent 2px);background-size:10px 10px'
+          };
+          return map[patId] ? '; ' + map[patId] : '';
+        },
+
+        // When patterns are active, returns the pattern's own defined colour
+        // (completely overriding the bar's individual colour). Falls back to
+        // defaultColor when no patterns are selected.
+        getPatternColor(index, defaultColor) {
+          if (!this.activePatterns || this.activePatterns.length === 0) return defaultColor;
+          const patId = this.activePatterns[index % this.activePatterns.length];
+          return this.patternColorMap[patId] || defaultColor;
+        },
+
         filterByElement(chartType, index) {
           if (chartType === 'nps') {
             alert(`Filtering by: ${this.npsSegments[index].label}`);
@@ -4364,11 +4469,18 @@
 
           // Sync with "Colours for chart, mean & index" modal
           window.addEventListener('webropol:chart-colours-closed', (e) => {
-            if (e.detail && e.detail.barColours) {
-              this.standardColors = [...e.detail.barColours];
-              // Re-apply the updated palette to all charts
-              if (!this.accessibilityMode) {
-                this.applyPaletteToAllCharts();
+            if (e.detail) {
+              // Set patterns FIRST so the subsequent applyPaletteToAllCharts()
+              // render already sees the correct activePatterns state
+              if (e.detail.activePatterns !== undefined) {
+                this.activePatterns = e.detail.activePatterns;
+              }
+              if (e.detail.barColours) {
+                this.standardColors = [...e.detail.barColours];
+                // Re-apply the updated palette to all charts
+                if (!this.accessibilityMode) {
+                  this.applyPaletteToAllCharts();
+                }
               }
             }
           });
