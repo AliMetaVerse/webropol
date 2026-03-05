@@ -27,9 +27,9 @@ function _registerColoursModal() {
   Alpine.data('coloursModal', () => {
 
     const DEFAULT_BAR_COLOURS = [
-      '#1a5276', '#e55e1e', '#27ae60', '#d4ac0d',
-      '#1abc9c', '#7f8c9a', '#c0392b', '#2e4ba0',
-      '#e91e8c', '#1a7d60', '#7d5a3c', '#95a5a6'
+      '#4361EE', '#F72585', '#4CC9F0', '#7209B7',
+      '#3A0CA3', '#F77F00', '#06D6A0', '#EF476F',
+      '#118AB2', '#FFD166', '#073B4C', '#8338EC'
     ];
 
     return {
@@ -87,16 +87,16 @@ function _registerColoursModal() {
 
       // ── Accessible patterns (Highcharts default-pattern-0 … -9) ──────────
       accessiblePatterns: [
-        { patternId: 'hc-pat-0', label: 'Diagonal /',    colour: '#1a5276', active: false },
-        { patternId: 'hc-pat-1', label: 'Diagonal \\',   colour: '#e55e1e', active: false },
-        { patternId: 'hc-pat-2', label: 'Horizontal',    colour: '#27ae60', active: false },
-        { patternId: 'hc-pat-3', label: 'Zigzag',        colour: '#d4ac0d', active: false },
-        { patternId: 'hc-pat-4', label: 'Vert. bars',    colour: '#1abc9c', active: false },
-        { patternId: 'hc-pat-5', label: 'Horiz. bars',   colour: '#c0392b', active: false },
-        { patternId: 'hc-pat-6', label: 'Squares',       colour: '#7f8c9a', active: false },
-        { patternId: 'hc-pat-7', label: 'Circles',       colour: '#2e4ba0', active: false },
-        { patternId: 'hc-pat-8', label: 'Filled dots',   colour: '#1a7d60', active: false },
-        { patternId: 'hc-pat-9', label: 'Steps',         colour: '#e91e8c', active: false }
+        { patternId: 'hc-pat-0', label: 'Diagonal /',    colour: '#4361EE', active: false },
+        { patternId: 'hc-pat-1', label: 'Diagonal \\',   colour: '#F72585', active: false },
+        { patternId: 'hc-pat-2', label: 'Horizontal',    colour: '#4CC9F0', active: false },
+        { patternId: 'hc-pat-3', label: 'Zigzag',        colour: '#7209B7', active: false },
+        { patternId: 'hc-pat-4', label: 'Vert. bars',    colour: '#3A0CA3', active: false },
+        { patternId: 'hc-pat-5', label: 'Horiz. bars',   colour: '#F77F00', active: false },
+        { patternId: 'hc-pat-6', label: 'Squares',       colour: '#06D6A0', active: false },
+        { patternId: 'hc-pat-7', label: 'Circles',       colour: '#EF476F', active: false },
+        { patternId: 'hc-pat-8', label: 'Filled dots',   colour: '#118AB2', active: false },
+        { patternId: 'hc-pat-9', label: 'Steps',         colour: '#FFD166', active: false }
       ],
 
       // ── Lifecycle ─────────────────────────────────────────────────────────
