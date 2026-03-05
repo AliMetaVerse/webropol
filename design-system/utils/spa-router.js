@@ -691,7 +691,7 @@ class WebropolSPA {
       const candidates = new Set();
       const pushAll = (list) => list.forEach((el) => candidates.add(el));
       pushAll(Array.from(body.querySelectorAll('.modal-overlay')));
-      pushAll(Array.from(body.querySelectorAll('webropol-modal, webropol-settings-modal')));
+      pushAll(Array.from(body.querySelectorAll('webropol-modal, webropol-settings-modal, webropol-chart-colours-modal')));
       pushAll(Array.from(body.querySelectorAll('[role="dialog"]')));
       // Common fixed full-screen overlays
       pushAll(Array.from(body.querySelectorAll('div.fixed.inset-0')));
