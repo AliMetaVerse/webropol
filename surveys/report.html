@@ -206,6 +206,41 @@
       box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
       border-color: #06b6d4 !important;
     }
+
+    /* ── Color Popup (from reporting-setting) ── */
+    .color-popup {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.08);
+      z-index: 60;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      min-width: 220px;
+    }
+    .color-popup::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: white;
+    }
+    .chart-element-clickable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .chart-element-clickable:hover {
+      opacity: 0.85;
+    }
+    .chart-element-clickable.ring-active {
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.5);
+    }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -222,7 +257,7 @@
     <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
 <body x-data="surveyEditApp()" 
-      @click="if (toolbarVisible && !$event.target.closest('.chart-container') && !$event.target.closest('.chart-floating-toolbar')) deselectWidget()"
+      @click="if (colorPopupTarget && !$event.target.closest('.color-popup') && !$event.target.closest('.chart-element-clickable')) colorPopupTarget = null; if (toolbarVisible && !$event.target.closest('.chart-container') && !$event.target.closest('.chart-floating-toolbar')) deselectWidget()"
       @action-click.window="if ($event.detail.action === 'group') { compareGroupsOpen = true; console.log('Compare groups modal opened'); }">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
@@ -630,24 +665,76 @@
                          :class="{ 'selected': selectedWidget === 'nps-chart-1' }"
                          @click="selectWidget('nps-chart-1')">
                     <div class="nps-bar" style="border: 1px solid #cbd5e1;">
-                      <div class="nps-segment nps-detractors chart-bar-animate" style="width: 40%; animation-delay: 0.1s;">
-                        <div class="flex flex-col items-center">
-                          <span class="text-lg font-semibold">40%</span>
-                          <span class="text-xs">n = 2</span>
+                      <template x-for="(seg, si) in npsSegments" :key="seg.key">
+                        <div class="nps-segment chart-bar-animate chart-element-clickable"
+                             :style="`width: ${seg.percent}%; background-color: ${seg.color}; animation-delay: ${0.1 + si*0.1}s;`"
+                             :class="colorPopupTarget === 'nps-' + si ? 'ring-active' : ''"
+                             @click.stop="toggleColorPopup('nps-' + si)">
+                          <div class="flex flex-col items-center">
+                            <span class="text-lg font-semibold" x-text="seg.percent + '%'"></span>
+                            <span class="text-xs" x-text="'n = ' + seg.count"></span>
+                          </div>
+                          <!-- Color Popup -->
+                          <div class="color-popup" x-cloak
+                               x-show="colorPopupTarget === 'nps-' + si"
+                               x-transition:enter="transition ease-out duration-200"
+                               x-transition:enter-start="opacity-0 translate-y-2"
+                               x-transition:enter-end="opacity-100 translate-y-0"
+                               @click.stop>
+                            <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
+                                 :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                              <span class="text-[10px] font-bold uppercase tracking-wide"
+                                    :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
+                                    x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
+                              <button @click.stop="toggleAccessibility()"
+                                      class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
+                                      :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
+                                <i class="fal fa-universal-access"></i>
+                                <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
+                              </button>
+                            </div>
+                            <div class="flex items-center gap-2 p-2">
+                              <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                <template x-if="!accessibilityMode">
+                                  <div class="flex items-center gap-1">
+                                    <template x-for="c in standardColors" :key="c">
+                                      <button @click.stop="changeNpsColor(si, c)"
+                                              class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                              :style="`background-color: ${c}`"
+                                              :class="seg.color === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                    </template>
+                                  </div>
+                                </template>
+                                <template x-if="accessibilityMode">
+                                  <div class="flex items-center gap-1">
+                                    <template x-for="c in accessibleColors" :key="c">
+                                      <button @click.stop="changeNpsColor(si, c)"
+                                              class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                              :style="`background-color: ${c}`"
+                                              :class="seg.color === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
+                                    </template>
+                                  </div>
+                                </template>
+                                <label @click.stop
+                                       class="w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
+                                       :class="isCustomColor(seg.color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
+                                       :style="isCustomColor(seg.color) ? `background-color: ${seg.color}` : ''">
+                                  <input type="color" class="sr-only" :value="seg.color"
+                                         @input.stop="changeNpsColor(si, $event.target.value)"
+                                         @change.stop="changeNpsColor(si, $event.target.value)">
+                                  <i class="fal fa-palette text-[10px] pointer-events-none"
+                                     :class="isCustomColor(seg.color) ? 'text-white' : ''"></i>
+                                </label>
+                              </div>
+                              <div class="h-6 w-px bg-gray-200"></div>
+                              <button @click.stop="filterByElement('nps', si)"
+                                      class="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-50 text-gray-600 hover:text-blue-600 transition-colors text-xs font-medium whitespace-nowrap">
+                                <i class="fal fa-filter"></i> Filter
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div class="nps-segment nps-passive chart-bar-animate" style="width: 20%; animation-delay: 0.2s;">
-                        <div class="flex flex-col items-center">
-                          <span class="text-lg font-semibold">20%</span>
-                          <span class="text-xs">n = 1</span>
-                        </div>
-                      </div>
-                      <div class="nps-segment nps-promoters chart-bar-animate" style="width: 40%; animation-delay: 0.3s;">
-                        <div class="flex flex-col items-center">
-                          <span class="text-lg font-semibold">40%</span>
-                          <span class="text-xs">n = 2</span>
-                        </div>
-                      </div>
+                      </template>
                     </div>
                     
                     <!-- NPS Label -->
@@ -657,18 +744,12 @@
 
                     <!-- Legend -->
                     <div class="flex items-center justify-center gap-6 mt-4">
-                      <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full" style="background: #ef4444;"></div>
-                        <span class="text-sm text-webropol-gray-700">Detractors</span>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full" style="background: #f59e0b;"></div>
-                        <span class="text-sm text-webropol-gray-700">Passive</span>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full" style="background: #10b981;"></div>
-                        <span class="text-sm text-webropol-gray-700">Promoters</span>
-                      </div>
+                      <template x-for="seg in npsSegments" :key="seg.key + '-legend'">
+                        <div class="flex items-center gap-2">
+                          <div class="w-3 h-3 rounded-full" :style="`background-color: ${seg.color}`"></div>
+                          <span class="text-sm text-webropol-gray-700" x-text="seg.label"></span>
+                        </div>
+                      </template>
                     </div>
 
                     <!-- NPS Score -->
@@ -856,63 +937,93 @@
 
                       <!-- Rank Chart Visualization -->
                       <div class="mb-6">
-                        <div class="flex items-center mb-4 pb-2 border-b border-webropol-gray-300 chart-row-animate">
-                          <div class="w-12 text-left text-sm font-medium text-webropol-gray-700">A</div>
-                          <div class="flex-1 flex gap-1 mx-4">
-                            <div class="h-6 bg-teal-700 chart-bar-animate" style="width: 25%; animation-delay: 0.15s;"></div>
-                            <div class="h-6 bg-orange-500 chart-bar-animate" style="width: 20%; animation-delay: 0.2s;"></div>
-                            <div class="h-6 bg-green-500 chart-bar-animate" style="width: 30%; animation-delay: 0.25s;"></div>
-                            <div class="h-6 bg-yellow-600 chart-bar-animate" style="width: 15%; animation-delay: 0.3s;"></div>
-                            <div class="h-6 bg-purple-500 chart-bar-animate" style="width: 10%; animation-delay: 0.35s;"></div>
+                        <template x-for="(row, ri) in rankData" :key="row.label">
+                          <div class="flex items-center mb-4 pb-2 border-b border-webropol-gray-300 chart-row-animate">
+                            <div class="w-12 text-left text-sm font-medium text-webropol-gray-700" x-text="row.label"></div>
+                            <div class="flex-1 flex gap-1 mx-4">
+                              <template x-for="(pct, bi) in row.bars" :key="bi">
+                                <div class="h-6 chart-bar-animate chart-element-clickable relative"
+                                     :style="`width: ${pct}%; background-color: ${rankColors[bi]}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s;`"
+                                     :class="colorPopupTarget === 'rank-' + ri + '-' + bi ? 'ring-active' : ''"
+                                     @click.stop="toggleColorPopup('rank-' + ri + '-' + bi)">
+                                  <!-- Color Popup -->
+                                  <div class="color-popup" x-cloak
+                                       x-show="colorPopupTarget === 'rank-' + ri + '-' + bi"
+                                       x-transition:enter="transition ease-out duration-200"
+                                       x-transition:enter-start="opacity-0 translate-y-2"
+                                       x-transition:enter-end="opacity-100 translate-y-0"
+                                       @click.stop>
+                                    <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
+                                         :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                                      <span class="text-[10px] font-bold uppercase tracking-wide"
+                                            :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
+                                            x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
+                                      <button @click.stop="toggleAccessibility()"
+                                              class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
+                                              :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
+                                        <i class="fal fa-universal-access"></i>
+                                        <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
+                                      </button>
+                                    </div>
+                                    <div class="flex items-center gap-2 p-2">
+                                      <div class="flex items-center gap-1 p-1 rounded" :class="accessibilityMode ? 'bg-amber-50' : 'bg-gray-50'">
+                                        <template x-if="!accessibilityMode">
+                                          <div class="flex items-center gap-1">
+                                            <template x-for="c in standardColors" :key="c">
+                                              <button @click.stop="changeRankColor(bi, c)"
+                                                      class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                      :style="`background-color: ${c}`"
+                                                      :class="rankColors[bi] === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
+                                            </template>
+                                          </div>
+                                        </template>
+                                        <template x-if="accessibilityMode">
+                                          <div class="flex items-center gap-1">
+                                            <template x-for="c in accessibleColors" :key="c">
+                                              <button @click.stop="changeRankColor(bi, c)"
+                                                      class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                      :style="`background-color: ${c}`"
+                                                      :class="rankColors[bi] === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
+                                            </template>
+                                          </div>
+                                        </template>
+                                        <label @click.stop
+                                               class="w-6 h-6 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
+                                               :class="isCustomColor(rankColors[bi]) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
+                                               :style="isCustomColor(rankColors[bi]) ? `background-color: ${rankColors[bi]}` : ''">
+                                          <input type="color" class="sr-only" :value="rankColors[bi]"
+                                                 @input.stop="changeRankColor(bi, $event.target.value)"
+                                                 @change.stop="changeRankColor(bi, $event.target.value)">
+                                          <i class="fal fa-palette text-[10px] pointer-events-none"
+                                             :class="isCustomColor(rankColors[bi]) ? 'text-white' : ''"></i>
+                                        </label>
+                                      </div>
+                                      <div class="h-6 w-px bg-gray-200"></div>
+                                      <button @click.stop="filterByElement('rank', bi)"
+                                              class="flex items-center gap-2 px-3 py-1 rounded hover:bg-gray-50 text-gray-600 hover:text-blue-600 transition-colors text-xs font-medium whitespace-nowrap">
+                                        <i class="fal fa-filter"></i> Filter
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </template>
+                            </div>
+                            <div class="text-right text-sm font-semibold text-webropol-gray-800 min-w-[100px]">
+                              <template x-if="ri === 0">Average score<br/></template>
+                              <span class="text-lg" x-text="row.avg"></span>
+                            </div>
                           </div>
-                          <div class="text-right text-sm font-semibold text-webropol-gray-800 min-w-[100px]">Average score<br/><span class="text-lg">2.8</span></div>
-                        </div>
-                        <div class="flex items-center mb-4 pb-2 border-b border-webropol-gray-300 chart-row-animate">
-                          <div class="w-12 text-left text-sm font-medium text-webropol-gray-700">B</div>
-                          <div class="flex-1 flex gap-1 mx-4">
-                            <div class="h-6 bg-teal-700 chart-bar-animate" style="width: 15%; animation-delay: 0.25s;"></div>
-                            <div class="h-6 bg-orange-500 chart-bar-animate" style="width: 25%; animation-delay: 0.3s;"></div>
-                            <div class="h-6 bg-green-500 chart-bar-animate" style="width: 20%; animation-delay: 0.35s;"></div>
-                            <div class="h-6 bg-yellow-600 chart-bar-animate" style="width: 25%; animation-delay: 0.4s;"></div>
-                            <div class="h-6 bg-purple-500 chart-bar-animate" style="width: 15%; animation-delay: 0.45s;"></div>
-                          </div>
-                          <div class="text-right text-sm font-semibold text-webropol-gray-800 min-w-[100px]"><span class="text-lg">3.2</span></div>
-                        </div>
-                        <div class="flex items-center mb-4 pb-2 border-b border-webropol-gray-300 chart-row-animate">
-                          <div class="w-12 text-left text-sm font-medium text-webropol-gray-700">C</div>
-                          <div class="flex-1 flex gap-1 mx-4">
-                            <div class="h-6 bg-teal-700 chart-bar-animate" style="width: 30%; animation-delay: 0.35s;"></div>
-                            <div class="h-6 bg-orange-500 chart-bar-animate" style="width: 15%; animation-delay: 0.4s;"></div>
-                            <div class="h-6 bg-green-500 chart-bar-animate" style="width: 25%; animation-delay: 0.45s;"></div>
-                            <div class="h-6 bg-yellow-600 chart-bar-animate" style="width: 20%; animation-delay: 0.5s;"></div>
-                            <div class="h-6 bg-purple-500 chart-bar-animate" style="width: 10%; animation-delay: 0.55s;"></div>
-                          </div>
-                          <div class="text-right text-sm font-semibold text-webropol-gray-800 min-w-[100px]"><span class="text-lg">2.5</span></div>
-                        </div>
+                        </template>
                       </div>
 
                       <!-- Legend -->
                       <div class="flex items-center justify-center gap-6 mb-6 flex-wrap">
-                        <div class="flex items-center gap-2">
-                          <div class="w-3 h-3 rounded-full bg-teal-700"></div>
-                          <span class="text-xs text-webropol-gray-700">1</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-                          <span class="text-xs text-webropol-gray-700">2</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                          <span class="text-xs text-webropol-gray-700">3</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <div class="w-3 h-3 rounded-full bg-yellow-600"></div>
-                          <span class="text-xs text-webropol-gray-700">4</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
-                          <span class="text-xs text-webropol-gray-700">5</span>
-                        </div>
+                        <template x-for="(clr, li) in rankColors" :key="'rank-legend-' + li">
+                          <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full" :style="`background-color: ${clr}`"></div>
+                            <span class="text-xs text-webropol-gray-700" x-text="li + 1"></span>
+                          </div>
+                        </template>
                       </div>
                     </div>
                   </div>
@@ -3582,6 +3693,27 @@
         selectedWidget: null,
         toolbarVisible: false,
         chartView: 'chart', // 'chart' or 'table'
+
+        // ── Color popup state ─────────────────────────────────
+        colorPopupTarget: null,  // e.g. 'nps-0', 'rank-1-2'
+        accessibilityMode: false,
+        standardColors:   ['#f87171', '#facc15', '#22c55e', '#3b82f6'],
+        accessibleColors: ['#0072B2', '#E69F00', '#009E73', '#D55E00'],
+
+        // ── NPS chart reactive data ───────────────────────────
+        npsSegments: [
+          { key: 'detractors', label: 'Detractors', percent: 40, count: 2, color: '#ef4444' },
+          { key: 'passive',    label: 'Passive',    percent: 20, count: 1, color: '#f59e0b' },
+          { key: 'promoters',  label: 'Promoters',  percent: 40, count: 2, color: '#10b981' }
+        ],
+
+        // ── Rank chart reactive data ──────────────────────────
+        rankColors: ['#0f766e', '#f97316', '#22c55e', '#ca8a04', '#a855f7'],
+        rankData: [
+          { label: 'A', bars: [25, 20, 30, 15, 10], avg: 2.8 },
+          { label: 'B', bars: [15, 25, 20, 25, 15], avg: 3.2 },
+          { label: 'C', bars: [30, 15, 25, 20, 10], avg: 2.5 }
+        ],
         
         selectWidget(widgetId) {
           console.log('selectWidget called with:', widgetId);
@@ -3590,6 +3722,7 @@
           } else {
             this.selectedWidget = widgetId;
             this.toolbarVisible = true;
+            this.colorPopupTarget = null; // close any color popup on widget switch
             console.log('Widget selected, toolbar visible:', this.toolbarVisible);
           }
         },
@@ -3598,6 +3731,46 @@
           console.log('deselectWidget called');
           this.selectedWidget = null;
           this.toolbarVisible = false;
+          this.colorPopupTarget = null;
+        },
+
+        // ── Color popup methods ───────────────────────────────
+        toggleColorPopup(target) {
+          this.colorPopupTarget = this.colorPopupTarget === target ? null : target;
+        },
+
+        changeNpsColor(index, color) {
+          this.npsSegments[index].color = color;
+          this.markAsEdited();
+        },
+
+        changeRankColor(index, color) {
+          this.rankColors[index] = color;
+          // Force Alpine reactivity by replacing the array
+          this.rankColors = [...this.rankColors];
+          this.markAsEdited();
+        },
+
+        toggleAccessibility() {
+          this.accessibilityMode = !this.accessibilityMode;
+          const palette = this.accessibilityMode ? this.accessibleColors : this.standardColors;
+          // Update NPS colors
+          this.npsSegments.forEach((seg, i) => { seg.color = palette[i % palette.length]; });
+          // Update rank colors
+          this.rankColors = this.rankColors.map((_, i) => palette[i % palette.length]);
+          this.markAsEdited();
+        },
+
+        isCustomColor(color) {
+          return ![...this.standardColors, ...this.accessibleColors].includes(color);
+        },
+
+        filterByElement(chartType, index) {
+          if (chartType === 'nps') {
+            alert(`Filtering by: ${this.npsSegments[index].label}`);
+          } else if (chartType === 'rank') {
+            alert(`Filtering by rank position: ${index + 1}`);
+          }
         },
         
         expandChart(widgetId) {
