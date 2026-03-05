@@ -3,447 +3,576 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Webropol Button Variants - Design System Demo</title>
+  <title>Button Component — Webropol Design System</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Pro -->
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Config with Webropol tokens -->
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
-            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-            'webropol-royalViolet': {
-              50: '#f5f3ff',
-              100: '#ede9fe',
-              200: '#ddd6fe',
-              300: '#c4b5fd',
-              400: '#a78bfa',
-              500: '#8b5cf6',
-              600: '#6d28d9',
-              700: '#5b21b6',
-              800: '#4c1d95',
-              900: '#321065'
-            },
-            'webropol-royalBlue': {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              200: '#c7d2fe',
-              300: '#a5b4fc',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              800: '#3730a3',
-              900: '#312e81'
-            },
-            'webropol-royalTurquoise': {
-              50: '#f0fdfa',
-              100: '#ccfbf1',
-              200: '#99f6e4',
-              300: '#5eead4',
-              400: '#2dd4bf',
-              500: '#14b8a6',
-              600: '#0d9488',
-              700: '#0f766e',
-              800: '#115e59',
-              900: '#134e4a'
-            }
+            'webropol-primary':       { 50:'#f0fdff', 100:'#ccfbff', 200:'#99f3fe', 300:'#5ce5fb', 400:'#25cef0', 500:'#06b6d4', 600:'#0891b2', 700:'#0e7490', 800:'#155e75', 900:'#164e63' },
+            'webropol-gray':          { 50:'#f8fafc', 100:'#f1f5f9', 200:'#e2e8f0', 300:'#cbd5e1', 400:'#94a3b8', 500:'#64748b', 600:'#475569', 700:'#334155', 800:'#1e293b', 900:'#0f172a' },
+            'webropol-royalViolet':   { 200:'#ddd6fe', 500:'#8b5cf6', 600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6' },
+            'webropol-royalBlue':     { 200:'#bfdbfe', 500:'#3b82f6', 600:'#2563eb', 700:'#1d4ed8', 800:'#1e40af' },
+            'webropol-royalTurquoise':{ 200:'#99f6e4', 500:'#14b8a6', 600:'#0d9488', 700:'#0f766e', 800:'#115e59' },
+            'webropol-green':         { 100:'#dcfce7', 700:'#15803d' }
           },
-          fontFamily: {
-            'sans': ['Inter', 'system-ui', 'sans-serif']
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'card':   '0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04)',
+            'medium': '0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -1px rgba(0,0,0,.05)',
+            'soft':   '0 2px 8px rgba(0,0,0,.04)'
           }
         }
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Button component -->
   <script src="../components/buttons/Button.js" type="module"></script>
+
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Section card */
+    .demo-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+    /* Row of buttons */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Code snippet chip */
+    .code-chip {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 11px;
+      font-family: 'Fira Code', 'Cascadia Code', monospace;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 4px;
+      line-height: 1.8;
+    }
+
+    /* Label under each button */
+    .btn-demo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-demo-item .chip-label {
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* Section divider */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    /* Property table */
+    .prop-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .prop-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 600;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .prop-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+      vertical-align: top;
+    }
+    .prop-table tr:last-child td { border-bottom: none; }
+    .prop-table td code {
+      background: #f1f5f9;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #0e7490;
+      font-family: monospace;
+    }
+    .prop-table td .dim { color: #94a3b8; font-style: italic; }
+
+    /* Gradient background for royal section */
+    .royal-bg {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      border-color: transparent;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-webropol-gray-50 to-webropol-primary-50 min-h-screen py-12 px-6">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="text-center mb-16">
-      <h1 class="text-5xl font-bold text-webropol-gray-900 mb-4">Webropol Button System</h1>
-      <p class="text-xl text-webropol-gray-600">Complete button variants with royal gradient styles</p>
+<body class="bg-webropol-gray-50 min-h-screen" x-data="{ loadingDemo: false }">
+
+  <!-- ─── Top nav bar ─────────────────────────────────────────── -->
+  <header class="sticky top-0 z-30 bg-white border-b border-webropol-gray-200 shadow-soft">
+    <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
+          <i class="fal fa-arrow-left text-sm"></i>
+        </a>
+        <span class="text-webropol-gray-300 text-sm">|</span>
+        <span class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-widest">Design System</span>
+        <i class="fal fa-chevron-right text-webropol-gray-300 text-xs"></i>
+        <span class="text-sm font-semibold text-webropol-gray-800">Button</span>
+      </div>
+      <span class="text-xs text-webropol-gray-400 font-mono bg-webropol-gray-100 px-2 py-1 rounded-md">webropol-button</span>
     </div>
+  </header>
 
-    <!-- Standard Variants -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mb-8">
-      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Standard Variants</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Primary -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Primary</h3>
-          <webropol-button variant="primary" size="sm">Small Primary</webropol-button>
-          <webropol-button variant="primary" size="md">Medium Primary</webropol-button>
-          <webropol-button variant="primary" size="lg">Large Primary</webropol-button>
-          <webropol-button variant="primary" size="md" icon="check">With Icon</webropol-button>
-          <webropol-button variant="primary" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Secondary -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Secondary</h3>
-          <webropol-button variant="secondary" size="sm">Small Secondary</webropol-button>
-          <webropol-button variant="secondary" size="md">Medium Secondary</webropol-button>
-          <webropol-button variant="secondary" size="lg">Large Secondary</webropol-button>
-          <webropol-button variant="secondary" size="md" icon="download">Download</webropol-button>
-          <webropol-button variant="secondary" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Tertiary -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Tertiary</h3>
-          <webropol-button variant="tertiary" size="sm">Small Tertiary</webropol-button>
-          <webropol-button variant="tertiary" size="md">Medium Tertiary</webropol-button>
-          <webropol-button variant="tertiary" size="lg">Large Tertiary</webropol-button>
-          <webropol-button variant="tertiary" size="md" icon="edit">Edit</webropol-button>
-          <webropol-button variant="tertiary" size="md" disabled>Disabled</webropol-button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Status Variants -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mb-8">
-      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Status Variants</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Success -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Success</h3>
-          <webropol-button variant="success" size="sm">Small Success</webropol-button>
-          <webropol-button variant="success" size="md" icon="check-circle">Success</webropol-button>
-          <webropol-button variant="success" size="lg">Large Success</webropol-button>
-          <webropol-button variant="success" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Danger -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Danger</h3>
-          <webropol-button variant="danger" size="sm">Small Danger</webropol-button>
-          <webropol-button variant="danger" size="md" icon="trash">Delete</webropol-button>
-          <webropol-button variant="danger" size="lg">Large Danger</webropol-button>
-          <webropol-button variant="danger" size="md" disabled>Disabled</webropol-button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Outline Variants -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-webropol-gray-900">Outline Variants</h2>
-          <p class="text-webropol-gray-600 mt-1">Outlined style for secondary destructive actions</p>
-        </div>
-        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-full">
-          <i class="fal fa-star mr-2"></i> NEW
-        </span>
-      </div>
-      
-      <div class="space-y-4">
-        <div>
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide mb-3">Danger Outline</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="danger-outline" size="sm">Small Outline</webropol-button>
-            <webropol-button variant="danger-outline" size="md" icon="trash">Delete Item</webropol-button>
-            <webropol-button variant="danger-outline" size="lg">Large Outline</webropol-button>
-            <webropol-button variant="danger-outline" size="md" disabled>Disabled</webropol-button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Icon-Only Buttons -->
-    <section class="bg-gradient-to-br from-webropol-gray-50 to-white rounded-3xl shadow-xl p-8 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-webropol-gray-900">Icon-Only Buttons</h2>
-          <p class="text-webropol-gray-600 mt-1">Square buttons for actions with clear icon meaning</p>
-        </div>
-        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white text-sm font-semibold rounded-full">
-          <i class="fal fa-star mr-2"></i> NEW
-        </span>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Primary Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Primary</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="primary" icon="plus" icon-only size="sm"></webropol-button>
-            <webropol-button variant="primary" icon="edit" icon-only size="md"></webropol-button>
-            <webropol-button variant="primary" icon="download" icon-only size="lg"></webropol-button>
-            <webropol-button variant="primary" icon="star" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-
-        <!-- Danger Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Danger</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="danger" icon="trash" icon-only size="sm"></webropol-button>
-            <webropol-button variant="danger" icon="times" icon-only size="md"></webropol-button>
-            <webropol-button variant="danger" icon="ban" icon-only size="lg"></webropol-button>
-            <webropol-button variant="danger" icon="exclamation-triangle" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-
-        <!-- Danger Outline Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Danger Outline</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="danger-outline" icon="trash" icon-only size="sm"></webropol-button>
-            <webropol-button variant="danger-outline" icon="times" icon-only size="md"></webropol-button>
-            <webropol-button variant="danger-outline" icon="archive" icon-only size="lg"></webropol-button>
-            <webropol-button variant="danger-outline" icon="exclamation-circle" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-
-        <!-- Royal Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Royal</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="royal" icon="crown" icon-only size="sm"></webropol-button>
-            <webropol-button variant="royalViolet" icon="magic" icon-only size="md"></webropol-button>
-            <webropol-button variant="royalBlue" icon="gem" icon-only size="lg"></webropol-button>
-            <webropol-button variant="royalTurquoise" icon="sparkles" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-
-        <!-- Secondary Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Secondary</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="secondary" icon="heart" icon-only size="sm"></webropol-button>
-            <webropol-button variant="secondary" icon="share" icon-only size="md"></webropol-button>
-            <webropol-button variant="secondary" icon="bookmark" icon-only size="lg"></webropol-button>
-            <webropol-button variant="secondary" icon="info-circle" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-
-        <!-- Success Icons -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Success</h3>
-          <div class="flex flex-wrap gap-3">
-            <webropol-button variant="success" icon="check" icon-only size="sm"></webropol-button>
-            <webropol-button variant="success" icon="check-circle" icon-only size="md"></webropol-button>
-            <webropol-button variant="success" icon="thumbs-up" icon-only size="lg"></webropol-button>
-            <webropol-button variant="success" icon="badge-check" icon-only size="xl"></webropol-button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Roundness Variations -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-webropol-gray-900">Border Radius Options</h2>
-          <p class="text-webropol-gray-600 mt-1">Fully rounded (default) vs regular rounded corners</p>
-        </div>
-        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-webropol-royalBlue-500 to-webropol-royalBlue-600 text-white text-sm font-semibold rounded-full">
-          <i class="fal fa-star mr-2"></i> NEW
-        </span>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Fully Rounded (Default) -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-semibold text-webropol-gray-800">Fully Rounded (roundness="full")</h3>
-          <div class="space-y-3">
-            <webropol-button variant="primary" size="md" roundness="full">Primary Full</webropol-button>
-            <webropol-button variant="danger" size="md" roundness="full" icon="trash">Delete</webropol-button>
-            <webropol-button variant="royal" size="md" roundness="full" icon="crown">Premium</webropol-button>
-            <webropol-button variant="danger-outline" size="md" roundness="full">Outline</webropol-button>
-          </div>
-        </div>
-
-        <!-- Regular Rounded -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-semibold text-webropol-gray-800">Rounded Corners (roundness="lg")</h3>
-          <div class="space-y-3">
-            <webropol-button variant="primary" size="md" roundness="lg">Primary Rounded</webropol-button>
-            <webropol-button variant="danger" size="md" roundness="lg" icon="trash">Delete</webropol-button>
-            <webropol-button variant="royal" size="md" roundness="lg" icon="crown">Premium</webropol-button>
-            <webropol-button variant="danger-outline" size="md" roundness="lg">Outline</webropol-button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Icon buttons with roundness -->
-      <div class="mt-8 pt-8 border-t border-webropol-gray-200">
-        <h3 class="text-lg font-semibold text-webropol-gray-800 mb-4">Icon-Only with Roundness</h3>
-        <div class="flex flex-wrap gap-4">
-          <div class="text-center">
-            <webropol-button variant="danger" icon="trash" icon-only size="lg" roundness="full"></webropol-button>
-            <p class="text-xs text-webropol-gray-600 mt-2">Full (default)</p>
-          </div>
-          <div class="text-center">
-            <webropol-button variant="danger" icon="trash" icon-only size="lg" roundness="lg"></webropol-button>
-            <p class="text-xs text-webropol-gray-600 mt-2">Rounded</p>
-          </div>
-          <div class="text-center">
-            <webropol-button variant="danger-outline" icon="times" icon-only size="lg" roundness="full"></webropol-button>
-            <p class="text-xs text-webropol-gray-600 mt-2">Outline Full</p>
-          </div>
-          <div class="text-center">
-            <webropol-button variant="danger-outline" icon="times" icon-only size="lg" roundness="lg"></webropol-button>
-            <p class="text-xs text-webropol-gray-600 mt-2">Outline Rounded</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Status Variants -->
-
-    <!-- Royal Gradient Variants (NEW) -->
-    <section class="bg-gradient-to-br from-webropol-royalViolet-50 to-webropol-royalBlue-50 rounded-3xl shadow-xl p-8 mb-8">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-webropol-gray-900">Royal Gradient Buttons</h2>
-          <p class="text-webropol-gray-600 mt-1">Premium gradient styles for special actions</p>
-        </div>
-        <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 text-white text-sm font-semibold rounded-full">
-          <i class="fal fa-star mr-2"></i> NEW
-        </span>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Royal (Mixed Gradient) -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Royal Mixed</h3>
-          <webropol-button variant="royal" size="sm">Small Royal</webropol-button>
-          <webropol-button variant="royal" size="md" icon="crown">Premium</webropol-button>
-          <webropol-button variant="royal" size="lg">Large Royal</webropol-button>
-          <webropol-button variant="royal" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Royal Violet -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Royal Violet</h3>
-          <webropol-button variant="royalViolet" size="sm">Small Violet</webropol-button>
-          <webropol-button variant="royalViolet" size="md" icon="magic">Magic</webropol-button>
-          <webropol-button variant="royalViolet" size="lg">Large Violet</webropol-button>
-          <webropol-button variant="royalViolet" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Royal Blue -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Royal Blue</h3>
-          <webropol-button variant="royalBlue" size="sm">Small Blue</webropol-button>
-          <webropol-button variant="royalBlue" size="md" icon="gem">Premium</webropol-button>
-          <webropol-button variant="royalBlue" size="lg">Large Blue</webropol-button>
-          <webropol-button variant="royalBlue" size="md" disabled>Disabled</webropol-button>
-        </div>
-
-        <!-- Royal Turquoise -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Royal Turquoise</h3>
-          <webropol-button variant="royalTurquoise" size="sm">Small Turquoise</webropol-button>
-          <webropol-button variant="royalTurquoise" size="md" icon="sparkles">Special</webropol-button>
-          <webropol-button variant="royalTurquoise" size="lg">Large Turquoise</webropol-button>
-          <webropol-button variant="royalTurquoise" size="md" disabled>Disabled</webropol-button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Interactive States -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mb-8">
-      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Interactive States</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Loading -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Loading State</h3>
-          <webropol-button variant="primary" size="md" loading>Processing...</webropol-button>
-          <webropol-button variant="royal" size="md" loading>Loading...</webropol-button>
-          <webropol-button variant="success" size="md" loading>Saving...</webropol-button>
-        </div>
-
-        <!-- Full Width -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Full Width</h3>
-          <webropol-button variant="primary" size="md" full-width>Full Width Primary</webropol-button>
-          <webropol-button variant="royal" size="md" full-width icon="arrow-right" icon-position="right">Continue</webropol-button>
-          <webropol-button variant="secondary" size="md" full-width>Full Width Secondary</webropol-button>
-        </div>
-
-        <!-- Icon Positions -->
-        <div class="space-y-3">
-          <h3 class="text-sm font-semibold text-webropol-gray-700 uppercase tracking-wide">Icon Positions</h3>
-          <webropol-button variant="primary" size="md" icon="arrow-left">Previous</webropol-button>
-          <webropol-button variant="royalBlue" size="md" icon="arrow-right" icon-position="right">Next</webropol-button>
-          <webropol-button variant="royal" size="md" icon="star">Icon Only Context</webropol-button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Available Variants Reference -->
-    <section class="bg-white rounded-3xl shadow-xl p-8 mt-8">
-      <h2 class="text-2xl font-bold text-webropol-gray-900 mb-6">Available Variants Reference</h2>
-      
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-gray-100 rounded-lg px-3 py-2">primary</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-gray-100 rounded-lg px-3 py-2">secondary</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-gray-100 rounded-lg px-3 py-2">tertiary</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-gray-100 rounded-lg px-3 py-2">success</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-gray-100 rounded-lg px-3 py-2">danger</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-red-100 rounded-lg px-3 py-2 font-semibold">danger-outline ⭐</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-gradient-to-r from-webropol-royalViolet-100 to-webropol-royalBlue-100 rounded-lg px-3 py-2 font-semibold">royal ⭐</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-royalViolet-100 rounded-lg px-3 py-2 font-semibold">royalViolet ⭐</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-royalBlue-100 rounded-lg px-3 py-2 font-semibold">royalBlue ⭐</div>
-        </div>
-        <div class="text-center">
-          <div class="text-sm font-mono bg-webropol-royalTurquoise-100 rounded-lg px-3 py-2 font-semibold">royalTurquoise ⭐</div>
-        </div>
-      </div>
-
-      <div class="mt-6 p-4 bg-webropol-primary-50 rounded-xl border border-webropol-primary-200">
-        <p class="text-sm text-webropol-gray-700">
-          <i class="fal fa-info-circle text-webropol-primary-600 mr-2"></i>
-          <strong>Sizes:</strong> sm, md, lg, xl, icon-sm, icon-md, icon-lg, icon-xl | 
-          <strong>Attributes:</strong> disabled, loading, full-width, icon, icon-only, icon-position, roundness, href, target | 
-          <strong>Roundness:</strong> full (default), lg, xl, 2xl
-        </p>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <div class="text-center mt-12 text-webropol-gray-600">
-      <p>Webropol Design System • Button Components v2.0</p>
-      <p class="text-sm mt-2">Fully rounded buttons with premium royal gradient variants</p>
-    </div>
+  <!-- ─── Hero ────────────────────────────────────────────────── -->
+  <div class="max-w-5xl mx-auto px-6 pt-12 pb-6">
+    <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Button</h1>
+    <p class="text-webropol-gray-500 text-base max-w-xl">
+      The <code class="code-chip">&lt;webropol-button&gt;</code> component wraps a native
+      <code class="code-chip">&lt;button&gt;</code> (or <code class="code-chip">&lt;a&gt;</code>) with unified
+      styling, built-in states, and accessible defaults.
+    </p>
   </div>
 
-  <script>
-    // Event listener example
-    document.addEventListener('webropol-button-click', (e) => {
-      console.log('Button clicked:', e.detail);
-    });
-  </script>
+  <!-- ─── Main content ────────────────────────────────────────── -->
+  <main class="max-w-5xl mx-auto px-6 pb-20 space-y-8">
+
+    <!-- 1. Variants ─────────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Variants</p>
+      <div class="btn-row mb-6">
+
+        <div class="btn-demo-item">
+          <webropol-button variant="primary">Primary</webropol-button>
+          <span class="chip-label">primary</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="secondary">Secondary</webropol-button>
+          <span class="chip-label">secondary</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="tertiary">Tertiary</webropol-button>
+          <span class="chip-label">tertiary</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="danger">Danger</webropol-button>
+          <span class="chip-label">danger</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="danger-outline">Danger Outline</webropol-button>
+          <span class="chip-label">danger-outline</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="success">Success</webropol-button>
+          <span class="chip-label">success</span>
+        </div>
+
+      </div>
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button variant="primary"&gt;Primary&lt;/webropol-button&gt;
+&lt;webropol-button variant="secondary"&gt;Secondary&lt;/webropol-button&gt;
+&lt;webropol-button variant="tertiary"&gt;Tertiary&lt;/webropol-button&gt;
+&lt;webropol-button variant="danger"&gt;Danger&lt;/webropol-button&gt;
+&lt;webropol-button variant="danger-outline"&gt;Danger Outline&lt;/webropol-button&gt;
+&lt;webropol-button variant="success"&gt;Success&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 2. Sizes ─────────────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Sizes</p>
+      <div class="btn-row mb-6 items-end">
+
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" size="sm">Small</webropol-button>
+          <span class="chip-label">sm</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" size="md">Medium</webropol-button>
+          <span class="chip-label">md (default)</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" size="lg">Large</webropol-button>
+          <span class="chip-label">lg</span>
+        </div>
+
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" size="xl">Extra Large</webropol-button>
+          <span class="chip-label">xl</span>
+        </div>
+
+      </div>
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button size="sm"&gt;Small&lt;/webropol-button&gt;
+&lt;webropol-button size="md"&gt;Medium&lt;/webropol-button&gt;
+&lt;webropol-button size="lg"&gt;Large&lt;/webropol-button&gt;
+&lt;webropol-button size="xl"&gt;Extra Large&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 3. Icons ─────────────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Icons</p>
+
+      <!-- Icon left -->
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Icon — Left (default)</p>
+      <div class="btn-row mb-6">
+        <webropol-button variant="primary"   icon="plus">Create Survey</webropol-button>
+        <webropol-button variant="secondary" icon="download">Download</webropol-button>
+        <webropol-button variant="tertiary"  icon="filter">Filter</webropol-button>
+        <webropol-button variant="danger"    icon="trash">Delete</webropol-button>
+        <webropol-button variant="success"   icon="check">Approve</webropol-button>
+      </div>
+
+      <!-- Icon right -->
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Icon — Right</p>
+      <div class="btn-row mb-6">
+        <webropol-button variant="primary"   icon="arrow-right" icon-position="right">Continue</webropol-button>
+        <webropol-button variant="secondary" icon="external-link" icon-position="right">Open Link</webropol-button>
+        <webropol-button variant="tertiary"  icon="chevron-down"  icon-position="right">More Options</webropol-button>
+      </div>
+
+      <!-- Icon only -->
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Icon Only</p>
+      <div class="btn-row mb-6 items-end">
+        <div class="btn-demo-item">
+          <webropol-button variant="primary"       icon="plus"       icon-only size="sm"></webropol-button>
+          <span class="chip-label">sm</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary"       icon="plus"       icon-only></webropol-button>
+          <span class="chip-label">md</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary"       icon="plus"       icon-only size="lg"></webropol-button>
+          <span class="chip-label">lg</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="secondary"     icon="pencil"     icon-only></webropol-button>
+          <span class="chip-label">secondary</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="tertiary"      icon="ellipsis-h" icon-only></webropol-button>
+          <span class="chip-label">tertiary</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="danger"        icon="trash"      icon-only></webropol-button>
+          <span class="chip-label">danger</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="danger-outline" icon="trash"     icon-only></webropol-button>
+          <span class="chip-label">danger-outline</span>
+        </div>
+      </div>
+
+      <pre class="code-chip whitespace-pre-wrap">&lt;!-- Icon left (default) --&gt;
+&lt;webropol-button icon="plus"&gt;Create Survey&lt;/webropol-button&gt;
+
+&lt;!-- Icon right --&gt;
+&lt;webropol-button icon="arrow-right" icon-position="right"&gt;Continue&lt;/webropol-button&gt;
+
+&lt;!-- Icon only --&gt;
+&lt;webropol-button icon="plus" icon-only&gt;&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 4. States ───────────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">States</p>
+
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Disabled</p>
+      <div class="btn-row mb-6">
+        <webropol-button variant="primary"   disabled>Primary</webropol-button>
+        <webropol-button variant="secondary" disabled>Secondary</webropol-button>
+        <webropol-button variant="tertiary"  disabled>Tertiary</webropol-button>
+        <webropol-button variant="danger"    disabled>Danger</webropol-button>
+        <webropol-button variant="success"   disabled>Success</webropol-button>
+      </div>
+
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Loading</p>
+      <div class="btn-row mb-6">
+        <webropol-button variant="primary"   loading>Saving…</webropol-button>
+        <webropol-button variant="secondary" loading>Loading…</webropol-button>
+        <webropol-button variant="danger"    loading>Deleting…</webropol-button>
+      </div>
+
+      <!-- Interactive loading toggle -->
+      <p class="text-xs font-semibold text-webropol-gray-500 mb-3">Interactive demo</p>
+      <div class="btn-row mb-4">
+        <webropol-button
+          id="live-btn"
+          variant="primary"
+          icon="paper-plane"
+          x-bind:loading="loadingDemo ? '' : null"
+          @click="loadingDemo = true; setTimeout(() => loadingDemo = false, 2500)"
+        >Send Report</webropol-button>
+        <span class="text-xs text-webropol-gray-400">Click to trigger loading state (auto-resets after 2.5 s)</span>
+      </div>
+
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button disabled&gt;Disabled&lt;/webropol-button&gt;
+&lt;webropol-button loading&gt;Loading…&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 5. Roundness ────────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Roundness</p>
+      <div class="btn-row mb-6 items-end">
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="none">Button</webropol-button>
+          <span class="chip-label">none</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="sm">Button</webropol-button>
+          <span class="chip-label">sm</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="md">Button</webropol-button>
+          <span class="chip-label">md</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="lg">Button</webropol-button>
+          <span class="chip-label">lg</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="xl">Button</webropol-button>
+          <span class="chip-label">xl</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="2xl">Button</webropol-button>
+          <span class="chip-label">2xl</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="primary" roundness="full">Button</webropol-button>
+          <span class="chip-label">full (default)</span>
+        </div>
+      </div>
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button roundness="none"&gt;Button&lt;/webropol-button&gt;
+&lt;webropol-button roundness="lg"&gt;Button&lt;/webropol-button&gt;
+&lt;webropol-button roundness="full"&gt;Button&lt;/webropol-button&gt;  &lt;!-- default --&gt;</pre>
+    </div>
+
+    <!-- 6. Royal Gradients ───────────────────────────────────── -->
+    <div class="demo-card royal-bg">
+      <p class="section-title" style="color:#6366f1;">Royal Gradients</p>
+      <div class="btn-row mb-6">
+        <div class="btn-demo-item">
+          <webropol-button variant="royal">Royal</webropol-button>
+          <span class="chip-label" style="color:#6366f1;">royal</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="royalViolet">Violet</webropol-button>
+          <span class="chip-label" style="color:#6366f1;">royalViolet</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="royalBlue">Blue</webropol-button>
+          <span class="chip-label" style="color:#6366f1;">royalBlue</span>
+        </div>
+        <div class="btn-demo-item">
+          <webropol-button variant="royalTurquoise">Turquoise</webropol-button>
+          <span class="chip-label" style="color:#6366f1;">royalTurquoise</span>
+        </div>
+      </div>
+      <!-- with icons -->
+      <div class="btn-row mb-6">
+        <webropol-button variant="royal"         icon="sparkles">Get Premium</webropol-button>
+        <webropol-button variant="royalViolet"   icon="wand-magic-sparkles">AI Generate</webropol-button>
+        <webropol-button variant="royalBlue"     icon="chart-line-up">Analytics Pro</webropol-button>
+        <webropol-button variant="royalTurquoise" icon="rocket">Launch</webropol-button>
+      </div>
+      <pre class="code-chip whitespace-pre-wrap" style="background:#0f172a; color:#94a3b8;">&lt;webropol-button variant="royal"&gt;Royal&lt;/webropol-button&gt;
+&lt;webropol-button variant="royalViolet"&gt;Violet&lt;/webropol-button&gt;
+&lt;webropol-button variant="royalBlue"&gt;Blue&lt;/webropol-button&gt;
+&lt;webropol-button variant="royalTurquoise"&gt;Turquoise&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 7. Full Width ───────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Full Width</p>
+      <div class="flex flex-col gap-3 mb-6">
+        <webropol-button variant="primary"   full-width>Full Width Primary</webropol-button>
+        <webropol-button variant="secondary" full-width icon="download">Full Width with Icon</webropol-button>
+      </div>
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button full-width&gt;Full Width&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 8. Link / href ──────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">Link Button (href)</p>
+      <p class="text-xs text-webropol-gray-500 mb-4">
+        When <code class="code-chip">href</code> is set the component renders as an <code class="code-chip">&lt;a&gt;</code> tag while keeping the button visual style.
+      </p>
+      <div class="btn-row mb-6">
+        <webropol-button variant="primary"   href="#"              icon="external-link" icon-position="right">Open Docs</webropol-button>
+        <webropol-button variant="secondary" href="#"              icon="arrow-right"   icon-position="right">Learn More</webropol-button>
+        <webropol-button variant="tertiary"  href="#" target="_blank">New Tab</webropol-button>
+      </div>
+      <pre class="code-chip whitespace-pre-wrap">&lt;webropol-button href="/docs" icon="external-link" icon-position="right"&gt;Open Docs&lt;/webropol-button&gt;
+&lt;webropol-button href="/docs" target="_blank"&gt;New Tab&lt;/webropol-button&gt;</pre>
+    </div>
+
+    <!-- 9. API Reference ────────────────────────────────────── -->
+    <div class="demo-card">
+      <p class="section-title">API Reference</p>
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th style="width:160px">Attribute</th>
+            <th style="width:220px">Values</th>
+            <th style="width:100px">Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>variant</code></td>
+            <td><code>primary</code> <code>secondary</code> <code>tertiary</code> <code>danger</code> <code>danger-outline</code> <code>success</code> <code>royal</code> <code>royalViolet</code> <code>royalBlue</code> <code>royalTurquoise</code></td>
+            <td><code>primary</code></td>
+            <td>Visual style of the button.</td>
+          </tr>
+          <tr>
+            <td><code>size</code></td>
+            <td><code>sm</code> <code>md</code> <code>lg</code> <code>xl</code></td>
+            <td><code>md</code></td>
+            <td>Controls padding and font size.</td>
+          </tr>
+          <tr>
+            <td><code>icon</code></td>
+            <td>FontAwesome icon name (without <code>fal fa-</code> prefix)</td>
+            <td><span class="dim">none</span></td>
+            <td>Renders an icon inside the button.</td>
+          </tr>
+          <tr>
+            <td><code>icon-position</code></td>
+            <td><code>left</code> <code>right</code></td>
+            <td><code>left</code></td>
+            <td>Side on which the icon appears.</td>
+          </tr>
+          <tr>
+            <td><code>icon-only</code></td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Hides text label, applies square padding.</td>
+          </tr>
+          <tr>
+            <td><code>roundness</code></td>
+            <td><code>none</code> <code>sm</code> <code>md</code> <code>lg</code> <code>xl</code> <code>2xl</code> <code>full</code></td>
+            <td><code>full</code></td>
+            <td>Border radius of the button.</td>
+          </tr>
+          <tr>
+            <td><code>disabled</code></td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Prevents interaction; applies muted opacity.</td>
+          </tr>
+          <tr>
+            <td><code>loading</code></td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Shows spinner, blocks interaction.</td>
+          </tr>
+          <tr>
+            <td><code>full-width</code></td>
+            <td>Boolean</td>
+            <td><code>false</code></td>
+            <td>Stretches the button to fill its container.</td>
+          </tr>
+          <tr>
+            <td><code>href</code></td>
+            <td>URL string</td>
+            <td><span class="dim">none</span></td>
+            <td>Renders as an <code>&lt;a&gt;</code> tag instead of <code>&lt;button&gt;</code>.</td>
+          </tr>
+          <tr>
+            <td><code>target</code></td>
+            <td><code>_self</code> <code>_blank</code> etc.</td>
+            <td><span class="dim">none</span></td>
+            <td>Link target (only applies when <code>href</code> is set).</td>
+          </tr>
+          <tr>
+            <td><code>type</code></td>
+            <td><code>button</code> <code>submit</code> <code>reset</code></td>
+            <td><code>button</code></td>
+            <td>Native button type attribute.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Events -->
+      <p class="section-title mt-8">Custom Events</p>
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th style="width:230px">Event</th>
+            <th>Detail Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>webropol-button-click</code></td>
+            <td><code>{ variant, size, originalEvent }</code> — bubbles up from the component</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- JS Methods -->
+      <p class="section-title mt-8">JavaScript Methods</p>
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th style="width:230px">Method</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>setLoading(bool)</code></td>
+            <td>Programmatically toggle loading state.</td>
+          </tr>
+          <tr>
+            <td><code>setDisabled(bool)</code></td>
+            <td>Programmatically toggle disabled state.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
 </body>
 </html>
