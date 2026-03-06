@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webropol – Webinar Banner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 24px 60px;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+
+    /* ─── Toolbar ─── */
+    .toolbar {
+      width: 1200px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .toolbar-title {
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .toolbar-sep {
+      width: 1px;
+      height: 20px;
+      background: #374151;
+      margin: 0 4px;
+    }
+
+    .btn {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-jpg  { background: #e07573; color: #fff; }
+    .btn-png  { background: #2563eb; color: #fff; }
+    .btn-upload { background: #1f2937; color: #d1d5db; border: 1px solid #374151; }
+
+    .upload-label {
+      padding: 9px 20px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #d1d5db;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .upload-label:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+
+    input[type="file"] { display: none; }
+
+    /* ─── Banner wrapper ─── */
+    .banner-shadow {
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════
+       BANNER  –  exact 1200 × 628 px
+       ══════════════════════════════════ */
+    #banner {
+      width:  1200px;
+      height: 628px;
+      background: #ebf4f7;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+
+    /* ── Top accent bars – 4 Webropol brand colours ── */
+    .top-bars {
+      display: flex;
+      width: 100%;
+      height: 50px;
+      flex-shrink: 0;
+    }
+    .bar { height: 100%; }
+    .bar-orange { background: #E85F0B; flex: 1; }
+    .bar-green  { background: #6BB458; flex: 1; }
+    .bar-cyan   { background: #48BDD6; flex: 1; }
+    .bar-teal   { background: #0B5065; flex: 1; }
+
+    /* ── Main content row ── */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      padding: 44px 54px 50px 60px;
+    }
+
+    /* ── LEFT: Logo + headline ── */
+    .col-left {
+      flex: 0 0 410px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    /* Webropol logo image */
+    .logo-img {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+
+    .headline {
+      font-size: 50px;
+      font-weight: 900;
+      color: #0B5065;
+      line-height: 1.16;
+      letter-spacing: -1px;
+    }
+
+    /* ── CENTER: Geometric decoration ── */
+    .col-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .geo {
+      position: relative;
+      width: 110px;
+      height: 148px;
+    }
+    .geo div {
+      position: absolute;
+      border-radius: 3px;
+    }
+    .geo-yellow { width: 40px; height: 40px; background: #6BB458; top: 0;   left: 32px; }
+    .geo-navy   { width: 32px; height: 60px; background: #0B5065; top: 18px; right: 2px; }
+    .geo-coral  { width: 56px; height: 56px; background: #E85F0B; bottom: 0; left: 0; }
+    .geo-blue   { width: 26px; height: 26px; background: #48BDD6; bottom: 12px; right: 10px; }
+
+    /* ── RIGHT: People ── */
+    .col-right {
+      flex: 0 0 490px;
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+    }
+
+    .person {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Photo duotone effect */
+    .photo-frame {
+      width: 222px;
+      height: 268px;
+      position: relative;
+      overflow: hidden;
+      display: block;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      filter: grayscale(100%) contrast(1.1);
+    }
+
+    /* Duotone colour overlay: dark teal (shadows) → orange (highlights) */
+    .photo-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #0B5065 0%, #E85F0B 100%);
+      mix-blend-mode: multiply;
+      opacity: 0.75;
+    }
+
+    .person-info { margin-top: 11px; }
+    .person-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0B5065;
+      line-height: 1.2;
+    }
+    .person-org {
+      font-size: 13px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    /* ─── Loading overlay during export ─── */
+    #export-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    #export-overlay.active { display: flex; }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Toast ─── */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      z-index: 1000;
+      white-space: nowrap;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─── Photo picker tooltip ─── */
+    .photo-tip {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="export-overlay">
+    <div class="spinner"></div>
+    <span id="overlay-msg">Rendering banner…</span>
+  </div>
+
+  <!-- Toast message -->
+  <div id="toast"></div>
+
+  <!-- ─── Toolbar ─── -->
+  <div class="toolbar">
+    <span class="toolbar-title">Webropol · Webinar Banner · 1200 × 628 px</span>
+
+    <!-- Photo upload buttons -->
+    <label class="upload-label" title="Upload left photo">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Photo 1
+      <input type="file" id="upload-1" accept="image/*" onchange="loadPhoto(this, 'img-1')">
+    </label>
+
+    <label class="upload-label" title="Upload right photo">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Photo 2
+      <input type="file" id="upload-2" accept="image/*" onchange="loadPhoto(this, 'img-2')">
+    </label>
+
+    <div class="toolbar-sep"></div>
+
+    <button class="btn btn-jpg" onclick="exportBanner('jpg')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Save as JPG
+    </button>
+
+    <button class="btn btn-png" onclick="exportBanner('png')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Save as PNG
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       BANNER  –  1200 × 628 px — matches reference image
+       ══════════════════════════════════════════════ -->
+  <div class="banner-shadow">
+    <div id="banner">
+
+      <!-- Top accent bars – 4 Webropol brand colours -->
+      <div class="top-bars">
+        <div class="bar bar-orange"></div>
+        <div class="bar bar-green"></div>
+        <div class="bar bar-cyan"></div>
+        <div class="bar bar-teal"></div>
+      </div>
+
+      <!-- Main content row -->
+      <div class="content">
+
+        <!-- LEFT: Logo + headline -->
+        <div class="col-left">
+          <div class="logo">
+            <img class="logo-img"
+              src="../img/logo/webropol-logo-noslogan-primary.svg"
+              alt="Webropol">
+          </div>
+
+          <h1 class="headline">
+            Smarter surveys,<br>
+            better insights,<br>
+            with the<br>
+            Webropol<br>
+            platform
+          </h1>
+        </div>
+
+        <!-- CENTER: Geometric shapes -->
+        <div class="col-center">
+          <div class="geo">
+            <div class="geo-yellow"></div>
+            <div class="geo-navy"></div>
+            <div class="geo-coral"></div>
+            <div class="geo-blue"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: People -->
+        <div class="col-right">
+
+          <div class="person">
+            <div class="photo-frame">
+              <img id="img-1"
+                src="img/email/email-me.jpg"
+                alt="Ali Al-Zuhairi">
+            </div>
+            <div class="person-info">
+              <div class="person-name">Ali Al-Zuhairi</div>
+              <div class="person-org">Product Designer &amp; Owner</div>
+            </div>
+          </div>
+
+          <div class="person">
+            <div class="photo-frame">
+              <img id="img-2"
+                src="img/email/mimmi-email.jpg"
+                alt="Mimmi Kuusisaari"
+                crossorigin="anonymous">
+            </div>
+            <div class="person-info">
+              <div class="person-name">Mimmi Kuusisaari</div>
+              <div class="person-org">Marketing</div>
+            </div>
+          </div>
+
+        </div><!-- /col-right -->
+      </div><!-- /content -->
+    </div><!-- /banner -->
+  </div><!-- /shadow wrapper -->
+
+  <p class="photo-tip">Tip: Click "Photo 1 / Photo 2" to replace the portrait images with your own</p>
+
+  <!-- ─── Scripts ─── -->
+  <script>
+    /* ── Photo upload ── */
+    function loadPhoto(input, imgId) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById(imgId);
+        img.src = e.target.result;
+        img.onload = () => showToast('Photo updated');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    /* ── Export ── */
+    async function exportBanner(format) {
+      const overlay  = document.getElementById('export-overlay');
+      const msgEl    = document.getElementById('overlay-msg');
+      const banner   = document.getElementById('banner');
+
+      overlay.classList.add('active');
+      msgEl.textContent = 'Rendering banner…';
+
+      // Small delay so the overlay paints before heavy work
+      await new Promise(r => setTimeout(r, 60));
+
+      try {
+        const canvas = await html2canvas(banner, {
+          scale: 2,                 // 2400×1256 px output – print-ready
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#eae9e7',
+          logging: false,
+          width: 1200,
+          height: 628,
+          windowWidth: 1200,
+          windowHeight: 628,
+        });
+
+        msgEl.textContent = 'Saving file…';
+        await new Promise(r => setTimeout(r, 30));
+
+        const mime    = format === 'jpg' ? 'image/jpeg' : 'image/png';
+        const quality = format === 'jpg' ? 0.95 : 1.0;
+        const dataUrl = canvas.toDataURL(mime, quality);
+
+        const a       = document.createElement('a');
+        a.download    = `software-finland-webinar-banner.${format}`;
+        a.href        = dataUrl;
+        a.click();
+
+        showToast(`Saved as ${format.toUpperCase()} (${Math.round(dataUrl.length / 1024)} KB)`);
+      } catch (err) {
+        console.error('Export failed:', err);
+        showToast('Export failed – see console for details');
+      } finally {
+        overlay.classList.remove('active');
+      }
+    }
+
+    /* ── Toast helper ── */
+    let toastTimer;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>
