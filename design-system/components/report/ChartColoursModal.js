@@ -49,6 +49,13 @@ function _registerColoursModal() {
       // ── Accessible colour palettes ────────────────────────────────────────
       accessiblePalettes: [
         {
+          name: 'IBM Colour Blind Safe',
+          description: 'IBM Design Language · 12 high-contrast categorical colours',
+          reference: 'IBM Design Language — Color (2023)',
+          referenceUrl: 'https://www.ibm.com/design/language/color/',
+          colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000','#009D9A','#001141','#005D5D','#8A3FFC','#FA4D56','#08BDBA','#25A249']
+        },
+        {
           name: 'Wong (2011)',
           description: 'CVD-safe · 12 colours · gold standard for scientific figures',
           reference: 'Wong, B. — Nature Methods 8, 441 (2011)',
@@ -61,13 +68,6 @@ function _registerColoursModal() {
           reference: 'Okabe, M. & Ito, K. — Color Universal Design (2002)',
           referenceUrl: 'https://jfly.uni-koeln.de/color/',
           colours: ['#E69F00','#56B4E9','#009E73','#F0E442','#0072B2','#D55E00','#CC79A7','#999999','#000000','#F4A582','#004949','#009292']
-        },
-        {
-          name: 'IBM Colour Blind Safe',
-          description: 'IBM Design Language · 12 high-contrast categorical colours',
-          reference: 'IBM Design Language — Color (2023)',
-          referenceUrl: 'https://www.ibm.com/design/language/color/',
-          colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000','#009D9A','#001141','#005D5D','#8A3FFC','#FA4D56','#08BDBA','#25A249']
         },
         {
           name: 'Paul Tol Muted',
@@ -105,12 +105,22 @@ function _registerColoursModal() {
           this.isOpen = true;
           document.body.classList.add('modal-open');
         };
+        this._selectAccessiblePaletteHandler = (event) => {
+          const paletteName = event.detail?.paletteName;
+          if (paletteName) {
+            this.applyAccessiblePaletteByName(paletteName, false);
+          }
+        };
         window.addEventListener('webropol:open-chart-colours', this._openHandler);
+        window.addEventListener('webropol:select-accessible-palette', this._selectAccessiblePaletteHandler);
       },
 
       destroy() {
         if (this._openHandler) {
           window.removeEventListener('webropol:open-chart-colours', this._openHandler);
+        }
+        if (this._selectAccessiblePaletteHandler) {
+          window.removeEventListener('webropol:select-accessible-palette', this._selectAccessiblePaletteHandler);
         }
       },
 
@@ -142,8 +152,17 @@ function _registerColoursModal() {
       },
 
       applyAccessiblePalette(palette) {
+        this.applyAccessiblePaletteByName(palette.name, true);
+      },
+
+      applyAccessiblePaletteByName(paletteName, switchTab = true) {
+        const palette = this.accessiblePalettes.find(item => item.name === paletteName);
+        if (!palette) return;
+
         this.selectedAccessiblePalette = palette.name;
-        this.barTab = 'colours';
+        if (switchTab) {
+          this.barTab = 'colours';
+        }
         palette.colours.forEach((c, i) => {
           if (i < this.barColours.length) this.barColours[i] = c;
         });
