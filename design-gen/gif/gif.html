@@ -47,9 +47,15 @@
                     </label>
 
                     <div class="mt-4 max-h-48 overflow-y-auto space-y-2">
-                        <template x-for="(img, index) in images" :key="index">
+                        <template x-for="(img, index) in images" :key="img.id || index">
                             <div class="flex items-center gap-3 p-2 bg-slate-50 rounded border border-slate-200">
-                                <img :src="img.src" class="w-10 h-10 object-cover rounded" />
+                                <span class="text-slate-400 cursor-move flex-shrink-0" title="Move Up" @click="moveUp(index)" x-show="index > 0">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                </span>
+                                <span class="text-slate-400 cursor-move flex-shrink-0" title="Move Down" @click="moveDown(index)" x-show="index < images.length - 1">
+                                    <i class="fa-solid fa-arrow-down"></i>
+                                </span>
+                                <img :src="img.src" class="w-10 h-10 object-cover rounded ml-2" />
                                 <span class="flex-1 text-xs truncate font-medium" x-text="img.file.name"></span>
                                 <button @click="removeImage(index)" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
                             </div>
@@ -181,12 +187,32 @@
                 files.forEach(file => {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        this.images.push({ file, src: event.target.result });
+                        this.images.push({ 
+                            id: Date.now() + Math.random(), // Unique ID for keying
+                            file, 
+                            src: event.target.result 
+                        });
                     };
                     reader.readAsDataURL(file);
                 });
                 // Reset input so same files can be selected again
                 e.target.value = '';
+            },
+
+            moveUp(index) {
+                if (index > 0) {
+                    const temp = this.images[index];
+                    this.images[index] = this.images[index - 1];
+                    this.images[index - 1] = temp;
+                }
+            },
+
+            moveDown(index) {
+                if (index < this.images.length - 1) {
+                    const temp = this.images[index];
+                    this.images[index] = this.images[index + 1];
+                    this.images[index + 1] = temp;
+                }
             },
 
             removeImage(index) {
