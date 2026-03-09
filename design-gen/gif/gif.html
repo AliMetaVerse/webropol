@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Generator - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'webropol-primary': { 50: '#f0fdff', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 900: '#164e63' },
+                    'webropol-gray': { 50: '#f8fafc', 500: '#64748b', 900: '#0f172a' }
+                },
+                fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+            }
+        }
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-webropol-gray-900" x-data="gifApp()">
+    <div class="max-w-5xl mx-auto py-12 px-6">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-webropol-primary-900">GIF Creator</h1>
+            <p class="text-webropol-gray-500 mt-2">Upload images, configure compression, and generate optimized GIFs.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Settings & Upload -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Upload Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-lg font-semibold mb-4">1. Add Images</h2>
+                    
+                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-webropol-primary-500 rounded-lg cursor-pointer bg-webropol-primary-50 hover:bg-cyan-50 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-webropol-primary-500 mb-2"></i>
+                            <p class="text-sm text-webropol-primary-700 font-medium mt-2">Click or drag images</p>
+                        </div>
+                        <input type="file" class="hidden" multiple accept="image/png, image/jpeg, image/webp" @change="handleFiles" />
+                    </label>
+
+                    <div class="mt-4 max-h-48 overflow-y-auto space-y-2">
+                        <template x-for="(img, index) in images" :key="index">
+                            <div class="flex items-center gap-3 p-2 bg-slate-50 rounded border border-slate-200">
+                                <img :src="img.src" class="w-10 h-10 object-cover rounded" />
+                                <span class="flex-1 text-xs truncate font-medium" x-text="img.file.name"></span>
+                                <button @click="removeImage(index)" class="text-red-500 hover:text-red-700 px-2"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </template>
+                        <p x-show="images.length === 0" class="text-xs text-slate-500 text-center py-2">No images added yet.</p>
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-lg font-semibold mb-4">2. GIF Settings</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Delay between frames (ms)</label>
+                            <input type="number" x-model="delay" class="w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-webropol-primary-500 focus:border-webropol-primary-500" min="10" max="5000">
+                            <p class="text-xs text-slate-500 mt-1">Lower is faster. 100ms = 10fps.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Output Width (px)</label>
+                            <input type="number" x-model="width" class="w-full rounded-md border-slate-300 shadow-sm px-3 py-2 border focus:ring-webropol-primary-500 focus:border-webropol-primary-500" min="100" max="1920">
+                            <p class="text-xs text-slate-500 mt-1">Height scales automatically to maintain aspect ratio.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Compression Quality (1 - 30)</label>
+                            <input type="range" x-model="quality" min="1" max="30" class="w-full accent-webropol-primary-500">
+                            <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                <span>Highest Quality (1)</span>
+                                <span class="font-bold text-webropol-primary-600" x-text="quality"></span>
+                                <span>High Compression (30)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        @click="generateGif" 
+                        :disabled="images.length < 2 || generating"
+                        class="w-full mt-6 bg-webropol-primary-500 hover:bg-webropol-primary-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2.5 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles" x-show="!generating"></i>
+                        <i class="fa-solid fa-spinner fa-spin" x-show="generating" style="display: none;"></i>
+                        <span x-text="generating ? 'Generating...' : 'Generate GIF'"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-full min-h-[500px] flex flex-col">
+                    <h2 class="text-lg font-semibold mb-4">3. Preview & Download</h2>
+                    
+                    <div class="flex-1 rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden relative" id="preview-container">
+                        
+                        <template x-if="!resultUrl && !generating">
+                            <div class="text-center text-slate-400">
+                                <i class="fa-regular fa-images text-5xl mb-3"></i>
+                                <p>Your generated GIF will appear here</p>
+                            </div>
+                        </template>
+
+                        <template x-if="generating">
+                            <div class="text-center w-full max-w-xs p-6 bg-white rounded-xl shadow-sm border border-slate-100">
+                                <div class="mb-4">
+                                    <i class="fa-solid fa-cog fa-spin text-4xl text-webropol-primary-500"></i>
+                                </div>
+                                <h3 class="font-medium mb-2">Processing Frames...</h3>
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div class="bg-webropol-primary-500 h-2.5 rounded-full transition-all duration-300" :style="`width: ${Math.round(progress * 100)}%`"></div>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-2 font-medium" x-text="`${Math.round(progress * 100)}% completed`"></p>
+                            </div>
+                        </template>
+
+                        <template x-if="resultUrl && !generating">
+                            <img :src="resultUrl" class="max-w-full max-h-full object-contain rounded drop-shadow-sm" />
+                        </template>
+                    </div>
+
+                    <template x-if="resultUrl && !generating">
+                        <div class="mt-6 flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                            <span class="text-sm font-medium px-3 py-1 bg-slate-100 text-slate-600 rounded-full mr-auto flex items-center gap-2">
+                                <i class="fa-solid fa-file-image"></i>
+                                <span x-text="`Size: ${resultSize} KB`"></span>
+                            </span>
+                            <button @click="reset" class="px-4 py-2 border border-slate-300 rounded-md text-slate-700 hover:bg-slate-50 transition-colors font-medium">Start Over</button>
+                            <a :href="resultUrl" download="webropol-animation.gif" class="px-5 py-2 bg-webropol-primary-500 hover:bg-webropol-primary-600 text-white rounded-md transition-colors font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-download"></i> Download GIF
+                            </a>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function gifApp() {
+        return {
+            images: [],
+            delay: 300,
+            width: 600,
+            quality: 10,
+            generating: false,
+            progress: 0,
+            resultUrl: null,
+            resultSize: 0,
+            workerBlobUrl: null,
+
+            async init() {
+                // Fetch gif.worker.js as blob to avoid cross-origin worker script restrictions
+                try {
+                    const res = await fetch('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');
+                    const blob = await res.blob();
+                    this.workerBlobUrl = URL.createObjectURL(blob);
+                } catch(e) {
+                    console.error("Failed to load worker:", e);
+                }
+            },
+
+            handleFiles(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        this.images.push({ file, src: event.target.result });
+                    };
+                    reader.readAsDataURL(file);
+                });
+                // Reset input so same files can be selected again
+                e.target.value = '';
+            },
+
+            removeImage(index) {
+                this.images.splice(index, 1);
+            },
+
+            reset() {
+                this.resultUrl = null;
+                this.generating = false;
+                this.progress = 0;
+                this.resultSize = 0;
+            },
+
+            async generateGif() {
+                if (this.images.length === 0 || !this.workerBlobUrl) return;
+                
+                this.generating = true;
+                this.progress = 0;
+                this.resultUrl = null;
+
+                // Load all images cleanly via promise array
+                const loadedImages = await Promise.all(this.images.map(imgData => {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.onload = () => resolve(img);
+                        img.src = imgData.src;
+                    });
+                }));
+
+                const firstImg = loadedImages[0];
+                const aspectRatio = firstImg.height / firstImg.width;
+                const targetWidth = parseInt(this.width);
+                const targetHeight = Math.round(targetWidth * aspectRatio);
+
+                const gif = new window.GIF({
+                    workers: 2,
+                    quality: parseInt(this.quality),
+                    workerScript: this.workerBlobUrl,
+                    width: targetWidth,
+                    height: targetHeight
+                });
+
+                // Create a reusable canvas to draw and scale frames
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+
+                loadedImages.forEach(img => {
+                    // Clear canvas and draw scaled image
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, targetWidth, targetHeight);
+                    // Standard fit-cover pattern
+                    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                    
+                    gif.addFrame(ctx, {copy: true, delay: parseInt(this.delay)});
+                });
+
+                gif.on('progress', p => {
+                    this.progress = p;
+                });
+
+                gif.on('finished', blob => {
+                    this.resultUrl = URL.createObjectURL(blob);
+                    this.resultSize = Math.round(blob.size / 1024);
+                    this.generating = false;
+                });
+
+                gif.render();
+            }
+        }
+    }
+    </script>
+</body>
+</html>
