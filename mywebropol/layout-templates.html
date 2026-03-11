@@ -283,12 +283,18 @@
                                     </label>
 
                                     <div class="flex flex-wrap items-center gap-2">
+                                        <input
+                                            x-ref="assetUploadInput"
+                                            type="file"
+                                            class="hidden"
+                                            :accept="uploadAccept()"
+                                            @change="handleFileSelected($event)">
                                         <webropol-button
                                             variant="secondary"
                                             size="sm"
                                             roundness="xl"
-                                            icon="plus"
-                                            @click="createTemplate()">
+                                            :icon="primaryActionIcon()"
+                                            @click="handlePrimaryAction()">
                                             <span x-text="createButtonLabel()"></span>
                                         </webropol-button>
                                         <webropol-button
@@ -451,8 +457,8 @@
                                             variant="primary"
                                             size="sm"
                                             roundness="xl"
-                                            icon="plus"
-                                            @click="createTemplate()">
+                                            :icon="primaryActionIcon()"
+                                            @click="handlePrimaryAction()">
                                             <span x-text="createButtonLabel()"></span>
                                         </webropol-button>
                                         <webropol-button
@@ -666,6 +672,10 @@
                     return this.activeTopTab === 'images';
                 },
 
+                isUploadSection() {
+                    return ['files', 'images'].includes(this.activeTopTab);
+                },
+
                 searchAriaLabel() {
                     return `Search ${this.sectionConfig().pluralLabel} by name`;
                 },
@@ -676,7 +686,19 @@
 
                 createButtonLabel() {
                     const itemLabel = this.sectionConfig().itemLabel;
+                    if (this.isUploadSection()) {
+                        return `Upload ${itemLabel}`;
+                    }
+
                     return `New ${itemLabel}`;
+                },
+
+                primaryActionIcon() {
+                    return this.isUploadSection() ? 'upload' : 'plus';
+                },
+
+                uploadAccept() {
+                    return this.isImageSection() ? 'image/*' : '';
                 },
 
                 columnHeading() {
@@ -847,7 +869,7 @@
                 },
 
                 renameTemplate(template) {
-                    const nextName = window.prompt('Rename template', template.name);
+                    const nextName = window.prompt(`Rename ${this.sectionConfig().itemLabel}`, template.name);
                     if (!nextName || !nextName.trim()) {
                         return;
                     }
@@ -876,6 +898,50 @@
                         }));
                     });
 
+                    this.saveTemplates();
+                },
+
+                handlePrimaryAction() {
+                    if (this.isUploadSection()) {
+                        this.openUploadDialog();
+                        return;
+                    }
+
+                    this.createTemplate();
+                },
+
+                openUploadDialog() {
+                    const input = this.$refs.assetUploadInput;
+                    if (!input) {
+                        return;
+                    }
+
+                    input.value = '';
+                    input.click();
+                },
+
+                handleFileSelected(event) {
+                    const [file] = Array.from(event.target.files || []);
+                    if (!file) {
+                        return;
+                    }
+
+                    const asset = {
+                        id: `${this.activeTopTab}-own-${Date.now()}`,
+                        name: file.name,
+                        createdBy: 'Ali Al-Zuhairi',
+                        lastModified: this.formatToday(),
+                        sharedTo: ''
+                    };
+
+                    if (this.isImageSection()) {
+                        asset.isDefaultLogo = false;
+                    }
+
+                    this.activeSideTab = 'own';
+                    this.templates[this.activeTopTab].own = [asset, ...this.templates[this.activeTopTab].own];
+                    this.page = 1;
+                    this.selectedIds = [];
                     this.saveTemplates();
                 },
 
@@ -910,6 +976,10 @@
                     }
 
                     if (this.activeSideTab === 'own') {
+                        if (this.isUploadSection()) {
+                            return `Upload your first ${this.sectionConfig().itemLabel}`;
+                        }
+
                         return `Add your first ${this.sectionConfig().itemLabel}`;
                     }
 
@@ -922,6 +992,10 @@
                     }
 
                     if (this.activeSideTab === 'own') {
+                        if (this.isUploadSection()) {
+                            return `Upload a ${this.sectionConfig().itemLabel} for this section and it will appear here with the rest of your personal assets.`;
+                        }
+
                         return `Create a new ${this.sectionConfig().itemLabel} for this section and it will appear here with the rest of your personal assets.`;
                     }
 
