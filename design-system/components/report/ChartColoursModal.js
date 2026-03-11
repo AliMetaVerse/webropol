@@ -350,7 +350,7 @@ class WebropolChartColoursModal extends HTMLElement {
 
                 <!-- 12 swatches in 2 rows of 6 -->
                 <div class="grid gap-1" style="grid-template-columns:repeat(6,1fr)">
-                  <template x-for="c in getOrderedPaletteColours(palette)" :key="palette.name + '-' + c">
+                  <template x-for="(c, colorIndex) in getOrderedPaletteColours(palette)" :key="palette.name + '-' + colorIndex">
                     <div class="h-7 rounded-md border-2 border-white ring-1 ring-black/10 shadow-sm"
                          :style="'background:' + c"
                          :title="c"></div>
