@@ -220,7 +220,7 @@
                     <section class="hero-gradient glass-card relative overflow-hidden rounded-3xl p-6 lg:p-8">
                         <div class="floating-orb one"></div>
                         <div class="floating-orb two"></div>
-                        <div class="relative z-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+                        <div class="relative z-10">
                             <div>
                                 <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-webropol-primary-100 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-webropol-primary-700">
                                     <i class="fal fa-layer-group"></i>
@@ -232,87 +232,42 @@
                                 </p>
                             </div>
 
-                            <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Current scope</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeCollectionCount()"></div>
-                                    <div class="mt-1 text-sm text-webropol-gray-600" x-text="activeScopeLabel()"></div>
-                                </div>
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Shared in section</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeSharedCount()"></div>
-                                    <div class="mt-1 text-sm text-webropol-gray-600" x-text="activeTopTabLabel()"></div>
-                                </div>
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Selected</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="selectedIds.length"></div>
-                                    <div class="mt-1 text-sm text-webropol-gray-600">Ready for bulk actions</div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="glass-card mt-6 rounded-3xl p-3 lg:p-4">
-                        <div class="flex flex-wrap gap-2">
-                            <template x-for="tab in topTabs" :key="tab.id">
-                                <button
-                                    type="button"
-                                    @click="setTopTab(tab.id)"
-                                    class="segmented-tab rounded-2xl px-4 py-3 text-sm font-semibold"
-                                    :class="{ 'active': activeTopTab === tab.id }">
-                                    <span x-text="tab.label"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </section>
-
-                    <section class="mt-6 grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-                        <aside class="glass-card rounded-3xl p-5 lg:p-6">
-                            <div class="mb-5">
-                                <h2 class="text-lg font-semibold text-webropol-gray-900">Template scopes</h2>
-                                <p class="mt-1 text-sm leading-6 text-webropol-gray-600">Separate your private layouts from workspace-ready shared assets.</p>
-                            </div>
-
-                            <nav class="space-y-3" aria-label="Template scope tabs">
-                                <template x-for="tab in sideTabs()" :key="tab.id">
+                            <div class="mt-6 flex flex-wrap gap-2 border-t border-white/60 pt-5">
+                                <template x-for="tab in topTabs" :key="tab.id">
                                     <button
                                         type="button"
-                                        @click="setSideTab(tab.id)"
-                                        class="scope-tab flex w-full items-start justify-between rounded-2xl p-4 text-left"
-                                        :class="{ 'active': activeSideTab === tab.id }">
-                                        <div>
-                                            <div class="font-semibold text-webropol-gray-900" x-text="tab.label"></div>
-                                            <div class="mt-1 text-xs leading-5 text-webropol-gray-500" x-text="tab.id === 'own' ? 'Personal layouts for your team or account.' : 'Templates already available to others.'"></div>
-                                        </div>
-                                        <span class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-webropol-primary-700 shadow-sm" x-text="tab.count"></span>
+                                        @click="setTopTab(tab.id)"
+                                        class="segmented-tab rounded-2xl px-4 py-3 text-sm font-semibold"
+                                        :class="{ 'active': activeTopTab === tab.id }">
+                                        <span x-text="tab.label"></span>
                                     </button>
                                 </template>
-                            </nav>
-
-                            <div class="mt-6 rounded-2xl border border-webropol-primary-100 bg-webropol-primary-50/70 p-4">
-                                <div class="flex items-start gap-3">
-                                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-webropol-primary-600 shadow-sm">
-                                        <i class="fal fa-sparkles"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-sm font-semibold text-webropol-gray-900">Design-system ready</h3>
-                                        <p class="mt-1 text-sm leading-6 text-webropol-gray-600">This page now uses Webropol surfaces, tokens, and component buttons instead of the previous legacy chrome.</p>
-                                    </div>
-                                </div>
                             </div>
-                        </aside>
+                        </div>
+                    </section>
 
+                    <section class="mt-6">
                         <div class="glass-card rounded-3xl p-5 lg:p-6">
                             <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                 <div>
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <h2 class="text-xl font-semibold text-webropol-gray-900" x-text="activeTopTabLabel()"></h2>
-                                        <span class="rounded-full bg-webropol-primary-50 px-3 py-1 text-xs font-semibold text-webropol-primary-700" x-text="activeScopeLabel()"></span>
-                                    </div>
+                                    <h2 class="text-xl font-semibold text-webropol-gray-900" x-text="activeTopTabLabel()"></h2>
                                     <p class="mt-2 text-sm leading-6 text-webropol-gray-600">
                                         <span x-text="visibleTemplatesCount()"></span>
                                         <span x-text="searchTerm ? 'matching templates in the current filter.' : 'templates available in the current view.'"></span>
                                     </p>
+
+                                    <div class="mt-4 flex flex-wrap gap-2" aria-label="Template tabs">
+                                        <template x-for="tab in sideTabs()" :key="tab.id">
+                                            <button
+                                                type="button"
+                                                @click="setSideTab(tab.id)"
+                                                class="scope-tab inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold"
+                                                :class="{ 'active': activeSideTab === tab.id }">
+                                                <span x-text="tab.label"></span>
+                                                <span class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-webropol-primary-700 shadow-sm" x-text="tab.count"></span>
+                                            </button>
+                                        </template>
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center xl:justify-end">
@@ -346,21 +301,6 @@
                                             Delete
                                         </webropol-button>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-6 grid gap-4 md:grid-cols-3">
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Own templates</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeOwnCount()"></div>
-                                </div>
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Shared templates</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeSharedCount()"></div>
-                                </div>
-                                <div class="stats-tile rounded-2xl p-4">
-                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Visible now</div>
-                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="pagedTemplates().length"></div>
                                 </div>
                             </div>
 
