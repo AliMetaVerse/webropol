@@ -170,6 +170,10 @@ function _registerColoursModal() {
         this.applyAccessiblePaletteByName(palette.name, false);
       },
 
+      applyAccessiblePaletteOverride(paletteName, reversed) {
+        this.applyAccessiblePaletteByName(paletteName, false, reversed);
+      },
+
       getOrderedPaletteColours(palette, reversed = this.accessiblePaletteReversed) {
         const colours = [...palette.colours];
         return reversed ? colours.reverse() : colours;
@@ -334,11 +338,20 @@ class WebropolChartColoursModal extends HTMLElement {
 
                 <!-- Top row: name + selected indicator -->
                 <div class="flex items-start justify-between mb-2.5">
-                  <div>
+                  <div class="min-w-0 flex-1">
                     <div class="text-sm font-semibold text-webropol-gray-800 leading-tight" x-text="palette.name"></div>
                     <div class="text-xs text-webropol-gray-500 mt-0.5" x-text="palette.description"></div>
                   </div>
-                  <div class="flex-shrink-0 ml-3 mt-0.5">
+                  <div class="flex items-start gap-2 flex-shrink-0 ml-3 mt-0.5">
+                        <button @click.stop="applyAccessiblePaletteOverride(palette.name, true)"
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors"
+                          :class="selectedAccessiblePalette === palette.name && accessiblePaletteReversed
+                              ? 'bg-webropol-primary-700 text-white shadow-sm'
+                              : 'bg-white text-webropol-gray-600 border border-webropol-gray-200 hover:border-webropol-primary-300 hover:text-webropol-primary-700'">
+                      <i class="fal fa-exchange-alt"></i>
+                      <span>Reverse</span>
+                    </button>
                     <div x-show="selectedAccessiblePalette === palette.name"
                          class="w-5 h-5 rounded-full bg-webropol-primary-600 flex items-center justify-center shadow-sm">
                       <i class="fal fa-check text-white" style="font-size:9px"></i>
