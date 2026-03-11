@@ -58,10 +58,10 @@ function _registerColoursModal() {
         },
         {
           name: 'Webropol RAG',
-          description: 'Webropol sentiment scale · 4 red, 4 amber, 4 green · worst to best',
+          description: 'Webropol sentiment scale · always includes red, amber and green with bridging shades · worst to best',
           reference: 'Webropol Design System',
           referenceUrl: '#',
-          colours: ['#C03020','#D93025','#E86150','#F08270','#F5962A','#F5A623','#F0BC45','#BDD050','#72BF6E','#4CAF5A','#2E9648','#1C7036']
+          colours: ['#C03020','#C03020','#F08270','#F08270','#F5A623','#F5A623','#F5A623','#72BF6E','#72BF6E','#72BF6E','#2E9648','#2E9648']
         },
         {
           name: 'Wong (2011)',

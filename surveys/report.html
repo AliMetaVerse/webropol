@@ -4222,14 +4222,12 @@
           {
             name: 'Webropol RAG',
             colors: [
-              '#C03020', '#D93025', '#E86150', '#F08270',
-              '#F5962A', '#F5A623', '#F0BC45', '#BDD050',
-              '#72BF6E', '#4CAF5A', '#2E9648', '#1C7036'
+                '#C03020', '#F08270', '#F5A623', '#72BF6E', '#2E9648'
             ],
             npsIndexes: {
               detractors: 0,
-              passive: 4,
-              promoters: 8
+                passive: 2,
+                promoters: 4
             }
           }
         ],
@@ -4376,7 +4374,7 @@
             promoters: '#75BA73'
           };
 
-          if (this.accessibilityMode) {
+          if (this.activeAccessiblePaletteName === 'Webropol RAG' || this.accessibilityMode) {
             const palette = this.getAccessiblePalette(this.activeAccessiblePaletteName);
             const indexMap = palette?.npsIndexes || {
               detractors: 0,
@@ -4448,37 +4446,51 @@
           this.markAsEdited();
         },
 
-        // ── Webropol RAG: dynamic sentiment colour scale ──────────────────
-        // Smoothly interpolates across red → orange → green for any number
-        // of options.  index = 0-based position, total = total option count.
-        // 0 (worst) → red, middle → amber, total-1 (best) → green.
+        // ── Webropol RAG: fixed 5-sentiment colour scale ──────────────────
+        // Fewer than 5 options sample the 5 sentiment anchors evenly, so
+        // 3 options become worst → neutral → best. 5+ options are spread
+        // across all 5 colours with extra slots added from the middle out.
         getRAGColor(index, total) {
-          const t = total <= 1 ? 0 : index / (total - 1);
-          // Anchor stops: [normalised position, [R, G, B]]
-          const stops = [
-            [0.00, [192,  48,  32]],  // #C03020 deep red
-            [0.25, [240, 130, 112]],  // #F08270 salmon / light red
-            [0.50, [245, 166,  35]],  // #F5A623 warm amber
-            [0.75, [114, 191, 110]],  // #72BF6E light green
-            [1.00, [ 46, 150,  72]]   // #2E9648 green
-          ];
-          let lo = stops[0], hi = stops[stops.length - 1];
-          for (let i = 0; i < stops.length - 1; i++) {
-            if (t >= stops[i][0] && t <= stops[i + 1][0]) {
-              lo = stops[i]; hi = stops[i + 1]; break;
+          const sentimentColors = this.accessiblePaletteReversed
+            ? ['#2E9648', '#72BF6E', '#F5A623', '#F08270', '#C03020']
+            : ['#C03020', '#F08270', '#F5A623', '#72BF6E', '#2E9648'];
+          const safeTotal = Number.isFinite(total) ? Math.max(0, total) : 0;
+          const safeIndex = Number.isFinite(index) ? Math.max(0, index) : 0;
+
+          if (safeTotal <= 1) {
+            return sentimentColors[2];
+          }
+
+          if (safeTotal < sentimentColors.length) {
+            const colorIndex = Math.round((safeIndex * (sentimentColors.length - 1)) / (safeTotal - 1));
+            return sentimentColors[Math.min(sentimentColors.length - 1, colorIndex)];
+          }
+
+          const bucketCounts = new Array(sentimentColors.length).fill(1);
+          const expansionOrder = [2, 3, 1, 4, 0];
+          let remaining = safeTotal - sentimentColors.length;
+          let expansionIndex = 0;
+
+          while (remaining > 0) {
+            bucketCounts[expansionOrder[expansionIndex % expansionOrder.length]] += 1;
+            expansionIndex += 1;
+            remaining -= 1;
+          }
+
+          let bucketEnd = 0;
+          for (let colorIndex = 0; colorIndex < bucketCounts.length; colorIndex++) {
+            bucketEnd += bucketCounts[colorIndex];
+            if (safeIndex < bucketEnd) {
+              return sentimentColors[colorIndex];
             }
           }
-          const range = hi[0] - lo[0];
-          const lt = range === 0 ? 0 : (t - lo[0]) / range;
-          const r = Math.round(lo[1][0] + (hi[1][0] - lo[1][0]) * lt);
-          const g = Math.round(lo[1][1] + (hi[1][1] - lo[1][1]) * lt);
-          const b = Math.round(lo[1][2] + (hi[1][2] - lo[1][2]) * lt);
-          return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+
+          return sentimentColors[sentimentColors.length - 1];
         },
 
         // Apply the active palette (standard or accessible) to every chart
         applyPaletteToAllCharts() {
-          const useRAG = this.accessibilityMode && this.activeAccessiblePaletteName === 'Webropol RAG';
+          const useRAG = this.activeAccessiblePaletteName === 'Webropol RAG';
           const pal = this.accessibilityMode ? this.accessibleColors : this.standardColors;
           const colorFor = (i, total) => useRAG ? this.getRAGColor(i, total) : pal[i % pal.length];
 
