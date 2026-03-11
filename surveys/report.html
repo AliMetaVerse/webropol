@@ -1061,7 +1061,7 @@
                         <template x-for="(clr, li) in rankColors" :key="'rank-legend-' + li">
                           <div class="flex items-center gap-2">
                             <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0;border-radius:2px">
-                              <rect width="14" height="14" :fill="getPatternColor(li, clr)"/>
+                              <rect width="14" height="14" :fill="getPatternColor(li, rankColors[li])"/>
                               <rect width="14" height="14" :fill="getBarPattern(li) ? `url(#${getBarPattern(li)})` : 'none'"/>
                             </svg>
                             <span class="text-xs text-webropol-gray-700" x-text="li + 1"></span>
@@ -1470,6 +1470,19 @@
                               </div>
                             </div>
                           </template>
+                        </div>
+                      </template>
+                    </div>
+
+                    <!-- Matrix Legend – reflects current segment colours from row 0 -->
+                    <div class="flex items-center justify-center gap-6 mt-4 flex-wrap">
+                      <template x-for="(seg, si) in matrixRows[0].segments" :key="'matrix-legend-' + si">
+                        <div class="flex items-center gap-2">
+                          <svg width="14" height="14" viewBox="0 0 14 14" style="flex-shrink:0;border-radius:2px">
+                            <rect width="14" height="14" :fill="getPatternColor(si, seg.color)"/>
+                            <rect width="14" height="14" :fill="getBarPattern(si) ? `url(#${getBarPattern(si)})` : 'none'"/>
+                          </svg>
+                          <span class="text-xs text-webropol-gray-700" x-text="si + 1"></span>
                         </div>
                       </template>
                     </div>
@@ -4406,7 +4419,12 @@
         },
 
         changeMatrixSegColor(rowIdx, segIdx, color) {
-          this.matrixRows[rowIdx].segments[segIdx].color = color;
+          // Sync the same segment index across ALL rows so the legend always
+          // reflects the actual colours shown in the chart.
+          this.matrixRows.forEach(row => {
+            if (row.segments[segIdx]) row.segments[segIdx].color = color;
+          });
+          this.matrixRows = [...this.matrixRows]; // force Alpine reactivity
           this.markAsEdited();
         },
 
@@ -4463,20 +4481,68 @@
           const useRAG = this.accessibilityMode && this.activeAccessiblePaletteName === 'Webropol RAG';
           const pal = this.accessibilityMode ? this.accessibleColors : this.standardColors;
           const colorFor = (i, total) => useRAG ? this.getRAGColor(i, total) : pal[i % pal.length];
+
+          // Keep patternColorMap in sync with the current palette so that when
+          // patterns are active getPatternColor() returns the new colours and
+          // legends always reflect the selected palette.
+          const patternIds = ['hc-pat-0','hc-pat-1','hc-pat-2','hc-pat-3','hc-pat-4',
+                              'hc-pat-5','hc-pat-6','hc-pat-7','hc-pat-8','hc-pat-9'];
+          patternIds.forEach((id, i) => {
+            this.patternColorMap[id] = colorFor(i, patternIds.length);
+          });
+          this.patternColorMap = { ...this.patternColorMap }; // force Alpine reactivity
+
           // Rank
           const rankTotal = this.rankColors.length;
           this.rankColors = this.rankColors.map((_, i) => colorFor(i, rankTotal));
           // Bar chart
           const barTotal = this.barChartData.length;
           this.barChartData.forEach((bar, i) => { bar.color = colorFor(i, barTotal); });
+          this.barChartData = [...this.barChartData]; // force Alpine reactivity
+
           // Matrix (each row re-uses the same segment-index colours)
           this.matrixRows.forEach(row => {
             const segTotal = row.segments.length;
             row.segments.forEach((seg, si) => { seg.color = colorFor(si, segTotal); });
           });
+          this.matrixRows = [...this.matrixRows]; // force Alpine reactivity
+
           // Gantt
           const ganttTotal = this.ganttBars.length;
           this.ganttBars.forEach((bar, i) => { bar.color = colorFor(i, ganttTotal); });
+          this.ganttBars = [...this.ganttBars]; // force Alpine reactivity
+
+          // Sync NPS table CSS variables so its coloured headers/rows match the chart legend
+          this._updateNpsCssVars();
+        },
+
+        // Derives and writes the CSS custom properties used by the NPS breakdown table
+        // so that its coloured headers/rows always stay in sync with the chart and legend.
+        _updateNpsCssVars() {
+          const set = (name, val) => document.documentElement.style.setProperty(name, val);
+          const hexToRgb = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+          const rgba = (h, a) => { const [r,g,b] = hexToRgb(h); return `rgba(${r},${g},${b},${a})`; };
+          // Pick text colour by perceived luminance
+          const textFor = h => { const [r,g,b] = hexToRgb(h); return (r*299+g*587+b*114)/1000 > 145 ? '#1e293b' : '#ffffff'; };
+
+          const dc = this.getNpsColor('detractors');
+          const pc = this.getNpsColor('passive');
+          const pr = this.getNpsColor('promoters');
+
+          set('--nps-detractors-strong', dc);
+          set('--nps-detractors-medium', rgba(dc, 0.38));
+          set('--nps-detractors-soft',   rgba(dc, 0.18));
+          set('--nps-detractors-text',   textFor(dc));
+
+          set('--nps-passive-strong', pc);
+          set('--nps-passive-medium', rgba(pc, 0.38));
+          set('--nps-passive-soft',   rgba(pc, 0.18));
+          set('--nps-passive-text',   textFor(pc));
+
+          set('--nps-promoters-strong', pr);
+          set('--nps-promoters-medium', rgba(pr, 0.38));
+          set('--nps-promoters-soft',   rgba(pr, 0.18));
+          set('--nps-promoters-text',   textFor(pr));
         },
 
         isCustomColor(color) {
