@@ -4,6 +4,7 @@
   const viewType = document.body.dataset.viewType;
   let latestPayload = null;
   let activePanelSection = 'planning';
+  let aiDraft = '';
 
   window.addEventListener('message', (event) => {
     const message = event.data;
@@ -25,9 +26,25 @@
     }
 
     const action = actionTarget.dataset.action;
-    if (action === 'show-planning' || action === 'show-execution' || action === 'show-history') {
+    if (action === 'show-planning' || action === 'show-execution' || action === 'show-history' || action === 'show-ai') {
       activePanelSection = action.replace('show-', '');
+      vscode.postMessage({ type: 'setSection', section: activePanelSection });
       render();
+      return;
+    }
+
+    if (action === 'send-ai-message') {
+      sendAiMessage();
+      return;
+    }
+
+    if (action === 'clear-ai-conversation') {
+      vscode.postMessage({ type: 'clearAiConversation' });
+      return;
+    }
+
+    if (action === 'refresh-ai-models') {
+      vscode.postMessage({ type: 'refreshAiModels' });
       return;
     }
 
@@ -99,6 +116,28 @@
     }
   });
 
+  document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLSelectElement)) {
+      return;
+    }
+
+    if (target.name === 'ai-model') {
+      vscode.postMessage({ type: 'selectAiModel', modelId: target.value });
+    }
+  });
+
+  document.addEventListener('input', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLTextAreaElement)) {
+      return;
+    }
+
+    if (target.name === 'ai-prompt') {
+      aiDraft = target.value;
+    }
+  });
+
   document.addEventListener('keydown', (event) => {
     const modifier = event.ctrlKey || event.metaKey;
     if (!modifier || event.key !== 'Enter') {
@@ -118,12 +157,18 @@
     if (viewType === 'execution') {
       event.preventDefault();
       vscode.postMessage({ type: 'completeCurrentTask' });
+      return;
+    }
+
+    if (viewType === 'panel' && activePanelSection === 'ai' && event.target instanceof HTMLTextAreaElement && event.target.name === 'ai-prompt') {
+      event.preventDefault();
+      sendAiMessage();
     }
   });
 
   function render() {
     if (!latestPayload) {
-      app.innerHTML = '<div class="empty-state">Loading planner…</div>';
+      app.innerHTML = '<div class="empty-state">Loading Gravity Planner…</div>';
       return;
     }
 
@@ -151,7 +196,7 @@
       <div class="shell panel-shell">
         <div class="hero-card compact">
           <div>
-            <p class="eyebrow">Planner Dashboard</p>
+            <p class="eyebrow">Gravity Planner</p>
             <h1>${escapeHtml(meta.todayLabel)}</h1>
           </div>
           <div class="progress-chip">${meta.progress.percent}% complete</div>
@@ -160,6 +205,7 @@
           <button type="button" class="tab-button${activePanelSection === 'planning' ? ' active' : ''}" data-action="show-planning">Planning</button>
           <button type="button" class="tab-button${activePanelSection === 'execution' ? ' active' : ''}" data-action="show-execution">Execution</button>
           <button type="button" class="tab-button${activePanelSection === 'history' ? ' active' : ''}" data-action="show-history">History</button>
+          <button type="button" class="tab-button${activePanelSection === 'ai' ? ' active' : ''}" data-action="show-ai">AI</button>
         </div>
         <div class="panel-stage">
           ${renderSectionMarkup(activePanelSection)}
@@ -175,6 +221,10 @@
 
     if (section === 'execution') {
       return executionMarkup();
+    }
+
+    if (section === 'ai') {
+      return aiMarkup();
     }
 
     return historyMarkup();
@@ -317,7 +367,7 @@
     if (!state.history.length) {
       return `
         <div class="panel centered">
-          <p class="empty-copy">No previous planner sessions yet.</p>
+          <p class="empty-copy">No previous Gravity Planner sessions yet.</p>
         </div>
       `;
     }
@@ -336,6 +386,99 @@
         `).join('')}
       </div>
     `;
+  }
+
+  function aiMarkup() {
+    const { state, meta } = latestPayload;
+    const assistant = state.assistant || { selectedModelId: '', messages: [], isLoading: false, lastError: '' };
+    const models = Array.isArray(meta.models) ? meta.models : [];
+    const selectedModelId = assistant.selectedModelId || (models[0] ? models[0].id : '');
+
+    return `
+      <section class="panel ai-panel">
+        <div class="section-header">
+          <div>
+            <h2>AI Chat</h2>
+            <p class="hint">Use the AI models already available in your VS Code installation.</p>
+          </div>
+          <div class="footer-actions compact-actions">
+            <button type="button" class="ghost-button" data-action="refresh-ai-models">Refresh Models</button>
+            <button type="button" class="ghost-button" data-action="clear-ai-conversation">Clear Chat</button>
+          </div>
+        </div>
+
+        <div class="ai-toolbar">
+          <label>
+            <span>Model</span>
+            <select name="ai-model" ${assistant.isLoading ? 'disabled' : ''}>
+              ${models.length
+                ? models.map((model) => `<option value="${escapeHtml(model.id)}"${model.id === selectedModelId ? ' selected' : ''}>${escapeHtml(model.vendor)} / ${escapeHtml(model.name)}${model.family ? ` (${escapeHtml(model.family)})` : ''}</option>`).join('')
+                : '<option value="">No integrated models available</option>'}
+            </select>
+          </label>
+          <div class="ai-model-meta">
+            ${renderSelectedModelMeta(models, selectedModelId)}
+          </div>
+        </div>
+
+        <div class="ai-thread">
+          ${assistant.messages.length
+            ? assistant.messages.map(renderChatBubble).join('')
+            : '<div class="ai-empty">Start chatting about your plan, tasks, or code work.</div>'}
+          ${assistant.isLoading ? '<div class="chat-bubble assistant pending">Thinking...</div>' : ''}
+        </div>
+
+        ${assistant.lastError ? `<div class="ai-error">${escapeHtml(assistant.lastError)}</div>` : ''}
+
+        <div class="ai-compose">
+          <label>
+            <span>Message</span>
+            <textarea name="ai-prompt" rows="5" placeholder="Ask for help planning the day, breaking down a task, or choosing the next step...">${escapeHtml(aiDraft)}</textarea>
+          </label>
+          <div class="footer-actions">
+            <button type="button" class="primary-button" data-action="send-ai-message" ${assistant.isLoading || !models.length ? 'disabled' : ''}>Send</button>
+          </div>
+          <p class="hint">Keyboard: Ctrl/Cmd+Enter sends the current message.</p>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderSelectedModelMeta(models, selectedModelId) {
+    const selectedModel = models.find((model) => model.id === selectedModelId);
+    if (!selectedModel) {
+      return '<span class="hint">No model selected</span>';
+    }
+
+    return `
+      <span class="model-chip">${escapeHtml(selectedModel.vendor)}</span>
+      <span class="model-chip">${escapeHtml(selectedModel.family || selectedModel.version || 'model')}</span>
+      <span class="hint">${escapeHtml(String(selectedModel.maxInputTokens || 0))} max tokens</span>
+    `;
+  }
+
+  function renderChatBubble(message) {
+    return `
+      <div class="chat-bubble ${message.role === 'user' ? 'user' : 'assistant'}">
+        <div class="chat-meta">
+          <strong>${message.role === 'user' ? 'You' : 'AI'}</strong>
+          ${message.modelId ? `<span>${escapeHtml(message.modelId)}</span>` : ''}
+        </div>
+        <div class="chat-content">${escapeHtml(message.content)}</div>
+      </div>
+    `;
+  }
+
+  function sendAiMessage() {
+    const prompt = aiDraft.trim();
+    if (!prompt || !latestPayload) {
+      return;
+    }
+
+    const selectedModel = document.querySelector('select[name="ai-model"]');
+    const modelId = selectedModel instanceof HTMLSelectElement ? selectedModel.value : '';
+    vscode.postMessage({ type: 'sendAiPrompt', prompt, modelId });
+    aiDraft = '';
   }
 
   function taskRow(task, timeBlocks) {

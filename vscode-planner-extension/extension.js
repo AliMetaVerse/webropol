@@ -5,9 +5,7 @@ const crypto = require('crypto');
 
 const STORAGE_FILE_NAME = 'planner-state.json';
 const VIEW_TYPES = {
-  planning: 'plannerPlanningView',
-  execution: 'plannerExecutionView',
-  history: 'plannerHistoryView'
+  dashboard: 'plannerDashboardView'
 };
 
 function createId(prefix) {
@@ -54,6 +52,15 @@ function createEmptyPlan(date = todayIso()) {
   };
 }
 
+function createAssistantState() {
+  return {
+    selectedModelId: '',
+    messages: [],
+    isLoading: false,
+    lastError: ''
+  };
+}
+
 function normalizeTask(task = {}) {
   return {
     id: task.id || createId('task'),
@@ -74,6 +81,25 @@ function normalizeBlock(block = {}) {
   };
 }
 
+function normalizeAssistantMessage(message = {}) {
+  return {
+    id: message.id || createId('chat'),
+    role: message.role === 'user' ? 'user' : 'assistant',
+    content: typeof message.content === 'string' ? message.content : '',
+    modelId: typeof message.modelId === 'string' ? message.modelId : '',
+    createdAt: typeof message.createdAt === 'string' ? message.createdAt : new Date().toISOString()
+  };
+}
+
+function normalizeAssistantState(assistant = {}) {
+  return {
+    selectedModelId: typeof assistant.selectedModelId === 'string' ? assistant.selectedModelId : '',
+    messages: Array.isArray(assistant.messages) ? assistant.messages.map(normalizeAssistantMessage) : [],
+    isLoading: Boolean(assistant.isLoading),
+    lastError: typeof assistant.lastError === 'string' ? assistant.lastError : ''
+  };
+}
+
 function normalizePlan(plan = {}) {
   const normalized = {
     date: typeof plan.date === 'string' ? plan.date : todayIso(),
@@ -89,9 +115,10 @@ function normalizePlan(plan = {}) {
 }
 
 function normalizeState(raw = {}) {
-  const activePlan = normalizePlan(raw.activePlan || createEmptyPlan());
-  const history = Array.isArray(raw.history)
-    ? raw.history.map((entry) => ({
+  const safeRaw = raw && typeof raw === 'object' ? raw : {};
+  const activePlan = normalizePlan(safeRaw.activePlan || createEmptyPlan());
+  const history = Array.isArray(safeRaw.history)
+    ? safeRaw.history.map((entry) => ({
         date: typeof entry.date === 'string' ? entry.date : todayIso(),
         endedAt: typeof entry.endedAt === 'string' ? entry.endedAt : new Date().toISOString(),
         mode: ['planning', 'executing', 'paused'].includes(entry.mode) ? entry.mode : 'planning',
@@ -102,7 +129,96 @@ function normalizeState(raw = {}) {
       }))
     : [];
 
-  return { version: 1, activePlan, history };
+  const assistant = normalizeAssistantState(safeRaw.assistant || createAssistantState());
+
+  return { version: 1, activePlan, history, assistant };
+}
+
+function serializeModelInfo(model) {
+  return {
+    id: model.id,
+    name: model.name,
+    vendor: model.vendor,
+    family: model.family,
+    version: model.version,
+    maxInputTokens: model.maxInputTokens
+  };
+}
+
+async function listAvailableModels() {
+  if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
+    return [];
+  }
+
+  const models = await vscode.lm.selectChatModels();
+  return models
+    .map(serializeModelInfo)
+    .sort((left, right) => `${left.vendor}/${left.family}/${left.name}`.localeCompare(`${right.vendor}/${right.family}/${right.name}`));
+}
+
+async function resolveSelectedModel(selectedModelId) {
+  if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
+    return undefined;
+  }
+
+  if (selectedModelId) {
+    const exactMatches = await vscode.lm.selectChatModels({ id: selectedModelId });
+    if (exactMatches.length > 0) {
+      return exactMatches[0];
+    }
+  }
+
+  const models = await vscode.lm.selectChatModels();
+  return models[0];
+}
+
+function summarizePlanContext(plan) {
+  const topPriorities = plan.topPriorities
+    .filter((task) => task.title.trim())
+    .map((task) => `- ${task.title}`)
+    .join('\n');
+  const plannedTasks = plan.plannedTasks
+    .filter((task) => task.title.trim())
+    .map((task) => `- ${task.title}`)
+    .join('\n');
+  const currentTask = getCurrentTask(plan);
+
+  return [
+    'You are helping the user inside Gravity Planner in VS Code.',
+    `Date: ${plan.date}`,
+    currentTask ? `Current task: ${currentTask.title}` : 'Current task: none selected',
+    topPriorities ? `Top priorities:\n${topPriorities}` : 'Top priorities: none',
+    plannedTasks ? `Planned tasks:\n${plannedTasks}` : 'Planned tasks: none',
+    'Keep answers concise, practical, and focused on planning or development work unless the user asks otherwise.'
+  ].join('\n\n');
+}
+
+function buildLanguageModelMessages(plan, assistantMessages) {
+  const messages = [vscode.LanguageModelChatMessage.User(summarizePlanContext(plan))];
+  const history = assistantMessages.filter((message) => message.content.trim()).slice(-12);
+
+  for (const message of history) {
+    if (message.role === 'assistant') {
+      messages.push(vscode.LanguageModelChatMessage.Assistant(message.content));
+      continue;
+    }
+
+    messages.push(vscode.LanguageModelChatMessage.User(message.content));
+  }
+
+  return messages;
+}
+
+function formatLanguageModelError(error) {
+  if (typeof vscode.LanguageModelError === 'function' && error instanceof vscode.LanguageModelError) {
+    return error.message || 'The selected VS Code model could not complete the request.';
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'The selected VS Code model could not complete the request.';
 }
 
 function getAllTasks(plan) {
@@ -233,6 +349,7 @@ class PlannerViewProvider {
     this.viewType = viewType;
     this.title = title;
     this.view = undefined;
+    this.activeSection = 'planning';
   }
 
   resolveWebviewView(webviewView) {
@@ -254,15 +371,49 @@ class PlannerViewProvider {
 
     switch (message.type) {
       case 'ready':
+        if (typeof message.section === 'string' && message.section) {
+          this.activeSection = message.section;
+        }
         this.postState();
         return;
+      case 'setSection':
+        this.activeSection = typeof message.section === 'string' && message.section ? message.section : 'planning';
+        this.postState();
+        return;
+      case 'refreshAiModels':
+        this.activeSection = 'ai';
+        this.postState();
+        return;
+      case 'selectAiModel':
+        this.activeSection = 'ai';
+        await this.store.update((draft) => {
+          draft.assistant.selectedModelId = typeof message.modelId === 'string' ? message.modelId : '';
+          draft.assistant.lastError = '';
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'clearAiConversation':
+        this.activeSection = 'ai';
+        await this.store.update((draft) => {
+          draft.assistant.messages = [];
+          draft.assistant.lastError = '';
+          draft.assistant.isLoading = false;
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'sendAiPrompt':
+        this.activeSection = 'ai';
+        await this.sendAiPrompt(message);
+        return;
       case 'savePlan':
+        this.activeSection = 'planning';
         await this.store.update((draft) => {
           draft.activePlan = normalizePlan(message.plan);
         });
         PlannerViewProvider.broadcast();
         return;
       case 'startExecution':
+        this.activeSection = 'execution';
         await this.store.update((draft) => {
           if (message.plan) {
             draft.activePlan = normalizePlan(message.plan);
@@ -271,15 +422,16 @@ class PlannerViewProvider {
           syncCurrentTask(draft.activePlan);
         });
         PlannerViewProvider.broadcast();
-        vscode.commands.executeCommand('planner.openExecution');
         return;
       case 'pauseExecution':
+        this.activeSection = 'execution';
         await this.store.update((draft) => {
           draft.activePlan.mode = 'paused';
         });
         PlannerViewProvider.broadcast();
         return;
       case 'resumeExecution':
+        this.activeSection = 'execution';
         await this.store.update((draft) => {
           draft.activePlan.mode = 'executing';
           syncCurrentTask(draft.activePlan);
@@ -287,6 +439,7 @@ class PlannerViewProvider {
         PlannerViewProvider.broadcast();
         return;
       case 'completeCurrentTask':
+        this.activeSection = 'execution';
         await this.store.update((draft) => {
           const task = getCurrentTask(draft.activePlan);
           if (task) {
@@ -298,6 +451,7 @@ class PlannerViewProvider {
         PlannerViewProvider.broadcast();
         return;
       case 'skipCurrentTask':
+        this.activeSection = 'execution';
         await this.store.update((draft) => {
           const task = getCurrentTask(draft.activePlan);
           if (task) {
@@ -309,35 +463,130 @@ class PlannerViewProvider {
         PlannerViewProvider.broadcast();
         return;
       case 'endSession':
+        this.activeSection = 'history';
         await this.store.update((draft) => {
           draft.history.unshift(createArchiveEntry(draft.activePlan));
           draft.activePlan = createEmptyPlan(todayIso());
         });
         PlannerViewProvider.broadcast();
-        vscode.commands.executeCommand('planner.openPlanning');
         return;
       default:
         return;
     }
   }
 
-  postState() {
+  async sendAiPrompt(message) {
+    const prompt = typeof message.prompt === 'string' ? message.prompt.trim() : '';
+    if (!prompt) {
+      return;
+    }
+
+    const userMessage = {
+      id: createId('chat'),
+      role: 'user',
+      content: prompt,
+      modelId: typeof message.modelId === 'string' ? message.modelId : '',
+      createdAt: new Date().toISOString()
+    };
+
+    const assistantMessageId = createId('chat');
+
+    await this.store.update((draft) => {
+      draft.assistant.selectedModelId = typeof message.modelId === 'string' ? message.modelId : draft.assistant.selectedModelId;
+      draft.assistant.messages.push(userMessage, {
+        id: assistantMessageId,
+        role: 'assistant',
+        content: '',
+        modelId: draft.assistant.selectedModelId,
+        createdAt: new Date().toISOString()
+      });
+      draft.assistant.isLoading = true;
+      draft.assistant.lastError = '';
+    });
+
+    PlannerViewProvider.broadcast();
+
+    try {
+      if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
+        throw new Error('This VS Code build does not expose integrated chat models to extensions.');
+      }
+
+      const currentState = this.store.getState();
+      const model = await resolveSelectedModel(currentState.assistant.selectedModelId);
+
+      if (!model) {
+        throw new Error('No integrated VS Code chat models are currently available.');
+      }
+
+      const modelMessages = buildLanguageModelMessages(
+        currentState.activePlan,
+        currentState.assistant.messages.filter((entry) => entry.id !== assistantMessageId)
+      );
+
+      const response = await model.sendRequest(modelMessages, {
+        justification: 'Gravity Planner AI chat lets the user discuss tasks and daily plans using models already available in VS Code.'
+      });
+
+      let responseText = '';
+      for await (const fragment of response.text) {
+        responseText += fragment;
+      }
+
+      await this.store.update((draft) => {
+        const assistantMessage = draft.assistant.messages.find((entry) => entry.id === assistantMessageId);
+        if (assistantMessage) {
+          assistantMessage.content = responseText.trim() || 'No response returned by the selected model.';
+          assistantMessage.modelId = model.id;
+        }
+        draft.assistant.selectedModelId = model.id;
+        draft.assistant.isLoading = false;
+        draft.assistant.lastError = '';
+      });
+    } catch (error) {
+      const errorMessage = formatLanguageModelError(error);
+      await this.store.update((draft) => {
+        const assistantMessage = draft.assistant.messages.find((entry) => entry.id === assistantMessageId);
+        if (assistantMessage) {
+          assistantMessage.content = errorMessage;
+        }
+        draft.assistant.isLoading = false;
+        draft.assistant.lastError = errorMessage;
+      });
+    }
+
+    PlannerViewProvider.broadcast();
+  }
+
+  async postState() {
     if (!this.view) {
       return;
     }
 
     const state = this.store.getState();
     const progress = getProgress(state.activePlan);
+    const models = await listAvailableModels();
+
+    if (!state.assistant.selectedModelId && models.length > 0) {
+      await this.store.update((draft) => {
+        if (!draft.assistant.selectedModelId) {
+          draft.assistant.selectedModelId = models[0].id;
+        }
+      });
+    }
+
+    const hydratedState = this.store.getState();
     this.view.description = `${progress.percent}% complete`;
     this.view.webview.postMessage({
       type: 'state',
       payload: {
         viewType: this.viewType,
-        state,
+        state: hydratedState,
         meta: {
-          todayLabel: formatLongDate(state.activePlan.date),
+          todayLabel: formatLongDate(hydratedState.activePlan.date),
           progress,
-          currentTask: getCurrentTask(state.activePlan)
+          currentTask: getCurrentTask(hydratedState.activePlan),
+          section: this.activeSection,
+          models
         }
       }
     });
@@ -355,7 +604,7 @@ class PlannerViewProvider {
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="${styleUri}">
-  <title>Planner</title>
+  <title>Gravity Planner</title>
 </head>
 <body data-view-type="${this.viewType}">
   <div id="app"></div>
@@ -364,10 +613,12 @@ class PlannerViewProvider {
 </html>`;
   }
 
-  reveal() {
+  reveal(section = this.activeSection) {
+    this.activeSection = section;
     if (this.view) {
       this.view.show?.(true);
     }
+    this.postState();
   }
 
   static register(provider) {
@@ -383,200 +634,29 @@ class PlannerViewProvider {
 
 PlannerViewProvider.providers = [];
 
-class PlannerPanel {
-  constructor(context, store) {
-    this.context = context;
-    this.store = store;
-    this.panel = undefined;
-  }
-
-  open(section = 'planning') {
-    if (!this.panel) {
-      this.panel = vscode.window.createWebviewPanel(
-        'plannerDashboard',
-        'Planner Dashboard',
-        vscode.ViewColumn.One,
-        {
-          enableScripts: true,
-          retainContextWhenHidden: true,
-          localResourceRoots: [vscode.Uri.joinPath(this.context.extensionUri, 'media')]
-        }
-      );
-
-      this.panel.onDidDispose(() => {
-        this.panel = undefined;
-      });
-
-      this.panel.webview.html = this.getHtml(this.panel.webview);
-      this.panel.webview.onDidReceiveMessage((message) => this.handleMessage(message));
-    }
-
-    this.panel.reveal(vscode.ViewColumn.One, false);
-    this.postState(section);
-  }
-
-  async handleMessage(message) {
-    if (!message || typeof message.type !== 'string') {
-      return;
-    }
-
-    switch (message.type) {
-      case 'ready':
-        this.postState(message.section || 'planning');
-        return;
-      case 'savePlan':
-        await this.store.update((draft) => {
-          draft.activePlan = normalizePlan(message.plan);
-        });
-        PlannerViewProvider.broadcast();
-        return;
-      case 'startExecution':
-        await this.store.update((draft) => {
-          if (message.plan) {
-            draft.activePlan = normalizePlan(message.plan);
-          }
-          draft.activePlan.mode = 'executing';
-          syncCurrentTask(draft.activePlan);
-        });
-        PlannerViewProvider.broadcast();
-        this.postState('execution');
-        return;
-      case 'pauseExecution':
-        await this.store.update((draft) => {
-          draft.activePlan.mode = 'paused';
-        });
-        PlannerViewProvider.broadcast();
-        return;
-      case 'resumeExecution':
-        await this.store.update((draft) => {
-          draft.activePlan.mode = 'executing';
-          syncCurrentTask(draft.activePlan);
-        });
-        PlannerViewProvider.broadcast();
-        return;
-      case 'completeCurrentTask':
-        await this.store.update((draft) => {
-          const task = getCurrentTask(draft.activePlan);
-          if (task) {
-            task.completed = true;
-            task.skipped = false;
-          }
-          syncCurrentTask(draft.activePlan);
-        });
-        PlannerViewProvider.broadcast();
-        return;
-      case 'skipCurrentTask':
-        await this.store.update((draft) => {
-          const task = getCurrentTask(draft.activePlan);
-          if (task) {
-            task.skipped = true;
-            task.completed = false;
-          }
-          syncCurrentTask(draft.activePlan);
-        });
-        PlannerViewProvider.broadcast();
-        return;
-      case 'endSession':
-        await this.store.update((draft) => {
-          draft.history.unshift(createArchiveEntry(draft.activePlan));
-          draft.activePlan = createEmptyPlan(todayIso());
-        });
-        PlannerViewProvider.broadcast();
-        this.postState('history');
-        return;
-      default:
-        return;
-    }
-  }
-
-  postState(section = 'planning') {
-    if (!this.panel) {
-      return;
-    }
-
-    const state = this.store.getState();
-    const progress = getProgress(state.activePlan);
-    this.panel.webview.postMessage({
-      type: 'state',
-      payload: {
-        viewType: 'panel',
-        state,
-        meta: {
-          todayLabel: formatLongDate(state.activePlan.date),
-          progress,
-          currentTask: getCurrentTask(state.activePlan),
-          section
-        }
-      }
-    });
-  }
-
-  getHtml(webview) {
-    const nonce = crypto.randomBytes(16).toString('base64');
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'planner.js'));
-    const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'planner.css'));
-
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="${styleUri}">
-  <title>Planner Dashboard</title>
-</head>
-<body data-view-type="panel">
-  <div id="app"></div>
-  <script nonce="${nonce}" src="${scriptUri}"></script>
-</body>
-</html>`;
-  }
-}
-
 async function activate(context) {
   const store = new PlannerStore(context);
   await store.init();
 
-  const planningProvider = new PlannerViewProvider(context, store, 'planning', 'Planning');
-  const executionProvider = new PlannerViewProvider(context, store, 'execution', 'Execution');
-  const historyProvider = new PlannerViewProvider(context, store, 'history', 'History');
-  const plannerPanel = new PlannerPanel(context, store);
+  const dashboardProvider = new PlannerViewProvider(context, store, 'panel', 'Gravity Planner');
 
-  PlannerViewProvider.register(planningProvider);
-  PlannerViewProvider.register(executionProvider);
-  PlannerViewProvider.register(historyProvider);
-  PlannerViewProvider.register(plannerPanel);
+  PlannerViewProvider.register(dashboardProvider);
 
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(VIEW_TYPES.planning, planningProvider, {
-      webviewOptions: { retainContextWhenHidden: true }
-    }),
-    vscode.window.registerWebviewViewProvider(VIEW_TYPES.execution, executionProvider, {
-      webviewOptions: { retainContextWhenHidden: true }
-    }),
-    vscode.window.registerWebviewViewProvider(VIEW_TYPES.history, historyProvider, {
+    vscode.window.registerWebviewViewProvider(VIEW_TYPES.dashboard, dashboardProvider, {
       webviewOptions: { retainContextWhenHidden: true }
     }),
     vscode.commands.registerCommand('planner.openDashboard', async () => {
-      plannerPanel.open('planning');
+      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+      dashboardProvider.reveal('planning');
     }),
     vscode.commands.registerCommand('planner.openPlanning', async () => {
-      if (planningProvider.view) {
-        await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
-        planningProvider.reveal();
-        return;
-      }
-
-      plannerPanel.open('planning');
+      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+      dashboardProvider.reveal('planning');
     }),
     vscode.commands.registerCommand('planner.openExecution', async () => {
-      if (executionProvider.view) {
-        await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
-        executionProvider.reveal();
-        return;
-      }
-
-      plannerPanel.open('execution');
+      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+      dashboardProvider.reveal('execution');
     }),
     vscode.commands.registerCommand('planner.resetToday', async () => {
       await store.resetToday();
@@ -584,10 +664,19 @@ async function activate(context) {
     })
   );
 
+  if (vscode.lm && typeof vscode.lm.onDidChangeChatModels === 'function') {
+    context.subscriptions.push(
+      vscode.lm.onDidChangeChatModels(() => {
+        PlannerViewProvider.broadcast();
+      })
+    );
+  }
+
   if (context.extensionMode === vscode.ExtensionMode.Development) {
-    vscode.window.showInformationMessage('Webropol Daily Planner activated (dev)');
-    setTimeout(() => {
-      plannerPanel.open('planning');
+    vscode.window.showInformationMessage('Gravity Planner activated (dev)');
+    setTimeout(async () => {
+      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+      dashboardProvider.reveal('planning');
     }, 300);
   }
 }
