@@ -40,6 +40,7 @@ function _registerColoursModal() {
       barTab: 'colours',   // 'colours' | 'accessible-colours' | 'accessible-patterns'
       barColours: [...DEFAULT_BAR_COLOURS],
       selectedAccessiblePalette: null,
+      accessiblePaletteReversed: false,
 
       // ── Averages / excluded rows ──────────────────────────────────────────
       indexType: 'mean',   // 'mean' | 'index'
@@ -54,6 +55,13 @@ function _registerColoursModal() {
           reference: 'IBM Design Language — Color (2023)',
           referenceUrl: 'https://www.ibm.com/design/language/color/',
           colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000','#009D9A','#001141','#005D5D','#8A3FFC','#FA4D56','#08BDBA','#25A249']
+        },
+        {
+          name: 'IBM RAG Shades',
+          description: 'IBM-inspired RAG sequence · 4 red, 4 amber and 4 green shades',
+          reference: 'Webropol custom palette — based on IBM accessible colour families',
+          referenceUrl: 'https://www.ibm.com/design/language/color/',
+          colours: ['#FA4D56','#DC267F','#C2255C','#A61E4D','#FFB000','#FE8F00','#D97706','#B45309','#25A249','#08BDBA','#009D9A','#0E7C3A']
         },
         {
           name: 'Wong (2011)',
@@ -108,7 +116,11 @@ function _registerColoursModal() {
         this._selectAccessiblePaletteHandler = (event) => {
           const paletteName = event.detail?.paletteName;
           if (paletteName) {
-            this.applyAccessiblePaletteByName(paletteName, false);
+            this.applyAccessiblePaletteByName(
+              paletteName,
+              false,
+              event.detail?.reversed ?? this.accessiblePaletteReversed
+            );
           }
         };
         window.addEventListener('webropol:open-chart-colours', this._openHandler);
@@ -132,6 +144,8 @@ function _registerColoursModal() {
           detail: {
             barColours:     [...this.barColours],
             activePatterns: this.accessiblePatterns.filter(p => p.active).map(p => p.patternId),
+            accessiblePaletteName: this.selectedAccessiblePalette,
+            accessiblePaletteReversed: this.accessiblePaletteReversed,
             averageRows:    [...this.averageRows],
             excludedRows:   [...this.excludedRows]
           }
@@ -145,6 +159,7 @@ function _registerColoursModal() {
       resetBarColours() {
         this.barColours = [...DEFAULT_BAR_COLOURS];
         this.selectedAccessiblePalette = null;
+        this.accessiblePaletteReversed = false;
       },
 
       setBarColour(index, val) {
@@ -152,20 +167,33 @@ function _registerColoursModal() {
       },
 
       applyAccessiblePalette(palette) {
-        this.applyAccessiblePaletteByName(palette.name, true);
+        this.applyAccessiblePaletteByName(palette.name, false);
       },
 
-      applyAccessiblePaletteByName(paletteName, switchTab = true) {
+      getOrderedPaletteColours(palette, reversed = this.accessiblePaletteReversed) {
+        const colours = [...palette.colours];
+        return reversed ? colours.reverse() : colours;
+      },
+
+      applyAccessiblePaletteByName(paletteName, switchTab = true, reversed = this.accessiblePaletteReversed) {
         const palette = this.accessiblePalettes.find(item => item.name === paletteName);
         if (!palette) return;
 
         this.selectedAccessiblePalette = palette.name;
+        this.accessiblePaletteReversed = reversed;
         if (switchTab) {
           this.barTab = 'colours';
         }
-        palette.colours.forEach((c, i) => {
+        this.getOrderedPaletteColours(palette, reversed).forEach((c, i) => {
           if (i < this.barColours.length) this.barColours[i] = c;
         });
+      },
+
+      toggleAccessiblePaletteReverse() {
+        this.accessiblePaletteReversed = !this.accessiblePaletteReversed;
+        if (this.selectedAccessiblePalette) {
+          this.applyAccessiblePaletteByName(this.selectedAccessiblePalette, false, this.accessiblePaletteReversed);
+        }
       },
 
       togglePattern(idx) {
@@ -283,6 +311,19 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <!-- ── TAB: Accessible colours ── -->
         <div x-show="barTab === 'accessible-colours'" x-transition.opacity>
+          <div class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-webropol-gray-200 bg-webropol-gray-50 px-4 py-3">
+            <div>
+              <div class="text-sm font-medium text-webropol-gray-800">Reverse palette order</div>
+              <div class="text-xs text-webropol-gray-500">Flip the sequence from green-to-red or red-to-green without editing individual colours.</div>
+            </div>
+            <button @click="toggleAccessiblePaletteReverse()"
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+                    :class="accessiblePaletteReversed ? 'bg-webropol-primary-700 text-white shadow-sm' : 'bg-white text-webropol-gray-600 border border-webropol-gray-200 hover:border-webropol-primary-300 hover:text-webropol-primary-700'">
+              <i class="fal fa-exchange-alt"></i>
+              <span x-text="accessiblePaletteReversed ? 'Reversed' : 'Normal order'"></span>
+            </button>
+          </div>
           <div class="space-y-2">
             <template x-for="palette in accessiblePalettes" :key="palette.name">
               <div class="p-3.5 rounded-xl border-2 cursor-pointer transition-all"
@@ -309,7 +350,7 @@ class WebropolChartColoursModal extends HTMLElement {
 
                 <!-- 12 swatches in 2 rows of 6 -->
                 <div class="grid gap-1" style="grid-template-columns:repeat(6,1fr)">
-                  <template x-for="c in palette.colours" :key="c">
+                  <template x-for="c in getOrderedPaletteColours(palette)" :key="palette.name + '-' + c">
                     <div class="h-7 rounded-md border-2 border-white ring-1 ring-black/10 shadow-sm"
                          :style="'background:' + c"
                          :title="c"></div>
