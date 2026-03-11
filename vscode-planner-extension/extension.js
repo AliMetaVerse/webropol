@@ -383,21 +383,169 @@ class PlannerViewProvider {
 
 PlannerViewProvider.providers = [];
 
+class PlannerPanel {
+  constructor(context, store) {
+    this.context = context;
+    this.store = store;
+    this.panel = undefined;
+  }
+
+  open(section = 'planning') {
+    if (!this.panel) {
+      this.panel = vscode.window.createWebviewPanel(
+        'plannerDashboard',
+        'Planner Dashboard',
+        vscode.ViewColumn.One,
+        {
+          enableScripts: true,
+          retainContextWhenHidden: true,
+          localResourceRoots: [vscode.Uri.joinPath(this.context.extensionUri, 'media')]
+        }
+      );
+
+      this.panel.onDidDispose(() => {
+        this.panel = undefined;
+      });
+
+      this.panel.webview.html = this.getHtml(this.panel.webview);
+      this.panel.webview.onDidReceiveMessage((message) => this.handleMessage(message));
+    }
+
+    this.panel.reveal(vscode.ViewColumn.One, false);
+    this.postState(section);
+  }
+
+  async handleMessage(message) {
+    if (!message || typeof message.type !== 'string') {
+      return;
+    }
+
+    switch (message.type) {
+      case 'ready':
+        this.postState(message.section || 'planning');
+        return;
+      case 'savePlan':
+        await this.store.update((draft) => {
+          draft.activePlan = normalizePlan(message.plan);
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'startExecution':
+        await this.store.update((draft) => {
+          if (message.plan) {
+            draft.activePlan = normalizePlan(message.plan);
+          }
+          draft.activePlan.mode = 'executing';
+          syncCurrentTask(draft.activePlan);
+        });
+        PlannerViewProvider.broadcast();
+        this.postState('execution');
+        return;
+      case 'pauseExecution':
+        await this.store.update((draft) => {
+          draft.activePlan.mode = 'paused';
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'resumeExecution':
+        await this.store.update((draft) => {
+          draft.activePlan.mode = 'executing';
+          syncCurrentTask(draft.activePlan);
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'completeCurrentTask':
+        await this.store.update((draft) => {
+          const task = getCurrentTask(draft.activePlan);
+          if (task) {
+            task.completed = true;
+            task.skipped = false;
+          }
+          syncCurrentTask(draft.activePlan);
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'skipCurrentTask':
+        await this.store.update((draft) => {
+          const task = getCurrentTask(draft.activePlan);
+          if (task) {
+            task.skipped = true;
+            task.completed = false;
+          }
+          syncCurrentTask(draft.activePlan);
+        });
+        PlannerViewProvider.broadcast();
+        return;
+      case 'endSession':
+        await this.store.update((draft) => {
+          draft.history.unshift(createArchiveEntry(draft.activePlan));
+          draft.activePlan = createEmptyPlan(todayIso());
+        });
+        PlannerViewProvider.broadcast();
+        this.postState('history');
+        return;
+      default:
+        return;
+    }
+  }
+
+  postState(section = 'planning') {
+    if (!this.panel) {
+      return;
+    }
+
+    const state = this.store.getState();
+    const progress = getProgress(state.activePlan);
+    this.panel.webview.postMessage({
+      type: 'state',
+      payload: {
+        viewType: 'panel',
+        state,
+        meta: {
+          todayLabel: formatLongDate(state.activePlan.date),
+          progress,
+          currentTask: getCurrentTask(state.activePlan),
+          section
+        }
+      }
+    });
+  }
+
+  getHtml(webview) {
+    const nonce = crypto.randomBytes(16).toString('base64');
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'planner.js'));
+    const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'planner.css'));
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="${styleUri}">
+  <title>Planner Dashboard</title>
+</head>
+<body data-view-type="panel">
+  <div id="app"></div>
+  <script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>`;
+  }
+}
+
 async function activate(context) {
   const store = new PlannerStore(context);
   await store.init();
 
-  if (context.extensionMode === vscode.ExtensionMode.Development) {
-    vscode.window.showInformationMessage('Webropol Daily Planner activated');
-  }
-
   const planningProvider = new PlannerViewProvider(context, store, 'planning', 'Planning');
   const executionProvider = new PlannerViewProvider(context, store, 'execution', 'Execution');
   const historyProvider = new PlannerViewProvider(context, store, 'history', 'History');
+  const plannerPanel = new PlannerPanel(context, store);
 
   PlannerViewProvider.register(planningProvider);
   PlannerViewProvider.register(executionProvider);
   PlannerViewProvider.register(historyProvider);
+  PlannerViewProvider.register(plannerPanel);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(VIEW_TYPES.planning, planningProvider, {
@@ -409,19 +557,39 @@ async function activate(context) {
     vscode.window.registerWebviewViewProvider(VIEW_TYPES.history, historyProvider, {
       webviewOptions: { retainContextWhenHidden: true }
     }),
+    vscode.commands.registerCommand('planner.openDashboard', async () => {
+      plannerPanel.open('planning');
+    }),
     vscode.commands.registerCommand('planner.openPlanning', async () => {
-      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
-      planningProvider.reveal();
+      if (planningProvider.view) {
+        await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+        planningProvider.reveal();
+        return;
+      }
+
+      plannerPanel.open('planning');
     }),
     vscode.commands.registerCommand('planner.openExecution', async () => {
-      await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
-      executionProvider.reveal();
+      if (executionProvider.view) {
+        await vscode.commands.executeCommand('workbench.view.extension.dailyPlanner');
+        executionProvider.reveal();
+        return;
+      }
+
+      plannerPanel.open('execution');
     }),
     vscode.commands.registerCommand('planner.resetToday', async () => {
       await store.resetToday();
       PlannerViewProvider.broadcast();
     })
   );
+
+  if (context.extensionMode === vscode.ExtensionMode.Development) {
+    vscode.window.showInformationMessage('Webropol Daily Planner activated (dev)');
+    setTimeout(() => {
+      plannerPanel.open('planning');
+    }, 300);
+  }
 }
 
 function deactivate() {}

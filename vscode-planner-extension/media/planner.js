@@ -3,6 +3,7 @@
   const app = document.getElementById('app');
   const viewType = document.body.dataset.viewType;
   let latestPayload = null;
+  let activePanelSection = 'planning';
 
   window.addEventListener('message', (event) => {
     const message = event.data;
@@ -11,6 +12,9 @@
     }
 
     latestPayload = message.payload;
+    if (viewType === 'panel' && message.payload?.meta?.section) {
+      activePanelSection = message.payload.meta.section;
+    }
     render();
   });
 
@@ -21,10 +25,19 @@
     }
 
     const action = actionTarget.dataset.action;
+    if (action === 'show-planning' || action === 'show-execution' || action === 'show-history') {
+      activePanelSection = action.replace('show-', '');
+      render();
+      return;
+    }
+
     if (action === 'start-execution') {
       const plan = collectPlanningForm();
       if (!plan) {
         return;
+      }
+      if (viewType === 'panel') {
+        activePanelSection = 'execution';
       }
       vscode.postMessage({ type: 'startExecution', plan });
       return;
@@ -56,6 +69,9 @@
     }
 
     if (action === 'end-session') {
+      if (viewType === 'panel') {
+        activePanelSection = 'history';
+      }
       vscode.postMessage({ type: 'endSession' });
       return;
     }
@@ -121,72 +137,122 @@
       return;
     }
 
+    if (viewType === 'panel') {
+      renderPanelView();
+      return;
+    }
+
     renderHistoryView();
   }
 
-  function renderPlanningView() {
-    const { state, meta } = latestPayload;
-    const plan = state.activePlan;
+  function renderPanelView() {
+    const { meta } = latestPayload;
     app.innerHTML = `
-      <div class="shell">
-        <div class="hero-card">
+      <div class="shell panel-shell">
+        <div class="hero-card compact">
           <div>
-            <p class="eyebrow">Daily Plan</p>
+            <p class="eyebrow">Planner Dashboard</p>
             <h1>${escapeHtml(meta.todayLabel)}</h1>
           </div>
-          <div class="progress-chip">${meta.progress.percent}% planned complete</div>
+          <div class="progress-chip">${meta.progress.percent}% complete</div>
         </div>
-
-        <div class="progress-card">
-          <div class="progress-header">
-            <span>Day Progress</span>
-            <strong>${meta.progress.completed}/${meta.progress.total || 0}</strong>
-          </div>
-          <div class="progress-bar"><span style="width:${meta.progress.percent}%"></span></div>
+        <div class="panel-tabs">
+          <button type="button" class="tab-button${activePanelSection === 'planning' ? ' active' : ''}" data-action="show-planning">Planning</button>
+          <button type="button" class="tab-button${activePanelSection === 'execution' ? ' active' : ''}" data-action="show-execution">Execution</button>
+          <button type="button" class="tab-button${activePanelSection === 'history' ? ' active' : ''}" data-action="show-history">History</button>
         </div>
-
-        <form id="planning-form" class="stack">
-          <section class="panel">
-            <div class="section-header">
-              <h2>Top Priorities</h2>
-              <button type="button" class="ghost-button" data-action="add-priority">Add</button>
-            </div>
-            <div class="task-list" data-list="topPriorities">
-              ${plan.topPriorities.map((task) => taskRow(task, plan.timeBlocks)).join('')}
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="section-header">
-              <h2>Planned Tasks</h2>
-              <button type="button" class="ghost-button" data-action="add-task">Add</button>
-            </div>
-            <div class="task-list" data-list="plannedTasks">
-              ${plan.plannedTasks.map((task) => taskRow(task, plan.timeBlocks)).join('')}
-            </div>
-          </section>
-
-          <section class="panel">
-            <div class="section-header">
-              <h2>Time Blocks</h2>
-              <button type="button" class="ghost-button" data-action="add-block">Add</button>
-            </div>
-            <div class="block-list" data-list="timeBlocks">
-              ${plan.timeBlocks.map(blockRow).join('')}
-            </div>
-          </section>
-
-          <div class="footer-actions">
-            <button type="button" class="secondary-button" data-action="save-plan">Save Plan</button>
-            <button type="button" class="primary-button" data-action="start-execution">Start Execution</button>
-          </div>
-          <p class="hint">Keyboard: Ctrl/Cmd+Enter starts execution from this view.</p>
-        </form>
+        <div class="panel-stage">
+          ${renderSectionMarkup(activePanelSection)}
+        </div>
       </div>
     `;
   }
 
+  function renderSectionMarkup(section) {
+    if (section === 'planning') {
+      return planningMarkup();
+    }
+
+    if (section === 'execution') {
+      return executionMarkup();
+    }
+
+    return historyMarkup();
+  }
+
+  function renderPlanningView() {
+    app.innerHTML = `<div class="shell">${planningMarkup()}</div>`;
+  }
+
   function renderExecutionView() {
+    app.innerHTML = `<div class="shell">${executionMarkup()}</div>`;
+  }
+
+  function renderHistoryView() {
+    app.innerHTML = `<div class="shell">${historyMarkup()}</div>`;
+  }
+
+  function planningMarkup() {
+    const { state, meta } = latestPayload;
+    const plan = state.activePlan;
+    return `
+      <div class="hero-card">
+        <div>
+          <p class="eyebrow">Daily Plan</p>
+          <h1>${escapeHtml(meta.todayLabel)}</h1>
+        </div>
+        <div class="progress-chip">${meta.progress.percent}% planned complete</div>
+      </div>
+
+      <div class="progress-card">
+        <div class="progress-header">
+          <span>Day Progress</span>
+          <strong>${meta.progress.completed}/${meta.progress.total || 0}</strong>
+        </div>
+        <div class="progress-bar"><span style="width:${meta.progress.percent}%"></span></div>
+      </div>
+
+      <form id="planning-form" class="stack">
+        <section class="panel">
+          <div class="section-header">
+            <h2>Top Priorities</h2>
+            <button type="button" class="ghost-button" data-action="add-priority">Add</button>
+          </div>
+          <div class="task-list" data-list="topPriorities">
+            ${plan.topPriorities.map((task) => taskRow(task, plan.timeBlocks)).join('')}
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-header">
+            <h2>Planned Tasks</h2>
+            <button type="button" class="ghost-button" data-action="add-task">Add</button>
+          </div>
+          <div class="task-list" data-list="plannedTasks">
+            ${plan.plannedTasks.map((task) => taskRow(task, plan.timeBlocks)).join('')}
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-header">
+            <h2>Time Blocks</h2>
+            <button type="button" class="ghost-button" data-action="add-block">Add</button>
+          </div>
+          <div class="block-list" data-list="timeBlocks">
+            ${plan.timeBlocks.map(blockRow).join('')}
+          </div>
+        </section>
+
+        <div class="footer-actions">
+          <button type="button" class="secondary-button" data-action="save-plan">Save Plan</button>
+          <button type="button" class="primary-button" data-action="start-execution">Start Execution</button>
+        </div>
+        <p class="hint">Keyboard: Ctrl/Cmd+Enter starts execution from this view.</p>
+      </form>
+    `;
+  }
+
+  function executionMarkup() {
     const { state, meta } = latestPayload;
     const plan = state.activePlan;
     const currentTask = meta.currentTask;
@@ -194,90 +260,80 @@
     const isPaused = plan.mode === 'paused';
 
     if (!currentTask) {
-      app.innerHTML = `
-        <div class="shell">
-          <div class="hero-card compact">
-            <div>
-              <p class="eyebrow">Execution Mode</p>
-              <h1>All queued tasks are done</h1>
-            </div>
-            <div class="progress-chip">${meta.progress.percent}% complete</div>
-          </div>
-          <div class="panel centered">
-            <p class="empty-copy">You have no remaining active tasks for today.</p>
-            <div class="footer-actions single">
-              <button type="button" class="secondary-button" data-action="end-session">End Session</button>
-            </div>
-          </div>
-        </div>
-      `;
-      return;
-    }
-
-    app.innerHTML = `
-      <div class="shell">
+      return `
         <div class="hero-card compact">
           <div>
-            <p class="eyebrow">${isPaused ? 'Paused' : 'Current Task'}</p>
-            <h1>${escapeHtml(currentTask.title)}</h1>
+            <p class="eyebrow">Execution Mode</p>
+            <h1>All queued tasks are done</h1>
           </div>
           <div class="progress-chip">${meta.progress.percent}% complete</div>
         </div>
-
-        <section class="panel focus-panel">
-          <div class="focus-row">
-            <span class="label">Time Block</span>
-            <strong>${currentBlock ? `${escapeHtml(currentBlock.start)} - ${escapeHtml(currentBlock.end)}  ${escapeHtml(currentBlock.label)}` : 'Not assigned'}</strong>
-          </div>
-          <div class="focus-row">
-            <span class="label">Estimate</span>
-            <strong>${currentTask.estimateMinutes ? `${escapeHtml(String(currentTask.estimateMinutes))} min` : 'Not set'}</strong>
-          </div>
-          <div class="focus-row">
-            <span class="label">Mode</span>
-            <strong>${escapeHtml(plan.mode)}</strong>
-          </div>
-          <div class="progress-bar large"><span style="width:${meta.progress.percent}%"></span></div>
-        </section>
-
-        <div class="footer-actions spread">
-          <button type="button" class="primary-button" data-action="complete-task">Complete Task</button>
-          <button type="button" class="secondary-button" data-action="skip-task">Skip Task</button>
-          <button type="button" class="secondary-button" data-action="${isPaused ? 'resume-task' : 'pause-task'}">${isPaused ? 'Resume' : 'Pause'}</button>
-          <button type="button" class="ghost-button" data-action="end-session">End Session</button>
-        </div>
-        <p class="hint">Keyboard: Ctrl/Cmd+Enter completes the current task.</p>
-      </div>
-    `;
-  }
-
-  function renderHistoryView() {
-    const { state } = latestPayload;
-    if (!state.history.length) {
-      app.innerHTML = `
-        <div class="shell">
-          <div class="panel centered">
-            <p class="empty-copy">No previous planner sessions yet.</p>
+        <div class="panel centered">
+          <p class="empty-copy">You have no remaining active tasks for today.</p>
+          <div class="footer-actions single">
+            <button type="button" class="secondary-button" data-action="end-session">End Session</button>
           </div>
         </div>
       `;
-      return;
     }
 
-    app.innerHTML = `
-      <div class="shell">
-        <div class="stack">
-          ${state.history.map((entry) => `
-            <section class="panel history-card">
-              <div class="section-header dense">
-                <h2>${escapeHtml(entry.date)}</h2>
-                <span class="progress-chip small">${escapeHtml(String(entry.progressPercent))}%</span>
-              </div>
-              <p class="history-summary">${escapeHtml(entry.summary || 'Session archived')}</p>
-              <p class="history-meta">Ended ${escapeHtml(new Date(entry.endedAt).toLocaleString())}</p>
-            </section>
-          `).join('')}
+    return `
+      <div class="hero-card compact">
+        <div>
+          <p class="eyebrow">${isPaused ? 'Paused' : 'Current Task'}</p>
+          <h1>${escapeHtml(currentTask.title)}</h1>
         </div>
+        <div class="progress-chip">${meta.progress.percent}% complete</div>
+      </div>
+
+      <section class="panel focus-panel">
+        <div class="focus-row">
+          <span class="label">Time Block</span>
+          <strong>${currentBlock ? `${escapeHtml(currentBlock.start)} - ${escapeHtml(currentBlock.end)}  ${escapeHtml(currentBlock.label)}` : 'Not assigned'}</strong>
+        </div>
+        <div class="focus-row">
+          <span class="label">Estimate</span>
+          <strong>${currentTask.estimateMinutes ? `${escapeHtml(String(currentTask.estimateMinutes))} min` : 'Not set'}</strong>
+        </div>
+        <div class="focus-row">
+          <span class="label">Mode</span>
+          <strong>${escapeHtml(plan.mode)}</strong>
+        </div>
+        <div class="progress-bar large"><span style="width:${meta.progress.percent}%"></span></div>
+      </section>
+
+      <div class="footer-actions spread">
+        <button type="button" class="primary-button" data-action="complete-task">Complete Task</button>
+        <button type="button" class="secondary-button" data-action="skip-task">Skip Task</button>
+        <button type="button" class="secondary-button" data-action="${isPaused ? 'resume-task' : 'pause-task'}">${isPaused ? 'Resume' : 'Pause'}</button>
+        <button type="button" class="ghost-button" data-action="end-session">End Session</button>
+      </div>
+      <p class="hint">Keyboard: Ctrl/Cmd+Enter completes the current task.</p>
+    `;
+  }
+
+  function historyMarkup() {
+    const { state } = latestPayload;
+    if (!state.history.length) {
+      return `
+        <div class="panel centered">
+          <p class="empty-copy">No previous planner sessions yet.</p>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="stack">
+        ${state.history.map((entry) => `
+          <section class="panel history-card">
+            <div class="section-header dense">
+              <h2>${escapeHtml(entry.date)}</h2>
+              <span class="progress-chip small">${escapeHtml(String(entry.progressPercent))}%</span>
+            </div>
+            <p class="history-summary">${escapeHtml(entry.summary || 'Session archived')}</p>
+            <p class="history-meta">Ended ${escapeHtml(new Date(entry.endedAt).toLocaleString())}</p>
+          </section>
+        `).join('')}
       </div>
     `;
   }
@@ -418,6 +474,6 @@
       .replace(/'/g, '&#39;');
   }
 
-  vscode.postMessage({ type: 'ready' });
+  vscode.postMessage({ type: 'ready', section: activePanelSection });
   render();
 })();

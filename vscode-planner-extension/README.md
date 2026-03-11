@@ -16,6 +16,33 @@ MVP VS Code extension for planning a workday and then running it in focus mode.
 2. Use the workspace launch configuration named `Run Daily Planner Extension`.
 3. In the Extension Development Host, open the `Planner` activity bar item.
 
+## Install without Node.js
+
+If you do not have Node.js or `npx`, you can still install the extension by copying this folder into your VS Code extensions directory.
+
+### Option 1: Use the included PowerShell installer
+
+From the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\vscode-planner-extension\install-local.ps1
+```
+
+For VS Code Insiders:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\vscode-planner-extension\install-local.ps1 -Target insiders
+```
+
+### Option 2: Copy manually
+
+Copy the folder [vscode-planner-extension](vscode-planner-extension) to one of these locations and rename it to `alimetaverse.webropol-daily-planner-0.0.1`:
+
+- VS Code: `C:\Users\<your-user>\.vscode\extensions\`
+- VS Code Insiders: `C:\Users\<your-user>\.vscode-insiders\extensions\`
+
+After copying, reload VS Code and search for `Planner` in the Command Palette.
+
 ## Storage
 
 Planner state is stored in the extension workspace storage as `planner-state.json`.
