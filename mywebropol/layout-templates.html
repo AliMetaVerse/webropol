@@ -228,7 +228,7 @@
                                 </div>
                                 <h1 class="text-3xl font-semibold tracking-tight text-webropol-gray-900 lg:text-4xl">Layout templates</h1>
                                 <p class="mt-3 max-w-2xl text-sm leading-7 text-webropol-gray-600 lg:text-base">
-                                    Manage survey, reporting, and event layouts in a workspace that matches the rest of MyWebropol. Switch scopes, search quickly, and keep shared assets organized.
+                                    Manage files, images, and layout templates in one workspace that matches the rest of MyWebropol. Switch sections, search quickly, and keep shared assets organized.
                                 </p>
                             </div>
 
@@ -253,7 +253,7 @@
                                     <h2 class="text-xl font-semibold text-webropol-gray-900" x-text="activeTopTabLabel()"></h2>
                                     <p class="mt-2 text-sm leading-6 text-webropol-gray-600">
                                         <span x-text="visibleTemplatesCount()"></span>
-                                        <span x-text="searchTerm ? 'matching templates in the current filter.' : 'templates available in the current view.'"></span>
+                                        <span x-text="searchTerm ? matchingResultsLabel() : availableResultsLabel()"></span>
                                     </p>
 
                                     <div class="mt-4 flex flex-wrap gap-2" aria-label="Template tabs">
@@ -272,12 +272,12 @@
 
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center xl:justify-end">
                                     <label class="relative block">
-                                        <span class="sr-only">Search for survey template by name</span>
+                                        <span class="sr-only" x-text="searchAriaLabel()"></span>
                                         <input
                                             x-model.trim="searchTerm"
                                             @input="page = 1"
                                             type="search"
-                                            placeholder="Search templates by name"
+                                            :placeholder="searchPlaceholder()"
                                             class="search-input h-11 w-full min-w-[240px] rounded-2xl px-4 pr-11 text-sm">
                                         <i class="fal fa-search pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-webropol-gray-400"></i>
                                     </label>
@@ -289,7 +289,7 @@
                                             roundness="xl"
                                             icon="plus"
                                             @click="createTemplate()">
-                                            New template
+                                            <span x-text="createButtonLabel()"></span>
                                         </webropol-button>
                                         <webropol-button
                                             variant="secondary"
@@ -319,7 +319,7 @@
                                                 </th>
                                                 <th class="px-5 py-4 text-left">
                                                     <button type="button" class="inline-flex items-center gap-2" @click="sortBy('name')">
-                                                        <span>Template</span>
+                                                        <span x-text="columnHeading()"></span>
                                                         <i class="fal" :class="sortIcon('name')"></i>
                                                     </button>
                                                 </th>
@@ -347,7 +347,7 @@
                                                     <td class="px-5 py-4 align-top">
                                                         <div class="flex items-start gap-3">
                                                             <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-600">
-                                                                <i class="fal fa-layer-group"></i>
+                                                                <i class="fal" :class="currentSectionIcon()"></i>
                                                             </div>
                                                             <div>
                                                                 <div class="font-semibold text-webropol-gray-900" x-text="template.name"></div>
@@ -359,12 +359,13 @@
                                                     <td class="px-5 py-4 align-top text-webropol-gray-600" x-text="template.lastModified"></td>
                                                     <td class="px-5 py-4 align-top">
                                                         <span class="rounded-full px-3 py-1 text-xs font-semibold"
-                                                            :class="template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700'"
-                                                            x-text="template.sharedTo || 'Private'"></span>
+                                                            :class="statusBadgeClass(template)"
+                                                            x-text="statusBadgeLabel(template)"></span>
                                                     </td>
                                                     <td class="px-5 py-4 align-top">
-                                                        <div class="flex items-center gap-4 text-sm font-medium">
+                                                        <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
                                                             <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
+                                                            <button type="button" class="action-link" x-show="isImageSection()" @click="toggleDefaultLogo(template)" x-text="template.isDefaultLogo ? 'Remove default logo' : 'Set as default logo'"></button>
                                                             <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
                                                         </div>
                                                     </td>
@@ -390,13 +391,14 @@
                                                     </div>
                                                 </div>
                                                 <span class="rounded-full px-3 py-1 text-xs font-semibold"
-                                                    :class="template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700'"
-                                                    x-text="template.sharedTo || 'Private'"></span>
+                                                    :class="statusBadgeClass(template)"
+                                                    x-text="statusBadgeLabel(template)"></span>
                                             </div>
                                             <div class="mt-4 flex items-center justify-between text-sm text-webropol-gray-500">
                                                 <span x-text="template.lastModified"></span>
-                                                <div class="flex items-center gap-4">
+                                                <div class="flex flex-wrap items-center gap-4 justify-end">
                                                     <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
+                                                    <button type="button" class="action-link" x-show="isImageSection()" @click="toggleDefaultLogo(template)" x-text="template.isDefaultLogo ? 'Remove default logo' : 'Set as default logo'"></button>
                                                     <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
                                                 </div>
                                             </div>
@@ -440,7 +442,7 @@
                             <div class="mt-6" x-show="pagedTemplates().length === 0" x-cloak>
                                 <div class="rounded-3xl border border-dashed border-webropol-primary-200 bg-gradient-to-br from-white via-webropol-primary-50/40 to-white p-8 text-center">
                                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-webropol-primary-600 shadow-soft">
-                                        <i class="fal fa-layer-group text-xl"></i>
+                                        <i class="fal text-xl" :class="currentSectionIcon()"></i>
                                     </div>
                                     <h3 class="mt-5 text-xl font-semibold text-webropol-gray-900" x-text="emptyStateTitle()"></h3>
                                     <p class="mx-auto mt-3 max-w-xl text-sm leading-7 text-webropol-gray-600" x-text="emptyStateDescription()"></p>
@@ -451,7 +453,7 @@
                                             roundness="xl"
                                             icon="plus"
                                             @click="createTemplate()">
-                                            Create template
+                                            <span x-text="createButtonLabel()"></span>
                                         </webropol-button>
                                         <webropol-button
                                             x-show="searchTerm"
@@ -486,14 +488,18 @@
                 pageSizes: [20, 50, 100, 'All'],
                 selectedIds: [],
                 topTabs: [
-                    { id: 'survey', label: 'Survey templates' },
-                    { id: 'reporting', label: 'Reporting templates' },
-                    { id: 'event', label: 'Event templates' }
+                    { id: 'survey', label: 'Survey templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-list-check' },
+                    { id: 'event', label: 'Event templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-calendar-star' },
+                    { id: 'reporting', label: 'Reporting templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-chart-mixed' },
+                    { id: 'files', label: 'Files', itemLabel: 'file', pluralLabel: 'files', ownLabel: 'Own files', sharedLabel: 'Shared files', icon: 'fa-folder-open' },
+                    { id: 'images', label: 'Images', itemLabel: 'image', pluralLabel: 'images', ownLabel: 'Own images', sharedLabel: 'Shared images', icon: 'fa-image' }
                 ],
                 templates: {
+                    files: { own: [], shared: [] },
+                    images: { own: [], shared: [] },
                     survey: { own: [], shared: [] },
-                    reporting: { own: [], shared: [] },
-                    event: { own: [], shared: [] }
+                    event: { own: [], shared: [] },
+                    reporting: { own: [], shared: [] }
                 },
 
                 init() {
@@ -502,6 +508,24 @@
 
                 defaultTemplates() {
                     return {
+                        files: {
+                            own: [
+                                { id: 'files-own-1', name: 'Brand Guidelines PDF', createdBy: 'Ali Al-Zuhairi', lastModified: '08 Mar 2026', sharedTo: '' },
+                                { id: 'files-own-2', name: 'Campaign Header Pack', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' }
+                            ],
+                            shared: [
+                                { id: 'files-shared-1', name: 'Corporate Fonts Package', createdBy: 'Brand Team', lastModified: '01 Mar 2026', sharedTo: 'Workspace' }
+                            ]
+                        },
+                        images: {
+                            own: [
+                                { id: 'images-own-1', name: 'Webropol Primary Logo', createdBy: 'Ali Al-Zuhairi', lastModified: '09 Mar 2026', sharedTo: '', isDefaultLogo: true },
+                                { id: 'images-own-2', name: 'Survey Hero Illustration', createdBy: 'Ali Al-Zuhairi', lastModified: '03 Mar 2026', sharedTo: '' }
+                            ],
+                            shared: [
+                                { id: 'images-shared-1', name: 'Event Banner Visual', createdBy: 'Design Team', lastModified: '27 Feb 2026', sharedTo: 'Workspace', isDefaultLogo: false }
+                            ]
+                        },
                         survey: {
                             own: [],
                             shared: [
@@ -511,6 +535,13 @@
                                 { id: 'survey-shared-4', name: 'Brand Tracker Form', createdBy: 'Webropol Team', lastModified: '11 Feb 2026', sharedTo: 'Workspace' }
                             ]
                         },
+                        event: {
+                            own: [],
+                            shared: [
+                                { id: 'event-shared-1', name: 'Registration Confirmation Flow', createdBy: 'Events Team', lastModified: '06 Mar 2026', sharedTo: 'Workspace' },
+                                { id: 'event-shared-2', name: 'Event Follow-up Summary', createdBy: 'Webropol Team', lastModified: '19 Feb 2026', sharedTo: 'Workspace' }
+                            ]
+                        },
                         reporting: {
                             own: [
                                 { id: 'report-own-1', name: 'Executive Summary View', createdBy: 'Ali Al-Zuhairi', lastModified: '02 Mar 2026', sharedTo: '' }
@@ -518,13 +549,6 @@
                             shared: [
                                 { id: 'report-shared-1', name: 'Board Reporting Layout', createdBy: 'Webropol Team', lastModified: '25 Feb 2026', sharedTo: 'Workspace' },
                                 { id: 'report-shared-2', name: 'Insight Dashboard Export', createdBy: 'Analytics Team', lastModified: '20 Feb 2026', sharedTo: 'Workspace' }
-                            ]
-                        },
-                        event: {
-                            own: [],
-                            shared: [
-                                { id: 'event-shared-1', name: 'Registration Confirmation Flow', createdBy: 'Events Team', lastModified: '06 Mar 2026', sharedTo: 'Workspace' },
-                                { id: 'event-shared-2', name: 'Event Follow-up Summary', createdBy: 'Webropol Team', lastModified: '19 Feb 2026', sharedTo: 'Workspace' }
                             ]
                         }
                     };
@@ -536,17 +560,25 @@
                     try {
                         const existing = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
                         this.templates = {
+                            files: {
+                                own: Array.isArray(existing?.files?.own) ? existing.files.own : defaults.files.own,
+                                shared: Array.isArray(existing?.files?.shared) ? existing.files.shared : defaults.files.shared
+                            },
+                            images: {
+                                own: Array.isArray(existing?.images?.own) ? existing.images.own : defaults.images.own,
+                                shared: Array.isArray(existing?.images?.shared) ? existing.images.shared : defaults.images.shared
+                            },
                             survey: {
                                 own: Array.isArray(existing?.survey?.own) ? existing.survey.own : defaults.survey.own,
                                 shared: Array.isArray(existing?.survey?.shared) ? existing.survey.shared : defaults.survey.shared
                             },
-                            reporting: {
-                                own: Array.isArray(existing?.reporting?.own) ? existing.reporting.own : defaults.reporting.own,
-                                shared: Array.isArray(existing?.reporting?.shared) ? existing.reporting.shared : defaults.reporting.shared
-                            },
                             event: {
                                 own: Array.isArray(existing?.event?.own) ? existing.event.own : defaults.event.own,
                                 shared: Array.isArray(existing?.event?.shared) ? existing.event.shared : defaults.event.shared
+                            },
+                            reporting: {
+                                own: Array.isArray(existing?.reporting?.own) ? existing.reporting.own : defaults.reporting.own,
+                                shared: Array.isArray(existing?.reporting?.shared) ? existing.reporting.shared : defaults.reporting.shared
                             }
                         };
                     } catch (error) {
@@ -560,9 +592,11 @@
                         const existing = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
                         const merged = {
                             ...existing,
+                            files: this.templates.files,
+                            images: this.templates.images,
                             survey: this.templates.survey,
-                            reporting: this.templates.reporting,
-                            event: this.templates.event
+                            event: this.templates.event,
+                            reporting: this.templates.reporting
                         };
 
                         localStorage.setItem(this.storageKey, JSON.stringify(merged));
@@ -571,11 +605,15 @@
                     }
                 },
 
+                sectionConfig() {
+                    return this.topTabs.find((tab) => tab.id === this.activeTopTab) || this.topTabs[0];
+                },
+
                 sideTabs() {
                     const section = this.templates[this.activeTopTab];
                     return [
-                        { id: 'own', label: 'Own templates', count: section.own.length },
-                        { id: 'shared', label: 'Shared templates', count: section.shared.length }
+                        { id: 'own', label: this.sectionConfig().ownLabel, count: section.own.length },
+                        { id: 'shared', label: this.sectionConfig().sharedLabel, count: section.shared.length }
                     ];
                 },
 
@@ -605,7 +643,7 @@
                 },
 
                 activeScopeLabel() {
-                    return this.activeSideTab === 'own' ? 'Own templates' : 'Shared templates';
+                    return this.activeSideTab === 'own' ? this.sectionConfig().ownLabel : this.sectionConfig().sharedLabel;
                 },
 
                 activeCollectionCount() {
@@ -622,6 +660,56 @@
 
                 visibleTemplatesCount() {
                     return this.sortedTemplates().length;
+                },
+
+                isImageSection() {
+                    return this.activeTopTab === 'images';
+                },
+
+                searchAriaLabel() {
+                    return `Search ${this.sectionConfig().pluralLabel} by name`;
+                },
+
+                searchPlaceholder() {
+                    return `Search ${this.sectionConfig().pluralLabel} by name`;
+                },
+
+                createButtonLabel() {
+                    const itemLabel = this.sectionConfig().itemLabel;
+                    return `New ${itemLabel}`;
+                },
+
+                columnHeading() {
+                    const itemLabel = this.sectionConfig().itemLabel;
+                    return itemLabel.charAt(0).toUpperCase() + itemLabel.slice(1);
+                },
+
+                currentSectionIcon() {
+                    return this.sectionConfig().icon;
+                },
+
+                matchingResultsLabel() {
+                    return `matching ${this.sectionConfig().pluralLabel} in the current filter.`;
+                },
+
+                availableResultsLabel() {
+                    return `${this.sectionConfig().pluralLabel} available in the current view.`;
+                },
+
+                statusBadgeLabel(template) {
+                    if (this.isImageSection() && template.isDefaultLogo) {
+                        return 'Default logo';
+                    }
+
+                    return template.sharedTo || 'Private';
+                },
+
+                statusBadgeClass(template) {
+                    if (this.isImageSection() && template.isDefaultLogo) {
+                        return 'bg-amber-50 text-amber-700';
+                    }
+
+                    return template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700';
                 },
 
                 filteredTemplates() {
@@ -775,8 +863,24 @@
                     this.saveTemplates();
                 },
 
+                toggleDefaultLogo(template) {
+                    if (!this.isImageSection()) {
+                        return;
+                    }
+
+                    const shouldSetAsDefault = !template.isDefaultLogo;
+                    ['own', 'shared'].forEach((scope) => {
+                        this.templates.images[scope] = this.templates.images[scope].map((image) => ({
+                            ...image,
+                            isDefaultLogo: shouldSetAsDefault ? image.id === template.id : false
+                        }));
+                    });
+
+                    this.saveTemplates();
+                },
+
                 createTemplate() {
-                    const nextName = window.prompt('Name your new template');
+                    const nextName = window.prompt(`Name your new ${this.sectionConfig().itemLabel}`);
                     if (!nextName || !nextName.trim()) {
                         return;
                     }
@@ -802,22 +906,26 @@
 
                 emptyStateTitle() {
                     if (this.searchTerm) {
-                        return 'No templates match your search';
+                        return `No ${this.sectionConfig().pluralLabel} match your search`;
                     }
 
-                    return this.activeSideTab === 'own' ? 'Build your first template' : 'Nothing has been shared here yet';
+                    if (this.activeSideTab === 'own') {
+                        return `Add your first ${this.sectionConfig().itemLabel}`;
+                    }
+
+                    return `No shared ${this.sectionConfig().pluralLabel} yet`;
                 },
 
                 emptyStateDescription() {
                     if (this.searchTerm) {
-                        return 'Try a different keyword or clear the search to view all templates in this scope.';
+                        return `Try a different keyword or clear the search to view all ${this.sectionConfig().pluralLabel} in this scope.`;
                     }
 
                     if (this.activeSideTab === 'own') {
-                        return 'Create a new layout template for this section and it will appear here with the rest of your personal assets.';
+                        return `Create a new ${this.sectionConfig().itemLabel} for this section and it will appear here with the rest of your personal assets.`;
                     }
 
-                    return 'Shared templates will appear here when they are published to your workspace or team.';
+                    return `Shared ${this.sectionConfig().pluralLabel} will appear here when they are published to your workspace or team.`;
                 },
 
                 formatToday() {
