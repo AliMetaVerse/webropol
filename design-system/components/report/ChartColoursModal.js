@@ -57,11 +57,11 @@ function _registerColoursModal() {
           colours: ['#648FFF','#785EF0','#DC267F','#FE6100','#FFB000','#009D9A','#001141','#005D5D','#8A3FFC','#FA4D56','#08BDBA','#25A249']
         },
         {
-          name: 'IBM RAG Shades',
-          description: 'IBM-inspired RAG sequence · 4 red, 4 amber and 4 green shades',
-          reference: 'Webropol custom palette — based on IBM accessible colour families',
-          referenceUrl: 'https://www.ibm.com/design/language/color/',
-          colours: ['#FA4D56','#DC267F','#C2255C','#A61E4D','#FFB000','#FE8F00','#D97706','#B45309','#25A249','#08BDBA','#009D9A','#0E7C3A']
+          name: 'Webropol RAG',
+          description: 'Webropol sentiment scale · 4 red, 4 amber, 4 green · worst to best',
+          reference: 'Webropol Design System',
+          referenceUrl: '#',
+          colours: ['#C03020','#D93025','#E86150','#F08270','#F5962A','#F5A623','#F0BC45','#BDD050','#72BF6E','#4CAF5A','#2E9648','#1C7036']
         },
         {
           name: 'Wong (2011)',
