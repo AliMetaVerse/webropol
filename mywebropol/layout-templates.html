@@ -32,25 +32,13 @@
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
     <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <script src="../design-system/components/buttons/Button.js" type="module"></script>
     <script src="../design-system/utils/theme-manager.js" type="module"></script>
     <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
     <script src="../scripts/analytics-global-tracker.js"></script>
     <style>
         [x-cloak] {
             display: none !important;
-        }
-
-        :root {
-            --layout-shell: #dfe7ec;
-            --layout-panel: #eef3f6;
-            --layout-border: #c8d4dc;
-            --layout-border-strong: #7ea6be;
-            --layout-text: #2f3d4a;
-            --layout-text-soft: #627180;
-            --layout-accent: #0e7490;
-            --layout-accent-soft: #e6f5f9;
-            --layout-table-header: #f4f7f9;
-            --layout-disabled: #d8dde2;
         }
 
         body {
@@ -72,95 +60,154 @@
             border-radius: 6px;
         }
 
-        .legacy-shell {
-            background: linear-gradient(180deg, #f3f7fa 0%, var(--layout-shell) 100%);
+        .layout-shell {
+            background:
+                radial-gradient(circle at top left, rgba(34, 204, 241, 0.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(14, 116, 144, 0.10), transparent 24%),
+                linear-gradient(180deg, #f6fbfd 0%, #edf5f8 52%, #e6f0f4 100%);
         }
 
-        .legacy-panel {
-            background: rgba(238, 243, 246, 0.96);
-            border: 1px solid var(--layout-border);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-        }
-
-        .legacy-top-tab {
-            border-right: 1px solid var(--layout-border);
-            border-bottom: 1px solid var(--layout-border);
-            color: var(--layout-text-soft);
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        .legacy-top-tab.active {
+        .glass-card {
             background: rgba(255, 255, 255, 0.9);
-            color: var(--layout-text);
-            border-bottom-color: transparent;
-            box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 18px 60px -28px rgba(15, 23, 42, 0.18);
         }
 
-        .legacy-side-tab {
-            color: var(--layout-text-soft);
-            border-left: 3px solid transparent;
+        .hero-gradient {
+            background:
+                linear-gradient(135deg, rgba(6, 182, 212, 0.14), rgba(255, 255, 255, 0.75) 42%, rgba(14, 116, 144, 0.08)),
+                rgba(255, 255, 255, 0.9);
+        }
+
+        .segmented-tab {
+            color: #475569;
+            border: 1px solid transparent;
             transition: all 0.2s ease;
         }
 
-        .legacy-side-tab.active {
-            background: rgba(255, 255, 255, 0.74);
-            border-left-color: var(--layout-accent);
-            color: var(--layout-text);
-            font-weight: 600;
+        .segmented-tab.active {
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            color: white;
+            box-shadow: 0 12px 24px -16px rgba(8, 145, 178, 0.9);
         }
 
-        .legacy-toolbar-input {
+        .segmented-tab:not(.active):hover {
+            background: rgba(240, 249, 255, 0.85);
+            border-color: rgba(125, 211, 252, 0.4);
+            color: #0e7490;
+        }
+
+        .scope-tab {
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            background: rgba(248, 250, 252, 0.95);
+            transition: all 0.2s ease;
+        }
+
+        .scope-tab.active {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.16), rgba(14, 116, 144, 0.08));
+            border-color: rgba(8, 145, 178, 0.28);
+            box-shadow: inset 0 0 0 1px rgba(8, 145, 178, 0.08);
+        }
+
+        .search-input {
             background: white;
-            border: 1px solid #aebbc6;
-            color: var(--layout-text);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            color: #0f172a;
+            box-shadow: 0 8px 20px -16px rgba(15, 23, 42, 0.22);
         }
 
-        .legacy-table {
-            border: 1px solid var(--layout-border);
-            background: white;
+        .search-input:focus {
+            border-color: rgba(8, 145, 178, 0.75);
+            box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.14);
+            outline: none;
         }
 
-        .legacy-table th {
-            background: var(--layout-table-header);
-            color: #275770;
-            border-bottom: 2px solid var(--layout-border-strong);
+        .stats-tile {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.88));
+            border: 1px solid rgba(226, 232, 240, 0.85);
+        }
+
+        .table-shell {
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: rgba(255, 255, 255, 0.88);
+            overflow: hidden;
+        }
+
+        .table-shell th {
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.96));
+            color: #475569;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.95);
             font-size: 12px;
             font-weight: 600;
         }
 
-        .legacy-table td {
-            color: var(--layout-text);
-            border-bottom: 1px solid #d8e0e6;
-            font-size: 12px;
+        .table-shell td {
+            border-bottom: 1px solid rgba(241, 245, 249, 0.95);
+            color: #334155;
+            font-size: 13px;
         }
 
-        .legacy-action {
-            color: var(--layout-accent);
+        .row-card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 10px 30px -24px rgba(15, 23, 42, 0.18);
+        }
+
+        .action-link {
+            color: #0891b2;
             transition: color 0.2s ease;
         }
 
-        .legacy-action:hover {
-            color: #155e75;
+        .action-link:hover {
+            color: #0e7490;
         }
 
-        .legacy-page-link.active {
-            color: #e36c13;
+        .page-link {
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .page-link.active {
+            color: #0891b2;
             font-weight: 700;
         }
 
-        .legacy-checkbox {
-            accent-color: var(--layout-accent);
+        .page-link:hover {
+            color: #0e7490;
         }
 
-        .legacy-delete:disabled {
-            color: #aeb7bf;
-            background: rgba(255, 255, 255, 0.55);
-            cursor: not-allowed;
+        .selection-checkbox {
+            accent-color: #0891b2;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(12px);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .floating-orb.one {
+            width: 10rem;
+            height: 10rem;
+            top: -2.5rem;
+            right: -1.5rem;
+            background: rgba(34, 211, 238, 0.16);
+        }
+
+        .floating-orb.two {
+            width: 7rem;
+            height: 7rem;
+            bottom: -1.5rem;
+            left: 35%;
+            background: rgba(14, 116, 144, 0.12);
         }
     </style>
 </head>
 
-<body x-data="layoutTemplatesApp()" x-init="init()" class="legacy-shell">
+<body x-data="layoutTemplatesApp()" x-init="init()" class="layout-shell">
     <div class="flex h-screen">
         <webropol-sidebar active="mywebropol" base="../"></webropol-sidebar>
         <div class="flex-1 flex flex-col overflow-hidden xl:ml-0 ml-0">
@@ -170,116 +217,216 @@
             </div>
             <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 pb-16" role="main">
                 <div class="max-w-7xl mx-auto">
-                    <section class="legacy-panel rounded-sm overflow-hidden">
-                        <div class="px-6 pt-5 pb-3">
-                            <h1 class="text-[2rem] font-semibold text-webropol-gray-900 tracking-tight">Layout templates</h1>
-                        </div>
+                    <section class="hero-gradient glass-card relative overflow-hidden rounded-3xl p-6 lg:p-8">
+                        <div class="floating-orb one"></div>
+                        <div class="floating-orb two"></div>
+                        <div class="relative z-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+                            <div>
+                                <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-webropol-primary-100 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-webropol-primary-700">
+                                    <i class="fal fa-layer-group"></i>
+                                    Template Workspace
+                                </div>
+                                <h1 class="text-3xl font-semibold tracking-tight text-webropol-gray-900 lg:text-4xl">Layout templates</h1>
+                                <p class="mt-3 max-w-2xl text-sm leading-7 text-webropol-gray-600 lg:text-base">
+                                    Manage survey, reporting, and event layouts in a workspace that matches the rest of MyWebropol. Switch scopes, search quickly, and keep shared assets organized.
+                                </p>
+                            </div>
 
-                        <div class="border-b border-[var(--layout-border)] bg-[#e7edf1]">
-                            <div class="flex flex-wrap text-[13px]">
-                                <template x-for="tab in topTabs" :key="tab.id">
-                                    <button
-                                        type="button"
-                                        @click="setTopTab(tab.id)"
-                                        class="legacy-top-tab px-4 py-3"
-                                        :class="{ 'active': activeTopTab === tab.id }"
-                                        x-text="tab.label"></button>
-                                </template>
+                            <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Current scope</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeCollectionCount()"></div>
+                                    <div class="mt-1 text-sm text-webropol-gray-600" x-text="activeScopeLabel()"></div>
+                                </div>
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Shared in section</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeSharedCount()"></div>
+                                    <div class="mt-1 text-sm text-webropol-gray-600" x-text="activeTopTabLabel()"></div>
+                                </div>
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.18em] text-webropol-gray-500">Selected</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="selectedIds.length"></div>
+                                    <div class="mt-1 text-sm text-webropol-gray-600">Ready for bulk actions</div>
+                                </div>
                             </div>
                         </div>
+                    </section>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-[126px_minmax(0,1fr)] min-h-[610px]">
-                            <aside class="border-r border-[var(--layout-border)] bg-[#edf2f5] py-3">
-                                <nav class="space-y-1 text-[13px]" aria-label="Template scope tabs">
-                                    <template x-for="tab in sideTabs()" :key="tab.id">
-                                        <button
-                                            type="button"
-                                            @click="setSideTab(tab.id)"
-                                            class="legacy-side-tab flex w-full items-center justify-between px-3 py-3 text-left"
-                                            :class="{ 'active': activeSideTab === tab.id }">
-                                            <span x-text="tab.label"></span>
-                                            <span class="text-[12px]" x-text="`(${tab.count})`"></span>
-                                        </button>
-                                    </template>
-                                </nav>
-                            </aside>
+                    <section class="glass-card mt-6 rounded-3xl p-3 lg:p-4">
+                        <div class="flex flex-wrap gap-2">
+                            <template x-for="tab in topTabs" :key="tab.id">
+                                <button
+                                    type="button"
+                                    @click="setTopTab(tab.id)"
+                                    class="segmented-tab rounded-2xl px-4 py-3 text-sm font-semibold"
+                                    :class="{ 'active': activeTopTab === tab.id }">
+                                    <span x-text="tab.label"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </section>
 
-                            <div class="bg-[#edf2f5] p-4 lg:p-5">
-                                <div class="mb-3 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <section class="mt-6 grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+                        <aside class="glass-card rounded-3xl p-5 lg:p-6">
+                            <div class="mb-5">
+                                <h2 class="text-lg font-semibold text-webropol-gray-900">Template scopes</h2>
+                                <p class="mt-1 text-sm leading-6 text-webropol-gray-600">Separate your private layouts from workspace-ready shared assets.</p>
+                            </div>
+
+                            <nav class="space-y-3" aria-label="Template scope tabs">
+                                <template x-for="tab in sideTabs()" :key="tab.id">
                                     <button
                                         type="button"
-                                        class="legacy-delete w-fit rounded-full border border-[var(--layout-border)] bg-white px-5 py-2 text-[13px] font-medium text-[var(--layout-text-soft)]"
-                                        :disabled="selectedIds.length === 0"
-                                        @click="deleteSelected()">
-                                        Delete
+                                        @click="setSideTab(tab.id)"
+                                        class="scope-tab flex w-full items-start justify-between rounded-2xl p-4 text-left"
+                                        :class="{ 'active': activeSideTab === tab.id }">
+                                        <div>
+                                            <div class="font-semibold text-webropol-gray-900" x-text="tab.label"></div>
+                                            <div class="mt-1 text-xs leading-5 text-webropol-gray-500" x-text="tab.id === 'own' ? 'Personal layouts for your team or account.' : 'Templates already available to others.'"></div>
+                                        </div>
+                                        <span class="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-webropol-primary-700 shadow-sm" x-text="tab.count"></span>
                                     </button>
+                                </template>
+                            </nav>
 
-                                    <div class="flex items-center gap-3 self-start lg:self-auto">
-                                        <label class="relative block">
-                                            <span class="sr-only">Search for survey template by name</span>
-                                            <input
-                                                x-model.trim="searchTerm"
-                                                @input="page = 1"
-                                                type="search"
-                                                placeholder="Search for survey template by name"
-                                                class="legacy-toolbar-input h-9 w-[250px] rounded-sm px-3 pr-9 text-[12px] outline-none focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-100">
-                                            <i class="fal fa-search pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[15px] text-[var(--layout-text-soft)]"></i>
-                                        </label>
+                            <div class="mt-6 rounded-2xl border border-webropol-primary-100 bg-webropol-primary-50/70 p-4">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-webropol-primary-600 shadow-sm">
+                                        <i class="fal fa-sparkles"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-webropol-gray-900">Design-system ready</h3>
+                                        <p class="mt-1 text-sm leading-6 text-webropol-gray-600">This page now uses Webropol surfaces, tokens, and component buttons instead of the previous legacy chrome.</p>
                                     </div>
                                 </div>
+                            </div>
+                        </aside>
 
-                                <div class="legacy-table overflow-hidden">
+                        <div class="glass-card rounded-3xl p-5 lg:p-6">
+                            <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                                <div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <h2 class="text-xl font-semibold text-webropol-gray-900" x-text="activeTopTabLabel()"></h2>
+                                        <span class="rounded-full bg-webropol-primary-50 px-3 py-1 text-xs font-semibold text-webropol-primary-700" x-text="activeScopeLabel()"></span>
+                                    </div>
+                                    <p class="mt-2 text-sm leading-6 text-webropol-gray-600">
+                                        <span x-text="visibleTemplatesCount()"></span>
+                                        <span x-text="searchTerm ? 'matching templates in the current filter.' : 'templates available in the current view.'"></span>
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center xl:justify-end">
+                                    <label class="relative block">
+                                        <span class="sr-only">Search for survey template by name</span>
+                                        <input
+                                            x-model.trim="searchTerm"
+                                            @input="page = 1"
+                                            type="search"
+                                            placeholder="Search templates by name"
+                                            class="search-input h-11 w-full min-w-[240px] rounded-2xl px-4 pr-11 text-sm">
+                                        <i class="fal fa-search pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-webropol-gray-400"></i>
+                                    </label>
+
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <webropol-button
+                                            variant="secondary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="createTemplate()">
+                                            New template
+                                        </webropol-button>
+                                        <webropol-button
+                                            variant="secondary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="trash"
+                                            :disabled="selectedIds.length === 0"
+                                            @click="deleteSelected()">
+                                            Delete
+                                        </webropol-button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 grid gap-4 md:grid-cols-3">
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Own templates</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeOwnCount()"></div>
+                                </div>
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Shared templates</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="activeSharedCount()"></div>
+                                </div>
+                                <div class="stats-tile rounded-2xl p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.16em] text-webropol-gray-500">Visible now</div>
+                                    <div class="mt-2 text-2xl font-semibold text-webropol-gray-900" x-text="pagedTemplates().length"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6" x-show="pagedTemplates().length > 0" x-cloak>
+                                <div class="table-shell hidden rounded-3xl xl:block">
                                     <table class="min-w-full border-collapse">
                                         <thead>
                                             <tr>
-                                                <th class="w-11 px-4 py-2 text-left">
+                                                <th class="w-12 px-5 py-4 text-left">
                                                     <input
                                                         type="checkbox"
-                                                        class="legacy-checkbox h-4 w-4"
+                                                        class="selection-checkbox h-4 w-4"
                                                         :checked="allVisibleSelected()"
                                                         :disabled="pagedTemplates().length === 0"
                                                         @change="toggleSelectAll($event.target.checked)">
                                                 </th>
-                                                <th class="px-4 py-2 text-left">
-                                                    <button type="button" class="inline-flex items-center gap-1" @click="sortBy('name')">
-                                                        <span>Template name</span>
+                                                <th class="px-5 py-4 text-left">
+                                                    <button type="button" class="inline-flex items-center gap-2" @click="sortBy('name')">
+                                                        <span>Template</span>
                                                         <i class="fal" :class="sortIcon('name')"></i>
                                                     </button>
                                                 </th>
-                                                <th class="px-4 py-2 text-left">Created by</th>
-                                                <th class="px-4 py-2 text-left">
-                                                    <button type="button" class="inline-flex items-center gap-1" @click="sortBy('lastModified')">
+                                                <th class="px-5 py-4 text-left">Created by</th>
+                                                <th class="px-5 py-4 text-left">
+                                                    <button type="button" class="inline-flex items-center gap-2" @click="sortBy('lastModified')">
                                                         <span>Last modified</span>
                                                         <i class="fal" :class="sortIcon('lastModified')"></i>
                                                     </button>
                                                 </th>
-                                                <th class="px-4 py-2 text-left">Rename</th>
-                                                <th class="px-4 py-2 text-left">Share to</th>
+                                                <th class="px-5 py-4 text-left">Status</th>
+                                                <th class="px-5 py-4 text-left">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <template x-if="pagedTemplates().length === 0">
-                                                <tr>
-                                                    <td colspan="6" class="px-4 py-6 text-center text-[12px] text-[var(--layout-text-soft)]">No data available</td>
-                                                </tr>
-                                            </template>
                                             <template x-for="template in pagedTemplates()" :key="template.id">
-                                                <tr class="bg-white hover:bg-webropol-primary-50/30">
-                                                    <td class="px-4 py-3 align-middle">
+                                                <tr class="transition-colors hover:bg-webropol-primary-50/40">
+                                                    <td class="px-5 py-4 align-top">
                                                         <input
                                                             type="checkbox"
-                                                            class="legacy-checkbox h-4 w-4"
+                                                            class="selection-checkbox mt-1 h-4 w-4"
                                                             :checked="selectedIds.includes(template.id)"
                                                             @change="toggleSelection(template.id)">
                                                     </td>
-                                                    <td class="px-4 py-3 align-middle font-medium" x-text="template.name"></td>
-                                                    <td class="px-4 py-3 align-middle" x-text="template.createdBy"></td>
-                                                    <td class="px-4 py-3 align-middle" x-text="template.lastModified"></td>
-                                                    <td class="px-4 py-3 align-middle">
-                                                        <button type="button" class="legacy-action text-[12px] font-medium" @click="renameTemplate(template)">Rename</button>
+                                                    <td class="px-5 py-4 align-top">
+                                                        <div class="flex items-start gap-3">
+                                                            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-600">
+                                                                <i class="fal fa-layer-group"></i>
+                                                            </div>
+                                                            <div>
+                                                                <div class="font-semibold text-webropol-gray-900" x-text="template.name"></div>
+                                                                <div class="mt-1 text-xs text-webropol-gray-500" x-text="activeTopTabLabel()"></div>
+                                                            </div>
+                                                        </div>
                                                     </td>
-                                                    <td class="px-4 py-3 align-middle">
-                                                        <button type="button" class="legacy-action text-[12px] font-medium" @click="shareTemplate(template)" x-text="template.sharedTo || 'Share'"></button>
+                                                    <td class="px-5 py-4 align-top text-webropol-gray-600" x-text="template.createdBy"></td>
+                                                    <td class="px-5 py-4 align-top text-webropol-gray-600" x-text="template.lastModified"></td>
+                                                    <td class="px-5 py-4 align-top">
+                                                        <span class="rounded-full px-3 py-1 text-xs font-semibold"
+                                                            :class="template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700'"
+                                                            x-text="template.sharedTo || 'Private'"></span>
+                                                    </td>
+                                                    <td class="px-5 py-4 align-top">
+                                                        <div class="flex items-center gap-4 text-sm font-medium">
+                                                            <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
+                                                            <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             </template>
@@ -287,15 +434,47 @@
                                     </table>
                                 </div>
 
-                                <div class="mt-3 flex flex-col gap-3 text-[12px] text-[var(--layout-text-soft)] lg:flex-row lg:items-center lg:justify-between">
-                                    <div class="flex items-center gap-3">
+                                <div class="space-y-4 xl:hidden">
+                                    <template x-for="template in pagedTemplates()" :key="`${template.id}-mobile`">
+                                        <div class="row-card rounded-3xl p-4">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="flex items-start gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        class="selection-checkbox mt-1 h-4 w-4"
+                                                        :checked="selectedIds.includes(template.id)"
+                                                        @change="toggleSelection(template.id)">
+                                                    <div>
+                                                        <div class="font-semibold text-webropol-gray-900" x-text="template.name"></div>
+                                                        <div class="mt-1 text-xs text-webropol-gray-500" x-text="template.createdBy"></div>
+                                                    </div>
+                                                </div>
+                                                <span class="rounded-full px-3 py-1 text-xs font-semibold"
+                                                    :class="template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700'"
+                                                    x-text="template.sharedTo || 'Private'"></span>
+                                            </div>
+                                            <div class="mt-4 flex items-center justify-between text-sm text-webropol-gray-500">
+                                                <span x-text="template.lastModified"></span>
+                                                <div class="flex items-center gap-4">
+                                                    <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
+                                                    <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="mt-5 flex flex-col gap-4 border-t border-webropol-gray-100 pt-5 text-sm text-webropol-gray-500 lg:flex-row lg:items-center lg:justify-between">
+                                    <div class="flex flex-wrap items-center gap-3">
                                         <button type="button" class="disabled:opacity-40" :disabled="page === 1" @click="goToPage(1)">
                                             <i class="fal fa-step-backward"></i>
                                         </button>
                                         <button type="button" class="disabled:opacity-40" :disabled="page === 1" @click="goToPage(page - 1)">
                                             <i class="fal fa-caret-left mr-1"></i> Previous
                                         </button>
-                                        <span>Page <span x-text="page"></span> / <span x-text="totalPages()"></span></span>
+                                        <span>
+                                            Showing <span x-text="visibleRangeStart()"></span>-<span x-text="visibleRangeEnd()"></span> of <span x-text="visibleTemplatesCount()"></span>
+                                        </span>
                                         <button type="button" class="disabled:opacity-40" :disabled="page === totalPages()" @click="goToPage(page + 1)">
                                             Next <i class="fal fa-caret-right ml-1"></i>
                                         </button>
@@ -309,11 +488,40 @@
                                         <template x-for="size in pageSizes" :key="String(size)">
                                             <button
                                                 type="button"
-                                                class="legacy-page-link px-1"
+                                                class="page-link px-1"
                                                 :class="{ 'active': pageSize === size }"
                                                 @click="setPageSize(size)"
                                                 x-text="size"></button>
                                         </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6" x-show="pagedTemplates().length === 0" x-cloak>
+                                <div class="rounded-3xl border border-dashed border-webropol-primary-200 bg-gradient-to-br from-white via-webropol-primary-50/40 to-white p-8 text-center">
+                                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-webropol-primary-600 shadow-soft">
+                                        <i class="fal fa-layer-group text-xl"></i>
+                                    </div>
+                                    <h3 class="mt-5 text-xl font-semibold text-webropol-gray-900" x-text="emptyStateTitle()"></h3>
+                                    <p class="mx-auto mt-3 max-w-xl text-sm leading-7 text-webropol-gray-600" x-text="emptyStateDescription()"></p>
+                                    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                                        <webropol-button
+                                            variant="primary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="createTemplate()">
+                                            Create template
+                                        </webropol-button>
+                                        <webropol-button
+                                            x-show="searchTerm"
+                                            variant="tertiary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="times"
+                                            @click="clearSearch()">
+                                            Clear search
+                                        </webropol-button>
                                     </div>
                                 </div>
                             </div>
@@ -452,6 +660,30 @@
                     return this.templates[this.activeTopTab][this.activeSideTab];
                 },
 
+                activeTopTabLabel() {
+                    return this.topTabs.find((tab) => tab.id === this.activeTopTab)?.label || 'Templates';
+                },
+
+                activeScopeLabel() {
+                    return this.activeSideTab === 'own' ? 'Own templates' : 'Shared templates';
+                },
+
+                activeCollectionCount() {
+                    return this.currentTemplates().length;
+                },
+
+                activeOwnCount() {
+                    return this.templates[this.activeTopTab].own.length;
+                },
+
+                activeSharedCount() {
+                    return this.templates[this.activeTopTab].shared.length;
+                },
+
+                visibleTemplatesCount() {
+                    return this.sortedTemplates().length;
+                },
+
                 filteredTemplates() {
                     const term = this.searchTerm.toLowerCase();
                     return this.currentTemplates().filter((template) => {
@@ -466,8 +698,8 @@
                 sortedTemplates() {
                     const direction = this.sortDirection === 'asc' ? 1 : -1;
                     return [...this.filteredTemplates()].sort((left, right) => {
-                        const leftValue = String(left[this.sortKey] || '').toLowerCase();
-                        const rightValue = String(right[this.sortKey] || '').toLowerCase();
+                        const leftValue = this.getSortValue(left, this.sortKey);
+                        const rightValue = this.getSortValue(right, this.sortKey);
 
                         if (leftValue < rightValue) {
                             return -1 * direction;
@@ -479,6 +711,14 @@
 
                         return 0;
                     });
+                },
+
+                getSortValue(template, key) {
+                    if (key === 'lastModified') {
+                        return new Date(template.lastModified).getTime() || 0;
+                    }
+
+                    return String(template[key] || '').toLowerCase();
                 },
 
                 pagedTemplates() {
@@ -506,6 +746,26 @@
                 setPageSize(size) {
                     this.pageSize = size;
                     this.page = 1;
+                },
+
+                visibleRangeStart() {
+                    if (this.visibleTemplatesCount() === 0) {
+                        return 0;
+                    }
+
+                    if (this.pageSize === 'All') {
+                        return 1;
+                    }
+
+                    return (this.page - 1) * this.pageSize + 1;
+                },
+
+                visibleRangeEnd() {
+                    if (this.pageSize === 'All') {
+                        return this.visibleTemplatesCount();
+                    }
+
+                    return Math.min(this.page * this.pageSize, this.visibleTemplatesCount());
                 },
 
                 sortBy(key) {
@@ -573,6 +833,51 @@
                     template.sharedTo = template.sharedTo ? '' : 'Workspace';
                     template.lastModified = this.formatToday();
                     this.saveTemplates();
+                },
+
+                createTemplate() {
+                    const nextName = window.prompt('Name your new template');
+                    if (!nextName || !nextName.trim()) {
+                        return;
+                    }
+
+                    const template = {
+                        id: `${this.activeTopTab}-own-${Date.now()}`,
+                        name: nextName.trim(),
+                        createdBy: 'Ali Al-Zuhairi',
+                        lastModified: this.formatToday(),
+                        sharedTo: ''
+                    };
+
+                    this.activeSideTab = 'own';
+                    this.templates[this.activeTopTab].own = [template, ...this.templates[this.activeTopTab].own];
+                    this.page = 1;
+                    this.saveTemplates();
+                },
+
+                clearSearch() {
+                    this.searchTerm = '';
+                    this.page = 1;
+                },
+
+                emptyStateTitle() {
+                    if (this.searchTerm) {
+                        return 'No templates match your search';
+                    }
+
+                    return this.activeSideTab === 'own' ? 'Build your first template' : 'Nothing has been shared here yet';
+                },
+
+                emptyStateDescription() {
+                    if (this.searchTerm) {
+                        return 'Try a different keyword or clear the search to view all templates in this scope.';
+                    }
+
+                    if (this.activeSideTab === 'own') {
+                        return 'Create a new layout template for this section and it will appear here with the rest of your personal assets.';
+                    }
+
+                    return 'Shared templates will appear here when they are published to your workspace or team.';
                 },
 
                 formatToday() {
