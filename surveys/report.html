@@ -471,17 +471,17 @@
                     <span class="flex items-center justify-between gap-3 min-w-0 flex-1">
                       <span>Colours for chart, mean &amp; index</span>
                       <span class="flex items-center gap-1.5 flex-shrink-0">
-                        <span x-show="useAccessiblePalette" style="display:none"
+                        <span x-show="getChartColourIndicatorMode() === 'colour'" style="display:none"
                               class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-amber-700 ring-1 ring-amber-200"
                               title="Accessible colours active"
                               aria-label="Accessible colours active">
                           <i class="fa-light fa-paintbrush text-xs"></i>
                         </span>
-                        <span x-show="activePatterns.length > 0" style="display:none"
-                              class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-violet-50 text-violet-700 ring-1 ring-violet-200"
+                        <span x-show="getChartColourIndicatorMode() === 'pattern'" style="display:none; padding-right: 1px; padding-top: 1px;"
+                              class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-violet-50 text-violet-700 ring-1 ring-violet-200 leading-none"
                               title="Patterns active"
                               aria-label="Patterns active">
-                          <i class="fa-light fa-waffle text-xs"></i>
+                          <i class="fa-light fa-waffle fa-fw text-[13px] leading-none"></i>
                         </span>
                       </span>
                     </span>
@@ -4496,6 +4496,18 @@
 
         isCustomColor(color) {
           return ![...this.standardColors, ...this.accessibleColors].includes(color);
+        },
+
+        getChartColourIndicatorMode() {
+          if (this.activePatterns && this.activePatterns.length > 0) {
+            return 'pattern';
+          }
+
+          if (this.useAccessiblePalette) {
+            return 'colour';
+          }
+
+          return null;
         },
 
         // Returns the pattern ID for a given bar index (cycles through active patterns)
