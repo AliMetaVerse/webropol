@@ -205,6 +205,15 @@ function _registerColoursModal() {
         return reversed ? colours.reverse() : colours;
       },
 
+      getPalettePreviewColours(palette) {
+        const isSelectedPalette = this.selectedAccessiblePalette === palette.name;
+        const reversed = isSelectedPalette
+          ? this.accessiblePaletteReversed
+          : this.palettePreviewReversed;
+
+        return this.getOrderedPaletteColours(palette, reversed);
+      },
+
       applyAccessiblePaletteByName(paletteName, switchTab = true, reversed = this.accessiblePaletteReversed) {
         const palette = this.accessiblePalettes.find(item => item.name === paletteName);
         if (!palette) return;
@@ -485,9 +494,9 @@ class WebropolChartColoursModal extends HTMLElement {
 
                 <!-- Compact single-row palette strip -->
                 <div class="flex items-center gap-0.5 rounded-xl bg-webropol-gray-100 p-1">
-                  <template x-for="(c, colorIndex) in getOrderedPaletteColours(palette)" :key="palette.name + '-' + colorIndex">
+                  <template x-for="(c, colorIndex) in getPalettePreviewColours(palette)" :key="palette.name + '-' + colorIndex">
                     <div class="h-5 flex-1 min-w-0 shadow-sm"
-                         :class="colorIndex === 0 ? 'rounded-l-lg' : (colorIndex === getOrderedPaletteColours(palette).length - 1 ? 'rounded-r-lg' : '')"
+                         :class="colorIndex === 0 ? 'rounded-l-lg' : (colorIndex === getPalettePreviewColours(palette).length - 1 ? 'rounded-r-lg' : '')"
                          :style="'background:' + c"
                          :title="c"></div>
                   </template>
