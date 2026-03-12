@@ -986,47 +986,35 @@
                                        x-transition:enter-end="opacity-100 translate-y-0"
                                        @click.stop>
                                     <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
-                                         :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
-                                      <span class="text-[10px] font-bold uppercase tracking-wide"
-                                            :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
-                                            x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
-                                      <button @click.stop="toggleAccessibility()"
-                                              class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
-                                              :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
-                                        <i class="fal fa-universal-access"></i>
-                                        <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
-                                      </button>
+                                         :class="useAccessiblePalette ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                                      <div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wide"
+                                              :class="useAccessiblePalette ? 'text-amber-700' : 'text-gray-400'"
+                                              x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                                        <div class="mt-0.5 text-[10px] text-webropol-gray-500"
+                                             x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual colour scale'"></div>
+                                      </div>
                                     </div>
                                     <!-- Pattern active notice -->
                                     <div x-show="activePatterns.length > 0" style="display:none"
                                          class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
                                       <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
                                       <span class="text-[10px] font-semibold text-purple-700"
-                                            x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                            x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying current colours'"></span>
                                     </div>
                                     <div class="flex items-center gap-2 p-2">
-                                      <div class="flex items-center gap-1 p-1 rounded transition-opacity"
-                                           :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
-                                        <template x-if="!accessibilityMode">
-                                          <div class="swatch-grid">
-                                            <template x-for="c in standardColors" :key="c">
-                                              <button @click.stop="changeRankColor(bi, c)"
-                                                      class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                      :style="`background-color: ${c}`"
-                                                      :class="rankColors[bi] === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
-                                            </template>
-                                          </div>
-                                        </template>
-                                        <template x-if="accessibilityMode">
-                                          <div class="swatch-grid">
-                                            <template x-for="c in accessibleColors" :key="c">
-                                              <button @click.stop="changeRankColor(bi, c)"
-                                                      class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                      :style="`background-color: ${c}`"
-                                                      :class="rankColors[bi] === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
-                                            </template>
-                                          </div>
-                                        </template>
+                                      <div class="flex items-center gap-1 p-1 rounded"
+                                           :class="useAccessiblePalette ? 'bg-amber-50' : 'bg-gray-50'">
+                                        <div class="swatch-grid">
+                                          <template x-for="c in getPopupPalette()" :key="c">
+                                            <button @click.stop="changeRankColor(bi, c)"
+                                                    class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                    :style="`background-color: ${c}`"
+                                                    :class="rankColors[bi] === c
+                                                      ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-gray-500 scale-110')
+                                                      : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-gray-300')"></button>
+                                          </template>
+                                        </div>
                                         <label @click.stop
                                                class="w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
                                                :class="isCustomColor(rankColors[bi]) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
@@ -1232,47 +1220,35 @@
                                  x-transition:enter-end="opacity-100 translate-y-0"
                                  @click.stop>
                               <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
-                                   :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
-                                <span class="text-[10px] font-bold uppercase tracking-wide"
-                                      :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
-                                      x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
-                                <button @click.stop="toggleAccessibility()"
-                                        class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
-                                        :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
-                                  <i class="fal fa-universal-access"></i>
-                                  <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
-                                </button>
+                                   :class="useAccessiblePalette ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                                <div>
+                                  <span class="text-[10px] font-bold uppercase tracking-wide"
+                                        :class="useAccessiblePalette ? 'text-amber-700' : 'text-gray-400'"
+                                        x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                                  <div class="mt-0.5 text-[10px] text-webropol-gray-500"
+                                       x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual colour scale'"></div>
+                                </div>
                               </div>
                               <!-- Pattern active notice -->
                               <div x-show="activePatterns.length > 0" style="display:none"
                                    class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
                                 <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
                                 <span class="text-[10px] font-semibold text-purple-700"
-                                      x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                      x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying current colours'"></span>
                               </div>
                               <div class="flex items-center gap-2 p-2">
-                                <div class="flex items-center gap-1 p-1 rounded transition-opacity"
-                                     :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
-                                  <template x-if="!accessibilityMode">
-                                    <div class="swatch-grid">
-                                      <template x-for="c in standardColors" :key="c">
-                                        <button @click.stop="changeBarChartColor(index, c)"
-                                                class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                :style="`background-color: ${c}`"
-                                                :class="bar.color === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
-                                      </template>
-                                    </div>
-                                  </template>
-                                  <template x-if="accessibilityMode">
-                                    <div class="swatch-grid">
-                                      <template x-for="c in accessibleColors" :key="c">
-                                        <button @click.stop="changeBarChartColor(index, c)"
-                                                class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                :style="`background-color: ${c}`"
-                                                :class="bar.color === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
-                                      </template>
-                                    </div>
-                                  </template>
+                                <div class="flex items-center gap-1 p-1 rounded"
+                                     :class="useAccessiblePalette ? 'bg-amber-50' : 'bg-gray-50'">
+                                  <div class="swatch-grid">
+                                    <template x-for="c in getPopupPalette()" :key="c">
+                                      <button @click.stop="changeBarChartColor(index, c)"
+                                              class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                              :style="`background-color: ${c}`"
+                                              :class="bar.color === c
+                                                ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-gray-500 scale-110')
+                                                : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-gray-300')"></button>
+                                    </template>
+                                  </div>
                                   <label @click.stop
                                          class="w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
                                          :class="isCustomColor(bar.color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
@@ -1414,47 +1390,35 @@
                                    x-transition:enter-end="opacity-100 translate-y-0"
                                    @click.stop>
                                 <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
-                                     :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
-                                  <span class="text-[10px] font-bold uppercase tracking-wide"
-                                        :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
-                                        x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
-                                  <button @click.stop="toggleAccessibility()"
-                                          class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
-                                          :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
-                                    <i class="fal fa-universal-access"></i>
-                                    <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
-                                  </button>
+                                     :class="useAccessiblePalette ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                                  <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wide"
+                                          :class="useAccessiblePalette ? 'text-amber-700' : 'text-gray-400'"
+                                          x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                                    <div class="mt-0.5 text-[10px] text-webropol-gray-500"
+                                         x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual colour scale'"></div>
+                                  </div>
                                 </div>
                                 <!-- Pattern active notice -->
                                 <div x-show="activePatterns.length > 0" style="display:none"
                                      class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
                                   <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
                                   <span class="text-[10px] font-semibold text-purple-700"
-                                        x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                                        x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying current colours'"></span>
                                 </div>
                                 <div class="flex items-center gap-2 p-2">
-                                  <div class="flex items-center gap-1 p-1 rounded transition-opacity"
-                                       :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
-                                    <template x-if="!accessibilityMode">
-                                      <div class="swatch-grid">
-                                        <template x-for="c in standardColors" :key="c">
-                                          <button @click.stop="changeMatrixSegColor(ri, si, c)"
-                                                  class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                  :style="`background-color: ${c}`"
-                                                  :class="seg.color === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
-                                        </template>
-                                      </div>
-                                    </template>
-                                    <template x-if="accessibilityMode">
-                                      <div class="swatch-grid">
-                                        <template x-for="c in accessibleColors" :key="c">
-                                          <button @click.stop="changeMatrixSegColor(ri, si, c)"
-                                                  class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                                  :style="`background-color: ${c}`"
-                                                  :class="seg.color === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
-                                        </template>
-                                      </div>
-                                    </template>
+                                  <div class="flex items-center gap-1 p-1 rounded"
+                                       :class="useAccessiblePalette ? 'bg-amber-50' : 'bg-gray-50'">
+                                    <div class="swatch-grid">
+                                      <template x-for="c in getPopupPalette()" :key="c">
+                                        <button @click.stop="changeMatrixSegColor(ri, si, c)"
+                                                class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                                :style="`background-color: ${c}`"
+                                                :class="seg.color === c
+                                                  ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-gray-500 scale-110')
+                                                  : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-gray-300')"></button>
+                                      </template>
+                                    </div>
                                     <label @click.stop
                                            class="w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
                                            :class="isCustomColor(seg.color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
@@ -1556,46 +1520,34 @@
                        @click.stop
                        :style="`${ganttPopupStyle}; bottom: auto; transform: translate(-50%, -100%); min-width: 200px;`">
                       <div class="flex items-center justify-between px-2.5 pt-2 pb-1.5 border-b"
-                           :class="accessibilityMode ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
-                        <span class="text-[10px] font-bold uppercase tracking-wide"
-                              :class="accessibilityMode ? 'text-amber-700' : 'text-gray-400'"
-                              x-text="accessibilityMode ? 'Accessible Colors' : 'Standard Colors'"></span>
-                        <button @click.stop="toggleAccessibility()"
-                                class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all"
-                                :class="accessibilityMode ? 'bg-amber-500 text-white shadow-sm' : 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-700'">
-                          <i class="fal fa-universal-access"></i>
-                          <span x-text="accessibilityMode ? 'On' : 'Off'"></span>
-                        </button>
+                           :class="useAccessiblePalette ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100'">
+                        <div>
+                          <span class="text-[10px] font-bold uppercase tracking-wide"
+                                :class="useAccessiblePalette ? 'text-amber-700' : 'text-gray-400'"
+                                x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                          <div class="mt-0.5 text-[10px] text-webropol-gray-500"
+                               x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual colour scale'"></div>
+                        </div>
                       </div>
                       <div x-show="activePatterns.length > 0" style="display:none"
                            class="flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 border-b border-purple-200">
                         <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
                         <span class="text-[10px] font-semibold text-purple-700"
-                              x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 colors overridden'"></span>
+                              x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying current colours'"></span>
                       </div>
                       <div class="flex items-center gap-1 p-2">
-                        <div class="flex items-center gap-1 p-1 rounded transition-opacity"
-                             :class="[accessibilityMode ? 'bg-amber-50' : 'bg-gray-50', activePatterns.length > 0 ? 'opacity-40 pointer-events-none select-none' : '']">
-                          <template x-if="!accessibilityMode">
-                            <div class="swatch-grid">
-                              <template x-for="c in standardColors" :key="c">
-                                <button @click.stop="changeGanttColor(activeGanttIndex, c)"
-                                        class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                        :style="`background-color: ${c}`"
-                                        :class="ganttBars[activeGanttIndex]?.color === c ? 'ring-2 ring-gray-500 scale-110' : 'ring-1 ring-transparent hover:ring-gray-300'"></button>
-                              </template>
-                            </div>
-                          </template>
-                          <template x-if="accessibilityMode">
-                            <div class="swatch-grid">
-                              <template x-for="c in accessibleColors" :key="c">
-                                <button @click.stop="changeGanttColor(activeGanttIndex, c)"
-                                        class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
-                                        :style="`background-color: ${c}`"
-                                        :class="ganttBars[activeGanttIndex]?.color === c ? 'ring-2 ring-amber-500 scale-110' : 'ring-1 ring-transparent hover:ring-amber-300'"></button>
-                              </template>
-                            </div>
-                          </template>
+                        <div class="flex items-center gap-1 p-1 rounded"
+                             :class="useAccessiblePalette ? 'bg-amber-50' : 'bg-gray-50'">
+                          <div class="swatch-grid">
+                            <template x-for="c in getPopupPalette()" :key="c">
+                              <button @click.stop="changeGanttColor(activeGanttIndex, c)"
+                                      class="w-6 h-6 rounded-full hover:scale-110 transition-transform ring-offset-1"
+                                      :style="`background-color: ${c}`"
+                                      :class="ganttBars[activeGanttIndex]?.color === c
+                                        ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-gray-500 scale-110')
+                                        : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-gray-300')"></button>
+                            </template>
+                          </div>
                           <label @click.stop
                                  class="w-6 h-6 flex-shrink-0 rounded-full border flex items-center justify-center hover:scale-110 transition-transform cursor-pointer ring-offset-1"
                                  :class="isCustomColor(ganttBars[activeGanttIndex]?.color) ? 'ring-2 ring-gray-500 scale-110 border-transparent' : 'border-gray-200 text-gray-400 hover:border-blue-400 hover:text-blue-500'"
@@ -4191,18 +4143,11 @@
         colorPopupTarget: null,  // e.g. 'nps-0', 'rank-1-2'
         ganttPopupStyle: '',
         activeGanttIndex: null,
-        accessibilityMode: false,
+        useAccessiblePalette: false,
         defaultAccessiblePaletteName: 'IBM Colour Blind Safe',
         activeAccessiblePaletteName: 'IBM Colour Blind Safe',
         accessiblePaletteReversed: false,
         activePatterns: [],      // pattern IDs from ChartColoursModal
-        // Colours assigned to each pattern in ChartColoursModal (mirrors accessiblePatterns)
-        patternColorMap: {
-          'hc-pat-0': '#4361EE', 'hc-pat-1': '#F72585', 'hc-pat-2': '#4CC9F0',
-          'hc-pat-3': '#7209B7', 'hc-pat-4': '#3A0CA3', 'hc-pat-5': '#F77F00',
-          'hc-pat-6': '#06D6A0', 'hc-pat-7': '#EF476F', 'hc-pat-8': '#118AB2',
-          'hc-pat-9': '#FFD166'
-        },
 
         // Generic 12-colour palette from "Colours for chart, mean & index" modal
         standardColors: [
@@ -4374,7 +4319,7 @@
             promoters: '#75BA73'
           };
 
-          if (this.activeAccessiblePaletteName === 'Webropol RAG' || this.accessibilityMode) {
+          if (this.useAccessiblePalette) {
             const palette = this.getAccessiblePalette(this.activeAccessiblePaletteName);
             const indexMap = palette?.npsIndexes || {
               detractors: 0,
@@ -4404,6 +4349,10 @@
           this.accessibleColors = reversed ? paletteColors.reverse() : paletteColors;
         },
 
+        getPopupPalette() {
+          return this.useAccessiblePalette ? this.accessibleColors : this.standardColors;
+        },
+
         changeRankColor(index, color) {
           this.rankColors[index] = color;
           // Force Alpine reactivity by replacing the array
@@ -4428,21 +4377,6 @@
 
         changeGanttColor(index, color) {
           this.ganttBars[index].color = color;
-          this.markAsEdited();
-        },
-
-        toggleAccessibility() {
-          this.accessibilityMode = !this.accessibilityMode;
-          if (this.accessibilityMode) {
-            this.setAccessiblePalette(this.defaultAccessiblePaletteName, this.accessiblePaletteReversed);
-            window.dispatchEvent(new CustomEvent('webropol:select-accessible-palette', {
-              detail: {
-                paletteName: this.defaultAccessiblePaletteName,
-                reversed: this.accessiblePaletteReversed
-              }
-            }));
-          }
-          this.applyPaletteToAllCharts();
           this.markAsEdited();
         },
 
@@ -4491,18 +4425,8 @@
         // Apply the active palette (standard or accessible) to every chart
         applyPaletteToAllCharts() {
           const useRAG = this.activeAccessiblePaletteName === 'Webropol RAG';
-          const pal = this.accessibilityMode ? this.accessibleColors : this.standardColors;
+          const pal = this.useAccessiblePalette ? this.accessibleColors : this.standardColors;
           const colorFor = (i, total) => useRAG ? this.getRAGColor(i, total) : pal[i % pal.length];
-
-          // Keep patternColorMap in sync with the current palette so that when
-          // patterns are active getPatternColor() returns the new colours and
-          // legends always reflect the selected palette.
-          const patternIds = ['hc-pat-0','hc-pat-1','hc-pat-2','hc-pat-3','hc-pat-4',
-                              'hc-pat-5','hc-pat-6','hc-pat-7','hc-pat-8','hc-pat-9'];
-          patternIds.forEach((id, i) => {
-            this.patternColorMap[id] = colorFor(i, patternIds.length);
-          });
-          this.patternColorMap = { ...this.patternColorMap }; // force Alpine reactivity
 
           // Rank
           const rankTotal = this.rankColors.length;
@@ -4587,13 +4511,10 @@
           return map[patId] ? '; ' + map[patId] : '';
         },
 
-        // When patterns are active, returns the pattern's own defined colour
-        // (completely overriding the bar's individual colour). Falls back to
-        // defaultColor when no patterns are selected.
+        // Patterns are an overlay only, so the active colour scale remains the
+        // base fill and the pattern is added through getPatternBg().
         getPatternColor(index, defaultColor) {
-          if (!this.activePatterns || this.activePatterns.length === 0) return defaultColor;
-          const patId = this.activePatterns[index % this.activePatterns.length];
-          return this.patternColorMap[patId] || defaultColor;
+          return defaultColor;
         },
 
         filterByElement(chartType, index) {
@@ -4694,13 +4615,13 @@
                 this.activePatterns = e.detail.activePatterns;
               }
               if (e.detail.accessiblePaletteName) {
-                this.accessibilityMode = true;
+                this.useAccessiblePalette = true;
                 this.setAccessiblePalette(
                   e.detail.accessiblePaletteName,
                   e.detail.accessiblePaletteReversed ?? this.accessiblePaletteReversed
                 );
               } else {
-                this.accessibilityMode = false;
+                this.useAccessiblePalette = false;
                 this.defaultAccessiblePaletteName = 'IBM Colour Blind Safe';
                 this.activeAccessiblePaletteName = 'IBM Colour Blind Safe';
                 this.accessiblePaletteReversed = false;

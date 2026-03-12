@@ -37,11 +37,12 @@ function _registerColoursModal() {
       isOpen: false,
 
       // ── Bar colours state ─────────────────────────────────────────────────
-      barTab: 'colours',   // 'colours' | 'accessible-colours' | 'accessible-patterns'
+      barTab: 'colours',   // 'colours' | 'accessible-colours'
       barColours: [...DEFAULT_BAR_COLOURS],
       selectedAccessiblePalette: null,
       palettePreviewReversed: false,
       accessiblePaletteReversed: false,
+      patternsEnabled: false,
 
       // ── Averages / excluded rows ──────────────────────────────────────────
       indexType: 'mean',   // 'mean' | 'index'
@@ -145,7 +146,7 @@ function _registerColoursModal() {
         window.dispatchEvent(new CustomEvent('webropol:chart-colours-closed', {
           detail: {
             barColours:     [...this.barColours],
-            activePatterns: this.accessiblePatterns.filter(p => p.active).map(p => p.patternId),
+            activePatterns: this.getActivePatternIds(),
             accessiblePaletteName: this.selectedAccessiblePalette,
             accessiblePaletteReversed: this.accessiblePaletteReversed,
             averageRows:    [...this.averageRows],
@@ -163,6 +164,7 @@ function _registerColoursModal() {
         this.selectedAccessiblePalette = null;
         this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
+        this.syncPatternColoursWithBarColours();
       },
 
       resetAll() {
@@ -171,17 +173,21 @@ function _registerColoursModal() {
         this.selectedAccessiblePalette = null;
         this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
+        this.patternsEnabled = false;
         this.indexType = 'mean';
         this.averageRows = [];
         this.excludedRows = [];
-        this.accessiblePatterns = this.accessiblePatterns.map((pattern) => ({
+        this.accessiblePatterns = this.accessiblePatterns.map((pattern, index) => ({
           ...pattern,
-          active: false
+          active: false,
+          colour: DEFAULT_BAR_COLOURS[index % DEFAULT_BAR_COLOURS.length]
         }));
       },
 
       setBarColour(index, val) {
-        if (/^#[0-9a-fA-F]{6}$/.test(val)) this.barColours[index] = val;
+        if (!/^#[0-9a-fA-F]{6}$/.test(val)) return;
+        this.barColours[index] = val;
+        this.syncPatternColoursWithBarColours();
       },
 
       applyAccessiblePalette(palette) {
@@ -211,6 +217,7 @@ function _registerColoursModal() {
         this.getOrderedPaletteColours(palette, reversed).forEach((c, i) => {
           if (i < this.barColours.length) this.barColours[i] = c;
         });
+        this.syncPatternColoursWithBarColours();
       },
 
       toggleAccessiblePaletteReverse() {
@@ -220,8 +227,23 @@ function _registerColoursModal() {
         }
       },
 
-      togglePattern(idx) {
-        this.accessiblePatterns[idx].active = !this.accessiblePatterns[idx].active;
+      getActivePatternIds() {
+        return this.accessiblePatterns.filter((pattern) => pattern.active).map((pattern) => pattern.patternId);
+      },
+
+      setPatternsEnabled(isEnabled) {
+        this.patternsEnabled = isEnabled;
+        this.accessiblePatterns = this.accessiblePatterns.map((pattern) => ({
+          ...pattern,
+          active: isEnabled
+        }));
+      },
+
+      syncPatternColoursWithBarColours() {
+        this.accessiblePatterns = this.accessiblePatterns.map((pattern, index) => ({
+          ...pattern,
+          colour: this.barColours[index % this.barColours.length]
+        }));
       }
     };
   });
@@ -296,14 +318,85 @@ class WebropolChartColoursModal extends HTMLElement {
           </button>
           <button @click="barTab = 'accessible-colours'"
                   :class="barTab === 'accessible-colours' ? 'bg-webropol-primary-700 text-white' : 'bg-white text-webropol-gray-600 hover:bg-webropol-gray-50'"
-                  class="flex-1 px-4 py-2 text-xs font-medium transition-all flex items-center justify-center gap-2 border-r border-webropol-gray-200">
+                  class="flex-1 px-4 py-2 text-xs font-medium transition-all flex items-center justify-center gap-2">
             <i class="fal fa-universal-access"></i> Accessible colours
           </button>
-          <button @click="barTab = 'accessible-patterns'"
-                  :class="barTab === 'accessible-patterns' ? 'bg-webropol-primary-700 text-white' : 'bg-white text-webropol-gray-600 hover:bg-webropol-gray-50'"
-                  class="flex-1 px-4 py-2 text-xs font-medium transition-all flex items-center justify-center gap-2">
-            <i class="fal fa-th"></i> Accessible patterns
-          </button>
+        </div>
+
+        <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+          <defs>
+            <pattern id="hc-pat-0" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11" stroke="white" stroke-width="2.5" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-1" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9" stroke="white" stroke-width="2.5" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-2" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-3" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 0 L 5 10 L 10 0" stroke="white" stroke-width="1.5" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-4" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 2.5 0 L 2.5 10 M 7.5 0 L 7.5 10" stroke="white" stroke-width="2" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-5" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-6" patternUnits="userSpaceOnUse" width="8" height="8">
+              <rect x="1" y="1" width="3" height="3" fill="white"/>
+              <rect x="5" y="5" width="3" height="3" fill="white"/>
+            </pattern>
+            <pattern id="hc-pat-7" patternUnits="userSpaceOnUse" width="10" height="10">
+              <circle cx="5" cy="5" r="3.5" stroke="white" stroke-width="1.5" fill="none"/>
+            </pattern>
+            <pattern id="hc-pat-8" patternUnits="userSpaceOnUse" width="6" height="6">
+              <circle cx="3" cy="3" r="2" fill="white"/>
+            </pattern>
+            <pattern id="hc-pat-9" patternUnits="userSpaceOnUse" width="10" height="10">
+              <path d="M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7" stroke="white" stroke-width="2" fill="none"/>
+            </pattern>
+          </defs>
+        </svg>
+
+        <div class="mb-5 rounded-2xl border border-webropol-gray-200 bg-white p-4 shadow-soft">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <div class="text-sm font-semibold text-webropol-gray-900">Pattern overlay</div>
+              <div class="mt-1 text-xs text-webropol-gray-500">Apply all available patterns on top of the current colour scale for stronger differentiation in charts and greyscale exports.</div>
+            </div>
+            <button @click="setPatternsEnabled(!patternsEnabled)"
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+                    :class="patternsEnabled ? 'bg-webropol-primary-700 text-white shadow-sm' : 'bg-webropol-gray-100 text-webropol-gray-600 hover:bg-webropol-gray-200'">
+              <i class="fal fa-layer-group"></i>
+              <span x-text="patternsEnabled ? 'Patterns enabled' : 'Enable patterns'"></span>
+            </button>
+          </div>
+
+          <div x-show="patternsEnabled" x-transition.opacity class="mt-4">
+            <div class="grid gap-3 sm:grid-cols-5">
+              <template x-for="(pat, idx) in accessiblePatterns" :key="pat.patternId">
+                <div class="rounded-xl border border-webropol-primary-100 bg-webropol-primary-50/50 p-2.5">
+                  <div class="overflow-hidden rounded-lg ring-1 ring-webropol-primary-200">
+                    <svg width="100%" height="100%" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="display:block">
+                      <rect width="60" height="60" :fill="pat.colour"/>
+                      <rect width="60" height="60" :fill="'url(#' + pat.patternId + ')'"/>
+                    </svg>
+                  </div>
+                  <div class="mt-2 text-center">
+                    <div class="text-xs font-medium text-webropol-gray-700 leading-tight" x-text="pat.label"></div>
+                    <div class="text-[11px] text-webropol-gray-400" x-text="'Pattern ' + (idx + 1)"></div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-4 rounded-xl border border-webropol-primary-100 bg-webropol-primary-50 px-3 py-2.5 text-xs text-webropol-primary-800 flex gap-2">
+              <i class="fal fa-info-circle mt-0.5 flex-shrink-0"></i>
+              <span>All 10 patterns are activated together and inherit the current colour scale, so the overlay stays aligned with manual colours and accessible palettes.</span>
+            </div>
+          </div>
         </div>
 
         <!-- ── TAB: Colours ── -->
@@ -418,86 +511,6 @@ class WebropolChartColoursModal extends HTMLElement {
           </div>
         </div>
 
-        <!-- ── TAB: Accessible patterns ── -->
-        <div x-show="barTab === 'accessible-patterns'" x-transition.opacity>
-
-          <!-- SVG pattern defs — Highcharts default-pattern-0 … -9 -->
-          <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
-            <defs>
-              <!-- 0: Diagonal / -->
-              <pattern id="hc-pat-0" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11" stroke="white" stroke-width="2.5" fill="none"/>
-              </pattern>
-              <!-- 1: Diagonal \ -->
-              <pattern id="hc-pat-1" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9" stroke="white" stroke-width="2.5" fill="none"/>
-              </pattern>
-              <!-- 2: Horizontal lines -->
-              <pattern id="hc-pat-2" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/>
-              </pattern>
-              <!-- 3: Zigzag / chevron -->
-              <pattern id="hc-pat-3" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 0 L 5 10 L 10 0" stroke="white" stroke-width="1.5" fill="none"/>
-              </pattern>
-              <!-- 4: Double vertical bars -->
-              <pattern id="hc-pat-4" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 2.5 0 L 2.5 10 M 7.5 0 L 7.5 10" stroke="white" stroke-width="2" fill="none"/>
-              </pattern>
-              <!-- 5: Double horizontal bars -->
-              <pattern id="hc-pat-5" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/>
-              </pattern>
-              <!-- 6: Squares grid (checkerboard) -->
-              <pattern id="hc-pat-6" patternUnits="userSpaceOnUse" width="8" height="8">
-                <rect x="1" y="1" width="3" height="3" fill="white"/>
-                <rect x="5" y="5" width="3" height="3" fill="white"/>
-              </pattern>
-              <!-- 7: Circle outlines -->
-              <pattern id="hc-pat-7" patternUnits="userSpaceOnUse" width="10" height="10">
-                <circle cx="5" cy="5" r="3.5" stroke="white" stroke-width="1.5" fill="none"/>
-              </pattern>
-              <!-- 8: Filled dots -->
-              <pattern id="hc-pat-8" patternUnits="userSpaceOnUse" width="6" height="6">
-                <circle cx="3" cy="3" r="2" fill="white"/>
-              </pattern>
-              <!-- 9: Step / L-path -->
-              <pattern id="hc-pat-9" patternUnits="userSpaceOnUse" width="10" height="10">
-                <path d="M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7" stroke="white" stroke-width="2" fill="none"/>
-              </pattern>
-            </defs>
-          </svg>
-
-          <!-- Pattern grid 5 × 2 -->
-          <div class="grid gap-3" style="grid-template-columns:repeat(5,1fr)">
-            <template x-for="(pat, idx) in accessiblePatterns" :key="pat.patternId">
-              <div class="flex flex-col items-center gap-2 cursor-pointer group" @click="togglePattern(idx)">
-                <div class="relative rounded-xl overflow-hidden transition-all w-full aspect-square"
-                     :class="pat.active
-                       ? 'ring-2 ring-webropol-primary-500 ring-offset-2'
-                       : 'ring-1 ring-webropol-gray-200 group-hover:ring-webropol-gray-400'">
-                  <svg width="100%" height="100%" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="display:block">
-                    <rect width="60" height="60" :fill="pat.colour"/>
-                    <rect width="60" height="60" :fill="'url(#' + pat.patternId + ')'"/>
-                  </svg>
-                  <div x-show="pat.active"
-                       class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-webropol-primary-600 flex items-center justify-center shadow">
-                    <i class="fal fa-check text-white" style="font-size:9px"></i>
-                  </div>
-                </div>
-                <div class="text-center">
-                  <div class="text-xs font-medium text-webropol-gray-700 leading-tight" x-text="pat.label"></div>
-                  <div class="text-xs text-webropol-gray-400" x-text="'pattern-' + idx"></div>
-                </div>
-              </div>
-            </template>
-          </div>
-
-          <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 flex gap-2.5">
-            <i class="fal fa-info-circle text-slate-400 mt-0.5 flex-shrink-0 text-sm"></i>
-            <span>Patterns supplement colour — charts remain distinguishable in greyscale prints and for users with colour vision deficiency. Based on <strong>Highcharts pattern fill</strong> naming convention.</span>
-          </div>
-        </div>
       </div><!-- /BAR COLOURS -->
 
       <div class="border-t border-webropol-gray-100 mb-6"></div>
