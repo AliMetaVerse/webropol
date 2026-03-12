@@ -40,6 +40,7 @@ function _registerColoursModal() {
       barTab: 'colours',   // 'colours' | 'accessible-colours' | 'accessible-patterns'
       barColours: [...DEFAULT_BAR_COLOURS],
       selectedAccessiblePalette: null,
+      palettePreviewReversed: false,
       accessiblePaletteReversed: false,
 
       // ── Averages / excluded rows ──────────────────────────────────────────
@@ -116,6 +117,7 @@ function _registerColoursModal() {
         this._selectAccessiblePaletteHandler = (event) => {
           const paletteName = event.detail?.paletteName;
           if (paletteName) {
+            this.palettePreviewReversed = !!event.detail?.reversed;
             this.applyAccessiblePaletteByName(
               paletteName,
               false,
@@ -159,7 +161,23 @@ function _registerColoursModal() {
       resetBarColours() {
         this.barColours = [...DEFAULT_BAR_COLOURS];
         this.selectedAccessiblePalette = null;
+        this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
+      },
+
+      resetAll() {
+        this.barTab = 'colours';
+        this.barColours = [...DEFAULT_BAR_COLOURS];
+        this.selectedAccessiblePalette = null;
+        this.palettePreviewReversed = false;
+        this.accessiblePaletteReversed = false;
+        this.indexType = 'mean';
+        this.averageRows = [];
+        this.excludedRows = [];
+        this.accessiblePatterns = this.accessiblePatterns.map((pattern) => ({
+          ...pattern,
+          active: false
+        }));
       },
 
       setBarColour(index, val) {
@@ -167,14 +185,16 @@ function _registerColoursModal() {
       },
 
       applyAccessiblePalette(palette) {
-        this.applyAccessiblePaletteByName(palette.name, false);
+        this.applyAccessiblePaletteByName(palette.name, false, this.palettePreviewReversed);
       },
 
-      applyAccessiblePaletteOverride(paletteName, reversed) {
-        this.applyAccessiblePaletteByName(paletteName, false, reversed);
+      toggleSelectedPaletteReverse(paletteName) {
+        const isSelectedPalette = this.selectedAccessiblePalette === paletteName;
+        const nextReversed = isSelectedPalette ? !this.accessiblePaletteReversed : true;
+        this.applyAccessiblePaletteByName(paletteName, false, nextReversed);
       },
 
-      getOrderedPaletteColours(palette, reversed = this.accessiblePaletteReversed) {
+      getOrderedPaletteColours(palette, reversed = this.palettePreviewReversed) {
         const colours = [...palette.colours];
         return reversed ? colours.reverse() : colours;
       },
@@ -194,9 +214,9 @@ function _registerColoursModal() {
       },
 
       toggleAccessiblePaletteReverse() {
-        this.accessiblePaletteReversed = !this.accessiblePaletteReversed;
+        this.palettePreviewReversed = !this.palettePreviewReversed;
         if (this.selectedAccessiblePalette) {
-          this.applyAccessiblePaletteByName(this.selectedAccessiblePalette, false, this.accessiblePaletteReversed);
+          this.applyAccessiblePaletteByName(this.selectedAccessiblePalette, false, this.palettePreviewReversed);
         }
       },
 
@@ -238,14 +258,14 @@ class WebropolChartColoursModal extends HTMLElement {
      aria-modal="true"
      aria-labelledby="coloursModalTitle">
 
-  <div class="modal-content" style="max-width:680px;">
+  <div class="modal-content" style="max-width:780px;">
 
     <!-- ── Header ─────────────────────────────────────────────────────── -->
     <div class="modal-header">
       <div class="modal-title-section">
         <div class="modal-title" id="coloursModalTitle">
           <span class="inline-flex w-9 h-9 rounded-lg bg-cyan-50 items-center justify-center text-cyan-600">
-            <i class="fal fa-palette text-lg"></i>
+            <i class="fa-light fa-circles-overlap-3 text-lg"></i>
           </span>
           <span>Colours for chart, mean &amp; index</span>
         </div>
@@ -317,15 +337,24 @@ class WebropolChartColoursModal extends HTMLElement {
         <div x-show="barTab === 'accessible-colours'" x-transition.opacity>
           <div class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-webropol-gray-200 bg-webropol-gray-50 px-4 py-3">
             <div>
-              <div class="text-sm font-medium text-webropol-gray-800">Reverse palette order</div>
-              <div class="text-xs text-webropol-gray-500">Flip the sequence from green-to-red or red-to-green without editing individual colours.</div>
+              <div class="text-sm font-medium text-webropol-gray-800">Reverse all palette previews</div>
+              <div class="text-xs text-webropol-gray-500">This master control flips every palette card. Use the Reverse button on a palette card to reverse only that selected palette.</div>
             </div>
             <button @click="toggleAccessiblePaletteReverse()"
                     type="button"
+                    style="min-width:180px"
                     class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
-                    :class="accessiblePaletteReversed ? 'bg-webropol-primary-700 text-white shadow-sm' : 'bg-white text-webropol-gray-600 border border-webropol-gray-200 hover:border-webropol-primary-300 hover:text-webropol-primary-700'">
+                    :class="palettePreviewReversed ? 'bg-webropol-primary-700 text-white shadow-sm' : 'bg-white text-webropol-gray-600 border border-webropol-gray-200 hover:border-webropol-primary-300 hover:text-webropol-primary-700'">
               <i class="fal fa-exchange-alt"></i>
-              <span x-text="accessiblePaletteReversed ? 'Reversed' : 'Normal order'"></span>
+              <span x-text="palettePreviewReversed ? 'All previews reversed' : 'Normal preview order'"></span>
+            </button>
+          </div>
+          <div class="mb-4 flex justify-end">
+            <button @click="resetAll()"
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full border border-webropol-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-webropol-gray-600 transition-colors hover:border-webropol-primary-300 hover:text-webropol-primary-700">
+              <i class="fal fa-undo"></i>
+              <span>Reset everything</span>
             </button>
           </div>
           <div class="space-y-2">
@@ -343,7 +372,7 @@ class WebropolChartColoursModal extends HTMLElement {
                     <div class="text-xs text-webropol-gray-500 mt-0.5" x-text="palette.description"></div>
                   </div>
                   <div class="flex items-start gap-2 flex-shrink-0 ml-3 mt-0.5">
-                        <button @click.stop="applyAccessiblePaletteOverride(palette.name, true)"
+                        <button @click.stop="toggleSelectedPaletteReverse(palette.name)"
                             type="button"
                             class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors"
                           :class="selectedAccessiblePalette === palette.name && accessiblePaletteReversed
@@ -361,10 +390,11 @@ class WebropolChartColoursModal extends HTMLElement {
                   </div>
                 </div>
 
-                <!-- 12 swatches in 2 rows of 6 -->
-                <div class="grid gap-1" style="grid-template-columns:repeat(6,1fr)">
+                <!-- Compact single-row palette strip -->
+                <div class="flex items-center gap-0.5 rounded-xl bg-webropol-gray-100 p-1">
                   <template x-for="(c, colorIndex) in getOrderedPaletteColours(palette)" :key="palette.name + '-' + colorIndex">
-                    <div class="h-7 rounded-md border-2 border-white ring-1 ring-black/10 shadow-sm"
+                    <div class="h-5 flex-1 min-w-0 shadow-sm"
+                         :class="colorIndex === 0 ? 'rounded-l-lg' : (colorIndex === getOrderedPaletteColours(palette).length - 1 ? 'rounded-r-lg' : '')"
                          :style="'background:' + c"
                          :title="c"></div>
                   </template>
@@ -694,9 +724,12 @@ class WebropolChartColoursModal extends HTMLElement {
     </div><!-- /modal-body -->
 
     <!-- ── Footer ──────────────────────────────────────────────────────── -->
-    <div class="border-t border-webropol-gray-100 px-6 py-4 flex justify-end gap-3 bg-webropol-gray-50 rounded-b-2xl">
+    <div class="border-t border-webropol-gray-100 px-6 py-4 flex items-center justify-between gap-3 bg-webropol-gray-50 rounded-b-2xl">
+      <button class="btn btn-secondary" @click="resetAll()">Reset All</button>
+      <div class="flex justify-end gap-3">
       <button class="btn btn-secondary" @click="close()">Cancel</button>
       <button class="btn btn-primary" @click="save()">Save</button>
+      </div>
     </div>
 
   </div><!-- /modal-content -->

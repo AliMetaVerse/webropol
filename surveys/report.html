@@ -470,7 +470,7 @@
                   </button>
                   <!-- Colours for chart, mean & index -->
                   <button @click="window.dispatchEvent(new CustomEvent('webropol:open-chart-colours')); layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
-                    <i class="fal fa-palette w-5 text-webropol-gray-500"></i>
+                    <i class="fa-light fa-circles-overlap-3 w-5 text-webropol-gray-500"></i>
                     <span>Colours for chart, mean &amp; index</span>
                   </button>
                   <!-- Total respondent count -->
@@ -4694,10 +4694,17 @@
                 this.activePatterns = e.detail.activePatterns;
               }
               if (e.detail.accessiblePaletteName) {
+                this.accessibilityMode = true;
                 this.setAccessiblePalette(
                   e.detail.accessiblePaletteName,
                   e.detail.accessiblePaletteReversed ?? this.accessiblePaletteReversed
                 );
+              } else {
+                this.accessibilityMode = false;
+                this.defaultAccessiblePaletteName = 'IBM Colour Blind Safe';
+                this.activeAccessiblePaletteName = 'IBM Colour Blind Safe';
+                this.accessiblePaletteReversed = false;
+                this.accessibleColors = [...this.getAccessiblePalette(this.defaultAccessiblePaletteName).colors];
               }
               if (e.detail.barColours) {
                 this.standardColors = [...e.detail.barColours];
