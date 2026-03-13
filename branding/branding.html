@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Branding - Webropol</title>
-  
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  
+
   <script>
     tailwind.config = {
       theme: {
@@ -22,17 +22,23 @@
       }
     }
   </script>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
   <script src="../design-system/components/buttons/Button.js" type="module"></script>
   <script src="../design-system/components/forms/Input.js" type="module"></script>
+
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
 </head>
-<body x-data="brandingApp()" class="text-slate-900">
+<body x-data="brandingApp()" x-init="init()" class="text-slate-900">
   <div class="flex h-screen">
     <webropol-sidebar active="branding" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -40,436 +46,729 @@
       <div class="bg-white/70 backdrop-blur px-0 sm:px-4 border-b border-gray-200">
         <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Branding","url":"#"}]'></webropol-breadcrumbs>
       </div>
-      
+
       <main class="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8" role="main">
-        
-        <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 class="text-2xl font-bold text-webropol-gray-900">Branding Management</h1>
-            <p class="text-webropol-gray-500 mt-1">Manage your organization's visual identity and templates.</p>
+            <p class="text-webropol-gray-500 mt-1">Manage brand identity, reusable templates, and asset libraries in one workspace.</p>
           </div>
-          
-          <!-- Admin Toggle for Demo -->
+
           <div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200 shadow-sm">
-            <span class="text-sm font-medium text-gray-600">View as:</span>
-            <button @click="isAdmin = false" :class="{'bg-gray-100 text-gray-900': !isAdmin, 'text-gray-500 hover:text-gray-700': isAdmin}" class="px-3 py-1.5 rounded-md text-sm transition-colors">User</button>
-            <button @click="isAdmin = true" :class="{'bg-webropol-primary-500 text-white shadow-sm': isAdmin, 'text-gray-500 hover:text-gray-700': !isAdmin}" class="px-3 py-1.5 rounded-md text-sm transition-colors font-medium">Admin</button>
+            <span class="text-sm font-medium text-gray-600">Scope:</span>
+            <button @click="activeScope = 'own'" :class="{'bg-gray-100 text-gray-900': activeScope === 'own', 'text-gray-500 hover:text-gray-700': activeScope !== 'own'}" class="px-3 py-1.5 rounded-md text-sm transition-colors">Own</button>
+            <button @click="activeScope = 'shared'" :class="{'bg-webropol-primary-500 text-white shadow-sm': activeScope === 'shared', 'text-gray-500 hover:text-gray-700': activeScope !== 'shared'}" class="px-3 py-1.5 rounded-md text-sm transition-colors font-medium">Shared</button>
           </div>
         </div>
 
-        <!-- Navigation Tabs -->
         <div class="border-b border-gray-200">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <template x-for="tab in tabs" :key="tab.id">
-                    <button 
-                        @click="currentTab = tab.id"
-                        :class="currentTab === tab.id 
-                            ? 'border-webropol-primary-500 text-webropol-primary-600' 
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
-                    >
-                        <i :class="tab.icon"></i>
-                        <span x-text="tab.label"></span>
-                    </button>
-                </template>
-            </nav>
+          <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+            <template x-for="tab in topTabs" :key="tab.id">
+              <button
+                @click="setTopTab(tab.id)"
+                :class="activeTopTab === tab.id ? 'border-webropol-primary-500 text-webropol-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2">
+                <i :class="tab.icon"></i>
+                <span x-text="tab.label"></span>
+              </button>
+            </template>
+          </nav>
         </div>
 
-        <!-- Content Area -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden min-h-[400px]">
-            
-            <!-- GENERAL TAB (Logo & Colors) -->
-            <div x-show="currentTab === 'general'"  class="p-6 space-y-8">
-                <!-- Logo Section -->
-                <div class="space-y-4">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Organization Logo</h3>
-                            <p class="text-sm text-gray-500">Used on surveys, reports, and emails.</p>
-                        </div>
-                        <template x-if="isAdmin">
-                            <webropol-button variant="secondary" icon="fa-upload" @click="$refs.logoInput.click()">Upload New</webropol-button>
-                        </template>
-                        <input type="file" x-ref="logoInput" class="hidden" accept="image/*" @change="handleLogoUpload">
-                    </div>
-                    
-                    <div class="p-8 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center bg-gray-50 min-h-[200px]">
-                        <template x-if="data.logo">
-                            <div class="relative group">
-                                <img :src="data.logo" class="max-h-32 object-contain" alt="Brand Logo">
-                                <template x-if="isAdmin">
-                                    <button @click="removeLogo" class="absolute -top-2 -right-2 bg-white text-red-500 rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i class="fa-solid fa-times-circle text-xl"></i>
-                                    </button>
-                                </template>
-                            </div>
-                        </template>
-                        <template x-if="!data.logo">
-                            <div class="text-center text-gray-400">
-                                <i class="fa-thin fa-image text-4xl mb-2"></i>
-                                <p>No logo uploaded</p>
-                            </div>
-                        </template>
-                    </div>
+        <div class="rounded-xl shadow-sm border border-gray-200 overflow-hidden min-h-[520px]">
+          <div x-show="isBrandingSection()" class="p-6 space-y-8">
+            <div class="space-y-4">
+              <div class="flex justify-between items-start gap-4 flex-col lg:flex-row">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">Brand Identity</h3>
+                  <p class="text-sm text-gray-500">Upload a logo, define typography, and build a color system applied across surveys, events, and reports.</p>
                 </div>
-
-                <hr class="border-gray-100">
-
-                <!-- Brand Colors -->
-                <div class="space-y-4">
-                     <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900">Brand Colors</h3>
-                            <p class="text-sm text-gray-500">Primary colors for charts and interface elements.</p>
-                        </div>
-                        <template x-if="isAdmin">
-                            <webropol-button variant="secondary" icon="fa-plus" @click="addColor">Add Color</webropol-button>
-                        </template>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        <template x-for="(color, index) in data.colors" :key="index">
-                            <div class="group relative bg-white border border-gray-200 rounded-lg p-3 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow">
-                                <div class="h-16 w-full rounded-md shadow-inner" :style="`background-color: ${color}`"></div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-mono text-gray-600 uppercase" x-text="color"></span>
-                                    <template x-if="isAdmin">
-                                        <input type="color" x-model="data.colors[index]" @change="saveToLocalStorage" class="w-6 h-6 p-0 border-0 rounded cursor-pointer">
-                                    </template>
-                                </div>
-                                <template x-if="isAdmin && data.colors.length > 1">
-                                    <button @click="removeColor(index)" class="absolute top-1 right-1 bg-white/90 text-red-500 hover:text-red-700 rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
+                <div class="flex gap-2">
+                  <webropol-button variant="secondary" icon="fa-rotate-left" @click="resetBrandingSettings()">Reset</webropol-button>
+                  <webropol-button variant="primary" icon="fa-check" @click="saveBrandingSettings()">
+                    <span x-text="brandingSaved ? 'Saved!' : 'Save changes'"></span>
+                  </webropol-button>
                 </div>
-            </div>
+              </div>
 
-            <!-- DOCUMENT TEMPLATES TAB -->
-            <div x-show="currentTab === 'templates'"  class="p-6 space-y-8" x-cloak>
-                 <!-- Word Templates -->
-                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <i class="fa-solid fa-file-word text-blue-700"></i> Word Templates
-                            </h3>
-                        </div>
-                        <template x-if="isAdmin">
-                            <webropol-button variant="secondary" icon="fa-upload" @click="addTemplate('word')">Upload Word Template</webropol-button>
+              <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="xl:col-span-2 space-y-6">
+                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+                    <div class="flex justify-between items-start gap-4">
+                      <div>
+                        <h4 class="font-semibold text-gray-900">Organization Logo</h4>
+                        <p class="text-sm text-gray-500 mt-1">PNG, JPG, SVG, GIF, or WEBP. Used in branding-aware layouts and exported materials.</p>
+                      </div>
+                      <div class="flex gap-2">
+                        <webropol-button variant="secondary" icon="fa-upload" @click="$refs.logoInput.click()">Upload</webropol-button>
+                        <button x-show="brandingSettings.logoDataUrl" @click="removeLogo()" class="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">Remove</button>
+                      </div>
+                    </div>
+                    <input type="file" x-ref="logoInput" class="hidden" accept="image/png,image/jpeg,image/svg+xml,image/gif,image/webp" @change="handleLogoUpload($event)">
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div class="p-8 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center bg-gray-50 min-h-[180px]">
+                        <template x-if="brandingSettings.logoDataUrl">
+                          <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-24 object-contain">
                         </template>
-                    </div>
-                    
-                    <div class="overflow-hidden border border-gray-200 rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template Name</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
-                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <template x-if="data.wordTemplates.length === 0">
-                                    <tr><td colspan="3" class="px-6 py-8 text-center text-gray-500">No Word templates available.</td></tr>
-                                </template>
-                                <template x-for="(tpl, idx) in data.wordTemplates" :key="idx">
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="tpl.name"></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="tpl.date"></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="#" class="text-webropol-primary-600 hover:text-webropol-primary-900 mr-4">Download</a>
-                                            <template x-if="isAdmin">
-                                                <button @click="removeTemplate('word', idx)" class="text-red-600 hover:text-red-900">Delete</button>
-                                            </template>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- PPT Templates -->
-                 <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                                <i class="fa-solid fa-file-powerpoint text-orange-600"></i> PowerPoint Templates
-                            </h3>
-                        </div>
-                        <template x-if="isAdmin">
-                            <webropol-button variant="secondary" icon="fa-upload" @click="addTemplate('ppt')">Upload PPT Template</webropol-button>
+                        <template x-if="!brandingSettings.logoDataUrl">
+                          <div class="text-center text-gray-400">
+                            <i class="fa-thin fa-image text-4xl mb-2"></i>
+                            <p>No logo uploaded</p>
+                          </div>
                         </template>
+                      </div>
+                      <div class="rounded-lg border border-gray-200 bg-white min-h-[180px] flex items-center justify-center p-6">
+                        <template x-if="brandingSettings.logoDataUrl">
+                          <div class="text-center">
+                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 object-contain mx-auto">
+                            <p class="text-xs text-gray-500 mt-3">Light background</p>
+                          </div>
+                        </template>
+                        <template x-if="!brandingSettings.logoDataUrl">
+                          <div class="text-center text-gray-400 text-sm">Preview on light background</div>
+                        </template>
+                      </div>
+                      <div class="rounded-lg border border-gray-200 bg-slate-900 min-h-[180px] flex items-center justify-center p-6">
+                        <template x-if="brandingSettings.logoDataUrl">
+                          <div class="text-center">
+                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 object-contain mx-auto opacity-90">
+                            <p class="text-xs text-slate-300 mt-3">Dark background</p>
+                          </div>
+                        </template>
+                        <template x-if="!brandingSettings.logoDataUrl">
+                          <div class="text-center text-slate-400 text-sm">Preview on dark background</div>
+                        </template>
+                      </div>
                     </div>
-                    
-                    <div class="overflow-hidden border border-gray-200 rounded-lg">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template Name</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Modified</th>
-                                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <template x-if="data.pptTemplates.length === 0">
-                                    <tr><td colspan="3" class="px-6 py-8 text-center text-gray-500">No PowerPoint templates available.</td></tr>
-                                </template>
-                                <template x-for="(tpl, idx) in data.pptTemplates" :key="idx">
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="tpl.name"></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="tpl.date"></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="#" class="text-webropol-primary-600 hover:text-webropol-primary-900 mr-4">Download</a>
-                                            <template x-if="isAdmin">
-                                                <button @click="removeTemplate('ppt', idx)" class="text-red-600 hover:text-red-900">Delete</button>
-                                            </template>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                  </div>
 
-            <!-- SURVEY TEMPLATES TAB -->
-            <div x-show="currentTab === 'surveys'" class="p-6 space-y-6" x-cloak>
-                 <div class="flex justify-between items-center">
+                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Survey Templates</h3>
-                        <p class="text-sm text-gray-500">Pre-styled survey bases for your users.</p>
+                      <h4 class="font-semibold text-gray-900">Typography</h4>
+                      <p class="text-sm text-gray-500 mt-1">Choose heading and body fonts used by your layouts.</p>
                     </div>
-                    <template x-if="isAdmin">
-                        <webropol-button variant="secondary" icon="fa-plus" @click="addSurveyTemplate">Create New Template</webropol-button>
-                    </template>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <template x-for="(survey, idx) in data.surveyTemplates" :key="idx">
-                        <div class="group border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all">
-                            <div class="h-32 bg-gray-100 flex items-center justify-center relative">
-                                <i class="fa-thin fa-clipboard-list text-5xl text-gray-300"></i>
-                                <div class="absolute top-2 right-2 flex gap-2" x-show="isAdmin">
-                                    <button @click="removeTemplate('survey', idx)" class="bg-white text-red-500 p-2 rounded-full shadow-sm hover:bg-red-50 transition-colors">
-                                        <i class="fa-solid fa-trash-can text-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <h4 class="font-semibold text-gray-900" x-text="survey.name"></h4>
-                                <p class="text-xs text-gray-500 mt-1" x-text="'Created: ' + survey.date"></p>
-                                <div class="mt-4 flex justify-between items-center">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                    <button class="text-webropol-primary-600 hover:text-webropol-primary-800 text-sm font-medium">Preview</button>
-                                </div>
-                            </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="space-y-3">
+                        <label class="text-sm font-medium text-gray-700">Heading font</label>
+                        <select x-model="brandingSettings.primaryFont" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400">
+                          <template x-for="font in headingFonts" :key="font">
+                            <option x-text="font"></option>
+                          </template>
+                        </select>
+                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                          <p class="text-xl font-semibold text-gray-900" :style="`font-family: '${brandingSettings.primaryFont}', sans-serif`">Survey Title Preview</p>
+                          <p class="text-xs text-gray-400 mt-1" x-text="brandingSettings.primaryFont"></p>
                         </div>
-                    </template>
-                     <template x-if="data.surveyTemplates.length === 0">
-                        <div class="col-span-full text-center py-12 text-gray-500">
-                            No survey templates found.
+                      </div>
+                      <div class="space-y-3">
+                        <label class="text-sm font-medium text-gray-700">Body font</label>
+                        <select x-model="brandingSettings.bodyFont" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400">
+                          <template x-for="font in bodyFonts" :key="font">
+                            <option x-text="font"></option>
+                          </template>
+                        </select>
+                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                          <p class="text-sm text-gray-700" :style="`font-family: '${brandingSettings.bodyFont}', sans-serif`">This is how body copy appears across your survey and reporting experiences.</p>
+                          <p class="text-xs text-gray-400 mt-1" x-text="brandingSettings.bodyFont"></p>
                         </div>
-                    </template>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                <div class="space-y-6">
+                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+                    <div>
+                      <h4 class="font-semibold text-gray-900">Color Palette</h4>
+                      <p class="text-sm text-gray-500 mt-1">Primary, supporting, and neutral colors from the layout-template workspace.</p>
+                    </div>
+                    <div class="space-y-3">
+                      <template x-for="key in brandingColorKeys" :key="key">
+                        <label class="flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-3">
+                          <div>
+                            <div class="text-sm font-medium text-gray-800 capitalize" x-text="key"></div>
+                            <div class="text-xs text-gray-400 font-mono uppercase" x-text="brandingSettings.colors[key]"></div>
+                          </div>
+                          <input type="color" x-model="brandingSettings.colors[key]" class="h-10 w-12 rounded cursor-pointer border-0 bg-transparent">
+                        </label>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+                    <div>
+                      <h4 class="font-semibold text-gray-900">Preset Themes</h4>
+                      <p class="text-sm text-gray-500 mt-1">Quick palettes from the source layout-template page.</p>
+                    </div>
+                    <div class="space-y-2">
+                      <template x-for="preset in colorPresets" :key="preset.name">
+                        <button @click="applyColorPreset(preset)" class="w-full flex items-center justify-between rounded-lg border border-gray-200 px-3 py-3 hover:border-webropol-primary-300 hover:bg-webropol-primary-50 transition-colors text-left">
+                          <div>
+                            <div class="text-sm font-medium text-gray-800" x-text="preset.name"></div>
+                            <div class="text-xs text-gray-400">Apply full brand palette</div>
+                          </div>
+                          <div class="flex gap-1.5">
+                            <span class="h-4 w-4 rounded-full border border-white shadow" :style="`background:${preset.primary}`"></span>
+                            <span class="h-4 w-4 rounded-full border border-white shadow" :style="`background:${preset.secondary}`"></span>
+                            <span class="h-4 w-4 rounded-full border border-white shadow" :style="`background:${preset.accent}`"></span>
+                          </div>
+                        </button>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div class="border border-gray-200 rounded-xl p-5 bg-gray-50">
+                    <div class="text-sm font-medium text-gray-800">Brand storage</div>
+                    <p class="text-sm text-gray-500 mt-2">Settings are merged into localStorage keys so existing branding data is preserved.</p>
+                    <div class="mt-4 text-xs text-gray-400 space-y-1">
+                      <div>Identity key: webropol_branding_identity</div>
+                      <div>Library key: webropol_layout_templates</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div x-show="!isBrandingSection()" class="p-6 space-y-6" x-cloak>
+            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900" x-text="activeTopTabLabel()"></h3>
+                <p class="text-sm text-gray-500 mt-1">
+                  <span x-text="filteredItems().length"></span>
+                  <span x-text="searchTerm ? matchingResultsLabel() : availableResultsLabel()"></span>
+                </p>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-3 sm:items-center w-full lg:w-auto">
+                <label class="relative block">
+                  <input x-model.trim="searchTerm" type="search" :placeholder="searchPlaceholder()" class="w-full sm:w-72 rounded-lg border border-gray-200 px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400">
+                  <i class="fal fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <webropol-button x-show="canImport()" variant="secondary" icon="fa-file-import" @click="importFromShared()">Import</webropol-button>
+                  <webropol-button x-show="canUpload()" variant="secondary" icon="fa-plus" @click="triggerUpload()">Upload</webropol-button>
+                  <input x-ref="assetInput" type="file" class="hidden" :accept="uploadAccept()" @change="handleAssetUpload($event)">
+                </div>
+              </div>
             </div>
 
-             <!-- FONTS TAB -->
-             <div x-show="currentTab === 'fonts'" class="p-6 space-y-6" x-cloak>
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Custom Fonts</h3>
-                        <p class="text-sm text-gray-500">Manage custom fonts available in surveys and reports.</p>
-                    </div>
-                    <template x-if="isAdmin">
-                        <webropol-button variant="secondary" icon="fa-font" @click="addFont">Upload Font</webropol-button>
-                    </template>
-                </div>
+            <div class="flex flex-wrap gap-2">
+              <button @click="activeScope = 'own'" :class="activeScope === 'own' ? 'bg-webropol-primary-500 text-white border-webropol-primary-500' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'" class="px-4 py-2 rounded-lg border text-sm font-medium transition-colors">
+                <span x-text="sectionConfig().ownLabel"></span>
+                <span class="ml-2 text-xs opacity-80" x-text="templates[activeTopTab].own.length"></span>
+              </button>
+              <button @click="activeScope = 'shared'" :class="activeScope === 'shared' ? 'bg-webropol-primary-500 text-white border-webropol-primary-500' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'" class="px-4 py-2 rounded-lg border text-sm font-medium transition-colors">
+                <span x-text="sectionConfig().sharedLabel"></span>
+                <span class="ml-2 text-xs opacity-80" x-text="templates[activeTopTab].shared.length"></span>
+              </button>
+            </div>
 
-                <div class="overflow-hidden border border-gray-200 rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Font Family</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Formats</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <template x-for="(font, idx) in data.fonts" :key="idx">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="h-10 w-10 flex-shrink-0 flex items-center justify-center bg-gray-100 rounded-lg text-gray-500 font-bold border border-gray-200">
-                                                Aa
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900" x-text="font.name"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="font.formats"></td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Installed
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <template x-if="isAdmin">
-                                            <button @click="removeFont(idx)" class="text-red-600 hover:text-red-900">Remove</button>
-                                        </template>
-                                    </td>
-                                </tr>
-                            </template>
-                            <template x-if="data.fonts.length === 0">
-                                <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No custom fonts installed.</td></tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-             </div>
+            <div class="overflow-hidden border border-gray-200 rounded-lg" x-show="filteredItems().length > 0">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button @click="sortBy('name')" class="inline-flex items-center gap-2">Name <i class="fal" :class="sortIcon('name')"></i></button>
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created By</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <button @click="sortBy('lastModified')" class="inline-flex items-center gap-2">Last Modified <i class="fal" :class="sortIcon('lastModified')"></i></button>
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <template x-for="item in filteredItems()" :key="item.id">
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="item.name"></td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="item.createdBy"></td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="item.lastModified"></td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium" :class="item.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-gray-100 text-gray-700'" x-text="item.sharedTo || 'Private'"></span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button @click="renameItem(item)" class="text-webropol-primary-600 hover:text-webropol-primary-800 mr-4">Rename</button>
+                        <button @click="toggleShare(item)" class="text-webropol-primary-600 hover:text-webropol-primary-800 mr-4" x-text="item.sharedTo ? 'Unshare' : 'Share'"></button>
+                        <button @click="deleteItem(item.id)" class="text-red-600 hover:text-red-900" x-show="activeScope === 'own'">Delete</button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
 
+            <div x-show="filteredItems().length === 0" class="rounded-xl border border-dashed border-gray-200 bg-gray-50 py-12 px-6 text-center" x-cloak>
+              <div class="mx-auto h-14 w-14 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-webropol-primary-500">
+                <i class="fal text-xl" :class="sectionConfig().icon"></i>
+              </div>
+              <h4 class="mt-4 text-lg font-semibold text-gray-900" x-text="emptyStateTitle()"></h4>
+              <p class="mt-2 text-sm text-gray-500 max-w-xl mx-auto" x-text="emptyStateDescription()"></p>
+            </div>
+          </div>
         </div>
-
       </main>
     </div>
   </div>
-  
+
   <webropol-floating-button position="bottom-center" theme="primary-blue" items='[]'></webropol-floating-button>
 
   <script>
     function brandingApp() {
-        return {
-            isAdmin: true, // Default to admin for demo
-            currentTab: 'general',
-            tabs: [
-                { id: 'general', label: 'General Styling', icon: 'fa-regular fa-palette' },
-                { id: 'templates', label: 'Document Templates', icon: 'fa-regular fa-file-contract' },
-                { id: 'surveys', label: 'Survey Themes', icon: 'fa-regular fa-clipboard-list' },
-                { id: 'fonts', label: 'Custom Fonts', icon: 'fa-regular fa-font' }
-            ],
-            data: {
-                logo: null,
-                colors: ['#06b6d4', '#0f172a', '#ffffff'],
-                wordTemplates: [
-                    { name: 'Corporate Report 2024.docx', date: '2024-10-15' },
-                    { name: 'Letterhead.docx', date: '2023-05-20' }
-                ],
-                pptTemplates: [
-                    { name: 'Sales Presentation.pptx', date: '2024-09-01' }
-                ],
-                surveyTemplates: [
-                    { name: 'Employee Satisfaction', date: '2024-01-10' },
-                    { name: 'Customer Feedback', date: '2024-02-15' }
-                ],
-                fonts: [
-                     { name: 'Circular Std', formats: 'WOFF, WOFF2' }
-                ]
-            },
+      return {
+        storageKey: 'webropol_layout_templates',
+        brandingStorageKey: 'webropol_branding_identity',
+        activeTopTab: 'branding',
+        activeScope: 'own',
+        searchTerm: '',
+        sortKey: 'name',
+        sortDirection: 'asc',
+        brandingSaved: false,
+        headingFonts: ['Inter', 'Poppins', 'Montserrat', 'Raleway', 'Nunito', 'Work Sans', 'Playfair Display', 'Merriweather', 'Georgia'],
+        bodyFonts: ['Inter', 'Open Sans', 'Roboto', 'Lato', 'Source Sans Pro', 'Nunito', 'Work Sans', 'Merriweather'],
+        brandingColorKeys: ['primary', 'secondary', 'accent', 'background', 'text'],
+        topTabs: [
+          { id: 'branding', label: 'Brand Identity', icon: 'fa-regular fa-palette', itemLabel: 'item', pluralLabel: 'items', ownLabel: 'Own', sharedLabel: 'Shared', upload: false },
+          { id: 'survey', label: 'Survey Templates', icon: 'fa-regular fa-clipboard-list', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', upload: false },
+          { id: 'event', label: 'Event Templates', icon: 'fa-regular fa-calendar-star', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', upload: false },
+          { id: 'reporting', label: 'Reporting Templates', icon: 'fa-regular fa-chart-mixed', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', upload: false },
+          { id: 'files', label: 'PowerPoint Templates', icon: 'fa-regular fa-file-powerpoint', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', upload: true },
+          { id: 'images', label: 'Images', icon: 'fa-regular fa-image', itemLabel: 'image', pluralLabel: 'images', ownLabel: 'Own images', sharedLabel: 'Shared images', upload: true }
+        ],
+        templates: {
+          files: { own: [], shared: [] },
+          images: { own: [], shared: [] },
+          survey: { own: [], shared: [] },
+          event: { own: [], shared: [] },
+          reporting: { own: [], shared: [] }
+        },
+        brandingSettings: {
+          logoDataUrl: '',
+          logoName: '',
+          primaryFont: 'Inter',
+          bodyFont: 'Inter',
+          colors: {
+            primary: '#06b6d4',
+            secondary: '#0e7490',
+            accent: '#22d3ee',
+            background: '#f8fafc',
+            text: '#0f172a'
+          }
+        },
+        colorPresets: [
+          { name: 'Ocean', primary: '#06b6d4', secondary: '#0e7490', accent: '#22d3ee', background: '#f0fdff', text: '#0f172a' },
+          { name: 'Violet', primary: '#7c3aed', secondary: '#5b21b6', accent: '#a78bfa', background: '#f5f3ff', text: '#1e1b4b' },
+          { name: 'Emerald', primary: '#059669', secondary: '#047857', accent: '#34d399', background: '#ecfdf5', text: '#064e3b' },
+          { name: 'Rose', primary: '#e11d48', secondary: '#be123c', accent: '#fb7185', background: '#fff1f2', text: '#1f1f2e' },
+          { name: 'Neutral', primary: '#475569', secondary: '#334155', accent: '#94a3b8', background: '#f8fafc', text: '#0f172a' }
+        ],
 
-            init() {
-                this.loadFromLocalStorage();
-                // Watch for changes to save automatically
-                this.$watch('data', () => this.saveToLocalStorage());
-            },
+        init() {
+          this.loadTemplates();
+          this.loadBrandingSettings();
+        },
 
-            loadFromLocalStorage() {
-                try {
-                    const stored = localStorage.getItem('webropol_branding_data');
-                    if (stored) {
-                        // Merge with default structure to prevent errors if schematic changes
-                        const parsed = JSON.parse(stored);
-                        this.data = { ...this.data, ...parsed };
-                    }
-                } catch (e) {
-                    console.error('Failed to load branding data', e);
-                }
+        defaultTemplates() {
+          return {
+            files: {
+              own: [
+                { id: 'files-own-1', name: 'Brand Survey Classic', createdBy: 'Ali Al-Zuhairi', lastModified: '08 Mar 2026', sharedTo: '' },
+                { id: 'files-own-2', name: 'Campaign Feedback Layout', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' }
+              ],
+              shared: [
+                { id: 'files-shared-1', name: 'Corporate NPS Template', createdBy: 'Brand Team', lastModified: '01 Mar 2026', sharedTo: 'Workspace' }
+              ]
             },
-
-            saveToLocalStorage() {
-                try {
-                    localStorage.setItem('webropol_branding_data', JSON.stringify(this.data));
-                } catch (e) {
-                    console.error('Failed to save branding data', e);
-                    alert('Could not save changes (Storage full?)');
-                }
+            images: {
+              own: [
+                { id: 'images-own-1', name: 'Webropol Primary Logo', createdBy: 'Ali Al-Zuhairi', lastModified: '09 Mar 2026', sharedTo: '' },
+                { id: 'images-own-2', name: 'Survey Hero Illustration', createdBy: 'Ali Al-Zuhairi', lastModified: '03 Mar 2026', sharedTo: '' }
+              ],
+              shared: [
+                { id: 'images-shared-1', name: 'Event Banner Visual', createdBy: 'Design Team', lastModified: '27 Feb 2026', sharedTo: 'Workspace' }
+              ]
             },
-
-            // Logo methods
-            handleLogoUpload(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    this.data.logo = event.target.result;
-                };
-                reader.readAsDataURL(file);
+            survey: {
+              own: [],
+              shared: [
+                { id: 'survey-shared-1', name: 'Employee Pulse Layout', createdBy: 'Webropol Team', lastModified: '04 Mar 2026', sharedTo: 'Workspace' },
+                { id: 'survey-shared-2', name: 'Customer Satisfaction Classic', createdBy: 'Research Ops', lastModified: '28 Feb 2026', sharedTo: 'Workspace' },
+                { id: 'survey-shared-3', name: 'NPS Compact Layout', createdBy: 'Insight Studio', lastModified: '17 Feb 2026', sharedTo: 'Workspace' },
+                { id: 'survey-shared-4', name: 'Brand Tracker Form', createdBy: 'Webropol Team', lastModified: '11 Feb 2026', sharedTo: 'Workspace' }
+              ]
             },
-            removeLogo() {
-                if(confirm('Remove logo?')) {
-                    this.data.logo = null;
-                }
+            event: {
+              own: [],
+              shared: [
+                { id: 'event-shared-1', name: 'Registration Confirmation Flow', createdBy: 'Events Team', lastModified: '06 Mar 2026', sharedTo: 'Workspace' },
+                { id: 'event-shared-2', name: 'Event Follow-up Summary', createdBy: 'Webropol Team', lastModified: '19 Feb 2026', sharedTo: 'Workspace' }
+              ]
             },
-
-            // Color methods
-            addColor() {
-                this.data.colors.push('#000000');
-            },
-            removeColor(index) {
-                this.data.colors.splice(index, 1);
-            },
-
-            // Template methods
-            addTemplate(type) {
-                const name = prompt(`Enter ${type.toUpperCase()} template name:`);
-                if (!name) return;
-                const newTpl = {
-                    name: name + (type === 'word' ? '.docx' : '.pptx'),
-                    date: new Date().toISOString().split('T')[0]
-                };
-                if (type === 'word') this.data.wordTemplates.push(newTpl);
-                else this.data.pptTemplates.push(newTpl);
-            },
-            removeTemplate(type, index) {
-                if(!confirm('Delete this template?')) return;
-                if (type === 'word') this.data.wordTemplates.splice(index, 1);
-                else if (type === 'ppt') this.data.pptTemplates.splice(index, 1);
-                else if (type === 'survey') this.data.surveyTemplates.splice(index, 1);
-            },
-
-            addSurveyTemplate() {
-                const name = prompt('Enter Survey Template name:');
-                 if (!name) return;
-                 this.data.surveyTemplates.push({
-                     name: name,
-                     date: new Date().toISOString().split('T')[0]
-                 });
-            },
-
-            // Font methods
-            addFont() {
-                const name = prompt('Enter font family name:');
-                if(!name) return;
-                this.data.fonts.push({
-                    name: name,
-                    formats: 'WOFF2' // Simulation
-                });
-            },
-            removeFont(index) {
-                if(confirm('Remove this font?')) {
-                    this.data.fonts.splice(index, 1);
-                }
+            reporting: {
+              own: [
+                { id: 'report-own-1', name: 'Executive Summary View', createdBy: 'Ali Al-Zuhairi', lastModified: '02 Mar 2026', sharedTo: '' }
+              ],
+              shared: [
+                { id: 'report-shared-1', name: 'Board Reporting Layout', createdBy: 'Webropol Team', lastModified: '25 Feb 2026', sharedTo: 'Workspace' },
+                { id: 'report-shared-2', name: 'Insight Dashboard Export', createdBy: 'Analytics Team', lastModified: '20 Feb 2026', sharedTo: 'Workspace' }
+              ]
             }
+          };
+        },
+
+        loadTemplates() {
+          const defaults = this.defaultTemplates();
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
+            this.templates = {
+              files: {
+                own: Array.isArray(existing?.files?.own) ? existing.files.own : defaults.files.own,
+                shared: Array.isArray(existing?.files?.shared) ? existing.files.shared : defaults.files.shared
+              },
+              images: {
+                own: Array.isArray(existing?.images?.own) ? existing.images.own : defaults.images.own,
+                shared: Array.isArray(existing?.images?.shared) ? existing.images.shared : defaults.images.shared
+              },
+              survey: {
+                own: Array.isArray(existing?.survey?.own) ? existing.survey.own : defaults.survey.own,
+                shared: Array.isArray(existing?.survey?.shared) ? existing.survey.shared : defaults.survey.shared
+              },
+              event: {
+                own: Array.isArray(existing?.event?.own) ? existing.event.own : defaults.event.own,
+                shared: Array.isArray(existing?.event?.shared) ? existing.event.shared : defaults.event.shared
+              },
+              reporting: {
+                own: Array.isArray(existing?.reporting?.own) ? existing.reporting.own : defaults.reporting.own,
+                shared: Array.isArray(existing?.reporting?.shared) ? existing.reporting.shared : defaults.reporting.shared
+              }
+            };
+          } catch (error) {
+            console.error('localStorage error:', error);
+            this.templates = defaults;
+          }
+        },
+
+        saveTemplates() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
+            const merged = {
+              ...existing,
+              files: this.templates.files,
+              images: this.templates.images,
+              survey: this.templates.survey,
+              event: this.templates.event,
+              reporting: this.templates.reporting
+            };
+            localStorage.setItem(this.storageKey, JSON.stringify(merged));
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        loadBrandingSettings() {
+          try {
+            const saved = JSON.parse(localStorage.getItem(this.brandingStorageKey) || 'null');
+            if (saved && typeof saved === 'object') {
+              this.brandingSettings = {
+                ...this.brandingSettings,
+                ...saved,
+                colors: {
+                  ...this.brandingSettings.colors,
+                  ...(saved.colors || {})
+                }
+              };
+            }
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        saveBrandingSettings() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.brandingStorageKey) || '{}');
+            const merged = {
+              ...existing,
+              ...this.brandingSettings,
+              colors: {
+                ...(existing.colors || {}),
+                ...this.brandingSettings.colors
+              }
+            };
+            localStorage.setItem(this.brandingStorageKey, JSON.stringify(merged));
+            this.brandingSaved = true;
+            setTimeout(() => {
+              this.brandingSaved = false;
+            }, 2200);
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        resetBrandingSettings() {
+          this.brandingSettings = {
+            logoDataUrl: '',
+            logoName: '',
+            primaryFont: 'Inter',
+            bodyFont: 'Inter',
+            colors: {
+              primary: '#06b6d4',
+              secondary: '#0e7490',
+              accent: '#22d3ee',
+              background: '#f8fafc',
+              text: '#0f172a'
+            }
+          };
+        },
+
+        setTopTab(tabId) {
+          this.activeTopTab = tabId;
+          this.searchTerm = '';
+          this.sortKey = 'name';
+          this.sortDirection = 'asc';
+          this.activeScope = 'own';
+        },
+
+        sectionConfig() {
+          return this.topTabs.find((tab) => tab.id === this.activeTopTab) || this.topTabs[0];
+        },
+
+        isBrandingSection() {
+          return this.activeTopTab === 'branding';
+        },
+
+        activeTopTabLabel() {
+          return this.sectionConfig().label;
+        },
+
+        currentItems() {
+          if (this.isBrandingSection()) {
+            return [];
+          }
+          return this.templates[this.activeTopTab][this.activeScope];
+        },
+
+        filteredItems() {
+          const term = this.searchTerm.toLowerCase();
+          const direction = this.sortDirection === 'asc' ? 1 : -1;
+          return [...this.currentItems()]
+            .filter((item) => {
+              if (!term) return true;
+              return [item.name, item.createdBy, item.lastModified].some((value) => String(value || '').toLowerCase().includes(term));
+            })
+            .sort((left, right) => {
+              const leftValue = this.getSortValue(left, this.sortKey);
+              const rightValue = this.getSortValue(right, this.sortKey);
+              if (leftValue < rightValue) return -1 * direction;
+              if (leftValue > rightValue) return 1 * direction;
+              return 0;
+            });
+        },
+
+        getSortValue(item, key) {
+          if (key === 'lastModified') {
+            return new Date(item.lastModified).getTime() || 0;
+          }
+          return String(item[key] || '').toLowerCase();
+        },
+
+        sortBy(key) {
+          if (this.sortKey === key) {
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+            return;
+          }
+          this.sortKey = key;
+          this.sortDirection = 'asc';
+        },
+
+        sortIcon(key) {
+          if (this.sortKey !== key) return 'fa-sort text-[10px]';
+          return this.sortDirection === 'asc' ? 'fa-sort-up text-[10px]' : 'fa-sort-down text-[10px]';
+        },
+
+        matchingResultsLabel() {
+          return `matching ${this.sectionConfig().pluralLabel} in the current scope.`;
+        },
+
+        availableResultsLabel() {
+          return `${this.sectionConfig().pluralLabel} available in the current scope.`;
+        },
+
+        searchPlaceholder() {
+          return `Search ${this.sectionConfig().pluralLabel} by name`;
+        },
+
+        canUpload() {
+          return this.sectionConfig().upload && this.activeScope === 'own';
+        },
+
+        canImport() {
+          return !this.sectionConfig().upload && this.activeScope === 'own';
+        },
+
+        importFromShared() {
+          const sharedItems = this.templates[this.activeTopTab].shared;
+          if (!sharedItems.length) {
+            window.alert('No shared items available to import.');
+            return;
+          }
+
+          const options = sharedItems.map((item, index) => `${index + 1}. ${item.name}`).join('\n');
+          const response = window.prompt(`Import which ${this.sectionConfig().itemLabel}?\n${options}`, '1');
+          const index = Number(response) - 1;
+
+          if (!Number.isInteger(index) || index < 0 || index >= sharedItems.length) {
+            return;
+          }
+
+          const source = sharedItems[index];
+          const exists = this.templates[this.activeTopTab].own.some((item) => item.name === source.name);
+          if (exists) {
+            window.alert('That item is already in your own library.');
+            return;
+          }
+
+          this.templates[this.activeTopTab].own.unshift({
+            ...source,
+            id: `${this.activeTopTab}-own-${Date.now()}`,
+            createdBy: 'Ali Al-Zuhairi',
+            lastModified: this.formatToday(),
+            sharedTo: ''
+          });
+          this.saveTemplates();
+        },
+
+        uploadAccept() {
+          return this.activeTopTab === 'images' ? 'image/*' : '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation';
+        },
+
+        triggerUpload() {
+          if (!this.$refs.assetInput) return;
+          this.$refs.assetInput.value = '';
+          this.$refs.assetInput.click();
+        },
+
+        handleAssetUpload(event) {
+          const [file] = Array.from(event.target.files || []);
+          if (!file) return;
+
+          if (!this.isAcceptedFile(file)) {
+            window.alert(`Unsupported file type. Use ${this.activeTopTab === 'images' ? 'PNG, JPG, SVG, GIF, or WEBP' : 'PPTX'}.`);
+            return;
+          }
+
+          const nextName = window.prompt(`Name this ${this.sectionConfig().itemLabel}`, this.stripFileExtension(file.name));
+          if (!nextName || !nextName.trim()) return;
+
+          this.templates[this.activeTopTab].own.unshift({
+            id: `${this.activeTopTab}-own-${Date.now()}`,
+            name: nextName.trim(),
+            createdBy: 'Ali Al-Zuhairi',
+            lastModified: this.formatToday(),
+            sharedTo: '',
+            sourceFileName: file.name,
+            fileSize: file.size
+          });
+          this.saveTemplates();
+        },
+
+        isAcceptedFile(file) {
+          const extension = this.fileExtension(file.name);
+          if (this.activeTopTab === 'images') {
+            return ['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(extension);
+          }
+          return extension === 'pptx';
+        },
+
+        renameItem(item) {
+          const nextName = window.prompt(`Rename ${this.sectionConfig().itemLabel}`, item.name);
+          if (!nextName || !nextName.trim()) return;
+          item.name = nextName.trim();
+          item.lastModified = this.formatToday();
+          this.saveTemplates();
+        },
+
+        toggleShare(item) {
+          item.sharedTo = item.sharedTo ? '' : 'Workspace';
+          item.lastModified = this.formatToday();
+          this.saveTemplates();
+        },
+
+        deleteItem(itemId) {
+          if (!window.confirm(`Delete this ${this.sectionConfig().itemLabel}?`)) return;
+          this.templates[this.activeTopTab].own = this.templates[this.activeTopTab].own.filter((item) => item.id !== itemId);
+          this.saveTemplates();
+        },
+
+        emptyStateTitle() {
+          if (this.searchTerm) {
+            return `No ${this.sectionConfig().pluralLabel} match your search`;
+          }
+          if (this.activeScope === 'own') {
+            return this.canUpload() ? `Upload your first ${this.sectionConfig().itemLabel}` : `Import your first ${this.sectionConfig().itemLabel}`;
+          }
+          return `No shared ${this.sectionConfig().pluralLabel} yet`;
+        },
+
+        emptyStateDescription() {
+          if (this.searchTerm) {
+            return `Try a different keyword or clear the search to view all ${this.sectionConfig().pluralLabel} in this scope.`;
+          }
+          if (this.activeScope === 'own') {
+            return this.canUpload()
+              ? `Upload a ${this.sectionConfig().itemLabel} and it will appear here with the rest of your personal assets.`
+              : `Bring a shared ${this.sectionConfig().itemLabel} into your own collection from the workspace library.`;
+          }
+          return `Shared ${this.sectionConfig().pluralLabel} will appear here when they are published to your workspace.`;
+        },
+
+        handleLogoUpload(event) {
+          const [file] = Array.from(event.target.files || []);
+          if (!file || !this.isAcceptedLogo(file.name)) return;
+          const reader = new FileReader();
+          reader.onload = (loadEvent) => {
+            this.brandingSettings.logoDataUrl = loadEvent.target.result;
+            this.brandingSettings.logoName = file.name;
+          };
+          reader.readAsDataURL(file);
+        },
+
+        removeLogo() {
+          this.brandingSettings.logoDataUrl = '';
+          this.brandingSettings.logoName = '';
+        },
+
+        applyColorPreset(preset) {
+          this.brandingSettings.colors = {
+            primary: preset.primary,
+            secondary: preset.secondary,
+            accent: preset.accent,
+            background: preset.background,
+            text: preset.text
+          };
+        },
+
+        isAcceptedLogo(fileName) {
+          return ['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(this.fileExtension(fileName));
+        },
+
+        formatToday() {
+          return new Date().toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+          });
+        },
+
+        fileExtension(fileName) {
+          return String(fileName || '').split('.').pop().toLowerCase();
+        },
+
+        stripFileExtension(fileName) {
+          return String(fileName || '').replace(/\.[^.]+$/, '');
         }
+      };
     }
   </script>
 </body>
