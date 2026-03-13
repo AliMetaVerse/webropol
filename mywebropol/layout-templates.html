@@ -204,6 +204,71 @@
             left: 35%;
             background: rgba(14, 116, 144, 0.12);
         }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        webropol-header {
+            display: block;
+            position: relative;
+            z-index: 40;
+        }
+
+        body:has(.modal-overlay.active) webropol-header,
+        body.modal-open webropol-header {
+            z-index: 1 !important;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2147483640 !important;
+        }
+
+        .upload-dropzone {
+            border: 1px dashed rgba(8, 145, 178, 0.28);
+            background:
+                radial-gradient(circle at top right, rgba(34, 204, 241, 0.14), transparent 32%),
+                linear-gradient(180deg, rgba(240, 249, 255, 0.72), rgba(255, 255, 255, 0.96));
+            transition: all 0.2s ease;
+        }
+
+        .upload-dropzone.is-active {
+            border-color: rgba(8, 145, 178, 0.72);
+            box-shadow: 0 0 0 5px rgba(34, 211, 238, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .upload-metric {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .font-preview {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .logo-preview-frame {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9));
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+        }
+
+        .color-picker-row {
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .color-picker-row:hover {
+            box-shadow: 0 4px 12px -6px rgba(8, 145, 178, 0.2);
+        }
     </style>
 </head>
 
@@ -246,7 +311,188 @@
                         </div>
                     </section>
 
-                    <section class="mt-6">
+                    <!-- ── Brand Identity panel ── -->
+                    <section class="mt-6" x-show="isBrandingSection()">
+                        <div class="glass-card rounded-3xl p-6 lg:p-8">
+                            <!-- Header -->
+                            <div>
+                                <h2 class="text-xl font-semibold text-webropol-gray-900">Brand Identity</h2>
+                                <p class="mt-2 text-sm leading-6 text-webropol-gray-600">Define your brand identity — upload a logo, choose typography, and build a color palette applied across surveys, events, and reports.</p>
+                            </div>
+
+                            <div class="mt-8 border-t border-webropol-gray-100"></div>
+
+                            <!-- ── Logo ── -->
+                            <div class="mt-7">
+                                <h3 class="flex items-center gap-2 text-base font-semibold text-webropol-gray-900">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-webropol-primary-50 text-webropol-primary-600">
+                                        <i class="fal fa-image text-sm"></i>
+                                    </span>
+                                    Brand Logo
+                                </h3>
+                                <p class="ml-10 mt-1 text-sm text-webropol-gray-500">Upload your organization's logo. PNG, JPG, SVG, GIF, or WEBP.</p>
+
+                                <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                                    <!-- Drop zone -->
+                                    <div
+                                        class="upload-dropzone cursor-pointer rounded-2xl p-6 text-center"
+                                        :class="{ 'is-active': brandingLogoDrag }"
+                                        @click="$refs.logoInput.click()"
+                                        @dragover.prevent="brandingLogoDrag = true"
+                                        @dragleave.prevent="brandingLogoDrag = false"
+                                        @drop.prevent="handleLogoFileDrop($event)">
+                                        <input x-ref="logoInput" type="file" class="hidden" accept="image/png,image/jpeg,image/svg+xml,image/gif,image/webp" @change="handleLogoUpload($event)">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-500">
+                                                <i class="fal fa-cloud-arrow-up text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="text-sm font-semibold text-webropol-gray-900">Upload logo</div>
+                                                <div class="mt-1 text-xs text-webropol-gray-400">PNG · JPG · SVG · GIF</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Light background preview -->
+                                    <div class="logo-preview-frame rounded-2xl p-5" x-show="brandingSettings.logoDataUrl">
+                                        <div class="flex w-full flex-col items-center gap-2">
+                                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 max-w-full object-contain">
+                                            <div class="mt-1 flex items-center gap-1.5">
+                                                <span class="max-w-[130px] truncate text-xs text-webropol-gray-500" x-text="brandingSettings.logoName"></span>
+                                                <button type="button" @click="removeLogo()" class="flex h-5 w-5 items-center justify-center rounded-md text-webropol-gray-400 transition hover:bg-webropol-gray-100 hover:text-red-500" aria-label="Remove logo">
+                                                    <i class="fal fa-times text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dark background preview -->
+                                    <div class="flex flex-col items-center justify-center gap-2 rounded-2xl p-5" x-show="brandingSettings.logoDataUrl" style="background: linear-gradient(135deg, #1e293b, #0f172a); min-height: 110px;">
+                                        <span class="text-xs font-medium text-webropol-gray-500">Dark background</span>
+                                        <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-16 max-w-full object-contain opacity-90">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-7 border-t border-webropol-gray-100"></div>
+
+                            <!-- ── Typography ── -->
+                            <div class="mt-7">
+                                <h3 class="flex items-center gap-2 text-base font-semibold text-webropol-gray-900">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-webropol-primary-50 text-webropol-primary-600">
+                                        <i class="fal fa-font text-sm"></i>
+                                    </span>
+                                    Typography
+                                </h3>
+                                <p class="ml-10 mt-1 text-sm text-webropol-gray-500">Choose fonts for headings and body text across surveys and reports.</p>
+
+                                <div class="mt-4 grid gap-5 sm:grid-cols-2">
+                                    <!-- Heading font -->
+                                    <div>
+                                        <label class="text-xs font-semibold uppercase tracking-wide text-webropol-gray-500">Heading Font</label>
+                                        <select x-model="brandingSettings.primaryFont" class="mt-2 h-11 w-full rounded-xl border border-webropol-gray-200 bg-white px-3 text-sm font-medium text-webropol-gray-900 focus:border-webropol-primary-400 focus:outline-none focus:ring-2 focus:ring-webropol-primary-100">
+                                            <option>Inter</option>
+                                            <option>Poppins</option>
+                                            <option>Montserrat</option>
+                                            <option>Raleway</option>
+                                            <option>Nunito</option>
+                                            <option>Work Sans</option>
+                                            <option>Playfair Display</option>
+                                            <option>Merriweather</option>
+                                            <option>Georgia</option>
+                                        </select>
+                                        <div class="font-preview mt-2">
+                                            <p class="text-lg font-semibold text-webropol-gray-900" :style="`font-family: '${brandingSettings.primaryFont}', sans-serif`">Survey Title Preview</p>
+                                            <p class="mt-0.5 text-xs text-webropol-gray-400" x-text="brandingSettings.primaryFont"></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Body font -->
+                                    <div>
+                                        <label class="text-xs font-semibold uppercase tracking-wide text-webropol-gray-500">Body Font</label>
+                                        <select x-model="brandingSettings.bodyFont" class="mt-2 h-11 w-full rounded-xl border border-webropol-gray-200 bg-white px-3 text-sm font-medium text-webropol-gray-900 focus:border-webropol-primary-400 focus:outline-none focus:ring-2 focus:ring-webropol-primary-100">
+                                            <option>Inter</option>
+                                            <option>Open Sans</option>
+                                            <option>Roboto</option>
+                                            <option>Lato</option>
+                                            <option>Source Sans Pro</option>
+                                            <option>Nunito</option>
+                                            <option>Work Sans</option>
+                                            <option>Merriweather</option>
+                                        </select>
+                                        <div class="font-preview mt-2">
+                                            <p class="text-sm text-webropol-gray-700" :style="`font-family: '${brandingSettings.bodyFont}', sans-serif`">This is how your survey body text appears to respondents when they fill out a form.</p>
+                                            <p class="mt-0.5 text-xs text-webropol-gray-400" x-text="brandingSettings.bodyFont"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-7 border-t border-webropol-gray-100"></div>
+
+                            <!-- ── Color Palette ── -->
+                            <div class="mt-7">
+                                <h3 class="flex items-center gap-2 text-base font-semibold text-webropol-gray-900">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-webropol-primary-50 text-webropol-primary-600">
+                                        <i class="fal fa-palette text-sm"></i>
+                                    </span>
+                                    Color Palette
+                                </h3>
+                                <p class="ml-10 mt-1 text-sm text-webropol-gray-500">Pick your brand colors or choose a preset theme.</p>
+
+                                <!-- Swatches row -->
+                                <div class="mt-4 flex flex-wrap gap-3">
+                                    <template x-for="(colorKey, idx) in ['primary','secondary','accent','background','text']" :key="colorKey">
+                                        <label class="group cursor-pointer text-center">
+                                            <input type="color" x-model="brandingSettings.colors[colorKey]" class="sr-only" :aria-label="colorKey + ' color'">
+                                            <span class="mx-auto block h-12 w-12 rounded-2xl border-2 border-transparent shadow-sm transition group-hover:scale-105 group-hover:border-webropol-primary-300"
+                                                :style="`background-color: ${brandingSettings.colors[colorKey]}`"></span>
+                                            <span class="mt-1.5 block text-[11px] font-semibold capitalize text-webropol-gray-500" x-text="colorKey"></span>
+                                            <span class="block font-mono text-[10px] uppercase text-webropol-gray-400" x-text="brandingSettings.colors[colorKey]"></span>
+                                        </label>
+                                    </template>
+                                </div>
+
+                                <!-- Presets -->
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <template x-for="preset in colorPresets" :key="preset.name">
+                                        <button type="button"
+                                            @click="applyColorPreset(preset)"
+                                            class="flex items-center gap-2 rounded-xl border border-webropol-gray-200 bg-white px-3 py-2 text-xs font-semibold text-webropol-gray-700 transition hover:border-webropol-primary-300 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
+                                            <span class="flex gap-0.5">
+                                                <span class="h-3.5 w-3.5 rounded-full" :style="`background-color: ${preset.primary}`"></span>
+                                                <span class="h-3.5 w-3.5 rounded-full" :style="`background-color: ${preset.secondary}`"></span>
+                                                <span class="h-3.5 w-3.5 rounded-full" :style="`background-color: ${preset.accent}`"></span>
+                                            </span>
+                                            <span x-text="preset.name"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- ── Save bar ── -->
+                            <div class="mt-7 flex flex-col gap-3 border-t border-webropol-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                                <p class="text-sm text-webropol-gray-500">Changes are saved to your personal branding workspace.</p>
+                                <div class="flex flex-wrap gap-3">
+                                    <button type="button"
+                                        @click="resetBrandingSettings()"
+                                        class="rounded-xl border border-webropol-gray-200 px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                                        Reset to defaults
+                                    </button>
+                                    <button type="button"
+                                        @click="saveBrandingSettings()"
+                                        :class="brandingSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-webropol-primary-600 hover:bg-webropol-primary-700'"
+                                        class="inline-flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold text-white transition">
+                                        <i class="fal text-xs" :class="brandingSaved ? 'fa-check-circle' : 'fa-check'"></i>
+                                        <span x-text="brandingSaved ? 'Saved!' : 'Save changes'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ── Templates / Assets panel ── -->
+                    <section class="mt-6" x-show="!isBrandingSection()">
                         <div class="glass-card rounded-3xl p-5 lg:p-6">
                             <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                 <div>
@@ -271,6 +517,12 @@
                                 </div>
 
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center xl:justify-end">
+                                    <input
+                                        x-ref="assetUploadInput"
+                                        type="file"
+                                        class="hidden"
+                                        :accept="uploadAccept()"
+                                        @change="handleFileSelected($event)">
                                     <label class="relative block">
                                         <span class="sr-only" x-text="searchAriaLabel()"></span>
                                         <input
@@ -283,19 +535,32 @@
                                     </label>
 
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <input
-                                            x-ref="assetUploadInput"
-                                            type="file"
-                                            class="hidden"
-                                            :accept="uploadAccept()"
-                                            @change="handleFileSelected($event)">
                                         <webropol-button
+                                            x-show="!isUploadSection()"
                                             variant="secondary"
                                             size="sm"
                                             roundness="xl"
-                                            :icon="primaryActionIcon()"
-                                            @click="handlePrimaryAction()">
-                                            <span x-text="createButtonLabel()"></span>
+                                            icon="file-import"
+                                            @click="openImportModal()">
+                                            Import from library
+                                        </webropol-button>
+                                        <webropol-button
+                                            x-show="isPptxSection()"
+                                            variant="secondary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="openUploadModal()">
+                                            Add new template
+                                        </webropol-button>
+                                        <webropol-button
+                                            x-show="isImageSection()"
+                                            variant="secondary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="openUploadModal()">
+                                            Add new image
                                         </webropol-button>
                                         <webropol-button
                                             variant="secondary"
@@ -371,7 +636,6 @@
                                                     <td class="px-5 py-4 align-top">
                                                         <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
                                                             <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
-                                                            <button type="button" class="action-link" x-show="isImageSection()" @click="toggleDefaultLogo(template)" x-text="template.isDefaultLogo ? 'Remove default logo' : 'Set as default logo'"></button>
                                                             <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
                                                         </div>
                                                     </td>
@@ -404,7 +668,6 @@
                                                 <span x-text="template.lastModified"></span>
                                                 <div class="flex flex-wrap items-center gap-4 justify-end">
                                                     <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
-                                                    <button type="button" class="action-link" x-show="isImageSection()" @click="toggleDefaultLogo(template)" x-text="template.isDefaultLogo ? 'Remove default logo' : 'Set as default logo'"></button>
                                                     <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
                                                 </div>
                                             </div>
@@ -454,12 +717,31 @@
                                     <p class="mx-auto mt-3 max-w-xl text-sm leading-7 text-webropol-gray-600" x-text="emptyStateDescription()"></p>
                                     <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
                                         <webropol-button
+                                            x-show="!isUploadSection()"
                                             variant="primary"
                                             size="sm"
                                             roundness="xl"
-                                            :icon="primaryActionIcon()"
-                                            @click="handlePrimaryAction()">
-                                            <span x-text="createButtonLabel()"></span>
+                                            icon="file-import"
+                                            @click="openImportModal()">
+                                            Import from library
+                                        </webropol-button>
+                                        <webropol-button
+                                            x-show="isPptxSection()"
+                                            variant="primary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="openUploadModal()">
+                                            Add new template
+                                        </webropol-button>
+                                        <webropol-button
+                                            x-show="isImageSection()"
+                                            variant="primary"
+                                            size="sm"
+                                            roundness="xl"
+                                            icon="plus"
+                                            @click="openUploadModal()">
+                                            Add new image
                                         </webropol-button>
                                         <webropol-button
                                             x-show="searchTerm"
@@ -480,11 +762,259 @@
         </div>
     </div>
 
+    <div
+        x-show="uploadModalOpen"
+        x-cloak
+        x-transition.opacity
+        @keydown.escape.window="closeUploadModal()"
+        class="modal-overlay bg-webropol-gray-900/55 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+        :class="{ 'active': uploadModalOpen }">
+        <div
+            @click.self="closeUploadModal()"
+            class="absolute inset-0"></div>
+
+        <!-- ── Import from library modal (survey / event / reporting) ── -->
+        <section
+            x-show="uploadModalOpen && !isUploadSection()"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-3 scale-[0.98]"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-2 scale-[0.98]"
+            class="relative z-10 w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-16px_rgba(15,23,42,0.28)]">
+
+            <!-- Header -->
+            <div class="flex items-start gap-4 border-b border-webropol-gray-100 px-6 py-5">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-600">
+                    <i class="fal fa-file-import text-lg"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-base font-semibold text-webropol-gray-900">Import from library</h2>
+                    <p class="mt-1 text-sm text-webropol-gray-500">Pick a shared <span x-text="sectionConfig().itemLabel"></span> from the workspace library and add it to your own collection.</p>
+                </div>
+                <button
+                    type="button"
+                    @click="closeUploadModal()"
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-webropol-gray-400 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-600"
+                    aria-label="Close">
+                    <i class="fal fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="px-6 pt-4">
+                <label class="relative block">
+                    <input
+                        x-model.trim="importSearch"
+                        type="search"
+                        placeholder="Search library…"
+                        class="search-input h-10 w-full rounded-xl px-4 pr-10 text-sm">
+                    <i class="fal fa-search pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-webropol-gray-400"></i>
+                </label>
+            </div>
+
+            <!-- Library list -->
+            <div class="max-h-72 overflow-y-auto px-6 py-3">
+                <template x-if="importLibraryItems().length === 0">
+                    <div class="py-8 text-center">
+                        <i class="fal fa-folder-open text-2xl text-webropol-gray-300"></i>
+                        <p class="mt-3 text-sm text-webropol-gray-500">No shared <span x-text="sectionConfig().pluralLabel"></span> found.</p>
+                    </div>
+                </template>
+                <template x-for="item in importLibraryItems()" :key="item.id">
+                    <div class="flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-webropol-primary-50">
+                        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-webropol-primary-50 text-webropol-primary-600">
+                            <i class="fal" :class="currentSectionIcon()"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="truncate text-sm font-semibold text-webropol-gray-900" x-text="item.name"></div>
+                            <div class="mt-0.5 text-xs text-webropol-gray-400">
+                                <span x-text="item.createdBy"></span>
+                                <span class="mx-1">·</span>
+                                <span x-text="item.lastModified"></span>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            @click="importTemplate(item)"
+                            :disabled="isAlreadyImported(item)"
+                            :class="isAlreadyImported(item) ? 'text-webropol-gray-300 cursor-default' : 'text-webropol-primary-600 hover:bg-webropol-primary-100'"
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm transition"
+                            :title="isAlreadyImported(item) ? 'Already in your library' : 'Import'">
+                            <i class="fal" :class="isAlreadyImported(item) ? 'fa-check' : 'fa-plus'"></i>
+                        </button>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-end gap-3 border-t border-webropol-gray-100 px-6 py-4">
+                <button
+                    type="button"
+                    @click="closeUploadModal()"
+                    class="rounded-xl border border-webropol-gray-200 px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                    Close
+                </button>
+            </div>
+        </section>
+
+        <!-- ── Upload asset modal (files / images) ── -->
+        <section
+            x-show="uploadModalOpen && isUploadSection()"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 translate-y-3 scale-[0.98]"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-2 scale-[0.98]"
+            class="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_-16px_rgba(15,23,42,0.28)]">
+
+            <div class="grid lg:grid-cols-[1fr_360px]">
+
+                <!-- Left: drop zone -->
+                <div class="p-6 sm:p-8">
+                    <!-- Header -->
+                    <div class="flex items-start gap-3">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-600">
+                            <i class="fal text-lg" :class="uploadModalIcon()"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-webropol-gray-900" x-text="uploadModalTitle()"></h2>
+                            <p class="mt-1 text-sm text-webropol-gray-500" x-text="uploadModalDescription()"></p>
+                        </div>
+                    </div>
+
+                    <!-- Unified file zone -->
+                    <div
+                        class="upload-dropzone mt-5 cursor-pointer rounded-xl transition"
+                        :class="{ 'is-active': uploadDraft.dragActive }"
+                        @click="triggerFilePicker()"
+                        @dragover.prevent="setDragState(true)"
+                        @dragleave.prevent="setDragState(false)"
+                        @drop.prevent="handleFileDrop($event)">
+
+                        <!-- Empty state -->
+                        <div x-show="!uploadDraft.file" class="flex flex-col items-center gap-3 py-10 text-center">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-webropol-primary-50 text-webropol-primary-500">
+                                <i class="fal text-xl" :class="uploadModalIcon()"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-webropol-gray-900">Drag a file here, or click to browse</div>
+                                <div class="mt-1 text-xs text-webropol-gray-400" x-text="uploadAcceptSummary()"></div>
+                            </div>
+                        </div>
+
+                        <!-- File selected -->
+                        <div x-show="uploadDraft.file" class="flex items-center gap-3 px-4 py-4">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-webropol-primary-50 text-webropol-primary-600">
+                                <i class="fal" :class="selectedFileIcon()"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="truncate text-sm font-medium text-webropol-gray-900" x-text="uploadDraft.file?.name"></div>
+                                <div class="mt-0.5 text-xs text-webropol-gray-400">
+                                    <span x-text="uploadDraft.file && formatFileSize(uploadDraft.file.size)"></span>
+                                    <span class="mx-1">·</span>
+                                    <span x-text="selectedFileTypeLabel()"></span>
+                                    <span class="mx-1">·</span>
+                                    <span class="text-webropol-primary-500">Click to replace</span>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                @click.stop="removeSelectedFile()"
+                                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-webropol-gray-300 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-600"
+                                aria-label="Clear file">
+                                <i class="fal fa-times text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: details -->
+                <div class="border-t border-webropol-gray-100 bg-webropol-gray-50/60 p-6 lg:border-l lg:border-t-0">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="text-sm font-semibold text-webropol-gray-900">Item details</div>
+                        <button
+                            type="button"
+                            @click="closeUploadModal()"
+                            class="flex h-8 w-8 items-center justify-center rounded-lg text-webropol-gray-400 transition hover:bg-webropol-gray-200 hover:text-webropol-gray-600"
+                            aria-label="Close">
+                            <i class="fal fa-times"></i>
+                        </button>
+                    </div>
+                    <p class="mt-1 text-sm text-webropol-gray-500">Review the name, then save or share it.</p>
+
+                    <div class="mt-6 space-y-5">
+                        <div>
+                            <label for="upload-name" class="text-sm font-semibold text-webropol-gray-900">Name</label>
+                            <input
+                                id="upload-name"
+                                x-model.trim="uploadDraft.name"
+                                type="text"
+                                :placeholder="uploadNamePlaceholder()"
+                                class="search-input mt-2 h-11 w-full rounded-xl px-4 text-sm">
+                        </div>
+
+                        <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-webropol-gray-200 bg-white p-4">
+                            <input
+                                x-model="uploadDraft.shareToWorkspace"
+                                type="checkbox"
+                                class="selection-checkbox mt-0.5 h-4 w-4">
+                            <span>
+                                <span class="block text-sm font-semibold text-webropol-gray-900">Share to workspace</span>
+                                <span class="mt-1 block text-xs leading-5 text-webropol-gray-500">Other teams can also use this asset from their own library.</span>
+                            </span>
+                        </label>
+
+                        <div class="rounded-xl border border-webropol-gray-200 bg-white p-4">
+                            <div class="text-xs font-semibold uppercase tracking-wide text-webropol-gray-500">Summary</div>
+                            <div class="mt-3 space-y-2 text-sm">
+                                <div class="flex items-center justify-between gap-3 text-webropol-gray-600">
+                                    <span>Section</span>
+                                    <span class="font-semibold text-webropol-gray-900" x-text="activeTopTabLabel()"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-3 text-webropol-gray-600">
+                                    <span>Scope</span>
+                                    <span class="font-semibold text-webropol-gray-900">Own library</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-3 text-webropol-gray-600">
+                                    <span>Status</span>
+                                    <span class="font-semibold text-webropol-gray-900" x-text="uploadDraft.shareToWorkspace ? 'Shared to workspace' : 'Private'"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <template x-if="uploadDraft.error">
+                            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" x-text="uploadDraft.error"></div>
+                        </template>
+                    </div>
+
+                    <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <button
+                            type="button"
+                            @click="closeUploadModal()"
+                            class="rounded-xl border border-webropol-gray-200 bg-white px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            @click="saveUploadedItem()"
+                            class="inline-flex items-center gap-2 rounded-xl bg-webropol-primary-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-webropol-primary-700">
+                            <i class="fal fa-arrow-up-from-bracket"></i>
+                            <span x-text="uploadSubmitLabel()"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <script>
         function layoutTemplatesApp() {
             return {
                 storageKey: 'webropol_layout_templates',
-                activeTopTab: 'survey',
+                activeTopTab: 'branding',
                 activeSideTab: 'own',
                 searchTerm: '',
                 sortKey: 'name',
@@ -493,11 +1023,22 @@
                 pageSize: 20,
                 pageSizes: [20, 50, 100, 'All'],
                 selectedIds: [],
+                uploadModalOpen: false,
+                importModalOpen: false,
+                importSearch: '',
+                uploadDraft: {
+                    name: '',
+                    shareToWorkspace: false,
+                    file: null,
+                    error: '',
+                    dragActive: false
+                },
                 topTabs: [
+                    { id: 'branding', label: 'Brand Identity', itemLabel: 'item', pluralLabel: 'items', ownLabel: 'Own', sharedLabel: 'Shared', icon: 'fa-paintbrush-fine' },
                     { id: 'survey', label: 'Survey templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-list-check' },
                     { id: 'event', label: 'Event templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-calendar-star' },
                     { id: 'reporting', label: 'Reporting templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-chart-mixed' },
-                    { id: 'files', label: 'Files', itemLabel: 'file', pluralLabel: 'files', ownLabel: 'Own files', sharedLabel: 'Shared files', icon: 'fa-folder-open' },
+                    { id: 'files', label: 'PowerPoint Templates', itemLabel: 'template', pluralLabel: 'templates', ownLabel: 'Own templates', sharedLabel: 'Shared templates', icon: 'fa-file-powerpoint' },
                     { id: 'images', label: 'Images', itemLabel: 'image', pluralLabel: 'images', ownLabel: 'Own images', sharedLabel: 'Shared images', icon: 'fa-image' }
                 ],
                 templates: {
@@ -508,28 +1049,54 @@
                     reporting: { own: [], shared: [] }
                 },
 
+                brandingSettings: {
+                    logoDataUrl: '',
+                    logoName: '',
+                    primaryFont: 'Inter',
+                    bodyFont: 'Inter',
+                    colors: {
+                        primary: '#06b6d4',
+                        secondary: '#0e7490',
+                        accent: '#22d3ee',
+                        background: '#f8fafc',
+                        text: '#0f172a'
+                    }
+                },
+                brandingLogoDrag: false,
+                brandingSaved: false,
+                brandingStorageKey: 'webropol_branding_identity',
+                brandingColorKeys: ['primary', 'secondary', 'accent', 'background', 'text'],
+                colorPresets: [
+                    { name: 'Ocean', primary: '#06b6d4', secondary: '#0e7490', accent: '#22d3ee', background: '#f0fdff', text: '#0f172a' },
+                    { name: 'Violet', primary: '#7c3aed', secondary: '#5b21b6', accent: '#a78bfa', background: '#f5f3ff', text: '#1e1b4b' },
+                    { name: 'Emerald', primary: '#059669', secondary: '#047857', accent: '#34d399', background: '#ecfdf5', text: '#064e3b' },
+                    { name: 'Rose', primary: '#e11d48', secondary: '#be123c', accent: '#fb7185', background: '#fff1f2', text: '#1f1f2e' },
+                    { name: 'Neutral', primary: '#475569', secondary: '#334155', accent: '#94a3b8', background: '#f8fafc', text: '#0f172a' }
+                ],
+
                 init() {
                     this.loadTemplates();
+                    this.loadBrandingSettings();
                 },
 
                 defaultTemplates() {
                     return {
                         files: {
                             own: [
-                                { id: 'files-own-1', name: 'Brand Guidelines PDF', createdBy: 'Ali Al-Zuhairi', lastModified: '08 Mar 2026', sharedTo: '' },
-                                { id: 'files-own-2', name: 'Campaign Header Pack', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' }
+                                { id: 'files-own-1', name: 'Brand Survey Classic', createdBy: 'Ali Al-Zuhairi', lastModified: '08 Mar 2026', sharedTo: '' },
+                                { id: 'files-own-2', name: 'Campaign Feedback Layout', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' }
                             ],
                             shared: [
-                                { id: 'files-shared-1', name: 'Corporate Fonts Package', createdBy: 'Brand Team', lastModified: '01 Mar 2026', sharedTo: 'Workspace' }
+                                { id: 'files-shared-1', name: 'Corporate NPS Template', createdBy: 'Brand Team', lastModified: '01 Mar 2026', sharedTo: 'Workspace' }
                             ]
                         },
                         images: {
                             own: [
-                                { id: 'images-own-1', name: 'Webropol Primary Logo', createdBy: 'Ali Al-Zuhairi', lastModified: '09 Mar 2026', sharedTo: '', isDefaultLogo: true },
+                                { id: 'images-own-1', name: 'Webropol Primary Logo', createdBy: 'Ali Al-Zuhairi', lastModified: '09 Mar 2026', sharedTo: '' },
                                 { id: 'images-own-2', name: 'Survey Hero Illustration', createdBy: 'Ali Al-Zuhairi', lastModified: '03 Mar 2026', sharedTo: '' }
                             ],
                             shared: [
-                                { id: 'images-shared-1', name: 'Event Banner Visual', createdBy: 'Design Team', lastModified: '27 Feb 2026', sharedTo: 'Workspace', isDefaultLogo: false }
+                                { id: 'images-shared-1', name: 'Event Banner Visual', createdBy: 'Design Team', lastModified: '27 Feb 2026', sharedTo: 'Workspace' }
                             ]
                         },
                         survey: {
@@ -612,10 +1179,14 @@
                 },
 
                 sectionConfig() {
-                    return this.topTabs.find((tab) => tab.id === this.activeTopTab) || this.topTabs[0];
+                    if (this.isBrandingSection()) {
+                        return { id: 'branding', label: 'Brand Identity', itemLabel: 'item', pluralLabel: 'items', ownLabel: 'Own', sharedLabel: 'Shared', icon: 'fa-paintbrush-fine' };
+                    }
+                    return this.topTabs.find((tab) => tab.id === this.activeTopTab) || this.topTabs.find((tab) => tab.id === 'survey');
                 },
 
                 sideTabs() {
+                    if (this.isBrandingSection()) return [];
                     const section = this.templates[this.activeTopTab];
                     return [
                         { id: 'own', label: this.sectionConfig().ownLabel, count: section.own.length },
@@ -641,6 +1212,7 @@
                 },
 
                 currentTemplates() {
+                    if (this.isBrandingSection()) return [];
                     return this.templates[this.activeTopTab][this.activeSideTab];
                 },
 
@@ -676,6 +1248,74 @@
                     return ['files', 'images'].includes(this.activeTopTab);
                 },
 
+                isPptxSection() {
+                    return this.activeTopTab === 'files';
+                },
+
+                uploadModalEyebrow() {
+                    return this.isUploadSection() ? 'Upload asset' : 'Upload template';
+                },
+
+                uploadModalTitle() {
+                    if (this.isImageSection()) {
+                        return 'Upload an image and keep your brand library tidy';
+                    }
+
+                    if (this.isPptxSection()) {
+                        return 'Upload a PowerPoint template';
+                    }
+
+                    return `Upload a ${this.sectionConfig().itemLabel} package for ${this.activeTopTabLabel().toLowerCase()}`;
+                },
+
+                uploadModalDescription() {
+                    if (this.isImageSection()) {
+                        return 'Bring in logos, illustrations, and visual assets with a simple flow that keeps names, visibility, and default branding decisions in one place.';
+                    }
+
+                    if (this.isPptxSection()) {
+                        return 'Choose a .pptx file and it will be added to your own template library using the file name.';
+                    }
+
+                    return 'Upload a template file, review the item details, and publish it into your own template library without leaving the page.';
+                },
+
+                uploadModalIcon() {
+                    if (this.isImageSection()) {
+                        return 'fa-image';
+                    }
+
+                    return 'fa-file-powerpoint';
+                },
+
+                uploadAcceptSummary() {
+                    if (this.isImageSection()) {
+                        return 'PNG, JPG, SVG, GIF';
+                    }
+
+                    return 'PPTX only';
+                },
+
+                uploadTip() {
+                    if (this.isImageSection()) {
+                        return 'Use clear names for logos and banners';
+                    }
+
+                    return 'One PowerPoint file per template';
+                },
+
+                uploadHintChip() {
+                    return this.isImageSection() ? 'Ideal for logos and hero visuals' : 'Only .pptx files are allowed';
+                },
+
+                uploadNamePlaceholder() {
+                    return `Give this ${this.sectionConfig().itemLabel} a clear name`;
+                },
+
+                uploadSubmitLabel() {
+                    return `Upload ${this.sectionConfig().itemLabel}`;
+                },
+
                 searchAriaLabel() {
                     return `Search ${this.sectionConfig().pluralLabel} by name`;
                 },
@@ -684,21 +1324,8 @@
                     return `Search ${this.sectionConfig().pluralLabel} by name`;
                 },
 
-                createButtonLabel() {
-                    const itemLabel = this.sectionConfig().itemLabel;
-                    if (this.isUploadSection()) {
-                        return `Upload ${itemLabel}`;
-                    }
-
-                    return `New ${itemLabel}`;
-                },
-
-                primaryActionIcon() {
-                    return this.isUploadSection() ? 'upload' : 'plus';
-                },
-
                 uploadAccept() {
-                    return this.isImageSection() ? 'image/*' : '';
+                    return this.isImageSection() ? 'image/*' : '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation';
                 },
 
                 columnHeading() {
@@ -719,18 +1346,10 @@
                 },
 
                 statusBadgeLabel(template) {
-                    if (this.isImageSection() && template.isDefaultLogo) {
-                        return 'Default logo';
-                    }
-
                     return template.sharedTo || 'Private';
                 },
 
                 statusBadgeClass(template) {
-                    if (this.isImageSection() && template.isDefaultLogo) {
-                        return 'bg-amber-50 text-amber-700';
-                    }
-
                     return template.sharedTo ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-700';
                 },
 
@@ -885,32 +1504,66 @@
                     this.saveTemplates();
                 },
 
-                toggleDefaultLogo(template) {
-                    if (!this.isImageSection()) {
-                        return;
-                    }
+                openImportModal() {
+                    this.importSearch = '';
+                    this.importModalOpen = true;
+                    document.body.classList.add('modal-open');
+                },
 
-                    const shouldSetAsDefault = !template.isDefaultLogo;
-                    ['own', 'shared'].forEach((scope) => {
-                        this.templates.images[scope] = this.templates.images[scope].map((image) => ({
-                            ...image,
-                            isDefaultLogo: shouldSetAsDefault ? image.id === template.id : false
-                        }));
-                    });
+                closeImportModal() {
+                    this.importModalOpen = false;
+                    this.importSearch = '';
+                    document.body.classList.remove('modal-open');
+                },
 
+                importLibraryItems() {
+                    const term = this.importSearch.toLowerCase();
+                    return (this.templates[this.activeTopTab]?.shared || []).filter(t =>
+                        !term || t.name.toLowerCase().includes(term) || (t.createdBy || '').toLowerCase().includes(term)
+                    );
+                },
+
+                importTemplate(template) {
+                    const alreadyOwned = this.templates[this.activeTopTab].own.some(t => t.id === template.id || t.name === template.name);
+                    if (alreadyOwned) return;
+                    const copy = {
+                        ...template,
+                        id: `${this.activeTopTab}-own-${Date.now()}`,
+                        createdBy: 'Ali Al-Zuhairi',
+                        lastModified: this.formatToday(),
+                        sharedTo: '',
+                        importedFrom: template.createdBy
+                    };
+                    this.templates[this.activeTopTab].own = [copy, ...this.templates[this.activeTopTab].own];
                     this.saveTemplates();
+                    this.activeSideTab = 'own';
+                    this.closeImportModal();
                 },
 
-                handlePrimaryAction() {
-                    if (this.isUploadSection()) {
-                        this.openUploadDialog();
-                        return;
-                    }
-
-                    this.createTemplate();
+                isAlreadyImported(template) {
+                    return this.templates[this.activeTopTab].own.some(t => t.name === template.name);
                 },
 
-                openUploadDialog() {
+                openUploadModal() {
+                    this.uploadDraft = {
+                        name: '',
+                        shareToWorkspace: false,
+                        file: null,
+                        error: '',
+                        dragActive: false
+                    };
+                    this.uploadModalOpen = true;
+                    document.body.classList.add('modal-open');
+                },
+
+                closeUploadModal() {
+                    this.uploadModalOpen = false;
+                    this.uploadDraft.dragActive = false;
+                    this.uploadDraft.error = '';
+                    document.body.classList.remove('modal-open');
+                },
+
+                triggerFilePicker() {
                     const input = this.$refs.assetUploadInput;
                     if (!input) {
                         return;
@@ -920,49 +1573,114 @@
                     input.click();
                 },
 
+                setDragState(isActive) {
+                    this.uploadDraft.dragActive = isActive;
+                },
+
+                handleFileDrop(event) {
+                    this.setDragState(false);
+                    const [file] = Array.from(event.dataTransfer?.files || []);
+                    this.selectUploadFile(file);
+                },
+
                 handleFileSelected(event) {
                     const [file] = Array.from(event.target.files || []);
+                    this.selectUploadFile(file);
+                },
+
+                selectUploadFile(file) {
                     if (!file) {
                         return;
                     }
 
-                    const asset = {
-                        id: `${this.activeTopTab}-own-${Date.now()}`,
-                        name: file.name,
-                        createdBy: 'Ali Al-Zuhairi',
-                        lastModified: this.formatToday(),
-                        sharedTo: ''
-                    };
-
-                    if (this.isImageSection()) {
-                        asset.isDefaultLogo = false;
-                    }
-
-                    this.activeSideTab = 'own';
-                    this.templates[this.activeTopTab].own = [asset, ...this.templates[this.activeTopTab].own];
-                    this.page = 1;
-                    this.selectedIds = [];
-                    this.saveTemplates();
-                },
-
-                createTemplate() {
-                    const nextName = window.prompt(`Name your new ${this.sectionConfig().itemLabel}`);
-                    if (!nextName || !nextName.trim()) {
+                    if (!this.isAcceptedFile(file)) {
+                        this.uploadDraft.error = `Unsupported file type. Use ${this.uploadAcceptSummary().toLowerCase()}.`;
                         return;
                     }
 
-                    const template = {
+                    this.uploadDraft.file = file;
+                    this.uploadDraft.error = '';
+
+                    if (!this.uploadDraft.name) {
+                        this.uploadDraft.name = this.stripFileExtension(file.name);
+                    }
+                },
+
+                removeSelectedFile() {
+                    this.uploadDraft.file = null;
+                    this.uploadDraft.error = '';
+                },
+
+                selectedFileIcon() {
+                    if (!this.uploadDraft.file) {
+                        return this.uploadModalIcon();
+                    }
+
+                    if (!this.isUploadSection()) {
+                        return 'fa-file-powerpoint';
+                    }
+
+                    if (this.isImageSection()) {
+                        return 'fa-image';
+                    }
+
+                    const extension = this.fileExtension(this.uploadDraft.file.name);
+                    if (extension === 'zip') {
+                        return 'fa-file-zipper';
+                    }
+
+                    if (extension === 'pdf') {
+                        return 'fa-file-pdf';
+                    }
+
+                    if (['doc', 'docx'].includes(extension)) {
+                        return 'fa-file-word';
+                    }
+
+                    return 'fa-file-lines';
+                },
+
+                selectedFileTypeLabel() {
+                    if (!this.uploadDraft.file) {
+                        return '';
+                    }
+
+                    const extension = this.fileExtension(this.uploadDraft.file.name);
+                    return extension ? extension.toUpperCase() : 'FILE';
+                },
+
+                saveUploadedItem() {
+                    if (!this.uploadDraft.file) {
+                        this.uploadDraft.error = `Choose a file before saving this ${this.sectionConfig().itemLabel}.`;
+                        return;
+                    }
+
+                    const nextName = this.uploadDraft.name.trim();
+                    if (!nextName) {
+                        this.uploadDraft.error = 'Add a name before saving.';
+                        return;
+                    }
+
+                    const item = {
                         id: `${this.activeTopTab}-own-${Date.now()}`,
-                        name: nextName.trim(),
+                        name: nextName,
                         createdBy: 'Ali Al-Zuhairi',
                         lastModified: this.formatToday(),
-                        sharedTo: ''
+                        sharedTo: this.uploadDraft.shareToWorkspace ? 'Workspace' : '',
+                        sourceFileName: this.uploadDraft.file.name,
+                        fileSize: this.uploadDraft.file.size
                     };
 
+                    if (!this.isUploadSection()) {
+                        item.sharedTo = '';
+                    }
+
                     this.activeSideTab = 'own';
-                    this.templates[this.activeTopTab].own = [template, ...this.templates[this.activeTopTab].own];
+                    this.templates[this.activeTopTab].own = [item, ...this.templates[this.activeTopTab].own];
                     this.page = 1;
+                    this.selectedIds = [];
                     this.saveTemplates();
+                    this.closeUploadModal();
                 },
 
                 clearSearch() {
@@ -980,7 +1698,7 @@
                             return `Upload your first ${this.sectionConfig().itemLabel}`;
                         }
 
-                        return `Add your first ${this.sectionConfig().itemLabel}`;
+                        return `Import your first template from the library`;
                     }
 
                     return `No shared ${this.sectionConfig().pluralLabel} yet`;
@@ -996,10 +1714,95 @@
                             return `Upload a ${this.sectionConfig().itemLabel} for this section and it will appear here with the rest of your personal assets.`;
                         }
 
-                        return `Create a new ${this.sectionConfig().itemLabel} for this section and it will appear here with the rest of your personal assets.`;
+                        return `Browse the shared library, pick a ${this.sectionConfig().itemLabel}, and import it into your own collection.`;
                     }
 
                     return `Shared ${this.sectionConfig().pluralLabel} will appear here when they are published to your workspace or team.`;
+                },
+
+                isBrandingSection() {
+                    return this.activeTopTab === 'branding';
+                },
+
+                loadBrandingSettings() {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem(this.brandingStorageKey) || 'null');
+                        if (saved && typeof saved === 'object') {
+                            if (saved.logoDataUrl) this.brandingSettings.logoDataUrl = saved.logoDataUrl;
+                            if (saved.logoName) this.brandingSettings.logoName = saved.logoName;
+                            if (saved.primaryFont) this.brandingSettings.primaryFont = saved.primaryFont;
+                            if (saved.bodyFont) this.brandingSettings.bodyFont = saved.bodyFont;
+                            if (saved.colors && typeof saved.colors === 'object') {
+                                this.brandingSettings.colors = { ...this.brandingSettings.colors, ...saved.colors };
+                            }
+                        }
+                    } catch (e) {
+                        console.error('localStorage error:', e);
+                    }
+                },
+
+                saveBrandingSettings() {
+                    try {
+                        const existing = JSON.parse(localStorage.getItem(this.brandingStorageKey) || '{}');
+                        const merged = { ...existing, ...this.brandingSettings };
+                        localStorage.setItem(this.brandingStorageKey, JSON.stringify(merged));
+                        this.brandingSaved = true;
+                        setTimeout(() => { this.brandingSaved = false; }, 2500);
+                    } catch (e) {
+                        console.error('localStorage error:', e);
+                    }
+                },
+
+                resetBrandingSettings() {
+                    this.brandingSettings = {
+                        logoDataUrl: '',
+                        logoName: '',
+                        primaryFont: 'Inter',
+                        bodyFont: 'Inter',
+                        colors: { primary: '#06b6d4', secondary: '#0e7490', accent: '#22d3ee', background: '#f8fafc', text: '#0f172a' }
+                    };
+                },
+
+                handleLogoUpload(event) {
+                    const [file] = Array.from(event.target.files || []);
+                    if (!file) return;
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(ext)) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.brandingSettings.logoDataUrl = e.target.result;
+                        this.brandingSettings.logoName = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                },
+
+                handleLogoFileDrop(event) {
+                    this.brandingLogoDrag = false;
+                    const [file] = Array.from(event.dataTransfer?.files || []);
+                    if (!file) return;
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(ext)) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.brandingSettings.logoDataUrl = e.target.result;
+                        this.brandingSettings.logoName = file.name;
+                    };
+                    reader.readAsDataURL(file);
+                },
+
+                removeLogo() {
+                    this.brandingSettings.logoDataUrl = '';
+                    this.brandingSettings.logoName = '';
+                },
+
+                applyColorPreset(preset) {
+                    this.brandingSettings.colors = {
+                        primary: preset.primary,
+                        secondary: preset.secondary,
+                        accent: preset.accent,
+                        background: preset.background,
+                        text: preset.text
+                    };
                 },
 
                 formatToday() {
@@ -1008,6 +1811,36 @@
                         month: 'short',
                         year: 'numeric'
                     });
+                },
+
+                fileExtension(fileName) {
+                    return String(fileName || '').split('.').pop().toLowerCase();
+                },
+
+                stripFileExtension(fileName) {
+                    return String(fileName || '').replace(/\.[^.]+$/, '');
+                },
+
+                isAcceptedFile(file) {
+                    const extension = this.fileExtension(file.name);
+
+                    if (this.isImageSection()) {
+                        return ['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'].includes(extension);
+                    }
+
+                    return extension === 'pptx';
+                },
+
+                formatFileSize(bytes) {
+                    if (!Number.isFinite(bytes) || bytes <= 0) {
+                        return '0 KB';
+                    }
+
+                    if (bytes < 1024 * 1024) {
+                        return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+                    }
+
+                    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
                 }
             };
         }
