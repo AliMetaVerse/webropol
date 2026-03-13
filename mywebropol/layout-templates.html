@@ -131,7 +131,22 @@
         .table-shell {
             border: 1px solid rgba(226, 232, 240, 0.95);
             background: rgba(255, 255, 255, 0.88);
-            overflow: hidden;
+        }
+
+        .table-shell th:first-child {
+            border-top-left-radius: 1.5rem;
+        }
+
+        .table-shell th:last-child {
+            border-top-right-radius: 1.5rem;
+        }
+
+        .table-shell tr:last-child td:first-child {
+            border-bottom-left-radius: 1.5rem;
+        }
+
+        .table-shell tr:last-child td:last-child {
+            border-bottom-right-radius: 1.5rem;
         }
 
         .table-shell th {
@@ -633,10 +648,30 @@
                                                             :class="statusBadgeClass(template)"
                                                             x-text="statusBadgeLabel(template)"></span>
                                                     </td>
-                                                    <td class="px-5 py-4 align-top">
-                                                        <div class="flex flex-wrap items-center gap-4 text-sm font-medium">
-                                                            <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
-                                                            <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
+                                                    <td class="px-5 py-4 align-top" :class="menuOpen ? 'relative z-50' : ''">
+                                                        <div class="flex flex-wrap items-center gap-2 text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false">
+                                                            <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-gray-50 text-webropol-gray-600 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-900" title="View">
+                                                                <i class="fal fa-eye"></i>
+                                                            </button>
+                                                            <div class="relative">
+                                                                <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-primary-300 text-webropol-gray-900 transition hover:bg-webropol-primary-400" @click="menuOpen = !menuOpen">
+                                                                    <i class="fal fa-ellipsis-v"></i>
+                                                                </button>
+                                                                <div x-show="menuOpen" x-transition.opacity class="absolute right-0 top-full z-[100] mt-2 w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-cloak>
+                                                                    <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="renameTemplate(template); menuOpen = false">
+                                                                        <i class="fal fa-pen w-5 text-center text-lg"></i>
+                                                                        <span>Rename</span>
+                                                                    </button>
+                                                                    <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="shareTemplate(template); menuOpen = false">
+                                                                        <i class="fal fa-user-plus w-5 text-center text-lg"></i>
+                                                                        <span x-text="template.sharedTo ? 'Unshare' : 'Share to'"></span>
+                                                                    </button>
+                                                                    <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
+                                                                        <i class="fal fa-file-certificate w-5 text-center text-lg"></i>
+                                                                        <span>Set organization default</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -666,9 +701,29 @@
                                             </div>
                                             <div class="mt-4 flex items-center justify-between text-sm text-webropol-gray-500">
                                                 <span x-text="template.lastModified"></span>
-                                                <div class="flex flex-wrap items-center gap-4 justify-end">
-                                                    <button type="button" class="action-link" @click="renameTemplate(template)">Rename</button>
-                                                    <button type="button" class="action-link" @click="shareTemplate(template)" x-text="template.sharedTo ? 'Unshare' : 'Share'"></button>
+                                                <div class="flex flex-wrap items-center gap-2 justify-end text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false">
+                                                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-gray-50 text-webropol-gray-600 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-900" title="View">
+                                                        <i class="fal fa-eye"></i>
+                                                    </button>
+                                                    <div class="relative" :class="menuOpen ? 'z-50' : ''">
+                                                        <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-primary-300 text-webropol-gray-900 transition hover:bg-webropol-primary-400" @click="menuOpen = !menuOpen">
+                                                            <i class="fal fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <div x-show="menuOpen" x-transition.opacity class="absolute right-0 bottom-full z-[100] mb-2 w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-cloak>
+                                                            <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="renameTemplate(template); menuOpen = false">
+                                                                <i class="fal fa-pen w-5 text-center text-lg"></i>
+                                                                <span>Rename</span>
+                                                            </button>
+                                                            <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="shareTemplate(template); menuOpen = false">
+                                                                <i class="fal fa-user-plus w-5 text-center text-lg"></i>
+                                                                <span x-text="template.sharedTo ? 'Unshare' : 'Share to'"></span>
+                                                            </button>
+                                                            <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
+                                                                <i class="fal fa-file-certificate w-5 text-center text-lg"></i>
+                                                                <span>Set organization default</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
