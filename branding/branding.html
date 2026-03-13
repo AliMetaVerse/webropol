@@ -91,13 +91,13 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <div class="xl:col-span-2 space-y-6">
-                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+              <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <div class="xl:col-span-2 space-y-8">
+                  <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 space-y-6">
                     <div class="flex justify-between items-start gap-4">
                       <div>
-                        <h4 class="font-semibold text-gray-900">Organization Logo</h4>
-                        <p class="text-sm text-gray-500 mt-1">PNG, JPG, SVG, GIF, or WEBP. Used in branding-aware layouts and exported materials.</p>
+                        <h4 class="text-base font-semibold text-gray-900">Organization Logo</h4>
+                        <p class="text-xs text-gray-500 mt-1.5">PNG, JPG, SVG, GIF, or WEBP. Used in branding-aware layouts and exported materials.</p>
                       </div>
                       <div class="flex gap-2">
                         <webropol-button variant="secondary" icon="fa-upload" @click="$refs.logoInput.click()">Upload</webropol-button>
@@ -106,96 +106,105 @@
                     </div>
                     <input type="file" x-ref="logoInput" class="hidden" accept="image/png,image/jpeg,image/svg+xml,image/gif,image/webp" @change="handleLogoUpload($event)">
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div class="p-8 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center bg-gray-50 min-h-[180px]">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div class="p-6 md:p-8 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center bg-gray-50/50 hover:bg-gray-50 transition min-h-[160px] cursor-pointer group" @click="$refs.logoInput.click()">
                         <template x-if="brandingSettings.logoDataUrl">
-                          <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-24 object-contain">
+                          <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 object-contain group-hover:scale-105 transition-transform duration-300">
                         </template>
                         <template x-if="!brandingSettings.logoDataUrl">
-                          <div class="text-center text-gray-400">
-                            <i class="fa-thin fa-image text-4xl mb-2"></i>
-                            <p>No logo uploaded</p>
+                          <div class="text-center text-gray-400 group-hover:text-webropol-primary-500 transition-colors">
+                            <i class="fa-thin fa-image text-3xl mb-3 text-gray-300 group-hover:text-webropol-primary-400 transition-colors"></i>
+                            <p class="text-sm font-medium">Click to upload</p>
                           </div>
                         </template>
                       </div>
-                      <div class="rounded-lg border border-gray-200 bg-white min-h-[180px] flex items-center justify-center p-6">
+                      <div class="rounded-xl border border-gray-100 shadow-sm bg-white min-h-[160px] flex items-center justify-center p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-white -z-10"></div>
                         <template x-if="brandingSettings.logoDataUrl">
-                          <div class="text-center">
-                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 object-contain mx-auto">
-                            <p class="text-xs text-gray-500 mt-3">Light background</p>
+                          <div class="text-center z-10 w-full">
+                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-16 object-contain mx-auto drop-shadow-sm">
+                            <p class="text-[11px] font-medium text-gray-400 mt-5 uppercase tracking-wider">Light bg</p>
                           </div>
                         </template>
                         <template x-if="!brandingSettings.logoDataUrl">
-                          <div class="text-center text-gray-400 text-sm">Preview on light background</div>
+                          <div class="text-center text-gray-300 text-xs font-medium uppercase tracking-wider z-10">Light preview</div>
                         </template>
                       </div>
-                      <div class="rounded-lg border border-gray-200 bg-slate-900 min-h-[180px] flex items-center justify-center p-6">
+                      <div class="rounded-xl bg-slate-900 min-h-[160px] flex items-center justify-center p-6 relative overflow-hidden ring-1 ring-slate-800">
+                        <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 -z-10"></div>
                         <template x-if="brandingSettings.logoDataUrl">
-                          <div class="text-center">
-                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-20 object-contain mx-auto opacity-90">
-                            <p class="text-xs text-slate-300 mt-3">Dark background</p>
+                          <div class="text-center z-10 w-full">
+                            <img :src="brandingSettings.logoDataUrl" :alt="brandingSettings.logoName" class="max-h-16 object-contain mx-auto opacity-95">
+                            <p class="text-[11px] font-medium text-slate-400 mt-5 uppercase tracking-wider">Dark bg</p>
                           </div>
                         </template>
                         <template x-if="!brandingSettings.logoDataUrl">
-                          <div class="text-center text-slate-400 text-sm">Preview on dark background</div>
+                          <div class="text-center text-slate-600 text-xs font-medium uppercase tracking-wider z-10">Dark preview</div>
                         </template>
                       </div>
                     </div>
                   </div>
 
-                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+                  <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 space-y-6">
                     <div>
-                      <h4 class="font-semibold text-gray-900">Typography</h4>
-                      <p class="text-sm text-gray-500 mt-1">Choose heading and body fonts used by your layouts.</p>
+                      <h4 class="text-base font-semibold text-gray-900">Typography</h4>
+                      <p class="text-xs text-gray-500 mt-1.5">Choose heading and body fonts used by your layouts.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div class="space-y-3">
-                        <label class="text-sm font-medium text-gray-700">Heading font</label>
-                        <select x-model="brandingSettings.primaryFont" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400">
-                          <template x-for="font in headingFonts" :key="font">
-                            <option x-text="font"></option>
-                          </template>
-                        </select>
-                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                          <p class="text-xl font-semibold text-gray-900" :style="`font-family: '${brandingSettings.primaryFont}', sans-serif`">Survey Title Preview</p>
-                          <p class="text-xs text-gray-400 mt-1" x-text="brandingSettings.primaryFont"></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div class="space-y-4">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block">Heading font</label>
+                        <div class="relative">
+                          <select x-model="brandingSettings.primaryFont" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400 transition-colors cursor-pointer appearance-none">
+                            <template x-for="font in headingFonts" :key="font">
+                              <option x-text="font"></option>
+                            </template>
+                          </select>
+                          <i class="fa-regular fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                        </div>
+                        <div class="rounded-xl border border-gray-100 bg-white shadow-sm p-6 flex flex-col justify-center min-h-[120px]">
+                          <p class="text-2xl font-bold text-gray-900 leading-tight" :style="`font-family: '${brandingSettings.primaryFont}', sans-serif`">Survey Title</p>
+                          <p class="text-[11px] font-medium text-gray-400 mt-2.5 uppercase tracking-wider" x-text="brandingSettings.primaryFont"></p>
                         </div>
                       </div>
-                      <div class="space-y-3">
-                        <label class="text-sm font-medium text-gray-700">Body font</label>
-                        <select x-model="brandingSettings.bodyFont" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400">
-                          <template x-for="font in bodyFonts" :key="font">
-                            <option x-text="font"></option>
-                          </template>
-                        </select>
-                        <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                          <p class="text-sm text-gray-700" :style="`font-family: '${brandingSettings.bodyFont}', sans-serif`">This is how body copy appears across your survey and reporting experiences.</p>
-                          <p class="text-xs text-gray-400 mt-1" x-text="brandingSettings.bodyFont"></p>
+                      <div class="space-y-4">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-gray-500 block">Body font</label>
+                        <div class="relative">
+                          <select x-model="brandingSettings.bodyFont" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-webropol-primary-100 focus:border-webropol-primary-400 transition-colors cursor-pointer appearance-none">
+                            <template x-for="font in bodyFonts" :key="font">
+                              <option x-text="font"></option>
+                            </template>
+                          </select>
+                          <i class="fa-regular fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
+                        </div>
+                        <div class="rounded-xl border border-gray-100 bg-white shadow-sm p-6 flex flex-col justify-center min-h-[120px]">
+                          <p class="text-sm text-gray-600 leading-relaxed" :style="`font-family: '${brandingSettings.bodyFont}', sans-serif`">This is how body copy appears across your survey and reporting experiences.</p>
+                          <p class="text-[11px] font-medium text-gray-400 mt-3 uppercase tracking-wider" x-text="brandingSettings.bodyFont"></p>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="space-y-6">
-                  <div class="border border-gray-200 rounded-xl p-5 space-y-4">
+                <div class="space-y-8">
+                  <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 md:p-8 space-y-6">
                     <div>
-                      <h4 class="font-semibold text-gray-900">Color Palette</h4>
-                      <p class="text-sm text-gray-500 mt-1">Primary, supporting, and neutral colors from the layout-template workspace.</p>
+                      <h4 class="text-base font-semibold text-gray-900">Color Palette</h4>
+                      <p class="text-xs text-gray-500 mt-1.5">Primary, supporting, and neutral colors from the layout-template workspace.</p>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                       <template x-for="key in brandingColorKeys" :key="key">
-                        <label class="flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-3">
+                        <label class="flex items-center justify-between gap-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-gray-200 hover:shadow-sm transition-all p-3.5 cursor-pointer group">
                           <div>
-                            <div class="text-sm font-medium text-gray-800 capitalize" x-text="key"></div>
-                            <div class="text-xs text-gray-400 font-mono uppercase" x-text="brandingSettings.colors[key]"></div>
+                            <div class="text-sm font-semibold text-gray-700 capitalize group-hover:text-gray-900 transition-colors" x-text="key"></div>
+                            <div class="text-[11px] text-gray-400 font-mono uppercase mt-0.5 group-hover:text-gray-500 transition-colors" x-text="brandingSettings.colors[key]"></div>
                           </div>
-                          <input type="color" x-model="brandingSettings.colors[key]" class="h-10 w-12 rounded cursor-pointer border-0 bg-transparent">
+                          <div class="h-9 w-14 rounded-lg overflow-hidden border border-gray-200/80 shadow-sm flex shrink-0">
+                            <input type="color" x-model="brandingSettings.colors[key]" class="h-16 w-16 -m-2 cursor-pointer border-0 p-0">
+                          </div>
                         </label>
                       </template>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
