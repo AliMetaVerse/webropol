@@ -306,6 +306,19 @@
                     if (id && names[id]) {
                         this.surveyName = names[id];
                     }
+
+                    // Compute total credits per recipient from question components and persist
+                    this.$nextTick(() => {
+                        const questionEls = document.querySelectorAll('[credits]');
+                        const total = Array.from(questionEls).reduce((sum, el) => {
+                            return sum + (parseInt(el.getAttribute('credits'), 10) || 0);
+                        }, 0);
+                        if (total > 0) {
+                            try {
+                                localStorage.setItem('webropol_sms_credits_per_recipient', total);
+                            } catch (e) { /* ignore */ }
+                        }
+                    });
                 }
             };
         }
