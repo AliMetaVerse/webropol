@@ -32,6 +32,10 @@ class WebropolSPA {
       ['/sms', 'sms/list.html'],
       ['/sms/list', 'sms/list.html'],
       ['/sms/edit', 'sms/edit.html'],
+      ['/sms/collect', 'sms/collect.html'],
+      ['/sms/follow', 'sms/follow.html'],
+      ['/sms/report', 'sms/report.html'],
+      ['/sms/aita', 'sms/aita.html'],
       ['/exw', 'exw/index.html'],
       ['/case-management', 'case-management/index.html'],
       ['/mywebropol', 'mywebropol/index.html'],
@@ -76,6 +80,10 @@ class WebropolSPA {
   promo: 'Promo',
       list: 'List',
       edit: 'Edit',
+      collect: 'Collect Answers',
+      follow: 'Follow Up',
+      report: 'Report',
+      aita: 'AI Text Analysis',
       index: 'Home'
     };
   }

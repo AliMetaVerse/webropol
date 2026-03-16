@@ -2,28 +2,32 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 /**
  * SurveyActionTabs Component
- * Navigation tabs for survey actions in SPA mode (hash-based routing)
+ * Navigation tabs for survey/SMS actions in SPA mode (hash-based routing)
  * (Edit, Collect Answers, Follow up, Report, AI Text Analysis)
  * 
- * @attr {string} active - Currently active tab: 'edit' | 'collect' | 'follow' | 'report' | 'aita'
+ * @attr {string} active  - Currently active tab: 'edit' | 'collect' | 'follow' | 'report' | 'aita'
+ * @attr {string} context - Context mode: 'survey' (default) | 'sms'
  * 
  * @example
  * <webropol-survey-action-tabs active="edit"></webropol-survey-action-tabs>
+ * <webropol-survey-action-tabs active="edit" context="sms"></webropol-survey-action-tabs>
  */
 export class SurveyActionTabs extends BaseComponent {
   static get observedAttributes() {
-    return ['active'];
+    return ['active', 'context'];
   }
 
-  init() {
-    this.tabs = [
+  /** Returns the tab definitions for a given context ('survey' or 'sms'). */
+  getTabsForContext(context) {
+    const isSms = context === 'sms';
+    return [
       {
         id: 'edit',
         label: 'Edit',
         icon: 'fal fa-edit',
         iconBg: 'bg-green-100',
         iconColor: 'text-green-700',
-        url: '#/surveys/edit'
+        url: isSms ? '#/sms/edit' : '#/surveys/edit'
       },
       {
         id: 'collect',
@@ -31,7 +35,7 @@ export class SurveyActionTabs extends BaseComponent {
         icon: 'fa-light fa-users',
         iconBg: 'bg-sky-100',
         iconColor: 'text-sky-700',
-        url: '#/surveys/collect'
+        url: isSms ? '#/sms/collect' : '#/surveys/collect'
       },
       {
         id: 'follow',
@@ -39,7 +43,7 @@ export class SurveyActionTabs extends BaseComponent {
         icon: 'fal fa-eye',
         iconBg: 'bg-rose-100',
         iconColor: 'text-rose-700',
-        url: '#/surveys/follow'
+        url: isSms ? '#/sms/follow' : '#/surveys/follow'
       },
       {
         id: 'report',
@@ -47,7 +51,7 @@ export class SurveyActionTabs extends BaseComponent {
         icon: 'fal fa-chart-line',
         iconBg: 'bg-amber-100',
         iconColor: 'text-amber-700',
-        url: '#/surveys/report'
+        url: isSms ? '#/sms/report' : '#/surveys/report'
       },
       {
         id: 'aita',
@@ -55,24 +59,30 @@ export class SurveyActionTabs extends BaseComponent {
         icon: 'fal fa-magnifying-glass-chart',
         iconBg: 'bg-orange-100',
         iconColor: 'text-orange-700',
-        url: '#/surveys/aita'
+        url: isSms ? '#/sms/aita' : '#/surveys/aita'
       }
     ];
   }
 
+  init() {
+    // Tabs are resolved dynamically per context in render()
+  }
+
   render() {
     const active = this.getAttr('active', 'edit');
+    const context = this.getAttr('context', 'survey');
+    const tabs = this.getTabsForContext(context);
 
-    const tabsHTML = this.tabs.map(tab => {
+    const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
-      const baseClasses = 'px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px]';
+      const baseClasses = 'px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] no-underline';
       const activeClasses = isActive 
         ? 'bg-white shadow-sm relative -mb-[2px]' 
         : 'hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01]';
       
       return `
-        <button 
-          onclick="window.location.href='${tab.url}'" 
+        <a 
+          href="${tab.url}"
           class="${baseClasses} ${activeClasses}"
           aria-label="${tab.label}"
           ${isActive ? 'aria-current="page"' : ''}
@@ -82,7 +92,7 @@ export class SurveyActionTabs extends BaseComponent {
           </span>
           <span>${tab.label}</span>
           ${isActive ? '<div class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>' : ''}
-        </button>
+        </a>
       `;
     }).join('');
 
@@ -94,7 +104,7 @@ export class SurveyActionTabs extends BaseComponent {
   }
 
   bindEvents() {
-    // No custom events needed - using onclick navigation
+    // Navigation handled natively by <a href> elements
   }
 }
 

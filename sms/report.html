@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report - 2-Way SMS | Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="../design-system/components/tabs/unified-tabs.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04)',
+            'card': '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/tokens.css" rel="stylesheet">
+  <link href="../design-system/styles/tabs.css" rel="stylesheet">
+  <link href="../design-system/styles/button-classes.css" rel="stylesheet">
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
+  <script src="../design-system/components/navigation/SurveyHelperToolbar.js" type="module"></script>
+  <style>
+    :root { --primary-600: #1d809d; --primary-50: #eefbfd; --neutral-600: #787f81; }
+    body { font-family: 'Inter', sans-serif; scrollbar-width: thin; scrollbar-color: #cbd5e1 #f8fafc; }
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+    .hover-lift { transition: all 0.2s ease; }
+    .hover-lift:hover { transform: translateY(-1px); box-shadow: 0 4px 25px -5px rgba(0,0,0,0.15); }
+    .drag-handle {
+      flex-shrink: 0; cursor: move; background: white; border: 1px solid #cbd5e1;
+      border-radius: 8px; padding: 6px; transition: background 0.2s ease, border-color 0.2s ease;
+      display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+    }
+    @keyframes scaleIn { from { transform: scaleX(0); opacity: 0; } to { transform: scaleX(1); opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .chart-bar-animate { animation: scaleIn 0.6s ease-out forwards; transform-origin: left center; }
+    .chart-row-animate { animation: fadeInUp 0.4s ease-out forwards; opacity: 0; }
+    .chart-row-animate:nth-child(1) { animation-delay: 0.1s; }
+    .chart-row-animate:nth-child(2) { animation-delay: 0.2s; }
+    .chart-row-animate:nth-child(3) { animation-delay: 0.3s; }
+    .chart-row-animate:nth-child(4) { animation-delay: 0.4s; }
+    .chart-row-animate:nth-child(5) { animation-delay: 0.5s; }
+    .survey-action-btn { width: 40px; height: 40px; flex-shrink: 0; }
+  </style>
+</head>
+<body x-data="smsReportApp()" x-init="init()">
+  <div class="flex h-screen">
+    <webropol-sidebar active="sms" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="Ali Al-Zuhairi" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+
+      <main class="flex-1 overflow-y-auto px-2 py-2 lg:px-1" role="main">
+        <div class="w-full mx-auto">
+
+          <!-- Action Tabs -->
+          <div class="mb-2">
+            <div class="flex items-center justify-between border-b border-webropol-gray-300">
+              <webropol-survey-action-tabs active="report" context="sms"></webropol-survey-action-tabs>
+              <webropol-survey-helper-toolbar
+                survey-name="new 2-way sms survey"
+                survey-id="Sms348267"
+                active-page="report"
+                access-level="admin"
+                survey-status="active"
+                hide-edit-btn>
+              </webropol-survey-helper-toolbar>
+            </div>
+          </div>
+
+          <!-- Report Toolbar -->
+          <div class="flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
+            <div class="flex items-center gap-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
+                <span class="font-semibold">(Edited)</span>
+                <span>Basic SMS dashboard</span>
+                <i class="fal fa-angle-down ml-1"></i>
+              </div>
+              <button class="px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
+                <i class="fal fa-save mr-2"></i>Save
+              </button>
+              <button class="px-3 py-1.5 rounded-full bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 border border-webropol-gray-200">
+                <i class="fal fa-save mr-2"></i>Save as
+              </button>
+            </div>
+            <div class="flex items-center gap-6 text-webropol-gray-700">
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-filter text-xl mb-1"></i><span>Filter</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-sliders-h text-xl mb-1"></i><span>Compare</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-users text-xl mb-1"></i><span>Respondents</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
+              </button>
+              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+                <i class="fal fa-plus-square text-xl mb-1"></i><span>Add Elements</span>
+              </button>
+              <button @click="exportOpen = true" class="flex flex-col items-center text-sm text-amber-700 hover:text-amber-800">
+                <i class="fal fa-share-square text-xl mb-1"></i><span>Export &amp; Share</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 px-1">
+
+            <!-- Sidebar -->
+            <aside class="lg:col-span-1">
+              <div class="bg-white/90 rounded-2xl border border-webropol-gray-100 shadow-card p-4 space-y-1">
+                <div class="text-xs font-semibold text-webropol-gray-500 uppercase tracking-wider mb-3 px-1">Dashboard elements</div>
+                <template x-for="item in sidebarItems" :key="item.id">
+                  <button class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-webropol-gray-700 hover:bg-webropol-primary-50 hover:text-webropol-primary-800 transition-colors"
+                    @click="selectedElement = item.id"
+                    :class="selectedElement === item.id ? 'bg-webropol-primary-50 text-webropol-primary-800 font-medium' : ''">
+                    <i class="fal text-base w-5 text-center" :class="item.icon"></i>
+                    <span x-text="item.label"></span>
+                  </button>
+                </template>
+              </div>
+            </aside>
+
+            <!-- Main report -->
+            <section class="lg:col-span-3 space-y-5">
+
+              <!-- Banner -->
+              <div x-data="{ show: sessionStorage.getItem('smsReportBannerDismissed') !== '1', dontShow: false, dismiss() { if (this.dontShow) sessionStorage.setItem('smsReportBannerDismissed','1'); this.show = false; } }">
+                <div x-show="show" class="bg-amber-50 border border-amber-300 rounded-xl p-4 sm:p-5 shadow-card">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 class="font-semibold text-webropol-gray-900 mb-2">Remember to save changes</h3>
+                      <p class="text-sm text-webropol-gray-700 mb-4">This dashboard has unsaved changes. Save with a new name to keep them.</p>
+                      <label class="inline-flex items-center gap-2 text-sm">
+                        <input type="checkbox" class="w-4 h-4" x-model="dontShow">
+                        <span>Don't show again this session</span>
+                      </label>
+                    </div>
+                    <button class="text-webropol-gray-500 hover:text-webropol-gray-700" @click="dismiss()"><i class="fal fa-times"></i></button>
+                  </div>
+                  <div class="mt-4 flex flex-wrap gap-3">
+                    <button @click="dismiss()" class="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-medium">Continue editing</button>
+                    <button class="px-4 py-2 rounded-full bg-white border border-webropol-gray-300 text-webropol-gray-700 hover:bg-webropol-gray-50">Open basic dashboard</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Summary KPIs -->
+              <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-webropol-gray-900 mb-5">Survey summary</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div class="text-center p-4 bg-webropol-gray-50 rounded-xl">
+                    <div class="text-2xl font-bold text-webropol-primary-700">453</div>
+                    <div class="text-xs text-webropol-gray-500 mt-1">SMS sent</div>
+                  </div>
+                  <div class="text-center p-4 bg-green-50 rounded-xl">
+                    <div class="text-2xl font-bold text-green-700">263</div>
+                    <div class="text-xs text-webropol-gray-500 mt-1">Replies received</div>
+                  </div>
+                  <div class="text-center p-4 bg-cyan-50 rounded-xl">
+                    <div class="text-2xl font-bold text-cyan-700">58%</div>
+                    <div class="text-xs text-webropol-gray-500 mt-1">Response rate</div>
+                  </div>
+                  <div class="text-center p-4 bg-amber-50 rounded-xl">
+                    <div class="text-2xl font-bold text-amber-700">4m 37s</div>
+                    <div class="text-xs text-webropol-gray-500 mt-1">Avg. reply time</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Question 1: Selection (bar chart) -->
+              <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100 p-6">
+                <div class="flex items-start justify-between mb-5">
+                  <div>
+                    <div class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-wide mb-1">Question 1 · Selection</div>
+                    <h3 class="text-base font-semibold text-webropol-gray-900">How would you rate your experience?</h3>
+                  </div>
+                  <div class="flex gap-1">
+                    <button class="survey-action-btn rounded-xl bg-webropol-gray-50 border border-webropol-gray-200 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition">
+                      <i class="fal fa-chart-bar"></i>
+                    </button>
+                    <button class="survey-action-btn rounded-xl bg-webropol-gray-50 border border-webropol-gray-200 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition">
+                      <i class="fal fa-table"></i>
+                    </button>
+                    <button class="survey-action-btn rounded-xl bg-webropol-gray-50 border border-webropol-gray-200 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 transition">
+                      <i class="fal fa-ellipsis-h"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <template x-for="opt in q1Options" :key="opt.label">
+                    <div class="chart-row-animate">
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm text-webropol-gray-700" x-text="opt.label"></span>
+                        <span class="text-sm font-semibold text-webropol-gray-900" x-text="opt.pct + '%  (' + opt.count + ')'"></span>
+                      </div>
+                      <div class="h-7 bg-webropol-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full chart-bar-animate bg-webropol-primary-500" :style="'width:' + opt.pct + '%'"></div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div class="mt-4 pt-4 border-t border-webropol-gray-100 flex items-center gap-6 text-sm text-webropol-gray-500">
+                  <span>Total replies: <strong class="text-webropol-gray-900">263</strong></span>
+                  <span>No answer: <strong class="text-webropol-gray-900">0</strong></span>
+                </div>
+              </div>
+
+              <!-- Question 2: NPS -->
+              <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100 p-6">
+                <div class="flex items-start justify-between mb-5">
+                  <div>
+                    <div class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-wide mb-1">Question 2 · NPS</div>
+                    <h3 class="text-base font-semibold text-webropol-gray-900">How likely are you to recommend us?</h3>
+                  </div>
+                  <div class="flex gap-1">
+                    <button class="survey-action-btn rounded-xl bg-webropol-gray-50 border border-webropol-gray-200 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition">
+                      <i class="fal fa-chart-bar"></i>
+                    </button>
+                    <button class="survey-action-btn rounded-xl bg-webropol-gray-50 border border-webropol-gray-200 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 transition">
+                      <i class="fal fa-ellipsis-h"></i>
+                    </button>
+                  </div>
+                </div>
+                <!-- NPS Score display -->
+                <div class="flex items-center justify-center gap-8 mb-6">
+                  <div class="text-center">
+                    <div class="text-5xl font-black text-webropol-primary-700">+42</div>
+                    <div class="text-sm text-webropol-gray-500 mt-1">NPS Score</div>
+                  </div>
+                  <div class="h-16 w-px bg-webropol-gray-200"></div>
+                  <div class="flex gap-6">
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-green-600">57%</div>
+                      <div class="text-xs text-webropol-gray-500 mt-1">Promoters<br>(9–10)</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-amber-500">28%</div>
+                      <div class="text-xs text-webropol-gray-500 mt-1">Passives<br>(7–8)</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-red-500">15%</div>
+                      <div class="text-xs text-webropol-gray-500 mt-1">Detractors<br>(0–6)</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Distribution bar -->
+                <div class="h-6 rounded-full overflow-hidden flex">
+                  <div class="bg-red-400" style="width:15%"></div>
+                  <div class="bg-amber-400" style="width:28%"></div>
+                  <div class="bg-green-500" style="width:57%"></div>
+                </div>
+                <div class="flex justify-between text-xs text-webropol-gray-500 mt-1 px-1">
+                  <span>Detractors 15%</span>
+                  <span>Passives 28%</span>
+                  <span>Promoters 57%</span>
+                </div>
+              </div>
+
+            </section>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Export modal overlay -->
+  <div x-show="exportOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="exportOpen = false"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-webropol-gray-900">Export &amp; Share</h3>
+        <button @click="exportOpen = false" class="text-webropol-gray-400 hover:text-webropol-gray-700"><i class="fal fa-times text-lg"></i></button>
+      </div>
+      <div class="space-y-3">
+        <button class="w-full flex items-center gap-3 p-4 rounded-xl border border-webropol-gray-200 hover:bg-webropol-gray-50 text-left transition">
+          <i class="fal fa-file-pdf text-red-500 text-xl w-7"></i>
+          <div><div class="font-medium text-webropol-gray-900">Export as PDF</div><div class="text-sm text-webropol-gray-500">Download full report</div></div>
+        </button>
+        <button class="w-full flex items-center gap-3 p-4 rounded-xl border border-webropol-gray-200 hover:bg-webropol-gray-50 text-left transition">
+          <i class="fal fa-file-excel text-green-600 text-xl w-7"></i>
+          <div><div class="font-medium text-webropol-gray-900">Export as Excel</div><div class="text-sm text-webropol-gray-500">Download raw data</div></div>
+        </button>
+        <button class="w-full flex items-center gap-3 p-4 rounded-xl border border-webropol-gray-200 hover:bg-webropol-gray-50 text-left transition">
+          <i class="fal fa-link text-webropol-primary-500 text-xl w-7"></i>
+          <div><div class="font-medium text-webropol-gray-900">Share public link</div><div class="text-sm text-webropol-gray-500">Create shareable report link</div></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>[x-cloak]{display:none!important}</style>
+
+  <script>
+    function smsReportApp() {
+      return {
+        exportOpen: false,
+        selectedElement: 'summary',
+        sidebarItems: [
+          { id: 'summary', icon: 'fa-tachometer-alt', label: 'Survey summary' },
+          { id: 'q1', icon: 'fa-list-ul', label: 'Q1 – Selection' },
+          { id: 'q2', icon: 'fa-chart-line', label: 'Q2 – NPS' },
+        ],
+        q1Options: [
+          { label: 'Excellent', pct: 38, count: 100 },
+          { label: 'Good', pct: 29, count: 76 },
+          { label: 'Average', pct: 22, count: 58 },
+          { label: 'Poor', pct: 11, count: 29 },
+        ],
+        init() {}
+      }
+    }
+  </script>
+</body>
+</html>
