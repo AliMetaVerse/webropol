@@ -54,7 +54,7 @@
 
     /* Constrain send-to dropdown to panel width */
     #send-to-dropdown .dropdown-menu { width: 100%; }
-    #send-to-dropdown .dropdown-menu > div { white-space: normal; }
+    #send-to-dropdown .dropdown-menu > div { white-space: normal; max-height: none; overflow-y: visible; }
     #send-to-dropdown .dropdown-option span { white-space: normal; word-break: break-word; }
   </style>
 </head>
@@ -235,7 +235,7 @@
                           </button>
                         </td>
                         <td class="px-3 py-2.5">
-                          <input type="checkbox" :checked="r.selected" @change="r.selected = $event.target.checked" class="rounded border-webropol-gray-300">
+                          <input type="checkbox" :checked="r.selected" @change="r.selected = $event.target.checked; onRowCheck()" class="rounded border-webropol-gray-300">
                         </td>
                         <td class="px-3 py-2.5 font-mono text-webropol-gray-800" x-text="r.phone"></td>
                         <td class="px-3 py-2.5 text-webropol-gray-700" x-text="r.sent"></td>
@@ -338,7 +338,11 @@
                           {"label": "Recipients who haven\u0027t received SMS reminder", "value": "not_reminded", "icon": "fa-bell-slash"},
                           {"label": "Recipients who haven\u0027t answered", "value": "not_answered", "icon": "fa-comment-slash"}
                         ]'
-                        x-init="$el.addEventListener('change', e => selectedList = e.detail.value)">
+                        x-init="$el.addEventListener('change', e => {
+                            selectedList = e.detail.value;
+                            if (e.detail.value === 'all') recipients.forEach(r => r.selected = true);
+                            if (e.detail.value !== 'all' && e.detail.value !== 'from_list') recipients.forEach(r => r.selected = false);
+                          })">
                       </webropol-dropdown>
                       <p class="mt-1.5 text-xs text-webropol-gray-500 leading-relaxed">SMS is only sent to recipients with a mobile number.</p>
                     </div>
@@ -590,6 +594,32 @@
         },
         toggleAll(e) {
           this.recipients.forEach(r => r.selected = e.target.checked);
+          if (e.target.checked) {
+            this.setDropdownValue('all');
+          } else {
+            this.setDropdownValue('');
+          }
+        },
+
+        onRowCheck() {
+          const count = this.recipients.filter(r => r.selected).length;
+          if (count === this.recipients.length) {
+            this.setDropdownValue('all');
+          } else if (count > 0) {
+            this.setDropdownValue('from_list');
+          } else {
+            this.setDropdownValue('');
+          }
+        },
+
+        setDropdownValue(value) {
+          this.selectedList = value;
+          const el = document.getElementById('send-to-dropdown');
+          if (el) {
+            el.setAttribute('value', value);
+            // Re-render the component to reflect the new selected state
+            if (typeof el.render === 'function') { el.render(); el.bindEvents && el.bindEvents(); }
+          }
         },
 
         get selectedCount() {
