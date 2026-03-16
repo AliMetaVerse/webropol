@@ -9,10 +9,12 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
-    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
     <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
     <script src="../design-system/components/navigation/SurveyHelperToolbar.js" type="module"></script>
     <script src="../design-system/components/navigation/SurveyEditToolbar.js" type="module"></script>
+    <script src="./components/questions/SMSYesNo.js" type="module"></script>
+    <script src="./components/questions/SMSNpsQuestion.js" type="module"></script>
+    <script src="./components/questions/SMSOpenEnded.js" type="module"></script>
     <link rel="stylesheet" href="../design-system/styles/tokens.css">
     <script>
         tailwind.config = {
@@ -151,10 +153,6 @@
         <webropol-sidebar active="sms" base="../"></webropol-sidebar>
         <div class="flex-1 flex flex-col overflow-hidden">
             <webropol-header username="Ali Al-Zuhairi" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
-            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 border-b border-webropol-gray-200">
-                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"2-Way SMS","url":"list.html"},{"label":"Edit","url":"#"}]'></webropol-breadcrumbs>
-            </div>
-
             <main class="flex-1 overflow-hidden" role="main">
                 <div class="flex items-center justify-between border-b border-webropol-gray-300">
                     <webropol-survey-action-tabs active="edit" context="sms"></webropol-survey-action-tabs>
@@ -216,62 +214,51 @@
 
                     <section class="flex-1 overflow-y-auto px-8 py-4">
                         <div class="max-w-[760px] mx-auto pb-10">
-                            <div class="flex justify-center mb-4">
-                                <div class="sms-badge"><i class="fal fa-message"></i> SMS 1 <span>(9 Characters) 1 Credits</span></div>
-                            </div>
-                            <div class="survey-card p-5 mb-5">
-                                <h3 class="text-[2rem] font-semibold text-center mb-4" x-text="surveyName"></h3>
-                                <div class="question-frame">
-                                    <div class="text-xl font-semibold mb-5">1. Selection</div>
-                                    <div class="space-y-4 text-lg">
-                                        <template x-for="item in ['a1', 'a2', 'a3']" :key="item">
-                                            <label class="flex items-center gap-3 cursor-pointer">
-                                                <span class="choice-dot"></span>
-                                                <span x-text="item"></span>
-                                            </label>
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="pt-5 text-center text-webropol-primary-700 font-medium">
-                                    <button type="button" class="inline-flex items-center gap-2"><i class="fal fa-circle-plus"></i><span>Add New SMS Question</span></button>
-                                </div>
-                            </div>
 
-                            <div class="flex justify-center mb-4">
-                                <div class="sms-badge"><i class="fal fa-message"></i> SMS 2 <span>(3 Characters) 1 Credits</span></div>
-                            </div>
-                            <div class="survey-card p-5 mb-5">
-                                <h3 class="text-[2rem] font-semibold text-center mb-4" x-text="surveyName"></h3>
-                                <div class="question-frame">
-                                    <div class="text-xl font-semibold mb-5">2. NPS</div>
-                                    <div class="max-w-[520px] mx-auto">
-                                        <div class="flex justify-center gap-6 text-sm mb-2 px-4">
-                                            <template x-for="n in Array.from({ length: 11 }, (_, index) => index)" :key="n">
-                                                <span x-text="n"></span>
-                                            </template>
-                                        </div>
-                                        <div class="flex items-center justify-center gap-3 mb-2">
-                                            <template x-for="n in Array.from({ length: 11 }, (_, index) => index)" :key="'dot-' + n">
-                                                <span class="rating-dot"></span>
-                                            </template>
-                                        </div>
-                                        <div class="flex justify-between text-sm text-webropol-gray-700 px-4">
-                                            <span>Not at all likely</span>
-                                            <span>Extremely likely</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="pt-5 text-center text-webropol-primary-700 font-medium">
-                                    <button type="button" class="inline-flex items-center gap-2"><i class="fal fa-circle-plus"></i><span>Add New SMS Question</span></button>
-                                </div>
-                            </div>
+                            <!-- Q1: Yes / No selection -->
+                            <webropol-sms-yes-no
+                                :survey-name="surveyName"
+                                question-number="1"
+                                sms-number="1"
+                                characters="94"
+                                credits="1"
+                                mode="edit"
+                                question-id="sms-q1"
+                                question-text="Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No">
+                            </webropol-sms-yes-no>
 
+                            <!-- Q2: NPS scale -->
+                            <webropol-sms-nps
+                                :survey-name="surveyName"
+                                question-number="2"
+                                sms-number="2"
+                                characters="169"
+                                credits="2"
+                                mode="edit"
+                                question-id="sms-q2"
+                                question-text="How easy or difficult has it been to use Webropol&#39;s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.">
+                            </webropol-sms-nps>
+
+                            <!-- Q3: Open-ended -->
+                            <webropol-sms-open-ended
+                                :survey-name="surveyName"
+                                question-number="3"
+                                sms-number="3"
+                                characters="54"
+                                credits="1"
+                                mode="edit"
+                                question-id="sms-q3"
+                                question-text="Please share any comments or suggestions you may have:">
+                            </webropol-sms-open-ended>
+
+                            <!-- Thank you page -->
                             <div class="flex justify-center mb-4">
                                 <div class="sms-badge"><i class="fal fa-hand-holding-heart"></i> Thank You Page</div>
                             </div>
                             <div class="survey-card p-10 text-center text-4xl text-webropol-gray-500">
                                 Add thank you page message
                             </div>
+
                         </div>
                     </section>
                 </div>
@@ -286,16 +273,23 @@
                 pages: [
                     {
                         id: 1,
-                        label: 'Page 1',
+                        label: 'SMS 1',
                         questions: [
-                            { id: 'q1', label: 'Selection' }
+                            { id: 'sms-q1', label: 'Yes / No' }
                         ]
                     },
                     {
                         id: 2,
-                        label: 'Page 2',
+                        label: 'SMS 2',
                         questions: [
-                            { id: 'q2', label: 'NPS' }
+                            { id: 'sms-q2', label: 'NPS Scale' }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        label: 'SMS 3',
+                        questions: [
+                            { id: 'sms-q3', label: 'Open Ended' }
                         ]
                     }
                 ],

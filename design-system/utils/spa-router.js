@@ -442,8 +442,14 @@ class WebropolSPA {
       const purePath = (path || '').split('?')[0] || '/';
       const isSurveyEditRoute = purePath === '/surveys/edit';
       const isSurveyReportRoute = purePath === '/surveys/report';
+      // Editor tab routes: hide breadcrumbs for all survey/sms tab pages
+      const isEditorTabsRoute = [
+        '/surveys/edit', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
+        '/sms/edit', '/sms/collect', '/sms/aita', '/sms/follow', '/sms/report'
+      ].includes(purePath);
       document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
       document.body.classList.toggle('route-surveys-report', isSurveyReportRoute);
+      document.body.classList.toggle('route-editor-tabs', isEditorTabsRoute);
     } catch (_) {
       // ignore
     }
@@ -835,9 +841,14 @@ class WebropolSPA {
       }
 
       // Update header component title if present (enhanced or legacy)
+      // Skip title display on editor tab routes (surveys/sms edit/collect/aita/follow/report)
+      const isEditorTabsRoute = [
+        '/surveys/edit', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
+        '/sms/edit', '/sms/collect', '/sms/aita', '/sms/follow', '/sms/report'
+      ].includes(purePath);
       const header = document.querySelector('webropol-header-enhanced, webropol-header');
-      if (header && label) {
-        header.setAttribute('title', label);
+      if (header) {
+        header.setAttribute('title', isEditorTabsRoute ? '' : (label || ''));
       }
     } catch (_) {
       // ignore
