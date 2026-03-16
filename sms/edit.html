@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit 2-Way SMS - Webropol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+    <script src="../design-system/components/navigation/Header.js" type="module"></script>
+    <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <link rel="stylesheet" href="../design-system/styles/tokens.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+                        'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        soft: '0 10px 30px -18px rgba(15, 23, 42, 0.18)',
+                        card: '0 8px 30px -16px rgba(15, 23, 42, 0.14)'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .mini-tool {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            width: 90px;
+            min-height: 86px;
+            border-radius: 18px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 24px -18px rgba(15, 23, 42, 0.3);
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+
+        .mini-tool:hover,
+        .mini-tool.active {
+            border-color: #bae6fd;
+            background: #f0fdff;
+            color: #0e7490;
+        }
+
+        .mini-tool i {
+            font-size: 1.15rem;
+        }
+
+        .structure-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.2rem;
+            color: #334155;
+            font-size: 0.92rem;
+        }
+
+        .sms-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.55rem;
+            border-radius: 0.6rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 0.72rem;
+            font-weight: 500;
+        }
+
+        .survey-card {
+            background: white;
+            border-radius: 1.6rem;
+            box-shadow: 0 18px 40px -30px rgba(15, 23, 42, 0.28);
+            border: 1px solid #e2e8f0;
+        }
+
+        .question-frame {
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.3rem 1.45rem;
+            background: white;
+        }
+
+        .choice-dot {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 9999px;
+            border: 1.5px solid #111827;
+            display: inline-block;
+            background: white;
+        }
+
+        .rating-dot {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 9999px;
+            border: 1px solid #111827;
+            display: inline-block;
+        }
+
+        .structure-divider {
+            width: 1px;
+            background: #bae6fd;
+            align-self: stretch;
+            position: relative;
+        }
+
+        .structure-toggle {
+            position: absolute;
+            top: 48%;
+            right: -10px;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 34px;
+            border-radius: 9999px;
+            background: #06b6d4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 18px -14px rgba(15, 23, 42, 0.45);
+        }
+    </style>
+</head>
+<body x-data="smsEditApp()" class="bg-[#eef9fd] text-webropol-gray-900">
+    <div class="flex h-screen">
+        <webropol-sidebar active="sms" base="../"></webropol-sidebar>
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <webropol-header username="Ali Al-Zuhairi" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
+            <div class="bg-white/70 backdrop-blur px-0 sm:px-4 border-b border-webropol-gray-200">
+                <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"2-Way SMS","url":"list.html"},{"label":"Edit","url":"#"}]'></webropol-breadcrumbs>
+            </div>
+
+            <main class="flex-1 overflow-hidden" role="main">
+                <div class="border-b border-webropol-gray-300 bg-[#e8f7fd] px-6">
+                    <div class="flex items-center justify-between gap-4 overflow-x-auto">
+                        <div class="flex gap-4 min-w-max">
+                            <button type="button" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out bg-white shadow-sm relative -mb-[2px]" aria-current="page">
+                                <span class="inline-flex w-8 h-8 rounded-full bg-green-100 items-center justify-center">
+                                    <i class="fal fa-edit text-green-700"></i>
+                                </span>
+                                <span>Edit</span>
+                                <div class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>
+                            </button>
+                            <button type="button" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] whitespace-nowrap">
+                                <span class="inline-flex w-8 h-8 rounded-full bg-sky-100 items-center justify-center">
+                                    <i class="fa-light fa-users text-sky-700"></i>
+                                </span>
+                                <span>Collect Answers</span>
+                            </button>
+                            <button type="button" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] whitespace-nowrap">
+                                <span class="inline-flex w-8 h-8 rounded-full bg-rose-100 items-center justify-center">
+                                    <i class="fal fa-eye text-rose-700"></i>
+                                </span>
+                                <span>Follow up</span>
+                            </button>
+                            <button type="button" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] whitespace-nowrap">
+                                <span class="inline-flex w-8 h-8 rounded-full bg-amber-100 items-center justify-center">
+                                    <i class="fal fa-chart-line text-amber-700"></i>
+                                </span>
+                                <span>Report</span>
+                            </button>
+                            <button type="button" class="px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01] whitespace-nowrap">
+                                <span class="inline-flex w-8 h-8 rounded-full bg-orange-100 items-center justify-center">
+                                    <i class="fal fa-magnifying-glass-chart text-orange-700"></i>
+                                </span>
+                                <span>AI Text Analysis</span>
+                            </button>
+                        </div>
+                        <div class="ml-auto flex items-center gap-4 pl-6 whitespace-nowrap">
+                            <div class="inline-flex items-center gap-3 rounded-[26px] border border-green-200 bg-green-50 px-4 py-3 text-sm text-webropol-gray-700">
+                                <span class="inline-flex w-10 h-10 rounded-full bg-green-100 text-green-700 items-center justify-center"><i class="fal fa-file-lines"></i></span>
+                                <div>
+                                    <div class="text-green-700 font-bold uppercase tracking-wide text-xs">Open</div>
+                                    <div x-text="surveyName"></div>
+                                </div>
+                            </div>
+                            <button type="button" class="w-14 h-14 rounded-2xl bg-white border border-webropol-gray-200 text-webropol-gray-600"><i class="fal fa-pen-to-square text-xl"></i></button>
+                            <button type="button" class="w-14 h-14 rounded-2xl bg-white border border-webropol-gray-200 text-webropol-gray-600"><i class="fal fa-ellipsis-vertical text-xl"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-3 border-b border-webropol-gray-200 bg-[#e8f7fd] flex items-center gap-3 overflow-x-auto">
+                    <button type="button" class="mini-tool active">
+                        <i class="fal fa-plus text-orange-600"></i>
+                        <span class="text-xs font-medium">Add question</span>
+                    </button>
+                    <button type="button" class="mini-tool">
+                        <i class="fal fa-shield-check text-sky-700"></i>
+                        <span class="text-xs font-medium">Personal data</span>
+                    </button>
+                    <button type="button" class="mini-tool">
+                        <i class="fal fa-gear text-webropol-gray-700"></i>
+                        <span class="text-xs font-medium">Settings</span>
+                    </button>
+                    <div class="ml-auto flex items-center gap-2">
+                        <button type="button" class="w-10 h-10 rounded-xl border border-webropol-primary-300 text-webropol-primary-600 bg-white"><i class="fal fa-message-lines"></i></button>
+                        <button type="button" class="w-10 h-10 rounded-xl border border-webropol-primary-300 text-webropol-primary-600 bg-white"><i class="fal fa-ellipsis-vertical"></i></button>
+                    </div>
+                </div>
+
+                <div class="flex h-[calc(100vh-215px)] overflow-hidden bg-[#eef9fd]">
+                    <aside class="w-[280px] shrink-0 px-5 py-4 overflow-y-auto">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold">Survey structure</h2>
+                            <button type="button" class="text-webropol-gray-400"><i class="fal fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-5 text-sm">
+                            <button type="button" class="px-4 py-2 rounded-full bg-white border border-webropol-gray-200 text-webropol-gray-600">Move</button>
+                            <button type="button" class="px-4 py-2 rounded-full bg-white border border-webropol-gray-200 text-webropol-gray-600">Copy</button>
+                            <button type="button" class="px-4 py-2 rounded-full bg-white border border-webropol-gray-200 text-webropol-gray-600">Delete</button>
+                        </div>
+
+                        <div class="space-y-2">
+                            <template x-for="page in pages" :key="page.id">
+                                <div>
+                                    <div class="structure-item font-semibold uppercase text-sm">
+                                        <input type="checkbox" class="rounded border-webropol-gray-300">
+                                        <i class="fal fa-file-lines text-webropol-gray-500"></i>
+                                        <span x-text="page.label"></span>
+                                        <button type="button" class="ml-auto text-webropol-gray-500"><i class="fal fa-angle-down"></i></button>
+                                    </div>
+                                    <div class="ml-7 space-y-1 pb-2">
+                                        <template x-for="question in page.questions" :key="question.id">
+                                            <div class="structure-item text-webropol-gray-700">
+                                                <input type="checkbox" class="rounded border-webropol-gray-300">
+                                                <span x-text="question.label"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                            <div class="structure-item text-webropol-gray-700 pt-2">
+                                <i class="fal fa-thumbs-up text-webropol-gray-500"></i>
+                                <span>Thank you page</span>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <div class="structure-divider">
+                        <div class="structure-toggle"><i class="fal fa-angle-left"></i></div>
+                    </div>
+
+                    <section class="flex-1 overflow-y-auto px-8 py-4">
+                        <div class="max-w-[760px] mx-auto pb-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="sms-badge"><i class="fal fa-message"></i> SMS 1 <span>(9 Characters) 1 Credits</span></div>
+                            </div>
+                            <div class="survey-card p-5 mb-5">
+                                <h3 class="text-[2rem] font-semibold text-center mb-4" x-text="surveyName"></h3>
+                                <div class="question-frame">
+                                    <div class="text-xl font-semibold mb-5">1. Selection</div>
+                                    <div class="space-y-4 text-lg">
+                                        <template x-for="item in ['a1', 'a2', 'a3']" :key="item">
+                                            <label class="flex items-center gap-3 cursor-pointer">
+                                                <span class="choice-dot"></span>
+                                                <span x-text="item"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="pt-5 text-center text-webropol-primary-700 font-medium">
+                                    <button type="button" class="inline-flex items-center gap-2"><i class="fal fa-circle-plus"></i><span>Add New SMS Question</span></button>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-center mb-4">
+                                <div class="sms-badge"><i class="fal fa-message"></i> SMS 2 <span>(3 Characters) 1 Credits</span></div>
+                            </div>
+                            <div class="survey-card p-5 mb-5">
+                                <h3 class="text-[2rem] font-semibold text-center mb-4" x-text="surveyName"></h3>
+                                <div class="question-frame">
+                                    <div class="text-xl font-semibold mb-5">2. NPS</div>
+                                    <div class="max-w-[520px] mx-auto">
+                                        <div class="flex justify-center gap-6 text-sm mb-2 px-4">
+                                            <template x-for="n in Array.from({ length: 11 }, (_, index) => index)" :key="n">
+                                                <span x-text="n"></span>
+                                            </template>
+                                        </div>
+                                        <div class="flex items-center justify-center gap-3 mb-2">
+                                            <template x-for="n in Array.from({ length: 11 }, (_, index) => index)" :key="'dot-' + n">
+                                                <span class="rating-dot"></span>
+                                            </template>
+                                        </div>
+                                        <div class="flex justify-between text-sm text-webropol-gray-700 px-4">
+                                            <span>Not at all likely</span>
+                                            <span>Extremely likely</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-5 text-center text-webropol-primary-700 font-medium">
+                                    <button type="button" class="inline-flex items-center gap-2"><i class="fal fa-circle-plus"></i><span>Add New SMS Question</span></button>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-center mb-4">
+                                <div class="sms-badge"><i class="fal fa-hand-holding-heart"></i> Thank You Page</div>
+                            </div>
+                            <div class="survey-card p-10 text-center text-4xl text-webropol-gray-500">
+                                Add thank you page message
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function smsEditApp() {
+            return {
+                surveyName: 'new 2-way sms survey',
+                pages: [
+                    {
+                        id: 1,
+                        label: 'Page 1',
+                        questions: [
+                            { id: 'q1', label: 'Selection' }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        label: 'Page 2',
+                        questions: [
+                            { id: 'q2', label: 'NPS' }
+                        ]
+                    }
+                ],
+                init() {
+                    const query = new URLSearchParams(window.__pageQueryString || window.location.search || '');
+                    const id = query.get('id');
+                    const names = {
+                        '1': 'new 2-way sms survey',
+                        '2': 'Customer Satisfaction Survey',
+                        '3': 'Event attendance confirmation',
+                        '4': 'Support case callback request',
+                        '5': 'Delivery experience pulse'
+                    };
+                    if (id && names[id]) {
+                        this.surveyName = names[id];
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
