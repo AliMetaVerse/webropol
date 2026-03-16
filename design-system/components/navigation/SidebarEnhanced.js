@@ -241,6 +241,20 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     return 'home';
   }
 
+  navigateToRoute(route) {
+    if (!route) return;
+
+    if (window.WebropolSPA) {
+      window.WebropolSPA.navigate(route);
+      return;
+    }
+
+    const base = this.getAttr('base', '');
+    const normalizedBase = base ? (base.endsWith('/') ? base : `${base}/`) : '';
+    const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
+    window.location.href = `${normalizedBase}index.html#${normalizedRoute}`;
+  }
+
   handleHashChange() {
     const active = this.getActiveIdFromHash();
     // Update attribute so desktop/tablet re-render and mobile sync updates
@@ -303,7 +317,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       },
       {
         id: 'sms',
-        href: '#/sms',
+        href: '#/sms/list',
         icon: 'fa-duotone fa-thin fa-sms',
         label: '2-Way SMS',
         active: active === 'sms',
@@ -506,9 +520,9 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           this.closeMobileMenu();
         } else if (navItem) {
           const route = navItem.getAttribute('data-route');
-          if (route && window.WebropolSPA) {
+          if (route) {
             e.preventDefault();
-            window.WebropolSPA.navigate(route);
+            this.navigateToRoute(route);
           }
           setTimeout(() => this.closeMobileMenu(), 150);
         }
@@ -761,9 +775,9 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       // Handle SPA navigation
       const route = navItem.getAttribute('data-route');
       const id = navItem.getAttribute('data-id');
-      if (route && window.WebropolSPA) {
+      if (route) {
         e.preventDefault();
-        window.WebropolSPA.navigate(route);
+        this.navigateToRoute(route);
       }
       if (id) {
         this.setAttribute('active', id);

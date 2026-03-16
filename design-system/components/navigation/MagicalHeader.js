@@ -68,7 +68,7 @@ export class WebropolMagicalHeader extends BaseComponent {
                         </span>
                         <span class="font-medium">Events</span>
                     </a>
-                    <a href="#/sms" class="flex items-center px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-webropol-royalBlue-600 transition-colors group">
+                    <a href="#/sms/list" class="flex items-center px-5 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-webropol-royalBlue-600 transition-colors group">
                         <span class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center mr-3 group-hover:bg-webropol-royalBlue-50 transition-colors border border-slate-100 group-hover:border-webropol-royalBlue-100">
                             <i class="fa-regular fa-sms text-slate-400 group-hover:text-webropol-royalBlue-500"></i>
                         </span>

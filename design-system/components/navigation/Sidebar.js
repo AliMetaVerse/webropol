@@ -12,6 +12,20 @@ export class WebropolSidebar extends BaseComponent {
     return ['active', 'base'];
   }
 
+  navigateToRoute(route) {
+    if (!route) return;
+
+    if (window.WebropolSPA) {
+      window.WebropolSPA.navigate(route);
+      return;
+    }
+
+    const base = this.getAttr('base', '');
+    const normalizedBase = base ? (base.endsWith('/') ? base : `${base}/`) : '';
+    const normalizedRoute = route.startsWith('/') ? route : `/${route}`;
+    window.location.href = `${normalizedBase}index.html#${normalizedRoute}`;
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       this.render();
@@ -126,7 +140,7 @@ export class WebropolSidebar extends BaseComponent {
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Events</span>
           </a>
           
-          <a href="#/sms" data-route="/sms" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
+          <a href="#/sms/list" data-route="/sms/list" class="nav-item flex items-center rounded-xl font-semibold transition-all duration-200 group/item
                                                     xl:px-4 px-3
                                                     group-hover:px-4
                                                     py-3
@@ -293,9 +307,9 @@ export class WebropolSidebar extends BaseComponent {
 
       // SPA client-side route
       const route = navItem.getAttribute('data-route');
-      if (route && window.WebropolSPA) {
+      if (route) {
         e.preventDefault();
-        window.WebropolSPA.navigate(route);
+        this.navigateToRoute(route);
       }
 
       // Collapse on small screens after navigation
