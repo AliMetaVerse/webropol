@@ -157,6 +157,8 @@ class WebropolSPA {
     
     // Load if route is not home (shell already shows home content)
     if (initialRoute !== '/home' && initialRoute !== '/') {
+      // Immediately clear home content to avoid flash while async fetch runs
+      this.container.innerHTML = '<div class="flex items-center justify-center" style="height:60vh"><div style="width:2.5rem;height:2.5rem;border:3px solid #e2e8f0;border-top-color:#06b6d4;border-radius:50%;animation:spa-spin .7s linear infinite"></div></div><style>@keyframes spa-spin{to{transform:rotate(360deg)}}</style>';
       this.load(initialRoute);
     }
   }

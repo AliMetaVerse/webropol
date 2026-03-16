@@ -1,11 +1,41 @@
 import { BaseComponent } from '../../utils/base-component.js';
 
 export class SurveyEditToolbar extends BaseComponent {
+  static get observedAttributes() {
+    return ['items'];
+  }
+
   init() {
     // No specific initialization needed
   }
 
   render() {
+    const itemsAttr = this.getAttr('items', '');
+    const filter = itemsAttr ? itemsAttr.split(',').map(s => s.trim()) : null;
+
+    const tool = (action, label, icon, isPrimary = false) => {
+      if (filter && !filter.includes(action)) return '';
+      const cls = isPrimary ? 'tool-item add-question-btn' : 'tool-item';
+      return `<button type="button" class="${cls}" aria-label="${label}" title="${label}" data-action="${action}">
+          <div class="tool-icon"><i class="${icon}"></i></div>
+          <span class="tool-label">${label}</span>
+        </button>`;
+    };
+
+    const sep = () => '<div class="toolbar-separator"></div>';
+
+    // Define groups; separators are placed between non-empty groups
+    const groups = [
+      [tool('add-question', 'Add Question', 'fal fa-plus-circle', true)],
+      [tool('etest', 'eTest', 'fal fa-flask'), tool('library', 'Library', 'fal fa-books')],
+      [tool('add-page', 'Add Page', 'fal fa-file-plus'), tool('add-phase', 'Add Phase', 'fal fa-layer-plus')],
+      [tool('language', 'Language', 'fal fa-globe'), tool('image-gallery', 'Image Gallery', 'fal fa-images'), tool('layout', 'Layout', 'fal fa-palette')],
+      [tool('personal-data', 'Personal Data', 'fal fa-user-shield'), tool('settings', 'Settings', 'fal fa-cog'), tool('preview', 'Preview & Test', 'fal fa-eye')],
+    ];
+
+    const visibleGroups = groups.map(g => g.filter(Boolean).join('\n        ')).filter(g => g.trim());
+    const toolsHTML = visibleGroups.join(`\n        ${sep()}\n        `);
+
     this.innerHTML = `
       <style>
         /* Modern Survey Edit Toolbar Styles */
@@ -197,101 +227,7 @@ export class SurveyEditToolbar extends BaseComponent {
         }
       </style>
       <div class="survey-edit-toolbar" role="toolbar" aria-label="Survey quick actions">
-        <!-- Add Question Button -->
-        <button type="button" class="tool-item add-question-btn" aria-label="Add Question" title="Add Question" data-action="add-question">
-          <div class="tool-icon">
-            <i class="fal fa-plus-circle"></i>
-          </div>
-          <span class="tool-label">Add Question</span>
-        </button>
-        
-        <div class="toolbar-separator"></div>
-        
-        <!-- eTest -->
-        <button type="button" class="tool-item" aria-label="eTest" title="eTest" data-action="etest">
-          <div class="tool-icon">
-            <i class="fal fa-flask"></i>
-          </div>
-          <span class="tool-label">eTest</span>
-        </button>
-        
-        <!-- Library -->
-        <button type="button" class="tool-item" aria-label="Library" title="Library" data-action="library">
-          <div class="tool-icon">
-            <i class="fal fa-books"></i>
-          </div>
-          <span class="tool-label">Library</span>
-        </button>
-        
-        <div class="toolbar-separator"></div>
-        
-        <!-- Add Page -->
-        <button type="button" class="tool-item" aria-label="Add Page" title="Add Page" data-action="add-page">
-          <div class="tool-icon">
-            <i class="fal fa-file-plus"></i>
-          </div>
-          <span class="tool-label">Add Page</span>
-        </button>
-        
-        <!-- Add Phase -->
-        <button type="button" class="tool-item" aria-label="Add Phase" title="Add Phase" data-action="add-phase">
-          <div class="tool-icon">
-            <i class="fal fa-layer-plus"></i>
-          </div>
-          <span class="tool-label">Add Phase</span>
-        </button>
-        
-        <div class="toolbar-separator"></div>
-        
-        <!-- Language -->
-        <button type="button" class="tool-item" aria-label="Language" title="Language" data-action="language">
-          <div class="tool-icon">
-            <i class="fal fa-globe"></i>
-          </div>
-          <span class="tool-label">Language</span>
-        </button>
-        
-        <!-- Image Gallery -->
-        <button type="button" class="tool-item" aria-label="Image Gallery" title="Image Gallery" data-action="image-gallery">
-          <div class="tool-icon">
-            <i class="fal fa-images"></i>
-          </div>
-          <span class="tool-label">Image Gallery</span>
-        </button>
-        
-        <!-- Layout -->
-        <button type="button" class="tool-item" aria-label="Layout" title="Layout" data-action="layout">
-          <div class="tool-icon">
-            <i class="fal fa-palette"></i>
-          </div>
-          <span class="tool-label">Layout</span>
-        </button>
-        
-        <div class="toolbar-separator"></div>
-        
-        <!-- Personal Data -->
-        <button type="button" class="tool-item" aria-label="Personal Data" title="Personal Data" data-action="personal-data">
-          <div class="tool-icon">
-            <i class="fal fa-user-shield"></i>
-          </div>
-          <span class="tool-label">Personal Data</span>
-        </button>
-        
-        <!-- Settings -->
-        <button type="button" class="tool-item" aria-label="Settings" title="Settings" data-action="settings">
-          <div class="tool-icon">
-            <i class="fal fa-cog"></i>
-          </div>
-          <span class="tool-label">Settings</span>
-        </button>
-        
-        <!-- Preview & Test -->
-        <button type="button" class="tool-item" aria-label="Preview and Test" title="Preview and Test" data-action="preview">
-          <div class="tool-icon">
-            <i class="fal fa-eye"></i>
-          </div>
-          <span class="tool-label">Preview & Test</span>
-        </button>
+        ${toolsHTML}
       </div>
     `;
   }

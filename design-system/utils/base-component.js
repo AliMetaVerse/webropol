@@ -11,13 +11,21 @@ export class BaseComponent extends HTMLElement {
   }
 
   connectedCallback() {
+    this._connected = true;
     this.init();
     this.render();
     this.bindEvents();
     this.setupAccessibility();
   }
 
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (!this._connected || oldValue === newValue) return;
+    this.render();
+    this.bindEvents();
+  }
+
   disconnectedCallback() {
+    this._connected = false;
     this.cleanup();
   }
 
