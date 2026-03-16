@@ -305,12 +305,21 @@
                       </div>
                     </template>
 
-                    <template x-if="!selectedSender || surveyClosed">
+                    <template x-if="surveyClosed">
+                      <div class="flex items-center gap-3 py-2.5 px-3 bg-webropol-gray-50 rounded-lg border border-webropol-gray-200">
+                        <i class="fal fa-sim-card text-webropol-gray-400 text-sm flex-shrink-0"></i>
+                        <div>
+                          <p class="text-xs text-webropol-gray-500 leading-none mb-0.5">Sender</p>
+                          <p class="text-sm font-mono font-medium text-webropol-gray-500" x-text="selectedSender"></p>
+                        </div>
+                        <span class="ml-auto text-xs font-medium text-webropol-gray-500 bg-webropol-gray-100 px-2 py-0.5 rounded-full">Closed</span>
+                      </div>
+                    </template>
+
+                    <template x-if="surveyClosed">
                       <div class="flex items-center gap-3 py-3 px-3 bg-amber-50 rounded-lg border border-amber-200">
                         <i class="fal fa-circle-exclamation text-amber-500 text-sm flex-shrink-0"></i>
-                        <p class="text-xs text-amber-700 leading-snug">
-                          Publish your survey first to enable sending.
-                        </p>
+                        <p class="text-xs text-amber-700 leading-snug">Survey is closed. Publish it again to enable sending.</p>
                       </div>
                     </template>
 
@@ -534,6 +543,10 @@
             const stored = localStorage.getItem('webropol_sms_credits_per_recipient');
             if (stored) this.creditsPerRecipient = parseInt(stored, 10) || 4;
           } catch (e) { /* ignore */ }
+          // Pre-assign the first available sender number
+          if (!this.selectedSender && this.senderNumbers.length > 0) {
+            this.selectedSender = this.senderNumbers[0].phone;
+          }
         },
         senderNumbers: [
           { phone: '+3584573966532', status: 'Available' },
