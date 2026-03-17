@@ -204,6 +204,17 @@
             z-index: 2147483640 !important;
         }
 
+        .in-own-tab .set-org-btn {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+            color: #94a3b8;
+        }
+
+        .in-own-tab .group:hover .set-org-tooltip {
+            display: block;
+        }
+
         .upload-dropzone {
             border: 1px dashed rgba(8, 145, 178, 0.28);
             background:
@@ -545,7 +556,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-6" x-show="pagedTemplates().length > 0" x-cloak>
+                            <div class="mt-6" :class="activeSideTab === 'own' ? 'in-own-tab' : ''" x-show="pagedTemplates().length > 0" x-cloak>
                                 <div class="table-shell hidden rounded-3xl xl:block">
                                     <table class="min-w-full border-collapse">
                                         <thead>
@@ -621,10 +632,16 @@
                                                                         <i class="fal fa-user-plus w-5 text-center text-lg"></i>
                                                                         <span x-text="template.sharedTo ? 'Unshare' : 'Share to'"></span>
                                                                     </button>
-                                                                    <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
-                                                                        <i class="fal fa-file-certificate w-5 text-center text-lg"></i>
-                                                                        <span>Set organization default</span>
-                                                                    </button>
+                                                                    <div class="group relative">
+                                                                        <button type="button" class="set-org-btn flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
+                                                                            <i class="fa-light fa-building w-5 text-center text-lg"></i>
+                                                                            <span>Set organization default</span>
+                                                                        </button>
+                                                                        <div class="set-org-tooltip pointer-events-none absolute bottom-full left-1/2 z-[200] mb-2 hidden w-64 -translate-x-1/2 rounded-xl bg-webropol-gray-900 px-3 py-2 text-xs text-white shadow-lg">
+                                                                            Share this template to Shared Templates before setting it as the organization's default.
+                                                                            <div class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-webropol-gray-900"></div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -673,10 +690,16 @@
                                                                 <i class="fal fa-user-plus w-5 text-center text-lg"></i>
                                                                 <span x-text="template.sharedTo ? 'Unshare' : 'Share to'"></span>
                                                             </button>
-                                                            <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
-                                                                <i class="fal fa-file-certificate w-5 text-center text-lg"></i>
-                                                                <span>Set organization default</span>
-                                                            </button>
+                                                            <div class="group relative">
+                                                                <button type="button" class="set-org-btn flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="menuOpen = false">
+                                                                    <i class="fa-light fa-building w-5 text-center text-lg"></i>
+                                                                    <span>Set organization default</span>
+                                                                </button>
+                                                                <div class="set-org-tooltip pointer-events-none absolute bottom-full left-1/2 z-[200] mb-2 hidden w-64 -translate-x-1/2 rounded-xl bg-webropol-gray-900 px-3 py-2 text-xs text-white shadow-lg">
+                                                                    Share this template to Shared Templates before setting it as the organization's default.
+                                                                    <div class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-webropol-gray-900"></div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1023,7 +1046,7 @@
     <script>
         function layoutTemplatesApp() {
             return {
-                storageKey: 'webropol_layout_templates',
+                storageKey: 'webropol_layout_templates_v2',
                 activeTopTab: 'branding',
                 activeSideTab: 'own',
                 searchTerm: '',
@@ -1094,7 +1117,8 @@
                         files: {
                             own: [
                                 { id: 'files-own-1', name: 'Brand Survey Classic', createdBy: 'Ali Al-Zuhairi', lastModified: '08 Mar 2026', sharedTo: '' },
-                                { id: 'files-own-2', name: 'Campaign Feedback Layout', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' }
+                                { id: 'files-own-2', name: 'Campaign Feedback Layout', createdBy: 'Ali Al-Zuhairi', lastModified: '04 Mar 2026', sharedTo: '' },
+                                { id: 'files-own-3', name: 'Annual Report Deck', createdBy: 'Ali Al-Zuhairi', lastModified: '12 Mar 2026', sharedTo: '' }
                             ],
                             shared: [
                                 { id: 'files-shared-1', name: 'Corporate NPS Template', createdBy: 'Brand Team', lastModified: '01 Mar 2026', sharedTo: 'Workspace' }
