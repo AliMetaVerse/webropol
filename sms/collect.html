@@ -43,19 +43,23 @@
       border: none; box-shadow: 0 4px 15px rgba(6,182,212,0.35);
       transition: all 0.3s ease;
     }
-    .send-btn:hover {
+    .send-btn:hover:not(:disabled) {
       background: linear-gradient(135deg, #0891b2, #0e7490);
       box-shadow: 0 6px 20px rgba(6,182,212,0.45); transform: translateY(-1px);
     }
 
-    /* time input – hide native spinner */
     input[type="time"]::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; right: 0; width: 100%; cursor: pointer; }
     input[type="time"] { position: relative; }
 
-    /* Constrain send-to dropdown to panel width */
-    #send-to-dropdown .dropdown-menu { width: 100%; }
-    #send-to-dropdown .dropdown-menu > div { white-space: normal; max-height: none; overflow-y: visible; }
-    #send-to-dropdown .dropdown-option span { white-space: normal; word-break: break-word; }
+    /* Step connector line */
+    .step-connector { position: absolute; left: 19px; top: 44px; bottom: -8px; width: 2px; }
+
+    /* Step card hover */
+    .step-card { transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+    .step-card:hover { box-shadow: 0 4px 20px -4px rgba(0,0,0,0.08); }
+
+    /* Smooth height transition for collapsible sections */
+    [x-cloak] { display: none !important; }
   </style>
 </head>
 <body x-data="smsCollectApp()">
@@ -64,11 +68,11 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <webropol-header username="Ali Al-Zuhairi" show-notifications show-help show-user-menu show-theme-selector></webropol-header>
 
-      <main class="flex-1 overflow-y-auto" role="main">
+      <main class="flex-1 overflow-y-auto bg-webropol-gray-50/50" role="main">
         <div class="w-full">
 
           <!-- Action Tabs -->
-          <div class="mb-0">
+          <div class="mb-0 bg-white">
             <div class="flex items-center justify-between border-b border-webropol-gray-300">
               <webropol-survey-action-tabs active="collect" context="sms"></webropol-survey-action-tabs>
               <webropol-survey-helper-toolbar
@@ -82,425 +86,475 @@
             </div>
           </div>
 
-          <!-- Top action bar -->
-          <div class="flex items-center justify-between px-6 py-3 border-b border-webropol-gray-200 bg-webropol-gray-50/60">
-            <div class="flex items-center gap-3 text-sm text-webropol-gray-600">
-              <div class="w-8 h-8 rounded-full bg-webropol-primary-100 flex items-center justify-center">
-                <i class="fal fa-users text-webropol-primary-700 text-sm"></i>
+          <!-- ═══════════════════════════════════════════════════ -->
+          <!--  PAGE CONTENT: Guided 3-Step Workflow              -->
+          <!-- ═══════════════════════════════════════════════════ -->
+          <div class="max-w-4xl mx-auto px-6 py-8">
+
+            <!-- Page title + survey status -->
+            <div class="flex items-center justify-between mb-8">
+              <div>
+                <h1 class="text-xl font-semibold text-webropol-gray-900">Send SMS Survey</h1>
+                <p class="text-sm text-webropol-gray-500 mt-1">Follow the steps below to add recipients and send your 2-Way SMS survey.</p>
               </div>
-              <span>
-                <span x-text="recipients.length" class="font-semibold text-webropol-gray-900"></span>
-                <span class="text-webropol-gray-500"> recipients in this survey</span>
-              </span>
-            </div>
+              <div class="flex items-center gap-3">
+                <!-- Survey status badge -->
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
+                  :class="surveyClosed ? 'bg-webropol-gray-100 text-webropol-gray-600' : 'bg-green-50 text-green-700 border border-green-200'">
+                  <span class="w-2 h-2 rounded-full" :class="surveyClosed ? 'bg-webropol-gray-400' : 'bg-green-500'"></span>
+                  <span x-text="surveyClosed ? 'Survey Closed' : 'Survey Active'"></span>
+                </div>
 
-            <!-- Close / Publish SMS survey -->
-            <div class="relative" x-data="{ publishOpen: false }">
-
-              <!-- State: open or published → "Close SMS survey" outline button -->
-              <button
-                x-show="!surveyClosed"
-                @click="surveyClosed = true"
-                class="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-webropol-primary-600 text-webropol-primary-700 text-sm font-medium hover:bg-webropol-primary-50 transition-colors">
-                Close SMS survey
-              </button>
-
-              <!-- State: closed but not yet published → "Publish SMS survey" filled button with dropdown -->
-              <button
-                x-show="surveyClosed"
-                @click="publishOpen = !publishOpen"
-                @click.outside="publishOpen = false"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-webropol-primary-800 text-white text-sm font-semibold hover:bg-webropol-primary-900 shadow-md transition-all">
-                Publish SMS survey
-                <i class="fal fa-chevron-down text-xs transition-transform duration-200" :class="publishOpen ? 'rotate-180' : ''"></i>
-              </button>
-
-              <!-- Dropdown: available sender numbers -->
-              <div
-                x-show="publishOpen"
-                x-transition:enter="transition ease-out duration-150"
-                x-transition:enter-start="opacity-0 translate-y-1"
-                x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-100"
-                x-transition:leave-start="opacity-100 translate-y-0"
-                x-transition:leave-end="opacity-0 translate-y-1"
-                class="absolute right-0 top-full mt-2 z-50 bg-white border-2 border-webropol-primary-700 rounded-xl shadow-lg w-72 overflow-hidden">
-
-                <template x-for="num in senderNumbers" :key="num.phone">
+                <!-- Close / Publish toggle -->
+                <div class="relative" x-data="{ publishOpen: false }">
                   <button
-                    @click="selectedSender = num.phone; surveyClosed = false; publishOpen = false"
-                    class="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-webropol-gray-50 transition-colors border-b border-webropol-gray-100 last:border-0">
-                    <span class="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
-                      <i class="fas fa-check text-white text-xs"></i>
-                    </span>
-                    <span class="font-mono text-webropol-gray-800" x-text="num.phone"></span>
-                    <span class="ml-auto text-green-700 font-medium text-xs" x-text="'[' + num.status + ']'"></span>
+                    x-show="!surveyClosed"
+                    @click="surveyClosed = true"
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-webropol-gray-300 text-webropol-gray-600 text-xs font-medium hover:bg-webropol-gray-50 hover:border-red-300 hover:text-red-600 transition-colors">
+                    <i class="fal fa-stop text-xs"></i> Close Survey
                   </button>
-                </template>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- ─── UNIFIED LAYOUT: Recipients (left) + Send SMS panel (right) ─── -->
-          <div class="flex gap-6 py-6 items-start">
-
-            <!-- LEFT: Recipients table -->
-            <div class="flex-1 min-w-0 bg-white border border-webropol-gray-200 rounded-xl overflow-hidden">
-
-              <!-- Top bar: Add recipients + count -->
-              <div class="flex items-center gap-4 px-4 pt-4 pb-3 border-b border-webropol-gray-100">
-                <button class="flex items-center gap-2 px-5 py-2 rounded text-white text-sm font-semibold transition-colors"
-                  style="background:#c0440a"
-                  onmouseover="this.style.background='#a83b08'" onmouseout="this.style.background='#c0440a'">
-                  <i class="fal fa-plus"></i> Add recipients
-                </button>
-                <span class="text-sm text-webropol-gray-700">
-                  <span class="font-semibold">All recipients:</span>
-                  <span x-text="' ' + recipients.length"></span>
-                </span>
-              </div>
-
-              <!-- Toolbar: Delete + search -->
-              <div class="flex items-center justify-between px-4 py-3 gap-4 flex-wrap border-b border-webropol-gray-100 bg-webropol-gray-50/40">
-                <button class="px-4 py-1.5 rounded text-white text-sm font-medium transition-colors"
-                  style="background:#c0440a"
-                  onmouseover="this.style.background='#a83b08'" onmouseout="this.style.background='#c0440a'">
-                  <i class="fal fa-trash-alt mr-1.5"></i> Delete
-                </button>
-
-                <div class="flex items-center gap-2 ml-auto flex-wrap">
-                  <span class="text-sm text-webropol-gray-600 font-medium">Search By:</span>
-                  <select x-model="searchField" class="border border-webropol-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-webropol-primary-500 bg-white">
-                    <option value="phone">Mobile phone</option>
-                    <option value="sent">Sent</option>
-                  </select>
-                  <select x-model="searchOp" class="border border-webropol-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-webropol-primary-500 bg-white">
-                    <option value="contains">Contains</option>
-                    <option value="equals">Equals</option>
-                    <option value="starts">Starts with</option>
-                  </select>
-                  <input type="text" x-model="searchQuery" placeholder=""
-                    class="border border-webropol-gray-300 rounded px-2 py-1.5 text-sm w-32 focus:outline-none focus:border-webropol-primary-500">
-                  <button @click="doSearch()"
-                    class="px-3 py-1.5 rounded text-white text-sm font-medium bg-webropol-primary-700 hover:bg-webropol-primary-800 transition-colors">
-                    Search
+                  <button
+                    x-show="surveyClosed"
+                    @click="publishOpen = !publishOpen"
+                    @click.outside="publishOpen = false"
+                    class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-webropol-primary-700 text-white text-xs font-semibold hover:bg-webropol-primary-800 transition-colors">
+                    <i class="fal fa-rocket text-xs"></i> Re-publish Survey
+                    <i class="fal fa-chevron-down text-xs transition-transform duration-200" :class="publishOpen ? 'rotate-180' : ''"></i>
                   </button>
-                  <button @click="searchQuery = ''"
-                    class="px-3 py-1.5 rounded text-white text-sm font-medium bg-webropol-primary-700 hover:bg-webropol-primary-800 transition-colors">
-                    Show all
-                  </button>
-                  <!-- Excel export -->
-                  <button title="Export to Excel" class="w-8 h-8 flex items-center justify-center border border-webropol-gray-300 rounded hover:bg-webropol-gray-50 transition-colors">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none">
-                      <rect width="24" height="24" rx="2" fill="#1D6F42"/>
-                      <path d="M6 7l4 5-4 5h2.5l2.5-3.2L14 17h2.5l-4-5 4-5H14l-2.5 3.2L9 7H6z" fill="white"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Table -->
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="border-b-2 border-webropol-primary-600 bg-webropol-gray-50">
-                      <th class="w-8 px-3 py-2.5"></th>
-                      <th class="px-3 py-2.5 text-left">
-                        <input type="checkbox" class="rounded border-webropol-gray-300" @change="toggleAll($event)">
-                      </th>
-                      <th class="px-3 py-2.5 text-left font-semibold text-webropol-gray-800 cursor-pointer select-none" @click="sortBy('phone')">
-                        Mobile phone <i class="fal fa-sort ml-1 text-webropol-gray-400 text-xs"></i>
-                      </th>
-                      <th class="px-3 py-2.5 text-left font-semibold text-webropol-gray-800 cursor-pointer select-none" @click="sortBy('sent')">
-                        Sent <i class="fal fa-sort ml-1 text-webropol-gray-400 text-xs"></i>
-                      </th>
-                      <th class="px-3 py-2.5 text-left font-semibold text-webropol-gray-800 cursor-pointer select-none" @click="sortBy('responses')">
-                        Responses <i class="fal fa-sort ml-1 text-webropol-gray-400 text-xs"></i>
-                      </th>
-                      <th class="px-3 py-2.5 text-left font-semibold text-webropol-gray-800 cursor-pointer select-none" @click="sortBy('updated')">
-                        Updated <i class="fal fa-sort ml-1 text-webropol-gray-400 text-xs"></i>
-                      </th>
-                      <th class="px-3 py-2.5 text-left font-semibold text-webropol-gray-800 cursor-pointer select-none" @click="sortBy('valid')">
-                        Valid <i class="fal fa-sort ml-1 text-webropol-gray-400 text-xs"></i>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-webropol-gray-100">
-                    <template x-for="r in pagedRecipients" :key="r.id">
-                      <tr class="hover:bg-webropol-gray-50 transition-colors">
-                        <td class="px-3 py-2.5 text-center">
-                          <button class="text-webropol-primary-600 hover:text-webropol-primary-800 transition-colors">
-                            <i class="fal fa-pencil text-xs"></i>
-                          </button>
-                        </td>
-                        <td class="px-3 py-2.5">
-                          <input type="checkbox" :checked="r.selected" @change="r.selected = $event.target.checked; onRowCheck()" class="rounded border-webropol-gray-300">
-                        </td>
-                        <td class="px-3 py-2.5 font-mono text-webropol-gray-800" x-text="r.phone"></td>
-                        <td class="px-3 py-2.5 text-webropol-gray-700" x-text="r.sent"></td>
-                        <td class="px-3 py-2.5 text-webropol-gray-700" x-text="r.responses"></td>
-                        <td class="px-3 py-2.5 text-center">
-                          <i x-show="r.updated" class="fal fa-check text-green-600"></i>
-                        </td>
-                        <td class="px-3 py-2.5 text-center">
-                          <i class="fal fa-envelope text-green-600"></i>
-                        </td>
-                      </tr>
+                  <div
+                    x-show="publishOpen"
+                    x-transition
+                    class="absolute right-0 top-full mt-2 z-50 bg-white border border-webropol-gray-200 rounded-xl shadow-lg w-72 overflow-hidden">
+                    <div class="px-4 py-2.5 bg-webropol-gray-50 border-b border-webropol-gray-100">
+                      <p class="text-xs font-semibold text-webropol-gray-700">Select a sender number</p>
+                    </div>
+                    <template x-for="num in senderNumbers" :key="num.phone">
+                      <button
+                        @click="selectedSender = num.phone; surveyClosed = false; publishOpen = false"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-webropol-primary-50 transition-colors border-b border-webropol-gray-100 last:border-0">
+                        <span class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                          <i class="fas fa-check text-green-600" style="font-size:10px"></i>
+                        </span>
+                        <span class="font-mono text-webropol-gray-800 text-sm" x-text="num.phone"></span>
+                      </button>
                     </template>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Pagination -->
-              <div class="flex items-center justify-between px-4 py-3 border-t border-webropol-gray-200 text-sm text-webropol-gray-500">
-                <div class="flex items-center gap-2">
-                  <button @click="goPage(1)" class="hover:text-webropol-gray-700 disabled:opacity-40" :disabled="currentPage === 1"><i class="fal fa-chevrons-left"></i></button>
-                  <button @click="goPage(currentPage - 1)" class="hover:text-webropol-gray-700 disabled:opacity-40" :disabled="currentPage === 1"><i class="fal fa-chevron-left"></i></button>
-                  <span class="font-medium">Previous</span>
-                  <span class="mx-2">Page <span x-text="currentPage"></span> / <span x-text="totalPages"></span></span>
-                  <span class="font-medium">Next</span>
-                  <button @click="goPage(currentPage + 1)" class="hover:text-webropol-gray-700 disabled:opacity-40" :disabled="currentPage === totalPages"><i class="fal fa-chevron-right"></i></button>
-                  <button @click="goPage(totalPages)" class="hover:text-webropol-gray-700 disabled:opacity-40" :disabled="currentPage === totalPages"><i class="fal fa-chevrons-right"></i></button>
-                </div>
-                <div class="flex items-center gap-3">
-                  <span>Show on page</span>
-                  <template x-for="n in [5, 20, 50, 100]" :key="n">
-                    <button
-                      @click="pageSize = n; currentPage = 1"
-                      :class="pageSize === n ? 'font-bold text-webropol-primary-700' : 'text-webropol-primary-600 hover:text-webropol-primary-800'"
-                      x-text="n">
-                    </button>
-                  </template>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- RIGHT: Send SMS panel (sticky) -->
-            <div class="w-80 flex-shrink-0">
-              <div class="sticky top-6 space-y-4">
-
-                <!-- Send SMS card -->
-                <div class="bg-white border border-webropol-gray-200 rounded-xl shadow-card">
-                  <!-- Card header -->
-                  <div class="px-5 py-4 border-b border-webropol-gray-100">
-                    <h3 class="font-semibold text-webropol-gray-900 flex items-center gap-2 text-sm">
-                      <i class="fal fa-paper-plane text-webropol-primary-600"></i>
-                      Send SMS
-                    </h3>
                   </div>
+                </div>
+              </div>
+            </div>
 
-                  <div class="p-5 space-y-4">
+            <!-- Closed survey banner -->
+            <div x-show="surveyClosed" x-transition class="mb-6 flex items-center gap-3 px-5 py-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <i class="fal fa-circle-exclamation text-amber-600 text-lg"></i>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-amber-800">Survey is closed</p>
+                <p class="text-xs text-amber-700 mt-0.5">You need to re-publish the survey before you can send SMS messages. Click "Re-publish Survey" above.</p>
+              </div>
+            </div>
 
-                    <!-- Sender row — published number OR prompt to publish -->
-                    <template x-if="selectedSender && !surveyClosed">
-                      <div class="flex items-center gap-3 py-2.5 px-3 bg-webropol-gray-50 rounded-lg border border-webropol-gray-200">
-                        <i class="fal fa-sim-card text-webropol-primary-600 text-sm flex-shrink-0"></i>
+            <!-- ──────────────────────────────────────────── -->
+            <!-- STEP 1: Add Recipients                      -->
+            <!-- ──────────────────────────────────────────── -->
+            <div class="relative mb-6">
+              <!-- Step indicator -->
+              <div class="flex items-start gap-4">
+                <div class="flex flex-col items-center flex-shrink-0">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                    :class="recipients.length > 0 ? 'bg-green-100 text-green-700' : 'bg-webropol-primary-100 text-webropol-primary-700'">
+                    <template x-if="recipients.length > 0"><i class="fal fa-check"></i></template>
+                    <template x-if="recipients.length === 0"><span>1</span></template>
+                  </div>
+                  <div class="step-connector bg-webropol-gray-200"></div>
+                </div>
+
+                <!-- Step content -->
+                <div class="flex-1 min-w-0 pb-2">
+                  <div class="step-card bg-white border border-webropol-gray-200 rounded-xl overflow-hidden">
+                    <!-- Step header -->
+                    <div class="flex items-center justify-between px-5 py-4 cursor-pointer" @click="step1Open = !step1Open">
+                      <div class="flex items-center gap-3">
                         <div>
-                          <p class="text-xs text-webropol-gray-500 leading-none mb-0.5">Sender</p>
-                          <p class="text-sm font-mono font-medium text-webropol-gray-800" x-text="selectedSender"></p>
+                          <h2 class="text-sm font-semibold text-webropol-gray-900">Add Recipients</h2>
+                          <p class="text-xs text-webropol-gray-500 mt-0.5">
+                            <span x-text="recipients.length"></span> recipient<span x-show="recipients.length !== 1">s</span> added
+                          </p>
                         </div>
-                        <span class="ml-auto text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Active</span>
                       </div>
-                    </template>
-
-                    <template x-if="surveyClosed">
-                      <div class="flex items-center gap-3 py-2.5 px-3 bg-webropol-gray-50 rounded-lg border border-webropol-gray-200">
-                        <i class="fal fa-sim-card text-webropol-gray-400 text-sm flex-shrink-0"></i>
-                        <div>
-                          <p class="text-xs text-webropol-gray-500 leading-none mb-0.5">Sender</p>
-                          <p class="text-sm font-mono font-medium text-webropol-gray-500" x-text="selectedSender"></p>
-                        </div>
-                        <span class="ml-auto text-xs font-medium text-webropol-gray-500 bg-webropol-gray-100 px-2 py-0.5 rounded-full">Closed</span>
+                      <div class="flex items-center gap-3">
+                        <button @click.stop class="flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-700 text-white text-xs font-semibold hover:bg-webropol-primary-800 transition-colors">
+                          <i class="fal fa-plus text-xs"></i> Add Recipients
+                        </button>
+                        <i class="fal fa-chevron-down text-webropol-gray-400 text-sm transition-transform duration-200" :class="step1Open ? 'rotate-180' : ''"></i>
                       </div>
-                    </template>
-
-                    <template x-if="surveyClosed">
-                      <div class="flex items-center gap-3 py-3 px-3 bg-amber-50 rounded-lg border border-amber-200">
-                        <i class="fal fa-circle-exclamation text-amber-500 text-sm flex-shrink-0"></i>
-                        <p class="text-xs text-amber-700 leading-snug">Survey is closed. Publish it again to enable sending.</p>
-                      </div>
-                    </template>
-
-                    <!-- Send to -->
-                    <div>
-                      <label class="block text-xs font-semibold text-webropol-gray-700 mb-1.5">
-                        Send to <span class="text-red-500">*</span>
-                      </label>
-                      <webropol-dropdown
-                        id="send-to-dropdown"
-                        placeholder="– Select to whom survey will be sent –"
-                        options='[
-                          {"label": "To all", "value": "all", "icon": "fa-users"},
-                          {"label": "Select recipients from list", "value": "from_list", "icon": "fa-list"},
-                          {"label": "Recipients who haven\u0027t received SMS yet", "value": "not_received", "icon": "fa-paper-plane"},
-                          {"label": "Recipients who haven\u0027t received SMS reminder", "value": "not_reminded", "icon": "fa-bell-slash"},
-                          {"label": "Recipients who haven\u0027t answered", "value": "not_answered", "icon": "fa-comment-slash"}
-                        ]'
-                        x-init="$el.addEventListener('change', e => {
-                            selectedList = e.detail.value;
-                            if (e.detail.value === 'all') recipients.forEach(r => r.selected = true);
-                            if (e.detail.value !== 'all' && e.detail.value !== 'from_list') recipients.forEach(r => r.selected = false);
-                          })">
-                      </webropol-dropdown>
-                      <p class="mt-1.5 text-xs text-webropol-gray-500 leading-relaxed">SMS is only sent to recipients with a mobile number.</p>
                     </div>
 
-                    <!-- Advanced settings -->
-                    <div class="border-t border-webropol-gray-100 pt-4">
-                      <button
-                        @click="advancedOpen = !advancedOpen"
-                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-webropol-primary-700 hover:text-webropol-primary-900 transition-colors">
-                        <i class="fal fa-chevron-down transition-transform duration-200 text-xs" :class="advancedOpen ? 'rotate-180' : ''"></i>
-                        Advanced settings
-                      </button>
+                    <!-- Collapsible: Recipients table -->
+                    <div x-show="step1Open" x-transition>
 
-                      <div x-show="advancedOpen" x-transition class="mt-3 space-y-3">
-                        <!-- DND toggle -->
-                        <div class="flex items-start gap-2">
-                          <input
-                            type="checkbox"
-                            id="dnd-toggle"
-                            x-model="dndEnabled"
-                            class="w-4 h-4 mt-0.5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
-                          <label for="dnd-toggle" class="text-xs text-webropol-gray-700 cursor-pointer leading-snug">
-                            SMS will not be sent during these times
-                          </label>
+                      <!-- Empty state -->
+                      <div x-show="recipients.length === 0" class="px-8 py-12 text-center border-t border-webropol-gray-100">
+                        <div class="w-16 h-16 rounded-full bg-webropol-primary-50 flex items-center justify-center mx-auto mb-4">
+                          <i class="fal fa-user-plus text-webropol-primary-500 text-2xl"></i>
                         </div>
+                        <h3 class="text-sm font-semibold text-webropol-gray-800 mb-1">No recipients yet</h3>
+                        <p class="text-xs text-webropol-gray-500 mb-4 max-w-xs mx-auto">Add phone numbers of people you want to send the SMS survey to. You can add them manually or import from a file.</p>
+                        <button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-webropol-primary-700 text-white text-sm font-semibold hover:bg-webropol-primary-800 transition-colors">
+                          <i class="fal fa-plus"></i> Add Your First Recipients
+                        </button>
+                      </div>
 
-                        <!-- Time range -->
-                        <div class="flex items-center gap-2" :class="!dndEnabled && 'opacity-50 pointer-events-none'">
-                          <!-- Start time -->
-                          <div class="relative flex-1">
-                            <input type="time" x-model="dndStart" :disabled="!dndEnabled"
-                              class="w-full pl-3 pr-8 py-2 border border-webropol-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 disabled:bg-webropol-gray-50 transition-all">
-                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none text-xs"><i class="fal fa-clock"></i></span>
+                      <!-- Toolbar: search + actions -->
+                      <div x-show="recipients.length > 0" class="flex items-center justify-between px-4 py-2.5 gap-3 flex-wrap border-t border-webropol-gray-100 bg-webropol-gray-50/60">
+                        <div class="flex items-center gap-2">
+                          <button class="px-3 py-1.5 rounded-lg border border-webropol-gray-300 text-webropol-gray-600 text-xs font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all">
+                            <i class="fal fa-trash-alt mr-1.5"></i> Delete Selected
+                          </button>
+                          <button title="Export to Excel" class="w-8 h-8 flex items-center justify-center border border-webropol-gray-300 rounded-lg hover:bg-webropol-gray-100 transition-colors">
+                            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none">
+                              <rect width="24" height="24" rx="2" fill="#1D6F42"/>
+                              <path d="M6 7l4 5-4 5h2.5l2.5-3.2L14 17h2.5l-4-5 4-5H14l-2.5 3.2L9 7H6z" fill="white"/>
+                            </svg>
+                          </button>
+                        </div>
+                        <div class="flex items-center gap-2 ml-auto">
+                          <div class="relative">
+                            <i class="fal fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-webropol-gray-400 text-xs"></i>
+                            <input type="text" x-model="searchQuery" placeholder="Search phone numbers..."
+                              class="border border-webropol-gray-300 rounded-lg pl-8 pr-3 py-1.5 text-xs w-48 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500">
                           </div>
-                          <span class="text-webropol-gray-400">–</span>
-                          <!-- End time -->
-                          <div class="relative flex-1">
-                            <input type="time" x-model="dndEnd" :disabled="!dndEnabled"
-                              class="w-full pl-3 pr-8 py-2 border border-webropol-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 disabled:bg-webropol-gray-50 transition-all">
-                            <span class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none text-xs"><i class="fal fa-clock"></i></span>
-                          </div>
-                          <!-- Info tooltip -->
-                          <div class="relative flex-shrink-0" x-data="{ tipOpen: false }">
-                            <button @mouseenter="tipOpen = true" @mouseleave="tipOpen = false"
-                              class="w-6 h-6 rounded-full flex items-center justify-center bg-webropol-primary-700 text-white text-xs hover:bg-webropol-primary-800 transition-colors">
-                              <i class="fal fa-info"></i>
+                          <button x-show="searchQuery" @click="searchQuery = ''" class="text-xs text-webropol-primary-600 hover:text-webropol-primary-800 font-medium">Clear</button>
+                        </div>
+                      </div>
+
+                      <!-- Table -->
+                      <div x-show="recipients.length > 0" class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                          <thead>
+                            <tr class="border-t border-b border-webropol-gray-200 bg-webropol-gray-50">
+                              <th class="w-10 px-3 py-2.5 text-left">
+                                <input type="checkbox" class="rounded border-webropol-gray-300" @change="toggleAll($event)">
+                              </th>
+                              <th class="px-3 py-2.5 text-left text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider cursor-pointer select-none" @click="sortBy('phone')">
+                                Phone Number <i class="fal fa-sort ml-1 text-webropol-gray-400"></i>
+                              </th>
+                              <th class="px-3 py-2.5 text-center text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider cursor-pointer select-none" @click="sortBy('sent')">
+                                Sent <i class="fal fa-sort ml-1 text-webropol-gray-400"></i>
+                              </th>
+                              <th class="px-3 py-2.5 text-center text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider cursor-pointer select-none" @click="sortBy('responses')">
+                                Responses <i class="fal fa-sort ml-1 text-webropol-gray-400"></i>
+                              </th>
+                              <th class="px-3 py-2.5 text-center text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider">
+                                Status
+                              </th>
+                              <th class="w-10 px-3 py-2.5"></th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-webropol-gray-100">
+                            <template x-for="r in pagedRecipients" :key="r.id">
+                              <tr class="hover:bg-webropol-primary-50/30 transition-colors">
+                                <td class="px-3 py-2.5">
+                                  <input type="checkbox" :checked="r.selected" @change="r.selected = $event.target.checked; onRowCheck()" class="rounded border-webropol-gray-300">
+                                </td>
+                                <td class="px-3 py-2.5">
+                                  <span class="font-mono text-sm text-webropol-gray-800" x-text="r.phone"></span>
+                                </td>
+                                <td class="px-3 py-2.5 text-center">
+                                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium"
+                                    :class="r.sent > 0 ? 'bg-webropol-primary-50 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-400'"
+                                    x-text="r.sent"></span>
+                                </td>
+                                <td class="px-3 py-2.5 text-center">
+                                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium"
+                                    :class="r.responses > 0 ? 'bg-green-50 text-green-700' : 'bg-webropol-gray-100 text-webropol-gray-400'"
+                                    x-text="r.responses"></span>
+                                </td>
+                                <td class="px-3 py-2.5 text-center">
+                                  <span x-show="r.updated" class="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
+                                    <i class="fal fa-check text-xs"></i> Responded
+                                  </span>
+                                  <span x-show="!r.updated && r.sent > 0" class="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                                    <i class="fal fa-clock text-xs"></i> Pending
+                                  </span>
+                                  <span x-show="!r.updated && r.sent === 0" class="inline-flex items-center gap-1 text-xs font-medium text-webropol-gray-500 bg-webropol-gray-100 px-2 py-0.5 rounded-full">
+                                    Not sent
+                                  </span>
+                                </td>
+                                <td class="px-3 py-2.5 text-center">
+                                  <button class="text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
+                                    <i class="fal fa-pencil text-xs"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </template>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- Pagination -->
+                      <div x-show="recipients.length > 0" class="flex items-center justify-between px-4 py-3 border-t border-webropol-gray-200 text-xs text-webropol-gray-500">
+                        <div class="flex items-center gap-1.5">
+                          <button @click="goPage(1)" class="w-7 h-7 rounded flex items-center justify-center hover:bg-webropol-gray-100 disabled:opacity-30" :disabled="currentPage === 1"><i class="fal fa-chevrons-left"></i></button>
+                          <button @click="goPage(currentPage - 1)" class="w-7 h-7 rounded flex items-center justify-center hover:bg-webropol-gray-100 disabled:opacity-30" :disabled="currentPage === 1"><i class="fal fa-chevron-left"></i></button>
+                          <span class="mx-2 text-webropol-gray-700 font-medium">Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
+                          <button @click="goPage(currentPage + 1)" class="w-7 h-7 rounded flex items-center justify-center hover:bg-webropol-gray-100 disabled:opacity-30" :disabled="currentPage === totalPages"><i class="fal fa-chevron-right"></i></button>
+                          <button @click="goPage(totalPages)" class="w-7 h-7 rounded flex items-center justify-center hover:bg-webropol-gray-100 disabled:opacity-30" :disabled="currentPage === totalPages"><i class="fal fa-chevrons-right"></i></button>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-webropol-gray-500 mr-1">Rows:</span>
+                          <template x-for="n in [5, 20, 50, 100]" :key="n">
+                            <button
+                              @click="pageSize = n; currentPage = 1"
+                              class="w-7 h-7 rounded flex items-center justify-center text-xs transition-colors"
+                              :class="pageSize === n ? 'bg-webropol-primary-100 text-webropol-primary-700 font-bold' : 'hover:bg-webropol-gray-100 text-webropol-gray-500'"
+                              x-text="n">
                             </button>
-                            <div x-show="tipOpen" x-transition
-                              class="absolute bottom-full right-0 mb-2 w-56 bg-webropol-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-lg pointer-events-none z-50">
-                              SMS messages queued during the restricted hours will be automatically held and sent after the window ends.
-                              <div class="absolute top-full right-2 border-4 border-transparent border-t-webropol-gray-900"></div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ──────────────────────────────────────────── -->
+            <!-- STEP 2: Choose Who to Send To               -->
+            <!-- ──────────────────────────────────────────── -->
+            <div class="relative mb-6">
+              <div class="flex items-start gap-4">
+                <div class="flex flex-col items-center flex-shrink-0">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                    :class="selectedList ? 'bg-green-100 text-green-700' : (recipients.length > 0 ? 'bg-webropol-primary-100 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-400')">
+                    <template x-if="selectedList"><i class="fal fa-check"></i></template>
+                    <template x-if="!selectedList"><span>2</span></template>
+                  </div>
+                  <div class="step-connector bg-webropol-gray-200"></div>
+                </div>
+
+                <div class="flex-1 min-w-0 pb-2">
+                  <div class="step-card bg-white border border-webropol-gray-200 rounded-xl overflow-hidden"
+                    :class="recipients.length === 0 ? 'opacity-60 pointer-events-none' : ''">
+                    <div class="px-5 py-4">
+                      <h2 class="text-sm font-semibold text-webropol-gray-900 mb-1">Choose Who to Send To</h2>
+                      <p class="text-xs text-webropol-gray-500 mb-4">Select which recipients should receive the SMS survey.</p>
+
+                      <!-- Quick send options as clickable cards -->
+                      <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button @click="selectSendOption('all')"
+                          class="flex items-start gap-3 p-3 rounded-lg border text-left transition-all"
+                          :class="selectedList === 'all' ? 'border-webropol-primary-500 bg-webropol-primary-50 ring-1 ring-webropol-primary-500' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-gray-50'">
+                          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="selectedList === 'all' ? 'bg-webropol-primary-100' : 'bg-webropol-gray-100'">
+                            <i class="fal fa-users text-sm" :class="selectedList === 'all' ? 'text-webropol-primary-700' : 'text-webropol-gray-500'"></i>
+                          </div>
+                          <div>
+                            <p class="text-xs font-semibold" :class="selectedList === 'all' ? 'text-webropol-primary-800' : 'text-webropol-gray-800'">Send to All</p>
+                            <p class="text-xs mt-0.5" :class="selectedList === 'all' ? 'text-webropol-primary-600' : 'text-webropol-gray-500'">
+                              <span x-text="recipients.length"></span> recipients
+                            </p>
+                          </div>
+                        </button>
+
+                        <button @click="selectSendOption('not_received')"
+                          class="flex items-start gap-3 p-3 rounded-lg border text-left transition-all"
+                          :class="selectedList === 'not_received' ? 'border-webropol-primary-500 bg-webropol-primary-50 ring-1 ring-webropol-primary-500' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-gray-50'">
+                          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="selectedList === 'not_received' ? 'bg-webropol-primary-100' : 'bg-webropol-gray-100'">
+                            <i class="fal fa-paper-plane text-sm" :class="selectedList === 'not_received' ? 'text-webropol-primary-700' : 'text-webropol-gray-500'"></i>
+                          </div>
+                          <div>
+                            <p class="text-xs font-semibold" :class="selectedList === 'not_received' ? 'text-webropol-primary-800' : 'text-webropol-gray-800'">Not Yet Sent</p>
+                            <p class="text-xs mt-0.5" :class="selectedList === 'not_received' ? 'text-webropol-primary-600' : 'text-webropol-gray-500'">First-time send</p>
+                          </div>
+                        </button>
+
+                        <button @click="selectSendOption('not_answered')"
+                          class="flex items-start gap-3 p-3 rounded-lg border text-left transition-all"
+                          :class="selectedList === 'not_answered' ? 'border-webropol-primary-500 bg-webropol-primary-50 ring-1 ring-webropol-primary-500' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-gray-50'">
+                          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="selectedList === 'not_answered' ? 'bg-webropol-primary-100' : 'bg-webropol-gray-100'">
+                            <i class="fal fa-comment-slash text-sm" :class="selectedList === 'not_answered' ? 'text-webropol-primary-700' : 'text-webropol-gray-500'"></i>
+                          </div>
+                          <div>
+                            <p class="text-xs font-semibold" :class="selectedList === 'not_answered' ? 'text-webropol-primary-800' : 'text-webropol-gray-800'">Not Answered</p>
+                            <p class="text-xs mt-0.5" :class="selectedList === 'not_answered' ? 'text-webropol-primary-600' : 'text-webropol-gray-500'">Send reminder</p>
+                          </div>
+                        </button>
+
+                        <button @click="selectSendOption('from_list')"
+                          class="flex items-start gap-3 p-3 rounded-lg border text-left transition-all"
+                          :class="selectedList === 'from_list' ? 'border-webropol-primary-500 bg-webropol-primary-50 ring-1 ring-webropol-primary-500' : 'border-webropol-gray-200 hover:border-webropol-primary-300 hover:bg-webropol-gray-50'">
+                          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            :class="selectedList === 'from_list' ? 'bg-webropol-primary-100' : 'bg-webropol-gray-100'">
+                            <i class="fal fa-list-check text-sm" :class="selectedList === 'from_list' ? 'text-webropol-primary-700' : 'text-webropol-gray-500'"></i>
+                          </div>
+                          <div>
+                            <p class="text-xs font-semibold" :class="selectedList === 'from_list' ? 'text-webropol-primary-800' : 'text-webropol-gray-800'">Pick from List</p>
+                            <p class="text-xs mt-0.5" :class="selectedList === 'from_list' ? 'text-webropol-primary-600' : 'text-webropol-gray-500'">Select manually</p>
+                          </div>
+                        </button>
+                      </div>
+
+                      <!-- Selection summary -->
+                      <div x-show="selectedList" x-transition class="flex items-center gap-2 py-2 px-3 bg-webropol-primary-50 rounded-lg border border-webropol-primary-200 text-xs">
+                        <i class="fal fa-check-circle text-webropol-primary-600"></i>
+                        <span class="text-webropol-primary-800 font-medium">
+                          <span x-text="selectedCount"></span> recipient<span x-show="selectedCount !== 1">s</span> selected
+                        </span>
+                        <button @click="clearSelection()" class="ml-auto text-webropol-primary-600 hover:text-webropol-primary-800 font-medium">Clear</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ──────────────────────────────────────────── -->
+            <!-- STEP 3: Review & Send                       -->
+            <!-- ──────────────────────────────────────────── -->
+            <div class="relative">
+              <div class="flex items-start gap-4">
+                <div class="flex flex-col items-center flex-shrink-0">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                    :class="selectedCount > 0 && selectedList ? 'bg-webropol-primary-100 text-webropol-primary-700' : 'bg-webropol-gray-100 text-webropol-gray-400'">
+                    3
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <div class="step-card bg-white border border-webropol-gray-200 rounded-xl overflow-hidden"
+                    :class="!selectedList || selectedCount === 0 ? 'opacity-60 pointer-events-none' : ''">
+                    <div class="px-5 py-4">
+                      <h2 class="text-sm font-semibold text-webropol-gray-900 mb-1">Review & Send</h2>
+                      <p class="text-xs text-webropol-gray-500 mb-4">Confirm details and send your SMS survey.</p>
+
+                      <!-- Sender info -->
+                      <div class="mb-4">
+                        <label class="block text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider mb-2">Sender Number</label>
+                        <template x-if="selectedSender && !surveyClosed">
+                          <div class="flex items-center gap-3 py-2.5 px-4 bg-webropol-gray-50 rounded-lg border border-webropol-gray-200">
+                            <i class="fal fa-sim-card text-webropol-primary-600 text-sm"></i>
+                            <span class="font-mono text-sm font-medium text-webropol-gray-800" x-text="selectedSender"></span>
+                            <span class="ml-auto text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Active</span>
+                          </div>
+                        </template>
+                        <template x-if="!selectedSender || surveyClosed">
+                          <div class="flex items-center gap-3 py-2.5 px-4 bg-webropol-gray-50 rounded-lg border border-dashed border-webropol-gray-300">
+                            <i class="fal fa-sim-card text-webropol-gray-400 text-sm"></i>
+                            <span class="text-sm text-webropol-gray-500">No sender number assigned</span>
+                          </div>
+                        </template>
+                      </div>
+
+                      <!-- Advanced settings (expandable) -->
+                      <div class="mb-4">
+                        <button
+                          @click="advancedOpen = !advancedOpen"
+                          class="inline-flex items-center gap-1.5 text-xs font-semibold text-webropol-gray-600 hover:text-webropol-primary-700 transition-colors">
+                          <i class="fal fa-gear text-xs"></i>
+                          <span>Advanced Settings</span>
+                          <i class="fal fa-chevron-down transition-transform duration-200 text-xs" :class="advancedOpen ? 'rotate-180' : ''"></i>
+                        </button>
+
+                        <div x-show="advancedOpen" x-transition class="mt-3 p-4 bg-webropol-gray-50 rounded-lg border border-webropol-gray-200 space-y-3">
+                          <div class="flex items-start gap-2">
+                            <input type="checkbox" id="dnd-toggle" x-model="dndEnabled"
+                              class="w-4 h-4 mt-0.5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
+                            <label for="dnd-toggle" class="text-xs text-webropol-gray-700 cursor-pointer leading-snug">
+                              <span class="font-medium">Do Not Disturb</span> -- SMS will not be sent during these hours
+                            </label>
+                          </div>
+
+                          <div class="flex items-center gap-2 pl-6" :class="!dndEnabled && 'opacity-50 pointer-events-none'">
+                            <div class="relative flex-1 max-w-[140px]">
+                              <input type="time" x-model="dndStart" :disabled="!dndEnabled"
+                                class="w-full pl-3 pr-8 py-2 border border-webropol-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 disabled:bg-white transition-all">
+                              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none text-xs"><i class="fal fa-clock"></i></span>
+                            </div>
+                            <span class="text-webropol-gray-400 text-xs">to</span>
+                            <div class="relative flex-1 max-w-[140px]">
+                              <input type="time" x-model="dndEnd" :disabled="!dndEnabled"
+                                class="w-full pl-3 pr-8 py-2 border border-webropol-gray-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 disabled:bg-white transition-all">
+                              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 pointer-events-none text-xs"><i class="fal fa-clock"></i></span>
+                            </div>
+                            <div class="relative flex-shrink-0" x-data="{ tipOpen: false }">
+                              <button @mouseenter="tipOpen = true" @mouseleave="tipOpen = false"
+                                class="w-6 h-6 rounded-full flex items-center justify-center bg-webropol-primary-100 text-webropol-primary-700 text-xs hover:bg-webropol-primary-200 transition-colors">
+                                <i class="fal fa-info"></i>
+                              </button>
+                              <div x-show="tipOpen" x-transition
+                                class="absolute bottom-full right-0 mb-2 w-56 bg-webropol-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-lg pointer-events-none z-50">
+                                SMS messages queued during restricted hours will be held and sent after the window ends.
+                                <div class="absolute top-full right-2 border-4 border-transparent border-t-webropol-gray-900"></div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <!-- Credits info + Send button -->
-                    <div class="border-t border-webropol-gray-100 pt-4 space-y-3">
-
-                      <!-- Per-recipient rate -->
-                      <div class="flex items-start gap-2 text-xs text-webropol-gray-500 bg-webropol-gray-50 rounded-lg px-3 py-2.5">
-                        <i class="fal fa-info-circle text-webropol-primary-500 mt-0.5 flex-shrink-0"></i>
-                        <span>Each recipient answering the full survey uses <span x-text="creditsPerRecipient" class="font-semibold text-webropol-gray-700"></span> credits.</span>
-                      </div>
-
-                      <!-- Cost breakdown -->
-                      <div class="rounded-lg border border-webropol-gray-200 divide-y divide-webropol-gray-100 text-xs">
-                        <div class="flex items-center justify-between px-3 py-2">
-                          <span class="text-webropol-gray-500">Selected recipients</span>
-                          <span x-text="selectedCount > 0 ? selectedCount : '—'" :class="selectedCount > 0 ? 'font-semibold text-webropol-gray-800' : 'text-webropol-gray-400 italic'"></span>
+                      <!-- Credits summary -->
+                      <div class="rounded-xl border border-webropol-gray-200 overflow-hidden mb-4">
+                        <div class="bg-webropol-gray-50 px-4 py-2.5 border-b border-webropol-gray-200">
+                          <p class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-wider">Cost Summary</p>
                         </div>
-                        <div class="flex items-center justify-between px-3 py-2">
-                          <span class="flex items-center gap-1.5 text-webropol-gray-500">
-                            Credits used
-                            <span class="relative" x-data="{ tipOpen: false }">
-                              <button @mouseenter="tipOpen = true" @mouseleave="tipOpen = false"
-                                class="w-4 h-4 rounded-full flex items-center justify-center bg-webropol-gray-200 text-webropol-gray-500 text-xs hover:bg-webropol-gray-300 transition-colors leading-none">
-                                <i class="fal fa-info" style="font-size:9px"></i>
-                              </button>
-                              <div x-show="tipOpen"
-                                x-transition:enter="transition ease-out duration-150"
-                                x-transition:enter-start="opacity-0"
-                                x-transition:enter-end="opacity-100"
-                                x-transition:leave="transition ease-in duration-100"
-                                x-transition:leave-start="opacity-100"
-                                x-transition:leave-end="opacity-0"
-                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-webropol-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-lg pointer-events-none z-50 text-center">
-                                Credits are deducted from <span class="font-semibold">Ali Al-Zuhairi</span>'s account balance.
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-webropol-gray-900"></div>
-                              </div>
-                            </span>
-                          </span>
-                          <span x-text="selectedCount > 0 ? totalCost : '—'" :class="selectedCount > 0 ? 'font-semibold text-webropol-primary-700' : 'text-webropol-gray-400 italic'"></span>
+                        <div class="divide-y divide-webropol-gray-100 text-sm">
+                          <div class="flex items-center justify-between px-4 py-2.5">
+                            <span class="text-webropol-gray-600 text-xs">Selected recipients</span>
+                            <span class="font-semibold text-webropol-gray-800 text-xs" x-text="selectedCount"></span>
+                          </div>
+                          <div class="flex items-center justify-between px-4 py-2.5">
+                            <span class="text-webropol-gray-600 text-xs">Credits per recipient</span>
+                            <span class="font-medium text-webropol-gray-700 text-xs" x-text="creditsPerRecipient"></span>
+                          </div>
+                          <div class="flex items-center justify-between px-4 py-2.5">
+                            <span class="text-webropol-gray-600 text-xs">Total credits needed</span>
+                            <span class="font-bold text-webropol-primary-700 text-sm" x-text="totalCost"></span>
+                          </div>
+                          <div class="flex items-center justify-between px-4 py-2.5 bg-webropol-gray-50">
+                            <span class="text-webropol-gray-600 text-xs">Your balance</span>
+                            <span class="font-bold text-sm"
+                              :class="creditBalance >= totalCost ? 'text-green-700' : 'text-red-600'"
+                              x-text="creditBalance + ' credits'"></span>
+                          </div>
                         </div>
-                        <div class="flex items-center justify-between px-3 py-2">
-                          <span class="text-webropol-gray-500">Your balance</span>
-                          <span
-                            x-text="creditBalance + ' credits'"
-                            :class="selectedCount > 0 && creditBalance < totalCost ? 'text-red-600 font-semibold' : 'text-green-700 font-semibold'">
-                          </span>
-                        </div>
-                      </div>
-
-                      <!-- No selection notice -->
-                      <div x-show="selectedCount === 0" x-transition
-                        class="flex items-center gap-2 text-xs text-webropol-gray-500 bg-webropol-gray-50 border border-webropol-gray-200 rounded-lg px-3 py-2">
-                        <i class="fal fa-arrow-left flex-shrink-0"></i>
-                        Select recipients from the table to calculate credits.
                       </div>
 
                       <!-- Low balance warning -->
                       <div x-show="selectedCount > 0 && creditBalance < totalCost" x-transition
-                        class="flex items-center gap-2 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                        <i class="fal fa-triangle-exclamation flex-shrink-0"></i>
-                        Not enough credits to send to all recipients.
+                        class="flex items-center gap-3 mb-4 py-3 px-4 bg-red-50 border border-red-200 rounded-lg">
+                        <i class="fal fa-triangle-exclamation text-red-500 flex-shrink-0"></i>
+                        <p class="text-xs text-red-700">Not enough credits. You need <span class="font-semibold" x-text="totalCost - creditBalance"></span> more credits to send to all selected recipients.</p>
                       </div>
 
+                      <!-- SEND button -->
                       <button
                         @click="sendSurvey()"
                         :disabled="selectedCount === 0 || creditBalance < totalCost || !selectedSender || surveyClosed"
-                        class="send-btn w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        class="send-btn w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-white font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                         <i class="fal fa-paper-plane"></i>
-                        Send 2Way SMS Survey
+                        Send SMS Survey to <span x-text="selectedCount"></span> Recipient<span x-show="selectedCount !== 1">s</span>
                       </button>
+
+                      <p class="text-center text-xs text-webropol-gray-400 mt-2">SMS is only sent to recipients with a valid mobile number.</p>
                     </div>
-
                   </div>
-                </div>
 
-                <!-- Reset survey -->
-                <div class="bg-white border border-webropol-gray-200 rounded-xl p-4">
-                  <div class="flex items-center justify-between gap-3">
+                  <!-- Reset survey - separate from main flow, placed at the very bottom -->
+                  <div class="mt-6 flex justify-end">
                     <button
                       @click="confirmReset = true"
-                      class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-webropol-gray-300 text-webropol-gray-600 text-xs font-medium hover:bg-webropol-gray-50 hover:border-red-300 hover:text-red-600 transition-all">
+                      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs text-webropol-gray-500 hover:text-red-600 hover:bg-red-50 transition-all">
                       <i class="fal fa-rotate-left"></i>
-                      Reset survey &amp; delete answers
+                      Reset survey & delete all answers
                     </button>
-                    <div class="relative flex-shrink-0" x-data="{ tipOpen: false }">
-                      <button @mouseenter="tipOpen = true" @mouseleave="tipOpen = false"
-                        class="w-7 h-7 rounded-full flex items-center justify-center bg-webropol-gray-200 text-webropol-gray-600 text-xs hover:bg-webropol-gray-300 transition-colors">
-                        <i class="fal fa-info"></i>
-                      </button>
-                      <div x-show="tipOpen" x-transition
-                        class="absolute bottom-full right-0 mb-2 w-56 bg-webropol-gray-900 text-white text-xs rounded-lg px-3 py-2 shadow-lg pointer-events-none z-50">
-                        This will permanently delete all collected answers and reset the survey status.
-                        <div class="absolute top-full right-2 border-4 border-transparent border-t-webropol-gray-900"></div>
-                      </div>
-                    </div>
                   </div>
                 </div>
-
               </div>
             </div>
 
-          </div>
-          <!-- end two-column layout -->
+          </div><!-- end max-w-4xl -->
 
           <!-- ─── Reset confirmation dialog ─── -->
           <div x-show="confirmReset"
@@ -532,6 +586,7 @@
     function smsCollectApp() {
       return {
         selectedList: '',
+        step1Open: true,
         advancedOpen: false,
         dndEnabled: false,
         dndStart: '',
@@ -547,7 +602,6 @@
             const stored = localStorage.getItem('webropol_sms_credits_per_recipient');
             if (stored) this.creditsPerRecipient = parseInt(stored, 10) || 4;
           } catch (e) { /* ignore */ }
-          // Pre-assign the first available sender number
           if (!this.selectedSender && this.senderNumbers.length > 0) {
             this.selectedSender = this.senderNumbers[0].phone;
           }
@@ -555,12 +609,6 @@
         senderNumbers: [
           { phone: '+3584573966532', status: 'Available' },
           { phone: '+3584573958980', status: 'Available' },
-        ],
-
-        recipientLists: [
-          { id: '1', name: 'Customer feedback list (March 2026)' },
-          { id: '2', name: 'Internal testers' },
-          { id: '3', name: 'Event attendees – Feb 2026' },
         ],
 
         recipients: [
@@ -573,6 +621,27 @@
         searchQuery: '',
         currentPage: 1,
         pageSize: 5,
+
+        selectSendOption(option) {
+          this.selectedList = option;
+          if (option === 'all') {
+            this.recipients.forEach(r => r.selected = true);
+          } else if (option === 'not_received') {
+            this.recipients.forEach(r => r.selected = r.sent === 0);
+          } else if (option === 'not_answered') {
+            this.recipients.forEach(r => r.selected = !r.updated);
+          } else if (option === 'from_list') {
+            // Keep current manual selection or clear
+            if (this.selectedCount === 0) {
+              this.recipients.forEach(r => r.selected = false);
+            }
+          }
+        },
+
+        clearSelection() {
+          this.selectedList = '';
+          this.recipients.forEach(r => r.selected = false);
+        },
 
         get filteredRecipients() {
           if (!this.searchQuery) return this.recipients;
@@ -595,30 +664,20 @@
         toggleAll(e) {
           this.recipients.forEach(r => r.selected = e.target.checked);
           if (e.target.checked) {
-            this.setDropdownValue('all');
+            this.selectedList = 'all';
           } else {
-            this.setDropdownValue('');
+            this.selectedList = '';
           }
         },
 
         onRowCheck() {
           const count = this.recipients.filter(r => r.selected).length;
           if (count === this.recipients.length) {
-            this.setDropdownValue('all');
+            this.selectedList = 'all';
           } else if (count > 0) {
-            this.setDropdownValue('from_list');
+            this.selectedList = 'from_list';
           } else {
-            this.setDropdownValue('');
-          }
-        },
-
-        setDropdownValue(value) {
-          this.selectedList = value;
-          const el = document.getElementById('send-to-dropdown');
-          if (el) {
-            el.setAttribute('value', value);
-            // Re-render the component to reflect the new selected state
-            if (typeof el.render === 'function') { el.render(); el.bindEvents && el.bindEvents(); }
+            this.selectedList = '';
           }
         },
 
@@ -628,21 +687,14 @@
         get totalCost() {
           return this.selectedCount * this.creditsPerRecipient;
         },
-        get credits() {
-          return this.totalCost;
-        },
 
         sendSurvey() {
-          if (!this.selectedList) {
-            alert('Please select to whom the survey will be sent before sending.');
-            return;
-          }
-          // Persist send action to localStorage
+          if (!this.selectedList) return;
           try {
             this.creditBalance -= this.totalCost;
             const record = {
               id: Date.now(),
-              name: 'SMS campaign – ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+              name: 'SMS campaign \u2013 ' + new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
               date: 'Sent ' + new Date().toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
               recipients: this.recipients.length,
               responses: 0,
