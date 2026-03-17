@@ -194,40 +194,23 @@
     }
     .phone-input-bar button:hover:not(:disabled) { transform: scale(1.08); box-shadow: 0 2px 8px rgba(6,182,212,0.4); }
     .phone-input-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
-    .sms-nps-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 4px;
-      margin-top: 8px;
-    }
-    .sms-nps-btn {
-      width: 100%; aspect-ratio: 1;
-      border-radius: 8px;
-      border: 1.5px solid #e2e8f0;
-      background: white;
-      font-size: 12px; font-weight: 600;
-      color: #475569;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .sms-nps-btn:hover { border-color: #0891b2; background: #f0fdff; color: #0e7490; }
-    .sms-nps-btn.selected { background: #0891b2; color: white; border-color: #0891b2; }
-    .sms-yesno-btns {
-      display: flex; gap: 8px; margin-top: 8px;
-    }
-    .sms-yesno-btn {
-      flex: 1; padding: 10px;
-      border-radius: 10px;
-      border: 1.5px solid #e2e8f0;
-      background: white;
-      font-size: 13px; font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
+    .sms-hint {
+      font-size: 10px;
+      color: #94a3b8;
       text-align: center;
+      padding: 2px 0 0;
+      animation: bubbleIn 0.3s ease;
     }
-    .sms-yesno-btn:hover { border-color: #0891b2; background: #f0fdff; }
-    .sms-yesno-btn.selected { background: #0891b2; color: white; border-color: #0891b2; }
+    .sms-error {
+      font-size: 11px;
+      color: #ef4444;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 6px 12px;
+      align-self: flex-start;
+      animation: bubbleIn 0.2s ease;
+    }
     .sms-thank-you {
       text-align: center;
       padding: 24px 16px;
@@ -1069,27 +1052,14 @@
                         <div class="sms-bubble sms-outgoing" x-text="msg.text"></div>
                       </template>
 
-                      <!-- Yes/No options -->
-                      <template x-if="msg.type === 'yesno-options'">
-                        <div class="w-full">
-                          <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
-                          <div class="sms-yesno-btns" x-show="msg.active">
-                            <button class="sms-yesno-btn" @click="answerYesNo('Y')"><i class="fal fa-thumbs-up mr-1"></i> Yes</button>
-                            <button class="sms-yesno-btn" @click="answerYesNo('N')"><i class="fal fa-thumbs-down mr-1"></i> No</button>
-                          </div>
-                        </div>
+                      <!-- Input hint -->
+                      <template x-if="msg.type === 'hint'">
+                        <div class="sms-hint" x-text="msg.text"></div>
                       </template>
 
-                      <!-- NPS options -->
-                      <template x-if="msg.type === 'nps-options'">
-                        <div class="w-full">
-                          <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
-                          <div class="sms-nps-grid" x-show="msg.active">
-                            <template x-for="n in 11" :key="n">
-                              <button class="sms-nps-btn" :class="previewNpsSelected === (n-1) ? 'selected' : ''" @click="answerNps(n-1)" x-text="n-1"></button>
-                            </template>
-                          </div>
-                        </div>
+                      <!-- Validation error -->
+                      <template x-if="msg.type === 'error'">
+                        <div class="sms-error" x-text="msg.text"></div>
                       </template>
 
                       <!-- Typing indicator -->
@@ -1111,11 +1081,12 @@
                   </template>
                 </div>
 
-                <!-- Input bar for open-ended -->
+                <!-- Text input bar -- always visible when awaiting a reply -->
                 <div class="phone-input-bar" x-show="previewInputActive">
-                  <input type="text" x-model="previewInputText" placeholder="Type your reply..."
-                    @keydown.enter="sendOpenReply()" x-ref="previewInput">
-                  <button @click="sendOpenReply()" :disabled="!previewInputText.trim()">
+                  <input type="text" x-model="previewInputText"
+                    :placeholder="previewInputPlaceholder"
+                    @keydown.enter="submitReply()" x-ref="previewInput">
+                  <button @click="submitReply()" :disabled="!previewInputText.trim()">
                     <i class="fal fa-paper-plane" style="font-size:14px"></i>
                   </button>
                 </div>
@@ -1183,19 +1154,25 @@
         previewStep: 0,
         previewInputActive: false,
         previewInputText: '',
-        previewNpsSelected: null,
+        previewInputPlaceholder: 'Type your reply...',
         previewQuestions: [
           {
             type: 'yesno',
-            text: 'Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No'
+            text: 'Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No',
+            placeholder: 'Reply Y or N...',
+            hint: 'Reply with Y (Yes) or N (No)'
           },
           {
             type: 'nps',
-            text: 'How easy or difficult has it been to use Webropol\'s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.'
+            text: 'How easy or difficult has it been to use Webropol\'s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.',
+            placeholder: 'Reply 0–10...',
+            hint: 'Reply with a number from 0 to 10'
           },
           {
             type: 'open',
-            text: 'Please share any comments or suggestions you may have:'
+            text: 'Please share any comments or suggestions you may have:',
+            placeholder: 'Type your message...',
+            hint: null
           }
         ],
 
@@ -1335,7 +1312,7 @@
           this.previewStep = 0;
           this.previewInputActive = false;
           this.previewInputText = '';
-          this.previewNpsSelected = null;
+          this.previewInputPlaceholder = 'Type your reply...';
           this.showNextQuestion();
         },
 
@@ -1349,7 +1326,7 @@
         showNextQuestion() {
           const q = this.previewQuestions[this.previewStep];
           if (!q) {
-            // All questions done, show thank you
+            // All questions answered — show thank you
             this.previewInputActive = false;
             this.previewMessages.push({ type: 'typing' });
             this.scrollPreview();
@@ -1361,60 +1338,67 @@
             return;
           }
 
-          // Show typing indicator then the question
+          // Show typing indicator, then deliver the SMS
           this.previewMessages.push({ type: 'typing' });
           this.scrollPreview();
 
           setTimeout(() => {
             this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
-
-            if (q.type === 'yesno') {
-              this.previewMessages.push({ type: 'yesno-options', text: q.text, active: true });
-              this.previewInputActive = false;
-            } else if (q.type === 'nps') {
-              this.previewMessages.push({ type: 'nps-options', text: q.text, active: true });
-              this.previewInputActive = false;
-            } else if (q.type === 'open') {
-              this.previewMessages.push({ type: 'incoming', text: q.text });
-              this.previewInputActive = true;
-              this.$nextTick(() => {
-                if (this.$refs.previewInput) this.$refs.previewInput.focus();
-              });
+            this.previewMessages.push({ type: 'incoming', text: q.text });
+            if (q.hint) {
+              this.previewMessages.push({ type: 'hint', text: q.hint });
             }
+            this.previewInputPlaceholder = q.placeholder || 'Type your reply...';
+            this.previewInputActive = true;
             this.scrollPreview();
+            this.$nextTick(() => {
+              if (this.$refs.previewInput) this.$refs.previewInput.focus();
+            });
           }, 700);
         },
 
-        answerYesNo(val) {
-          // Deactivate buttons
-          const last = this.previewMessages.findLast(m => m.type === 'yesno-options');
-          if (last) last.active = false;
-          this.previewMessages.push({ type: 'outgoing', text: val === 'Y' ? 'Yes' : 'No' });
-          this.scrollPreview();
-          this.previewStep++;
-          setTimeout(() => this.showNextQuestion(), 400);
-        },
+        submitReply() {
+          const raw = this.previewInputText.trim();
+          if (!raw) return;
+          const q = this.previewQuestions[this.previewStep];
+          if (!q) return;
 
-        answerNps(val) {
-          this.previewNpsSelected = val;
-          const last = this.previewMessages.findLast(m => m.type === 'nps-options');
-          // Brief delay to show selection state
-          setTimeout(() => {
-            if (last) last.active = false;
-            this.previewMessages.push({ type: 'outgoing', text: String(val) });
-            this.scrollPreview();
-            this.previewStep++;
-            this.previewNpsSelected = null;
-            setTimeout(() => this.showNextQuestion(), 400);
-          }, 300);
-        },
+          // Validate based on question type
+          if (q.type === 'yesno') {
+            const val = raw.toUpperCase();
+            if (val !== 'Y' && val !== 'N') {
+              // Remove previous error if any
+              this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+              this.previewMessages.push({ type: 'outgoing', text: raw });
+              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please respond with Y or N.' });
+              this.previewInputText = '';
+              this.scrollPreview();
+              return;
+            }
+            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+            this.previewMessages.push({ type: 'outgoing', text: val === 'Y' ? 'Y' : 'N' });
+          } else if (q.type === 'nps') {
+            const num = parseInt(raw, 10);
+            if (isNaN(num) || num < 0 || num > 10) {
+              this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+              this.previewMessages.push({ type: 'outgoing', text: raw });
+              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please enter a number from 0 to 10.' });
+              this.previewInputText = '';
+              this.scrollPreview();
+              return;
+            }
+            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+            this.previewMessages.push({ type: 'outgoing', text: String(num) });
+          } else {
+            // Open-ended: accept anything
+            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+            this.previewMessages.push({ type: 'outgoing', text: raw });
+          }
 
-        sendOpenReply() {
-          const text = this.previewInputText.trim();
-          if (!text) return;
-          this.previewMessages.push({ type: 'outgoing', text });
+          // Clear input, remove hint, advance
           this.previewInputText = '';
           this.previewInputActive = false;
+          this.previewMessages = this.previewMessages.filter(m => m.type !== 'hint');
           this.scrollPreview();
           this.previewStep++;
           setTimeout(() => this.showNextQuestion(), 400);
