@@ -87,9 +87,9 @@ export class SMSYesNo extends BaseComponent {
                         <div class="flex items-center gap-2">
                             <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-webropol-gray-100">
                                 <div class="flex items-center justify-center w-6 h-6 text-green-600 bg-green-100 rounded-md">
-                                    <i class="fal fa-check-circle text-xs"></i>
+                                    <i class="fal fa-list-radio text-xs"></i>
                                 </div>
-                                <span class="text-xs font-medium text-webropol-gray-700">Yes / No</span>
+                                <span class="text-xs font-medium text-webropol-gray-700">Selection</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-1">

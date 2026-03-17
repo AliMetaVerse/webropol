@@ -1159,7 +1159,8 @@
           {
             type: 'selection',
             text: 'Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No',
-            placeholder: 'Reply Y or N...',
+            options: ['Y', 'N'],
+            placeholder: 'Reply with Y or N...',
             hint: null
           },
           {
@@ -1366,17 +1367,16 @@
           // Validate based on question type
           if (q.type === 'selection') {
             const val = raw.toUpperCase();
-            if (val !== 'Y' && val !== 'N') {
-              // Remove previous error if any
+            if (!q.options.includes(val)) {
               this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
               this.previewMessages.push({ type: 'outgoing', text: raw });
-              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please respond with Y or N.' });
+              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please respond with: ' + q.options.join(' or ') });
               this.previewInputText = '';
               this.scrollPreview();
               return;
             }
             this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
-            this.previewMessages.push({ type: 'outgoing', text: val === 'Y' ? 'Y' : 'N' });
+            this.previewMessages.push({ type: 'outgoing', text: val });
           } else if (q.type === 'nps') {
             const num = parseInt(raw, 10);
             if (isNaN(num) || num < 0 || num > 10) {
