@@ -255,8 +255,34 @@
                             <div class="flex justify-center mb-4">
                                 <div class="sms-badge"><i class="fal fa-hand-holding-heart"></i> Thank You Page</div>
                             </div>
-                            <div class="survey-card p-10 text-center text-4xl text-webropol-gray-500">
-                                Add thank you page message
+                            <div class="survey-card p-5 mb-5 relative cursor-pointer"
+                                 x-data="{ editing: false }"
+                                 :class="editing ? 'ring-2 ring-webropol-primary-400' : ''"
+                                 @click="editing = true"
+                                 @click.outside="editing = false">
+
+                                <!-- View mode -->
+                                <div x-show="!editing" class="text-center py-5">
+                                    <p class="text-lg" :class="thankYouMessage ? 'text-webropol-gray-800 font-medium' : 'text-4xl text-webropol-gray-500'" x-text="thankYouMessage || 'Add thank you page message'"></p>
+                                </div>
+
+                                <!-- Edit mode -->
+                                <div x-show="editing" @click.stop>
+                                    <div class="flex items-center justify-between mb-3 pb-3 border-b border-webropol-gray-100">
+                                        <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border border-webropol-gray-100">
+                                            <div class="flex items-center justify-center w-6 h-6 text-webropol-primary-600 bg-webropol-primary-50 rounded-md">
+                                                <i class="fal fa-hand-holding-heart text-xs"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-webropol-gray-700">Thank You Page</span>
+                                        </div>
+                                    </div>
+                                    <label class="block text-xs font-medium text-webropol-gray-500 mb-1 uppercase tracking-wide">Thank you message</label>
+                                    <textarea
+                                        class="w-full px-3 py-2 border border-webropol-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-webropol-primary-500/20 focus:border-webropol-primary-500 transition-all resize-none"
+                                        rows="3"
+                                        x-model="thankYouMessage"
+                                        placeholder="Enter your thank you message..."></textarea>
+                                </div>
                             </div>
 
                         </div>
@@ -270,6 +296,7 @@
         function smsEditApp() {
             return {
                 surveyName: 'HealthCare 2Way SMS Survey',
+                thankYouMessage: 'Thank you for your responses!',
                 pages: [
                     {
                         id: 1,
@@ -306,6 +333,19 @@
                     if (id && names[id]) {
                         this.surveyName = names[id];
                     }
+
+                    // Load persisted thank you message
+                    try {
+                        const saved = localStorage.getItem('webropol_sms_thankyou');
+                        if (saved) this.thankYouMessage = saved;
+                    } catch (e) { /* ignore */ }
+
+                    // Persist thank you message on change
+                    this.$watch('thankYouMessage', (val) => {
+                        try {
+                            localStorage.setItem('webropol_sms_thankyou', val);
+                        } catch (e) { /* ignore */ }
+                    });
 
                     // Compute total credits per recipient from question components and persist
                     this.$nextTick(() => {

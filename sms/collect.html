@@ -1071,11 +1071,7 @@
 
                       <!-- Thank you -->
                       <template x-if="msg.type === 'thankyou'">
-                        <div class="sms-thank-you">
-                          <i class="fal fa-circle-check"></i>
-                          <h3>Thank you!</h3>
-                          <p>Your responses have been recorded. We appreciate your feedback.</p>
-                        </div>
+                        <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
                       </template>
                     </div>
                   </template>
@@ -1155,6 +1151,7 @@
         previewInputActive: false,
         previewInputText: '',
         previewInputPlaceholder: 'Type your reply...',
+        thankYouMessage: 'Thank you for your responses!',
         previewQuestions: [
           {
             type: 'selection',
@@ -1181,6 +1178,20 @@
           this.$watch('addRecipientsOpen', v => this.toggleModal(v));
           this.$watch('confirmReset', v => this.toggleModal(v));
           this.$watch('previewOpen', v => this.toggleModal(v));
+
+          // Load edited question texts and thank-you message from localStorage
+          try {
+            const saved = JSON.parse(localStorage.getItem('webropol_sms_questions') || '{}');
+            const qIds = ['sms-q1', 'sms-q2', 'sms-q3'];
+            qIds.forEach((qId, i) => {
+              if (saved[qId]?.text && this.previewQuestions[i]) {
+                this.previewQuestions[i].text = saved[qId].text;
+              }
+            });
+            const ty = localStorage.getItem('webropol_sms_thankyou');
+            if (ty) this.thankYouMessage = ty;
+          } catch (e) { /* ignore */ }
+
           try {
             const stored = localStorage.getItem('webropol_sms_credits_per_recipient');
             if (stored) this.creditsPerRecipient = parseInt(stored, 10) || 4;
@@ -1333,7 +1344,7 @@
             this.scrollPreview();
             setTimeout(() => {
               this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
-              this.previewMessages.push({ type: 'thankyou' });
+              this.previewMessages.push({ type: 'thankyou', text: this.thankYouMessage });
               this.scrollPreview();
             }, 800);
             return;
