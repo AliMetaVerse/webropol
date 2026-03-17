@@ -613,16 +613,17 @@
                                                             :class="statusBadgeClass(template)"
                                                             x-text="statusBadgeLabel(template)"></span>
                                                     </td>
-                                                    <td class="px-5 py-4 align-middle text-right" :class="menuOpen ? 'relative z-50' : ''">
-                                                        <div class="flex flex-wrap items-center justify-end gap-3 text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false">
+                                                    <td class="px-5 py-4 align-middle text-right">
+                                                        <div class="flex flex-wrap items-center justify-end gap-3 text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false" @scroll.window="menuOpen = false">
                                                             <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-webropol-gray-500 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-900" title="View">
                                                                 <i class="fal fa-eye text-lg"></i>
                                                             </button>
                                                             <div class="relative">
-                                                                <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-webropol-gray-500 transition hover:bg-webropol-gray-100" @click="menuOpen = !menuOpen">
+                                                                <button x-ref="btn" type="button" class="flex h-8 w-8 items-center justify-center rounded-full text-webropol-gray-500 transition hover:bg-webropol-gray-100" @click="menuOpen = !menuOpen">
                                                                     <i class="fal fa-ellipsis-v text-lg"></i>
                                                                 </button>
-                                                                <div x-show="menuOpen" x-transition.opacity class="absolute right-0 top-full z-[100] mt-2 w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-cloak>
+                                                                <div x-show="menuOpen" class="fixed inset-0 z-[99]" @click="menuOpen = false" @wheel="menuOpen = false" @touchmove="menuOpen = false" x-cloak></div>
+                                                                <div x-show="menuOpen" x-transition.opacity class="fixed z-[100] w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-effect="if(menuOpen && $refs.btn) { const r = $refs.btn.getBoundingClientRect(); if(window.innerHeight - r.bottom < 250 && r.top > 250) { $el.style.bottom = `${window.innerHeight - r.top + 8}px`; $el.style.top = 'auto'; } else { $el.style.top = `${r.bottom + 8}px`; $el.style.bottom = 'auto'; } $el.style.left = `${Math.min(r.right - 256, window.innerWidth - 270)}px`; }" x-cloak>
                                                                     <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="renameTemplate(template); menuOpen = false">
                                                                         <i class="fal fa-pen w-5 text-center text-lg"></i>
                                                                         <span>Rename</span>
@@ -672,15 +673,16 @@
                                             </div>
                                             <div class="mt-4 flex items-center justify-between text-sm text-webropol-gray-500">
                                                 <span x-text="template.lastModified"></span>
-                                                <div class="flex flex-wrap items-center gap-2 justify-end text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false">
+                                                <div class="flex flex-wrap items-center gap-2 justify-end text-sm font-medium" x-data="{ menuOpen: false }" @click.outside="menuOpen = false" @scroll.window="menuOpen = false">
                                                     <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-gray-50 text-webropol-gray-600 transition hover:bg-webropol-gray-100 hover:text-webropol-gray-900" title="View">
                                                         <i class="fal fa-eye"></i>
                                                     </button>
-                                                    <div class="relative" :class="menuOpen ? 'z-50' : ''">
-                                                        <button type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-primary-300 text-webropol-gray-900 transition hover:bg-webropol-primary-400" @click="menuOpen = !menuOpen">
+                                                    <div class="relative">
+                                                        <button x-ref="mobileBtn" type="button" class="flex h-8 w-8 items-center justify-center rounded-full bg-webropol-primary-300 text-webropol-gray-900 transition hover:bg-webropol-primary-400" @click="menuOpen = !menuOpen">
                                                             <i class="fal fa-ellipsis-v"></i>
                                                         </button>
-                                                        <div x-show="menuOpen" x-transition.opacity class="absolute right-0 bottom-full z-[100] mb-2 w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-cloak>
+                                                        <div x-show="menuOpen" class="fixed inset-0 z-[99]" @click="menuOpen = false" @wheel="menuOpen = false" @touchmove="menuOpen = false" x-cloak></div>
+                                                        <div x-show="menuOpen" x-transition.opacity class="fixed z-[100] w-64 rounded-2xl bg-white py-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5" x-effect="if(menuOpen && $refs.mobileBtn) { const r = $refs.mobileBtn.getBoundingClientRect(); if(window.innerHeight - r.bottom < 250 && r.top > 250) { $el.style.bottom = `${window.innerHeight - r.top + 8}px`; $el.style.top = 'auto'; } else { $el.style.top = `${r.bottom + 8}px`; $el.style.bottom = 'auto'; } $el.style.left = `${Math.max(16, r.right - 256)}px`; }" x-cloak>
                                                             <button type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-webropol-gray-800 transition hover:bg-webropol-gray-50" @click="renameTemplate(template); menuOpen = false">
                                                                 <i class="fal fa-pen w-5 text-center text-lg"></i>
                                                                 <span>Rename</span>
