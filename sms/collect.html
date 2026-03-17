@@ -66,6 +66,186 @@
 
     /* Smooth height transition for collapsible sections */
     [x-cloak] { display: none !important; }
+
+    /* ── Phone Preview Mockup ── */
+    .phone-frame {
+      width: 320px;
+      height: 640px;
+      border-radius: 40px;
+      border: 6px solid #1e293b;
+      background: #f8fafc;
+      box-shadow: 0 25px 60px -12px rgba(0,0,0,0.35), inset 0 0 0 2px #334155;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .phone-notch {
+      width: 120px; height: 28px;
+      background: #1e293b;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+    .phone-notch::after {
+      content: '';
+      width: 10px; height: 10px;
+      background: #334155;
+      border-radius: 50%;
+      position: absolute;
+      top: 8px; left: 50%;
+      transform: translateX(-50%);
+    }
+    .phone-status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px;
+      height: 20px;
+      font-size: 11px; font-weight: 600;
+      color: #334155;
+      background: #f1f5f9;
+    }
+    .phone-chat-header {
+      background: linear-gradient(135deg, #0e7490, #0891b2);
+      color: white;
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 600;
+    }
+    .phone-chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f0f4f8;
+    }
+    .sms-bubble {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-word;
+      animation: bubbleIn 0.3s ease;
+    }
+    @keyframes bubbleIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .sms-incoming {
+      background: white;
+      color: #1e293b;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .sms-outgoing {
+      background: linear-gradient(135deg, #0891b2, #06b6d4);
+      color: white;
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .sms-typing {
+      align-self: flex-start;
+      display: flex; gap: 4px; padding: 12px 18px;
+      background: white; border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .sms-typing span {
+      width: 7px; height: 7px;
+      background: #94a3b8;
+      border-radius: 50%;
+      animation: typingDot 1.2s ease-in-out infinite;
+    }
+    .sms-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .sms-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+    .phone-input-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+    }
+    .phone-input-bar input {
+      flex: 1;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .phone-input-bar input:focus { border-color: #0891b2; }
+    .phone-input-bar button {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0e7490, #0891b2);
+      color: white; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .phone-input-bar button:hover:not(:disabled) { transform: scale(1.08); box-shadow: 0 2px 8px rgba(6,182,212,0.4); }
+    .phone-input-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .sms-nps-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .sms-nps-btn {
+      width: 100%; aspect-ratio: 1;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      font-size: 12px; font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sms-nps-btn:hover { border-color: #0891b2; background: #f0fdff; color: #0e7490; }
+    .sms-nps-btn.selected { background: #0891b2; color: white; border-color: #0891b2; }
+    .sms-yesno-btns {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .sms-yesno-btn {
+      flex: 1; padding: 10px;
+      border-radius: 10px;
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .sms-yesno-btn:hover { border-color: #0891b2; background: #f0fdff; }
+    .sms-yesno-btn.selected { background: #0891b2; color: white; border-color: #0891b2; }
+    .sms-thank-you {
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .sms-thank-you i {
+      font-size: 40px;
+      color: #0891b2;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .sms-thank-you h3 { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .sms-thank-you p { font-size: 12px; color: #64748b; }
+    .phone-home-indicator {
+      width: 120px; height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      margin: 6px auto 8px;
+    }
   </style>
 </head>
 <body x-data="smsCollectApp()">
@@ -110,6 +290,13 @@
                   <span class="w-2 h-2 rounded-full" :class="surveyClosed ? 'bg-webropol-gray-400' : 'bg-green-500'"></span>
                   <span x-text="surveyClosed ? 'Survey Closed' : 'Survey Active'"></span>
                 </div>
+
+                <!-- Preview button -->
+                <button
+                  @click="openPreview()"
+                  class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-webropol-gray-300 text-webropol-gray-600 text-xs font-medium hover:bg-webropol-primary-50 hover:border-webropol-primary-400 hover:text-webropol-primary-700 transition-colors">
+                  <i class="fal fa-mobile-screen text-xs"></i> Preview
+                </button>
 
                 <!-- Close / Publish toggle -->
                 <div class="relative" x-data="{ publishOpen: false }">
@@ -832,6 +1019,118 @@
             </div>
           </div>
 
+          <!-- ─── SMS Preview Modal ─── -->
+          <div x-show="previewOpen"
+               x-transition:enter="transition ease-out duration-300"
+               x-transition:enter-start="opacity-0"
+               x-transition:enter-end="opacity-100"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="opacity-100"
+               x-transition:leave-end="opacity-0"
+               class="modal-overlay active inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+               @click.self="previewOpen = false"
+               @keydown.escape.window="if(previewOpen) previewOpen = false">
+            <div class="flex flex-col items-center gap-4" @click.stop>
+              <!-- Close button above phone -->
+              <div class="flex items-center justify-between w-[320px]">
+                <span class="text-white/80 text-xs font-medium"><i class="fal fa-eye mr-1"></i> SMS Preview</span>
+                <button @click="previewOpen = false" class="text-white/70 hover:text-white transition-colors">
+                  <i class="fal fa-times text-lg"></i>
+                </button>
+              </div>
+
+              <!-- Phone frame -->
+              <div class="phone-frame">
+                <div class="phone-notch"></div>
+                <div class="phone-status-bar">
+                  <span>9:41</span>
+                  <span><i class="fas fa-signal" style="font-size:10px"></i> <i class="fas fa-wifi" style="font-size:10px"></i> <i class="fas fa-battery-full" style="font-size:10px"></i></span>
+                </div>
+                <div class="phone-chat-header">
+                  <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <i class="fal fa-comment-sms text-sm"></i>
+                  </div>
+                  <div>
+                    <div class="text-sm font-semibold" x-text="selectedSender || '+3584573966532'"></div>
+                    <div class="text-[10px] opacity-75">SMS Survey</div>
+                  </div>
+                </div>
+
+                <div class="phone-chat-body" x-ref="previewChatBody">
+                  <template x-for="(msg, idx) in previewMessages" :key="idx">
+                    <div>
+                      <!-- Incoming text bubble -->
+                      <template x-if="msg.type === 'incoming'">
+                        <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
+                      </template>
+
+                      <!-- Outgoing text bubble -->
+                      <template x-if="msg.type === 'outgoing'">
+                        <div class="sms-bubble sms-outgoing" x-text="msg.text"></div>
+                      </template>
+
+                      <!-- Yes/No options -->
+                      <template x-if="msg.type === 'yesno-options'">
+                        <div class="w-full">
+                          <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
+                          <div class="sms-yesno-btns" x-show="msg.active">
+                            <button class="sms-yesno-btn" @click="answerYesNo('Y')"><i class="fal fa-thumbs-up mr-1"></i> Yes</button>
+                            <button class="sms-yesno-btn" @click="answerYesNo('N')"><i class="fal fa-thumbs-down mr-1"></i> No</button>
+                          </div>
+                        </div>
+                      </template>
+
+                      <!-- NPS options -->
+                      <template x-if="msg.type === 'nps-options'">
+                        <div class="w-full">
+                          <div class="sms-bubble sms-incoming" x-text="msg.text"></div>
+                          <div class="sms-nps-grid" x-show="msg.active">
+                            <template x-for="n in 11" :key="n">
+                              <button class="sms-nps-btn" :class="previewNpsSelected === (n-1) ? 'selected' : ''" @click="answerNps(n-1)" x-text="n-1"></button>
+                            </template>
+                          </div>
+                        </div>
+                      </template>
+
+                      <!-- Typing indicator -->
+                      <template x-if="msg.type === 'typing'">
+                        <div class="sms-typing">
+                          <span></span><span></span><span></span>
+                        </div>
+                      </template>
+
+                      <!-- Thank you -->
+                      <template x-if="msg.type === 'thankyou'">
+                        <div class="sms-thank-you">
+                          <i class="fal fa-circle-check"></i>
+                          <h3>Thank you!</h3>
+                          <p>Your responses have been recorded. We appreciate your feedback.</p>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Input bar for open-ended -->
+                <div class="phone-input-bar" x-show="previewInputActive">
+                  <input type="text" x-model="previewInputText" placeholder="Type your reply..."
+                    @keydown.enter="sendOpenReply()" x-ref="previewInput">
+                  <button @click="sendOpenReply()" :disabled="!previewInputText.trim()">
+                    <i class="fal fa-paper-plane" style="font-size:14px"></i>
+                  </button>
+                </div>
+
+                <!-- Home indicator bar -->
+                <div class="phone-home-indicator"></div>
+              </div>
+
+              <!-- Restart button -->
+              <button @click="restartPreview()" class="text-white/70 hover:text-white text-xs font-medium transition-colors">
+                <i class="fal fa-rotate-left mr-1"></i> Restart Preview
+              </button>
+            </div>
+          </div>
+
           <!-- ─── Reset confirmation dialog ─── -->
           <div x-show="confirmReset"
                x-transition:enter="transition ease-out duration-200"
@@ -878,9 +1177,32 @@
         typedNumbers: '',
         removeDuplicates: true,
 
+        // Preview state
+        previewOpen: false,
+        previewMessages: [],
+        previewStep: 0,
+        previewInputActive: false,
+        previewInputText: '',
+        previewNpsSelected: null,
+        previewQuestions: [
+          {
+            type: 'yesno',
+            text: 'Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No'
+          },
+          {
+            type: 'nps',
+            text: 'How easy or difficult has it been to use Webropol\'s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.'
+          },
+          {
+            type: 'open',
+            text: 'Please share any comments or suggestions you may have:'
+          }
+        ],
+
         init() {
           this.$watch('addRecipientsOpen', v => this.toggleModal(v));
           this.$watch('confirmReset', v => this.toggleModal(v));
+          this.$watch('previewOpen', v => this.toggleModal(v));
           try {
             const stored = localStorage.getItem('webropol_sms_credits_per_recipient');
             if (stored) this.creditsPerRecipient = parseInt(stored, 10) || 4;
@@ -996,10 +1318,106 @@
           if (isOpen) {
             document.body.classList.add('modal-open');
           } else {
-            if (!this.addRecipientsOpen && !this.confirmReset) {
+            if (!this.addRecipientsOpen && !this.confirmReset && !this.previewOpen) {
               document.body.classList.remove('modal-open');
             }
           }
+        },
+
+        // ── Preview methods ──
+        openPreview() {
+          this.previewOpen = true;
+          this.restartPreview();
+        },
+
+        restartPreview() {
+          this.previewMessages = [];
+          this.previewStep = 0;
+          this.previewInputActive = false;
+          this.previewInputText = '';
+          this.previewNpsSelected = null;
+          this.showNextQuestion();
+        },
+
+        scrollPreview() {
+          this.$nextTick(() => {
+            const body = this.$refs.previewChatBody;
+            if (body) body.scrollTop = body.scrollHeight;
+          });
+        },
+
+        showNextQuestion() {
+          const q = this.previewQuestions[this.previewStep];
+          if (!q) {
+            // All questions done, show thank you
+            this.previewInputActive = false;
+            this.previewMessages.push({ type: 'typing' });
+            this.scrollPreview();
+            setTimeout(() => {
+              this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
+              this.previewMessages.push({ type: 'thankyou' });
+              this.scrollPreview();
+            }, 800);
+            return;
+          }
+
+          // Show typing indicator then the question
+          this.previewMessages.push({ type: 'typing' });
+          this.scrollPreview();
+
+          setTimeout(() => {
+            this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
+
+            if (q.type === 'yesno') {
+              this.previewMessages.push({ type: 'yesno-options', text: q.text, active: true });
+              this.previewInputActive = false;
+            } else if (q.type === 'nps') {
+              this.previewMessages.push({ type: 'nps-options', text: q.text, active: true });
+              this.previewInputActive = false;
+            } else if (q.type === 'open') {
+              this.previewMessages.push({ type: 'incoming', text: q.text });
+              this.previewInputActive = true;
+              this.$nextTick(() => {
+                if (this.$refs.previewInput) this.$refs.previewInput.focus();
+              });
+            }
+            this.scrollPreview();
+          }, 700);
+        },
+
+        answerYesNo(val) {
+          // Deactivate buttons
+          const last = this.previewMessages.findLast(m => m.type === 'yesno-options');
+          if (last) last.active = false;
+          this.previewMessages.push({ type: 'outgoing', text: val === 'Y' ? 'Yes' : 'No' });
+          this.scrollPreview();
+          this.previewStep++;
+          setTimeout(() => this.showNextQuestion(), 400);
+        },
+
+        answerNps(val) {
+          this.previewNpsSelected = val;
+          const last = this.previewMessages.findLast(m => m.type === 'nps-options');
+          // Brief delay to show selection state
+          setTimeout(() => {
+            if (last) last.active = false;
+            this.previewMessages.push({ type: 'outgoing', text: String(val) });
+            this.scrollPreview();
+            this.previewStep++;
+            this.previewNpsSelected = null;
+            setTimeout(() => this.showNextQuestion(), 400);
+          }, 300);
+        },
+
+        sendOpenReply() {
+          const text = this.previewInputText.trim();
+          if (!text) return;
+          this.previewMessages.push({ type: 'outgoing', text });
+          this.previewInputText = '';
+          this.previewInputActive = false;
+          this.scrollPreview();
+          this.previewStep++;
+          setTimeout(() => this.showNextQuestion(), 400);
         },
 
         addRecipientsConfirm() {
