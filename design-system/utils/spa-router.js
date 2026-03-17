@@ -327,6 +327,8 @@ class WebropolSPA {
         const candidates = this.container.querySelectorAll('.mx-auto, main, [class*="max-w-"], .container');
         candidates.forEach((el) => {
           if (!el.classList) return;
+          // Skip elements inside modals — their max-w-* classes are intentional sizing
+          if (el.closest('.modal-overlay, [class*="modal"], .fixed[class*="inset-0"]') || el.classList.contains('modal-overlay')) return;
           // Remove any Tailwind max-w-* classes, including arbitrary values like max-w-[1600px]
           const toRemove = [];
           el.classList.forEach((c) => {
