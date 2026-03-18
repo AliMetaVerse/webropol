@@ -590,9 +590,149 @@
                 </div>
               </div>
 
-              <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareModeSelectOpen = true" title="Export & Share">
-                <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
-              </button>
+              <div class="relative" @click.away="exportShareMenuOpen = false">
+                <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800 transition-colors" @click="exportShareMenuOpen = !exportShareMenuOpen" title="Export & Share" :class="{ 'text-orange-800': exportShareMenuOpen }">
+                  <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
+                </button>
+
+                <!-- Redesigned Export & Share Menu -->
+                <div x-show="exportShareMenuOpen"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                     class="absolute right-0 top-full mt-3 w-[26rem] bg-white rounded-2xl border border-webropol-gray-100 z-50 overflow-hidden"
+                     style="display: none; box-shadow: 0 20px 60px -10px rgba(0,0,0,.18), 0 4px 16px -4px rgba(0,0,0,.08);">
+
+                  <!-- Header -->
+                  <div class="px-5 pt-4 pb-3 bg-gradient-to-r from-orange-50 to-white border-b border-webropol-gray-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <i class="fal fa-share-square text-orange-600 text-base"></i>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-webropol-gray-900 text-sm leading-tight">Export & Share</p>
+                      <p class="text-xs text-webropol-gray-500 leading-tight">Report tools &amp; distribution</p>
+                    </div>
+                  </div>
+
+                  <div class="p-3 space-y-1">
+
+                    <!-- BI VIEW section -->
+                    <div class="rounded-xl overflow-hidden border border-webropol-gray-100 bg-gradient-to-r from-blue-50/60 to-white">
+                      <p class="px-3 pt-2.5 pb-1 text-[10px] font-bold tracking-widest text-blue-500 uppercase">BI View</p>
+                      <button @click="handleBiViewShare(); exportShareMenuOpen = false"
+                              :disabled="!isSavedReport"
+                              :class="isSavedReport ? 'hover:bg-blue-50 cursor-pointer' : 'opacity-40 cursor-not-allowed'"
+                              class="w-full flex items-center gap-3 px-3 pb-2.5 pt-1 text-left transition-colors group">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors" :class="isSavedReport ? 'bg-blue-100 group-hover:bg-blue-200' : 'bg-webropol-gray-100'">
+                          <span class="text-xs font-black leading-none" :class="isSavedReport ? 'text-blue-600' : 'text-webropol-gray-400'">
+                            <span class="text-blue-400">V</span><span class="text-blue-600">IEW</span>
+                          </span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-webropol-gray-800 leading-tight">Share saved report to BI VIEW</p>
+                          <p class="text-xs text-webropol-gray-400 leading-tight mt-0.5" x-text="isSavedReport ? 'Send to dashboard' : 'Save a report first to enable'"></p>
+                        </div>
+                        <i class="fal fa-chevron-right text-xs text-webropol-gray-300 flex-shrink-0"></i>
+                      </button>
+                    </div>
+
+                    <!-- Export section -->
+                    <div class="rounded-xl overflow-hidden border border-webropol-gray-100">
+                      <p class="px-3 pt-2.5 pb-1.5 text-[10px] font-bold tracking-widest text-webropol-gray-500 uppercase bg-webropol-gray-50/80 border-b border-webropol-gray-100 flex items-center gap-1.5">
+                        <i class="fal fa-download text-webropol-gray-400"></i> Export
+                      </p>
+                      <div class="grid grid-cols-3 gap-px bg-webropol-gray-100">
+                        <button @click="activeExportModal = 'ppt'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-orange-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-orange-50 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-file-powerpoint text-orange-600 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-orange-700">PowerPoint</span>
+                        </button>
+                        <button @click="activeExportModal = 'excel'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-green-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-file-excel text-green-700 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-green-700">Excel</span>
+                        </button>
+                        <button @click="activeExportModal = 'csv'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-green-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-file-csv text-green-600 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-green-600">CSV</span>
+                        </button>
+                        <button @click="activeExportModal = 'pdf'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-red-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-file-pdf text-red-600 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-red-600">PDF</span>
+                        </button>
+                        <button @click="activeExportModal = 'word'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-blue-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-file-word text-blue-800 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-blue-800">Word</span>
+                        </button>
+                        <button @click="activeExportModal = 'spss'; exportShareMenuOpen = false"
+                                class="flex flex-col items-center gap-1.5 px-2 py-3 bg-white hover:bg-cyan-50 transition-colors group">
+                          <div class="w-9 h-9 rounded-lg bg-cyan-50 group-hover:bg-cyan-100 flex items-center justify-center transition-colors">
+                            <i class="fas fa-table text-cyan-800 text-lg"></i>
+                          </div>
+                          <span class="text-[11px] font-medium text-webropol-gray-700 group-hover:text-cyan-800">SPSS</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Share Reports section -->
+                    <div class="rounded-xl overflow-hidden border border-webropol-gray-100">
+                      <p class="px-3 pt-2.5 pb-1.5 text-[10px] font-bold tracking-widest text-webropol-gray-500 uppercase bg-webropol-gray-50/80 border-b border-webropol-gray-100 flex items-center gap-1.5">
+                        <i class="fal fa-share-nodes text-webropol-gray-400"></i> Share Reports
+                      </p>
+                      <div class="divide-y divide-webropol-gray-50">
+                        <button @click="sharePublicLinkOpen = true; exportShareMenuOpen = false"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-webropol-primary-50 transition-colors text-left group">
+                          <div class="w-7 h-7 rounded-lg bg-webropol-primary-50 group-hover:bg-webropol-primary-100 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <i class="fal fa-globe text-webropol-primary-600 text-sm"></i>
+                          </div>
+                          <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-primary-700">Share as public link</span>
+                          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 ml-auto flex-shrink-0"></i>
+                        </button>
+                        <button @click="showPublicLinksOpen = true; exportShareMenuOpen = false"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-webropol-primary-50 transition-colors text-left group">
+                          <div class="w-7 h-7 rounded-lg bg-webropol-primary-50 group-hover:bg-webropol-primary-100 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <i class="fal fa-link text-webropol-primary-600 text-sm"></i>
+                          </div>
+                          <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-primary-700">Show public links</span>
+                          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 ml-auto flex-shrink-0"></i>
+                        </button>
+                        <button disabled class="w-full flex items-center gap-3 px-3 py-2.5 text-left opacity-40 cursor-not-allowed">
+                          <div class="w-7 h-7 rounded-lg bg-webropol-gray-100 flex items-center justify-center flex-shrink-0">
+                            <i class="fal fa-clock text-webropol-gray-400 text-sm"></i>
+                          </div>
+                          <span class="text-sm font-medium text-webropol-gray-500">Schedule sharing</span>
+                          <span class="ml-auto text-[10px] font-semibold text-webropol-gray-400 bg-webropol-gray-100 rounded-full px-2 py-0.5 flex-shrink-0">Soon</span>
+                        </button>
+                        <button @click="exportShareModeSelectOpen = true; exportShareMenuOpen = false"
+                                class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-webropol-primary-50 transition-colors text-left group">
+                          <div class="w-7 h-7 rounded-lg bg-webropol-primary-50 group-hover:bg-webropol-primary-100 flex items-center justify-center flex-shrink-0 transition-colors">
+                            <i class="fal fa-file-alt text-webropol-primary-600 text-sm"></i>
+                          </div>
+                          <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-primary-700">Exported reports</span>
+                          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 ml-auto flex-shrink-0"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           </div>
@@ -1660,8 +1800,6 @@
       <i class="fal fa-times"></i>
     </button>
   </div>
-
-  <!-- Modals removed as requested -->
 
   <!-- Export & Share Mode Selection Modal -->
   <div class="modal-overlay" x-cloak :class="{ 'active': exportShareModeSelectOpen }" @click.self="exportShareModeSelectOpen = false" @keydown.window.escape="exportShareModeSelectOpen = false" role="dialog" aria-modal="true">
@@ -4144,6 +4282,7 @@
         newRenameValue: '',
         
         exportShareOpen: false,
+        exportShareMenuOpen: false,
         exportShareModeSelectOpen: false,
         exportShareMode: 'accordion', // 'accordion' or 'modal'
         activeExportModal: null, // for modal-based exports
