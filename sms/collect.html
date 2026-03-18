@@ -172,7 +172,7 @@
       background: white;
       border-top: 1px solid #e2e8f0;
     }
-    .phone-input-bar input {
+    .phone-input-bar .reply-input {
       flex: 1;
       border: 1px solid #e2e8f0;
       border-radius: 20px;
@@ -180,8 +180,20 @@
       font-size: 13px;
       outline: none;
       transition: border-color 0.2s;
+      min-height: 36px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      cursor: text;
+      color: #1e293b;
+      background: white;
     }
-    .phone-input-bar input:focus { border-color: #0891b2; }
+    .phone-input-bar .reply-input:focus { border-color: #0891b2; }
+    .phone-input-bar .reply-input:empty::before {
+      content: attr(data-placeholder);
+      color: #94a3b8;
+      pointer-events: none;
+    }
     .phone-input-bar button {
       width: 36px; height: 36px;
       border-radius: 50%;
@@ -1021,11 +1033,14 @@
                @keydown.escape.window="if(previewOpen) previewOpen = false">
             <div class="flex flex-col items-center gap-4" @click.stop>
               <!-- Close button above phone -->
-              <div class="flex items-center justify-between w-[320px]">
-                <span class="text-white/80 text-xs font-medium"><i class="fal fa-eye mr-1"></i> SMS Preview</span>
-                <button @click="previewOpen = false" class="text-white/70 hover:text-white transition-colors">
-                  <i class="fal fa-times text-lg"></i>
-                </button>
+              <div class="flex flex-col gap-1 w-[320px]">
+                <div class="flex items-center justify-between">
+                  <span class="text-white/80 text-xs font-medium"><i class="fal fa-eye mr-1"></i> SMS Preview</span>
+                  <button @click="previewOpen = false" class="text-white/70 hover:text-white transition-colors">
+                    <i class="fal fa-times text-lg"></i>
+                  </button>
+                </div>
+                <p class="text-white/45 text-[11px]"><i class="fal fa-circle-info mr-1"></i>This is just a demo and not a real function.</p>
               </div>
 
               <!-- Phone frame -->
@@ -1086,10 +1101,18 @@
 
                 <!-- Text input bar -- always visible when awaiting a reply -->
                 <div class="phone-input-bar" x-show="previewInputActive">
-                  <input type="text" x-model="previewInputText"
-                    :placeholder="previewInputPlaceholder"
-                    @keydown.enter="submitReply()" x-ref="previewInput">
-                  <button @click="submitReply()" :disabled="!previewInputText.trim()">
+                  <div
+                    class="reply-input"
+                    contenteditable="true"
+                    role="textbox"
+                    aria-label="Reply"
+                    data-placeholder=""
+                    x-ref="previewInput"
+                    @input="previewInputText = $el.innerText"
+                    @keydown.enter.prevent="submitReply(); $el.innerText = ''"
+                    x-effect="if (!previewInputText) $refs.previewInput.innerText = ''"
+                  ></div>
+                  <button @click="submitReply(); $refs.previewInput.innerText = ''" :disabled="!previewInputText.trim()">
                     <i class="fal fa-paper-plane" style="font-size:14px"></i>
                   </button>
                 </div>
@@ -1097,6 +1120,17 @@
 
                 <!-- Home indicator bar -->
                 <div class="phone-home-indicator"></div>
+              </div>
+
+              <!-- External helper hint (outside the phone) -->
+              <div x-show="previewInputActive" x-transition class="w-[320px]">
+                <p class="text-center text-xs px-4 py-2 rounded-xl transition-all"
+                  :class="previewHelperIsError
+                    ? 'text-amber-300 bg-white/10 ring-1 ring-amber-400/30'
+                    : 'text-white/55'">
+                  <i class="fal mr-1" :class="previewHelperIsError ? 'fa-triangle-exclamation' : 'fa-circle-info'"></i>
+                  <span x-text="previewHelperText"></span>
+                </p>
               </div>
 
               <!-- Restart button -->
@@ -1157,7 +1191,8 @@
         previewStep: 0,
         previewInputActive: false,
         previewInputText: '',
-        previewInputPlaceholder: 'Type your reply...',
+        previewHelperText: '',
+        previewHelperIsError: false,
         thankYouMessage: 'Thank you for your responses!',
         previewQuestions: [
           {
@@ -1351,7 +1386,8 @@
           this.previewStep = 0;
           this.previewInputActive = false;
           this.previewInputText = '';
-          this.previewInputPlaceholder = 'Type your reply...';
+          this.previewHelperText = '';
+          this.previewHelperIsError = false;
           this.showNextQuestion();
         },
 
@@ -1384,14 +1420,15 @@
           setTimeout(() => {
             this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
             this.previewMessages.push({ type: 'incoming', text: q.text });
-            if (q.hint) {
-              this.previewMessages.push({ type: 'hint', text: q.hint });
-            }
-            this.previewInputPlaceholder = q.placeholder || 'Type your reply...';
+            this.previewHelperText = q.placeholder || '';
+            this.previewHelperIsError = false;
             this.previewInputActive = true;
             this.scrollPreview();
             this.$nextTick(() => {
-              if (this.$refs.previewInput) this.$refs.previewInput.focus();
+              if (this.$refs.previewInput) {
+                this.$refs.previewInput.innerText = '';
+                this.$refs.previewInput.focus();
+              }
             });
           }, 700);
         },
@@ -1406,30 +1443,27 @@
           if (q.type === 'selection') {
             const val = raw.toUpperCase();
             if (!q.options.includes(val)) {
-              this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
-              this.previewMessages.push({ type: 'outgoing', text: raw });
-              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please respond with: ' + q.options.join(' or ') });
+              // Wrong answer: clear input, guide via external helper, do nothing inside the phone
+              this.previewHelperIsError = true;
+              this.previewHelperText = 'Please respond with: ' + q.options.join(' or ');
               this.previewInputText = '';
-              this.scrollPreview();
               return;
             }
-            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+            this.previewHelperIsError = false;
             this.previewMessages.push({ type: 'outgoing', text: val });
           } else if (q.type === 'nps') {
             const num = parseInt(raw, 10);
             if (isNaN(num) || num < 0 || num > 10) {
-              this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
-              this.previewMessages.push({ type: 'outgoing', text: raw });
-              this.previewMessages.push({ type: 'error', text: 'Invalid reply. Please enter a number from 0 to 10.' });
+              // Wrong answer: clear input, guide via external helper, do nothing inside the phone
+              this.previewHelperIsError = true;
+              this.previewHelperText = 'Please enter a number from 0 to 10.';
               this.previewInputText = '';
-              this.scrollPreview();
               return;
             }
-            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
+            this.previewHelperIsError = false;
             this.previewMessages.push({ type: 'outgoing', text: String(num) });
           } else {
             // Open-ended: accept anything
-            this.previewMessages = this.previewMessages.filter(m => m.type !== 'error');
             this.previewMessages.push({ type: 'outgoing', text: raw });
           }
 
