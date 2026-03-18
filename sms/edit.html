@@ -92,12 +92,21 @@
             font-weight: 500;
         }
 
-        .survey-card {
-            background: white;
-            border-radius: 1.6rem;
-            box-shadow: 0 18px 40px -30px rgba(15, 23, 42, 0.28);
-            border: 1px solid #e2e8f0;
-        }
+        /* Unified question card styling (matches surveys/edit.html pattern) */
+        .question-card { border: 1px solid #e2e8f0; border-radius: 1.25rem; background: #fff; position: relative; transition: box-shadow .18s ease, border-color .18s ease, background-color .18s ease }
+        .question-card:hover { border-color: #d5dde6 }
+        .question-card.selected { border-color: #06b6d4; background: #f0fdff; box-shadow: 0 6px 18px -4px rgba(6,182,212,.25) }
+        .question-card-header { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border-radius: 1.25rem 1.25rem 0 0 }
+        .question-card.selected .question-card-header { background: #e0f7fb; border-color: #bae8f1 }
+        .question-card-toolbar button { padding: .35rem .55rem; border-radius: .6rem }
+        .question-card-collapsed:hover { background: #f8fafc }
+
+        /* Drag handle */
+        .drag-handle { position: absolute; right: -12px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 10; cursor: move; background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1) }
+        .drag-handle:hover { background: #f8fafc; border-color: #06b6d4 }
+        .question-card:hover .drag-handle, .question-card.selected .drag-handle { opacity: 1; right: -16px }
+        .drag-handle i { color: #64748b; font-size: 16px }
+        .drag-handle:hover i { color: #06b6d4 }
 
         .question-frame {
             border: 1px solid #e2e8f0;
@@ -217,47 +226,47 @@
 
                             <!-- Q1: Yes / No selection -->
                             <webropol-sms-yes-no
-                                :survey-name="surveyName"
                                 question-number="1"
                                 sms-number="1"
                                 characters="94"
                                 credits="1"
                                 mode="edit"
                                 question-id="sms-q1"
-                                question-text="Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No">
+                                question-text="Would you recommend Webropol to a colleague or friend? Please respond with: Y = Yes and N = No"
+                                class="block mb-4">
                             </webropol-sms-yes-no>
 
                             <!-- Q2: NPS scale -->
                             <webropol-sms-nps
-                                :survey-name="surveyName"
                                 question-number="2"
                                 sms-number="2"
                                 characters="169"
                                 credits="2"
                                 mode="edit"
                                 question-id="sms-q2"
-                                question-text="How easy or difficult has it been to use Webropol&#39;s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy.">
+                                question-text="How easy or difficult has it been to use Webropol&#39;s services over the past six months? Please rate on a scale from 0 to 10, where: 0 = Very difficult and 10 = Very easy."
+                                class="block mb-4">
                             </webropol-sms-nps>
 
                             <!-- Q3: Open-ended -->
                             <webropol-sms-open-ended
-                                :survey-name="surveyName"
                                 question-number="3"
                                 sms-number="3"
                                 characters="54"
                                 credits="1"
                                 mode="edit"
                                 question-id="sms-q3"
-                                question-text="Please share any comments or suggestions you may have:">
+                                question-text="Please share any comments or suggestions you may have:"
+                                class="block mb-4">
                             </webropol-sms-open-ended>
 
                             <!-- Thank you page -->
                             <div class="flex justify-center mb-4">
                                 <div class="sms-badge"><i class="fal fa-hand-holding-heart"></i> Thank You Page</div>
                             </div>
-                            <div class="survey-card p-5 mb-5 relative cursor-pointer"
+                            <div class="question-card p-5 mb-5 relative cursor-pointer"
                                  x-data="{ editing: false }"
-                                 :class="editing ? 'ring-2 ring-webropol-primary-400' : ''"
+                                 :class="editing ? 'selected' : ''"
                                  @click="editing = true"
                                  @click.outside="editing = false">
 
