@@ -1122,16 +1122,107 @@
 
               </div>
 
-              <!-- External helper hint (outside the phone) -->
-              <div x-show="previewInputActive" x-transition class="w-[320px]">
-                <p class="text-center text-xs px-4 py-2 rounded-xl transition-all"
-                  :class="previewHelperIsError
-                    ? 'text-amber-300 bg-white/10 ring-1 ring-amber-400/30'
-                    : 'text-white/55'">
-                  <i class="fal mr-1" :class="previewHelperIsError ? 'fa-triangle-exclamation' : 'fa-circle-info'"></i>
-                  <span x-text="previewHelperText"></span>
-                </p>
+              <!-- Interactive helper panel (outside the phone) -->
+              <div x-show="previewInputActive"
+                   x-transition:enter="transition ease-out duration-300"
+                   x-transition:enter-start="opacity-0 translate-y-2"
+                   x-transition:enter-end="opacity-100 translate-y-0"
+                   class="w-[320px] flex flex-col gap-2">
+
+                <!-- Step progress -->
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-white/40 text-[10px] uppercase tracking-wider font-semibold">
+                    Question <span x-text="previewStep + 1"></span> of <span x-text="previewQuestions.length"></span>
+                  </span>
+                  <div class="flex gap-1">
+                    <template x-for="(q, i) in previewQuestions" :key="i">
+                      <div class="h-1.5 w-7 rounded-full transition-all duration-300"
+                        :class="i < previewStep ? 'bg-webropol-primary-400' : (i === previewStep ? 'bg-white' : 'bg-white/20')"></div>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- Helper card -->
+                <div class="rounded-2xl p-3 transition-all duration-300"
+                  :class="previewHelperIsError ? 'bg-amber-500/20 ring-1 ring-amber-400/40' : 'bg-white/10'">
+
+                  <!-- Error banner -->
+                  <div x-show="previewHelperIsError" x-transition class="flex items-start gap-2 mb-3">
+                    <i class="fal fa-triangle-exclamation text-amber-300 flex-shrink-0 text-sm mt-0.5"></i>
+                    <p class="text-amber-200 text-xs leading-snug" x-text="previewHelperText"></p>
+                  </div>
+
+                  <!-- Selection: clickable Y / N buttons -->
+                  <template x-if="previewQuestions[previewStep]?.type === 'selection'">
+                    <div>
+                      <p class="text-white/40 text-[10px] uppercase tracking-wider mb-2">Tap to reply</p>
+                      <div class="flex gap-2">
+                        <template x-for="opt in previewQuestions[previewStep].options" :key="opt">
+                          <button
+                            @click="quickReply(opt)"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95"
+                            :class="previewHelperIsError
+                              ? 'bg-white/20 text-white hover:bg-white/30 ring-1 ring-amber-300/50'
+                              : 'bg-white/15 text-white hover:bg-white/25'">
+                            <span x-text="opt === 'Y' ? 'Y — Yes' : opt === 'N' ? 'N — No' : opt"></span>
+                          </button>
+                        </template>
+                      </div>
+                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">or type Y / N in the field above and press Enter</p>
+                    </div>
+                  </template>
+
+                  <!-- NPS: 0–10 color-coded grid -->
+                  <template x-if="previewQuestions[previewStep]?.type === 'nps'">
+                    <div>
+                      <div class="flex items-center justify-between mb-2">
+                        <span class="text-red-300/70 text-[10px]">0 · Very difficult</span>
+                        <span class="text-white/40 text-[10px] uppercase tracking-wider">Tap to rate</span>
+                        <span class="text-green-300/70 text-[10px]">10 · Very easy</span>
+                      </div>
+                      <div class="grid grid-cols-11 gap-1">
+                        <template x-for="n in [0,1,2,3,4,5,6,7,8,9,10]" :key="n">
+                          <button
+                            @click="quickReply(String(n))"
+                            class="aspect-square rounded-lg text-xs font-bold transition-all hover:scale-110 active:scale-95"
+                            :class="[
+                              n <= 6 ? 'bg-red-500/30 text-red-200 hover:bg-red-500/50' :
+                              n <= 8 ? 'bg-amber-500/30 text-amber-200 hover:bg-amber-500/50' :
+                                       'bg-green-500/30 text-green-200 hover:bg-green-500/50',
+                              previewHelperIsError ? 'ring-1 ring-amber-300/40' : ''
+                            ]"
+                            x-text="n">
+                          </button>
+                        </template>
+                      </div>
+                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">or type a number 0–10 above and press Enter</p>
+                    </div>
+                  </template>
+
+                  <!-- Open text guidance -->
+                  <template x-if="previewQuestions[previewStep]?.type === 'open'">
+                    <div class="flex items-start gap-2">
+                      <i class="fal fa-pen-line text-white/40 text-sm flex-shrink-0 mt-0.5"></i>
+                      <div>
+                        <p class="text-white/70 text-xs font-medium mb-0.5">Free text reply</p>
+                        <p class="text-white/40 text-[11px] leading-snug">Type any comment or feedback in the field above, then press <kbd class="px-1 py-0.5 rounded bg-white/10 font-mono text-[10px]">Enter</kbd> or tap the send button.</p>
+                      </div>
+                    </div>
+                  </template>
+
+                </div>
+
+                <!-- Arrow pointing up to the reply field -->
+                <div class="flex justify-center">
+                  <i class="fal fa-arrow-up text-white/20 text-xs" style="animation: bounce 1.5s infinite;"></i>
+                </div>
               </div>
+              <style>
+                @keyframes bounce {
+                  0%, 100% { transform: translateY(0); }
+                  50% { transform: translateY(-4px); }
+                }
+              </style>
 
               <!-- Restart button -->
               <button @click="restartPreview()" class="text-white/70 hover:text-white text-xs font-medium transition-colors">
@@ -1420,8 +1511,14 @@
           setTimeout(() => {
             this.previewMessages = this.previewMessages.filter(m => m.type !== 'typing');
             this.previewMessages.push({ type: 'incoming', text: q.text });
-            this.previewHelperText = q.placeholder || '';
             this.previewHelperIsError = false;
+            if (q.type === 'selection') {
+              this.previewHelperText = 'Tap one of the buttons below, or type Y / N and press Enter.';
+            } else if (q.type === 'nps') {
+              this.previewHelperText = 'Tap a number on the scale below, or type 0\u201310 and press Enter.';
+            } else {
+              this.previewHelperText = '';
+            }
             this.previewInputActive = true;
             this.scrollPreview();
             this.$nextTick(() => {
@@ -1474,6 +1571,13 @@
           this.scrollPreview();
           this.previewStep++;
           setTimeout(() => this.showNextQuestion(), 400);
+        },
+
+        // Shortcut: tap a helper button to directly submit that value
+        quickReply(val) {
+          if (this.$refs.previewInput) this.$refs.previewInput.innerText = val;
+          this.previewInputText = val;
+          this.$nextTick(() => this.submitReply());
         },
 
         addRecipientsConfirm() {
