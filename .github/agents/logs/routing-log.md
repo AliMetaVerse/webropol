@@ -35,6 +35,14 @@ Auto-maintained by the SmartRouter agent. Each entry records a routing decision 
 
 <!-- SmartRouter will append entries below this line -->
 
+## [2026-03-18 14:52] — check figma mcp access
+- **Module Selected**: GENERAL_FALLBACK
+- **Confidence**: 53%
+- **Score Breakdown**: GENERAL_FALLBACK:8, DOCUMENTATION:4, BUG_DIAGNOSIS:3
+- **Routing Reason**: Prompt is an environment capability check spanning agent configuration and MCP workspace setup rather than code changes in one module.
+- **Files Touched**: .github/agents/logs/routing-log.md
+- **Outcome**: completed
+
 ## [2026-03-18 14:43] — make sms collect helpers non-interactive
 - **Module Selected**: BUG_DIAGNOSIS
 - **Confidence**: 87%
