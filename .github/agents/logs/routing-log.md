@@ -35,6 +35,14 @@ Auto-maintained by the SmartRouter agent. Each entry records a routing decision 
 
 <!-- SmartRouter will append entries below this line -->
 
+## [2026-03-18 15:02] — add figma mcp server
+- **Module Selected**: FEATURE_ARCHITECTURE
+- **Confidence**: 73%
+- **Score Breakdown**: FEATURE_ARCHITECTURE:11, GENERAL_FALLBACK:2, DOCUMENTATION:1
+- **Routing Reason**: Prompt selected implementation of a new workspace integration by adding a concrete MCP server configuration.
+- **Files Touched**: .vscode/mcp.json, .github/agents/logs/routing-log.md
+- **Outcome**: completed
+
 ## [2026-03-18 14:52] — check figma mcp access
 - **Module Selected**: GENERAL_FALLBACK
 - **Confidence**: 53%
