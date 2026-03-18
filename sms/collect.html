@@ -1152,7 +1152,7 @@
                 </div>
 
                 <!-- Helper card -->
-                <div class="rounded-2xl p-3 transition-all duration-300"
+                <div class="rounded-2xl p-3 transition-all duration-300 pointer-events-none"
                   :class="previewHelperIsError ? 'bg-amber-500/20 ring-1 ring-amber-400/40' : 'bg-white/10'">
 
                   <!-- Error banner -->
@@ -1164,20 +1164,22 @@
                   <!-- Selection: clickable Y / N buttons -->
                   <template x-if="previewQuestions[previewStep]?.type === 'selection'">
                     <div>
-                      <p class="text-white/40 text-[10px] uppercase tracking-wider mb-2">Tap to reply</p>
+                      <p class="text-white/40 text-[10px] uppercase tracking-wider mb-2">Reply format</p>
                       <div class="flex gap-2">
                         <template x-for="opt in previewQuestions[previewStep].options" :key="opt">
                           <button
-                            @click="quickReply(opt)"
-                            class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-95"
+                            type="button"
+                            disabled
+                            aria-disabled="true"
+                            class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-default"
                             :class="previewHelperIsError
-                              ? 'bg-white/20 text-white hover:bg-white/30 ring-1 ring-amber-300/50'
-                              : 'bg-white/15 text-white hover:bg-white/25'">
+                              ? 'bg-white/20 text-white ring-1 ring-amber-300/50'
+                              : 'bg-white/15 text-white'">
                             <span x-text="opt === 'Y' ? 'Y — Yes' : opt === 'N' ? 'N — No' : opt"></span>
                           </button>
                         </template>
                       </div>
-                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">or type Y / N in the field above and press Enter</p>
+                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">Type Y / N in the field above and press Enter</p>
                     </div>
                   </template>
 
@@ -1186,25 +1188,27 @@
                     <div>
                       <div class="flex items-center justify-between mb-2">
                         <span class="text-red-300/70 text-[10px]">0 · Very difficult</span>
-                        <span class="text-white/40 text-[10px] uppercase tracking-wider">Tap to rate</span>
+                        <span class="text-white/40 text-[10px] uppercase tracking-wider">Scale reference</span>
                         <span class="text-green-300/70 text-[10px]">10 · Very easy</span>
                       </div>
                       <div class="grid grid-cols-11 gap-1">
                         <template x-for="n in [0,1,2,3,4,5,6,7,8,9,10]" :key="n">
                           <button
-                            @click="quickReply(String(n))"
-                            class="aspect-square rounded-lg text-xs font-bold transition-all hover:scale-110 active:scale-95"
+                            type="button"
+                            disabled
+                            aria-disabled="true"
+                            class="aspect-square rounded-lg text-xs font-bold transition-all cursor-default"
                             :class="[
-                              n <= 6 ? 'bg-red-500/30 text-red-200 hover:bg-red-500/50' :
-                              n <= 8 ? 'bg-amber-500/30 text-amber-200 hover:bg-amber-500/50' :
-                                       'bg-green-500/30 text-green-200 hover:bg-green-500/50',
+                              n <= 6 ? 'bg-red-500/30 text-red-200' :
+                              n <= 8 ? 'bg-amber-500/30 text-amber-200' :
+                                       'bg-green-500/30 text-green-200',
                               previewHelperIsError ? 'ring-1 ring-amber-300/40' : ''
                             ]"
                             x-text="n">
                           </button>
                         </template>
                       </div>
-                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">or type a number 0–10 above and press Enter</p>
+                      <p x-show="!previewHelperIsError" class="text-center text-white/30 text-[10px] mt-2">Type a number 0–10 above and press Enter</p>
                     </div>
                   </template>
 
@@ -1522,9 +1526,9 @@
             this.previewMessages.push({ type: 'incoming', text: q.text });
             this.previewHelperIsError = false;
             if (q.type === 'selection') {
-              this.previewHelperText = 'Tap one of the buttons below, or type Y / N and press Enter.';
+              this.previewHelperText = 'Please reply with Y or N in the field above and press Enter.';
             } else if (q.type === 'nps') {
-              this.previewHelperText = 'Tap a number on the scale below, or type 0\u201310 and press Enter.';
+              this.previewHelperText = 'Please reply with a number from 0 to 10 in the field above and press Enter.';
             } else {
               this.previewHelperText = '';
             }

@@ -34,3 +34,11 @@ Auto-maintained by the SmartRouter agent. Each entry records a routing decision 
 ---
 
 <!-- SmartRouter will append entries below this line -->
+
+## [2026-03-18 14:43] — make sms collect helpers non-interactive
+- **Module Selected**: BUG_DIAGNOSIS
+- **Confidence**: 87%
+- **Score Breakdown**: BUG_DIAGNOSIS:13, FEATURE_ARCHITECTURE:1, GENERAL_FALLBACK:2
+- **Routing Reason**: Prompt requests fixing current behavior in an existing page by removing unintended interactivity.
+- **Files Touched**: sms/collect.html
+- **Outcome**: completed
