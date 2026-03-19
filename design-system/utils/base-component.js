@@ -185,18 +185,22 @@ export class BaseComponent extends HTMLElement {
   getVariantClasses(componentType, variant = 'primary') {
     const variants = {
       button: {
-        // Colors aligned with Webropol Royal Design System (Figma)
-        primary: 'bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 text-white border-2 border-transparent hover:from-webropol-primary-700 hover:to-webropol-primary-800 focus:ring-webropol-primary-200 active:from-webropol-primary-800 active:to-webropol-primary-900 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        secondary: 'bg-white text-webropol-primary-700 border-2 border-webropol-primary-600 hover:bg-webropol-primary-50 hover:border-webropol-primary-700 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 active:border-webropol-primary-800 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
-        tertiary: 'bg-transparent text-webropol-primary-700 border-2 border-transparent hover:bg-webropol-primary-50 hover:text-webropol-primary-800 focus:ring-webropol-primary-200 active:bg-webropol-primary-100 disabled:text-webropol-gray-400 disabled:hover:bg-transparent',
-        danger: 'bg-gradient-to-r from-webropol-danger-500 to-webropol-danger-600 text-white border-2 border-transparent hover:from-webropol-danger-600 hover:to-webropol-danger-700 focus:ring-webropol-danger-200 active:from-webropol-danger-700 active:to-webropol-danger-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        'danger-outline': 'bg-white text-webropol-danger-600 border-2 border-webropol-danger-500 hover:bg-webropol-danger-50 hover:border-webropol-danger-600 focus:ring-webropol-danger-200 active:bg-webropol-danger-100 active:border-webropol-danger-700 shadow-card hover:shadow-medium disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:border-webropol-gray-300',
-        success: 'bg-gradient-to-r from-webropol-green-500 to-green-600 text-white border-2 border-transparent hover:from-green-600 hover:to-green-700 focus:ring-green-200 active:from-green-700 active:to-green-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
+        // Colors aligned with Webropol Royal Design System (Figma) — flat solid colors, no gradients
+        // Primary/700: #1E6880 | Hover: Primary/800 #215669 | Pressed: Primary/900 #204859
+        primary: '[background-color:#1e6880] text-white border border-[rgba(255,255,255,0.2)] hover:[background-color:#215669] active:[background-color:#204859] focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
+        // Secondary: #eefbfd bg, #1E6880 border+text | Hover: #b0e8f1 bg, #215669 border+text
+        secondary: '[background-color:#eefbfd] text-[#1e6880] border border-[#1e6880] hover:[background-color:#b0e8f1] hover:text-[#215669] hover:border-[#215669] active:[background-color:#9cd9e6] active:border-[#204859] active:text-[#204859] focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:border-[#bfc3c4] disabled:cursor-not-allowed',
+        tertiary: 'bg-transparent text-[#1e6880] border border-transparent hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 focus:outline-none disabled:text-[#61686a] disabled:cursor-not-allowed',
+        // Destructive/700: #BE1241 | Hover: Destructive/800 | Pressed: Destructive/900
+        danger: '[background-color:#be1241] text-white border border-[rgba(255,255,255,0.2)] hover:[background-color:#a60e38] active:[background-color:#8e0c30] focus:ring-2 focus:ring-[#be1241] focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
+        // Destructive Outline: Error/100 #FFE4E7 bg, Error/900 #88133A border+text
+        'danger-outline': '[background-color:#ffe4e7] text-[#88133a] border border-[#88133a] hover:[background-color:#fcc8cf] hover:border-[#7a1133] hover:text-[#7a1133] active:[background-color:#f9acb6] active:border-[#6b0f2d] active:text-[#6b0f2d] focus:ring-2 focus:ring-[#be1241] focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:border-[#bfc3c4] disabled:cursor-not-allowed',
+        success: '[background-color:#1a7e4a] text-white border border-[rgba(255,255,255,0.2)] hover:[background-color:#156b3e] active:[background-color:#105833] focus:ring-2 focus:ring-[#1a7e4a] focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
         // Royal gradient buttons (fully rounded with premium gradients)
-        royal: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 text-white border-2 border-transparent hover:from-webropol-royalViolet-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalViolet-200 active:from-webropol-royalViolet-700 active:to-webropol-royalBlue-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        royalViolet: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalViolet-600 text-white border-2 border-transparent hover:from-webropol-royalViolet-600 hover:to-webropol-royalViolet-700 focus:ring-webropol-royalViolet-200 active:from-webropol-royalViolet-700 active:to-webropol-royalViolet-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        royalBlue: 'bg-gradient-to-r from-webropol-royalBlue-500 to-webropol-royalBlue-600 text-white border-2 border-transparent hover:from-webropol-royalBlue-600 hover:to-webropol-royalBlue-700 focus:ring-webropol-royalBlue-200 active:from-webropol-royalBlue-700 active:to-webropol-royalBlue-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400',
-        royalTurquoise: 'bg-gradient-to-r from-webropol-royalTurquoise-500 to-webropol-royalTurquoise-600 text-white border-2 border-transparent hover:from-webropol-royalTurquoise-600 hover:to-webropol-royalTurquoise-700 focus:ring-webropol-royalTurquoise-200 active:from-webropol-royalTurquoise-700 active:to-webropol-royalTurquoise-800 shadow-medium hover:shadow-lg disabled:from-webropol-gray-300 disabled:to-webropol-gray-400'
+        royal: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 text-white border border-[rgba(255,255,255,0.2)] hover:from-webropol-royalViolet-600 hover:to-webropol-royalBlue-700 active:from-webropol-royalViolet-700 active:to-webropol-royalBlue-800 focus:ring-2 focus:ring-webropol-royalViolet-300 focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
+        royalViolet: 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalViolet-600 text-white border border-[rgba(255,255,255,0.2)] hover:from-webropol-royalViolet-600 hover:to-webropol-royalViolet-700 active:from-webropol-royalViolet-700 active:to-webropol-royalViolet-800 focus:ring-2 focus:ring-webropol-royalViolet-300 focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
+        royalBlue: 'bg-gradient-to-r from-webropol-royalBlue-500 to-webropol-royalBlue-600 text-white border border-[rgba(255,255,255,0.2)] hover:from-webropol-royalBlue-600 hover:to-webropol-royalBlue-700 active:from-webropol-royalBlue-700 active:to-webropol-royalBlue-800 focus:ring-2 focus:ring-webropol-royalBlue-300 focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed',
+        royalTurquoise: 'bg-gradient-to-r from-webropol-royalTurquoise-500 to-webropol-royalTurquoise-600 text-white border border-[rgba(255,255,255,0.2)] hover:from-webropol-royalTurquoise-600 hover:to-webropol-royalTurquoise-700 active:from-webropol-royalTurquoise-700 active:to-webropol-royalTurquoise-800 focus:ring-2 focus:ring-webropol-royalTurquoise-300 focus:ring-offset-2 focus:outline-none disabled:[background-color:#e6e7e8] disabled:text-[#61686a] disabled:cursor-not-allowed'
       },
       card: {
         default: 'bg-white border border-webropol-gray-200 shadow-card',
@@ -222,15 +226,17 @@ export class BaseComponent extends HTMLElement {
   getSizeClasses(componentType, size = 'md') {
     const sizes = {
       button: {
-        sm: 'px-3 py-1.5 text-sm font-medium',
-        md: 'px-6 py-2.5 text-sm font-semibold',
-        lg: 'px-8 py-3 text-base font-semibold',
-        xl: 'px-10 py-4 text-lg font-semibold',
+        // Sizes from Figma: Large px-5 py-3 (20/12px), Medium px-4 py-2.5 (16/10px), Small px-3.5 py-2 (14/8px), Micro px-3 py-1.5 (12/6px)
+        sm: 'px-3.5 py-2 text-sm font-medium leading-5',
+        md: 'px-4 py-2.5 text-sm font-medium leading-5',
+        lg: 'px-5 py-3 text-base font-medium leading-6',
+        xl: 'px-6 py-3.5 text-lg font-medium leading-7',
+        micro: 'px-3 py-1.5 text-xs font-medium leading-5',
         // Icon-only button sizes (square)
         'icon-sm': 'p-2 text-sm',
-        'icon-md': 'p-3 text-base',
-        'icon-lg': 'p-4 text-lg',
-        'icon-xl': 'p-5 text-xl'
+        'icon-md': 'p-2.5 text-base',
+        'icon-lg': 'p-3 text-lg',
+        'icon-xl': 'p-3.5 text-xl'
       },
       badge: {
         sm: 'px-2 py-1 text-xs',

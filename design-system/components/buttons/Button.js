@@ -40,14 +40,14 @@ export class WebropolButton extends BaseComponent {
     // Determine actual size (use icon-size for icon-only buttons)
     const actualSize = iconOnly ? `icon-${size}` : size;
     
-    // Base classes with enhanced styling from components version
+    // Base classes matching Webropol Royal Design System (Figma)
+    // Roboto Medium 16px/24px, flat colors, fully rounded, no scale transforms
     const baseClasses = this.classNames(
-      'inline-flex items-center justify-center font-semibold font-sans',
+      'inline-flex items-center justify-center font-medium',
+      'font-[Roboto,Inter,system-ui,sans-serif]',
       this.getRoundnessClasses(roundness),
-      'transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-opacity-50 focus:ring-offset-2',
-      'transform hover:scale-105 active:scale-95',
+      'transition-colors duration-150 ease-in-out focus:outline-none',
       fullWidth ? 'w-full' : '',
-      disabled || loading ? 'cursor-not-allowed opacity-60 transform-none hover:scale-100' : 'cursor-pointer',
       this.getVariantClasses('button', variant),
       this.getSizeClasses('button', actualSize)
     );
