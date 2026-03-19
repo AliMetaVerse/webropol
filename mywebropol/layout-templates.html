@@ -29,9 +29,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="../design-system/styles/animations.css" rel="stylesheet">
     <link href="../design-system/styles/tokens.css" rel="stylesheet">
+    <link href="../design-system/styles/tabs-unified.css" rel="stylesheet">
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
     <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+    <script src="../design-system/components/navigation/Tabs.js" type="module"></script>
     <script src="../design-system/components/buttons/Button.js" type="module"></script>
     <script src="../design-system/components/modals/Modal.js" type="module"></script>
     <script src="../design-system/components/forms/RadioSpecial.js" type="module"></script>
@@ -68,28 +70,6 @@
                 radial-gradient(circle at top left, rgba(34, 204, 241, 0.12), transparent 28%),
                 radial-gradient(circle at top right, rgba(14, 116, 144, 0.10), transparent 24%),
                 linear-gradient(180deg, #f6fbfd 0%, #edf5f8 52%, #e6f0f4 100%);
-        }
-
-        .segmented-tab {
-            color: #272a2b;
-            font-family: 'Roboto', 'Inter', system-ui, sans-serif;
-            font-weight: 500;
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .segmented-tab.active {
-            background: #1e6880;
-            color: #ffffff;
-        }
-
-        .segmented-tab:not(.active):hover {
-            background: #79d6e7;
-            color: #272a2b;
-        }
-
-        .segmented-tab:not(.active):active {
-            background: #79d6e7;
-            color: #272a2b;
         }
 
         .scope-tab {
@@ -292,16 +272,14 @@
                                 </p>
                             </div>
 
-                            <div class="mt-6 flex flex-wrap gap-2 border-t border-webropol-gray-100 pt-5">
-                                <template x-for="tab in topTabs" :key="tab.id">
-                                    <button
-                                        type="button"
-                                        @click="setTopTab(tab.id)"
-                                        class="segmented-tab inline-flex items-center justify-center h-11 px-3 rounded-lg text-sm"
-                                        :class="{ 'active': activeTopTab === tab.id }">
-                                        <span x-text="tab.label"></span>
-                                    </button>
-                                </template>
+                            <div class="mt-6 border-t border-webropol-gray-100 pt-5">
+                                <webropol-tabs
+                                    variant="primary"
+                                    no-panels
+                                    :active-tab="activeTopTab"
+                                    tabs='[{"id":"branding","label":"Brand Identity"},{"id":"survey","label":"Survey templates"},{"id":"event","label":"Event templates"},{"id":"reporting","label":"Reporting templates"},{"id":"files","label":"PowerPoint Templates"},{"id":"images","label":"Images"}]'
+                                    @webropol-tab-change="setTopTab($event.detail.activeTab)">
+                                </webropol-tabs>
                             </div>
                         </div>
                     </section>
@@ -492,21 +470,14 @@
                                         <span x-text="searchTerm ? matchingResultsLabel() : availableResultsLabel()"></span>
                                     </p>
 
-                                <div class="mt-4 flex flex-wrap gap-1 border-b border-[#e1e1e1] pb-2" aria-label="Template tabs">
-                                        <template x-for="tab in sideTabs()" :key="tab.id">
-                                            <button
-                                                type="button"
-                                                @click="setSideTab(tab.id)"
-                                                class="inline-flex items-center gap-2 rounded-lg h-11 px-3 text-sm font-medium text-[#272a2b] transition-colors"
-                                                :class="{
-                                                    'bg-[#b0e8f1]': activeSideTab === tab.id,
-                                                    'hover:bg-[#b0e8f1]': activeSideTab !== tab.id
-                                                }">
-                                                <span x-text="tab.label"></span>
-                                                <span class="rounded px-1 py-0.5 text-xs font-medium bg-[#215669] text-white"
-                                                      x-text="tab.count"></span>
-                                            </button>
-                                        </template>
+                                <div class="mt-4 border-b border-[#e1e1e1] pb-2" aria-label="Template tabs">
+                                        <webropol-tabs
+                                            variant="secondary"
+                                            no-panels
+                                            :active-tab="activeSideTab"
+                                            :tabs="JSON.stringify(sideTabs().map(t => ({id: t.id, label: t.label, badge: t.count})))"
+                                            @webropol-tab-change="setSideTab($event.detail.activeTab)">
+                                        </webropol-tabs>
                                     </div>
                                 </div>
 

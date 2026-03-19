@@ -8,7 +8,7 @@ import { BaseComponent } from '../../utils/base-component.js';
 
 export class WebropolTabs extends BaseComponent {
   static get observedAttributes() {
-    return ['active-tab', 'variant', 'size', 'alignment', 'shape'];
+    return ['active-tab', 'variant', 'size', 'alignment', 'shape', 'tabs', 'no-panels'];
   }
 
   constructor() {
@@ -45,18 +45,21 @@ export class WebropolTabs extends BaseComponent {
     }
 
     let tabsHtml;
-    if (variant === 'primary' || variant === 'secondary') {
+    if (variant === 'primary' || variant === 'secondary' || variant === 'light') {
       tabsHtml = this.renderFigmaTabs(activeTab, variant, alignment);
     } else {
       tabsHtml = this.renderUnifiedTabs(activeTab, size, alignment, shape);
     }
     
+    const noPanels = this.hasAttribute('no-panels');
     this.innerHTML = `
       <div class="tabs-container">
         ${tabsHtml}
+        ${noPanels ? '' : `
         <div class="tab-panels mt-6">
           ${this.renderPanels(activeTab)}
         </div>
+        `}
       </div>
     `;
   }
@@ -94,14 +97,24 @@ export class WebropolTabs extends BaseComponent {
    * Renders tabs using Figma Regular Primary or Regular Secondary variant tokens.
    * Primary:   selected bg #1e6880 (white text), hover bg #79d6e7
    * Secondary: selected bg #b0e8f1 (dark text), hover bg #b0e8f1, badge always #215669
+   * Light:     no fill; selected/hover shown by border-bottom indicator only
    */
   renderFigmaTabs(activeTab, variant, alignment) {
-    const buttonClass = variant === 'primary' ? 'webropol-tab-primary' : 'webropol-tab-secondary';
     const alignmentClass = alignment === 'center' ? 'justify-center' :
                            alignment === 'end' ? 'justify-end' : 'justify-start';
-    const containerClass = variant === 'primary'
-      ? `webropol-tabs-primary-container flex ${alignmentClass}`
-      : `webropol-tabs-secondary-container`;
+
+    let buttonClass, containerClass;
+    if (variant === 'primary') {
+      buttonClass = 'webropol-tab-primary';
+      containerClass = `webropol-tabs-primary-container flex ${alignmentClass}`;
+    } else if (variant === 'light') {
+      buttonClass = 'webropol-tab-light';
+      containerClass = `webropol-tabs-light-container flex ${alignmentClass}`;
+    } else {
+      // secondary
+      buttonClass = 'webropol-tab-secondary';
+      containerClass = `webropol-tabs-secondary-container flex ${alignmentClass}`;
+    }
 
     return `
       <div class="${containerClass}">
@@ -246,6 +259,9 @@ export class WebropolTabs extends BaseComponent {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
+      if (name === 'tabs') {
+        try { this.tabs = JSON.parse(newValue); } catch (e) { console.warn('Invalid tabs data format'); }
+      }
       this.render();
       this.bindEvents();
     }

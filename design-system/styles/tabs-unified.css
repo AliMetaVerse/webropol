@@ -130,9 +130,9 @@
 }
 
 /* ===== FIGMA REGULAR PRIMARY VARIANT ===== */
-/* Container: bare flex, no background wrapper */
+/* Container: bare flex, no background wrapper.
+   display:flex is applied via Tailwind class from the component. */
 .webropol-tabs-primary-container {
-  display: inline-flex;
   gap: 4px;
 }
 
@@ -193,16 +193,10 @@
 }
 
 /* ===== FIGMA REGULAR SECONDARY VARIANT ===== */
-/* Container: bare flex, no background wrapper */
+/* Container: bare flex, no background wrapper.
+   display:flex and alignment are applied via Tailwind classes from the component. */
 .webropol-tabs-secondary-container {
-  display: inline-flex;
-  flex-direction: column;
   gap: 4px;
-}
-
-/* Horizontal secondary container */
-.webropol-tabs-secondary-container.horizontal {
-  flex-direction: row;
 }
 
 /* Tab button base */
@@ -247,6 +241,64 @@
 .webropol-tab-secondary .webropol-tab-badge {
   background: var(--primary-800, #215669);
   color: var(--neutral-0, #ffffff);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  margin-left: 0;
+}
+
+/* ===== FIGMA LIGHT VARIANT ===== */
+/* Underline indicator style — designed to sit on top of a border/line or table edge. */
+/* No background fill on any state; selected/hover is conveyed purely by border-bottom.
+   display:flex and alignment are applied via Tailwind classes from the component. */
+.webropol-tabs-light-container {
+  gap: 0;
+}
+
+/* Tab button base */
+.webropol-tab-light {
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px 16px;
+  margin-bottom: -2px; /* sit flush on any container bottom border */
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--neutral-950, #272a2b);
+  white-space: nowrap;
+  user-select: none;
+  outline: none;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Hover */
+.webropol-tab-light:not(.active):hover {
+  border-bottom-color: var(--primary-300, #79d6e7);
+  color: var(--primary-800, #215669);
+}
+
+/* Focus */
+.webropol-tab-light:focus-visible {
+  outline: 2px solid var(--primary-300, #79d6e7);
+  outline-offset: 2px;
+}
+
+/* Active / selected */
+.webropol-tab-light.active {
+  border-bottom-color: var(--primary-700, #1e6880);
+  color: var(--primary-700, #1e6880);
+}
+
+/* Badge — same across all states */
+.webropol-tab-light .webropol-tab-badge {
+  background: var(--primary-200, #b0e8f1);
+  color: var(--primary-950, #102e3c);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 0.75rem;
@@ -461,7 +513,8 @@
   .webropol-tabs,
   .admin-tabs,
   .webropol-tabs-primary-container,
-  .webropol-tabs-secondary-container {
+  .webropol-tabs-secondary-container,
+  .webropol-tabs-light-container {
     flex-direction: column;
     width: 100%;
   }
@@ -471,7 +524,8 @@
   .webropol-tab,
   .admin-tab,
   .webropol-tab-primary,
-  .webropol-tab-secondary {
+  .webropol-tab-secondary,
+  .webropol-tab-light {
     width: 100%;
     min-width: unset;
     justify-content: flex-start;
@@ -486,6 +540,7 @@
   .admin-tab,
   .webropol-tab-primary,
   .webropol-tab-secondary,
+  .webropol-tab-light,
   .tab-content-enter-active,
   .tab-content-leave-active {
     transition: opacity var(--transition-normal, 0.2s) ease;
@@ -500,7 +555,8 @@
   .webropol-main-tab:active,
   .webropol-tab:active,
   .webropol-tab-primary:active,
-  .webropol-tab-secondary:active {
+  .webropol-tab-secondary:active,
+  .webropol-tab-light:active {
     transform: none;
   }
   
@@ -508,7 +564,8 @@
   .webropol-main-tab.active,
   .webropol-tab.active,
   .webropol-tab-primary.active,
-  .webropol-tab-secondary.active {
+  .webropol-tab-secondary.active,
+  .webropol-tab-light.active {
     transform: none;
   }
 }
@@ -519,7 +576,8 @@
   .webropol-tab,
   .admin-tab,
   .webropol-tab-primary,
-  .webropol-tab-secondary {
+  .webropol-tab-secondary,
+  .webropol-tab-light {
     border: 2px solid currentColor !important;
   }
   
@@ -528,7 +586,8 @@
   .webropol-tab.active,
   .admin-tab.active,
   .webropol-tab-primary.active,
-  .webropol-tab-secondary.active {
+  .webropol-tab-secondary.active,
+  .webropol-tab-light.active {
     background: var(--neutral-900, #45484a) !important;
     color: white !important;
   }
@@ -573,6 +632,7 @@
 .tabs-full-width .webropol-main-tab,
 .tabs-full-width .webropol-tab,
 .tabs-full-width .webropol-tab-primary,
-.tabs-full-width .webropol-tab-secondary {
+.tabs-full-width .webropol-tab-secondary,
+.tabs-full-width .webropol-tab-light {
   flex: 1;
 }
