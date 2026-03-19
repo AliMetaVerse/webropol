@@ -44,7 +44,12 @@ export class WebropolTabs extends BaseComponent {
       return;
     }
 
-    const tabsHtml = this.renderUnifiedTabs(activeTab, size, alignment, shape);
+    let tabsHtml;
+    if (variant === 'primary' || variant === 'secondary') {
+      tabsHtml = this.renderFigmaTabs(activeTab, variant, alignment);
+    } else {
+      tabsHtml = this.renderUnifiedTabs(activeTab, size, alignment, shape);
+    }
     
     this.innerHTML = `
       <div class="tabs-container">
@@ -78,6 +83,44 @@ export class WebropolTabs extends BaseComponent {
               ${tab.icon ? `<i class="fa-duotone fa-thin fa-${tab.icon} ${sizeClasses.icon}"></i>` : ''}
               ${tab.label}
               ${tab.badge ? `<span class="webropol-tab-badge ${sizeClasses.badge}">${tab.badge}</span>` : ''}
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  /**
+   * Renders tabs using Figma Regular Primary or Regular Secondary variant tokens.
+   * Primary:   selected bg #1e6880 (white text), hover bg #79d6e7
+   * Secondary: selected bg #b0e8f1 (dark text), hover bg #b0e8f1, badge always #215669
+   */
+  renderFigmaTabs(activeTab, variant, alignment) {
+    const buttonClass = variant === 'primary' ? 'webropol-tab-primary' : 'webropol-tab-secondary';
+    const alignmentClass = alignment === 'center' ? 'justify-center' :
+                           alignment === 'end' ? 'justify-end' : 'justify-start';
+    const containerClass = variant === 'primary'
+      ? `webropol-tabs-primary-container flex ${alignmentClass}`
+      : `webropol-tabs-secondary-container`;
+
+    return `
+      <div class="${containerClass}">
+        ${this.tabs.map(tab => {
+          const isActive = tab.id === activeTab;
+
+          return `
+            <button
+              class="${buttonClass}${isActive ? ' active' : ''}"
+              data-tab="${tab.id}"
+              role="tab"
+              aria-selected="${isActive}"
+              aria-controls="panel-${tab.id}"
+              id="tab-${tab.id}">
+              ${tab.icon ? `<i class="fal fa-${tab.icon}"></i>` : ''}
+              <span>${tab.label}</span>
+              ${tab.badge !== undefined && tab.badge !== null
+                ? `<span class="webropol-tab-badge">${tab.badge}</span>`
+                : ''}
             </button>
           `;
         }).join('')}
@@ -142,7 +185,7 @@ export class WebropolTabs extends BaseComponent {
   }
 
   bindEvents() {
-    const tabButtons = this.querySelectorAll('.webropol-unified-tab');
+    const tabButtons = this.querySelectorAll('[role="tab"]');
     
     tabButtons.forEach(button => {
       this.addListener(button, 'click', (event) => {
@@ -158,7 +201,7 @@ export class WebropolTabs extends BaseComponent {
 
   handleKeyNavigation(event) {
     const currentTab = event.currentTarget;
-    const tabButtons = Array.from(this.querySelectorAll('.webropol-unified-tab'));
+    const tabButtons = Array.from(this.querySelectorAll('[role="tab"]'));
     const currentIndex = tabButtons.indexOf(currentTab);
 
     let nextIndex = currentIndex;
