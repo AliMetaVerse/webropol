@@ -459,11 +459,12 @@
                             <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white border border-webropol-gray-200 shadow-sm rounded-3xl p-6 lg:p-8">
                                 <p class="text-sm text-webropol-gray-500">Changes are saved to your personal branding workspace.</p>
                                 <div class="flex flex-wrap gap-3">
-                                    <button type="button"
-                                        @click="resetBrandingSettings()"
-                                        class="rounded-full border border-webropol-gray-200 px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                                    <webropol-button
+                                        variant="secondary"
+                                        icon="undo"
+                                        @click="resetBrandingSettings()">
                                         Reset to defaults
-                                    </button>
+                                    </webropol-button>
                                     <button type="button"
                                         @click="saveBrandingSettings()"
                                         :class="brandingSaved ? 'bg-green-600 hover:bg-green-700' : 'bg-webropol-primary-600 hover:bg-webropol-primary-700'"
@@ -528,38 +529,34 @@
                             
                             <!-- Delete bar - newly added -->
                             <div class="mt-4 flex items-center justify-start gap-4">
-                               <button
-                                  type="button"
-                                  :disabled="selectedIds.length === 0"
-                                  @click="deleteSelected()"
-                                  class="inline-flex items-center gap-2 rounded-full bg-[#bd1d4f] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#a01640] shadow-sm disabled:bg-webropol-gray-100 disabled:text-webropol-gray-400 disabled:shadow-none disabled:cursor-not-allowed">
-                                  <i class="fal fa-trash-alt text-[15px]"></i>
-                                  <span>Delete</span>
-                                </button>
-                                 <button
+                                <webropol-button
+                                    variant="danger"
+                                    icon="trash-alt"
+                                    :disabled="selectedIds.length === 0"
+                                    @click="deleteSelected()">
+                                    Delete
+                                </webropol-button>
+                                <webropol-button
                                     x-show="!isImageSection() && !isPptxSection()"
-                                    type="button" 
-                                    @click="openImportModal()"
-                                    class="inline-flex items-center gap-2 rounded-full border border-webropol-primary-500 bg-transparent px-5 py-2 text-sm font-semibold text-webropol-primary-700 transition-all hover:bg-webropol-primary-50 hover:text-webropol-primary-800 whitespace-nowrap">
-                                    <i class="fal fa-plus-circle text-[15px]"></i>
-                                    <span>Import from library</span>
-                                </button>
-                                 <button
+                                    variant="secondary"
+                                    icon="plus-circle"
+                                    @click="openImportModal()">
+                                    Import from library
+                                </webropol-button>
+                                <webropol-button
                                     x-show="isPptxSection()"
-                                    type="button" 
-                                    @click="openUploadModal()"
-                                    class="inline-flex items-center gap-2 rounded-full border border-webropol-primary-500 bg-transparent px-5 py-2 text-sm font-semibold text-webropol-primary-700 transition-all hover:bg-webropol-primary-50 hover:text-webropol-primary-800 whitespace-nowrap">
-                                    <i class="fal fa-plus-circle text-[15px]"></i>
-                                    <span>Upload a PowerPoint Template</span>
-                                </button>
-                                <button
+                                    variant="secondary"
+                                    icon="plus-circle"
+                                    @click="openUploadModal()">
+                                    Upload a PowerPoint Template
+                                </webropol-button>
+                                <webropol-button
                                     x-show="isImageSection()"
-                                    type="button" 
-                                    @click="openUploadModal()"
-                                    class="inline-flex items-center gap-2 rounded-full border border-webropol-primary-500 bg-transparent px-5 py-2 text-sm font-semibold text-webropol-primary-700 transition-all hover:bg-webropol-primary-50 hover:text-webropol-primary-800 whitespace-nowrap">
-                                    <i class="fal fa-plus-circle text-[15px]"></i>
-                                    <span>Add new image</span>
-                                </button>
+                                    variant="secondary"
+                                    icon="plus-circle"
+                                    @click="openUploadModal()">
+                                    Add new image
+                                </webropol-button>
                             </div>
 
                             <div class="mt-6" :class="activeSideTab === 'own' ? 'in-own-tab' : ''" x-show="pagedTemplates().length > 0" x-cloak>
@@ -1008,12 +1005,11 @@
 
             <!-- Footer -->
             <div class="flex items-center justify-end gap-3 border-t border-webropol-gray-100 px-6 py-4">
-                <button
-                    type="button"
-                    @click="closeUploadModal()"
-                    class="rounded-full border border-webropol-gray-200 px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                <webropol-button
+                    variant="secondary"
+                    @click="closeUploadModal()">
                     Close
-                </button>
+                </webropol-button>
             </div>
         </section>
 
@@ -1149,12 +1145,11 @@
                     </div>
 
                     <div class="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <button
-                            type="button"
-                            @click="closeUploadModal()"
-                            class="rounded-full border border-webropol-gray-200 bg-white px-4 py-2 text-sm font-semibold text-webropol-gray-600 transition hover:border-webropol-gray-300 hover:bg-webropol-gray-50">
+                        <webropol-button
+                            variant="secondary"
+                            @click="closeUploadModal()">
                             Cancel
-                        </button>
+                        </webropol-button>
                         <button
                             type="button"
                             @click="saveUploadedItem()"
