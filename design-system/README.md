@@ -63,7 +63,7 @@ design-system/
 ## 🧩 Components
 
 ### Core Components
-- **Button** - Premium buttons with 9 variants including royal gradients (primary, secondary, tertiary, success, danger, royal, royalViolet, royalBlue, royalTurquoise)
+- **Button** - Premium buttons with 13 variants including royal gradients (primary, secondary, tertiary, danger, danger-outline, success, royal, royalViolet, royalBlue, royalTurquoise, royalLight, royalSecondary, royalTertiary, royalIcon)
 - **Card** - Content containers with various layouts
 - **Modal** - Overlays and dialogs
 - **Badge** - Status indicators and labels
@@ -129,6 +129,29 @@ design-system/
 <!-- Royal Turquoise Button -->
 <webropol-button variant="royalTurquoise" size="md" icon="sparkles">
   Exclusive
+</webropol-button>
+
+<!-- Royal Light Button (light gradient bg + violet border/text) -->
+<webropol-button variant="royalLight" size="md">
+  Royal Light
+</webropol-button>
+
+<!-- Royal Secondary Button (outlined: transparent + violet border/text) -->
+<webropol-button variant="royalSecondary" size="md">
+  Royal Secondary
+</webropol-button>
+
+<!-- Royal Tertiary Button (ghost: no border, violet text only) -->
+<webropol-button variant="royalTertiary" size="md">
+  Royal Tertiary
+</webropol-button>
+
+<!-- Royal Icon Button (icon-only; use with icon-only attribute) -->
+<webropol-button variant="royalIcon" size="md" icon="bell" icon-only></webropol-button>
+
+<!-- Rounded corners variant (use roundness="lg" for non-pill shape) -->
+<webropol-button variant="royalLight" size="md" roundness="lg">
+  Rounded
 </webropol-button>
 
 <!-- Basic Card -->
