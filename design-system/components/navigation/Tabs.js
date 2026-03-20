@@ -95,12 +95,12 @@ export class WebropolTabs extends BaseComponent {
   // ─── Heavy variant ─────────────────────────────────────────────────────────
   renderHeavyTabs(activeTab, orientation, alignment) {
     const isVertical = orientation === 'vertical';
-    const alignClass = alignment === 'center' ? 'justify-center' :
-                       alignment === 'end'    ? 'justify-end'    : '';
-    const dirClass = isVertical ? 'flex-col' : 'flex-row flex-wrap';
+    const alignClass = alignment === 'center' ? 'align-center' :
+                       alignment === 'end'    ? 'align-end'    : '';
+    const dirClass = isVertical ? 'is-col' : '';
 
     return `
-      <div class="webropol-tabs-heavy flex ${dirClass} gap-3 ${alignClass}">
+      <div class="webropol-tabs-heavy ${dirClass} ${alignClass}">
         ${this.tabs.map(tab => {
           const isActive = tab.id === activeTab;
           const disabledAttr = tab.disabled ? 'disabled' : '';
