@@ -93,7 +93,7 @@ export class SurveyStructurePanel extends BaseComponent {
     const delDisabled = this.selectedCount === 0 ? ' disabled' : '';
 
     this.innerHTML = `
-      <div class="rounded-3xl p-6 shadow-xl border border-white bg-white/80 backdrop-blur h-full flex flex-col">
+      <div class="rounded-3xl p-6 shadow-xl border border-white bg-white/20 backdrop-blur h-full flex flex-col">
 
         <!-- Header -->
         <div class="flex items-center justify-between mb-4">
