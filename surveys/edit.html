@@ -472,6 +472,7 @@
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/buttons/Button.js" type="module"></script>
+  <script src="../design-system/components/interactive/SurveyStructurePanel.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyHelperToolbar.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyEditToolbar.js" type="module"></script>
@@ -519,46 +520,17 @@
           <div id="surveyEditorLayout" class="survey-editor-layout grid grid-cols-1 gap-6 pt-6 flex-1 min-h-0">
             <!-- Left Sidebar - Survey Structure -->
             <div id="surveyStructurePane" class="survey-structure-pane lg:min-h-0" x-data="surveyStructureApp()">
-              <div class="rounded-3xl p-6 shadow-xl border border-white hover-lift lg:h-full flex flex-col">
-                <div class="flex items-center justify-between mb-4">
-                  <h3 class="font-semibold text-webropol-gray-900">Survey structure</h3>
-                  <button class="text-webropol-gray-400 hover:text-webropol-gray-600">
-                    <i class="fal fa-ellipsis-h"></i>
-                  </button>
-                </div>
-                
-                <!-- Structure Tabs with unified styling -->
-                <div class="webropol-tabs-unified webropol-tabs-rounded-container mb-4 self-start" role="tablist" aria-label="Edit modes">
-                  <button 
-                    @click="activeTab = 'pages'" 
-                    :class="activeTab === 'pages' ? 'webropol-unified-tab webropol-tab-rounded size-md active' : 'webropol-unified-tab webropol-tab-rounded size-md'"
-                    role="tab"
-                    :aria-selected="activeTab === 'pages'"
-                  >
-                    <i class="fal fa-file-alt mr-2"></i>
-                    <span>Pages</span>
-                  </button>
-                  <button 
-                    @click="activeTab = 'styles'" 
-                    :class="activeTab === 'styles' ? 'webropol-unified-tab webropol-tab-rounded size-md active' : 'webropol-unified-tab webropol-tab-rounded size-md'"
-                    role="tab"
-                    :aria-selected="activeTab === 'styles'"
-                  >
-                    <i class="fal fa-paint-brush mr-2"></i>
-                    <span>Styles</span>
-                  </button>
-                </div>
-                
-                <!-- Action Buttons - Show only for Pages tab -->
-                <div x-show="activeTab === 'pages'" class="flex flex-wrap gap-2 mb-4">
-                  <webropol-button variant="secondary" size="sm" icon="arrows-alt">Move</webropol-button>
-                  <webropol-button variant="secondary" size="sm" icon="copy">Copy</webropol-button>
-                  <webropol-button variant="danger" size="sm" icon="trash-can" :disabled="selectedCount === 0 ? '' : null">Delete</webropol-button>
-                </div>
-                
-                <div class="lg:flex-1 lg:min-h-0 lg:overflow-y-auto survey-scroll-area lg:pr-2">
-                <!-- Survey Structure Tree - Pages Tab -->
-                <div x-show="activeTab === 'pages'" class="space-y-3 mb-6">
+              <webropol-survey-structure
+                title="Survey structure"
+                show-styles
+                storage-key="edit-left-activeTab"
+                class="block hover-lift lg:h-full"
+                @structure-move="handleMove($event)"
+                @structure-copy="handleCopy($event)"
+                @structure-delete="handleDelete($event)"
+              >
+                <!-- Survey Structure Tree - Pages Tab (default slot) -->
+                <div class="space-y-3 mb-6">
                   <!-- Page 1 using new component -->
                   <webropol-survey-page 
                     page-number="1" 
@@ -623,8 +595,8 @@
                   </div>
                 </div>
                 
-                                <!-- Styles Tab Content -->
-                <div x-show="activeTab === 'styles'" x-data="surveyStylesApp()" class="space-y-6 mb-6">
+                <!-- Styles Tab Content (styles slot) -->
+                <div slot="styles" x-data="surveyStylesApp()" class="space-y-6 mb-6">
                   
                   <!-- Survey Pages Section -->
                   <div class="space-y-4">
@@ -814,8 +786,7 @@
                     </button>
                   </div>
                 </div>
-                </div>
-              </div>
+              </webropol-survey-structure>
               <button id="surveyStructureResizer" class="survey-structure-resizer" type="button" aria-label="Resize survey structure panel" title="Resize panel"></button>
             </div>
             
@@ -3948,58 +3919,38 @@
 
     function surveyStructureApp() {
       return {
-        activeTab: (function(){ try{ return localStorage.getItem('edit-left-activeTab') || 'pages'; }catch(e){ return 'pages'; } })(),
         selectedStyle: null,
-        selectedCount: 0,
         
         init() {
           console.log('Survey Structure initialized');
-          // Persist tab changes
-          this.$watch('activeTab', (v) => {
-            try { localStorage.setItem('edit-left-activeTab', v); } catch(e) {}
-          });
-          
-          // Set up event listeners for web components
-          this.setupComponentListeners();
-        },
-        
-        setupComponentListeners() {
-          // Listen for page toggle events
-          document.addEventListener('page-toggle', (e) => {
-            console.log('Page toggled:', e.detail);
-          });
-          
-          // Listen for page selection events
-          document.addEventListener('page-select', (e) => {
-            console.log('Page selected:', e.detail);
-            this.selectedCount += e.detail.selected ? 1 : -1;
-            if (this.selectedCount < 0) this.selectedCount = 0;
-          });
-          
-          // Listen for question selection events
-          document.addEventListener('question-select', (e) => {
-            console.log('Question selected:', e.detail);
-            this.selectedCount += e.detail.selected ? 1 : -1;
-            if (this.selectedCount < 0) this.selectedCount = 0;
-          });
-          
-          // Listen for question settings events
+
+          // Listen for question settings and delete events bubbling from child components
           document.addEventListener('question-settings', (e) => {
             this.openQuestionSettingsModal(e.detail.questionId);
           });
-          
-          // Listen for question delete events
           document.addEventListener('question-delete', (e) => {
             this.handleQuestionDelete(e.detail.questionId);
           });
         },
-        
+
         handlePageToggle(event) {
           console.log('Page toggle handler:', event.detail);
         },
-        
+
         handlePageSelect(event) {
           console.log('Page select handler:', event.detail);
+        },
+
+        handleMove(event) {
+          console.log('Move', event.detail);
+        },
+
+        handleCopy(event) {
+          console.log('Copy', event.detail);
+        },
+
+        handleDelete(event) {
+          console.log('Delete', event.detail);
         },
         
         openQuestionSettingsModal(questionId) {
