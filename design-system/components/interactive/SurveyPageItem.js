@@ -113,11 +113,10 @@ export class SurveyPageItem extends BaseComponent {
       this.toggleExpanded();
     });
 
-    // Also allow clicking anywhere on the header row (except checkbox/label)
+    // Also allow clicking anywhere on the header row (except checkbox and action buttons)
     const header = this.querySelector('.page-header');
     header?.addEventListener('click', (e) => {
       if (e.target.closest('.page-checkbox') ||
-          e.target.closest('.page-label')    ||
           e.target.closest('.page-menu-btn') ||
           e.target.closest('.expand-toggle-btn')) return;
       this.toggleExpanded();
@@ -129,13 +128,6 @@ export class SurveyPageItem extends BaseComponent {
       e.stopPropagation();
       this.isSelected = checkbox.checked;
       this.emit('page-select', { pageNumber: this.pageNumber, selected: this.isSelected });
-    });
-
-    // Label click → toggle checkbox
-    this.querySelector('.page-label')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const cb = this.querySelector('.page-checkbox');
-      if (cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
     });
   }
 
