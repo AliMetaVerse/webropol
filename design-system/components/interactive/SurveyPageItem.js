@@ -104,6 +104,9 @@ export class SurveyPageItem extends BaseComponent {
   }
 
   bindEvents() {
+    if (this._eventsBound) return;
+    this._eventsBound = true;
+
     // Expand/collapse via dedicated toggle button
     this.querySelector('.expand-toggle-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
