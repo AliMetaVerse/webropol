@@ -48,14 +48,14 @@ export class SurveyPageItem extends BaseComponent {
 
             <i class="fal fa-file-lines text-webropol-gray-400 text-xs shrink-0"></i>
 
-            <label for="${checkboxId}" class="flex-1 flex items-center gap-2 cursor-pointer page-label min-w-0">
+            <span class="flex-1 flex items-center gap-2 cursor-pointer page-label min-w-0">
               <span class="font-semibold text-webropol-gray-800 text-xs tracking-wide uppercase truncate">${this.pageName}</span>
               <span class="_count-badge inline-flex items-center justify-center min-w-[18px] h-[18px] px-1
                            text-[10px] font-semibold bg-webropol-gray-100 text-webropol-gray-500
                            rounded-full whitespace-nowrap leading-none">
                 ${this.questionCount}
               </span>
-            </label>
+            </span>
 
             <button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded
                            text-webropol-gray-400 hover:text-webropol-gray-600

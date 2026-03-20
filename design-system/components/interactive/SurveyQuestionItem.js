@@ -45,10 +45,9 @@ export class SurveyQuestionItem extends BaseComponent {
         </span>
 
         <!-- Question text -->
-        <label for="${checkboxId}"
-               class="flex-1 text-xs text-webropol-gray-700 truncate cursor-pointer question-label select-none">
+        <span class="flex-1 text-xs text-webropol-gray-700 truncate cursor-pointer question-label select-none">
           ${this.questionText}
-        </label>
+        </span>
 
         <!-- Hover action buttons -->
         <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100
@@ -82,17 +81,6 @@ export class SurveyQuestionItem extends BaseComponent {
         questionId: this.questionId,
         selected: this.isSelected
       });
-    });
-
-    // Prevent label click from triggering parent clicks
-    const label = this.querySelector('.question-label');
-    label?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const checkbox = this.querySelector('.question-checkbox');
-      if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change'));
-      }
     });
 
     // Settings button
