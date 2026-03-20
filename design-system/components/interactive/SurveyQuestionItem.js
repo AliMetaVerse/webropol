@@ -39,11 +39,6 @@ export class SurveyQuestionItem extends BaseComponent {
           id="${checkboxId}"
         >
 
-        <!-- Type icon chip -->
-        <span class="shrink-0 w-5 h-5 rounded flex items-center justify-center ${color}">
-          <i class="fal ${icon} text-[10px]"></i>
-        </span>
-
         <!-- Question text -->
         <span class="flex-1 text-xs text-webropol-gray-700 truncate cursor-pointer question-label select-none">
           ${this.questionText}
