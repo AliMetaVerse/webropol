@@ -125,8 +125,8 @@ export class SurveyStructurePanel extends BaseComponent {
 
         <!-- Action Buttons (visible only on the Pages tab) -->
         <div class="_action-bar flex flex-wrap gap-2 mb-4${!isPages ? ' hidden' : ''}">
-          <webropol-button variant="secondary" size="sm" icon="arrows-alt" type="button" class="_move-btn">Move</webropol-button>
-          <webropol-button variant="secondary" size="sm" icon="copy"       type="button" class="_copy-btn">Copy</webropol-button>
+          <webropol-button variant="secondary" size="sm" icon="arrows-alt" type="button" class="_move-btn"${delDisabled}>Move</webropol-button>
+          <webropol-button variant="secondary" size="sm" icon="copy"       type="button" class="_copy-btn"${delDisabled}>Copy</webropol-button>
           <webropol-button variant="danger"    size="sm" icon="trash-can"  type="button" class="_delete-btn"${delDisabled}>Delete</webropol-button>
         </div>
 
@@ -170,10 +170,10 @@ export class SurveyStructurePanel extends BaseComponent {
 
     // Move / Copy / Delete
     this.querySelector('._move-btn')?.addEventListener('click', () => {
-      this.emit('structure-move', { selectedCount: this.selectedCount });
+      if (this.selectedCount > 0) this.emit('structure-move', { selectedCount: this.selectedCount });
     });
     this.querySelector('._copy-btn')?.addEventListener('click', () => {
-      this.emit('structure-copy', { selectedCount: this.selectedCount });
+      if (this.selectedCount > 0) this.emit('structure-copy', { selectedCount: this.selectedCount });
     });
     this.querySelector('._delete-btn')?.addEventListener('click', () => {
       if (this.selectedCount > 0) {
@@ -185,12 +185,12 @@ export class SurveyStructurePanel extends BaseComponent {
     this.addEventListener('page-select', (e) => {
       this.selectedCount += e.detail.selected ? 1 : -1;
       if (this.selectedCount < 0) this.selectedCount = 0;
-      this._syncDeleteBtn();
+      this._syncActionBtns();
     });
     this.addEventListener('question-select', (e) => {
       this.selectedCount += e.detail.selected ? 1 : -1;
       if (this.selectedCount < 0) this.selectedCount = 0;
-      this._syncDeleteBtn();
+      this._syncActionBtns();
     });
   }
 
@@ -211,7 +211,7 @@ export class SurveyStructurePanel extends BaseComponent {
     const titleEl = this.querySelector('._panel-title');
     if (titleEl) titleEl.textContent = this.panelTitle;
     this._syncTabs();
-    this._syncDeleteBtn();
+    this._syncActionBtns();
   }
 
   _syncTabs() {
@@ -228,11 +228,14 @@ export class SurveyStructurePanel extends BaseComponent {
     this.querySelector('._action-bar') ?.classList.toggle('hidden', !isPages);
   }
 
-  _syncDeleteBtn() {
-    const btn = this.querySelector('._delete-btn');
-    if (!btn) return;
-    if (this.selectedCount === 0) btn.setAttribute('disabled', '');
-    else                          btn.removeAttribute('disabled');
+  _syncActionBtns() {
+    const disabled = this.selectedCount === 0;
+    ['._move-btn', '._copy-btn', '._delete-btn'].forEach(sel => {
+      const btn = this.querySelector(sel);
+      if (!btn) return;
+      if (disabled) btn.setAttribute('disabled', '');
+      else          btn.removeAttribute('disabled');
+    });
   }
 
   _esc(str) {
