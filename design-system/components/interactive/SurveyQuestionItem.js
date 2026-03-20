@@ -20,39 +20,52 @@ export class SurveyQuestionItem extends BaseComponent {
 
   render() {
     const checkboxId = `question-${this.questionId}-checkbox`;
-    const questionTypeIcon = this.getQuestionTypeIcon(this.questionType);
-    
+    const { icon, color } = this.getQuestionTypeMeta(this.questionType);
+
     this.innerHTML = `
-      <div class="flex items-center gap-2 px-2.5 py-2 bg-webropol-gray-50 hover:bg-white rounded-lg border border-transparent hover:border-webropol-gray-200 cursor-pointer transition-all group question-item mb-1">
+      <div class="relative flex items-center gap-2.5 px-2.5 py-2 rounded-lg
+                  cursor-pointer transition-all duration-150
+                  hover:bg-white hover:shadow-sm
+                  group question-item">
+
         <!-- Checkbox -->
-        <input 
-          type="checkbox" 
+        <input
+          type="checkbox"
           ${this.isSelected ? 'checked' : ''}
-          class="w-3.5 h-3.5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-0 question-checkbox" 
+          class="w-3.5 h-3.5 shrink-0 rounded border-webropol-gray-300
+                 text-webropol-primary-600
+                 focus:ring-2 focus:ring-webropol-primary-400 focus:ring-offset-0
+                 question-checkbox"
           id="${checkboxId}"
         >
-        
-        <!-- Question Content -->
-        <label for="${checkboxId}" class="flex-1 flex items-center gap-2 cursor-pointer question-label min-w-0">
-          <i class="fal ${questionTypeIcon} text-webropol-gray-400 text-xs flex-shrink-0"></i>
-          <span class="text-webropol-gray-700 text-xs truncate flex-1">${this.questionText}</span>
+
+        <!-- Type icon chip -->
+        <span class="shrink-0 w-5 h-5 rounded flex items-center justify-center ${color}">
+          <i class="fal ${icon} text-[10px]"></i>
+        </span>
+
+        <!-- Question text -->
+        <label for="${checkboxId}"
+               class="flex-1 text-xs text-webropol-gray-700 truncate cursor-pointer question-label select-none">
+          ${this.questionText}
         </label>
-        
-        <!-- Action Buttons (Hidden by default, shown on hover) -->
-        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity action-buttons flex-shrink-0">
-          <button 
-            class="w-5 h-5 flex items-center justify-center rounded bg-webropol-primary-600 text-white hover:bg-webropol-primary-700 transition-colors settings-btn" 
-            title="Settings"
-            aria-label="Question settings"
-          >
-            <i class="fal fa-cog text-[10px]"></i>
+
+        <!-- Hover action buttons -->
+        <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100
+                    transition-opacity action-buttons shrink-0">
+          <button type="button"
+                  class="w-6 h-6 flex items-center justify-center rounded
+                         text-webropol-gray-400 hover:text-webropol-primary-600
+                         hover:bg-webropol-primary-50 transition-colors settings-btn"
+                  title="Settings" aria-label="Question settings">
+            <i class="fal fa-sliders-h text-[10px]"></i>
           </button>
-          <button 
-            class="w-5 h-5 flex items-center justify-center rounded bg-webropol-gray-400 text-white hover:bg-red-500 transition-colors delete-btn" 
-            title="Delete"
-            aria-label="Delete question"
-          >
-            <i class="fa-light fa-trash-can text-[10px]"></i>
+          <button type="button"
+                  class="w-6 h-6 flex items-center justify-center rounded
+                         text-webropol-gray-400 hover:text-red-500
+                         hover:bg-red-50 transition-colors delete-btn"
+                  title="Delete" aria-label="Delete question">
+            <i class="fal fa-trash-can text-[10px]"></i>
           </button>
         </div>
       </div>
@@ -103,27 +116,26 @@ export class SurveyQuestionItem extends BaseComponent {
   }
 
   /**
-   * Get FontAwesome icon class based on question type
+   * Returns { icon, color } for the question type chip
    */
-  getQuestionTypeIcon(type) {
-    const iconMap = {
-      'text': 'fa-text',
-      'textarea': 'fa-align-left',
-      'radio': 'fa-dot-circle',
-      'checkbox': 'fa-check-square',
-      'dropdown': 'fa-caret-square-down',
-      'scale': 'fa-sliders-h',
-      'nps': 'fa-chart-line',
-      'rating': 'fa-star',
-      'matrix': 'fa-table',
-      'ranking': 'fa-sort-amount-down',
-      'contact': 'fa-address-card',
-      'autosuggest': 'fa-magic',
-      'date': 'fa-calendar-alt',
-      'file': 'fa-file-upload'
+  getQuestionTypeMeta(type) {
+    const map = {
+      'text':        { icon: 'fa-text',              color: 'bg-blue-50   text-blue-500'    },
+      'textarea':    { icon: 'fa-align-left',         color: 'bg-blue-50   text-blue-500'    },
+      'radio':       { icon: 'fa-circle-dot',         color: 'bg-violet-50 text-violet-500'  },
+      'checkbox':    { icon: 'fa-square-check',       color: 'bg-violet-50 text-violet-500'  },
+      'dropdown':    { icon: 'fa-caret-square-down',  color: 'bg-indigo-50 text-indigo-500'  },
+      'scale':       { icon: 'fa-sliders-h',          color: 'bg-cyan-50   text-cyan-600'    },
+      'nps':         { icon: 'fa-chart-line',         color: 'bg-cyan-50   text-cyan-600'    },
+      'rating':      { icon: 'fa-star',               color: 'bg-amber-50  text-amber-500'   },
+      'matrix':      { icon: 'fa-table',              color: 'bg-teal-50   text-teal-600'    },
+      'ranking':     { icon: 'fa-sort-amount-down',   color: 'bg-orange-50 text-orange-500'  },
+      'contact':     { icon: 'fa-address-card',       color: 'bg-green-50  text-green-600'   },
+      'autosuggest': { icon: 'fa-magic',              color: 'bg-purple-50 text-purple-500'  },
+      'date':        { icon: 'fa-calendar-alt',       color: 'bg-rose-50   text-rose-500'    },
+      'file':        { icon: 'fa-file-upload',        color: 'bg-gray-100  text-gray-500'    },
     };
-    
-    return iconMap[type] || 'fa-question-circle';
+    return map[type] || { icon: 'fa-question-circle', color: 'bg-gray-100 text-gray-400' };
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

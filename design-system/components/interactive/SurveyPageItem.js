@@ -17,104 +17,122 @@ export class SurveyPageItem extends BaseComponent {
     this.pageNumber = this.getAttr('page-number', '1');
     this.pageName = this.getAttr('page-name', `PAGE ${this.pageNumber}`);
     this.questionCount = this.getAttr('question-count', '0');
-    this._initialized = false;
+    // NOTE: do NOT reset _initialized here — doing so causes a double-render
+    // when the panel component moves this node into its slot container.
+    if (this._initialized === undefined) this._initialized = false;
   }
 
   render() {
-    // Only render structure once to preserve slotted content
     if (!this._initialized) {
       const expandIcon = this.isExpanded ? 'fa-chevron-down' : 'fa-chevron-right';
       const checkboxId = `page-${this.pageNumber}-checkbox`;
-      
-      // Save the slotted content
       const slottedContent = this.innerHTML;
-      
+
       this.innerHTML = `
-        <div class="bg-white rounded-xl border border-webropol-gray-200 hover:border-webropol-primary-300 transition-all shadow-sm hover:shadow-md mb-1">
-          <!-- Page Header - Compact Design -->
-          <div class="flex items-center gap-2 px-3 py-2.5 cursor-pointer page-header group">
-            <input 
-              type="checkbox" 
+        <div class="group _page-root">
+          <!-- Page Header -->
+          <div class="flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer page-header
+                      border border-transparent
+                      hover:border-webropol-gray-200 hover:bg-white
+                      transition-all duration-150 select-none">
+
+            <input
+              type="checkbox"
               ${this.isSelected ? 'checked' : ''}
-              class="w-3.5 h-3.5 text-webropol-primary-600 border-webropol-gray-300 rounded focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-0 page-checkbox" 
+              class="w-3.5 h-3.5 shrink-0 rounded border-webropol-gray-300
+                     text-webropol-primary-600
+                     focus:ring-2 focus:ring-webropol-primary-400 focus:ring-offset-0
+                     page-checkbox"
               id="${checkboxId}"
             >
-            <i class="fal transition-all duration-200 ${expandIcon} text-webropol-primary-600 expand-icon text-sm"></i>
+
+            <i class="fal fa-file-lines text-webropol-gray-400 text-xs shrink-0"></i>
+
             <label for="${checkboxId}" class="flex-1 flex items-center gap-2 cursor-pointer page-label min-w-0">
-              <span class="font-semibold text-webropol-gray-900 text-sm truncate">${this.pageName}</span>
-              <span class="px-1.5 py-0.5 text-[10px] font-medium bg-webropol-gray-100 text-webropol-gray-600 rounded-md whitespace-nowrap">
+              <span class="font-semibold text-webropol-gray-800 text-xs tracking-wide uppercase truncate">${this.pageName}</span>
+              <span class="_count-badge inline-flex items-center justify-center min-w-[18px] h-[18px] px-1
+                           text-[10px] font-semibold bg-webropol-gray-100 text-webropol-gray-500
+                           rounded-full whitespace-nowrap leading-none">
                 ${this.questionCount}
               </span>
             </label>
-            <button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-webropol-gray-100 rounded text-webropol-gray-500 hover:text-webropol-gray-700 page-menu-btn" title="Page options">
+
+            <button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded
+                           text-webropol-gray-400 hover:text-webropol-gray-600
+                           hover:bg-webropol-gray-100 page-menu-btn"
+                    title="Page options" type="button">
               <i class="fal fa-ellipsis-h text-xs"></i>
             </button>
+
+            <button class="p-1 rounded text-webropol-gray-400 hover:text-webropol-gray-600
+                           hover:bg-webropol-gray-100 transition-colors expand-toggle-btn"
+                    title="${this.isExpanded ? 'Collapse' : 'Expand'}" type="button">
+              <i class="fal ${expandIcon} expand-icon text-[10px] transition-transform duration-200"></i>
+            </button>
           </div>
-          
-          <!-- Questions Container (Collapsible) -->
-          <div class="questions-container px-3 pb-2 space-y-1 ${this.isExpanded ? '' : 'hidden'}">
+
+          <!-- Questions Container (collapsible) -->
+          <div class="questions-container ml-4 mt-1 space-y-0.5 ${this.isExpanded ? '' : 'hidden'}">
             ${slottedContent}
           </div>
         </div>
       `;
-      
+
       this._initialized = true;
     } else {
-      // Just update the dynamic parts without re-rendering everything
       this.updateDynamicContent();
     }
   }
   
   updateDynamicContent() {
-    const checkbox = this.querySelector('.page-checkbox');
-    const pageName = this.querySelector('.page-label span:first-child');
-    const badge = this.querySelector('.page-label span:last-child');
-    const icon = this.querySelector('.expand-icon');
+    const checkbox  = this.querySelector('.page-checkbox');
+    const nameEl    = this.querySelector('.page-label span:first-child');
+    const badge     = this.querySelector('._count-badge');
+    const icon      = this.querySelector('.expand-icon');
     const container = this.querySelector('.questions-container');
-    
-    if (checkbox) checkbox.checked = this.isSelected;
-    if (pageName) pageName.textContent = this.pageName;
-    if (badge) badge.textContent = this.questionCount;
+    const toggleBtn = this.querySelector('.expand-toggle-btn');
+
+    if (checkbox)  checkbox.checked = this.isSelected;
+    if (nameEl)    nameEl.textContent = this.pageName;
+    if (badge)     badge.textContent  = this.questionCount;
     if (icon) {
-      icon.classList.toggle('fa-chevron-down', this.isExpanded);
+      icon.classList.toggle('fa-chevron-down',  this.isExpanded);
       icon.classList.toggle('fa-chevron-right', !this.isExpanded);
     }
-    if (container) {
-      container.classList.toggle('hidden', !this.isExpanded);
-    }
+    if (container) container.classList.toggle('hidden', !this.isExpanded);
+    if (toggleBtn) toggleBtn.title = this.isExpanded ? 'Collapse' : 'Expand';
   }
 
   bindEvents() {
-    // Toggle expand/collapse on header click
-    const header = this.querySelector('.page-header');
-    header?.addEventListener('click', (e) => {
-      // Don't toggle if clicking directly on checkbox or label
-      if (e.target.closest('.page-checkbox') || e.target.closest('.page-label')) {
-        return;
-      }
+    // Expand/collapse via dedicated toggle button
+    this.querySelector('.expand-toggle-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       this.toggleExpanded();
     });
 
-    // Handle checkbox selection
+    // Also allow clicking anywhere on the header row (except checkbox/label)
+    const header = this.querySelector('.page-header');
+    header?.addEventListener('click', (e) => {
+      if (e.target.closest('.page-checkbox') ||
+          e.target.closest('.page-label')    ||
+          e.target.closest('.page-menu-btn') ||
+          e.target.closest('.expand-toggle-btn')) return;
+      this.toggleExpanded();
+    });
+
+    // Checkbox selection
     const checkbox = this.querySelector('.page-checkbox');
     checkbox?.addEventListener('change', (e) => {
       e.stopPropagation();
       this.isSelected = checkbox.checked;
-      this.emit('page-select', {
-        pageNumber: this.pageNumber,
-        selected: this.isSelected
-      });
+      this.emit('page-select', { pageNumber: this.pageNumber, selected: this.isSelected });
     });
 
-    // Prevent label click from bubbling to header
-    const label = this.querySelector('.page-label');
-    label?.addEventListener('click', (e) => {
+    // Label click → toggle checkbox
+    this.querySelector('.page-label')?.addEventListener('click', (e) => {
       e.stopPropagation();
-      const checkbox = this.querySelector('.page-checkbox');
-      if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        checkbox.dispatchEvent(new Event('change'));
-      }
+      const cb = this.querySelector('.page-checkbox');
+      if (cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('change')); }
     });
   }
 
