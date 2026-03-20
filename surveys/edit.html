@@ -827,7 +827,7 @@
                   <!-- Mandatory Questions Alert -->
                   <webropol-alert-info x-show="showMandatoryInfo">Mandatory questions are marked with an asterisk (<span class="text-red-600 font-bold">*</span>)</webropol-alert-info>
 
-                  <webropol-contact-form mode="edit" question-id="q1" class="block mb-4"></webropol-contact-form>
+                  <webropol-contact-form mode="edit" question-id="contactform" class="block mb-4"></webropol-contact-form>
 
                   <!-- Quick actions -->
                   <webropol-page-quick-actions
@@ -838,7 +838,7 @@
                     ]'
                   ></webropol-page-quick-actions>
 
-                  <webropol-autosuggest-text-field mode="edit" question-id="q2" class="block mb-4"></webropol-autosuggest-text-field>
+                  <webropol-autosuggest-text-field mode="edit" question-id="autosuggest" class="block mb-4"></webropol-autosuggest-text-field>
 
                   <!-- Quick actions -->
                   <webropol-page-quick-actions
@@ -849,7 +849,7 @@
                     ]'
                   ></webropol-page-quick-actions>
 
-                  <webropol-open-ended mode="edit" question-id="q3-openended" class="block mb-4"></webropol-open-ended>
+                  <webropol-open-ended mode="edit" question-id="openended" class="block mb-4"></webropol-open-ended>
 
                   <webropol-numeric-slider mode="edit" question-id="numeric-slider-1" question-number="4" class="block mb-4"></webropol-numeric-slider>
 
@@ -881,7 +881,7 @@
                     <h2 class="text-3xl sm:text-4xl font-bold text-webropol-gray-900">Customer Satisfaction Survey</h2>
                   </div>
 
-                  <webropol-nps mode="edit" question-id="q3" class="block mb-4"></webropol-nps>
+                  <webropol-nps mode="edit" question-id="nps" class="block mb-4"></webropol-nps>
 
                   <!-- Quick actions -->
                   <webropol-page-quick-actions
@@ -3943,6 +3943,17 @@
           });
           document.addEventListener('question-delete', (e) => {
             this.handleQuestionDelete(e.detail.questionId);
+          });
+
+          // Wire structure panel question selection → canvas scroll
+          this.$nextTick(() => {
+            document.querySelector('webropol-survey-structure')?.addEventListener('question-select', (e) => {
+              const { questionId, selected } = e.detail;
+              if (!selected) return;
+              // Exclude sidebar webropol-survey-question elements; target canvas cards only
+              const canvasEl = document.querySelector(`[question-id="${questionId}"]:not(webropol-survey-question)`);
+              if (canvasEl) canvasEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
           });
         },
 
