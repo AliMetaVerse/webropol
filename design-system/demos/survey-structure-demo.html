@@ -3,40 +3,354 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Survey Structure Components Demo | Webropol Design System</title>
+  <title>Survey Structure Panel — Webropol Design System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   
-  <!-- Import new components -->
-  <script src="../components/interactive/SurveyPageItem.js" type="module"></script>
-  <script src="../components/interactive/SurveyQuestionItem.js" type="module"></script>
-  
+  <!-- SurveyStructurePanel auto-imports SurveyPageItem & SurveyQuestionItem -->
+  <script src="../components/interactive/SurveyStructurePanel.js" type="module"></script>
+  <script src="../components/buttons/Button.js" type="module"></script>
+
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
-            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+            'webropol-primary': { 50:'#f0fdff',100:'#ccf7fe',200:'#99effd',300:'#66e0fa',400:'#22ccf1',500:'#06b6d4',600:'#0891b2',700:'#0e7490',800:'#155e75',900:'#164e63' },
+            'webropol-gray':    { 50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a' }
           },
-          fontFamily: {
-            'sans': ['Inter', 'system-ui', 'sans-serif']
+          fontFamily: { 'sans': ['Inter','system-ui','sans-serif'] },
+          boxShadow: {
+            'card':   '0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04)',
+            'medium': '0 4px 12px rgba(15,23,42,0.10), 0 2px 4px rgba(15,23,42,0.06)'
           }
         }
       }
     }
   </script>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Resizable panel handle (ported from surveys/edit.html) ─────── */
+    #demoStructurePane {
+      min-width: 260px;
+      max-width: 560px;
+    }
+
+    .demo-structure-resizer { display: none; }
+
+    @media (min-width: 768px) {
+      .demo-structure-resizer {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: -12px;
+        width: 24px;
+        height: 100%;
+        cursor: ew-resize;
+        z-index: 35;
+        background: transparent;
+        border: 0;
+        padding: 0;
+        touch-action: none;
+        pointer-events: auto;
+      }
+
+      .demo-structure-resizer::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        bottom: 12px;
+        left: 11px;
+        width: 2px;
+        border-radius: 9999px;
+        background: linear-gradient(to bottom,
+          rgba(148,163,184,0.1),
+          rgba(148,163,184,0.55),
+          rgba(148,163,184,0.1));
+        transition: background 0.2s ease;
+      }
+
+      .demo-structure-resizer::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 4px;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 64px;
+        border-radius: 9999px;
+        border: 1px solid #cbd5e1;
+        background-color: #ffffff;
+        background-image: radial-gradient(circle, #94a3b8 1.2px, transparent 1.2px);
+        background-size: 6px 10px;
+        background-position: center;
+        box-shadow: 0 2px 10px rgba(15,23,42,0.12);
+        transition: transform 0.2s ease, border-color 0.2s ease,
+                    box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      .demo-structure-resizer:hover::before,
+      body.is-resizing-demo .demo-structure-resizer::before {
+        background: linear-gradient(to bottom,
+          rgba(6,182,212,0.1),
+          rgba(6,182,212,0.7),
+          rgba(6,182,212,0.1));
+      }
+
+      .demo-structure-resizer:hover::after,
+      body.is-resizing-demo .demo-structure-resizer::after {
+        border-color: #06b6d4;
+        background-color: #f0fdff;
+        box-shadow: 0 4px 14px rgba(6,182,212,0.22);
+        transform: translateY(-50%) scale(1.03);
+      }
+
+      body.is-resizing-demo             { cursor: ew-resize; user-select: none; }
+      body.is-resizing-demo *           { cursor: ew-resize !important; }
+    }
+  </style>
 </head>
-<body class="bg-webropol-gray-50 p-8" x-data="demoApp()">
-  <div class="max-w-4xl mx-auto">
+<body class="bg-webropol-gray-100 flex flex-col font-sans antialiased" style="height:100vh;overflow:hidden;" x-data="demoApp()">
+  <div class="max-w-6xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Survey Structure Components Demo</h1>
-      <p class="text-webropol-gray-600">Interactive demonstration of SurveyPageItem and SurveyQuestionItem components</p>
+      <h1 class="text-3xl font-bold text-webropol-gray-900 mb-2">Survey Structure Panel</h1>
+      <p class="text-webropol-gray-600"><code class="bg-white px-2 py-0.5 rounded border border-webropol-gray-200 text-sm">webropol-survey-structure</code> — reusable panel for Surveys &amp; 2-Way SMS editors</p>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+      <!-- ── Example 1 : Survey editor (show-styles) ── -->
+      <div>
+        <h2 class="text-sm font-semibold text-webropol-gray-500 uppercase tracking-wider mb-3">Survey Editor <span class="normal-case font-normal">(show-styles)</span></h2>
+        <div style="height:560px">
+          <webropol-survey-structure
+            title="Survey structure"
+            show-styles
+            storage-key="demo-left-tab"
+            class="block h-full"
+            @structure-move="logEvent('structure-move', $event.detail)"
+            @structure-copy="logEvent('structure-copy', $event.detail)"
+            @structure-delete="logEvent('structure-delete', $event.detail)"
+            @tab-change="logEvent('tab-change', $event.detail)"
+          >
+            <!-- Pages tree (default slot) -->
+            <webropol-survey-page
+              page-number="1"
+              page-name="PAGE 1: Customer Info"
+              question-count="3"
+              expanded
+              @page-toggle="logEvent('page-toggle', $event.detail)"
+              @page-select="logEvent('page-select', $event.detail)"
+            >
+              <webropol-survey-question question-id="q1" question-text="What is your name?"           question-type="text"    @question-settings="logEvent('question-settings',$event.detail)" @question-delete="logEvent('question-delete',$event.detail)"></webropol-survey-question>
+              <webropol-survey-question question-id="q2" question-text="Fill in your contact details" question-type="contact" @question-settings="logEvent('question-settings',$event.detail)" @question-delete="logEvent('question-delete',$event.detail)"></webropol-survey-question>
+              <webropol-survey-question question-id="q3" question-text="Select your country"         question-type="dropdown" @question-settings="logEvent('question-settings',$event.detail)" @question-delete="logEvent('question-delete',$event.detail)"></webropol-survey-question>
+            </webropol-survey-page>
+
+            <webropol-survey-page
+              page-number="2"
+              page-name="PAGE 2: Feedback"
+              question-count="2"
+              @page-toggle="logEvent('page-toggle', $event.detail)"
+              @page-select="logEvent('page-select', $event.detail)"
+            >
+              <webropol-survey-question question-id="q4" question-text="Rate our service (NPS)" question-type="nps"      @question-settings="logEvent('question-settings',$event.detail)" @question-delete="logEvent('question-delete',$event.detail)"></webropol-survey-question>
+              <webropol-survey-question question-id="q5" question-text="Any additional comments?"  question-type="textarea" @question-settings="logEvent('question-settings',$event.detail)" @question-delete="logEvent('question-delete',$event.detail)"></webropol-survey-question>
+            </webropol-survey-page>
+
+            <div class="flex items-center space-x-3 p-3 hover:bg-webropol-gray-50 rounded-lg cursor-pointer transition-colors">
+              <i class="fal fa-heart text-green-600"></i>
+              <span class="text-webropol-gray-700 text-sm">Thank you page</span>
+            </div>
+
+            <!-- Styles slot -->
+            <div slot="styles" class="space-y-4 text-sm text-webropol-gray-600">
+              <p class="font-medium text-webropol-gray-800">Styles content goes here</p>
+              <p>In production this slot contains <code class="bg-webropol-gray-100 px-1 rounded">x-data="surveyStylesApp()"</code> with colour pickers, background settings, etc.</p>
+              <div class="bg-webropol-primary-50 border border-webropol-primary-200 rounded-xl p-4">
+                <p class="text-webropol-primary-700 font-medium">slot="styles" example</p>
+                <p class="text-webropol-primary-600 mt-1">Any content placed here is shown only when the Styles tab is active.</p>
+              </div>
+            </div>
+          </webropol-survey-structure>
+        </div>
+      </div>
+
+      <!-- ── Example 2 : SMS editor (no styles tab) ── -->
+      <div>
+        <h2 class="text-sm font-semibold text-webropol-gray-500 uppercase tracking-wider mb-3">SMS Editor <span class="normal-case font-normal">(no styles tab)</span></h2>
+        <div style="height:560px">
+          <webropol-survey-structure
+            title="Survey structure"
+            class="block h-full"
+            @structure-move="logEvent('structure-move', $event.detail)"
+            @structure-copy="logEvent('structure-copy', $event.detail)"
+            @structure-delete="logEvent('structure-delete', $event.detail)"
+          >
+            <!-- Plain Alpine-driven tree (SMS pattern) -->
+            <div class="space-y-2" x-data="{pages: [
+              {id:1, label:'PAGE 1', questions:[{id:'a',label:'Yes/No question'},{id:'b',label:'NPS (0-10)'}]},
+              {id:2, label:'PAGE 2', questions:[{id:'c',label:'Open-ended question'}]}
+            ]}">
+              <template x-for="page in pages" :key="page.id">
+                <div>
+                  <div class="flex items-center gap-2 px-3 py-2 font-semibold text-xs uppercase bg-webropol-gray-50 rounded-lg border border-webropol-gray-200 mb-1">
+                    <input type="checkbox" class="rounded border-webropol-gray-300 w-3.5 h-3.5">
+                    <i class="fal fa-file-lines text-webropol-gray-500"></i>
+                    <span x-text="page.label" class="text-webropol-gray-700"></span>
+                    <i class="fal fa-angle-down ml-auto text-webropol-gray-400"></i>
+                  </div>
+                  <div class="ml-6 space-y-1">
+                    <template x-for="q in page.questions" :key="q.id">
+                      <div class="flex items-center gap-2 px-2.5 py-2 bg-webropol-gray-50 rounded-lg text-xs text-webropol-gray-700">
+                        <input type="checkbox" class="rounded border-webropol-gray-300 w-3.5 h-3.5">
+                        <span x-text="q.label"></span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <div class="flex items-center gap-2 px-3 py-2 text-xs text-webropol-gray-600">
+                <i class="fal fa-thumbs-up text-green-500"></i>
+                <span>Thank you page</span>
+              </div>
+            </div>
+          </webropol-survey-structure>
+        </div>
+      </div>
+
+      <!-- ── Example 3 : Custom title ── -->
+      <div>
+        <h2 class="text-sm font-semibold text-webropol-gray-500 uppercase tracking-wider mb-3">Custom title attribute</h2>
+        <div style="height:560px">
+          <webropol-survey-structure
+            title="Event structure"
+            class="block h-full"
+          >
+            <webropol-survey-page page-number="1" page-name="SESSION 1" question-count="2" expanded>
+              <webropol-survey-question question-id="e1" question-text="Registration form" question-type="contact"></webropol-survey-question>
+              <webropol-survey-question question-id="e2" question-text="Session rating"    question-type="rating"></webropol-survey-question>
+            </webropol-survey-page>
+            <webropol-survey-page page-number="2" page-name="SESSION 2" question-count="1">
+              <webropol-survey-question question-id="e3" question-text="Feedback" question-type="textarea"></webropol-survey-question>
+            </webropol-survey-page>
+          </webropol-survey-structure>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="bg-white rounded-xl p-6 shadow-card mb-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-webropol-gray-900">Event Log</h2>
+        <button @click="clearLog()" class="text-xs text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">Clear</button>
+      </div>
+      <div class="bg-webropol-gray-900 text-green-400 rounded-lg p-4 font-mono text-xs h-36 overflow-y-auto" id="eventLog">
+        <div class="text-webropol-gray-500">// Component events will appear here</div>
+      </div>
+    </div>
+
+    <!-- Documentation -->
+    <div class="bg-white rounded-xl p-6 shadow-card">
+      <h2 class="text-xl font-semibold text-webropol-gray-900 mb-6">API Reference</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <!-- webropol-survey-structure -->
+        <div>
+          <h3 class="text-base font-semibold text-webropol-gray-800 mb-1">webropol-survey-structure</h3>
+          <p class="text-sm text-webropol-gray-500 mb-4">Panel shell — use in Surveys &amp; SMS edit pages</p>
+
+          <div class="bg-webropol-gray-50 rounded-lg p-4 mb-3">
+            <h4 class="text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider mb-2">Attributes</h4>
+            <ul class="space-y-1.5 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">title</code> — Panel heading (default: "Survey structure")</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">show-styles</code> — Boolean; adds Pages / Styles tab switcher</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">active-tab</code> — "pages" | "styles" (default: "pages")</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">storage-key</code> — localStorage key to persist active tab</li>
+            </ul>
+          </div>
+
+          <div class="bg-webropol-gray-50 rounded-lg p-4 mb-3">
+            <h4 class="text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider mb-2">Slots</h4>
+            <ul class="space-y-1.5 text-sm text-webropol-gray-600">
+              <li><span class="font-medium">default</span> — Pages tab content (tree of pages &amp; questions)</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">slot="styles"</code> — Styles tab content</li>
+            </ul>
+          </div>
+
+          <div class="bg-webropol-gray-50 rounded-lg p-4">
+            <h4 class="text-xs font-semibold text-webropol-gray-600 uppercase tracking-wider mb-2">Events emitted</h4>
+            <ul class="space-y-1.5 text-sm text-webropol-gray-600">
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">structure-menu</code></li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">structure-move</code> — detail: { selectedCount }</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">structure-copy</code> — detail: { selectedCount }</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">structure-delete</code> — detail: { selectedCount } (only when selected)</li>
+              <li><code class="bg-white px-1.5 py-0.5 rounded text-xs">tab-change</code> — detail: { tab }</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Child components -->
+        <div class="space-y-6">
+          <!-- webropol-survey-page -->
+          <div>
+            <h3 class="text-base font-semibold text-webropol-gray-800 mb-1">webropol-survey-page</h3>
+            <p class="text-sm text-webropol-gray-500 mb-3">Collapsible page row with checkbox</p>
+            <div class="bg-webropol-gray-50 rounded-lg p-4 text-sm text-webropol-gray-600 space-y-1">
+              <div><code class="bg-white px-1.5 py-0.5 rounded text-xs">page-number</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">page-name</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-count</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">expanded</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">selected</code></div>
+              <div class="text-webropol-gray-400">Events: <code class="bg-white px-1.5 py-0.5 rounded text-xs">page-toggle</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">page-select</code></div>
+            </div>
+          </div>
+
+          <!-- webropol-survey-question -->
+          <div>
+            <h3 class="text-base font-semibold text-webropol-gray-800 mb-1">webropol-survey-question</h3>
+            <p class="text-sm text-webropol-gray-500 mb-3">Question row with checkbox + hover actions</p>
+            <div class="bg-webropol-gray-50 rounded-lg p-4 text-sm text-webropol-gray-600 space-y-1">
+              <div><code class="bg-white px-1.5 py-0.5 rounded text-xs">question-id</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-text</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-type</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">selected</code></div>
+              <div class="text-webropol-gray-400">Events: <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-select</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-settings</code> · <code class="bg-white px-1.5 py-0.5 rounded text-xs">question-delete</code></div>
+            </div>
+          </div>
+
+          <!-- usage snippet -->
+          <div>
+            <h3 class="text-base font-semibold text-webropol-gray-800 mb-2">Import</h3>
+            <pre class="bg-webropol-gray-900 text-green-400 rounded-xl p-4 text-xs overflow-x-auto">&lt;!-- One import loads everything --&gt;
+&lt;script src="design-system/components/interactive/SurveyStructurePanel.js"
+        type="module"&gt;&lt;/script&gt;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function demoApp() {
+      return {
+        init() { this.logEvent('Demo ready', {}); },
+
+        logEvent(name, detail) {
+          const el  = document.getElementById('eventLog');
+          const ts  = new Date().toLocaleTimeString();
+          const row = document.createElement('div');
+          row.innerHTML = `<span class="text-webropol-gray-500">[${ts}]</span> <span class="text-yellow-400">${name}</span>: ${JSON.stringify(detail)}`;
+          el.appendChild(row);
+          el.scrollTop = el.scrollHeight;
+        },
+
+        clearLog() {
+          document.getElementById('eventLog').innerHTML = '<div class="text-webropol-gray-500">// Event log cleared</div>';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
 
     <!-- Demo Controls -->
     <div class="bg-white rounded-xl p-6 shadow-card mb-8">
