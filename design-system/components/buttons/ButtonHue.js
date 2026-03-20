@@ -279,7 +279,6 @@ export class WebropolButtonHue extends BaseComponent {
       `justify-content:${isHorizontal ? 'flex-start' : 'center'}`,
       `cursor:${disabled ? 'not-allowed' : 'pointer'}`,
       `padding:0`,
-      `background:none`,
     ].join(';');
 
     // ── Inner container ───────────────────────────────────────────────────────
