@@ -3,7 +3,7 @@ import './settings/NumericSliderSettingsModal.js';
 
 export class NumericSlider extends BaseComponent {
     static get observedAttributes() {
-        return ['mode', 'question-id'];
+        return ['mode', 'question-id', 'question-number'];
     }
 
     init() {
@@ -12,10 +12,11 @@ export class NumericSlider extends BaseComponent {
         
         // Expose Alpine data function globally so x-data can find it. 
         if (!window.numericSliderData) {
-            window.numericSliderData = (initialMode, qId) => {
+            window.numericSliderData = (initialMode, qId, questionNumber) => {
                 return {
                     mode: initialMode || 'edit',
                     questionId: qId,
+                    questionNumber: questionNumber || '',
                     selected: initialMode !== 'edit', // Default selected true in respond mode
                     
                     // Settings
@@ -278,6 +279,7 @@ export class NumericSlider extends BaseComponent {
         // We use a light DOM approach so outer Alpine scopes work if needed, 
         // but we also have our own internal scope. To bridge them, we can use 
         // an internal variable that syncs or just use the internal one for UI state.
+        const questionNumber = this.getAttribute('question-number') || '';
         
         this.innerHTML = `
             <style>
@@ -329,7 +331,7 @@ export class NumericSlider extends BaseComponent {
                 }
             </style>
 
-              <div x-data="numericSliderData('${this.mode}', '${this.questionId}')" class="w-full"
+              <div x-data="numericSliderData('${this.mode}', '${this.questionId}', '${questionNumber}')" class="w-full"
                   @click-question.window="if(mode === 'edit' && $event.detail !== questionId) { selected = false; showSettings = false; }"
                  x-effect="if($el.closest('webropol-numeric-slider').hasAttribute('settings-open')) { showSettings = true; selected = true; }"
                  @click.outside="if(mode === 'edit') { selected = false; showSettings = false; }">
@@ -439,13 +441,16 @@ export class NumericSlider extends BaseComponent {
                             <!-- Edit Mode: Inputs (When Selected) -->
                             <template x-if="mode === 'edit' && selected">
                                 <div class="space-y-4">
-                                    <textarea x-model="texts.title" rows="1" @input="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'" class="w-full text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2 resize-none overflow-hidden"></textarea>
+                                    <div class="flex items-start gap-1">
+                                        <span x-show="questionNumber" x-text="questionNumber + '. '" class="text-lg font-semibold text-webropol-gray-900 whitespace-nowrap flex-shrink-0"></span>
+                                        <textarea x-model="texts.title" rows="1" @input="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'" class="w-full text-lg font-semibold text-webropol-gray-900 border-b-2 border-transparent hover:border-webropol-primary-100 focus:border-webropol-primary-500 focus:outline-none transition-all duration-200 bg-transparent placeholder-webropol-gray-300 pb-2 resize-none overflow-hidden"></textarea>
+                                    </div>
                                 </div>
                             </template>
                             <!-- View Mode: Text (When Not Selected OR Respond Mode) -->
                             <template x-if="mode === 'respond' || (mode === 'edit' && !selected)">
                                 <div class="space-y-2">
-                                    <h2 class="text-xl md:text-2xl font-extrabold text-webropol-gray-900 tracking-tight leading-tight" x-text="texts.title || 'Question Title'"></h2>
+                                    <h2 class="text-base font-semibold text-webropol-gray-900 tracking-tight leading-tight" x-text="(questionNumber ? questionNumber + '. ' : '') + (texts.title || 'Question Title')"></h2>
                                 </div>
                             </template>
                         </div>
