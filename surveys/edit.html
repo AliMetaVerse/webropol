@@ -471,6 +471,7 @@
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/buttons/Button.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyHelperToolbar.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyEditToolbar.js" type="module"></script>
@@ -550,18 +551,9 @@
                 
                 <!-- Action Buttons - Show only for Pages tab -->
                 <div x-show="activeTab === 'pages'" class="flex flex-wrap gap-2 mb-4">
-                  <button class="btn btn-secondary btn-sm">
-                    <i class="fal fa-arrows-alt text-xs"></i>
-                    <span>Move</span>
-                  </button>
-                  <button class="btn btn-secondary btn-sm">
-                    <i class="fal fa-copy text-xs"></i>
-                    <span>Copy</span>
-                  </button>
-                  <button class="btn btn-secondary btn-sm">
-                    <i class="fa-light fa-trash-can text-xs"></i>
-                    <span>Delete</span>
-                  </button>
+                  <webropol-button variant="secondary" size="sm" icon="arrows-alt">Move</webropol-button>
+                  <webropol-button variant="secondary" size="sm" icon="copy">Copy</webropol-button>
+                  <webropol-button variant="danger" size="sm" icon="trash-can" :disabled="selectedCount === 0 ? '' : null">Delete</webropol-button>
                 </div>
                 
                 <div class="lg:flex-1 lg:min-h-0 lg:overflow-y-auto survey-scroll-area lg:pr-2">
@@ -3958,6 +3950,7 @@
       return {
         activeTab: (function(){ try{ return localStorage.getItem('edit-left-activeTab') || 'pages'; }catch(e){ return 'pages'; } })(),
         selectedStyle: null,
+        selectedCount: 0,
         
         init() {
           console.log('Survey Structure initialized');
@@ -3979,11 +3972,15 @@
           // Listen for page selection events
           document.addEventListener('page-select', (e) => {
             console.log('Page selected:', e.detail);
+            this.selectedCount += e.detail.selected ? 1 : -1;
+            if (this.selectedCount < 0) this.selectedCount = 0;
           });
           
           // Listen for question selection events
           document.addEventListener('question-select', (e) => {
             console.log('Question selected:', e.detail);
+            this.selectedCount += e.detail.selected ? 1 : -1;
+            if (this.selectedCount < 0) this.selectedCount = 0;
           });
           
           // Listen for question settings events
