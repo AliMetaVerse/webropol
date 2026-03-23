@@ -857,59 +857,8 @@
                   role="main">
                     <div id="app-content" class="mx-auto w-full rounded-2xl mobile-app-content" :class="(interfaceMode === 'prompt' || interfaceMode === 'magical') ? 'max-w-3xl sm:max-w-5xl px-4 sm:px-6 lg:px-12' : 'px-4 lg:px-8'">
                     
-                    
-                    <!-- Interface Mode Tabs -->
-                    <div class="mb-8" x-show="interfaceMode !== 'magical'">
-                       
-                        <!-- Tab Navigation (Classic only) -->
-                        <div class="flex mb-8" x-show="interfaceMode === 'classic'">
-                            <!-- Note: Removed webropol-tabs-unified class and role="tablist" to prevent unified-tabs.js from interfering with Alpine.js state -->
-                            <div class="inline-flex items-center webropol-tabs-secondary-container" aria-label="Interface modes">
-                                <button
-                                    class="webropol-tab-secondary"
-                                    :class="{ 'active': interfaceMode === 'classic', 'pointer-events-none': isTransitioning }"
-                                    data-tab="classic"
-                                    @click="switchInterface('classic')"
-                                    role="tab"
-                                    :aria-selected="interfaceMode === 'classic'"
-                                    :tabindex="interfaceMode === 'classic' ? '0' : '-1'"
-                                    @keydown.enter="switchInterface('classic')"
-                                    @keydown.space.prevent="switchInterface('classic')"
-                                >
-                                    <i class="fa-light fa-square-kanban"></i>
-                                    Classic
-                                </button>
-                                <button
-                                    class="webropol-tab-secondary"
-                                    :class="{ 'active': interfaceMode === 'prompt', 'pointer-events-none': isTransitioning }"
-                                    data-tab="prompt"
-                                    @click="switchInterface('prompt')"
-                                    role="tab"
-                                    :aria-selected="interfaceMode === 'prompt'"
-                                    :tabindex="interfaceMode === 'prompt' ? '0' : '-1'"
-                                    @keydown.enter="switchInterface('prompt')"
-                                    @keydown.space.prevent="switchInterface('prompt')"
-                                >
-                                    <i class="fal fa-magic"></i>
-                                    Magic
-                                </button>
-                                <button
-                                    class="webropol-tab-secondary"
-                                    :class="{ 'active': interfaceMode === 'magical', 'pointer-events-none': isTransitioning }"
-                                    data-tab="magical"
-                                    @click="switchInterface('magical')"
-                                    role="tab"
-                                    :aria-selected="interfaceMode === 'magical'"
-                                    :tabindex="interfaceMode === 'magical' ? '0' : '-1'"
-                                    @keydown.enter="switchInterface('magical')"
-                                    @keydown.space.prevent="switchInterface('magical')"
-                                >
-                                    <i class="fal fa-sparkles"></i>
-                                    Magical
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+
+
 
                     <!-- Classic Interface Content -->
                     <div x-show="interfaceMode === 'classic'" 
@@ -922,7 +871,7 @@
                          x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
                          role="tabpanel"
                          aria-labelledby="classic-tab">
-                        <h3 class="text-xl font-semibold mb-6 text-webropol-gray-900">Choose what you want to create</h3>
+                        <h3 class="text-2xl font-bold mt-8 mb-6 text-webropol-gray-900">Hi <span x-text="firstName"></span>! What do you want to do next?</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12">
                             <!-- Card 1: Surveys -->
                             <div class="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-cyan-50/30 border border-slate-200/60 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer">
@@ -2119,6 +2068,9 @@
             return {
                 // Interface mode state
                 interfaceMode: localStorage.getItem('webropol_interface_mode') || 'classic', // 'classic' or 'prompt'
+                // User identity
+                username: 'Ali Al-Zuhairi',
+                get firstName() { return (this.username || '').split(' ')[0] || 'there'; },
                 // removed: page-scoped dark mode state
                 isTransitioning: false,
                 
@@ -2328,6 +2280,13 @@
                         // Escape key to go back to classic interface from AI prompt
                         if (e.key === 'Escape' && this.interfaceMode === 'prompt') {
                             this.switchInterface('classic');
+                        }
+                    });
+
+                    // Listen for view mode switch dispatched by the header dropdown
+                    document.addEventListener('webropol-switch-interface', (e) => {
+                        if (e.detail && e.detail.mode) {
+                            this.switchInterface(e.detail.mode);
                         }
                     });
                     

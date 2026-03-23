@@ -45,6 +45,7 @@ export class WebropolHeader extends BaseComponent {
 
     const currentTheme = ThemeManager.getCurrentTheme();
     const allThemes = ThemeManager.getAllThemes();
+    const currentInterfaceMode = localStorage.getItem('webropol_interface_mode') || 'classic';
 
     this.innerHTML = `
   <header class="min-h-[5rem] h-20 glass-effect border-b border-webropol-gray-200/50 flex items-center justify-between px-8 shadow-soft relative">
@@ -88,19 +89,52 @@ export class WebropolHeader extends BaseComponent {
           <div class="flex items-center space-x-3">
             ${showThemeSelector ? `
               <div class="relative">
-                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all theme-selector-btn">
-                  <i class="fa-duotone fa-thin ${ThemeManager.getThemeConfig(currentTheme)?.icon || 'fa-palette'}"></i>
+                <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all theme-selector-btn" title="View &amp; Theme">
+                  <i class="fa-duotone fa-thin fa-sliders"></i>
                 </button>
-                
-                <!-- Theme dropdown -->
-                <div class="absolute right-0 top-full mt-2 w-40 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 theme-dropdown z-[9999]">
-                  ${allThemes.map(theme => `
-                    <button class="flex items-center w-full px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50 theme-option ${theme.key === currentTheme ? 'bg-webropol-primary-50 text-webropol-primary-700' : ''}" data-theme="${theme.key}">
-                      <i class="fa-duotone fa-thin ${theme.icon} w-4 mr-3"></i>
-                      ${theme.name}
-                      ${theme.key === currentTheme ? '<i class="fa-duotone fa-thin fa-check ml-auto"></i>' : ''}
-                    </button>
-                  `).join('')}
+
+                <!-- Combined View & Theme dropdown -->
+                <div class="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 theme-dropdown z-[9999]">
+
+                  <!-- View Mode section -->
+                  <div class="px-3 pt-1.5 pb-1">
+                    <p class="text-[10px] font-semibold text-webropol-gray-400 uppercase tracking-widest mb-1.5">View Mode</p>
+                    <div class="space-y-0.5">
+                      <button class="view-mode-option flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${currentInterfaceMode === 'classic' ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-mode="classic">
+                        <i class="fa-light fa-square-kanban w-4 mr-2.5"></i>
+                        Classic
+                        ${currentInterfaceMode === 'classic' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
+                      </button>
+                      <button class="view-mode-option flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${currentInterfaceMode === 'prompt' ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-mode="prompt">
+                        <i class="fal fa-magic w-4 mr-2.5"></i>
+                        Magic
+                        ${currentInterfaceMode === 'prompt' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
+                      </button>
+                      <button class="view-mode-option flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${currentInterfaceMode === 'magical' ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-mode="magical">
+                        <i class="fal fa-sparkles w-4 mr-2.5"></i>
+                        Magical
+                        ${currentInterfaceMode === 'magical' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Divider -->
+                  <hr class="my-1.5 border-webropol-gray-100 mx-3">
+
+                  <!-- Theme section -->
+                  <div class="px-3 pb-1.5">
+                    <p class="text-[10px] font-semibold text-webropol-gray-400 uppercase tracking-widest mb-1.5">Background Theme</p>
+                    <div class="space-y-0.5">
+                      ${allThemes.map(theme => `
+                        <button class="flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors theme-option ${theme.key === currentTheme ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-theme="${theme.key}">
+                          <i class="fa-duotone fa-thin ${theme.icon} w-4 mr-2.5"></i>
+                          ${theme.name}
+                          ${theme.key === currentTheme ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
+                        </button>
+                      `).join('')}
+                    </div>
+                  </div>
+
                 </div>
               </div>
             ` : ''}
@@ -182,6 +216,7 @@ export class WebropolHeader extends BaseComponent {
     // Add dropdown functionality
     this.addDropdownListeners();
     this.addThemeListeners();
+    this.addViewModeListeners();
     this.addRatingListeners();
     this.addCreateMenuListeners();
   this.addSidebarToggleListener();
@@ -200,6 +235,15 @@ export class WebropolHeader extends BaseComponent {
         this._reRenderTimer = setTimeout(() => this.render(), 50);
       });
       this._settingsListenerAdded = true;
+    }
+
+    // Re-render header when interface mode changes (to update active state in dropdown)
+    if (!this._interfaceListenerAdded) {
+      document.addEventListener('webropol-interface-change', () => {
+        clearTimeout(this._interfaceRenderTimer);
+        this._interfaceRenderTimer = setTimeout(() => this.render(), 80);
+      });
+      this._interfaceListenerAdded = true;
     }
   }
 
@@ -542,6 +586,23 @@ export class WebropolHeader extends BaseComponent {
         });
       }
     }
+  }
+
+  addViewModeListeners() {
+    const viewModeOptions = this.querySelectorAll('.view-mode-option');
+    const themeDropdown = this.querySelector('.theme-dropdown');
+
+    viewModeOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = option.getAttribute('data-mode');
+        // Dispatch event for Alpine.js (index.html) to catch
+        document.dispatchEvent(new CustomEvent('webropol-switch-interface', { detail: { mode } }));
+        if (themeDropdown) themeDropdown.classList.add('opacity-0', 'invisible');
+        // Update active state immediately
+        setTimeout(() => this.render(), 80);
+      });
+    });
   }
 
   addThemeListeners() {
