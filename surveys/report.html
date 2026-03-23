@@ -1989,27 +1989,48 @@
       <div class="modal-body p-0 flex flex-col min-h-0 bg-white">
         <!-- Accordion Mode Content -->
         <div x-show="exportShareMode === 'accordion'">
-        <!-- Banner -->
-        <div class="px-6 py-3.5 border-b border-gray-100"
-             x-data="{ biTooltip: false }"
-             x-effect="$el.querySelector('webropol-button-hue') && $el.querySelector('webropol-button-hue').toggleAttribute('disabled', !isSavedReport)">
-          <div class="relative">
-            <div @click="isSavedReport ? handleBiViewShare() : null"
-                 @mouseenter="biTooltip = true"
-                 @mouseleave="biTooltip = false"
-                 :class="isSavedReport ? 'cursor-pointer' : 'cursor-not-allowed'"
-                 class="flex">
-              <webropol-button-hue hue="royal-violet" orientation="horizontal" theme="filled" icon="fal fa-chart-network" label="Share saved report to BI VIEW" description="Publish to BI dashboard" disabled style="width:100%"></webropol-button-hue>
+        <!-- BI VIEW Banner -->
+        <div class="px-5 py-4 border-b border-gray-100">
+          <div class="rounded-2xl border px-5 py-3.5 flex items-center justify-between gap-4 transition-all duration-200"
+               :class="isSavedReport
+                 ? 'bg-gradient-to-r from-[#f1e9fb] via-[#ede0f8] to-[#f5eefb] border-[#c4a3ec]'
+                 : 'bg-gray-50 border-gray-200'">
+            <!-- Left: icon + text -->
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                   :class="isSavedReport ? 'bg-[#e4d4f7]' : 'bg-gray-200'">
+                <i class="fal fa-chart-network text-base transition-colors duration-200"
+                   :class="isSavedReport ? 'text-[#511a98]' : 'text-gray-400'"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-sm font-medium transition-colors duration-200"
+                        :class="isSavedReport ? 'text-[#3b1068]' : 'text-gray-400'">Share to</span>
+                  <span class="text-sm font-black tracking-widest uppercase transition-colors duration-200"
+                        :class="isSavedReport ? 'text-[#511a98]' : 'text-gray-400'">
+                    <span :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'">B</span><span :class="isSavedReport ? 'text-[#6d28d9]' : 'text-gray-400'">I</span>
+                    <span class="mx-0.5 font-light">·</span>
+                    <span :class="isSavedReport ? 'text-[#5b21b6]' : 'text-gray-400'">V</span><span :class="isSavedReport ? 'text-[#4c1d95]' : 'text-gray-400'">I</span><span :class="isSavedReport ? 'text-[#3b1068]' : 'text-gray-400'">E</span><span :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'">W</span>
+                  </span>
+                </div>
+                <p class="text-xs mt-0.5 truncate transition-colors duration-200"
+                   :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'"
+                   x-text="isSavedReport ? 'Publish this saved report to your BI dashboard' : 'Save a report first to unlock BI VIEW sharing'"></p>
+              </div>
             </div>
-            <!-- Tooltip (shown when disabled) -->
-            <div x-show="biTooltip && !isSavedReport"
-                 x-transition:enter="transition ease-out duration-150"
-                 x-transition:enter-start="opacity-0 translate-y-1"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none"
-                 style="display:none">
-              <i class="fal fa-lock mr-1.5 opacity-70"></i>Save a report first to enable BI VIEW sharing
-              <div class="absolute top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-900"></div>
+            <!-- Right: action or lock badge -->
+            <div class="flex-shrink-0">
+              <button x-show="isSavedReport" @click="handleBiViewShare()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all duration-150 bg-[#7c3aed] hover:bg-[#6d28d9] shadow-sm hover:shadow-md active:scale-95"
+                      style="display:none">
+                <i class="fal fa-arrow-up-right-from-square text-sm"></i>
+                Publish
+              </button>
+              <div x-show="!isSavedReport"
+                   class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-200 text-gray-400 text-xs font-semibold select-none">
+                <i class="fal fa-lock text-xs"></i>
+                Locked
+              </div>
             </div>
           </div>
         </div>
@@ -2410,27 +2431,48 @@
 
         <!-- Modal Mode Content -->
         <div x-show="exportShareMode === 'modal'">
-        <!-- Banner -->
-        <div class="px-6 py-3.5 border-b border-gray-100"
-             x-data="{ biTooltip: false }"
-             x-effect="$el.querySelector('webropol-button-hue') && $el.querySelector('webropol-button-hue').toggleAttribute('disabled', !isSavedReport)">
-          <div class="relative">
-            <div @click="isSavedReport ? handleBiViewShare() : null"
-                 @mouseenter="biTooltip = true"
-                 @mouseleave="biTooltip = false"
-                 :class="isSavedReport ? 'cursor-pointer' : 'cursor-not-allowed'"
-                 class="flex">
-              <webropol-button-hue hue="royal-violet" orientation="horizontal" theme="filled" icon="fal fa-chart-network" label="Share saved report to BI VIEW" description="Publish to BI dashboard" disabled style="width:100%"></webropol-button-hue>
+        <!-- BI VIEW Banner -->
+        <div class="px-5 py-4 border-b border-gray-100">
+          <div class="rounded-2xl border px-5 py-3.5 flex items-center justify-between gap-4 transition-all duration-200"
+               :class="isSavedReport
+                 ? 'bg-gradient-to-r from-[#f1e9fb] via-[#ede0f8] to-[#f5eefb] border-[#c4a3ec]'
+                 : 'bg-gray-50 border-gray-200'">
+            <!-- Left: icon + text -->
+            <div class="flex items-center gap-3.5 min-w-0">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                   :class="isSavedReport ? 'bg-[#e4d4f7]' : 'bg-gray-200'">
+                <i class="fal fa-chart-network text-base transition-colors duration-200"
+                   :class="isSavedReport ? 'text-[#511a98]' : 'text-gray-400'"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-sm font-medium transition-colors duration-200"
+                        :class="isSavedReport ? 'text-[#3b1068]' : 'text-gray-400'">Share to</span>
+                  <span class="text-sm font-black tracking-widest uppercase transition-colors duration-200"
+                        :class="isSavedReport ? 'text-[#511a98]' : 'text-gray-400'">
+                    <span :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'">B</span><span :class="isSavedReport ? 'text-[#6d28d9]' : 'text-gray-400'">I</span>
+                    <span class="mx-0.5 font-light">·</span>
+                    <span :class="isSavedReport ? 'text-[#5b21b6]' : 'text-gray-400'">V</span><span :class="isSavedReport ? 'text-[#4c1d95]' : 'text-gray-400'">I</span><span :class="isSavedReport ? 'text-[#3b1068]' : 'text-gray-400'">E</span><span :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'">W</span>
+                  </span>
+                </div>
+                <p class="text-xs mt-0.5 truncate transition-colors duration-200"
+                   :class="isSavedReport ? 'text-[#7c3aed]' : 'text-gray-400'"
+                   x-text="isSavedReport ? 'Publish this saved report to your BI dashboard' : 'Save a report first to unlock BI VIEW sharing'"></p>
+              </div>
             </div>
-            <!-- Tooltip (shown when disabled) -->
-            <div x-show="biTooltip && !isSavedReport"
-                 x-transition:enter="transition ease-out duration-150"
-                 x-transition:enter-start="opacity-0 translate-y-1"
-                 x-transition:enter-end="opacity-100 translate-y-0"
-                 class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none"
-                 style="display:none">
-              <i class="fal fa-lock mr-1.5 opacity-70"></i>Save a report first to enable BI VIEW sharing
-              <div class="absolute top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-900"></div>
+            <!-- Right: action or lock badge -->
+            <div class="flex-shrink-0">
+              <button x-show="isSavedReport" @click="handleBiViewShare()"
+                      class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all duration-150 bg-[#7c3aed] hover:bg-[#6d28d9] shadow-sm hover:shadow-md active:scale-95"
+                      style="display:none">
+                <i class="fal fa-arrow-up-right-from-square text-sm"></i>
+                Publish
+              </button>
+              <div x-show="!isSavedReport"
+                   class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-200 text-gray-400 text-xs font-semibold select-none">
+                <i class="fal fa-lock text-xs"></i>
+                Locked
+              </div>
             </div>
           </div>
         </div>
