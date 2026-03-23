@@ -51,6 +51,7 @@ export { Tooltip } from './feedback/Tooltip.js';
 export { WebropolPromo } from './feedback/PromoToast.js';
 export { WebropolAlert } from './feedback/Alert.js';
 export { WebropolToast } from './feedback/Toast.js';
+export { WebropolBanner } from './feedback/Banner.js';
 
 // AI components
 export { WebropolAIAssistant } from './ai/AIAssistantPanel.js';
