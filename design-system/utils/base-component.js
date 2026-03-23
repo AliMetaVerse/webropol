@@ -215,12 +215,13 @@ export class BaseComponent extends HTMLElement {
         gradient: 'bg-sun-to-br from-webropol-primary-50 to-webropol-primary-50 border border-webropol-primary-100 shadow-card'
       },
       badge: {
-        primary: 'bg-webropol-primary-100 text-webropol-primary-700',
+        // Figma Royal Design System — Accent style tokens (node 484-3721)
+        primary:   'bg-[#B0E8F1] text-[#102E3C]',  // Informative: Primary/200 bg, Primary/950 text
         secondary: 'bg-webropol-primary-100 text-webropol-primary-700',
-        success: 'bg-green-100 text-green-700',
-        warning: 'bg-yellow-100 text-yellow-700',
-        error: 'bg-red-100 text-red-700',
-        neutral: 'bg-webropol-gray-100 text-webropol-gray-700'
+        success:   'bg-[#A9D69F] text-[#38672E]',  // Success/300 bg, Success/700 text
+        warning:   'bg-[#FCCE4D] text-[#B44E09]',  // Warning/300 bg, Warning/700 text
+        error:     'bg-[#FDA4B2] text-[#BE1241]',  // Error/300 bg, Error/700 text
+        neutral:   'bg-[#D1D5D6] text-[#61686A]'   // Neutral/300 bg, Neutral/700 text
       }
     };
 

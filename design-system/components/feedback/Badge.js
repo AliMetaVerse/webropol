@@ -19,9 +19,9 @@ export class WebropolBadge extends BaseComponent {
     // Get text content
     const text = this.textContent.trim();
     
-    // Base classes
+    // Base classes — Figma uses rounded-[4px], not pill
     const baseClasses = this.classNames(
-      'inline-flex items-center font-medium rounded-full',
+      'inline-flex items-center font-medium rounded',
       this.getVariantClasses('badge', variant),
       this.getSizeClasses('badge', size)
     );
