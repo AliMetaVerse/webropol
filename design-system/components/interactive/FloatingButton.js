@@ -72,26 +72,9 @@ export class WebropolFloatingButton extends BaseComponent {
           ${renderCreateMenu()}
         </div>
 
-        <!-- Main Floating Button with Enhanced Design -->
-        <button class="main-floating-btn ${sizeClasses[size]} relative overflow-hidden bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center group transform hover:scale-110 hover:-translate-y-1">
-          <!-- Animated background layers -->
-          <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-400 to-webropol-primary-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity duration-500"></div>
-          
-          <!-- Rotating border effect -->
-          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-webropol-primary-300 to-webropol-primary-500 opacity-75 blur-md group-hover:animate-spin-slow"></div>
-          
-          <!-- Shimmer effect -->
-          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-          
-          <!-- Main icon -->
-          <div class="relative z-10 transform transition-all duration-300 group-hover:rotate-180 group-hover:scale-110">
-            <i class="fal fa-plus text-2xl font-bold"></i>
-          </div>
-          
-          <!-- Floating sparkles -->
-          <div class="absolute top-1 right-1 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-100"></div>
-          <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-200"></div>
-          <div class="absolute top-1 left-1 w-1.5 h-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-300"></div>
+        <!-- Main Floating Button with Clean Design -->
+        <button class="main-floating-btn ${sizeClasses[size]} relative bg-[#1e6880] hover:bg-[#215669] active:bg-[#204859] text-white rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-150 flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2">
+          <i class="fal fa-plus text-2xl transform transition-transform duration-200 group-hover:rotate-90"></i>
         </button>
       </div>
     `;

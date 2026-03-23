@@ -6,6 +6,7 @@
 import { BaseComponent } from '../../utils/base-component.js';
 import { ThemeManager } from '../../utils/theme-manager.js';
 import { renderCreateMenu, bindCreateMenu } from '../interactive/CreateMenu.js';
+import '../buttons/ButtonHue.js';
 
 export class WebropolHeader extends BaseComponent {
   static get observedAttributes() {
@@ -55,30 +56,17 @@ export class WebropolHeader extends BaseComponent {
       </button>
           ${showCreateMenu ? `
             <div class="relative" data-create-menu>
-              <button class="create-menu-btn group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 hover:from-webropol-primary-700 hover:to-webropol-primary-800 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 text-white font-semibold">
-                <!-- Animated background layer -->
-                <div class="absolute inset-0 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                <!-- Shimmer effect -->
-                <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 ease-out"></div>
-
-                <!-- Rotating border glow effect (inspired by Floating Button) -->
-                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-primary-400 to-webropol-primary-600 opacity-75 blur-md group-hover:animate-spin-slow -z-10"></div>
-                
-                <!-- Content -->
-                <div class="relative flex items-center space-x-2">
-                  <div class="create-icon-container relative">
-                    <i class="fa-duotone fa-thin fa-plus text-lg transform group-hover:rotate-180 transition-transform duration-300"></i>
-                    <!-- Sparkle effects -->
-                    <div class="absolute -top-1 -right-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-100"></div>
-                    <div class="absolute -bottom-1 -left-1 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-300 delay-200"></div>
-                  </div>
-                  <span class="text-sm font-bold tracking-wide">Create New</span>
-                </div>
-                
-                <!-- Border glow (primary) -->
-                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-700 opacity-0 group-hover:opacity-75 blur-sm -z-10 transition-opacity duration-300"></div>
-              </button>
+              <webropol-button-hue
+                class="create-menu-btn"
+                hue="primary"
+                orientation="horizontal"
+                theme="filled"
+                size="sm"
+                icon="fal fa-plus"
+                label="Create New"
+                aria-haspopup="true"
+                aria-expanded="false"
+              ></webropol-button-hue>
               <!-- Create dropdown powered by shared CreateMenu -->
               <div class="create-menu-dropdown absolute left-0 top-full mt-3 w-[26rem] transition-all duration-500 opacity-0 translate-y-2 scale-95 pointer-events-none z-[9999]">
                 ${renderCreateMenu()}

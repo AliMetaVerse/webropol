@@ -8,97 +8,81 @@
  */
 export function renderCreateMenu() {
   return `
-    <div class="relative bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-white/20 min-w-96 overflow-hidden">
-      <!-- Gradient background overlay -->
-      <div class="absolute inset-0 bg-gradient-to-br from-webropol-primary-50/80 to-webropol-primary-100/80 rounded-3xl"></div>
+    <div class="bg-white rounded-2xl shadow-lg border border-webropol-gray-200 p-4 min-w-[22rem] overflow-hidden">
 
       <!-- Header -->
-      <div class="relative mb-4 text-center">
-        <div class="flex items-center justify-center space-x-3 mb-2">
-          <h3 class="text-lg font-bold bg-gradient-to-r from-webropol-primary-600 to-webropol-primary-700 bg-clip-text text-transparent">Create Something Amazing</h3>
-        </div>
-        <p class="text-xs text-gray-600">What would you like to build today?</p>
+      <div class="mb-3 px-1">
+        <p class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-wider">Create New</p>
       </div>
 
       <!-- Menu items -->
-      <div class="relative space-y-3">
+      <div class="space-y-1">
+
+        <!-- Surveys — primary teal -->
         <button data-type="surveys"
-          class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-          <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fa-light fa-user-magnifying-glass text-white text-lg group-hover:animate-pulse"></i>
+          class="create-item-btn group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#eefbfd] transition-colors duration-150 text-left focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-1">
+          <div class="flex-shrink-0 w-9 h-9 bg-[#eefbfd] group-hover:bg-[#b0e8f1] border border-[#1e6880]/20 rounded-lg flex items-center justify-center transition-colors duration-150">
+            <i class="fal fa-user-magnifying-glass text-[#1e6880] text-base"></i>
           </div>
-          <div class="ml-4 flex-1">
-            <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">Surveys</span>
-            <span class="text-xs text-gray-600 group-hover:text-webropol-primary-600 transition-colors duration-300">Create custom surveys</span>
+          <div class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-webropol-gray-800 group-hover:text-[#1e6880] transition-colors duration-150">Surveys</span>
+            <span class="block text-xs text-webropol-gray-400">Create custom surveys</span>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <i class="fal fa-arrow-right text-webropol-primary-600"></i>
-          </div>
+          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 group-hover:text-[#1e6880] transition-colors duration-150 flex-shrink-0"></i>
         </button>
 
+        <!-- Events — royal blue -->
         <button data-type="events"
-          class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-          <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fal fa-calendar-alt text-white text-lg group-hover:animate-pulse"></i>
+          class="create-item-btn group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-indigo-50 transition-colors duration-150 text-left focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1">
+          <div class="flex-shrink-0 w-9 h-9 bg-indigo-50 group-hover:bg-indigo-100 border border-indigo-300/30 rounded-lg flex items-center justify-center transition-colors duration-150">
+            <i class="fal fa-calendar-alt text-indigo-600 text-base"></i>
           </div>
-          <div class="ml-4 flex-1">
-            <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">Events</span>
-            <span class="text-xs text-gray-600 group-hover:text-webropol-primary-600 transition-colors duration-300">Event management</span>
+          <div class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-webropol-gray-800 group-hover:text-indigo-700 transition-colors duration-150">Events</span>
+            <span class="block text-xs text-webropol-gray-400">Event management</span>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <i class="fal fa-arrow-right text-webropol-primary-600"></i>
-          </div>
+          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 group-hover:text-indigo-500 transition-colors duration-150 flex-shrink-0"></i>
         </button>
 
+        <!-- 2-Way SMS — emerald green -->
         <button data-type="2-way-sms"
-          class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-          <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fal fa-sms text-white text-lg group-hover:animate-pulse"></i>
+          class="create-item-btn group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-emerald-50 transition-colors duration-150 text-left focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-1">
+          <div class="flex-shrink-0 w-9 h-9 bg-emerald-50 group-hover:bg-emerald-100 border border-emerald-300/30 rounded-lg flex items-center justify-center transition-colors duration-150">
+            <i class="fal fa-sms text-emerald-600 text-base"></i>
           </div>
-          <div class="ml-4 flex-1">
-            <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">2-Way SMS</span>
-            <span class="text-xs text-gray-600 group-hover:text-webropol-primary-600 transition-colors duration-300">Send and receive</span>
+          <div class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-webropol-gray-800 group-hover:text-emerald-700 transition-colors duration-150">2-Way SMS</span>
+            <span class="block text-xs text-webropol-gray-400">Send and receive</span>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <i class="fal fa-arrow-right text-webropol-primary-600"></i>
-          </div>
+          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 group-hover:text-emerald-500 transition-colors duration-150 flex-shrink-0"></i>
         </button>
 
+        <!-- EXW Surveys — violet -->
         <button data-type="exw-surveys"
-          class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-          <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fal fa-user-chart text-white text-lg group-hover:animate-pulse"></i>
+          class="create-item-btn group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-violet-50 transition-colors duration-150 text-left focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-1">
+          <div class="flex-shrink-0 w-9 h-9 bg-violet-50 group-hover:bg-violet-100 border border-violet-300/30 rounded-lg flex items-center justify-center transition-colors duration-150">
+            <i class="fal fa-user-chart text-violet-600 text-base"></i>
           </div>
-          <div class="ml-4 flex-1">
-            <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">EXW Surveys</span>
-            <span class="text-xs text-gray-600 group-hover:text-webropol-primary-600 transition-colors duration-300">Employee experience</span>
+          <div class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-webropol-gray-800 group-hover:text-violet-700 transition-colors duration-150">EXW Surveys</span>
+            <span class="block text-xs text-webropol-gray-400">Employee experience</span>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <i class="fal fa-arrow-right text-webropol-primary-600"></i>
-          </div>
+          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 group-hover:text-violet-500 transition-colors duration-150 flex-shrink-0"></i>
         </button>
 
+        <!-- Case Management — amber -->
         <button data-type="case-management"
-          class="create-item-btn group w-full flex items-center p-4 rounded-2xl border border-webropol-primary-200/50 hover:border-webropol-primary-300 bg-white/50 hover:bg-webropol-primary-50/80 backdrop-blur-sm transition-all duration-300 text-left transform hover:scale-[1.03] hover:shadow-lg">
-          <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
-            <i class="fal fa-briefcase text-white text-lg group-hover:animate-pulse"></i>
+          class="create-item-btn group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 transition-colors duration-150 text-left focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1">
+          <div class="flex-shrink-0 w-9 h-9 bg-amber-50 group-hover:bg-amber-100 border border-amber-300/30 rounded-lg flex items-center justify-center transition-colors duration-150">
+            <i class="fal fa-briefcase text-amber-600 text-base"></i>
           </div>
-          <div class="ml-4 flex-1">
-            <span class="font-bold text-gray-800 group-hover:text-webropol-primary-700 transition-colors duration-300 block">Case Management</span>
-            <span class="text-xs text-gray-600 group-hover:text-webropol-primary-600 transition-colors duration-300">Manage your team</span>
+          <div class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-webropol-gray-800 group-hover:text-amber-700 transition-colors duration-150">Case Management</span>
+            <span class="block text-xs text-webropol-gray-400">Manage your team</span>
           </div>
-          <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <i class="fal fa-arrow-right text-webropol-primary-600"></i>
-          </div>
+          <i class="fal fa-chevron-right text-xs text-webropol-gray-300 group-hover:text-amber-500 transition-colors duration-150 flex-shrink-0"></i>
         </button>
-      </div>
 
-      <!-- Footer -->
-      <div class="relative mt-5 pt-3 border-t border-white/30">
-        <div class="flex items-center justify-center space-x-2 text-xs text-gray-500">
-          <i class="fal fa-lightbulb text-yellow-500"></i>
-          <span>Build something extraordinary</span>
-        </div>
       </div>
     </div>
   `;
