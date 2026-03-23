@@ -37,72 +37,77 @@ export const designTokens = {
       900: '#45484a',
       950: '#272a2b'
     },
-    // Accent palette (from screenshot)
+    // Accent palette (orange — from Figma Royal Design System)
     accent: {
       50:  '#fff4ed',
       100: '#ffe5d4',
       200: '#ffc8a8',
-      300: '#ffa271',
-      400: '#ff8429',
-      500: '#ff6429',
-      600: '#ef4f07',
+      300: '#ffa171',
+      400: '#ff6429',
+      500: '#fe4911',
+      600: '#ef2f07',
       700: '#c61e08',
       800: '#9d1a0f',
       900: '#7e1910',
       950: '#440806'
     },
-    // Success / Green (full scale)
+    // Success / Green (from Figma Royal Design System)
     success: {
-      50:  '#f0fdf4',
-      100: '#dcfce7',
-      200: '#bbf7d0',
-      300: '#86efac',
-      400: '#4ade80',
-      500: '#22c55e',
-      600: '#16a34a',
-      700: '#15803d',
-      800: '#166534',
-      900: '#14532d'
+      50:  '#f5faf3',
+      100: '#e8f4e4',
+      200: '#cfe9c9',
+      300: '#a9d69f',
+      400: '#69b259',
+      500: '#579f48',
+      600: '#448237',
+      700: '#38672e',
+      800: '#305229',
+      900: '#284423',
+      950: '#11240f'
     },
-    // Warning / Amber
+    // Warning / Amber (from Figma Royal Design System)
     warning: {
-      50:  '#fffbeb',
-      100: '#fef3c7',
-      200: '#fde68a',
-      300: '#fcd34d',
-      400: '#fbbf24',
-      500: '#f59e0b',
-      600: '#d97706',
-      700: '#b45309',
-      800: '#92400e',
-      900: '#78350f'
+      50:  '#fffae9',
+      100: '#fef2c7',
+      200: '#fde38a',
+      300: '#fcce4d',
+      400: '#fbb924',
+      500: '#f5980b',
+      600: '#d97106',
+      700: '#b44e09',
+      800: '#923c0e',
+      900: '#78320f',
+      950: '#451803'
     },
-    // Error / Red (full scale)
+    // Error / Red (from Figma Royal Design System)
     error: {
-      50:  '#fef2f2',
-      100: '#fee2e2',
-      200: '#fecaca',
-      300: '#fca5a5',
-      400: '#f87171',
-      500: '#ef4444',
-      600: '#dc2626',
-      700: '#b91c1c',
-      800: '#991b1b',
-      900: '#7f1d1d'
+      50:  '#ffebed',
+      100: '#ffe4e7',
+      200: '#fecdd4',
+      300: '#fda4b2',
+      400: '#fb7189',
+      500: '#f43f63',
+      600: '#e11d4e',
+      700: '#be1241',
+      800: '#9f123d',
+      900: '#88133a',
+      950: '#4c051b'
     },
-    // Royal Violet palette
+    // App background (from Figma Royal Design System)
+    background: '#ebf4f7',
+    // Royal Violet palette (from Figma Royal Design System)
     royalViolet: {
-      50:  '#F1E9FB',
-      100: '#D5BEF4',
-      200: '#BA92EC',
-      300: '#9E67E5',
-      400: '#8C50E0',
-      500: '#823BDD',
-      600: '#6922C4',
-      700: '#511A98',
-      800: '#3A136D',
-      900: '#230B41',
-      950: '#0C0416'
+      50:  '#f1e9fb',
+      100: '#d5bef4',
+      200: '#ba92ec',
+      300: '#9e67e5',
+      400: '#8c50e0',
+      500: '#823bdd',
+      600: '#6922c4',
+      700: '#511a98',
+      800: '#3a136d',
+      900: '#230b41',
+      950: '#0c0416'
     },
     // Royal Turquoise palette
     royalTurquoise: {
