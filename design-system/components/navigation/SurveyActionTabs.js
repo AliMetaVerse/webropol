@@ -75,29 +75,28 @@ export class SurveyActionTabs extends BaseComponent {
 
     const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
-      const baseClasses = 'px-4 py-3 font-semibold text-webropol-gray-800 border-b-2 border-transparent flex items-center gap-2 rounded-xl transition-all duration-200 ease-out -mb-[1px] no-underline';
-      const activeClasses = isActive 
-        ? 'bg-white shadow-sm relative -mb-[2px]' 
-        : 'hover:text-webropol-gray-900 hover:bg-white hover:shadow-md hover:scale-[1.01]';
-      
+
       return `
-        <a 
+        <a
           href="${tab.url}"
-          class="${baseClasses} ${activeClasses}"
+          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}"
+          role="tab"
           aria-label="${tab.label}"
-          ${isActive ? 'aria-current="page"' : ''}
+          ${isActive ? 'aria-current="page" aria-selected="true"' : ''}
         >
-          <span class="inline-flex w-8 h-8 rounded-full ${tab.iconBg} items-center justify-center">
-            <i class="${tab.icon} ${tab.iconColor}"></i>
-          </span>
-          <span>${tab.label}</span>
-          ${isActive ? '<div class="absolute bottom-0 left-4 right-4 h-1 bg-webropol-primary-600 rounded-t"></div>' : ''}
+          <div class="main-primary-row">
+            <span class="inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0">
+              <i class="${tab.icon} ${tab.iconColor}"></i>
+            </span>
+            <span class="main-primary-label">${tab.label}</span>
+          </div>
+          <div class="main-primary-indicator"></div>
         </a>
       `;
     }).join('');
 
     this.innerHTML = `
-      <div class="flex gap-4" role="navigation" aria-label="Survey actions">
+      <div class="webropol-tabs-main-primary flex" role="navigation" aria-label="Survey actions">
         ${tabsHTML}
       </div>
     `;
