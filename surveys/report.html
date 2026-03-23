@@ -14,6 +14,7 @@
   <script src="../design-system/components/interactive/DashboardConfig.js" type="module"></script>
   <script src="../design-system/components/report/ChartColoursModal.js" type="module"></script>
   <script src="../design-system/components/report/ReportIntroModal.js" type="module"></script>
+  <script src="../design-system/components/buttons/ButtonHue.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
   <script>
     tailwind.config = {
@@ -1989,37 +1990,29 @@
         <!-- Accordion Mode Content -->
         <div x-show="exportShareMode === 'accordion'">
         <!-- Banner -->
-         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between transition-all"
-              :class="isSavedReport ? 'bg-gradient-to-r from-blue-50 to-white' : 'bg-gradient-to-r from-gray-50 to-white opacity-60'">
-            <div class="flex items-center gap-3">
-                <button @click="isSavedReport ? handleBiViewShare() : null" 
-                        :disabled="!isSavedReport"
-                        :class="isSavedReport ? 'cursor-pointer hover:shadow-lg' : 'cursor-not-allowed opacity-75'"
-                        class="flex items-center gap-2 bg-white border-2 rounded-xl py-2 px-5 shadow-md transition-all"
-                        :class="isSavedReport ? 'border-blue-300 hover:border-blue-400' : 'border-gray-300'">
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-black tracking-tight">
-                            <span :class="isSavedReport ? 'text-blue-400' : 'text-gray-400'">V</span><span :class="isSavedReport ? 'text-blue-500' : 'text-gray-400'">I</span><span :class="isSavedReport ? 'text-blue-600' : 'text-gray-500'">E</span><span :class="isSavedReport ? 'text-orange-500' : 'text-gray-500'">W</span>
-                        </span>
-                    </div>
-                    <div class="h-6 w-px mx-2" :class="isSavedReport ? 'bg-gray-300' : 'bg-gray-200'"></div>
-                    <span class="text-sm font-semibold" :class="isSavedReport ? 'text-gray-700' : 'text-gray-400'">Share saved report to BI VIEW</span>
-                </button>
-                <div class="relative" x-data="{ showTooltip: false }">
-                    <button @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" 
-                            class="w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                            :class="isSavedReport ? 'bg-blue-100 hover:bg-blue-200' : 'bg-gray-100 hover:bg-gray-200'">
-                        <i class="fas fa-info-circle text-sm" :class="isSavedReport ? 'text-blue-600' : 'text-gray-500'"></i>
-                    </button>
-                    <div x-show="showTooltip" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 w-72 bg-gray-900 text-white text-xs rounded-lg shadow-xl p-3 pointer-events-none" style="display: none;">
-                        <div class="relative">
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                            <p class="leading-relaxed" x-text="isSavedReport ? 'Share this saved report to BI VIEW dashboard' : 'Only available for saved reports. Please save your report first to use this feature.'"></p>
-                        </div>
-                    </div>
-                </div>
+        <div class="px-6 py-3.5 border-b border-gray-100"
+             x-data="{ biTooltip: false }"
+             x-effect="$el.querySelector('webropol-button-hue') && $el.querySelector('webropol-button-hue').toggleAttribute('disabled', !isSavedReport)">
+          <div class="relative">
+            <div @click="isSavedReport ? handleBiViewShare() : null"
+                 @mouseenter="biTooltip = true"
+                 @mouseleave="biTooltip = false"
+                 :class="isSavedReport ? 'cursor-pointer' : 'cursor-not-allowed'"
+                 class="flex">
+              <webropol-button-hue hue="royal-violet" orientation="horizontal" theme="filled" icon="fal fa-chart-network" label="Share saved report to BI VIEW" description="Publish to BI dashboard" disabled style="width:100%"></webropol-button-hue>
             </div>
-         </div>
+            <!-- Tooltip (shown when disabled) -->
+            <div x-show="biTooltip && !isSavedReport"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none"
+                 style="display:none">
+              <i class="fal fa-lock mr-1.5 opacity-70"></i>Save a report first to enable BI VIEW sharing
+              <div class="absolute top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-900"></div>
+            </div>
+          </div>
+        </div>
 
         <!-- Main Content Grid -->
         <div class="flex-1 grid grid-cols-2 divide-x divide-gray-200 overflow-hidden">
@@ -2396,30 +2389,19 @@
             <!-- Right: Share Reports -->
             <div class="p-6 bg-white overflow-y-auto">
                 <h3 class="text-lg font-medium text-gray-800 mb-4">Share Reports</h3>
-                <div class="space-y-3">
-                    <!-- Link 1 -->
-                    <button @click="sharePublicLinkOpen = true" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
-                        <i class="fal fa-globe text-xl"></i>
-                        <span class="font-medium">Share report as a public link</span>
-                    </button>
-                    
-                    <!-- Link 2 -->
-                    <button @click="showPublicLinksOpen = true" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
-                        <i class="fal fa-link text-xl"></i>
-                        <span class="font-medium">Show public report links</span>
-                    </button>
-                    
-                    <!-- Link 3 -->
-                    <button disabled class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-gray-400 cursor-not-allowed text-left border border-transparent opacity-50">
-                        <i class="fal fa-envelope text-xl"></i>
-                        <span class="font-medium">Schedule sharing of reports</span>
-                    </button>
-                    
-                    <!-- Link 4 -->
-                    <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-transparent text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors text-left border border-transparent hover:border-webropol-primary-200">
-                        <i class="fal fa-file-alt text-xl"></i>
-                        <span class="font-medium">Exported reports</span>
-                    </button>
+                <div class="flex flex-col gap-3">
+                    <div @click="sharePublicLinkOpen = true" class="cursor-pointer flex">
+                      <webropol-button-hue hue="royal-turquoise" orientation="horizontal" theme="outline" icon="fal fa-globe" label="Share as public link" style="width:100%"></webropol-button-hue>
+                    </div>
+                    <div @click="showPublicLinksOpen = true" class="cursor-pointer flex">
+                      <webropol-button-hue hue="primary" orientation="horizontal" theme="outline" icon="fal fa-link" label="Show public links" style="width:100%"></webropol-button-hue>
+                    </div>
+                    <div class="flex">
+                      <webropol-button-hue hue="warning" orientation="horizontal" theme="outline" icon="fal fa-clock" label="Schedule sharing" disabled style="width:100%"></webropol-button-hue>
+                    </div>
+                    <div @click="exportShareModeSelectOpen = true" class="cursor-pointer flex">
+                      <webropol-button-hue hue="primary" orientation="horizontal" theme="outline" icon="fal fa-file-alt" label="Exported reports" style="width:100%"></webropol-button-hue>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2429,37 +2411,29 @@
         <!-- Modal Mode Content -->
         <div x-show="exportShareMode === 'modal'">
         <!-- Banner -->
-         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between transition-all"
-              :class="isSavedReport ? 'bg-gradient-to-r from-blue-50 to-white' : 'bg-gradient-to-r from-gray-50 to-white opacity-60'">
-            <div class="flex items-center gap-3">
-                <button @click="isSavedReport ? handleBiViewShare() : null" 
-                        :disabled="!isSavedReport"
-                        :class="isSavedReport ? 'cursor-pointer hover:shadow-lg' : 'cursor-not-allowed opacity-75'"
-                        class="flex items-center gap-2 bg-white border-2 rounded-xl py-2 px-5 shadow-md transition-all"
-                        :class="isSavedReport ? 'border-blue-300 hover:border-blue-400' : 'border-gray-300'">
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-3xl font-black tracking-tight">
-                            <span :class="isSavedReport ? 'text-blue-400' : 'text-gray-400'">V</span><span :class="isSavedReport ? 'text-blue-500' : 'text-gray-400'">I</span><span :class="isSavedReport ? 'text-blue-600' : 'text-gray-500'">E</span><span :class="isSavedReport ? 'text-orange-500' : 'text-gray-500'">W</span>
-                        </span>
-                    </div>
-                    <div class="h-6 w-px mx-2" :class="isSavedReport ? 'bg-gray-300' : 'bg-gray-200'"></div>
-                    <span class="text-sm font-semibold" :class="isSavedReport ? 'text-gray-700' : 'text-gray-400'">Share saved report to BI VIEW</span>
-                </button>
-                <div class="relative" x-data="{ showTooltip: false }">
-                    <button @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" 
-                            class="w-6 h-6 rounded-full flex items-center justify-center transition-colors"
-                            :class="isSavedReport ? 'bg-blue-100 hover:bg-blue-200' : 'bg-gray-100 hover:bg-gray-200'">
-                        <i class="fas fa-info-circle text-sm" :class="isSavedReport ? 'text-blue-600' : 'text-gray-500'"></i>
-                    </button>
-                    <div x-show="showTooltip" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 w-72 bg-gray-900 text-white text-xs rounded-lg shadow-xl p-3 pointer-events-none" style="display: none;">
-                        <div class="relative">
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-900"></div>
-                            <p class="leading-relaxed" x-text="isSavedReport ? 'Share this saved report to BI VIEW dashboard' : 'Only available for saved reports. Please save your report first to use this feature.'"></p>
-                        </div>
-                    </div>
-                </div>
+        <div class="px-6 py-3.5 border-b border-gray-100"
+             x-data="{ biTooltip: false }"
+             x-effect="$el.querySelector('webropol-button-hue') && $el.querySelector('webropol-button-hue').toggleAttribute('disabled', !isSavedReport)">
+          <div class="relative">
+            <div @click="isSavedReport ? handleBiViewShare() : null"
+                 @mouseenter="biTooltip = true"
+                 @mouseleave="biTooltip = false"
+                 :class="isSavedReport ? 'cursor-pointer' : 'cursor-not-allowed'"
+                 class="flex">
+              <webropol-button-hue hue="royal-violet" orientation="horizontal" theme="filled" icon="fal fa-chart-network" label="Share saved report to BI VIEW" description="Publish to BI dashboard" disabled style="width:100%"></webropol-button-hue>
             </div>
-         </div>
+            <!-- Tooltip (shown when disabled) -->
+            <div x-show="biTooltip && !isSavedReport"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none"
+                 style="display:none">
+              <i class="fal fa-lock mr-1.5 opacity-70"></i>Save a report first to enable BI VIEW sharing
+              <div class="absolute top-full left-1/2 -translate-x-1/2 border-l-[5px] border-r-[5px] border-t-[5px] border-l-transparent border-r-transparent border-t-gray-900"></div>
+            </div>
+          </div>
+        </div>
         
         <div class="p-6">
           <div class="grid grid-cols-2 gap-6">
@@ -2470,53 +2444,24 @@
                 <span>Export</span>
               </h3>
               <div class="grid grid-cols-2 gap-3">
-                <!-- PowerPoint Button -->
-                <button @click="activeExportModal = 'ppt'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-orange-500 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-orange-50 group-hover:bg-orange-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-file-powerpoint text-orange-600 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">PowerPoint</span>
-                </button>
-
-                <!-- Excel Button -->
-                <button @click="activeExportModal = 'excel'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-green-600 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-file-excel text-green-700 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">Excel</span>
-                </button>
-
-                <!-- CSV Button -->
-                <button @click="activeExportModal = 'csv'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-green-50 group-hover:bg-green-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-file-csv text-green-600 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">CSV</span>
-                </button>
-
-                <!-- PDF Button -->
-                <button @click="activeExportModal = 'pdf'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-red-600 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">PDF</span>
-                </button>
-
-                <!-- Word Button -->
-                <button @click="activeExportModal = 'word'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-blue-700 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-file-word text-blue-800 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">Word</span>
-                </button>
-
-                <!-- SPSS Button -->
-                <button @click="activeExportModal = 'spss'" class="group p-4 border-2 border-gray-200 rounded-xl hover:border-cyan-700 hover:shadow-md transition-all text-center">
-                  <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-cyan-50 group-hover:bg-cyan-100 flex items-center justify-center transition-colors">
-                    <i class="fas fa-table text-cyan-800 text-2xl"></i>
-                  </div>
-                  <span class="text-sm font-medium text-gray-700">SPSS</span>
-                </button>
+                <div @click="activeExportModal = 'ppt'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="accent" orientation="vertical" theme="filled" icon="fal fa-file-powerpoint" label="PowerPoint" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="activeExportModal = 'excel'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="success" orientation="vertical" theme="filled" icon="fal fa-file-excel" label="Excel" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="activeExportModal = 'csv'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="success" orientation="vertical" theme="filled" icon="fal fa-file-csv" label="CSV" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="activeExportModal = 'pdf'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="error" orientation="vertical" theme="filled" icon="fal fa-file-pdf" label="PDF" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="activeExportModal = 'word'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="royal-blue" orientation="vertical" theme="filled" icon="fal fa-file-word" label="Word" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="activeExportModal = 'spss'" class="cursor-pointer flex">
+                  <webropol-button-hue hue="royal-turquoise" orientation="vertical" theme="filled" icon="fal fa-table-cells" label="SPSS" style="width:100%"></webropol-button-hue>
+                </div>
               </div>
             </div>
 
@@ -2526,34 +2471,19 @@
                 <i class="fal fa-share-nodes text-webropol-primary-600"></i>
                 <span>Share Reports</span>
               </h3>
-              <div class="space-y-3">
-                <button @click="sharePublicLinkOpen = true" class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
-                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
-                    <i class="fal fa-globe text-webropol-primary-600 text-xl"></i>
-                  </div>
-                  <span class="font-medium text-gray-700">Share as public link</span>
-                </button>
-
-                <button @click="showPublicLinksOpen = true" class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
-                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
-                    <i class="fal fa-link text-webropol-primary-600 text-xl"></i>
-                  </div>
-                  <span class="font-medium text-gray-700">Show public links</span>
-                </button>
-
-                <button disabled class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl opacity-50 cursor-not-allowed text-left">
-                  <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                    <i class="fal fa-envelope text-gray-400 text-xl"></i>
-                  </div>
-                  <span class="font-medium text-gray-400">Schedule sharing</span>
-                </button>
-
-                <button class="w-full flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-webropol-primary-500 hover:shadow-md transition-all text-left">
-                  <div class="w-10 h-10 rounded-lg bg-webropol-primary-50 flex items-center justify-center">
-                    <i class="fal fa-file-alt text-webropol-primary-600 text-xl"></i>
-                  </div>
-                  <span class="font-medium text-gray-700">Exported reports</span>
-                </button>
+              <div class="flex flex-col gap-3">
+                <div @click="sharePublicLinkOpen = true" class="cursor-pointer flex">
+                  <webropol-button-hue hue="royal-turquoise" orientation="horizontal" theme="outline" icon="fal fa-globe" label="Share as public link" style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="showPublicLinksOpen = true" class="cursor-pointer flex">
+                  <webropol-button-hue hue="primary" orientation="horizontal" theme="outline" icon="fal fa-link" label="Show public links" style="width:100%"></webropol-button-hue>
+                </div>
+                <div class="flex">
+                  <webropol-button-hue hue="warning" orientation="horizontal" theme="outline" icon="fal fa-clock" label="Schedule sharing" disabled style="width:100%"></webropol-button-hue>
+                </div>
+                <div @click="exportShareModeSelectOpen = true" class="cursor-pointer flex">
+                  <webropol-button-hue hue="primary" orientation="horizontal" theme="outline" icon="fal fa-file-alt" label="Exported reports" style="width:100%"></webropol-button-hue>
+                </div>
               </div>
             </div>
           </div>
