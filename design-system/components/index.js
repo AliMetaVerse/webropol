@@ -9,6 +9,7 @@ export { BaseComponent } from '../utils/base-component.js';
 // Button components
 export { WebropolButton } from './buttons/Button.js';
 export { WebropolButtonHue } from './buttons/ButtonHue.js';
+export { WebropolTextLink } from './buttons/TextLink.js';
 
 // Card components
 export { WebropolCard } from './cards/Card.js';
