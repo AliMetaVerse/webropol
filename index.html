@@ -954,18 +954,43 @@
                             </div>
                         </div>
 
-                        <!-- Software Update Announcement Banner -->
-                        <webropol-banner class="mb-8"
-                            heading="Webropol has been updated — March 2026"
-                            description="We've rolled out new features including the Royal Design System Banners, enhanced survey analytics, improved event management workflows, and performance improvements across the platform."
-                            type="outlined"
-                            size="desktop"
-                            icon="fal fa-circle-check"
-                            primary-label="See what's new"
-                            primary-url="#/news"
-                            secondary-label="Dismiss"
-                            dismissible>
-                        </webropol-banner>
+                        <!-- Banner stack (data-driven, dismiss persisted to localStorage) -->
+                        <template x-for="banner in visibleBanners" :key="banner.id">
+                            <div class="relative flex items-start gap-4 rounded-lg border border-webropol-gray-300 p-6 mb-3"
+                                 x-data="{ leaving: false }"
+                                 :class="leaving ? 'opacity-0 max-h-0 overflow-hidden py-0 mb-0 border-0 transition-all duration-300 ease-in' : 'transition-all duration-300'">
+                                <!-- Icon -->
+                                <div class="flex-shrink-0 w-12 h-12 rounded-3xl bg-webropol-accent-100 flex items-center justify-center">
+                                    <i :class="banner.icon + ' text-2xl text-webropol-accent-600'"></i>
+                                </div>
+                                <!-- Content -->
+                                <div class="flex flex-col gap-2 flex-1 min-w-0 pr-8">
+                                    <p class="text-[1.1rem] font-bold text-webropol-gray-950 leading-6" style="font-family:'Inter',sans-serif" x-text="banner.heading"></p>
+                                    <p class="text-sm text-webropol-gray-700 leading-5" x-text="banner.description"></p>
+                                    <!-- Actions -->
+                                    <div class="flex items-center gap-2 justify-end mt-1">
+                                        <button type="button"
+                                                class="inline-flex items-center justify-center px-4 py-2 rounded-full text-webropol-primary-700 text-sm font-medium hover:bg-webropol-primary-50 transition-colors"
+                                                @click="leaving = true; setTimeout(() => dismissBanner(banner.id), 300)"
+                                                x-text="banner.secondaryLabel || 'Dismiss'">
+                                        </button>
+                                        <template x-if="banner.primaryLabel">
+                                            <a :href="banner.primaryUrl || '#'"
+                                               class="inline-flex items-center justify-center px-4 py-2 rounded-full border border-webropol-primary-700 bg-webropol-primary-50 text-webropol-primary-700 text-sm font-medium hover:bg-webropol-primary-100 transition-colors whitespace-nowrap"
+                                               x-text="banner.primaryLabel">
+                                            </a>
+                                        </template>
+                                    </div>
+                                </div>
+                                <!-- Close button -->
+                                <button type="button"
+                                        class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-webropol-gray-100 text-webropol-gray-500 hover:text-webropol-gray-700 transition-colors"
+                                        @click="leaving = true; setTimeout(() => dismissBanner(banner.id), 300)"
+                                        aria-label="Dismiss">
+                                    <i class="fal fa-xmark text-sm"></i>
+                                </button>
+                            </div>
+                        </template>
 
                     </div>
 
@@ -2063,6 +2088,63 @@
                 selectAllQuestions: false,
                 selectAllSurveys: false,
                 showContextMenu: null,
+
+                // ── Banner stack ─────────────────────────────────────────────
+                banners: [
+                    {
+                        id: 'update-march-2026',
+                        heading: 'Webropol has been updated \u2014 March 2026',
+                        description: "We've rolled out new features including the Royal Design System Banners, enhanced survey analytics, improved event management workflows, and performance improvements across the platform.",
+                        icon: 'fal fa-circle-check',
+                        primaryLabel: "See what's new",
+                        primaryUrl: '#/news',
+                        secondaryLabel: 'Dismiss'
+                    },
+                    {
+                        id: 'maintenance-april-2026',
+                        heading: 'Scheduled maintenance \u2014 April 1, 2026',
+                        description: 'The platform will be briefly unavailable on April 1 from 02:00\u201303:00 UTC for infrastructure upgrades. Please save your work beforehand.',
+                        icon: 'fal fa-triangle-exclamation',
+                        primaryLabel: 'Learn more',
+                        primaryUrl: '#/news',
+                        secondaryLabel: 'Got it'
+                    },
+                    {
+                        id: 'new-ai-features-2026',
+                        heading: 'AI Text Analysis is now available',
+                        description: 'Unlock sentiment analysis and theme detection on open-ended survey responses. Available on all Professional and Enterprise plans.',
+                        icon: 'fal fa-sparkles',
+                        primaryLabel: 'Try it now',
+                        primaryUrl: '#/create?type=survey',
+                        secondaryLabel: 'Dismiss'
+                    },
+                    {
+                        id: 'webinar-april-2026',
+                        heading: 'Live webinar: Getting the most out of Webropol',
+                        description: 'Join our free onboarding webinar on April 10 at 10:00 EEST. Learn tips, tricks, and new features from the product team.',
+                        icon: 'fal fa-calendar-star',
+                        primaryLabel: 'Register now',
+                        primaryUrl: '#/events',
+                        secondaryLabel: 'Maybe later'
+                    }
+                ],
+
+                get visibleBanners() {
+                    try {
+                        const dismissed = JSON.parse(localStorage.getItem('webropol_dismissed_banners') || '[]');
+                        return this.banners.filter(b => !dismissed.includes(b.id));
+                    } catch { return this.banners; }
+                },
+
+                dismissBanner(id) {
+                    try {
+                        const dismissed = JSON.parse(localStorage.getItem('webropol_dismissed_banners') || '[]');
+                        if (!dismissed.includes(id)) dismissed.push(id);
+                        localStorage.setItem('webropol_dismissed_banners', JSON.stringify(dismissed));
+                    } catch {}
+                    this.banners = this.banners.filter(b => b.id !== id);
+                },
+                // ─────────────────────────────────────────────────────────────
 
                 // AI Prompt Interface Methods
                 switchInterface(mode) {
