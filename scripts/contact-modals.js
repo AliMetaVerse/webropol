@@ -139,17 +139,17 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-7">
           <!-- AI Assistant Card -->
-          <div class="flex flex-col rounded-xl border border-webropol-gray-200 p-5 hover:border-orange-200 hover:shadow-sm transition-all duration-150">
-            <div class="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center mb-4 flex-shrink-0">
-              <i class="fal fa-robot text-orange-500"></i>
+          <div class="flex flex-col rounded-xl border border-webropol-gray-200 p-5 hover:border-webropol-royalViolet-200 hover:shadow-sm transition-all duration-150">
+            <div class="w-11 h-11 rounded-xl bg-webropol-royalViolet-50 flex items-center justify-center mb-4 flex-shrink-0">
+              <i class="fa-light fa-message-bot text-webropol-royalViolet-500"></i>
             </div>
             <div class="flex items-center gap-2 mb-2">
               <h3 class="text-sm font-semibold text-webropol-gray-900">AI Assistant</h3>
-              <span class="text-xs font-bold bg-orange-50 text-orange-600 border border-orange-200 rounded px-1.5 py-0.5">Beta</span>
+              <span class="text-xs font-bold bg-webropol-royalViolet-50 text-webropol-royalViolet-600 border border-webropol-royalViolet-200 rounded px-1.5 py-0.5">Beta</span>
             </div>
             <p class="text-xs text-webropol-gray-500 leading-relaxed mt-1 mb-5 flex-1">Instant answers powered by AI — available 24/7, no waiting.</p>
-            <button class="w-full flex items-center justify-center gap-2 py-2.5 border border-webropol-gray-200 hover:border-webropol-gray-300 bg-white hover:bg-webropol-gray-50 rounded-lg text-sm font-medium text-webropol-gray-700 transition-colors duration-150" data-ai-start>
-              <i class="fal fa-comments text-sm"></i>
+            <button class="w-full flex items-center justify-center gap-2 py-2.5 bg-webropol-royalViolet-600 hover:bg-webropol-royalViolet-700 rounded-full text-sm font-semibold text-white transition-colors duration-150" data-ai-start>
+              <i class="fa-light fa-message-bot text-sm"></i>
               Start chatting
             </button>
           </div>
@@ -164,7 +164,7 @@
               <span class="text-xs font-bold bg-webropol-primary-50 text-webropol-primary-700 border border-webropol-primary-200 rounded px-1.5 py-0.5">Live</span>
             </div>
             <p class="text-xs text-webropol-gray-500 leading-relaxed mt-1 mb-5 flex-1">Speak with our specialists for personalized, expert assistance.</p>
-            <button class="w-full flex items-center justify-center gap-2 py-2.5 bg-webropol-primary-600 hover:bg-webropol-primary-700 rounded-lg text-sm font-semibold text-white transition-colors duration-150" data-contact-next>
+            <button class="w-full flex items-center justify-center gap-2 py-2.5 bg-webropol-primary-600 hover:bg-webropol-primary-700 rounded-full text-sm font-semibold text-white transition-colors duration-150" data-contact-next>
               <i class="fal fa-paper-plane text-sm"></i>
               Contact Support
             </button>
