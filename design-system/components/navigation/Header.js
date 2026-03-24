@@ -110,11 +110,7 @@ export class WebropolHeader extends BaseComponent {
                         Magic
                         ${currentInterfaceMode === 'prompt' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
                       </button>
-                      <button class="view-mode-option flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${currentInterfaceMode === 'magical' ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-mode="magical">
-                        <i class="fal fa-sparkles w-4 mr-2.5"></i>
-                        Magical
-                        ${currentInterfaceMode === 'magical' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
-                      </button>
+
                     </div>
                   </div>
 
