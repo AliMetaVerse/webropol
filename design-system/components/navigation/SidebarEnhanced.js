@@ -422,14 +422,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       </div>
       
       <!-- Mobile Footer -->
-      <div class="border-t border-webropol-gray-200 pt-3 px-4 pb-4">
+      <div class="pt-3 px-4 pb-4">
         <a href="#/contact" data-route="/contact"
            class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200 px-4 py-3 mx-0 mb-1 text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
           <i class="fa-duotone fa-thin fa-headset w-5 mr-4"></i>
           <span class="font-medium">Contact Support</span>
         </a>
-        <div class="mt-2 px-4">
-          <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+        <div class="mt-2 mx-4 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50">
+          <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
         </div>
       </div>
     `;
@@ -558,7 +558,6 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         <!-- Tablet Footer -->
         <div class="p-2 group-hover:p-4 transition-all duration-300">
           <!-- Contact Us - Tablet Footer -->
-          <div class="border-t border-webropol-gray-200 mb-1"></div>
           <a href="#/contact" data-route="/contact"
              class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200
                     px-3 py-3 mx-2 group-hover:px-4 group-hover:mx-4 transition-all duration-300
@@ -566,8 +565,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <i class="fa-duotone fa-thin fa-headset w-5 flex-shrink-0"></i>
             <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-2 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+          <div class="mt-2 mx-2 group-hover:mx-4 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50 opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
           </div>
         </div>
       </aside>
@@ -618,7 +617,6 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     group-hover:px-4
                     pb-6">
           <!-- Contact Us - Desktop Footer -->
-          <div class="border-t border-webropol-gray-200 mb-1"></div>
           <a href="#/contact" data-route="/contact"
              class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200
                     xl:px-4 px-3 group-hover:px-4 py-3
@@ -630,10 +628,9 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                         opacity-0 w-0
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-2
-                      xl:px-4 px-3 group-hover:px-4
+          <div class="mt-2 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50
                       xl:opacity-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+            <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
           </div>
         </div>
       </aside>
