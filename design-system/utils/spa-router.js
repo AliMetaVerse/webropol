@@ -24,9 +24,10 @@ class WebropolSPA {
       ['/surveys', 'surveys/index.html'],
       ['/surveys/list', 'surveys/list.html'],
       ['/surveys/edit', 'surveys/edit.html'],
-  // Added explicit routes for survey report & AI text analysis views so SPA can navigate without reload
+  // Added explicit routes for survey report, AI text analysis & AI survey creator views
   ['/surveys/report', 'surveys/report.html'],
   ['/surveys/aita', 'surveys/aita.html'],
+  ['/surveys/ai-survey', 'surveys/ai-survey.html'],
       ['/events', 'events/index.html'],
       ['/events/list', 'events/list.html'],
       ['/sms', 'sms/list.html'],
@@ -84,6 +85,7 @@ class WebropolSPA {
       follow: 'Follow Up',
       report: 'Report',
       aita: 'AI Text Analysis',
+      'ai-survey': 'AI Survey Creator',
       index: 'Home'
     };
   }

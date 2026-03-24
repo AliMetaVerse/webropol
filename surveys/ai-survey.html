@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Survey Creator - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-royalViolet': { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9' },
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0,0,0,0.07), 0 10px 20px -2px rgba(0,0,0,0.04)',
+            'medium': '0 4px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+            'card': '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/utils/theme-manager.js" type="module"></script>
+  <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+    }
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+
+    /* ── Step indicator ── */
+    .step-circle {
+      width: 2.5rem; height: 2.5rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.875rem; font-weight: 700;
+      border: 2px solid transparent;
+      transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .step-circle.pending  { border-color: #e2e8f0; background: #fff; color: #94a3b8; }
+    .step-circle.active   { border-color: #7c3aed; background: linear-gradient(135deg,#7c3aed,#a855f7); color: #fff; box-shadow: 0 0 0 4px rgba(124,58,237,.15); }
+    .step-circle.done     { border-color: #10b981; background: #10b981; color: #fff; }
+    .step-line { height: 2px; border-radius: 9999px; flex: 1; margin: 0 0.75rem; transition: background 0.5s ease; }
+    .step-line.done  { background: #10b981; }
+    .step-line.idle  { background: #e2e8f0; }
+
+    /* ── Type pill ── */
+    .type-pill { transition: all 0.2s ease; }
+    .type-pill.active {
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(124,58,237,.35);
+      border-color: transparent;
+    }
+
+    /* ── Template cards ── */
+    .tmpl-card { transition: all 0.22s ease; }
+    .tmpl-card:hover { transform: translateY(-2px); }
+
+    /* ── Question cards ── */
+    .q-card { transition: box-shadow 0.15s ease; }
+    .q-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+
+    /* ── Generation overlay ── */
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+    .shimmer-block {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 0.5rem;
+    }
+
+    .progress-fill {
+      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #7c3aed, #a855f7, #06b6d4);
+    }
+
+    /* ── Question reveal ── */
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    .q-reveal { animation: slideInUp 0.35s ease both; }
+
+    /* ── Hero ── */
+    .ai-hero {
+      background: linear-gradient(130deg, #f8f4ff 0%, #fdf4ff 35%, #f0fdff 70%, #f0fdf4 100%);
+    }
+
+    /* ── AI badge pulse ── */
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,.3); }
+      50%       { box-shadow: 0 0 0 6px rgba(124,58,237,0); }
+    }
+    .ai-badge-pulse { animation: badgePulse 2.5s ease-in-out infinite; }
+
+    /* Text gradient */
+    .text-ai-gradient {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 55%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Floating orb decoration ── */
+    .orb {
+      border-radius: 50%;
+      pointer-events: none;
+      position: absolute;
+    }
+
+    /* Confetti / success flash */
+    @keyframes successFade {
+      0%   { opacity: 0; transform: scale(0.9) translateY(8px); }
+      100% { opacity: 1; transform: scale(1)   translateY(0);    }
+    }
+    .success-anim { animation: successFade 0.5s cubic-bezier(.4,0,.2,1) both; }
+  </style>
+</head>
+
+<body x-data="aiSurveyApp()" class="bg-webropol-gray-50 font-sans">
+  <div class="flex h-screen">
+    <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector></webropol-header>
+
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Surveys","url":"index.html"},{"label":"AI Survey Creator","url":"ai-survey.html"}]'></webropol-breadcrumbs>
+      </div>
+
+      <main class="flex-1 overflow-y-auto" role="main">
+
+        <!-- ═══════════════════════════════════════════════════════════
+             GENERATION LOADING OVERLAY
+        ════════════════════════════════════════════════════════════ -->
+        <div x-show="isGenerating"
+             x-cloak
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-white/85 backdrop-blur-sm">
+          <div class="text-center max-w-xs mx-auto px-8">
+            <!-- Animated icon -->
+            <div class="relative w-20 h-20 mx-auto mb-6">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 opacity-20 animate-ping"></div>
+              <div class="absolute inset-1 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-15 animate-pulse"></div>
+              <div class="absolute inset-3 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-500 flex items-center justify-center">
+                <i class="fal fa-sparkles text-white text-xl"></i>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold text-webropol-gray-900 mb-1">Generating your survey…</h3>
+            <p class="text-sm text-webropol-gray-500 mb-6">AI is crafting the perfect questions</p>
+            <!-- Progress bar -->
+            <div class="w-full bg-webropol-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
+              <div class="progress-fill h-1.5 rounded-full" :style="`width: ${generationProgress}%`"></div>
+            </div>
+            <p class="text-xs text-webropol-gray-400"
+               x-text="generationProgress < 35 ? 'Analyzing your prompt…' : generationProgress < 65 ? 'Selecting optimal questions…' : generationProgress < 90 ? 'Structuring survey logic…' : 'Finalising your survey…'">
+            </p>
+            <!-- Skeleton cards preview -->
+            <div class="mt-8 space-y-3 text-left">
+              <template x-for="n in [1,2,3]" :key="n">
+                <div class="p-3 bg-white rounded-xl border border-webropol-gray-100 flex items-center gap-3">
+                  <div class="shimmer-block w-8 h-8 rounded-lg flex-shrink-0"></div>
+                  <div class="flex-1 space-y-1.5">
+                    <div class="shimmer-block h-3 rounded w-4/5"></div>
+                    <div class="shimmer-block h-2.5 rounded w-2/5"></div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             SUCCESS STATE
+        ════════════════════════════════════════════════════════════ -->
+        <div x-show="surveyCreated"
+             x-cloak
+             class="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
+          <div class="text-center max-w-sm mx-auto px-8 success-anim">
+            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow-xl">
+              <i class="fal fa-check text-white text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-webropol-gray-900 mb-2">Survey Created!</h3>
+            <p class="text-webropol-gray-500 text-sm mb-6">Your AI-generated survey has been saved as a draft. Redirecting to your surveys…</p>
+            <div class="w-full bg-webropol-gray-200 rounded-full h-1 overflow-hidden">
+              <div class="h-1 bg-emerald-500 rounded-full transition-all duration-2000" :style="`width: ${redirectProgress}%`"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             MAIN PAGE
+        ════════════════════════════════════════════════════════════ -->
+        <div class="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
+
+          <!-- ── Step Indicator ── -->
+          <div class="flex items-center justify-center mb-10 px-4 sm:px-12">
+            <!-- Step 1 -->
+            <div class="flex flex-col items-center">
+              <div class="step-circle" :class="currentStep === 1 ? 'active' : currentStep > 1 ? 'done' : 'pending'">
+                <i x-show="currentStep > 1" class="fal fa-check text-xs"></i>
+                <span x-show="currentStep <= 1">1</span>
+              </div>
+              <span class="mt-2 text-xs font-medium whitespace-nowrap transition-colors"
+                    :class="currentStep === 1 ? 'text-violet-700' : currentStep > 1 ? 'text-emerald-600' : 'text-webropol-gray-400'">
+                Describe
+              </span>
+            </div>
+
+            <div class="step-line" :class="currentStep > 1 ? 'done' : 'idle'"></div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col items-center">
+              <div class="step-circle" :class="currentStep === 2 ? 'active' : currentStep > 2 ? 'done' : 'pending'">
+                <i x-show="currentStep > 2" class="fal fa-check text-xs"></i>
+                <span x-show="currentStep <= 2">2</span>
+              </div>
+              <span class="mt-2 text-xs font-medium whitespace-nowrap transition-colors"
+                    :class="currentStep === 2 ? 'text-violet-700' : currentStep > 2 ? 'text-emerald-600' : 'text-webropol-gray-400'">
+                Review
+              </span>
+            </div>
+
+            <div class="step-line" :class="currentStep > 2 ? 'done' : 'idle'"></div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col items-center">
+              <div class="step-circle" :class="currentStep === 3 ? 'active' : 'pending'">
+                <span>3</span>
+              </div>
+              <span class="mt-2 text-xs font-medium whitespace-nowrap transition-colors"
+                    :class="currentStep === 3 ? 'text-violet-700' : 'text-webropol-gray-400'">
+                Configure
+              </span>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════
+               STEP 1 — DESCRIBE
+          ════════════════════════════════════════════════════════════ -->
+          <div x-show="currentStep === 1"
+               x-transition:enter="transition ease-out duration-400"
+               x-transition:enter-start="opacity-0 translate-y-4"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="opacity-100 translate-y-0"
+               x-transition:leave-end="opacity-0 -translate-y-4">
+
+            <!-- Hero -->
+            <div class="ai-hero rounded-3xl p-8 md:p-12 mb-7 border border-violet-100 relative overflow-hidden">
+              <div class="orb w-60 h-60 bg-gradient-to-br from-violet-200/35 to-fuchsia-200/35 top-0 right-0 -translate-y-1/3 translate-x-1/3"></div>
+              <div class="orb w-40 h-40 bg-gradient-to-br from-cyan-200/25 to-blue-200/25 bottom-0 left-0 translate-y-1/3 -translate-x-1/3"></div>
+              <div class="relative text-center max-w-2xl mx-auto">
+                <div class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-violet-100 text-violet-700 rounded-full text-xs font-semibold mb-5 ai-badge-pulse">
+                  <i class="fal fa-sparkles"></i>
+                  AI-powered survey creation
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-webropol-gray-900 mb-3 leading-tight">
+                  Describe your survey idea,<br>
+                  <span class="text-ai-gradient">AI builds it for you</span>
+                </h1>
+                <p class="text-webropol-gray-500 text-base max-w-lg mx-auto">
+                  Choose a survey type, write a brief description, and let AI generate professional questions tailored to your needs — in seconds.
+                </p>
+              </div>
+            </div>
+
+            <!-- Survey Type Selector -->
+            <div class="bg-white rounded-2xl p-6 shadow-card border border-webropol-gray-100 mb-5">
+              <p class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-widest mb-4">Survey Type</p>
+              <div class="flex flex-wrap gap-2">
+                <template x-for="stype in surveyTypes" :key="stype.id">
+                  <button @click="selectedType = stype.id"
+                          :class="selectedType === stype.id ? 'type-pill active' : 'type-pill bg-webropol-gray-50 text-webropol-gray-600 hover:bg-webropol-gray-100 border border-webropol-gray-200'"
+                          class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm">
+                    <i :class="stype.icon" class="text-base"></i>
+                    <span x-text="stype.name"></span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- AI Prompt Input -->
+            <div class="bg-white rounded-2xl p-6 shadow-card border border-webropol-gray-100 mb-5">
+              <p class="text-xs font-semibold text-webropol-gray-400 uppercase tracking-widest mb-4">Describe Your Survey</p>
+
+              <textarea
+                x-model="aiPrompt"
+                rows="5"
+                :placeholder="currentPlaceholder"
+                class="w-full px-5 py-4 text-base border-2 border-webropol-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-violet-100 focus:border-violet-400 resize-none text-webropol-gray-900 placeholder-webropol-gray-400 leading-relaxed transition-all"
+              ></textarea>
+
+              <div class="flex items-center justify-between mt-3">
+                <button @click="showTips = !showTips"
+                        class="text-sm text-webropol-gray-400 hover:text-violet-600 transition-colors flex items-center gap-1.5">
+                  <i class="fal fa-lightbulb"></i>
+                  <span x-text="showTips ? 'Hide tips' : 'Writing tips'"></span>
+                </button>
+                <span class="text-xs text-webropol-gray-400" x-text="`${aiPrompt.length} characters`"></span>
+              </div>
+
+              <!-- Tips Panel -->
+              <div x-show="showTips"
+                   x-transition:enter="transition ease-out duration-200"
+                   x-transition:enter-start="opacity-0 -translate-y-1"
+                   x-transition:enter-end="opacity-100 translate-y-0"
+                   x-transition:leave="transition ease-in duration-150"
+                   x-transition:leave-start="opacity-100 translate-y-0"
+                   x-transition:leave-end="opacity-0 -translate-y-1"
+                   class="mt-4 p-4 bg-violet-50 border border-violet-200 rounded-xl">
+                <p class="text-xs font-semibold text-violet-800 mb-2.5 flex items-center gap-1.5">
+                  <i class="fal fa-sparkles"></i> Tips for great results
+                </p>
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <li class="flex items-start gap-2 text-xs text-violet-700">
+                    <i class="fal fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                    Be specific about your target audience
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-violet-700">
+                    <i class="fal fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                    Mention preferred question types (rating, NPS, open text…)
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-violet-700">
+                    <i class="fal fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                    Include the key topics you want to explore
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-violet-700">
+                    <i class="fal fa-check-circle text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                    Specify desired length or completion time
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Generate Button -->
+              <div class="mt-6 flex items-center justify-between gap-4">
+                <p x-show="aiPrompt.length > 0 && !canGenerate" class="text-xs text-webropol-gray-400">
+                  Add a bit more detail to generate…
+                </p>
+                <div class="flex-1"></div>
+                <button @click="generateSurvey()"
+                        :disabled="!canGenerate"
+                        :class="canGenerate
+                          ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white shadow-lg hover:shadow-xl cursor-pointer hover:-translate-y-0.5'
+                          : 'bg-webropol-gray-200 text-webropol-gray-400 cursor-not-allowed'"
+                        class="flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-sm transition-all duration-200">
+                  <i class="fal fa-sparkles"></i>
+                  Generate Survey with AI
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick-start Templates -->
+            <div class="mb-5">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-sm font-semibold text-webropol-gray-700 flex items-center gap-2">
+                  <i class="fal fa-rocket text-violet-500"></i>
+                  Quick-start Templates
+                </h2>
+                <span class="text-xs text-webropol-gray-400">Click any card to pre-fill the prompt</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                <template x-for="tmpl in quickTemplates" :key="tmpl.id">
+                  <button @click="useTemplate(tmpl)"
+                          class="tmpl-card text-left p-4 bg-white rounded-2xl border border-webropol-gray-200 hover:border-violet-300 hover:shadow-medium group transition-all">
+                    <div class="flex items-start gap-3">
+                      <div class="w-9 h-9 bg-violet-50 group-hover:bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
+                        <i :class="tmpl.icon" class="text-violet-600 text-sm"></i>
+                      </div>
+                      <div>
+                        <p class="font-semibold text-webropol-gray-900 text-sm mb-0.5 group-hover:text-violet-700 transition-colors" x-text="tmpl.title"></p>
+                        <p class="text-xs text-webropol-gray-500 leading-relaxed" x-text="tmpl.description"></p>
+                      </div>
+                    </div>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Recent Prompts -->
+            <div x-show="recentPrompts.length > 0"
+                 class="bg-white rounded-2xl p-5 shadow-card border border-webropol-gray-100">
+              <div class="flex items-center justify-between mb-3">
+                <h2 class="text-sm font-semibold text-webropol-gray-600 flex items-center gap-2">
+                  <i class="fal fa-history text-webropol-gray-400"></i>
+                  Recent Prompts
+                </h2>
+                <button @click="clearRecentPrompts()"
+                        class="text-xs text-webropol-gray-400 hover:text-webropol-gray-600 transition-colors">
+                  Clear all
+                </button>
+              </div>
+              <div class="space-y-2">
+                <template x-for="prompt in recentPrompts.slice(0, 4)" :key="prompt.id">
+                  <button @click="aiPrompt = prompt.text"
+                          class="w-full text-left px-4 py-3 bg-webropol-gray-50 hover:bg-violet-50 border border-webropol-gray-200 hover:border-violet-200 rounded-xl transition-all group">
+                    <p class="text-sm text-webropol-gray-700 line-clamp-1 group-hover:text-violet-700" x-text="prompt.text"></p>
+                    <p class="text-xs text-webropol-gray-400 mt-0.5" x-text="prompt.date + ' · ' + (prompt.type || 'survey')"></p>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+          </div><!-- /step 1 -->
+
+
+          <!-- ═══════════════════════════════════════════════════════════
+               STEP 2 — REVIEW
+          ════════════════════════════════════════════════════════════ -->
+          <div x-show="currentStep === 2"
+               x-cloak
+               x-transition:enter="transition ease-out duration-400"
+               x-transition:enter-start="opacity-0 translate-y-4"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="opacity-100 translate-y-0"
+               x-transition:leave-end="opacity-0 -translate-y-4">
+
+            <template x-if="generatedSurvey">
+              <div>
+                <!-- Generated Survey Header Card -->
+                <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-3xl p-6 md:p-8 mb-6 border border-violet-100 relative overflow-hidden">
+                  <div class="orb w-48 h-48 bg-gradient-to-br from-violet-200/30 to-fuchsia-200/30 top-0 right-0 -translate-y-1/4 translate-x-1/4"></div>
+                  <div class="relative flex items-start justify-between gap-4 flex-wrap">
+                    <div class="flex-1 min-w-0">
+                      <!-- Badges -->
+                      <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-semibold">
+                          <i class="fal fa-sparkles text-xs"></i> AI Generated
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold"
+                              x-text="`${generatedSurvey.aiConfidence} confidence`">
+                        </span>
+                      </div>
+                      <!-- Editable title -->
+                      <div x-data="{ editingTitle: false }">
+                        <div x-show="!editingTitle"
+                             @click="editingTitle = true"
+                             class="flex items-center gap-2 group cursor-pointer mb-3">
+                          <h2 class="text-2xl font-bold text-webropol-gray-900 group-hover:text-violet-700 transition-colors leading-tight"
+                              x-text="generatedSurvey.title"></h2>
+                          <i class="fal fa-pencil text-sm text-webropol-gray-300 group-hover:text-violet-400 transition-colors flex-shrink-0"></i>
+                        </div>
+                        <input x-show="editingTitle"
+                               x-cloak
+                               x-init="$watch('editingTitle', v => v && $nextTick(() => $el.focus()))"
+                               :value="generatedSurvey.title"
+                               @blur="editingTitle = false; generatedSurvey.title = $event.target.value"
+                               @keydown.enter="editingTitle = false; generatedSurvey.title = $event.target.value"
+                               @keydown.escape="editingTitle = false"
+                               class="text-2xl font-bold text-webropol-gray-900 border-b-2 border-violet-400 outline-none bg-transparent w-full mb-3">
+                      </div>
+                      <!-- Stats -->
+                      <div class="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-webropol-gray-600">
+                        <span class="flex items-center gap-1.5">
+                          <i class="fal fa-list-ul text-violet-400"></i>
+                          <span x-text="`${generatedSurvey.questions.length} questions`"></span>
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                          <i class="fal fa-clock text-violet-400"></i>
+                          <span x-text="`~${estimatedTime}`"></span>
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                          <i class="fal fa-globe text-violet-400"></i>
+                          English
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                          <i class="fal fa-asterisk text-violet-400 text-xs"></i>
+                          <span x-text="`${generatedSurvey.questions.filter(q => q.required).length} required`"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <!-- Regenerate -->
+                    <button @click="currentStep = 1; generatedSurvey = null"
+                            class="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 text-webropol-gray-700 rounded-xl font-medium text-sm transition-all shadow-sm flex-shrink-0">
+                      <i class="fal fa-redo text-xs"></i>
+                      Regenerate
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Questions List -->
+                <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100 mb-6 overflow-hidden">
+                  <div class="px-6 py-4 border-b border-webropol-gray-100 flex items-center justify-between">
+                    <h3 class="font-semibold text-webropol-gray-900">Generated Questions</h3>
+                    <span class="text-xs font-medium text-webropol-gray-400 bg-webropol-gray-50 px-2.5 py-1 rounded-full"
+                          x-text="`${generatedSurvey.questions.length} total`"></span>
+                  </div>
+
+                  <div class="divide-y divide-webropol-gray-50">
+                    <template x-for="(question, index) in generatedSurvey.questions" :key="question.id">
+                      <div class="q-card q-reveal px-5 py-4 hover:bg-webropol-gray-50/60 flex items-start gap-3.5 group"
+                           :style="`animation-delay: ${Math.min(index * 55, 400)}ms`">
+                        <!-- Number badge -->
+                        <div class="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5 transition-transform group-hover:scale-105"
+                             :class="getTypeStyle(question.type).numBg + ' ' + getTypeStyle(question.type).numText">
+                          <span x-text="index + 1"></span>
+                        </div>
+                        <!-- Content -->
+                        <div class="flex-1 min-w-0">
+                          <p class="text-sm font-medium text-webropol-gray-900 leading-snug mb-2" x-text="question.text"></p>
+                          <div class="flex flex-wrap items-center gap-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                                  :class="getTypeStyle(question.type).badge">
+                              <i :class="getTypeIcon(question.type)" class="text-xs"></i>
+                              <span x-text="getTypeName(question.type)"></span>
+                            </span>
+                            <span x-show="question.required"
+                                  class="px-2 py-0.5 bg-red-50 text-red-600 text-xs rounded-full font-medium border border-red-100">
+                              Required
+                            </span>
+                          </div>
+                        </div>
+                        <!-- Actions -->
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
+                          <button @click="question.required = !question.required"
+                                  :title="question.required ? 'Mark as optional' : 'Mark as required'"
+                                  :class="question.required ? 'bg-red-100 text-red-500 hover:bg-red-200' : 'bg-webropol-gray-100 text-webropol-gray-400 hover:bg-amber-100 hover:text-amber-600'"
+                                  class="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors">
+                            <i class="fal fa-asterisk"></i>
+                          </button>
+                          <button @click="removeQuestion(question.id)"
+                                  title="Remove question"
+                                  class="w-7 h-7 rounded-lg bg-webropol-gray-100 hover:bg-red-100 flex items-center justify-center text-webropol-gray-400 hover:text-red-500 text-xs transition-colors">
+                            <i class="fal fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+
+                    <!-- Add Question Row -->
+                    <div class="px-5 py-4">
+                      <button @click="addQuestion()"
+                              class="w-full flex items-center justify-center gap-2 py-3.5 border-2 border-dashed border-webropol-gray-200 rounded-xl text-sm text-webropol-gray-500 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50/40 transition-all">
+                        <i class="fal fa-plus text-xs"></i>
+                        Add a question
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- AI Tip Banner -->
+                <div class="bg-gradient-to-r from-violet-50 to-fuchsia-50 border border-violet-200 rounded-2xl px-5 py-4 flex items-start gap-3 mb-6">
+                  <div class="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i class="fal fa-lightbulb-on text-violet-600 text-sm"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-violet-900 mb-0.5">Review & refine</p>
+                    <p class="text-xs text-violet-700 leading-relaxed">
+                      You can edit the survey title inline above, toggle required/optional, remove questions you don't need, or add new ones. Hover over any question for controls.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center justify-between">
+                  <button @click="currentStep = 1"
+                          class="flex items-center gap-2 px-5 py-3 bg-white border border-webropol-gray-200 text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-xl font-medium text-sm transition-all">
+                    <i class="fal fa-arrow-left text-xs"></i>
+                    Back
+                  </button>
+                  <button @click="currentStep = 3"
+                          x-show="generatedSurvey.questions.length > 0"
+                          class="flex items-center gap-2 px-7 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white rounded-xl font-semibold text-sm transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                    Continue to Configure
+                    <i class="fal fa-arrow-right text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div><!-- /step 2 -->
+
+
+          <!-- ═══════════════════════════════════════════════════════════
+               STEP 3 — CONFIGURE
+          ════════════════════════════════════════════════════════════ -->
+          <div x-show="currentStep === 3"
+               x-cloak
+               x-transition:enter="transition ease-out duration-400"
+               x-transition:enter-start="opacity-0 translate-y-4"
+               x-transition:enter-end="opacity-100 translate-y-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="opacity-100 translate-y-0"
+               x-transition:leave-end="opacity-0 -translate-y-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+              <!-- Left — Form -->
+              <div class="md:col-span-2 space-y-5">
+                <div class="bg-white rounded-2xl p-6 shadow-card border border-webropol-gray-100">
+                  <h3 class="font-semibold text-webropol-gray-900 mb-5 flex items-center gap-2">
+                    <i class="fal fa-sliders-h text-violet-500"></i>
+                    Survey Settings
+                  </h3>
+                  <div class="space-y-5">
+                    <!-- Title -->
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">
+                        Survey Title <span class="text-red-500">*</span>
+                      </label>
+                      <input type="text"
+                             x-model="surveyTitle"
+                             placeholder="Enter survey title…"
+                             class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition-all text-webropol-gray-900 placeholder-webropol-gray-400">
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">
+                        Description <span class="text-webropol-gray-400 font-normal text-xs">(optional)</span>
+                      </label>
+                      <textarea x-model="surveyDescription"
+                                rows="2"
+                                placeholder="Brief description of your survey…"
+                                class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition-all text-webropol-gray-900 placeholder-webropol-gray-400 resize-none"></textarea>
+                    </div>
+
+                    <!-- Folder + Language -->
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">Folder</label>
+                        <select x-model="selectedFolder"
+                                class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition-all bg-white text-webropol-gray-900">
+                          <template x-for="folder in folders" :key="folder.value">
+                            <option :value="folder.value" x-text="folder.label"></option>
+                          </template>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">Language</label>
+                        <select x-model="selectedLanguage"
+                                class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-violet-200 focus:border-violet-400 outline-none transition-all bg-white text-webropol-gray-900">
+                          <template x-for="lang in languages" :key="lang.value">
+                            <option :value="lang.value" x-text="lang.label"></option>
+                          </template>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Auto-delete -->
+                    <div class="bg-webropol-gray-50 rounded-xl p-4 border border-webropol-gray-100">
+                      <div class="flex items-center gap-3 mb-2">
+                        <input type="checkbox" x-model="autoDelete" id="auto-delete"
+                               class="w-4 h-4 rounded border-webropol-gray-300 text-violet-600 focus:ring-violet-300">
+                        <label for="auto-delete" class="text-sm font-medium text-webropol-gray-700 cursor-pointer">
+                          Set automatic deletion date
+                        </label>
+                      </div>
+                      <div x-show="autoDelete" x-transition>
+                        <input type="date" x-model="deleteDate"
+                               class="w-full px-4 py-2.5 border border-webropol-gray-200 rounded-lg focus:ring-2 focus:ring-violet-200 outline-none mt-1 text-webropol-gray-700 bg-white">
+                        <p class="text-xs text-webropol-gray-400 mt-2">Survey will be automatically deleted after this date.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-center justify-between">
+                  <button @click="currentStep = 2"
+                          class="flex items-center gap-2 px-5 py-3 bg-white border border-webropol-gray-200 text-webropol-gray-700 hover:bg-webropol-gray-50 rounded-xl font-medium text-sm transition-all">
+                    <i class="fal fa-arrow-left text-xs"></i>
+                    Back to Review
+                  </button>
+                  <button @click="createSurvey()"
+                          :disabled="!surveyTitle.trim()"
+                          :class="surveyTitle.trim()
+                            ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:from-violet-700 hover:to-fuchsia-600 text-white shadow-lg hover:shadow-xl cursor-pointer hover:-translate-y-0.5'
+                            : 'bg-webropol-gray-200 text-webropol-gray-400 cursor-not-allowed'"
+                          class="flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-sm transition-all duration-200">
+                    <i class="fal fa-check"></i>
+                    Create Survey
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right — Summary -->
+              <div class="md:col-span-1">
+                <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50/60 rounded-2xl p-5 border border-violet-100 sticky top-6">
+                  <h4 class="text-sm font-semibold text-webropol-gray-700 mb-4 flex items-center gap-2">
+                    <i class="fal fa-sparkles text-violet-500"></i>
+                    Survey Summary
+                  </h4>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-webropol-gray-500 flex items-center gap-2">
+                        <i class="fal fa-list-ul text-webropol-gray-400 w-4"></i>
+                        Questions
+                      </span>
+                      <span class="font-semibold text-webropol-gray-900" x-text="generatedSurvey?.questions?.length || 0"></span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-webropol-gray-500 flex items-center gap-2">
+                        <i class="fal fa-asterisk text-webropol-gray-400 w-4 text-xs"></i>
+                        Required
+                      </span>
+                      <span class="font-semibold text-webropol-gray-900" x-text="generatedSurvey?.questions?.filter(q => q.required).length || 0"></span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-webropol-gray-500 flex items-center gap-2">
+                        <i class="fal fa-clock text-webropol-gray-400 w-4"></i>
+                        Est. time
+                      </span>
+                      <span class="font-semibold text-webropol-gray-900" x-text="estimatedTime"></span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-webropol-gray-500 flex items-center gap-2">
+                        <i class="fal fa-globe text-webropol-gray-400 w-4"></i>
+                        Language
+                      </span>
+                      <span class="font-semibold text-webropol-gray-900"
+                            x-text="languages.find(l => l.value === selectedLanguage)?.label || 'English'"></span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="text-webropol-gray-500 flex items-center gap-2">
+                        <i class="fal fa-folder text-webropol-gray-400 w-4"></i>
+                        Folder
+                      </span>
+                      <span class="font-semibold text-webropol-gray-900"
+                            x-text="folders.find(f => f.value === selectedFolder)?.label || 'Root'"></span>
+                    </div>
+                    <div class="pt-3.5 border-t border-violet-200">
+                      <div class="flex flex-wrap gap-1.5">
+                        <span class="px-2.5 py-1 bg-violet-100 text-violet-700 text-xs rounded-full font-medium flex items-center gap-1">
+                          <i class="fal fa-sparkles text-xs"></i> AI Generated
+                        </span>
+                        <span class="px-2.5 py-1 bg-webropol-gray-100 text-webropol-gray-600 text-xs rounded-full font-medium">
+                          Draft
+                        </span>
+                      </div>
+                      <p class="text-xs text-webropol-gray-400 mt-2.5 leading-relaxed">
+                        You can edit, add questions, and publish from the survey editor after creation.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /step 3 -->
+
+        </div><!-- /max-w-4xl -->
+      </main>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ALPINE.JS APP
+  ════════════════════════════════════════════════════════════ -->
+  <script>
+  function aiSurveyApp() {
+    return {
+
+      // ── Wizard state ───────────────────────────────────────────────
+      currentStep: 1,
+      isGenerating: false,
+      generationProgress: 0,
+      surveyCreated: false,
+      redirectProgress: 0,
+
+      // ── Step 1 ─────────────────────────────────────────────────────
+      aiPrompt: '',
+      selectedType: 'survey',
+      showTips: false,
+      recentPrompts: [],
+
+      surveyTypes: [
+        { id: 'survey',   name: 'Survey',    icon: 'fal fa-user-magnifying-glass', placeholder: 'e.g. Create a customer satisfaction survey for our hotel with questions about room quality, service, dining, and overall experience. Keep it under 5 minutes.' },
+        { id: 'employee', name: 'Employee',  icon: 'fal fa-users',                placeholder: 'e.g. Design an employee engagement survey covering job satisfaction, manager effectiveness, career development, and work-life balance.' },
+        { id: 'product',  name: 'Product',   icon: 'fal fa-box',                  placeholder: 'e.g. Create a product feedback survey for our new mobile app. Focus on onboarding experience, feature usage, performance, and missing features.' },
+        { id: 'event',    name: 'Event',     icon: 'fal fa-calendar-check',        placeholder: 'e.g. Design a post-event survey for our annual conference. Cover content quality, speakers, venue, catering, and likelihood to attend next year.' },
+        { id: 'nps',      name: 'NPS',       icon: 'fal fa-chart-line',            placeholder: 'e.g. Create a Net Promoter Score survey to measure customer loyalty after our software onboarding. Include follow-up questions for promoters and detractors.' },
+        { id: 'training', name: 'Training',  icon: 'fal fa-graduation-cap',        placeholder: 'e.g. Evaluate our cybersecurity awareness training. Assess content quality, instructor effectiveness, knowledge retention, and relevance to daily work.' },
+      ],
+
+      quickTemplates: [
+        { id: 1, title: 'Customer Satisfaction', description: 'Measure happiness and loyalty', icon: 'fal fa-heart', type: 'survey',
+          prompt: 'Create a customer satisfaction survey for our service. Include questions about overall satisfaction, likelihood to recommend, service quality, response time, and areas for improvement. Keep it under 5 minutes.' },
+        { id: 2, title: 'Employee Engagement',   description: 'Assess workplace wellbeing',   icon: 'fal fa-users', type: 'employee',
+          prompt: 'Design an employee engagement survey covering job satisfaction, work-life balance, management effectiveness, career development, and company culture. Include both rating scales and open-ended questions.' },
+        { id: 3, title: 'Product Feedback',      description: 'Improve features and UX',      icon: 'fal fa-box', type: 'product',
+          prompt: 'Create a product feedback survey for our software platform. Ask about usability, feature value, overall experience, comparison to alternatives, and suggestions for improvements. Target existing users.' },
+        { id: 4, title: 'Event Evaluation',      description: 'Rate events and meetings',     icon: 'fal fa-calendar-check', type: 'event',
+          prompt: 'Design an event evaluation survey for our annual conference. Cover content quality, speakers, venue, logistics, networking, and likelihood to attend future events.' },
+        { id: 5, title: 'Net Promoter Score',    description: 'Measure customer loyalty',     icon: 'fal fa-chart-line', type: 'nps',
+          prompt: 'Create a Net Promoter Score survey to measure customer loyalty. Include the NPS question, follow-up for detractors and promoters, overall satisfaction rating, and areas of improvement.' },
+        { id: 6, title: 'Training Evaluation',   description: 'Assess learning outcomes',     icon: 'fal fa-graduation-cap', type: 'training',
+          prompt: 'Design a training evaluation survey for our onboarding program. Assess content quality, instructor effectiveness, relevance to the role, knowledge retention, and action items taken post-training.' },
+      ],
+
+      // ── Step 2 ─────────────────────────────────────────────────────
+      generatedSurvey: null,
+
+      // ── Step 3 ─────────────────────────────────────────────────────
+      surveyTitle: '',
+      surveyDescription: '',
+      selectedFolder: 'root',
+      selectedLanguage: 'en',
+      autoDelete: false,
+      deleteDate: '',
+
+      folders: [
+        { value: 'root',              label: 'Root' },
+        { value: 'employee-surveys',  label: 'Employee Surveys' },
+        { value: 'customer-feedback', label: 'Customer Feedback' },
+        { value: 'market-research',   label: 'Market Research' },
+      ],
+
+      languages: [
+        { value: 'en', label: 'English' },
+        { value: 'fi', label: 'Finnish' },
+        { value: 'sv', label: 'Swedish' },
+        { value: 'de', label: 'German' },
+        { value: 'fr', label: 'French' },
+      ],
+
+      // ── Question banks ─────────────────────────────────────────────
+      questionBanks: {
+        customer: {
+          title: 'Customer Satisfaction Survey',
+          questions: [
+            { text: 'Overall, how satisfied are you with our service?', type: 'rating', required: true },
+            { text: 'How likely are you to recommend us to a friend or colleague?', type: 'nps', required: true },
+            { text: 'What is the primary reason for your score?', type: 'text', required: false },
+            { text: 'How would you rate the quality of our products?', type: 'rating', required: false },
+            { text: 'How responsive has our customer service team been to your needs?', type: 'scale', required: false },
+            { text: 'Was your last inquiry or issue resolved to your satisfaction?', type: 'yesno', required: false },
+            { text: 'Which aspects of our service do you value most?', type: 'choice', required: false, options: ['Product quality', 'Customer support', 'Pricing', 'Delivery speed', 'User experience'] },
+            { text: 'What can we do to further improve your experience with us?', type: 'text', required: false },
+          ]
+        },
+        employee: {
+          title: 'Employee Engagement Survey',
+          questions: [
+            { text: 'How satisfied are you with your current role and day-to-day responsibilities?', type: 'rating', required: true },
+            { text: 'Do you feel your contributions are recognized and genuinely appreciated?', type: 'scale', required: true },
+            { text: 'How likely are you to recommend our company as a great place to work?', type: 'nps', required: false },
+            { text: 'How would you rate your current work-life balance?', type: 'rating', required: false },
+            { text: 'Do you have the tools and resources needed to do your job effectively?', type: 'yesno', required: false },
+            { text: 'How effectively does leadership communicate the company vision and goals?', type: 'scale', required: false },
+            { text: 'Which areas of our company culture need the most improvement?', type: 'choice', required: false, options: ['Communication', 'Work-life balance', 'Career growth', 'Team collaboration', 'Leadership transparency'] },
+            { text: 'What would most improve your experience working here?', type: 'text', required: false },
+          ]
+        },
+        product: {
+          title: 'Product Feedback Survey',
+          questions: [
+            { text: 'How easy was it to get started and set up our product?', type: 'rating', required: true },
+            { text: 'How likely are you to continue using our product over the next 6 months?', type: 'nps', required: true },
+            { text: 'How would you rate the overall user experience and interface design?', type: 'rating', required: false },
+            { text: 'Which features do you use most frequently?', type: 'choice', required: false, options: ['Core features', 'Reporting & analytics', 'Integrations', 'Mobile app', 'Customer support'] },
+            { text: 'Has our product helped you achieve your main goals?', type: 'yesno', required: false },
+            { text: 'How does our product compare to alternatives you have previously used?', type: 'scale', required: false },
+            { text: 'What features are missing that you would most like to see added?', type: 'text', required: false },
+            { text: 'What is your biggest frustration or challenge when using our product?', type: 'text', required: false },
+          ]
+        },
+        event: {
+          title: 'Event Feedback Survey',
+          questions: [
+            { text: 'How would you rate the overall quality and value of this event?', type: 'rating', required: true },
+            { text: 'How likely are you to attend future events that we organize?', type: 'nps', required: true },
+            { text: 'How would you rate the quality of the content and presentations?', type: 'rating', required: false },
+            { text: 'Was the event well-organized and running on schedule?', type: 'yesno', required: false },
+            { text: 'How would you rate the venue, logistics, and catering?', type: 'scale', required: false },
+            { text: 'How did you first hear about this event?', type: 'choice', required: false, options: ['Email invitation', 'Social media', 'Colleague recommendation', 'Company website', 'Other'] },
+            { text: 'What was the most valuable or memorable part of the event for you?', type: 'text', required: false },
+            { text: 'What topics would you like us to cover at future events?', type: 'text', required: false },
+          ]
+        },
+        training: {
+          title: 'Training Evaluation Survey',
+          questions: [
+            { text: 'How would you rate the overall quality and value of this training?', type: 'rating', required: true },
+            { text: 'Were the learning objectives clearly communicated and fully met?', type: 'yesno', required: true },
+            { text: 'How relevant was this training to your current role and responsibilities?', type: 'scale', required: false },
+            { text: "How would you rate the instructor or facilitator's delivery?", type: 'rating', required: false },
+            { text: 'How likely are you to apply what you have learned in your daily work?', type: 'nps', required: false },
+            { text: 'Was the training duration appropriate for the amount of content covered?', type: 'yesno', required: false },
+            { text: 'What aspects of this training would you most like to see improved?', type: 'text', required: false },
+            { text: 'What additional training topics would benefit you or your team?', type: 'text', required: false },
+          ]
+        },
+        nps: {
+          title: 'Net Promoter Score Survey',
+          questions: [
+            { text: 'On a scale of 0–10, how likely are you to recommend our company to a friend or colleague?', type: 'nps', required: true },
+            { text: 'What is the primary reason for your score?', type: 'text', required: true },
+            { text: 'Overall, how satisfied are you with our company and offerings?', type: 'rating', required: false },
+            { text: 'How long have you been a customer of ours?', type: 'choice', required: false, options: ['Less than 6 months', '6–12 months', '1–3 years', 'More than 3 years'] },
+            { text: 'Which aspects of our business have most exceeded your expectations?', type: 'choice', required: false, options: ['Product quality', 'Customer service', 'Value for money', 'Innovation', 'Reliability'] },
+            { text: 'What single change would most increase your likelihood to recommend us?', type: 'text', required: false },
+          ]
+        },
+        default: {
+          title: 'Feedback Survey',
+          questions: [
+            { text: 'How would you rate your overall experience with us?', type: 'rating', required: true },
+            { text: 'How likely are you to recommend us to others?', type: 'nps', required: true },
+            { text: 'What did you enjoy most about your experience?', type: 'text', required: false },
+            { text: 'What areas do you think we could most improve?', type: 'text', required: false },
+            { text: 'Would you use our services again in the future?', type: 'yesno', required: false },
+            { text: 'How did you first hear about us?', type: 'choice', required: false, options: ['Word of mouth', 'Social media', 'Search engine', 'Advertisement', 'Other'] },
+            { text: 'Is there anything else you would like to share with us?', type: 'text', required: false },
+          ]
+        }
+      },
+
+      // ── Computed ───────────────────────────────────────────────────
+      get canGenerate() {
+        return this.aiPrompt.trim().length >= 10;
+      },
+
+      get currentPlaceholder() {
+        return this.surveyTypes.find(t => t.id === this.selectedType)?.placeholder
+          || 'Describe your survey vision in a few sentences…';
+      },
+
+      get estimatedTime() {
+        if (!this.generatedSurvey || !this.generatedSurvey.questions.length) return '0 min';
+        const secs = this.generatedSurvey.questions.reduce(
+          (acc, q) => acc + (q.type === 'text' ? 60 : 30), 0
+        );
+        return `${Math.ceil(secs / 60)} min`;
+      },
+
+      // ── AI generation ──────────────────────────────────────────────
+      detectTopic(prompt, type) {
+        const lc = prompt.toLowerCase();
+        if (type === 'employee' || /\bemployee\b|\bstaff\b|\bteam\b|\bworkplace\b|\bengagement\b|\bhr\b/.test(lc)) return 'employee';
+        if (type === 'product'  || /\bproduct\b|\bfeature\b|\bapp\b|\bsoftware\b|\bplatform\b/.test(lc))           return 'product';
+        if (type === 'event'    || /\bevent\b|\bconference\b|\bwebinar\b|\bworkshop\b|\bmeeting\b/.test(lc))         return 'event';
+        if (type === 'training' || /\btraining\b|\bcourse\b|\blearning\b|\bonboarding\b|\beducation\b/.test(lc))     return 'training';
+        if (type === 'nps'      || /\bnps\b|\bpromoter\b|\bloyalty\b/.test(lc))                                      return 'nps';
+        if (/\bcustomer\b|\bsatisfaction\b|\bclient\b|\bservice\b/.test(lc))                                          return 'customer';
+        return 'default';
+      },
+
+      simulateAIGeneration(prompt, type) {
+        const topic = this.detectTopic(prompt, type);
+        const bank  = this.questionBanks[topic] || this.questionBanks.default;
+        return {
+          title: bank.title,
+          questions: bank.questions.map((q, i) => ({
+            ...q,
+            id: `q_${Date.now()}_${i}`,
+            options: q.options ? [...q.options] : []
+          })),
+          aiConfidence: (Math.floor(Math.random() * 13) + 83) + '%',
+          detectedTopic: topic,
+        };
+      },
+
+      async generateSurvey() {
+        if (!this.canGenerate) return;
+        this.isGenerating = true;
+        this.generationProgress = 0;
+        this.saveRecentPrompt(this.aiPrompt.trim());
+
+        const interval = setInterval(() => {
+          if (this.generationProgress < 88) {
+            this.generationProgress = Math.min(88, this.generationProgress + Math.random() * 10 + 4);
+          }
+        }, 240);
+
+        await new Promise(r => setTimeout(r, 2400));
+        clearInterval(interval);
+        this.generationProgress = 100;
+
+        this.generatedSurvey = this.simulateAIGeneration(this.aiPrompt, this.selectedType);
+        this.surveyTitle = this.generatedSurvey.title;
+
+        await new Promise(r => setTimeout(r, 350));
+        this.isGenerating = false;
+        this.currentStep = 2;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      // ── Question management ────────────────────────────────────────
+      removeQuestion(id) {
+        if (!this.generatedSurvey) return;
+        this.generatedSurvey.questions = this.generatedSurvey.questions.filter(q => q.id !== id);
+      },
+
+      addQuestion() {
+        if (!this.generatedSurvey) return;
+        this.generatedSurvey.questions.push({
+          id: `q_new_${Date.now()}`,
+          text: 'Enter your question here…',
+          type: 'text',
+          required: false,
+          options: []
+        });
+      },
+
+      // ── Create survey ──────────────────────────────────────────────
+      createSurvey() {
+        if (!this.surveyTitle.trim()) return;
+
+        const id  = `AI_${Date.now()}`;
+        const now = new Date();
+        const dateStr = `${now.toLocaleDateString('fi-FI')} ${now.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })}`;
+
+        const surveyData = {
+          id,
+          name:        this.surveyTitle.trim(),
+          description: this.surveyDescription,
+          status:      'draft',
+          answers:     0,
+          lastEdited:  dateStr,
+          createdBy:   'Ali Al-Zuhairi',
+          folder:      this.selectedFolder,
+          language:    this.selectedLanguage,
+          aiGenerated: true,
+        };
+
+        try {
+          const existing = JSON.parse(localStorage.getItem('webropol_surveys') || '[]');
+          existing.unshift(surveyData);
+          localStorage.setItem('webropol_surveys', JSON.stringify(existing));
+
+          if (this.generatedSurvey?.questions) {
+            localStorage.setItem(
+              `webropol_survey_questions_${id}`,
+              JSON.stringify(this.generatedSurvey.questions)
+            );
+          }
+        } catch (e) {
+          console.error('[AI Survey] localStorage error:', e);
+        }
+
+        // Show success state, then redirect
+        this.surveyCreated = true;
+        let p = 0;
+        const redir = setInterval(() => {
+          p += 2.5;
+          this.redirectProgress = p;
+          if (p >= 100) {
+            clearInterval(redir);
+            window.location.href = '../surveys/list.html';
+          }
+        }, 40);
+      },
+
+      // ── Recent prompts ─────────────────────────────────────────────
+      saveRecentPrompt(text) {
+        try {
+          const recent = JSON.parse(localStorage.getItem('webropol_ai_recent_prompts') || '[]');
+          recent.unshift({ id: Date.now(), text, date: new Date().toLocaleDateString(), type: this.selectedType });
+          recent.splice(10);
+          localStorage.setItem('webropol_ai_recent_prompts', JSON.stringify(recent));
+          this.recentPrompts = recent;
+        } catch (e) { /* silent */ }
+      },
+
+      clearRecentPrompts() {
+        this.recentPrompts = [];
+        try { localStorage.removeItem('webropol_ai_recent_prompts'); } catch (e) { /* silent */ }
+      },
+
+      useTemplate(tmpl) {
+        this.aiPrompt    = tmpl.prompt;
+        this.selectedType = tmpl.type;
+        window.scrollTo({ top: 280, behavior: 'smooth' });
+      },
+
+      // ── Type helpers ───────────────────────────────────────────────
+      getTypeStyle(type) {
+        return ({
+          rating: { numBg: 'bg-amber-100',  numText: 'text-amber-700',  badge: 'bg-amber-50 text-amber-700 border border-amber-200' },
+          nps:    { numBg: 'bg-violet-100', numText: 'text-violet-700', badge: 'bg-violet-50 text-violet-700 border border-violet-200' },
+          text:   { numBg: 'bg-sky-100',    numText: 'text-sky-700',    badge: 'bg-sky-50 text-sky-700 border border-sky-200' },
+          choice: { numBg: 'bg-teal-100',   numText: 'text-teal-700',   badge: 'bg-teal-50 text-teal-700 border border-teal-200' },
+          yesno:  { numBg: 'bg-emerald-100',numText: 'text-emerald-700',badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
+          scale:  { numBg: 'bg-orange-100', numText: 'text-orange-700', badge: 'bg-orange-50 text-orange-700 border border-orange-200' },
+        })[type] || { numBg: 'bg-webropol-gray-100', numText: 'text-webropol-gray-600', badge: 'bg-webropol-gray-50 text-webropol-gray-600 border border-webropol-gray-200' };
+      },
+
+      getTypeIcon(type) {
+        return ({ rating: 'fal fa-star', nps: 'fal fa-chart-bar', text: 'fal fa-comment-lines', choice: 'fal fa-list-ul', yesno: 'fal fa-toggle-on', scale: 'fal fa-sliders-h' })[type] || 'fal fa-question';
+      },
+
+      getTypeName(type) {
+        return ({ rating: 'Rating', nps: 'NPS', text: 'Open Text', choice: 'Multiple Choice', yesno: 'Yes / No', scale: 'Scale' })[type] || type;
+      },
+
+      // ── Lifecycle ──────────────────────────────────────────────────
+      init() {
+        try {
+          this.recentPrompts = JSON.parse(localStorage.getItem('webropol_ai_recent_prompts') || '[]');
+        } catch (e) {
+          this.recentPrompts = [];
+        }
+
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 30);
+        this.deleteDate = futureDate.toISOString().split('T')[0];
+      }
+    };
+  }
+  </script>
+</body>
+</html>
