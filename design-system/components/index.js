@@ -25,8 +25,7 @@ export { WebropolSurveyList } from './surveys/SurveyList.js';
 // Navigation components
 export { WebropolHeader } from './navigation/Header.js';
 export { WebropolHeader as WebropolHeaderEnhanced } from './navigation/HeaderEnhanced.js';
-export { WebropolSidebar } from './navigation/Sidebar.js';
-export { WebropolSidebarEnhanced } from './navigation/SidebarEnhanced.js';
+export { WebropolSidebarEnhanced as WebropolSidebar, WebropolSidebarEnhanced } from './navigation/SidebarEnhanced.js';
 export { WebropolBreadcrumbs } from './navigation/Breadcrumbs.js';
 export { WebropolFolderTree } from './navigation/FolderTree.js';
 export { Tabs } from './navigation/Tabs.js';
@@ -74,7 +73,6 @@ import './cards/VideoCard.js';
 import './surveys/SurveyList.js';
 import './navigation/Header.js';
 import './navigation/HeaderEnhanced.js';
-import './navigation/Sidebar.js';
 import './navigation/SidebarEnhanced.js';
 import './navigation/Breadcrumbs.js';
 import './navigation/Tabs.js';

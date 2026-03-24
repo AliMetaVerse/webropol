@@ -422,36 +422,21 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       </div>
       
       <!-- Mobile Footer -->
-      <div class="border-t border-webropol-gray-200 p-4">
-        <!-- Contact Us - Redesigned Mobile Footer Button -->
-        <div class="relative">
-          <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
-            <!-- Icon with animated background -->
-            <div class="relative flex-shrink-0">
-              <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
-              </div>
-              <!-- Pulse animation on hover -->
-              <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
-            </div>
-            
-            <!-- Text content -->
-            <div class="ml-4 flex-1">
-              <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm">
-                Contact Us
-              </div>
-              <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300">
-                Gain Insight & Get Support
-              </div>
-            </div>
-          </a>
-        </div>
-        
-        <!-- Version info -->
-        <div class="mt-3 text-center">
-          <div class="text-xs text-webropol-gray-400">
-            Webropol Development ${this.version}
+      <div class="border-t border-webropol-gray-100 p-4">
+        <a href="#/contact" data-route="/contact"
+           class="contact-footer-btn group/contact flex items-center gap-3 px-3 py-3 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0
+                      bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
+            <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
           </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight">Contact Support</div>
+            <div class="text-[11px] text-webropol-gray-400 mt-0.5">Get help &amp; insights</div>
+          </div>
+          <i class="fal fa-chevron-right text-[10px] text-webropol-gray-300 group-hover/contact:text-webropol-primary-400 transition-colors duration-150 flex-shrink-0"></i>
+        </a>
+        <div class="mt-3 px-3">
+          <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase">v3 Parrot &mdash; Webropol</div>
         </div>
       </div>
     `;
@@ -579,32 +564,22 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         
         <!-- Tablet Footer -->
         <div class="p-2 group-hover:p-4 transition-all duration-300">
-          <!-- Contact Us - Redesigned Tablet Footer Button -->
-          <div class="relative">
-            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center justify-center group-hover:justify-start rounded-2xl font-semibold transition-all duration-300 p-3 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
-              <!-- Icon with animated background -->
-              <div class="relative flex-shrink-0">
-                <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-lg flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-sm"></i>
-                </div>
-                <!-- Pulse animation on hover -->
-                <div class="absolute inset-0 w-8 h-8 bg-webropol-primary-400 rounded-lg opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
-              </div>
-              
-              <!-- Text content (appears on hover) -->
-              <div class="ml-3 transition-all duration-300 overflow-hidden">
-                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap footer-contact-title">
-                  Contact Us
-                </div>
-                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap footer-contact-subtitle">
-                  Gain Insight & Get Support
-                </div>
-              </div>
-            </a>
-          </div>
-          <!-- Version info (added for tablet) -->
-          <div class="mt-3 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development ${this.version}</div>
+          <!-- Contact Us - Tablet Footer -->
+          <div class="border-t border-webropol-gray-100 mb-2"></div>
+          <a href="#/contact" data-route="/contact"
+             class="contact-footer-btn group/contact flex items-center gap-3 px-2 py-2.5 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
+            <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mx-auto
+                        bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
+              <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
+            </div>
+            <div class="min-w-0 flex-1 overflow-hidden transition-all duration-300
+                        opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto">
+              <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight whitespace-nowrap">Contact Support</div>
+              <div class="text-[11px] text-webropol-gray-400 mt-0.5 whitespace-nowrap">Get help &amp; insights</div>
+            </div>
+          </a>
+          <div class="mt-2 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase whitespace-nowrap">v3 Parrot &mdash; Webropol</div>
           </div>
         </div>
       </aside>
@@ -654,35 +629,27 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     xl:px-4 px-2
                     group-hover:px-4
                     pb-6">
-          <!-- Contact Us - Redesigned Desktop Footer Button -->
-          <div class="relative">
-            <a href="#/contact" data-route="/contact" class="contact-footer-btn group/contact flex items-center rounded-2xl font-semibold transition-all duration-300 p-4 bg-gradient-to-r from-webropol-primary-50 to-webropol-primary-100 hover:from-webropol-primary-500 hover:to-webropol-primary-600 border border-webropol-primary-200 hover:border-webropol-primary-500 shadow-sm hover:shadow-lg">
-              <!-- Icon with animated background -->
-              <div class="relative flex-shrink-0">
-                <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 group-hover/contact:from-white group-hover/contact:to-white rounded-xl flex items-center justify-center transition-all duration-300 group-hover/contact:scale-110">
-                  <i class="fa-duotone fa-thin fa-headset text-white group-hover/contact:text-webropol-primary-600 transition-colors duration-300 text-lg"></i>
-                </div>
-                <!-- Pulse animation on hover -->
-                <div class="absolute inset-0 w-10 h-10 bg-webropol-primary-400 rounded-xl opacity-0 group-hover/contact:opacity-20 group-hover/contact:animate-ping"></div>
-              </div>
-              
-              <!-- Text content -->
-              <div class="ml-4 overflow-hidden transition-all duration-300 xl:w-auto xl:block w-auto block">
-                <div class="font-semibold text-webropol-primary-700 group-hover/contact:text-white transition-colors duration-300 text-sm whitespace-nowrap footer-contact-title">
-                  Contact Us
-                </div>
-                <div class="text-xs text-webropol-primary-600 group-hover/contact:text-webropol-primary-100 transition-colors duration-300 whitespace-nowrap footer-contact-subtitle">
-                  Gain Insight & Get Support
-                </div>
-              </div>
-            </a>
-          </div>
-          
-          <!-- Version info -->
-          <div class="mt-3 text-center overflow-hidden transition-all duration-300">
-            <div class="text-xs text-webropol-gray-400 whitespace-nowrap">
-              Webropol Development ${this.version}
+          <!-- Contact Us - Desktop Footer -->
+          <div class="border-t border-webropol-gray-100 mb-4"></div>
+          <a href="#/contact" data-route="/contact"
+             class="contact-footer-btn group/contact flex items-center gap-3 px-3 py-3 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
+            <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0
+                        bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
+              <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
             </div>
+            <div class="min-w-0 flex-1 overflow-hidden transition-all duration-300
+                        xl:opacity-100 xl:w-auto
+                        opacity-0 w-0
+                        group-hover:opacity-100 group-hover:w-auto">
+              <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight whitespace-nowrap">Contact Support</div>
+              <div class="text-[11px] text-webropol-gray-400 mt-0.5 whitespace-nowrap">Get help &amp; insights</div>
+            </div>
+            <i class="fal fa-chevron-right text-[10px] text-webropol-gray-300 group-hover/contact:text-webropol-primary-400 transition-colors duration-150 flex-shrink-0
+                       xl:opacity-100 opacity-0 group-hover:opacity-100"></i>
+          </a>
+          <div class="mt-3 px-3
+                      xl:opacity-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase whitespace-nowrap">v3 Parrot &mdash; Webropol</div>
           </div>
         </div>
       </aside>
@@ -942,4 +909,9 @@ export class WebropolSidebarEnhanced extends BaseComponent {
 }
 
 customElements.define('webropol-sidebar-enhanced', WebropolSidebarEnhanced);
+
+// Also register as webropol-sidebar so standalone pages work without a separate file
+if (!customElements.get('webropol-sidebar')) {
+  customElements.define('webropol-sidebar', WebropolSidebarEnhanced);
+}
 
