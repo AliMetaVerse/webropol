@@ -1395,7 +1395,6 @@
                                                 </template>
                                                 <template x-if="activity.type === 'events'">
                                                     <div class="flex items-center gap-1.5 min-w-0">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-webropol-primary-300 flex-shrink-0"></span>
                                                         <a :href="activity.editUrl || 'events/edit.html'" class="text-sm font-semibold text-webropol-gray-900 hover:text-webropol-primary-600 transition-colors truncate" x-text="activity.name"></a>
                                                     </div>
                                                 </template>
@@ -1405,13 +1404,7 @@
                                                         <span class="text-sm font-semibold text-webropol-gray-900 truncate" x-text="activity.name"></span>
                                                     </div>
                                                 </template>
-                                                <!-- Responses count -->
-                                                <template x-if="activity.answers !== undefined && activity.answers > 0">
-                                                    <span class="inline-flex items-center gap-1 text-xs text-webropol-gray-400 flex-shrink-0">
-                                                        <i class="fal fa-users text-xs"></i>
-                                                        <span x-text="activity.answers"></span>
-                                                    </span>
-                                                </template>
+
                                             </div>
                                         </div>
 
@@ -1439,6 +1432,11 @@
                                             <!-- Quick links below badge (surveys only) -->
                                             <template x-if="activity.type === 'surveys'">
                                                 <div class="flex items-center gap-2">
+                                                    <span x-show="activity.answers > 0" class="inline-flex items-center gap-1 text-xs text-webropol-gray-400 flex-shrink-0">
+                                                        <i class="fal fa-users text-xs"></i>
+                                                        <span x-text="activity.answers"></span>
+                                                    </span>
+                                                    <span x-show="activity.answers > 0" class="text-webropol-gray-300 text-xs">·</span>
                                                     <webropol-text-link
                                                         @click.prevent="setCurrentSurvey(activity); location.hash = '#/surveys/report'"
                                                         variant="primary"
