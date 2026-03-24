@@ -107,7 +107,7 @@ export class WebropolHeader extends BaseComponent {
                       </button>
                       <button class="view-mode-option flex items-center w-full px-3 py-2 text-sm rounded-lg transition-colors ${currentInterfaceMode === 'prompt' ? 'bg-webropol-primary-50 text-webropol-primary-700 font-medium' : 'text-webropol-gray-700 hover:bg-webropol-gray-50'}" data-mode="prompt">
                         <i class="fal fa-magic w-4 mr-2.5"></i>
-                        Magic
+                        AI Survey
                         ${currentInterfaceMode === 'prompt' ? '<i class="fa-duotone fa-thin fa-check ml-auto text-xs"></i>' : ''}
                       </button>
 

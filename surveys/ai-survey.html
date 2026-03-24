@@ -376,33 +376,6 @@
               </div>
             </div>
 
-            <!-- Quick-start Templates -->
-            <div class="mb-5">
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="text-sm font-semibold text-webropol-gray-700 flex items-center gap-2">
-                  <i class="fal fa-rocket text-violet-500"></i>
-                  Quick-start Templates
-                </h2>
-                <span class="text-xs text-webropol-gray-400">Click any card to pre-fill the prompt</span>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                <template x-for="tmpl in quickTemplates" :key="tmpl.id">
-                  <button @click="useTemplate(tmpl)"
-                          class="tmpl-card text-left p-4 bg-white rounded-2xl border border-webropol-gray-200 hover:border-violet-300 hover:shadow-medium group transition-all">
-                    <div class="flex items-start gap-3">
-                      <div class="w-9 h-9 bg-violet-50 group-hover:bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors">
-                        <i :class="tmpl.icon" class="text-violet-600 text-sm"></i>
-                      </div>
-                      <div>
-                        <p class="font-semibold text-webropol-gray-900 text-sm mb-0.5 group-hover:text-violet-700 transition-colors" x-text="tmpl.title"></p>
-                        <p class="text-xs text-webropol-gray-500 leading-relaxed" x-text="tmpl.description"></p>
-                      </div>
-                    </div>
-                  </button>
-                </template>
-              </div>
-            </div>
-
             <!-- Recent Prompts -->
             <div x-show="recentPrompts.length > 0"
                  class="bg-white rounded-2xl p-5 shadow-card border border-webropol-gray-100">
@@ -799,21 +772,6 @@
         { id: 'training', name: 'Training',  icon: 'fal fa-graduation-cap',        placeholder: 'e.g. Evaluate our cybersecurity awareness training. Assess content quality, instructor effectiveness, knowledge retention, and relevance to daily work.' },
       ],
 
-      quickTemplates: [
-        { id: 1, title: 'Customer Satisfaction', description: 'Measure happiness and loyalty', icon: 'fal fa-heart', type: 'survey',
-          prompt: 'Create a customer satisfaction survey for our service. Include questions about overall satisfaction, likelihood to recommend, service quality, response time, and areas for improvement. Keep it under 5 minutes.' },
-        { id: 2, title: 'Employee Engagement',   description: 'Assess workplace wellbeing',   icon: 'fal fa-users', type: 'employee',
-          prompt: 'Design an employee engagement survey covering job satisfaction, work-life balance, management effectiveness, career development, and company culture. Include both rating scales and open-ended questions.' },
-        { id: 3, title: 'Product Feedback',      description: 'Improve features and UX',      icon: 'fal fa-box', type: 'product',
-          prompt: 'Create a product feedback survey for our software platform. Ask about usability, feature value, overall experience, comparison to alternatives, and suggestions for improvements. Target existing users.' },
-        { id: 4, title: 'Event Evaluation',      description: 'Rate events and meetings',     icon: 'fal fa-calendar-check', type: 'event',
-          prompt: 'Design an event evaluation survey for our annual conference. Cover content quality, speakers, venue, logistics, networking, and likelihood to attend future events.' },
-        { id: 5, title: 'Net Promoter Score',    description: 'Measure customer loyalty',     icon: 'fal fa-chart-line', type: 'nps',
-          prompt: 'Create a Net Promoter Score survey to measure customer loyalty. Include the NPS question, follow-up for detractors and promoters, overall satisfaction rating, and areas of improvement.' },
-        { id: 6, title: 'Training Evaluation',   description: 'Assess learning outcomes',     icon: 'fal fa-graduation-cap', type: 'training',
-          prompt: 'Design a training evaluation survey for our onboarding program. Assess content quality, instructor effectiveness, relevance to the role, knowledge retention, and action items taken post-training.' },
-      ],
-
       // ── Step 2 ─────────────────────────────────────────────────────
       generatedSurvey: null,
 
@@ -1084,12 +1042,6 @@
         try { localStorage.removeItem('webropol_ai_recent_prompts'); } catch (e) { /* silent */ }
       },
 
-      useTemplate(tmpl) {
-        this.aiPrompt    = tmpl.prompt;
-        this.selectedType = tmpl.type;
-        window.scrollTo({ top: 280, behavior: 'smooth' });
-      },
-
       // ── Type helpers ───────────────────────────────────────────────
       getTypeStyle(type) {
         return ({
@@ -1112,7 +1064,7 @@
 
       // ── Lifecycle ──────────────────────────────────────────────────
       init() {
-        // Mark prompt/magic mode so header shows the right checkmark
+        // Mark AI Survey mode so header shows the right checkmark
         localStorage.setItem('webropol_interface_mode', 'prompt');
 
         // Listen for header view-mode switcher → "Classic" navigates back to home
