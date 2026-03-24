@@ -592,6 +592,15 @@ export class WebropolHeader extends BaseComponent {
       option.addEventListener('click', (e) => {
         e.stopPropagation();
         const mode = option.getAttribute('data-mode');
+        try {
+          localStorage.setItem('webropol_interface_mode', mode);
+        } catch (err) {
+          console.warn('Failed to save interface mode:', err);
+        }
+
+        // Let any listeners update their own state/UI
+        document.dispatchEvent(new CustomEvent('webropol-interface-change', { detail: { mode } }));
+
         // Dispatch event for Alpine.js (index.html) to catch
         document.dispatchEvent(new CustomEvent('webropol-switch-interface', { detail: { mode } }));
         if (themeDropdown) themeDropdown.classList.add('opacity-0', 'invisible');

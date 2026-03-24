@@ -1783,11 +1783,17 @@
                     // Mark classic mode so header shows the right checkmark
                     localStorage.setItem('webropol_interface_mode', 'classic');
 
-                    // Listen for header view-mode switcher → "AI Survey" navigates to AI Survey Creator
+                    // Listen for header view-mode switcher
                     document.addEventListener('webropol-switch-interface', (e) => {
-                        if (e.detail && e.detail.mode === 'prompt') {
-                            localStorage.setItem('webropol_interface_mode', 'prompt');
+                        const mode = e?.detail?.mode;
+                        if (!mode) return;
+
+                        localStorage.setItem('webropol_interface_mode', mode);
+
+                        if (mode === 'prompt') {
                             location.hash = '#/surveys/ai-survey';
+                        } else if (mode === 'classic') {
+                            location.hash = '#/';
                         }
                     });
 
