@@ -10,10 +10,46 @@ import '../buttons/ButtonHue.js';
 
 export class WebropolHeader extends BaseComponent {
   static get observedAttributes() {
-    return ['username', 'title', 'show-notifications', 'show-help', 'show-user-menu', 'show-theme-selector'];
+    return ['username', 'title', 'show-notifications', 'show-help', 'show-user-menu', 'show-theme-selector', 'show-feedback'];
+  }
+
+  constructor() {
+    super();
+    this.isMobile = false;
+    this.checkViewport = this.checkViewport.bind(this);
+    this._dropdownLayer = null;
+    this._activeDropdown = null;
+    this.handleDocClick = this.handleDocClick.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.checkViewport();
+    window.addEventListener('resize', this.checkViewport);
+  }
+
+  checkViewport() {
+    const oldIsMobile = this.isMobile;
+    this.isMobile = window.innerWidth <= 767;
+    if (oldIsMobile !== this.isMobile) {
+      this.render();
+    }
   }
 
   render() {
+    if (this.isMobile) {
+      const username = this.getAttr('username', 'Ali Al-Zuhairi');
+      const title = this.getAttr('title');
+      const showNotifications = this.getBoolAttr('show-notifications');
+      const showHelp = this.getBoolAttr('show-help');
+      const showUserMenu = this.getBoolAttr('show-user-menu');
+      const showFeedback = this.hasAttribute('show-feedback') ? this.getBoolAttr('show-feedback') : true;
+      this.innerHTML = this.renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu, showFeedback);
+      this.addMobileEventListeners();
+      return;
+    }
+
     const username = this.getAttr('username', 'Ali Al-Zuhairi');
     const title = this.getAttr('title');
     const showNotifications = this.getBoolAttr('show-notifications');
@@ -1657,10 +1693,254 @@ export class WebropolHeader extends BaseComponent {
     });
   }
 
+  // ===== Mobile rendering =====
+
+  renderMobileHeader(username, title, showNotifications, showHelp, showUserMenu, showFeedback) {
+    return `
+      <header class="mobile-header h-16 bg-white/95 backdrop-blur-xl border-b border-webropol-gray-200/50 flex items-center justify-between px-4 shadow-soft sticky top-0"
+              style="z-index: var(--z-mobile-header);">
+        <div class="flex items-center space-x-3">
+          <button class="mobile-menu-toggle w-10 h-10 flex items-center justify-center text-webropol-gray-600 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200"
+                  aria-label="Toggle navigation menu">
+            <i class="fa-duotone fa-thin fa-bars text-lg"></i>
+          </button>
+          <div class="flex items-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
+              <i class="fa-light fa-user-magnifying-glass text-white text-sm"></i>
+            </div>
+            ${title ? `<span class="ml-2 font-semibold text-webropol-gray-900 text-sm truncate max-w-[120px]">${title}</span>` : ''}
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          ${showFeedback ? `
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200" aria-label="Feedback">
+              <i class="fa-duotone fa-thin fa-star text-lg"></i>
+            </button>
+          ` : ''}
+          ${showNotifications ? `
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
+              <i class="fa-duotone fa-thin fa-bell text-lg"></i>
+            </button>
+          ` : ''}
+          ${showHelp ? `
+            <button class="w-10 h-10 flex items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
+              <i class="fa-duotone fa-thin fa-question-circle text-lg"></i>
+            </button>
+          ` : ''}
+          ${showUserMenu !== false ? `
+            <button class="mobile-user-menu flex items-center px-3 py-2 text-webropol-gray-700 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-all duration-200">
+              <div class="w-6 h-6 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-full flex items-center justify-center mr-2">
+                <i class="fa-duotone fa-thin fa-user text-white text-xs"></i>
+              </div>
+              <i class="fa-duotone fa-thin fa-chevron-down text-xs"></i>
+            </button>
+          ` : ''}
+        </div>
+      </header>
+    `;
+  }
+
+  addMobileEventListeners() {
+    this.destroyDropdownLayer();
+
+    const mobileMenuToggle = this.querySelector('.mobile-menu-toggle');
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleMobileMenu();
+      });
+    }
+
+    const notificationIcon = this.querySelector('button .fa-bell');
+    if (notificationIcon) {
+      notificationIcon.parentElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('notifications', notificationIcon.parentElement);
+      });
+    }
+
+    const feedbackIcon = this.querySelector('button .fa-star');
+    if (feedbackIcon) {
+      feedbackIcon.parentElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('feedback', feedbackIcon.parentElement);
+      });
+    }
+
+    const helpIcon = this.querySelector('button .fa-question-circle');
+    if (helpIcon) {
+      helpIcon.parentElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('help', helpIcon.parentElement);
+      });
+    }
+
+    this.querySelectorAll('.mobile-user-menu').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleDropdown('user', btn);
+      });
+    });
+  }
+
+  toggleMobileMenu() {
+    const sidebar = document.querySelector('webropol-sidebar-enhanced');
+    if (sidebar) {
+      if (typeof sidebar.toggleMobileMenu === 'function') {
+        sidebar.toggleMobileMenu();
+        this.emit('mobile-menu-toggle');
+      } else {
+        const isOpen = sidebar.getAttribute('mobile-open') === 'true';
+        sidebar.setAttribute('mobile-open', !isOpen);
+      }
+    } else {
+      setTimeout(() => {
+        const retry = document.querySelector('webropol-sidebar-enhanced');
+        if (retry && typeof retry.toggleMobileMenu === 'function') {
+          retry.toggleMobileMenu();
+          this.emit('mobile-menu-toggle');
+        }
+      }, 100);
+    }
+  }
+
+  // ===== Body-level dropdown layer (mobile) =====
+
+  ensureDropdownLayer() {
+    if (this._dropdownLayer) return this._dropdownLayer;
+    const layer = document.createElement('div');
+    layer.setAttribute('data-header-layer', '');
+    layer.style.position = 'fixed';
+    layer.style.inset = '0';
+    layer.style.pointerEvents = 'none';
+    layer.style.zIndex = 'var(--z-mobile-header-dropdown, 9100)';
+    document.body.appendChild(layer);
+    this._dropdownLayer = layer;
+    document.addEventListener('click', this.handleDocClick, true);
+    document.addEventListener('keydown', this.handleKeyDown, true);
+    return layer;
+  }
+
+  destroyDropdownLayer() {
+    if (this._dropdownLayer && this._dropdownLayer.parentNode) {
+      this._dropdownLayer.parentNode.removeChild(this._dropdownLayer);
+    }
+    this._dropdownLayer = null;
+    this._activeDropdown = null;
+  }
+
+  handleDocClick(e) {
+    if (!this._dropdownLayer || !this._activeDropdown) return;
+    const dropdown = this._dropdownLayer.querySelector('[data-dropdown]');
+    if (!dropdown || dropdown.contains(e.target) || this.contains(e.target)) return;
+    this.closeDropdown();
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'Escape' && this._activeDropdown) this.closeDropdown();
+  }
+
+  toggleDropdown(type, anchorBtn) {
+    if (this._activeDropdown === type) this.closeDropdown();
+    else this.openDropdown(type, anchorBtn);
+  }
+
+  openDropdown(type, anchorBtn) {
+    const layer = this.ensureDropdownLayer();
+    layer.innerHTML = '';
+    const rect = anchorBtn.getBoundingClientRect();
+    const dropdown = document.createElement('div');
+    dropdown.setAttribute('data-dropdown', type);
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = `${Math.round(rect.bottom + 8)}px`;
+    const width = type === 'user' ? 192 : 320;
+    const left = Math.min(Math.max(8, rect.right - width), window.innerWidth - width - 8);
+    dropdown.style.left = `${Math.round(left)}px`;
+    dropdown.style.width = `${width}px`;
+    dropdown.style.pointerEvents = 'auto';
+    dropdown.className = 'bg-white rounded-xl shadow-lg border border-webropol-gray-200 p-2 opacity-0 translate-y-1 transition-all duration-150';
+
+    if (type === 'user') {
+      dropdown.innerHTML = `
+        <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Profile</button>
+        <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Settings</button>
+        <div class="my-1 border-t border-webropol-gray-200"></div>
+        <button data-action="signout" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Sign out</button>
+      `;
+    } else if (type === 'notifications') {
+      dropdown.innerHTML = `
+        <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Notifications</div>
+        <div class="px-3 py-2 rounded-lg text-webropol-gray-700">No new notifications</div>
+      `;
+    } else if (type === 'help') {
+      dropdown.innerHTML = `
+        <div class="px-3 py-2 text-sm font-semibold text-webropol-gray-600">Help</div>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/training-videos">Training Videos</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/docs">Documentation</a>
+        <a class="block px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50" href="#/support">Contact Support</a>
+      `;
+    } else if (type === 'feedback') {
+      const feedbackQuestionType = (window.globalSettingsManager?.getSetting?.('feedbackQuestionType')) || 'rating';
+      const feedbackContent = this.getFeedbackContent(feedbackQuestionType);
+      dropdown.style.width = '384px';
+      dropdown.innerHTML = feedbackContent;
+    }
+
+    requestAnimationFrame(() => {
+      dropdown.classList.remove('opacity-0', 'translate-y-1');
+      dropdown.classList.add('opacity-100', 'translate-y-0');
+    });
+    layer.appendChild(dropdown);
+    this._activeDropdown = type;
+
+    if (type === 'user') {
+      const settingsBtn = dropdown.querySelector('button[data-action="settings"]');
+      if (settingsBtn) {
+        settingsBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          this.closeDropdown();
+          try {
+            if (typeof window.openGlobalSettings === 'function') { window.openGlobalSettings(); return; }
+            if (window.globalSettingsManager?.openSettingsModal) { window.globalSettingsManager.openSettingsModal(); return; }
+            if (!customElements.get('webropol-settings-modal')) {
+              try { await import('../modals/SettingsModal.js'); } catch (_) {}
+            }
+            let modal = document.querySelector('webropol-settings-modal');
+            if (!modal) { modal = document.createElement('webropol-settings-modal'); document.body.appendChild(modal); }
+            if (typeof modal.open === 'function') modal.open(); else modal.setAttribute('open', '');
+          } catch { document.dispatchEvent(new CustomEvent('settings-open')); }
+        });
+      }
+    }
+
+    if (window.tailwind?.refresh) try { window.tailwind.refresh(); } catch {}
+  }
+
+  closeDropdown() {
+    if (!this._dropdownLayer) return;
+    const dropdown = this._dropdownLayer.querySelector('[data-dropdown]');
+    if (dropdown) {
+      dropdown.classList.add('opacity-0', 'translate-y-1');
+      setTimeout(() => { if (dropdown?.parentNode) dropdown.parentNode.removeChild(dropdown); }, 150);
+    }
+    this._activeDropdown = null;
+  }
+
+  // ===== Cleanup =====
+
   // Cleanup method
   disconnectedCallback() {
     super.disconnectedCallback();
-    
+    window.removeEventListener('resize', this.checkViewport);
+    document.removeEventListener('click', this.handleDocClick, true);
+    document.removeEventListener('keydown', this.handleKeyDown, true);
+    this.destroyDropdownLayer();
     if (this.settingsAnimationTimer) {
       clearTimeout(this.settingsAnimationTimer);
     }
@@ -1683,6 +1963,10 @@ export class WebropolHeader extends BaseComponent {
 }
 
 customElements.define('webropol-header', WebropolHeader);
+
+// webropol-header-enhanced is an alias — must be a distinct subclass
+class WebropolHeaderEnhanced extends WebropolHeader {}
+customElements.define('webropol-header-enhanced', WebropolHeaderEnhanced);
 
 // Global test function for browser console
 window.testSettingsAnimation = function(type = 'magnetic') {
