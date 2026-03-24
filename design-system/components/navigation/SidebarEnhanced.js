@@ -20,7 +20,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
     this.closeMobileMenu = this.closeMobileMenu.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
   // Centralized sidebar version label (update in one place)
-  this.version = 'v3.2.1';
+  this.version = 'v3 Parrot';
   // Body-level mobile layer nodes
   this._mobileLayer = null; // wrapper div
   this._backdropEl = null;  // backdrop div

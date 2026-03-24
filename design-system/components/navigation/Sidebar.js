@@ -293,7 +293,7 @@ export class WebropolSidebar extends BaseComponent {
                       opacity-0 hidden
                       group-hover:opacity-100 group-hover:block">
             <div class="text-xs text-webropol-gray-400 whitespace-nowrap">
-              Webropol Development v3.2.1
+              Webropol Development | Parrot v3
             </div>
           </div>
         </div>
