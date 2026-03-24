@@ -429,7 +429,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           <span class="font-medium">Contact Support</span>
         </a>
         <div class="mt-2 px-4">
-          <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
+          <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
         </div>
       </div>
     `;
@@ -567,7 +567,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">Contact Support</span>
           </a>
           <div class="mt-2 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
+            <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
           </div>
         </div>
       </aside>
@@ -633,7 +633,7 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           <div class="mt-2
                       xl:px-4 px-3 group-hover:px-4
                       xl:opacity-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
+            <div class="flex items-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
           </div>
         </div>
       </aside>
