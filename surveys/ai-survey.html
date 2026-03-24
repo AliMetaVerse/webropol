@@ -1109,7 +1109,12 @@
         document.addEventListener('webropol-switch-interface', (e) => {
           if (e.detail && e.detail.mode === 'classic') {
             localStorage.setItem('webropol_interface_mode', 'classic');
-            window.location.href = '../index.html#/home';
+            // Check if we are running in the SPA shell (hash route) or directly accessing the HTML file
+            if (window.location.pathname.endsWith('ai-survey.html')) {
+              window.location.href = '../index.html#/home';
+            } else {
+              window.location.hash = '#/home';
+            }
           }
         });
 
