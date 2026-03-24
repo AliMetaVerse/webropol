@@ -482,13 +482,20 @@
                 <div class="bg-white rounded-2xl shadow-card border border-webropol-gray-100 mb-6 overflow-hidden">
                   <div class="px-6 py-4 border-b border-webropol-gray-100 flex items-center justify-between">
                     <h3 class="font-semibold text-webropol-gray-900">Generated Questions</h3>
-                    <span class="text-xs font-medium text-webropol-gray-400 bg-webropol-gray-50 px-2.5 py-1 rounded-full"
-                          x-text="`${generatedSurvey.questions.length} total`"></span>
+                    <div class="flex items-center gap-2">
+                      <button @click="toggleSelectQuestions()"
+                              class="text-xs font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 px-2.5 py-1 rounded-full transition-colors">
+                        <span x-text="selectedQuestionIds.length === generatedSurvey.questions.length ? 'Clear selection' : 'Select questions'"></span>
+                      </button>
+                      <span class="text-xs font-medium text-webropol-gray-400 bg-webropol-gray-50 px-2.5 py-1 rounded-full"
+                            x-text="`${generatedSurvey.questions.length} total`"></span>
+                    </div>
                   </div>
 
                   <div class="divide-y divide-webropol-gray-50">
                     <template x-for="(question, index) in generatedSurvey.questions" :key="question.id">
                       <div class="q-card q-reveal px-5 py-4 hover:bg-webropol-gray-50/60 flex items-start gap-3.5 group"
+                           :class="selectedQuestionIds.includes(question.id) ? 'bg-violet-50/60 ring-1 ring-violet-200' : ''"
                            :style="`animation-delay: ${Math.min(index * 55, 400)}ms`">
                         <!-- Number badge -->
                         <div class="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5 transition-transform group-hover:scale-105"
@@ -512,6 +519,12 @@
                         </div>
                         <!-- Actions -->
                         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
+                          <button @click="toggleQuestionSelection(question.id)"
+                                  :title="selectedQuestionIds.includes(question.id) ? 'Unselect question' : 'Select question'"
+                                  :class="selectedQuestionIds.includes(question.id) ? 'bg-violet-100 text-violet-600 hover:bg-violet-200' : 'bg-webropol-gray-100 text-webropol-gray-400 hover:bg-violet-100 hover:text-violet-600'"
+                                  class="w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors">
+                            <i :class="selectedQuestionIds.includes(question.id) ? 'fal fa-check-square' : 'fal fa-square'"></i>
+                          </button>
                           <button @click="question.required = !question.required"
                                   :title="question.required ? 'Mark as optional' : 'Mark as required'"
                                   :class="question.required ? 'bg-red-100 text-red-500 hover:bg-red-200' : 'bg-webropol-gray-100 text-webropol-gray-400 hover:bg-amber-100 hover:text-amber-600'"
@@ -759,21 +772,23 @@
 
       // ── Step 1 ─────────────────────────────────────────────────────
       aiPrompt: '',
-      selectedType: 'survey',
+      selectedType: '',
       showTips: false,
       recentPrompts: [],
 
       surveyTypes: [
-        { id: 'survey',   name: 'Survey',    icon: 'fal fa-user-magnifying-glass', placeholder: 'e.g. Create a customer satisfaction survey for our hotel with questions about room quality, service, dining, and overall experience. Keep it under 5 minutes.' },
-        { id: 'employee', name: 'Employee',  icon: 'fal fa-users',                placeholder: 'e.g. Design an employee engagement survey covering job satisfaction, manager effectiveness, career development, and work-life balance.' },
-        { id: 'product',  name: 'Product',   icon: 'fal fa-box',                  placeholder: 'e.g. Create a product feedback survey for our new mobile app. Focus on onboarding experience, feature usage, performance, and missing features.' },
-        { id: 'event',    name: 'Event',     icon: 'fal fa-calendar-check',        placeholder: 'e.g. Design a post-event survey for our annual conference. Cover content quality, speakers, venue, catering, and likelihood to attend next year.' },
-        { id: 'nps',      name: 'NPS',       icon: 'fal fa-chart-line',            placeholder: 'e.g. Create a Net Promoter Score survey to measure customer loyalty after our software onboarding. Include follow-up questions for promoters and detractors.' },
-        { id: 'training', name: 'Training',  icon: 'fal fa-graduation-cap',        placeholder: 'e.g. Evaluate our cybersecurity awareness training. Assess content quality, instructor effectiveness, knowledge retention, and relevance to daily work.' },
+        { id: 'surveys',         name: 'Surveys',          icon: 'fal fa-user-magnifying-glass', placeholder: 'e.g. Create a customer satisfaction survey for our service with rating and open text questions.' },
+        { id: 'events',          name: 'Events',           icon: 'fal fa-calendar-check',         placeholder: 'e.g. Design a post-event survey for our conference covering content quality, logistics, and satisfaction.' },
+        { id: 'two-way-sms',     name: '2-Way SMS',        icon: 'fal fa-comments',               placeholder: 'e.g. Create a short SMS feedback survey with quick yes/no and rating questions.' },
+        { id: 'exw',             name: 'EXW',              icon: 'fal fa-chart-network',          placeholder: 'e.g. Create an EXW survey to measure workplace experience and engagement.' },
+        { id: 'case-management', name: 'Case Management',  icon: 'fal fa-briefcase',              placeholder: 'e.g. Build a case follow-up survey about handling time, clarity, and resolution quality.' },
+        { id: '360',             name: '360',              icon: 'fal fa-user-group',             placeholder: 'e.g. Create a 360 feedback survey for leadership, collaboration, and communication skills.' },
+        { id: 'etest',           name: 'eTest',            icon: 'fal fa-clipboard-check',        placeholder: 'e.g. Create an eTest to evaluate learning outcomes with objective and open questions.' },
       ],
 
       // ── Step 2 ─────────────────────────────────────────────────────
       generatedSurvey: null,
+      selectedQuestionIds: [],
 
       // ── Step 3 ─────────────────────────────────────────────────────
       surveyTitle: '',
@@ -911,6 +926,10 @@
       // ── AI generation ──────────────────────────────────────────────
       detectTopic(prompt, type) {
         const lc = prompt.toLowerCase();
+        if (type === 'events') return 'event';
+        if (type === '360') return 'employee';
+        if (type === 'etest') return 'training';
+        if (type === 'two-way-sms' || type === 'exw' || type === 'case-management') return 'default';
         if (type === 'employee' || /\bemployee\b|\bstaff\b|\bteam\b|\bworkplace\b|\bengagement\b|\bhr\b/.test(lc)) return 'employee';
         if (type === 'product'  || /\bproduct\b|\bfeature\b|\bapp\b|\bsoftware\b|\bplatform\b/.test(lc))           return 'product';
         if (type === 'event'    || /\bevent\b|\bconference\b|\bwebinar\b|\bworkshop\b|\bmeeting\b/.test(lc))         return 'event';
@@ -939,6 +958,7 @@
         if (!this.canGenerate) return;
         this.isGenerating = true;
         this.generationProgress = 0;
+        this.selectedQuestionIds = [];
         this.saveRecentPrompt(this.aiPrompt.trim());
 
         const interval = setInterval(() => {
@@ -964,6 +984,7 @@
       removeQuestion(id) {
         if (!this.generatedSurvey) return;
         this.generatedSurvey.questions = this.generatedSurvey.questions.filter(q => q.id !== id);
+        this.selectedQuestionIds = this.selectedQuestionIds.filter(selectedId => selectedId !== id);
       },
 
       addQuestion() {
@@ -975,6 +996,23 @@
           required: false,
           options: []
         });
+      },
+
+      toggleQuestionSelection(questionId) {
+        if (this.selectedQuestionIds.includes(questionId)) {
+          this.selectedQuestionIds = this.selectedQuestionIds.filter(id => id !== questionId);
+        } else {
+          this.selectedQuestionIds.push(questionId);
+        }
+      },
+
+      toggleSelectQuestions() {
+        if (!this.generatedSurvey || !this.generatedSurvey.questions?.length) return;
+        if (this.selectedQuestionIds.length === this.generatedSurvey.questions.length) {
+          this.selectedQuestionIds = [];
+        } else {
+          this.selectedQuestionIds = this.generatedSurvey.questions.map(question => question.id);
+        }
       },
 
       // ── Create survey ──────────────────────────────────────────────
