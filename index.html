@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -591,12 +591,6 @@
         webropol-sidebar {
             transition: all 0.3s ease-in-out;
         }
-        /* Hide sidebar in Magic mode (AI Prompt) regardless of component internal state */
-        body.mode-prompt webropol-sidebar,
-        body.mode-prompt webropol-sidebar-enhanced {
-            display: none !important;
-        }
-
         /* Enhanced gradient overlay for cards */
         .gradient-card {
             position: relative;
@@ -811,42 +805,23 @@
 <body x-data="libraryApp()" @click="showContextMenu = null">
 
     <div class="flex h-screen mobile-responsive-container">
-        <webropol-sidebar-enhanced x-show="interfaceMode === 'classic'" 
-                         x-transition:enter="transition ease-out duration-500"
-                         x-transition:enter-start="opacity-0 transform -translate-x-full scale-95"
-                         x-transition:enter-end="opacity-100 transform translate-x-0 scale-100"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 transform translate-x-0 scale-100"
-                         x-transition:leave-end="opacity-0 transform -translate-x-full scale-95"
-                         class="sidebar-transition"
+        <webropol-sidebar-enhanced class="sidebar-transition"
                          active="home" base=""></webropol-sidebar-enhanced>
-        <div class="flex-1 flex flex-col overflow-hidden main-content-transition mobile-main-content" 
-             :class="interfaceMode === 'prompt' ? 'w-full' : ''">
+        <div class="flex-1 flex flex-col overflow-hidden main-content-transition mobile-main-content">
             <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
-          <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4 relative mobile-breadcrumbs hidden"
-              :class="interfaceMode === 'prompt' ? 'px-4 sm:px-8' : ''">
-                <webropol-breadcrumbs :trail="interfaceMode === 'prompt' ? 
-                    '[{\"label\":\"Home\",\"url\":\"index.html\"},{\"label\":\"AI Survey\",\"url\":\"#/surveys/ai-survey\"}]' : '[{\"label\":\"Home\",\"url\":\"index.html\"}]'"></webropol-breadcrumbs>
+          <div id="breadcrumbs-fix-wrapper" class="bg-white/70 backdrop-blur px-0 sm:px-4 relative mobile-breadcrumbs hidden">
+                <webropol-breadcrumbs trail='[{"label":"Home","url":"index.html"}]'></webropol-breadcrumbs>
             </div>
         <!-- Page Content -->
                 <main class="flex-1 overflow-y-auto py-2 min-h-screen pb-24 mobile-main-content"
                   role="main">
-                    <div id="app-content" class="mx-auto w-full rounded-2xl mobile-app-content" :class="interfaceMode === 'prompt' ? 'max-w-3xl sm:max-w-5xl px-4 sm:px-6 lg:px-12' : 'px-4 lg:px-8'">
+                    <div id="app-content" class="mx-auto w-full rounded-2xl mobile-app-content px-4 lg:px-8">
                     
 
 
 
                     <!-- Classic Interface Content -->
-                    <div x-show="interfaceMode === 'classic'" 
-                         data-tab-panel="classic"
-                         x-transition:enter="transition ease-out duration-500"
-                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
-                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
-                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
-                         role="tabpanel"
-                         aria-labelledby="classic-tab">
+                    <div>
 
                         <h3 class="text-2xl font-bold mt-8 mb-6 text-webropol-gray-900">Hi <span x-text="firstName"></span>! What do you want to do next?</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6 mb-12">
@@ -969,218 +944,8 @@
 
                     </div>
 
-                    <!-- AI Prompt Interface Content -->
-                    <div x-show="interfaceMode === 'prompt'" 
-                         data-tab-panel="prompt"
-                         x-transition:enter="transition ease-out duration-500"
-                         x-transition:enter-start="opacity-0 transform translate-y-8 scale-98"
-                         x-transition:enter-end="opacity-100 transform translate-y-0 scale-100"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
-                         x-transition:leave-end="opacity-0 transform translate-y-4 scale-98"
-                         role="tabpanel"
-                         aria-labelledby="prompt-tab">
-                        
-                        <!-- Compact Magic Interface -->
-                        <div class="max-w-4xl mx-auto">
-                            <!-- Hero Section -->
-                            <div class="flex items-center justify-between mb-8">
-                                <webropol-button variant="secondary" size="md" icon="arrow-left" @click="switchInterface('classic')">Back to Classic View</webropol-button>
-                                <a href="#/surveys/ai-survey" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                                    <i class="fal fa-sparkles"></i> Open full AI Survey Creator
-                                </a>
-                            </div>
-
-                            <div class="text-center mb-12">
-                                <h2 class="text-5xl font-bold mb-4 tracking-tight">
-                                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-500">
-                                        Hi, Ali!
-                                    </span>
-                                </h2>
-                                <p class="text-xl text-slate-500 font-light">
-                                    Select a type and describe your vision. AI will do the rest.
-                                </p>
-                            </div>
-
-                            <!-- Main Creation Card -->
-                            <div class="bg-white/90 backdrop-blur-sm border border-webropol-gray-200 rounded-3xl p-8 shadow-xl mb-8">
-                                <!-- Quick Type Selector -->
-                                <div class="flex items-center justify-center mb-6">
-                                    <div class="flex bg-webropol-gray-50 rounded-2xl p-2 space-x-2">
-                                        <template x-for="type in surveyTypes.slice(0, 4)" :key="type.id">
-                                            <button @click="selectedSurveyType = type.id"
-                                                :class="selectedSurveyType === type.id ? 'bg-webropol-primary-600 text-white shadow-md' : 'bg-transparent text-webropol-gray-600 hover:bg-white hover:text-webropol-primary-600'"
-                                                class="flex items-center px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200">
-                                                <i :class="type.icon" class="mr-2"></i>
-                                                <span x-text="type.name"></span>
-                                            </button>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                <!-- AI Prompt Input -->
-                                <div class="relative mb-6">
-                                  <textarea id="ai-prompt" x-model="aiPrompt" 
-                                    rows="4" 
-                                    placeholder="Tell me what you want to create... For example: 'Create a customer satisfaction survey for our restaurant with questions about food quality, service, and overall experience. Keep it under 5 minutes.'"
-                                    class="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border-2 border-webropol-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-500 resize-none text-webropol-gray-900 placeholder-webropol-gray-400 leading-relaxed"
-                                    @input="updateCharCount()"></textarea>
-                                    
-                                    <!-- Character count and help -->
-                                    <div class="flex items-center justify-between mt-3">
-                                        <button @click="showPromptHelp = !showPromptHelp" 
-                                            class="flex items-center text-sm text-webropol-gray-500 hover:text-webropol-primary-600 transition-colors">
-                                            <i class="fal fa-lightbulb mr-1"></i>
-                                            <span x-text="showPromptHelp ? 'Hide tips' : 'Writing tips'"></span>
-                                        </button>
-                                        <div class="flex items-center space-x-3">
-                                            <span class="text-sm text-webropol-gray-500" x-text="aiPrompt.length + ' characters'"></span>
-                                            <button @click="clearPrompt()" 
-                                                x-show="aiPrompt.length > 0"
-                                                class="text-sm text-webropol-gray-500 hover:text-webropol-gray-700 transition-colors">
-                                                Clear
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Contextual Help -->
-                                    <div x-show="showPromptHelp" 
-                                         x-transition:enter="transition ease-out duration-200"
-                                         x-transition:enter-start="opacity-0 transform translate-y-2"
-                                         x-transition:enter-end="opacity-100 transform translate-y-0"
-                                         x-transition:leave="transition ease-in duration-150"
-                                         x-transition:leave-start="opacity-100 transform translate-y-0"
-                                         x-transition:leave-end="opacity-0 transform translate-y-2"
-                                         class="mt-4 p-4 bg-gradient-to-r from-webropol-primary-50 to-blue-50 border border-webropol-primary-200 rounded-xl">
-                                        <h4 class="font-semibold text-webropol-primary-900 mb-2 flex items-center">
-                                            <i class="fal fa-magic mr-2"></i>
-                                            Writing effective prompts:
-                                        </h4>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-webropol-primary-800">
-                                            <div class="flex items-start">
-                                                <i class="fal fa-check-circle text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>
-                                                <span>Be specific about your goals and audience</span>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fal fa-check-circle text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>
-                                                <span>Mention question types you prefer</span>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fal fa-check-circle text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>
-                                                <span>Include topics you want to cover</span>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fal fa-check-circle text-green-600 mt-0.5 mr-2 flex-shrink-0"></i>
-                                                <span>Specify desired length or time</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="flex items-center justify-center space-x-4">
-                                    <webropol-button variant="royal" size="xl" icon="magic" @click="generateSurvey()" :disabled="!aiPrompt.trim() || isGenerating" :loading="isGenerating">Create with AI</webropol-button>
-                                </div>
-                            </div>
-
-                            <!-- Quick Templates Row -->
-                            <div class="mb-8">
-                                <h4 class="text-lg font-semibold text-webropol-gray-900 mb-4 text-center">
-                                    <i class="fal fa-rocket mr-2 text-violet-600"></i>
-                                    Quick Start Templates
-                                </h4>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                                    <template x-for="template in promptTemplates.slice(0, 3)" :key="template.id">
-                                        <button @click="useTemplate(template.prompt)"
-                                            class="p-5 text-left bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl hover:border-violet-300 hover:bg-violet-50 transition-all duration-300 group shadow-sm">
-                                            <div class="flex items-start">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-xl flex items-center justify-center mr-4 transition-transform">
-                                                    <i :class="template.icon" class="text-violet-600"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <h5 class="font-semibold text-webropol-gray-900 mb-1" x-text="template.title"></h5>
-                                                    <p class="text-sm text-webropol-gray-600 leading-relaxed" x-text="template.description"></p>
-                                                </div>
-                                            </div>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <!-- Recent Prompts (Compact) -->
-                            <div x-show="recentPrompts.length > 0" 
-                                 class="bg-white/60 backdrop-blur border border-webropol-gray-200 rounded-2xl p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h4 class="font-semibold text-webropol-gray-900 flex items-center">
-                                        <i class="fal fa-history mr-2 text-violet-600"></i>
-                                        Recent Prompts
-                                    </h4>
-                                    <button @click="clearRecentPrompts()" 
-                                        class="text-sm text-webropol-gray-500 hover:text-webropol-gray-700 transition-colors">
-                                        Clear all
-                                    </button>
-                                </div>
-                                <div class="space-y-3">
-                                    <template x-for="prompt in recentPrompts.slice(0, 2)" :key="prompt.id">
-                                        <button @click="useRecentPrompt(prompt.text)"
-                                            class="w-full p-4 text-left bg-white border border-webropol-gray-200 rounded-xl hover:border-violet-300 hover:bg-violet-50 transition-all duration-200 group">
-                                            <p class="text-sm text-webropol-gray-900 line-clamp-2 group-hover:text-violet-700" x-text="prompt.text"></p>
-                                            <span class="text-xs text-webropol-gray-500 mt-1 block" x-text="prompt.date"></span>
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <!-- My Latest Activity (Magic View Specific) -->
-                            <div class="mt-12">
-                                <h3 class="text-xl font-bold mb-6 text-webropol-gray-900 flex items-center">
-                                    <i class="fal fa-sparkles text-violet-600 mr-2"></i>
-                                    My Latest AI Survey Creations
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <template x-for="activity in filteredActivities().slice(0, 4)" :key="activity.id">
-                                        <div class="bg-white/80 backdrop-blur border border-webropol-gray-200 rounded-2xl p-5 hover:shadow-lg hover:border-violet-200 transition-all duration-300 group cursor-pointer">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-fuchsia-50 flex items-center justify-center text-violet-600 group-hover:scale-110 transition-transform duration-300">
-                                                    <i :class="activity.type === 'surveys' ? 'fa-light fa-user-magnifying-glass' : 'fal fa-calendar-alt'" class="text-xl"></i>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <h4 class="font-semibold text-webropol-gray-900 truncate group-hover:text-violet-700 transition-colors" x-text="activity.name"></h4>
-                                                    <div class="flex items-center gap-3 mt-1 text-xs text-webropol-gray-500">
-                                                        <span class="flex items-center gap-1">
-                                                            <i class="fal fa-clock"></i>
-                                                            2 days ago
-                                                        </span>
-                                                        <span class="flex items-center gap-1" x-show="activity.status === 'Open'">
-                                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                                            Active
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button class="w-8 h-8 rounded-full bg-violet-50 text-violet-600 flex items-center justify-center hover:bg-violet-100">
-                                                        <i class="fal fa-arrow-right"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <!-- Keyboard Shortcuts -->
-                            <div class="mt-8 text-center">
-                                <div class="inline-flex items-center px-4 py-2 bg-webropol-gray-50 rounded-full text-xs text-webropol-gray-500">
-                                    <i class="fal fa-keyboard mr-2"></i>
-                                    Press <kbd class="px-2 py-1 bg-white rounded text-webropol-gray-700 font-mono mx-1">Esc</kbd> to return to Classic | 
-                                    <kbd class="px-2 py-1 bg-white rounded text-webropol-gray-700 font-mono mx-1">Ctrl+Shift+I</kbd> to toggle
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- My latest activity -->
-                    <div x-show="interfaceMode === 'classic'" class="mt-10">
+                    <div class="mt-10">
                     <h3 class="text-xl font-bold mb-6 text-webropol-gray-900">My latest activity</h3>
                         <!-- Unified Activity Tabs -->
                         <div class="flex mb-8 overflow-x-auto">
@@ -1340,14 +1105,7 @@
     </div>
 
     <!-- Floating Create Button Component -->
-    <!-- Visibility is controlled by GlobalSettingsManager; only gate by interface mode here -->
-    <webropol-floating-button x-show="interfaceMode === 'classic'" 
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 transform scale-90"
-                             x-transition:enter-end="opacity-100 transform scale-100"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100 transform scale-100"
-                             x-transition:leave-end="opacity-0 transform scale-90"></webropol-floating-button>
+    <webropol-floating-button></webropol-floating-button>
 
     <!-- Create Folder Modal -->
     <div x-show="showCreateFolder" x-cloak
@@ -1860,79 +1618,11 @@
         
         function libraryApp() {
             return {
-                // Interface mode state
-                interfaceMode: localStorage.getItem('webropol_interface_mode') || 'classic', // 'classic' or 'prompt'
                 // User identity
                 username: 'Ali Al-Zuhairi',
                 get firstName() { return (this.username || '').split(' ')[0] || 'there'; },
                 // removed: page-scoped dark mode state
-                isTransitioning: false,
-                
-                // AI Prompt Interface state
-                aiPrompt: '',
-                selectedSurveyType: 'survey',
-                isGenerating: false,
-                showPromptHelp: false,
-                recentPrompts: JSON.parse(localStorage.getItem('recentPrompts') || '[]'),
-                
-                // Survey types for AI prompt interface
-                surveyTypes: [
-                    { id: 'survey', name: 'Survey', icon: 'fa-light fa-user-magnifying-glass' },
-                    { id: 'event', name: 'Event', icon: 'fal fa-calendar-alt' },
-                    { id: 'feedback', name: '360', icon: 'fal fa-comment-dots' },
-                    { id: 'assessment', name: 'eTest', icon: 'fal fa-clipboard-check' },
-                    { id: 'quiz', name: 'SMS Survey', icon: 'fal fa-question-circle' },
-                    { id: 'poll', name: 'EXW', icon: 'fa-light fa-user-magnifying-glass' },
-                    { id: 'form', name: 'WOTT', icon: 'fal fa-tablet' },
-                    { id: 'research', name: 'Research', icon: 'fal fa-search' }
-                ],
-                
-                // Prompt templates
-                promptTemplates: [
-                    {
-                        id: 1,
-                        title: 'Customer Satisfaction',
-                        description: 'Measure customer satisfaction and experience',
-                        icon: 'fal fa-heart',
-                        prompt: 'Create a customer satisfaction survey for our service. Include questions about overall satisfaction, likelihood to recommend, service quality, and areas for improvement. Keep it under 5 minutes.'
-                    },
-                    {
-                        id: 2,
-                        title: 'Employee Feedback',
-                        description: 'Gather employee insights and engagement',
-                        icon: 'fal fa-users',
-                        prompt: 'Design an employee engagement survey covering job satisfaction, work-life balance, management effectiveness, and career development opportunities. Include both rating scales and open-ended questions.'
-                    },
-                    {
-                        id: 3,
-                        title: 'Product Feedback',
-                        description: 'Collect feedback on products or features',
-                        icon: 'fal fa-box',
-                        prompt: 'Create a product feedback survey for our new mobile app feature. Ask about usability, usefulness, frequency of use, and suggestions for improvements. Target tech-savvy users.'
-                    },
-                    {
-                        id: 4,
-                        title: 'Event Evaluation',
-                        description: 'Evaluate events and gatherings',
-                        icon: 'fal fa-calendar-check',
-                        prompt: 'Design an event evaluation survey for our quarterly team meeting. Include questions about content quality, speaker effectiveness, venue, logistics, and overall satisfaction.'
-                    },
-                    {
-                        id: 5,
-                        title: 'Market Research',
-                        description: 'Understand market trends and preferences',
-                        icon: 'fa-light fa-user-magnifying-glass',
-                        prompt: 'Create a market research survey to understand consumer preferences for eco-friendly products. Include demographic questions, purchasing behavior, and environmental consciousness factors.'
-                    },
-                    {
-                        id: 6,
-                        title: 'Training Assessment',
-                        description: 'Evaluate training effectiveness',
-                        icon: 'fal fa-graduation-cap',
-                        prompt: 'Design a training evaluation survey for our cybersecurity awareness program. Assess knowledge retention, training quality, applicability to daily work, and confidence levels.'
-                    }
-                ],
-                
+
                 // Original state properties
                 currentView: 'questions',
                 selectedLanguage: 'en',
@@ -2023,33 +1713,6 @@
                 },
                 // ─────────────────────────────────────────────────────────────
 
-                // AI Prompt Interface Methods
-                switchInterface(mode) {
-                    if (this.isTransitioning || this.interfaceMode === mode) return;
-                    
-                    this.isTransitioning = true;
-                    
-                    // Add a slight delay to allow for smooth animations
-                    setTimeout(() => {
-                        this.interfaceMode = mode;
-                        
-                        // Save interface mode to localStorage
-                        localStorage.setItem('webropol_interface_mode', mode);
-                        // Toggle body class so layout can react (e.g., hide sidebar)
-                        document.body.classList.toggle('mode-prompt', mode === 'prompt');
-                        document.body.classList.toggle('mode-classic', mode === 'classic');
-                        
-                        // Force cleanup of active classes on tabs if needed (Alpine should handle this via :class binding)
-                        // but we can dispatch an event to let other components know
-                        document.dispatchEvent(new CustomEvent('webropol-interface-change', { detail: { mode: mode } }));
-
-                        // Reset transition state after animation completes
-                        setTimeout(() => {
-                            this.isTransitioning = false;
-                        }, 500);
-                    }, 50);
-                },
-
                 // removed: local toggleTheme()
 
                 // Settings methods
@@ -2088,9 +1751,6 @@
                 init() {
                     // Apply settings on initialization
                     this.applySettings();
-                    // Ensure body has the correct interface mode class on load
-                    document.body.classList.toggle('mode-prompt', this.interfaceMode === 'prompt');
-                    document.body.classList.toggle('mode-classic', this.interfaceMode === 'classic');
                     
                     // Add Question Modal event listeners - delayed to ensure web components are ready
                     setTimeout(() => {
@@ -2120,26 +1780,6 @@
                         }
                     }, 100);
                     
-                    // Add keyboard listener for interface switching
-                    document.addEventListener('keydown', (e) => {
-                        // Ctrl/Cmd + Shift + I to toggle interface mode
-                        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
-                            e.preventDefault();
-                            this.switchInterface(this.interfaceMode === 'classic' ? 'prompt' : 'classic');
-                        }
-                        // Escape key to go back to classic interface from AI prompt
-                        if (e.key === 'Escape' && this.interfaceMode === 'prompt') {
-                            this.switchInterface('classic');
-                        }
-                    });
-
-                    // Listen for view mode switch dispatched by the header dropdown
-                    document.addEventListener('webropol-switch-interface', (e) => {
-                        if (e.detail && e.detail.mode) {
-                            this.switchInterface(e.detail.mode);
-                        }
-                    });
-                    
                     // removed: local theme change listener; global ThemeManager dispatches are handled in components
                     
                     // Listen for header settings open event
@@ -2165,85 +1805,6 @@
                     });
                 },
                 
-                updateCharCount() {
-                    // Character count is handled by x-text in template
-                },
-                
-                clearPrompt() {
-                    this.aiPrompt = '';
-                },
-                
-                useTemplate(prompt) {
-                    this.aiPrompt = prompt;
-                },
-                
-                useRecentPrompt(prompt) {
-                    this.aiPrompt = prompt;
-                },
-                
-                clearRecentPrompts() {
-                    this.recentPrompts = [];
-                    localStorage.removeItem('recentPrompts');
-                },
-                
-                saveRecentPrompt(prompt) {
-                    const newPrompt = {
-                        id: Date.now(),
-                        text: prompt,
-                        date: new Date().toLocaleDateString(),
-                        timestamp: Date.now()
-                    };
-                    
-                    // Remove if already exists
-                    this.recentPrompts = this.recentPrompts.filter(p => p.text !== prompt);
-                    
-                    // Add to beginning
-                    this.recentPrompts.unshift(newPrompt);
-                    
-                    // Keep only last 10
-                    this.recentPrompts = this.recentPrompts.slice(0, 10);
-                    
-                    // Save to localStorage
-                    localStorage.setItem('recentPrompts', JSON.stringify(this.recentPrompts));
-                },
-                
-                async generateSurvey() {
-                    if (!this.aiPrompt.trim()) return;
-                    
-                    this.isGenerating = true;
-                    
-                    try {
-                        // Save the prompt to recent prompts
-                        this.saveRecentPrompt(this.aiPrompt.trim());
-                        
-                        // Simulate AI generation (replace with actual API call)
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        
-                        // Here you would integrate with your AI service
-                        console.log('Generating survey with prompt:', this.aiPrompt);
-                        console.log('Survey type:', this.selectedSurveyType);
-                        
-                        // For demo purposes, show a success message
-                        alert('Survey generated successfully! (This is a demo - integrate with your AI service)');
-                        
-                        // Switch back to classic interface to show the result
-                        this.interfaceMode = 'classic';
-                        
-                    } catch (error) {
-                        console.error('Error generating survey:', error);
-                        alert('Error generating survey. Please try again.');
-                    } finally {
-                        this.isGenerating = false;
-                    }
-                },
-                
-                previewPrompt() {
-                    if (!this.aiPrompt.trim()) return;
-                    
-                    // Show a preview of what the AI will generate
-                    alert(`Preview:\n\nSurvey Type: ${this.selectedSurveyType}\nPrompt: ${this.aiPrompt}\n\nThis would generate a ${this.selectedSurveyType} based on your description.`);
-                },
-
                 // Sample data
                 folders: [
                     { id: 1, name: 'Customer Feedback', description: 'Questions and surveys for customer satisfaction' },
