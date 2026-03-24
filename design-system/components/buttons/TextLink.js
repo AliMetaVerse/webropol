@@ -68,27 +68,27 @@ export class WebropolTextLink extends BaseComponent {
     const variants = {
       primary: [
         'font-medium',
-        'text-[#1e6880] no-underline',
-        'hover:bg-[#b0e8f1] hover:text-[#215669] hover:underline hover:decoration-[#215669]',
-        'active:bg-[#79d6e7] active:text-[#204859] active:no-underline',
+        'text-[#1e6880] no-underline border-b border-transparent',
+        'hover:bg-[#b0e8f1] hover:text-[#215669] hover:border-[#215669]',
+        'active:bg-[#79d6e7] active:text-[#204859] active:border-transparent',
         'visited:text-[#1e6880]',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#272a2b]',
       ].join(' '),
 
       secondary: [
         'font-normal',
-        'text-[#1e6880] underline decoration-[#1e6880]',
-        'hover:bg-[#b0e8f1] hover:text-[#215669] hover:decoration-[#215669]',
-        'active:bg-[#79d6e7] active:text-[#204859] active:decoration-[#204859]',
-        'visited:text-[#1e6880] visited:decoration-[#1e6880]',
+        'text-[#1e6880] no-underline border-b border-[#1e6880]',
+        'hover:bg-[#b0e8f1] hover:text-[#215669] hover:border-[#215669]',
+        'active:bg-[#79d6e7] active:text-[#204859] active:border-[#204859]',
+        'visited:text-[#1e6880]',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#272a2b]',
       ].join(' '),
 
       delete: [
         'font-normal',
-        'text-[#be1241] no-underline',
-        'hover:bg-[#fecdd4] hover:text-[#9f123d] hover:underline hover:decoration-[#9f123d]',
-        'active:bg-[#fda4b2] active:text-[#88133a] active:no-underline',
+        'text-[#be1241] no-underline border-b border-transparent',
+        'hover:bg-[#fecdd4] hover:text-[#9f123d] hover:border-[#9f123d]',
+        'active:bg-[#fda4b2] active:text-[#88133a] active:border-transparent',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#272a2b]',
       ].join(' '),
     };
