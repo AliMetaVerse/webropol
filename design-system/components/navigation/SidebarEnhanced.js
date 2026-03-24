@@ -422,21 +422,14 @@ export class WebropolSidebarEnhanced extends BaseComponent {
       </div>
       
       <!-- Mobile Footer -->
-      <div class="border-t border-webropol-gray-100 p-4">
+      <div class="border-t border-webropol-gray-200 pt-3 px-4 pb-4">
         <a href="#/contact" data-route="/contact"
-           class="contact-footer-btn group/contact flex items-center gap-3 px-3 py-3 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
-          <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0
-                      bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
-            <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
-          </div>
-          <div class="min-w-0 flex-1">
-            <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight">Contact Support</div>
-            <div class="text-[11px] text-webropol-gray-400 mt-0.5">Get help &amp; insights</div>
-          </div>
-          <i class="fal fa-chevron-right text-[10px] text-webropol-gray-300 group-hover/contact:text-webropol-primary-400 transition-colors duration-150 flex-shrink-0"></i>
+           class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200 px-4 py-3 mx-0 mb-1 text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
+          <i class="fa-duotone fa-thin fa-headset w-5 mr-4"></i>
+          <span class="font-medium">Contact Support</span>
         </a>
-        <div class="mt-3 px-3">
-          <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase">v3 Parrot &mdash; Webropol</div>
+        <div class="mt-2 px-4">
+          <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
         </div>
       </div>
     `;
@@ -565,21 +558,16 @@ export class WebropolSidebarEnhanced extends BaseComponent {
         <!-- Tablet Footer -->
         <div class="p-2 group-hover:p-4 transition-all duration-300">
           <!-- Contact Us - Tablet Footer -->
-          <div class="border-t border-webropol-gray-100 mb-2"></div>
+          <div class="border-t border-webropol-gray-200 mb-1"></div>
           <a href="#/contact" data-route="/contact"
-             class="contact-footer-btn group/contact flex items-center gap-3 px-2 py-2.5 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
-            <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0 mx-auto
-                        bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
-              <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
-            </div>
-            <div class="min-w-0 flex-1 overflow-hidden transition-all duration-300
-                        opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto">
-              <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight whitespace-nowrap">Contact Support</div>
-              <div class="text-[11px] text-webropol-gray-400 mt-0.5 whitespace-nowrap">Get help &amp; insights</div>
-            </div>
+             class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200
+                    px-3 py-3 mx-2 group-hover:px-4 group-hover:mx-4 transition-all duration-300
+                    text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
+            <i class="fa-duotone fa-thin fa-headset w-5 flex-shrink-0"></i>
+            <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-2 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase whitespace-nowrap">v3 Parrot &mdash; Webropol</div>
+          <div class="mt-2 px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
           </div>
         </div>
       </aside>
@@ -630,26 +618,22 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                     group-hover:px-4
                     pb-6">
           <!-- Contact Us - Desktop Footer -->
-          <div class="border-t border-webropol-gray-100 mb-4"></div>
+          <div class="border-t border-webropol-gray-200 mb-1"></div>
           <a href="#/contact" data-route="/contact"
-             class="contact-footer-btn group/contact flex items-center gap-3 px-3 py-3 rounded-lg transition-colors duration-150 hover:bg-webropol-gray-50">
-            <div class="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0
-                        bg-webropol-gray-100 group-hover/contact:bg-webropol-primary-500 transition-colors duration-150">
-              <i class="fal fa-headset text-webropol-gray-500 group-hover/contact:text-white text-sm transition-colors duration-150"></i>
-            </div>
-            <div class="min-w-0 flex-1 overflow-hidden transition-all duration-300
+             class="contact-footer-btn nav-item flex items-center rounded-xl font-semibold transition-all duration-200
+                    xl:px-4 px-3 group-hover:px-4 py-3
+                    text-webropol-gray-600 hover:bg-webropol-primary-50 hover:text-webropol-primary-700">
+            <i class="fa-duotone fa-thin fa-headset w-5 flex-shrink-0
+                       xl:mr-4 mr-0 group-hover:mr-4 transition-all duration-300"></i>
+            <span class="font-medium overflow-hidden transition-all duration-300
                         xl:opacity-100 xl:w-auto
                         opacity-0 w-0
-                        group-hover:opacity-100 group-hover:w-auto">
-              <div class="text-xs font-semibold text-webropol-gray-700 uppercase tracking-widest leading-tight whitespace-nowrap">Contact Support</div>
-              <div class="text-[11px] text-webropol-gray-400 mt-0.5 whitespace-nowrap">Get help &amp; insights</div>
-            </div>
-            <i class="fal fa-chevron-right text-[10px] text-webropol-gray-300 group-hover/contact:text-webropol-primary-400 transition-colors duration-150 flex-shrink-0
-                       xl:opacity-100 opacity-0 group-hover:opacity-100"></i>
+                        group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-3 px-3
+          <div class="mt-2
+                      xl:px-4 px-3 group-hover:px-4
                       xl:opacity-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="text-[10px] text-webropol-gray-300 tracking-widest uppercase whitespace-nowrap">v3 Parrot &mdash; Webropol</div>
+            <div class="text-[10px] text-webropol-gray-400 whitespace-nowrap">Webropol Development v3 Parrot</div>
           </div>
         </div>
       </aside>
