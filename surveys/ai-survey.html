@@ -138,7 +138,7 @@
   </style>
 </head>
 
-<body x-data="aiSurveyApp()" class="bg-webropol-gray-50 font-sans">
+<body x-data="aiSurveyApp()">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
 
@@ -1112,6 +1112,17 @@
 
       // ── Lifecycle ──────────────────────────────────────────────────
       init() {
+        // Mark prompt/magic mode so header shows the right checkmark
+        localStorage.setItem('webropol_interface_mode', 'prompt');
+
+        // Listen for header view-mode switcher → "Classic" navigates back to home
+        document.addEventListener('webropol-switch-interface', (e) => {
+          if (e.detail && e.detail.mode === 'classic') {
+            localStorage.setItem('webropol_interface_mode', 'classic');
+            window.location.href = '../index.html';
+          }
+        });
+
         try {
           this.recentPrompts = JSON.parse(localStorage.getItem('webropol_ai_recent_prompts') || '[]');
         } catch (e) {
