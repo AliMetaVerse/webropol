@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
+              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
+              800: '#215669', 900: '#204859'
+            },
+            'webropol-gray': {
+              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
+              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
+              800: '#515557', 900: '#45484a', 950: '#272a2b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Navigation components -->
+  <script src="../components/navigation/Brand.js" type="module"></script>
+  <script src="../components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../components/navigation/Tabs.js" type="module"></script>
+  <script src="../components/navigation/FolderTree.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
+    .back-link:hover { text-decoration: underline; }
+    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
+    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+    .iframe-demo { width: 100%; border: 1px solid #e6e7e8; border-radius: 12px; background: white; }
+    .notice { background: #f0fdff; border: 1px solid #b0e8f1; border-radius: 12px; padding: 14px 18px; font-size: 0.875rem; color: #1e6880; display: flex; gap: 10px; align-items: flex-start; }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <a href="../components-index.html" class="back-link">
+    <i class="fal fa-arrow-left"></i> Back to Component Library
+  </a>
+
+  <h1>Navigation</h1>
+  <p class="lead">Brand identity, breadcrumbs, tabs, folder trees, and full‑page chrome components (header and sidebar).</p>
+
+  <!-- ── Brand ── -->
+  <section>
+    <h2 class="section-title">Brand</h2>
+    <p class="section-sub">Webropol logo and wordmark. Renders the SVG logo inline or via image. Use the <code>base</code> attribute for the asset root path.</p>
+    <div class="demo-block" style="display:flex;flex-direction:column;gap:20px">
+      <div>
+        <div class="sub-label">Default</div>
+        <webropol-brand base="../../"></webropol-brand>
+      </div>
+      <div>
+        <div class="sub-label">Compact / Icon only</div>
+        <webropol-brand base="../../" compact></webropol-brand>
+      </div>
+      <div>
+        <div class="sub-label">Dark background</div>
+        <div style="background:#204859;padding:16px 20px;border-radius:10px;display:inline-block">
+          <webropol-brand base="../../" inverted></webropol-brand>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Breadcrumbs ── -->
+  <section>
+    <h2 class="section-title">Breadcrumbs</h2>
+    <p class="section-sub">Hierarchical navigation trail. Accepts a JSON <code>trail</code> attribute — array of <code>{ label, url }</code> objects. Last item renders as current page (no link).</p>
+    <div class="demo-block" style="display:flex;flex-direction:column;gap:16px">
+
+      <div>
+        <div class="sub-label">Simple</div>
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../../index.html"},{"label":"Surveys","url":"../../surveys/index.html"},{"label":"Customer Satisfaction Q4"}]'></webropol-breadcrumbs>
+      </div>
+
+      <div>
+        <div class="sub-label">Deeper hierarchy</div>
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../../index.html"},{"label":"Events","url":"../../events/events.html"},{"label":"TechConnect 2025","url":"#"},{"label":"Registrations"}]'></webropol-breadcrumbs>
+      </div>
+
+      <div>
+        <div class="sub-label">Root only</div>
+        <webropol-breadcrumbs trail='[{"label":"Home"}]'></webropol-breadcrumbs>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Tabs ── -->
+  <section>
+    <h2 class="section-title">Tabs</h2>
+    <p class="section-sub">Horizontal tab navigation with badge support. Tabs emit a <code>webropol-tab-change</code> event on selection.</p>
+    <div class="demo-block" style="display:flex;flex-direction:column;gap:24px">
+
+      <div>
+        <div class="sub-label">Default tabs</div>
+        <webropol-tabs tabs='[
+          {"id":"overview","label":"Overview","icon":"fal fa-chart-bar"},
+          {"id":"responses","label":"Responses","badge":"142","icon":"fal fa-list"},
+          {"id":"settings","label":"Settings","icon":"fal fa-cog"}
+        ]' active="overview"></webropol-tabs>
+      </div>
+
+      <div>
+        <div class="sub-label">Pill tabs</div>
+        <webropol-tabs variant="pill" tabs='[
+          {"id":"all","label":"All Surveys"},
+          {"id":"active","label":"Active","badge":"8"},
+          {"id":"drafts","label":"Drafts","badge":"3"},
+          {"id":"archived","label":"Archived"}
+        ]' active="all"></webropol-tabs>
+      </div>
+
+      <div>
+        <div class="sub-label">Underline tabs</div>
+        <webropol-tabs variant="underline" tabs='[
+          {"id":"results","label":"Results"},
+          {"id":"summary","label":"Summary"},
+          {"id":"crosstabs","label":"Cross‑tabs"},
+          {"id":"export","label":"Export"}
+        ]' active="results"></webropol-tabs>
+      </div>
+
+      <p style="font-size:0.8125rem;color:#787f81;margin:8px 0 0">
+        See the full tabs demo: <a href="../components/tabs/tabs.html" style="color:#1d809d">tabs.html</a>
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── FolderTree ── -->
+  <section>
+    <h2 class="section-title">Folder Tree</h2>
+    <p class="section-sub">Recursive collapsible folder structure with survey/event items. Accepts a JSON <code>tree</code> attribute.</p>
+    <div class="demo-block">
+      <webropol-folder-tree tree='[
+        {
+          "id":"root",
+          "name":"My Surveys",
+          "type":"folder",
+          "expanded":true,
+          "children":[
+            {
+              "id":"f1",
+              "name":"Customer Research",
+              "type":"folder",
+              "expanded":true,
+              "children":[
+                {"id":"s1","name":"Q4 NPS Survey","type":"survey","status":"active","responses":142},
+                {"id":"s2","name":"Onboarding Feedback","type":"survey","status":"active","responses":38}
+              ]
+            },
+            {
+              "id":"f2",
+              "name":"Employee Surveys",
+              "type":"folder",
+              "children":[
+                {"id":"s3","name":"Pulse Check Jan","type":"survey","status":"draft","responses":0},
+                {"id":"s4","name":"Exit Interview","type":"survey","status":"archived","responses":27}
+              ]
+            },
+            {"id":"s5","name":"Quick Product Poll","type":"survey","status":"active","responses":89}
+          ]
+        }
+      ]'></webropol-folder-tree>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Header & Sidebar (live reference) ── -->
+  <section>
+    <h2 class="section-title">Header &amp; Sidebar</h2>
+    <p class="section-sub">Full‑page chrome. These components are complex layout components best viewed in situ.</p>
+    <div class="notice">
+      <i class="fal fa-info-circle" style="margin-top:2px"></i>
+      <div>
+        <strong>Live examples available on every app page.</strong>
+        The <code>webropol-header</code> / <code>webropol-header-enhanced</code> and <code>webropol-sidebar</code> components render the full top bar and left navigation. Open any module page (e.g. <a href="../../surveys/index.html" style="color:#1d809d">surveys/index.html</a>) to see them in context.
+        <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap">
+          <a href="../../surveys/index.html" style="color:#1d809d;font-size:0.8125rem">Surveys page →</a>
+          <a href="../../events/events.html" style="color:#1d809d;font-size:0.8125rem">Events page →</a>
+          <a href="../../dashboards/index.html" style="color:#1d809d;font-size:0.8125rem">Dashboards page →</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+      <!-- Header attrs summary -->
+      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px;background:white">
+        <p style="font-size:0.875rem;font-weight:600;margin:0 0 12px"><code>webropol-header-enhanced</code></p>
+        <table style="font-size:0.8125rem;width:100%;border-collapse:collapse">
+          <tr><td style="padding:4px 0;color:#787f81">username</td><td style="padding:4px 0">Display name in user menu</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">show-notifications</td><td style="padding:4px 0">Show notification bell</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">show-help</td><td style="padding:4px 0">Show help icon</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">show-user-menu</td><td style="padding:4px 0">Show avatar + dropdown</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">show-theme-selector</td><td style="padding:4px 0">Sun/moon toggle</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">notification-count</td><td style="padding:4px 0">Badge number</td></tr>
+        </table>
+      </div>
+
+      <!-- Sidebar attrs summary -->
+      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px;background:white">
+        <p style="font-size:0.875rem;font-weight:600;margin:0 0 12px"><code>webropol-sidebar</code></p>
+        <table style="font-size:0.8125rem;width:100%;border-collapse:collapse">
+          <tr><td style="padding:4px 0;color:#787f81">active</td><td style="padding:4px 0">Active module ID (e.g. "surveys")</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">base</td><td style="padding:4px 0">Base URL for asset paths</td></tr>
+          <tr><td style="padding:4px 0;color:#787f81">collapsed</td><td style="padding:4px 0">Start in collapsed state</td></tr>
+        </table>
+        <p style="font-size:0.8125rem;color:#787f81;margin:12px 0 0">
+          Module IDs: home, surveys, events, sms, dashboards, mywebropol, admin-tools, training-videos, shop
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

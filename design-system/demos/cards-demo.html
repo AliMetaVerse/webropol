@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cards — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
+              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
+              800: '#215669', 900: '#204859'
+            },
+            'webropol-gray': {
+              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
+              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
+              800: '#515557', 900: '#45484a', 950: '#272a2b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'card': '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- All card components -->
+  <script src="../components/cards/Card.js" type="module"></script>
+  <script src="../components/cards/ActionCard.js" type="module"></script>
+  <script src="../components/cards/ListCard.js" type="module"></script>
+  <script src="../components/cards/VideoCard.js" type="module"></script>
+  <script src="../components/cards/ThumbnailCard.js" type="module"></script>
+  <script src="../components/cards/ConfigurableCard.js" type="module"></script>
+  <script src="../components/buttons/Button.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1280px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 20px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
+    .back-link:hover { text-decoration: underline; }
+    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; font-family: monospace; letter-spacing: 0.03em; }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <a href="../components-index.html" class="back-link">
+    <i class="fal fa-arrow-left"></i> Back to Component Library
+  </a>
+
+  <h1>Cards</h1>
+  <p class="lead">Card containers for content, actions, media, and lists. Six variants covering the most common layout patterns.</p>
+
+  <!-- ── 1. Base Card ── -->
+  <section>
+    <h2 class="section-title">Card</h2>
+    <p class="section-sub">Base card with <code>default</code>, <code>elevated</code>, and <code>gradient</code> variants.</p>
+    <div class="cards-grid">
+
+      <webropol-card
+        variant="default"
+        title="Survey Overview"
+        subtitle="Get insights from your data">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.875rem;color:#787f81">Total Responses</span>
+            <span style="font-weight:600;color:#272a2b">2,847</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.875rem;color:#787f81">Completion Rate</span>
+            <span style="font-weight:600;color:#448237">89.2%</span>
+          </div>
+          <div style="background:#e6e7e8;border-radius:9999px;height:6px">
+            <div style="background:#1d809d;height:6px;border-radius:9999px;width:89%"></div>
+          </div>
+        </div>
+      </webropol-card>
+
+      <webropol-card
+        variant="elevated"
+        title="Team Collaboration"
+        badge="Active"
+        clickable="true">
+        <p style="color:#787f81;font-size:0.875rem;margin:0 0 12px">Work together on surveys and analyse results as a team.</p>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1d809d;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:600">A</div>
+            <div style="width:32px;height:32px;border-radius:50%;background:#823bdd;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:600;margin-left:-8px">S</div>
+            <div style="width:32px;height:32px;border-radius:50%;background:#f5980b;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:600;margin-left:-8px">M</div>
+          </div>
+          <span style="font-size:0.8125rem;color:#9ba2a4">+5 more</span>
+        </div>
+      </webropol-card>
+
+      <webropol-card
+        variant="gradient"
+        title="Premium Features"
+        subtitle="Unlock advanced capabilities">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px"><i class="fal fa-check" style="color:#448237"></i><span style="font-size:0.875rem">Custom branding</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><i class="fal fa-check" style="color:#448237"></i><span style="font-size:0.875rem">Advanced analytics</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><i class="fal fa-check" style="color:#448237"></i><span style="font-size:0.875rem">API integration</span></div>
+        </div>
+      </webropol-card>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── 2. Action Card ── -->
+  <section>
+    <h2 class="section-title">ActionCard</h2>
+    <p class="section-sub">Event and workshop cards with badge, title, description, and action content slot.</p>
+    <div class="cards-grid">
+
+      <webropol-action-card
+        badge="Workshop"
+        title="Customer Feedback Workshop"
+        description="Interactive session to improve customer satisfaction strategies."
+        variant="workshop">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:8px;color:#61686a;font-size:0.875rem">
+            <i class="fal fa-calendar" style="color:#1d809d"></i> Dec 28, 2025 • 2:00 PM
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;color:#61686a;font-size:0.875rem">
+            <i class="fal fa-users" style="color:#448237"></i> 24/30 registered
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #e6e7e8">
+            <span style="font-size:0.875rem;font-weight:500;color:#448237">Active</span>
+            <webropol-button variant="primary" size="sm">Register</webropol-button>
+          </div>
+        </div>
+      </webropol-action-card>
+
+      <webropol-action-card
+        badge="Webinar"
+        title="Advanced Analytics Deep Dive"
+        description="Master advanced survey analytics and reporting techniques."
+        variant="event">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:8px;color:#61686a;font-size:0.875rem">
+            <i class="fal fa-calendar" style="color:#1d809d"></i> Jan 15, 2026 • 1:00 PM
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;color:#61686a;font-size:0.875rem">
+            <i class="fal fa-globe" style="color:#1d809d"></i> Virtual (Zoom)
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #e6e7e8">
+            <span style="font-size:0.875rem;font-weight:500;color:#1d809d">Upcoming</span>
+            <webropol-button variant="secondary" size="sm">Join</webropol-button>
+          </div>
+        </div>
+      </webropol-action-card>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── 3. List Card ── -->
+  <section>
+    <h2 class="section-title">ListCard</h2>
+    <p class="section-sub">Card containing an ordered list of items with status badges and metadata.</p>
+    <div class="cards-grid">
+
+      <webropol-list-card
+        title="Recent Surveys"
+        items='[
+          {"title":"Customer Satisfaction Q4","meta":"Created 2 days ago","status":"active","badge":"142 responses"},
+          {"title":"Employee Feedback","meta":"Created 1 week ago","status":"completed","badge":"89 responses"},
+          {"title":"Product Research","meta":"Created 2 weeks ago","status":"draft","badge":"Draft"}
+        ]'>
+      </webropol-list-card>
+
+      <webropol-list-card
+        title="Team Activity"
+        icon="users"
+        compact="true"
+        items='[
+          {"title":"Ali created a new survey","meta":"2 hours ago","status":"completed"},
+          {"title":"Sarah shared a dashboard","meta":"4 hours ago","status":"completed"},
+          {"title":"Mike updated settings","meta":"1 day ago","status":"completed"}
+        ]'>
+      </webropol-list-card>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── 4. Video Card ── -->
+  <section>
+    <h2 class="section-title">VideoCard</h2>
+    <p class="section-sub">Media card with thumbnail, play overlay, duration badge, and view count.</p>
+    <div class="cards-grid">
+
+      <webropol-video-card
+        title="Getting Started with Webropol"
+        duration="5:24"
+        thumbnail="https://picsum.photos/seed/webropol1/400/220"
+        views="1,234">
+        <p style="font-size:0.875rem;color:#787f81">Learn the basics of creating your first survey from scratch.</p>
+      </webropol-video-card>
+
+      <webropol-video-card
+        title="Advanced Analytics Features"
+        duration="8:15"
+        thumbnail="https://picsum.photos/seed/webropol2/400/220"
+        views="856"
+        badge="New">
+        <p style="font-size:0.875rem;color:#787f81">Discover powerful analytics tools and report customisation.</p>
+      </webropol-video-card>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── 5. Thumbnail Card ── -->
+  <section>
+    <h2 class="section-title">ThumbnailCard</h2>
+    <p class="section-sub">Selectable thumbnail card for template or image pickers with selected state and preview bars.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px,1fr));gap:1rem;max-width:800px">
+
+      <webropol-thumbnail-card
+        title="Classic Survey"
+        preview-bars="60,40,70,50">
+      </webropol-thumbnail-card>
+
+      <webropol-thumbnail-card
+        title="Employee Pulse"
+        preview-bars="80,30,60,45"
+        selected="true">
+      </webropol-thumbnail-card>
+
+      <webropol-thumbnail-card
+        title="Event Feedback"
+        preview-bars="50,70,40,65">
+      </webropol-thumbnail-card>
+
+      <webropol-thumbnail-card
+        title="NPS Survey"
+        preview-bars="90,55,30,75"
+        disabled="true">
+      </webropol-thumbnail-card>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── 6. Configurable Card ── -->
+  <section>
+    <h2 class="section-title">ConfigurableCard</h2>
+    <p class="section-sub">Flexible card with title, subtitle, icon, badge, status, and optional expand support.</p>
+    <div class="cards-grid">
+
+      <webropol-configurable-card
+        title="Monthly Report"
+        subtitle="Generated automatically on the 1st of each month"
+        icon="chart-bar"
+        status="active"
+        badge="Auto">
+        <div style="font-size:0.875rem;color:#787f81;padding:12px 0">
+          <p>Last generated: Feb 1, 2026 · 456 responses included</p>
+        </div>
+      </webropol-configurable-card>
+
+      <webropol-configurable-card
+        title="Data Export Job"
+        subtitle="CSV export with all raw responses"
+        icon="file-export"
+        status="pending"
+        badge="Queued"
+        expandable>
+        <div slot="details" style="font-size:0.875rem;color:#787f81;padding:12px 0">
+          <p>Click to see export settings and history.</p>
+        </div>
+      </webropol-configurable-card>
+
+      <webropol-configurable-card
+        title="Integration Webhook"
+        subtitle="POST responses to your API endpoint"
+        icon="plug"
+        status="error"
+        badge="Failed">
+        <div style="font-size:0.875rem;color:#f43f63;padding:12px 0">
+          <p>Last attempt failed with HTTP 503. Check your endpoint URL.</p>
+        </div>
+      </webropol-configurable-card>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

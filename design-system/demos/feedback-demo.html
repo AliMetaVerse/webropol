@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
+              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
+              800: '#215669', 900: '#204859'
+            },
+            'webropol-gray': {
+              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
+              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
+              800: '#515557', 900: '#45484a', 950: '#272a2b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Feedback components -->
+  <script src="../components/feedback/Alert.js" type="module"></script>
+  <script src="../components/feedback/Banner.js" type="module"></script>
+  <script src="../components/feedback/Badge.js" type="module"></script>
+  <script src="../components/feedback/Loading.js" type="module"></script>
+  <script src="../components/feedback/Toast.js" type="module"></script>
+  <script src="../components/feedback/Tooltip.js" type="module"></script>
+  <script src="../components/feedback/PromoToast.js" type="module"></script>
+  <script src="../components/buttons/Button.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
+    .back-link:hover { text-decoration: underline; }
+    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
+    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+  </style>
+</head>
+<body x-data="feedbackDemo()">
+<main class="page">
+
+  <a href="../components-index.html" class="back-link">
+    <i class="fal fa-arrow-left"></i> Back to Component Library
+  </a>
+
+  <h1>Feedback</h1>
+  <p class="lead">Alert banners, page-level banners, badges, loading states, toasts, tooltips, and promotional overlays.</p>
+
+  <!-- ── Alert ── -->
+  <section>
+    <h2 class="section-title">Alert</h2>
+    <p class="section-sub">Inline contextual notification. The <code>webropol-alert-info</code> variant renders a gradient info banner with an icon.</p>
+    <div class="demo-block" style="display:flex;flex-direction:column;gap:16px">
+
+      <webropol-alert-info>
+        <strong>Survey published!</strong> Your survey is now live and accepting responses.
+        <a href="#" style="color:#1d809d;margin-left:8px">View survey →</a>
+      </webropol-alert-info>
+
+      <webropol-alert-info icon="fal fa-exclamation-triangle">
+        <strong>Response limit approaching.</strong> You have 45 responses remaining on your current plan.
+      </webropol-alert-info>
+
+      <webropol-alert-info icon="fal fa-check-circle">
+        <strong>Export complete.</strong> Your CSV file is ready. Check your email for the download link.
+      </webropol-alert-info>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Banner ── -->
+  <section>
+    <h2 class="section-title">Banner</h2>
+    <p class="section-sub">Page-level announcement banner with heading, description, primary/secondary actions, and dismissible support.</p>
+    <div class="demo-block" style="display:flex;flex-direction:column;gap:16px">
+
+      <webropol-banner
+        heading="New Feature: AI Survey Builder"
+        description="Generate surveys in seconds with our new AI-powered builder. Try it today!"
+        icon="fal fa-brain-circuit"
+        primary-label="Try now"
+        primary-url="#"
+        secondary-label="Dismiss"
+        dismissible>
+      </webropol-banner>
+
+      <webropol-banner
+        heading="Scheduled Maintenance"
+        description="Webropol will be unavailable on Sunday 12 April between 02:00–04:00 UTC."
+        icon="fal fa-wrench"
+        type="outlined"
+        primary-label="Learn more"
+        primary-url="#">
+      </webropol-banner>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Badge ── -->
+  <section>
+    <h2 class="section-title">Badge</h2>
+    <p class="section-sub">Status badges and pills in primary, secondary, success, warning, and error variants with optional icons.</p>
+    <div class="demo-block">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+        <webropol-badge variant="primary">Primary</webropol-badge>
+        <webropol-badge variant="secondary">Secondary</webropol-badge>
+        <webropol-badge variant="success" icon="check">Active</webropol-badge>
+        <webropol-badge variant="warning" icon="exclamation-triangle">Warning</webropol-badge>
+        <webropol-badge variant="error" icon="times">Error</webropol-badge>
+      </div>
+      <div class="sub-label" style="margin-top:20px">Status examples in context</div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid #e6e7e8;border-radius:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.875rem">Customer Satisfaction Q4</span>
+          <webropol-badge variant="success" icon="check">Active</webropol-badge>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.875rem">Employee Pulse Survey</span>
+          <webropol-badge variant="secondary">Draft</webropol-badge>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.875rem">Product Feedback Form</span>
+          <webropol-badge variant="warning" icon="exclamation-triangle">Expiring</webropol-badge>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.875rem">Annual NPS 2024</span>
+          <webropol-badge variant="primary">Archived</webropol-badge>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Loading ── -->
+  <section>
+    <h2 class="section-title">Loading</h2>
+    <p class="section-sub">Loading state indicators in four animation styles: <code>spinner</code>, <code>dots</code>, <code>pulse</code>, <code>bars</code>.</p>
+    <div class="demo-block">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:24px">
+
+        <div style="text-align:center">
+          <div class="sub-label">Spinner</div>
+          <webropol-loading type="spinner" size="md" text="Loading…"></webropol-loading>
+        </div>
+
+        <div style="text-align:center">
+          <div class="sub-label">Dots</div>
+          <webropol-loading type="dots" text="Processing…"></webropol-loading>
+        </div>
+
+        <div style="text-align:center">
+          <div class="sub-label">Pulse</div>
+          <webropol-loading type="pulse" size="lg"></webropol-loading>
+        </div>
+
+        <div style="text-align:center">
+          <div class="sub-label">Bars</div>
+          <webropol-loading type="bars"></webropol-loading>
+        </div>
+
+        <div style="text-align:center">
+          <div class="sub-label">Spinner — Large</div>
+          <webropol-loading type="spinner" size="lg" text="Generating report…"></webropol-loading>
+        </div>
+
+        <div style="text-align:center">
+          <div class="sub-label">Spinner — Small</div>
+          <webropol-loading type="spinner" size="sm"></webropol-loading>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Toast ── -->
+  <section>
+    <h2 class="section-title">Toast</h2>
+    <p class="section-sub">Floating notification toast with info/success/warning/error variants, position control, and auto-dismiss.</p>
+    <div class="demo-block">
+      <p style="font-size:0.875rem;color:#787f81;margin:0 0 20px">Click a button to trigger a toast notification. Each auto-dismisses after 4 seconds.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <webropol-button variant="primary" @click="showToast('info')">
+          <i class="fal fa-info-circle mr-1"></i> Info Toast
+        </webropol-button>
+        <webropol-button variant="secondary" @click="showToast('success')">
+          <i class="fal fa-check-circle mr-1"></i> Success Toast
+        </webropol-button>
+        <webropol-button variant="secondary" @click="showToast('warning')">
+          <i class="fal fa-exclamation-triangle mr-1"></i> Warning Toast
+        </webropol-button>
+        <webropol-button variant="danger" @click="showToast('error')">
+          <i class="fal fa-times-circle mr-1"></i> Error Toast
+        </webropol-button>
+      </div>
+
+      <!-- Toast instances (off-screen until triggered) -->
+      <webropol-toast id="toast-info"    variant="info"    position="top-right" duration="4000" dismissible>Survey saved successfully.</webropol-toast>
+      <webropol-toast id="toast-success" variant="success" position="top-right" duration="4000" dismissible>Changes published! Your survey is now live.</webropol-toast>
+      <webropol-toast id="toast-warning" variant="warning" position="top-right" duration="4000" dismissible>Response limit is 80% reached.</webropol-toast>
+      <webropol-toast id="toast-error"   variant="error"   position="top-right" duration="4000" dismissible>Failed to save. Please check your connection.</webropol-toast>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── Tooltip ── -->
+  <section>
+    <h2 class="section-title">Tooltip</h2>
+    <p class="section-sub">Hover tooltip wrapper with <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code> positioning.</p>
+    <div class="demo-block">
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:24px;padding:20px 0">
+
+        <webropol-tooltip text="This appears on top" position="top">
+          <webropol-button variant="secondary">Top</webropol-button>
+        </webropol-tooltip>
+
+        <webropol-tooltip text="This appears on the right" position="right">
+          <webropol-button variant="secondary">Right</webropol-button>
+        </webropol-tooltip>
+
+        <webropol-tooltip text="This appears at the bottom" position="bottom">
+          <webropol-button variant="secondary">Bottom</webropol-button>
+        </webropol-tooltip>
+
+        <webropol-tooltip text="This appears on the left" position="left">
+          <webropol-button variant="secondary">Left</webropol-button>
+        </webropol-tooltip>
+
+      </div>
+
+      <!-- Contextual example -->
+      <div style="margin-top:24px;padding-top:24px;border-top:1px solid #e6e7e8">
+        <p style="font-size:0.875rem;font-weight:500;margin:0 0 12px">Usage in context</p>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid #e6e7e8;border-radius:10px;background:#f9fafa;max-width:320px">
+          <span style="font-size:0.875rem;color:#272a2b">Anonymous responses</span>
+          <webropol-tooltip text="When enabled, all identifying information is removed from responses." position="right">
+            <i class="fal fa-info-circle" style="color:#9ba2a4;cursor:help"></i>
+          </webropol-tooltip>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function feedbackDemo() {
+    return {
+      showToast(variant) {
+        const toast = document.getElementById('toast-' + variant);
+        if (toast && toast.show) {
+          toast.show();
+        } else if (toast) {
+          // Fallback trigger via attribute
+          toast.setAttribute('show', 'true');
+          setTimeout(() => toast.removeAttribute('show'), 4500);
+        }
+      }
+    };
+  }
+</script>
+</body>
+</html>
