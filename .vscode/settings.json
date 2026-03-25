@@ -4,6 +4,14 @@
         "/^\\$utf8NoBom = New-Object System\\.Text\\.UTF8Encoding\\(\\$false\\); \\$files = Get-ChildItem \"design-system/component-demos\" -File \\| Where-Object \\{ \\$_\\.Extension -in '\\.html','\\.ps1' \\}; foreach \\(\\$f in \\$files\\) \\{ \\$content = \\[System\\.IO\\.File\\]::ReadAllText\\(\\$f\\.FullName\\); \\[System\\.IO\\.File\\]::WriteAllText\\(\\$f\\.FullName, \\$content, \\$utf8NoBom\\) \\}; \\$settings = \"\\.vscode/settings\\.json\"; if \\(Test-Path \\$settings\\) \\{ \\$s = \\[System\\.IO\\.File\\]::ReadAllText\\(\\$settings\\); \\[System\\.IO\\.File\\]::WriteAllText\\(\\(Resolve-Path \\$settings\\), \\$s, \\$utf8NoBom\\) \\}; \"Normalized UTF-8 \\(no BOM\\) for component-demos and \\.vscode/settings\\.json\"$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^Get-ChildItem \"c:\\\\Users\\\\ali\\.a-zuhairi\\\\OneDrive - Webropol Oy\\\\Documents\\\\GitHub Work\\\\webropol\\\\design-system\\\\demos\\\\\\*\\.html\" \\| ForEach-Object \\{ \\$name = \\$_\\.Name; \\$content = Get-Content \\$_\\.FullName -Raw; \\$h2count = \\(\\[regex\\]::Matches\\(\\$content, '<h2'\\)\\)\\.Count; \\$h3count = \\(\\[regex\\]::Matches\\(\\$content, '<h3'\\)\\)\\.Count; Write-Host \"\\$name — h2: \\$h2count, h3: \\$h3count\" \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^Get-ChildItem \"c:\\\\Users\\\\ali\\.a-zuhairi\\\\OneDrive - Webropol Oy\\\\Documents\\\\GitHub Work\\\\webropol\\\\design-system\\\\demos\\\\\\*\\.html\" \\| ForEach-Object \\{ \\$name = \\$_\\.Name; \\$content = Get-Content \\$_\\.FullName -Raw; \\$titles = \\[regex\\]::Matches\\(\\$content, '<h2\\[\\^>\\]\\*>\\(\\.\\*\\?\\)</h2>'\\) \\| ForEach-Object \\{ \\$_\\.Groups\\[1\\]\\.Value -replace '<\\[\\^>\\]\\+>','' \\}; if \\(\\$titles\\.Count -gt 1\\) \\{ Write-Host \"=== \\$name ===\"; \\$titles \\| ForEach-Object \\{ Write-Host \"  - \\$_\" \\} \\} \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

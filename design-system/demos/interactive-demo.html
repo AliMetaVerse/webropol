@@ -1,249 +1,123 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive — Webropol Design System</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'webropol-primary': {
-              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
-              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
-              800: '#215669', 900: '#204859'
-            },
-            'webropol-gray': {
-              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
-              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
-              800: '#515557', 900: '#45484a', 950: '#272a2b'
-            }
-          },
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
-
-  <!-- Interactive components -->
-  <script src="../components/interactive/FloatingButton.js" type="module"></script>
-  <script src="../components/interactive/FloatingToolbar.js" type="module"></script>
-  <script src="../components/interactive/ContentSelector.js" type="module"></script>
-  <script src="../components/buttons/Button.js" type="module"></script>
-
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
-    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 120px; }
-    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
-    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
-    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
-    .back-link:hover { text-decoration: underline; }
-    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
-    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
-    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
-    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
-    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
-    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
-    .canvas { position: relative; height: 220px; background: #f3f4f4; border-radius: 12px; border: 1px dashed #d1d5d6; overflow: hidden; }
-    .attr-table td { padding: 5px 12px 5px 0; font-size: 0.8125rem; vertical-align: top; }
-    .attr-table td:first-child { color: #787f81; white-space: nowrap; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 8px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; max-width: 640px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #9ba2a4; margin-bottom: 32px; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .component-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .comp-card { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s; text-decoration: none; color: inherit; }
+    .comp-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #b0e8f1; }
+    .comp-name { font-size: 1rem; font-weight: 600; color: #272a2b; }
+    .comp-tag { font-family: monospace; font-size: 0.8125rem; color: #1d809d; background: #eefbfd; padding: 2px 8px; border-radius: 6px; display: inline-block; }
+    .comp-desc { font-size: 0.875rem; color: #787f81; flex: 1; }
+    .comp-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.875rem; color: #1d809d; font-weight: 500; margin-top: 4px; }
+    .section-divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    .section-label { font-size: 1.125rem; font-weight: 600; color: #272a2b; margin: 0 0 6px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 20px; }
+    .other-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .other-card { padding: 20px; border: 1px solid #e6e7e8; border-radius: 12px; background: white; display: flex; flex-direction: column; gap: 8px; }
+    .other-card.muted { background: #f9fafa; }
+    .other-name { font-size: 0.875rem; font-weight: 600; color: #272a2b; display: flex; align-items: center; gap: 8px; }
+    .other-name.dimmed { color: #9ba2a4; }
+    .other-desc { font-size: 0.8125rem; color: #787f81; flex: 1; }
+    .other-desc.dimmed { color: #9ba2a4; }
+    .other-link { font-size: 0.8125rem; color: #1d809d; text-decoration: none; }
+    .other-link:hover { text-decoration: underline; }
+    .other-soon { font-size: 0.8125rem; color: #b5bbbd; }
   </style>
 </head>
 <body>
 <main class="page">
 
-  <a href="../index.html" class="back-link">
-    <i class="fal fa-arrow-left"></i> Back to Component Library
-  </a>
+  <nav class="breadcrumb">
+    <a href="../index.html">Component Library</a>
+    <i class="fal fa-chevron-right" style="font-size:10px"></i>
+    <span>Interactive</span>
+  </nav>
 
   <h1>Interactive</h1>
-  <p class="lead">Floating action menus, toolbars, content selectors, and other interactive overlay components.</p>
+  <p class="lead">Floating action menus, toolbars, content selectors, and other interactive overlay components for survey editing and navigation.</p>
 
-  <!-- ── FloatingButton ── -->
-  <section>
-    <h2 class="section-title">Floating Button</h2>
-    <p class="section-sub">Expandable floating action button (FAB) that reveals a radial or list menu. Used in the bottom-center of all app pages. Position, size, and menu items are configurable via attributes.</p>
-    <div class="demo-block">
-      <p style="font-size:0.875rem;color:#787f81;margin:0 0 16px">The floating button is rendered <strong>globally on this page</strong> (bottom-center). Click the + button to see the menu expand.</p>
+  <div class="component-grid">
 
-      <div style="margin-bottom:24px">
-        <div class="sub-label">Attributes</div>
-        <table class="attr-table">
-          <tr><td>position</td><td><code>bottom-left</code> · <code>bottom-center</code> · <code>bottom-right</code> · <code>top-right</code></td></tr>
-          <tr><td>size</td><td><code>sm</code> · <code>md</code> · <code>lg</code></td></tr>
-          <tr><td>items</td><td>JSON array of <code>{ id, label, description, icon, url }</code></td></tr>
-          <tr><td>show-menu</td><td>Boolean — start expanded</td></tr>
-        </table>
-      </div>
+    <a class="comp-card" href="floating-button-demo.html">
+      <div class="comp-name">Floating Button</div>
+      <div class="comp-tag">webropol-floating-button</div>
+      <p class="comp-desc">Expandable floating action button (FAB) that reveals a radial or list menu. Configurable position, size, and items.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-      <div style="background:#f9fafa;border-radius:10px;padding:16px 20px">
-        <div class="sub-label">Example usage</div>
-        <pre style="margin:0;font-size:0.8125rem;color:#272a2b;overflow-x:auto"><code>&lt;webropol-floating-button
-  position="bottom-center"
-  items='[
-    { "id": "survey", "label": "Survey", "icon": "fal fa-chart-bar", "url": "/surveys/create.html" },
-    { "id": "event", "label": "Event", "icon": "fal fa-calendar", "url": "/events/create.html" },
-    { "id": "sms", "label": "SMS", "icon": "fal fa-sms", "url": "/sms/create.html" }
-  ]'&gt;
-&lt;/webropol-floating-button&gt;</code></pre>
-      </div>
+    <a class="comp-card" href="floating-toolbar-demo.html">
+      <div class="comp-name">Floating Toolbar</div>
+      <div class="comp-tag">webropol-floating-toolbar</div>
+      <p class="comp-desc">Fixed toolbar for contextual editing actions within the survey editor. Supports multiple positions and variants.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
+
+    <a class="comp-card" href="content-selector-demo.html">
+      <div class="comp-name">Content Selector</div>
+      <div class="comp-tag">webropol-content-selector</div>
+      <p class="comp-desc">Panel for selecting the type of content to add to a survey page, with main action cards and question type grid.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
+
+  </div>
+
+  <div class="section-divider"></div>
+
+  <h2 class="section-label">Other Interactive Components</h2>
+  <p class="section-sub">Specialised workflow components best viewed in their full editor context.</p>
+
+  <div class="other-grid">
+
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-layer-group" style="color:#1d809d;width:16px;text-align:center"></i> Accordion</div>
+      <p class="other-desc">Collapsible content panels with single or multi-open modes.</p>
+      <a class="other-link" href="accordion-demo.html">View demo →</a>
     </div>
-  </section>
 
-  <!-- Live floating button instance for this page -->
-  <webropol-floating-button
-    position="bottom-center"
-    items='[
-      {"id":"survey","label":"Survey","description":"Create a new survey","icon":"fal fa-chart-bar","url":"../../surveys/index.html"},
-      {"id":"event","label":"Event","description":"Create a new event","icon":"fal fa-calendar-alt","url":"../../events/events.html"},
-      {"id":"sms","label":"SMS","description":"Send a message","icon":"fal fa-comment-alt","url":"../../sms/index.html"}
-    ]'>
-  </webropol-floating-button>
-
-  <div class="divider"></div>
-
-  <!-- ── FloatingToolbar ── -->
-  <section>
-    <h2 class="section-title">Floating Toolbar</h2>
-    <p class="section-sub">Fixed toolbar for contextual editing actions. Used within the survey editor for page/question-level tools. Supports positions, variants (<code>default</code>, <code>compact</code>, <code>rounded</code>), and sizes.</p>
-    <div class="demo-block">
-
-      <div class="sub-label">Default — top-center</div>
-      <div class="canvas">
-        <webropol-floating-toolbar
-          position="top-center"
-          variant="default"
-          size="medium"
-          tools='[
-            {"id":"add","label":"Add Page","icon":"fal fa-plus","action":"add-page"},
-            {"id":"duplicate","label":"Duplicate","icon":"fal fa-copy","action":"duplicate"},
-            {"id":"move-up","label":"Move Up","icon":"fal fa-arrow-up","action":"move-up"},
-            {"id":"move-down","label":"Move Down","icon":"fal fa-arrow-down","action":"move-down"},
-            {"id":"settings","label":"Page Settings","icon":"fal fa-cog","action":"settings"},
-            {"id":"delete","label":"Delete Page","icon":"fal fa-trash","action":"delete","variant":"danger"}
-          ]'>
-        </webropol-floating-toolbar>
-      </div>
-
-      <div style="margin-top:24px">
-        <div class="sub-label">Compact rounded — bottom-center</div>
-        <div class="canvas">
-          <webropol-floating-toolbar
-            position="bottom-center"
-            variant="rounded"
-            size="small"
-            tools='[
-              {"id":"bold","label":"Bold","icon":"fal fa-bold","action":"bold"},
-              {"id":"italic","label":"Italic","icon":"fal fa-italic","action":"italic"},
-              {"id":"link","label":"Link","icon":"fal fa-link","action":"link"},
-              {"id":"image","label":"Image","icon":"fal fa-image","action":"image"},
-              {"id":"code","label":"Code","icon":"fal fa-code","action":"code"}
-            ]'>
-          </webropol-floating-toolbar>
-        </div>
-      </div>
-
-      <div style="margin-top:24px">
-        <div class="sub-label">Attributes</div>
-        <table class="attr-table">
-          <tr><td>position</td><td><code>top-left</code> · <code>top-center</code> · <code>top-right</code> · <code>bottom-left</code> · <code>bottom-center</code> · <code>bottom-right</code></td></tr>
-          <tr><td>variant</td><td><code>default</code> · <code>compact</code> · <code>rounded</code></td></tr>
-          <tr><td>size</td><td><code>small</code> · <code>medium</code> · <code>large</code></td></tr>
-          <tr><td>tools</td><td>JSON array of <code>{ id, label, icon, action, variant? }</code></td></tr>
-        </table>
-      </div>
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-file-plus" style="color:#1d809d;width:16px;text-align:center"></i> Add Page Content</div>
+      <p class="other-desc">Inline panel for inserting content blocks into survey pages.</p>
+      <a class="other-link" href="add-page-content-demo.html">View demo →</a>
     </div>
-  </section>
 
-  <div class="divider"></div>
-
-  <!-- ── ContentSelector ── -->
-  <section>
-    <h2 class="section-title">Content Selector</h2>
-    <p class="section-sub">Panel for selecting the type of content to add to a survey page. Shows main action cards (Add Question, Import, Free Text) and a grid of question type options.</p>
-    <div class="demo-block">
-      <div style="max-width:480px;margin:0 auto">
-        <webropol-content-selector
-          title="Add to survey"
-          show-main-actions
-          show-question-types>
-        </webropol-content-selector>
-      </div>
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-object-group" style="color:#1d809d;width:16px;text-align:center"></i> Merge Pages</div>
+      <p class="other-desc">Dialog for merging two survey pages into one.</p>
+      <a class="other-link" href="merge-pages-demo.html">View demo →</a>
     </div>
-  </section>
 
-  <div class="divider"></div>
-
-  <!-- ── Other interactive components ── -->
-  <section>
-    <h2 class="section-title">Other Interactive Components</h2>
-    <p class="section-sub">Specialized workflow components that are best viewed in their full editor context.</p>
-    <div class="demo-block" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-layer-group" style="color:#1d809d;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600">Accordion</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#787f81;margin:0 0 12px">Collapsible content panels with single or multi-open modes.</p>
-        <a href="accordion-demo.html" style="color:#1d809d;font-size:0.8125rem;text-decoration:none">View demo →</a>
-      </div>
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-file-plus" style="color:#1d809d;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600">Add Page Content</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#787f81;margin:0 0 12px">Inline panel for inserting content blocks into survey pages.</p>
-        <a href="add-page-content-demo.html" style="color:#1d809d;font-size:0.8125rem;text-decoration:none">View demo →</a>
-      </div>
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-object-group" style="color:#1d809d;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600">Merge Pages</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#787f81;margin:0 0 12px">Dialog for merging two survey pages into one.</p>
-        <a href="merge-pages-demo.html" style="color:#1d809d;font-size:0.8125rem;text-decoration:none">View demo →</a>
-      </div>
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-bolt" style="color:#1d809d;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600">Page Quick Actions</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#787f81;margin:0 0 12px">Contextual quick-action overlay for survey pages.</p>
-        <a href="page-quick-actions-demo.html" style="color:#1d809d;font-size:0.8125rem;text-decoration:none">View demo →</a>
-      </div>
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-sitemap" style="color:#1d809d;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600">Survey Structure Panel</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#787f81;margin:0 0 12px">Side panel showing nested survey page/question tree.</p>
-        <a href="survey-structure-demo.html" style="color:#1d809d;font-size:0.8125rem;text-decoration:none">View demo →</a>
-      </div>
-
-      <div style="padding:20px;border:1px solid #e6e7e8;border-radius:12px;background:#f9fafa">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <i class="fal fa-tachometer-alt" style="color:#9ba2a4;width:20px;text-align:center"></i>
-          <span style="font-size:0.875rem;font-weight:600;color:#9ba2a4">Dashboard Config</span>
-        </div>
-        <p style="font-size:0.8125rem;color:#9ba2a4;margin:0 0 12px">Widget configuration panel for customizable dashboards.</p>
-        <span style="font-size:0.8125rem;color:#b5bbbd">Demo coming soon</span>
-      </div>
-
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-bolt" style="color:#1d809d;width:16px;text-align:center"></i> Page Quick Actions</div>
+      <p class="other-desc">Contextual quick-action overlay for survey pages.</p>
+      <a class="other-link" href="page-quick-actions-demo.html">View demo →</a>
     </div>
-  </section>
 
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-sitemap" style="color:#1d809d;width:16px;text-align:center"></i> Survey Structure Panel</div>
+      <p class="other-desc">Side panel showing nested survey page and question tree.</p>
+      <a class="other-link" href="survey-structure-demo.html">View demo →</a>
+    </div>
+
+    <div class="other-card muted">
+      <div class="other-name dimmed"><i class="fal fa-tachometer-alt" style="color:#9ba2a4;width:16px;text-align:center"></i> Dashboard Config</div>
+      <p class="other-desc dimmed">Widget configuration panel for customisable dashboards.</p>
+      <span class="other-soon">Demo coming soon</span>
+    </div>
+
+  </div>
 </main>
 </body>
 </html>

@@ -1,320 +1,79 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Forms — Webropol Design System</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'webropol-primary': {
-              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
-              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
-              800: '#215669', 900: '#204859'
-            },
-            'webropol-gray': {
-              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
-              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
-              800: '#515557', 900: '#45484a', 950: '#272a2b'
-            }
-          },
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
-
-  <!-- Form components -->
-  <script src="../components/forms/Input.js" type="module"></script>
-  <script src="../components/forms/Checkbox.js" type="module"></script>
-  <script src="../components/forms/Toggle.js" type="module"></script>
-  <script src="../components/forms/Dropdown.js" type="module"></script>
-  <script src="../components/forms/RadioSpecial.js" type="module"></script>
-  <script src="../components/buttons/Button.js" type="module"></script>
-
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
     .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
-    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
-    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
-    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
-    .back-link:hover { text-decoration: underline; }
-    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
-    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
-    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
-    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
-    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
-    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 8px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; max-width: 640px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #9ba2a4; margin-bottom: 32px; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .component-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .comp-card { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s; text-decoration: none; color: inherit; }
+    .comp-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #b0e8f1; }
+    .comp-name { font-size: 1rem; font-weight: 600; color: #272a2b; }
+    .comp-tag { font-family: monospace; font-size: 0.8125rem; color: #1d809d; background: #eefbfd; padding: 2px 8px; border-radius: 6px; display: inline-block; }
+    .comp-desc { font-size: 0.875rem; color: #787f81; flex: 1; }
+    .comp-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.875rem; color: #1d809d; font-weight: 500; margin-top: 4px; }
   </style>
 </head>
 <body>
 <main class="page">
 
-  <a href="../index.html" class="back-link">
-    <i class="fal fa-arrow-left"></i> Back to Component Library
-  </a>
+  <nav class="breadcrumb">
+    <a href="../index.html">Component Library</a>
+    <i class="fal fa-chevron-right" style="font-size:10px"></i>
+    <span>Forms</span>
+  </nav>
 
   <h1>Forms</h1>
-  <p class="lead">Input controls, selectors, toggles, checkboxes, and radio components for building rich forms.</p>
+  <p class="lead">Input controls, selectors, toggles, checkboxes, and radio components for building rich, accessible forms.</p>
 
-  <!-- ── Input ── -->
-  <section>
-    <h2 class="section-title">Input</h2>
-    <p class="section-sub">Text input with label, icon, helper text, required indicator, and error state.</p>
-    <div class="demo-block">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">
+  <div class="component-grid">
 
-        <div>
-          <div class="sub-label">Default</div>
-          <webropol-input label="Full Name" placeholder="Enter your full name" icon="user"></webropol-input>
-        </div>
+    <a class="comp-card" href="input-demo.html">
+      <div class="comp-name">Input</div>
+      <div class="comp-tag">webropol-input</div>
+      <p class="comp-desc">Text input with label, icon, helper text, required indicator, error state, and textarea variant.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-        <div>
-          <div class="sub-label">Required + Helper Text</div>
-          <webropol-input label="Email Address" type="email" placeholder="you@example.com" required="true" icon="envelope" helper-text="We'll never share your email address"></webropol-input>
-        </div>
+    <a class="comp-card" href="checkbox-demo.html">
+      <div class="comp-name">Checkbox</div>
+      <div class="comp-tag">webropol-checkbox</div>
+      <p class="comp-desc">Styled checkbox with label, checked, disabled, and indeterminate states in sm, md, and lg sizes.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-        <div>
-          <div class="sub-label">Password</div>
-          <webropol-input label="Password" type="password" placeholder="Enter password" required="true" icon="lock"></webropol-input>
-        </div>
+    <a class="comp-card" href="toggle-demo.html">
+      <div class="comp-name">Toggle</div>
+      <div class="comp-tag">webropol-toggle</div>
+      <p class="comp-desc">Toggle switch for boolean settings with label, description, size, color, and disabled attributes.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-        <div>
-          <div class="sub-label">Error State</div>
-          <webropol-input label="Username" placeholder="Choose a username" error="Username is already taken" value="webropol_user" icon="user"></webropol-input>
-        </div>
+    <a class="comp-card" href="dropdown-demo.html">
+      <div class="comp-name">Dropdown</div>
+      <div class="comp-tag">webropol-dropdown</div>
+      <p class="comp-desc">Custom styled dropdown with label, placeholder, JSON options array, size, and disabled attributes.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-        <div>
-          <div class="sub-label">Disabled</div>
-          <webropol-input label="Account ID" value="WBR-00123" disabled="true" icon="id-badge"></webropol-input>
-        </div>
+    <a class="comp-card" href="radio-demo.html">
+      <div class="comp-name">Radio Special</div>
+      <div class="comp-tag">webropol-radio-special</div>
+      <p class="comp-desc">Pill-style radio group for mutually exclusive selections with primary and accent variants.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
 
-        <div>
-          <div class="sub-label">Textarea</div>
-          <webropol-input label="Description" type="textarea" placeholder="Describe your survey goal…" rows="3"></webropol-input>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Checkbox ── -->
-  <section>
-    <h2 class="section-title">Checkbox</h2>
-    <p class="section-sub">Styled checkbox with label, checked, disabled, indeterminate, and <code>sm/md/lg</code> sizes.</p>
-    <div class="demo-block">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px">
-
-        <div>
-          <div class="sub-label">Sizes</div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <webropol-checkbox size="sm" label="Small checkbox"></webropol-checkbox>
-            <webropol-checkbox size="md" label="Medium checkbox (default)" checked></webropol-checkbox>
-            <webropol-checkbox size="lg" label="Large checkbox"></webropol-checkbox>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">States</div>
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <webropol-checkbox label="Unchecked"></webropol-checkbox>
-            <webropol-checkbox label="Checked" checked></webropol-checkbox>
-            <webropol-checkbox label="Indeterminate" indeterminate></webropol-checkbox>
-            <webropol-checkbox label="Disabled" disabled></webropol-checkbox>
-            <webropol-checkbox label="Disabled checked" disabled checked></webropol-checkbox>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">Example — Multi-select</div>
-          <div style="display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid #e6e7e8;border-radius:12px">
-            <p style="font-size:0.875rem;font-weight:500;margin:0 0 6px">Select notification types</p>
-            <webropol-checkbox label="Email notifications" checked></webropol-checkbox>
-            <webropol-checkbox label="SMS notifications"></webropol-checkbox>
-            <webropol-checkbox label="Push notifications" checked></webropol-checkbox>
-            <webropol-checkbox label="In-app alerts" disabled checked></webropol-checkbox>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Toggle ── -->
-  <section>
-    <h2 class="section-title">Toggle</h2>
-    <p class="section-sub">Toggle switch for boolean settings with label, description, size, color, and disabled attributes.</p>
-    <div class="demo-block">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px">
-
-        <div>
-          <div class="sub-label">Sizes</div>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <webropol-toggle label="Small toggle" size="sm" checked></webropol-toggle>
-            <webropol-toggle label="Medium toggle (default)" size="md"></webropol-toggle>
-            <webropol-toggle label="Large toggle" size="lg" checked></webropol-toggle>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">Colors</div>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <webropol-toggle label="Primary" color="primary" checked></webropol-toggle>
-            <webropol-toggle label="Success" color="success" checked></webropol-toggle>
-            <webropol-toggle label="Warning" color="warning" checked></webropol-toggle>
-            <webropol-toggle label="Danger" color="danger" checked></webropol-toggle>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">With Description + Disabled</div>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <webropol-toggle
-              label="Email notifications"
-              description="Receive daily summary emails"
-              checked>
-            </webropol-toggle>
-            <webropol-toggle
-              label="Two-Factor Auth"
-              description="Enhance your account security"
-              disabled>
-            </webropol-toggle>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Dropdown ── -->
-  <section>
-    <h2 class="section-title">Dropdown</h2>
-    <p class="section-sub">Custom styled dropdown with label, placeholder, JSON <code>options</code> array, size, and disabled attributes.</p>
-    <div class="demo-block">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px">
-
-        <div>
-          <div class="sub-label">Default</div>
-          <webropol-dropdown
-            label="Select Country"
-            placeholder="Choose a country…"
-            options='["Finland","Sweden","Norway","Denmark","Estonia"]'>
-          </webropol-dropdown>
-        </div>
-
-        <div>
-          <div class="sub-label">With Pre-selected Value</div>
-          <webropol-dropdown
-            label="Response Language"
-            value="English"
-            options='["English","Finnish","Swedish","German","French"]'>
-          </webropol-dropdown>
-        </div>
-
-        <div>
-          <div class="sub-label">Disabled</div>
-          <webropol-dropdown
-            label="Account Plan"
-            value="Enterprise"
-            options='["Basic","Pro","Enterprise"]'
-            disabled>
-          </webropol-dropdown>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Radio Special / Pill ── -->
-  <section>
-    <h2 class="section-title">RadioSpecial / RadioPill</h2>
-    <p class="section-sub">Pill-style radio group for mutually exclusive selections. Use <code>webropol-radio-special</code> with a shared <code>name</code> attribute.</p>
-    <div class="demo-block">
-      <div style="display:flex;flex-direction:column;gap:28px">
-
-        <div>
-          <div class="sub-label">Survey Type (primary variant)</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <webropol-radio-special name="survey-type" value="survey" label="Survey" checked></webropol-radio-special>
-            <webropol-radio-special name="survey-type" value="quiz" label="Quiz"></webropol-radio-special>
-            <webropol-radio-special name="survey-type" value="assessment" label="Assessment"></webropol-radio-special>
-            <webropol-radio-special name="survey-type" value="poll" label="Poll"></webropol-radio-special>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">Accent variant</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <webropol-radio-special name="access" value="public" label="Public" variant="accent" checked></webropol-radio-special>
-            <webropol-radio-special name="access" value="private" label="Private" variant="accent"></webropol-radio-special>
-            <webropol-radio-special name="access" value="restricted" label="Restricted" variant="accent"></webropol-radio-special>
-          </div>
-        </div>
-
-        <div>
-          <div class="sub-label">Small size + with disabled</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <webropol-radio-special name="freq" value="daily" label="Daily" size="sm" checked></webropol-radio-special>
-            <webropol-radio-special name="freq" value="weekly" label="Weekly" size="sm"></webropol-radio-special>
-            <webropol-radio-special name="freq" value="monthly" label="Monthly" size="sm"></webropol-radio-special>
-            <webropol-radio-special name="freq" value="never" label="Never" size="sm" disabled></webropol-radio-special>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Composed Form Example ── -->
-  <section>
-    <h2 class="section-title">Composed Form</h2>
-    <p class="section-sub">Real-world example combining multiple form components in a survey settings panel.</p>
-    <div class="demo-block" style="max-width:600px">
-      <h3 style="font-size:1rem;font-weight:600;color:#272a2b;margin:0 0 20px">Survey Settings</h3>
-
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <webropol-input label="Survey Title" value="Customer Satisfaction Q1 2026" required="true" icon="clipboard"></webropol-input>
-        <webropol-dropdown label="Category" value="Customer Experience" options='["Customer Experience","Employee Feedback","Market Research","Event Feedback","NPS"]'></webropol-dropdown>
-        <webropol-input label="Redirect URL" placeholder="https://example.com/thank-you" icon="link" helper-text="Optional: redirect respondents after submission"></webropol-input>
-
-        <div style="display:flex;flex-direction:column;gap:14px;padding:16px;background:#f9fafa;border-radius:12px;border:1px solid #e6e7e8">
-          <p style="font-size:0.875rem;font-weight:500;margin:0">Notification settings</p>
-          <webropol-toggle label="Email me new responses" description="Receive an email for each submission" checked></webropol-toggle>
-          <webropol-toggle label="Daily summary digest"></webropol-toggle>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <p style="font-size:0.875rem;font-weight:500;margin:0">Privacy</p>
-          <webropol-checkbox label="Anonymise all responses" checked></webropol-checkbox>
-          <webropol-checkbox label="Allow respondents to edit answers"></webropol-checkbox>
-        </div>
-
-        <div style="display:flex;justify-content:flex-end;gap:12px;padding-top:8px;border-top:1px solid #e6e7e8">
-          <webropol-button variant="secondary">Cancel</webropol-button>
-          <webropol-button variant="primary">Save Settings</webropol-button>
-        </div>
-      </div>
-    </div>
-  </section>
-
+  </div>
 </main>
 </body>
 </html>

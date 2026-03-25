@@ -1,290 +1,95 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modals — Webropol Design System</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'webropol-primary': {
-              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
-              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
-              800: '#215669', 900: '#204859'
-            },
-            'webropol-gray': {
-              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
-              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
-              800: '#515557', 900: '#45484a', 950: '#272a2b'
-            }
-          },
-          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
-
-  <!-- Modal components -->
-  <script src="../components/modals/Modal.js" type="module"></script>
-  <script src="../components/modals/SettingsModal.js" type="module"></script>
-  <script src="../components/modals/SurveySettingsModal.js" type="module"></script>
-  <script src="../components/buttons/Button.js" type="module"></script>
-
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
     .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
-    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
-    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
-    .back-link { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; margin-bottom: 32px; }
-    .back-link:hover { text-decoration: underline; }
-    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
-    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
-    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
-    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
-    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
-    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
-    .attr-table td { padding: 5px 12px 5px 0; font-size: 0.8125rem; vertical-align: top; }
-    .attr-table td:first-child { color: #787f81; white-space: nowrap; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 8px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; max-width: 640px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #9ba2a4; margin-bottom: 32px; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .component-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .comp-card { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow 0.15s, border-color 0.15s; text-decoration: none; color: inherit; }
+    .comp-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #b0e8f1; }
+    .comp-name { font-size: 1rem; font-weight: 600; color: #272a2b; }
+    .comp-tag { font-family: monospace; font-size: 0.8125rem; color: #1d809d; background: #eefbfd; padding: 2px 8px; border-radius: 6px; display: inline-block; }
+    .comp-desc { font-size: 0.875rem; color: #787f81; flex: 1; }
+    .comp-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.875rem; color: #1d809d; font-weight: 500; margin-top: 4px; }
+    .section-divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    .section-label { font-size: 1.125rem; font-weight: 600; color: #272a2b; margin: 0 0 6px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 20px; }
+    .other-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .other-card { padding: 20px; border: 1px solid #e6e7e8; border-radius: 12px; background: white; display: flex; flex-direction: column; gap: 8px; }
+    .other-name { font-size: 0.875rem; font-weight: 600; color: #272a2b; display: flex; align-items: center; gap: 8px; }
+    .other-desc { font-size: 0.8125rem; color: #787f81; flex: 1; }
+    .other-link { font-size: 0.8125rem; color: #1d809d; text-decoration: none; }
+    .other-link:hover { text-decoration: underline; }
   </style>
 </head>
-<body x-data="modalsDemo()">
+<body>
 <main class="page">
 
-  <a href="../index.html" class="back-link">
-    <i class="fal fa-arrow-left"></i> Back to Component Library
-  </a>
+  <nav class="breadcrumb">
+    <a href="../index.html">Component Library</a>
+    <i class="fal fa-chevron-right" style="font-size:10px"></i>
+    <span>Modals</span>
+  </nav>
 
   <h1>Modals</h1>
-  <p class="lead">Dialog overlays — base modal, settings panel, survey-specific settings, and specialized workflow modals.</p>
+  <p class="lead">Dialog overlays — base modal, settings panel, survey-specific settings, and specialised workflow modals.</p>
 
-  <!-- ── Base Modal ── -->
-  <section>
-    <h2 class="section-title">Modal</h2>
-    <p class="section-sub">General-purpose accessible modal dialog. Supports sizes <code>sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code>, <code>full</code>. Toggle with the <code>open</code> attribute or call <code>.open()</code> / <code>.close()</code>.</p>
-    <div class="demo-block">
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px">
-        <webropol-button variant="primary" @click="openModal('modal-sm')">Small</webropol-button>
-        <webropol-button variant="secondary" @click="openModal('modal-md')">Medium (default)</webropol-button>
-        <webropol-button variant="secondary" @click="openModal('modal-lg')">Large</webropol-button>
-        <webropol-button variant="secondary" @click="openModal('modal-confirm')">Confirm dialog</webropol-button>
-        <webropol-button variant="secondary" @click="openModal('modal-form')">Form modal</webropol-button>
-      </div>
+  <div class="component-grid">
 
-      <!-- Attribute reference -->
-      <div>
-        <div class="sub-label">Attributes</div>
-        <table class="attr-table">
-          <tr><td>title</td><td>Dialog heading text</td></tr>
-          <tr><td>size</td><td><code>sm</code> · <code>md</code> · <code>lg</code> · <code>xl</code> · <code>full</code></td></tr>
-          <tr><td>open</td><td>Boolean — visible when present</td></tr>
-          <tr><td>closable</td><td>Show ✕ close button (default true)</td></tr>
-          <tr><td>backdrop-close</td><td>Click backdrop to close (default true)</td></tr>
-        </table>
-      </div>
+    <a class="comp-card" href="modal-demo.html">
+      <div class="comp-name">Modal</div>
+      <div class="comp-tag">webropol-modal</div>
+      <p class="comp-desc">General-purpose accessible dialog supporting sm, md, lg, xl, and full sizes. Toggle via open attribute or .open() / .close() methods.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
+
+    <a class="comp-card" href="settings-modal-demo.html">
+      <div class="comp-name">Settings Modal</div>
+      <div class="comp-tag">webropol-settings-modal</div>
+      <p class="comp-desc">Side-panel modal for application-level settings and configuration with tabbed sections.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
+
+    <a class="comp-card" href="survey-settings-modal-demo.html">
+      <div class="comp-name">Survey Settings Modal</div>
+      <div class="comp-tag">webropol-survey-settings-modal</div>
+      <p class="comp-desc">Survey-specific configuration modal with general settings, appearance, access, and notification sections.</p>
+      <span class="comp-link">View demo <i class="fal fa-arrow-right"></i></span>
+    </a>
+
+  </div>
+
+  <div class="section-divider"></div>
+
+  <h2 class="section-label">Specialised Modals</h2>
+  <p class="section-sub">Complex workflow modals that require an active data context.</p>
+
+  <div class="other-grid">
+
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-plus-circle" style="color:#1d809d;width:16px;text-align:center"></i> Add Question Modal</div>
+      <p class="other-desc">Specialised modal for inserting survey questions with a type selection grid.</p>
+      <a class="other-link" href="add-question-modal-demo.html">View demo →</a>
     </div>
 
-    <!-- Modal instances -->
-    <webropol-modal id="modal-sm" title="Small Modal" size="sm" closable backdrop-close>
-      <p style="font-size:0.875rem;color:#45484a;padding:0 4px">This is a small modal. Useful for quick confirmations or brief messages.</p>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px">
-        <webropol-button variant="secondary" @click="closeModal('modal-sm')">Cancel</webropol-button>
-        <webropol-button variant="primary" @click="closeModal('modal-sm')">OK</webropol-button>
-      </div>
-    </webropol-modal>
-
-    <webropol-modal id="modal-md" title="Survey Options" size="md" closable backdrop-close>
-      <p style="font-size:0.875rem;color:#787f81;margin:0 0 20px">Choose what you would like to do with this survey.</p>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="padding:12px 16px;border:1px solid #e6e7e8;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px">
-          <i class="fal fa-copy" style="color:#1d809d;width:20px"></i>
-          <div><div style="font-size:0.875rem;font-weight:500">Duplicate survey</div><div style="font-size:0.8125rem;color:#787f81">Create an exact copy</div></div>
-        </div>
-        <div style="padding:12px 16px;border:1px solid #e6e7e8;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px">
-          <i class="fal fa-archive" style="color:#1d809d;width:20px"></i>
-          <div><div style="font-size:0.875rem;font-weight:500">Archive survey</div><div style="font-size:0.8125rem;color:#787f81">Hide without deleting</div></div>
-        </div>
-        <div style="padding:12px 16px;border:1px solid #e6e7e8;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:12px">
-          <i class="fal fa-share-alt" style="color:#1d809d;width:20px"></i>
-          <div><div style="font-size:0.875rem;font-weight:500">Share access</div><div style="font-size:0.8125rem;color:#787f81">Invite collaborators</div></div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px">
-        <webropol-button variant="secondary" @click="closeModal('modal-md')">Close</webropol-button>
-      </div>
-    </webropol-modal>
-
-    <webropol-modal id="modal-lg" title="Response Data — Customer Satisfaction Q4" size="lg" closable backdrop-close>
-      <div style="overflow-x:auto">
-        <table style="width:100%;font-size:0.8125rem;border-collapse:collapse">
-          <thead>
-            <tr style="border-bottom:2px solid #e6e7e8">
-              <th style="padding:8px 12px;text-align:left;color:#787f81;font-weight:600">Respondent</th>
-              <th style="padding:8px 12px;text-align:left;color:#787f81;font-weight:600">Date</th>
-              <th style="padding:8px 12px;text-align:left;color:#787f81;font-weight:600">Score</th>
-              <th style="padding:8px 12px;text-align:left;color:#787f81;font-weight:600">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid #f3f4f4"><td style="padding:8px 12px">Anonymous</td><td style="padding:8px 12px">2025-01-12</td><td style="padding:8px 12px">9</td><td style="padding:8px 12px"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:20px;font-size:11px">Complete</span></td></tr>
-            <tr style="border-bottom:1px solid #f3f4f4"><td style="padding:8px 12px">Anonymous</td><td style="padding:8px 12px">2025-01-13</td><td style="padding:8px 12px">7</td><td style="padding:8px 12px"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:20px;font-size:11px">Complete</span></td></tr>
-            <tr style="border-bottom:1px solid #f3f4f4"><td style="padding:8px 12px">Anonymous</td><td style="padding:8px 12px">2025-01-14</td><td style="padding:8px 12px">4</td><td style="padding:8px 12px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;font-size:11px">Partial</span></td></tr>
-            <tr><td style="padding:8px 12px">Anonymous</td><td style="padding:8px 12px">2025-01-15</td><td style="padding:8px 12px">10</td><td style="padding:8px 12px"><span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:20px;font-size:11px">Complete</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px">
-        <webropol-button variant="secondary" @click="closeModal('modal-lg')">Close</webropol-button>
-        <webropol-button variant="primary">Export CSV</webropol-button>
-      </div>
-    </webropol-modal>
-
-    <webropol-modal id="modal-confirm" title="Delete Survey" size="sm" closable backdrop-close>
-      <div style="display:flex;gap:16px;align-items:flex-start;padding:4px 0 20px">
-        <div style="width:40px;height:40px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <i class="fal fa-trash-alt" style="color:#ef4444"></i>
-        </div>
-        <div>
-          <p style="font-size:0.875rem;font-weight:600;margin:0 0 4px;color:#272a2b">Are you sure?</p>
-          <p style="font-size:0.8125rem;color:#787f81;margin:0">This will permanently delete <strong>Customer Satisfaction Q4</strong> and all its 142 responses. This action cannot be undone.</p>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px">
-        <webropol-button variant="secondary" @click="closeModal('modal-confirm')">Cancel</webropol-button>
-        <webropol-button variant="danger" @click="closeModal('modal-confirm')">Delete survey</webropol-button>
-      </div>
-    </webropol-modal>
-
-    <webropol-modal id="modal-form" title="New Contact" size="md" closable backdrop-close>
-      <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:8px">
-        <div>
-          <label style="font-size:0.8125rem;font-weight:500;display:block;margin-bottom:6px">Full name <span style="color:#ef4444">*</span></label>
-          <input type="text" placeholder="e.g. Maria Johnson" style="width:100%;padding:9px 13px;border:1px solid #d1d5d6;border-radius:8px;font-size:0.875rem;font-family:inherit;outline:none;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:0.8125rem;font-weight:500;display:block;margin-bottom:6px">Email address <span style="color:#ef4444">*</span></label>
-          <input type="email" placeholder="maria@example.com" style="width:100%;padding:9px 13px;border:1px solid #d1d5d6;border-radius:8px;font-size:0.875rem;font-family:inherit;outline:none;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:0.8125rem;font-weight:500;display:block;margin-bottom:6px">Contact group</label>
-          <select style="width:100%;padding:9px 13px;border:1px solid #d1d5d6;border-radius:8px;font-size:0.875rem;font-family:inherit;outline:none;background:white;box-sizing:border-box">
-            <option>Select a group…</option>
-            <option>Q4 NPS list</option>
-            <option>Newsletter subscribers</option>
-            <option>Event attendees</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px">
-        <webropol-button variant="secondary" @click="closeModal('modal-form')">Cancel</webropol-button>
-        <webropol-button variant="primary" @click="closeModal('modal-form')">Save contact</webropol-button>
-      </div>
-    </webropol-modal>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Settings Modal ── -->
-  <section>
-    <h2 class="section-title">Settings Modal</h2>
-    <p class="section-sub">A specialized side-panel or full modal for application settings and configuration, with tabbed sections.</p>
-    <div class="demo-block">
-      <div style="display:flex;gap:10px">
-        <webropol-button variant="secondary" @click="openModal('settings-modal')">
-          <i class="fal fa-cog mr-1"></i> Open Settings
-        </webropol-button>
-      </div>
-      <div style="margin-top:20px">
-        <div class="sub-label">Attributes</div>
-        <table class="attr-table">
-          <tr><td>open</td><td>Boolean — visible when present</td></tr>
-          <tr><td>active-tab</td><td>ID of the initially active tab section</td></tr>
-          <tr><td>title</td><td>Panel title (default: "Settings")</td></tr>
-        </table>
-      </div>
+    <div class="other-card">
+      <div class="other-name"><i class="fal fa-filter" style="color:#1d809d;width:16px;text-align:center"></i> Rule Group Modal</div>
+      <p class="other-desc">Advanced conditional logic builder for survey display rules. Requires an active survey context.</p>
+      <a class="other-link" href="../../surveys/edit.html">Open in Survey Editor →</a>
     </div>
-    <webropol-settings-modal id="settings-modal" title="Global Settings"></webropol-settings-modal>
-  </section>
 
-  <div class="divider"></div>
-
-  <!-- ── Survey Settings Modal ── -->
-  <section>
-    <h2 class="section-title">Survey Settings Modal</h2>
-    <p class="section-sub">Survey-specific configuration modal with sections for general settings, appearance, access, and notifications.</p>
-    <div class="demo-block">
-      <div style="display:flex;gap:10px">
-        <webropol-button variant="secondary" @click="openModal('survey-settings-modal')">
-          <i class="fal fa-sliders-h mr-1"></i> Survey Settings
-        </webropol-button>
-      </div>
-      <div style="margin-top:20px">
-        <div class="sub-label">Attributes</div>
-        <table class="attr-table">
-          <tr><td>open</td><td>Boolean — visible when present</td></tr>
-          <tr><td>survey-id</td><td>Survey identifier to load settings for</td></tr>
-          <tr><td>survey-name</td><td>Displayed in the modal header</td></tr>
-        </table>
-      </div>
-    </div>
-    <webropol-survey-settings-modal id="survey-settings-modal" survey-name="Customer Satisfaction Q4" survey-id="survey-demo-01"></webropol-survey-settings-modal>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Add Question Modal ── -->
-  <section>
-    <h2 class="section-title">Add Question Modal</h2>
-    <p class="section-sub">Specialized modal for inserting survey questions. Has its own dedicated demo page.</p>
-    <div class="demo-block">
-      <a href="add-question-modal-demo.html" style="display:inline-flex;align-items:center;gap:6px;color:#1d809d;font-size:0.875rem;text-decoration:none">
-        <i class="fal fa-external-link"></i> View Add Question Modal demo
-      </a>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- ── Rule Group Modal ── -->
-  <section>
-    <h2 class="section-title">Rule Group Modal</h2>
-    <p class="section-sub">Advanced conditional logic builder used in survey display rules and audience segmentation. Opens via the <code>open</code> attribute.</p>
-    <div class="demo-block">
-      <p style="font-size:0.875rem;color:#787f81;margin:0 0 16px">This is a complex data-driven modal that requires an active survey context and rule definitions. Best explored in the survey editor.</p>
-      <a href="../../surveys/edit.html" style="display:inline-flex;align-items:center;gap:6px;color:#1d809d;font-size:0.875rem;text-decoration:none">
-        <i class="fal fa-external-link"></i> Open in Survey Editor
-      </a>
-    </div>
-  </section>
-
+  </div>
 </main>
-
-<script>
-  function modalsDemo() {
-    return {
-      openModal(id) {
-        const el = document.getElementById(id);
-        if (el) {
-          el.setAttribute('open', '');
-          if (typeof el.open === 'function') el.open();
-        }
-      },
-      closeModal(id) {
-        const el = document.getElementById(id);
-        if (el) {
-          el.removeAttribute('open');
-          if (typeof el.close === 'function') el.close();
-        }
-      }
-    };
-  }
-</script>
 </body>
 </html>

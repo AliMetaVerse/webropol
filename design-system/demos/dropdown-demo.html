@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dropdown — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7', 400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880', 800: '#215669', 900: '#204859' },
+            'webropol-gray': { 50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6', 400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a', 800: '#515557', 900: '#45484a', 950: '#272a2b' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <script src="../components/forms/Dropdown.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #9ba2a4; margin-bottom: 12px; }
+    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 0.875rem; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: #b5bbbd; }
+    .sibling-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid #e6e7e8; margin-top: 64px; }
+    .sibling-nav a { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; padding: 8px 14px; border: 1px solid #b0e8f1; border-radius: 8px; background: white; }
+    .sibling-nav a:hover { background: #eefbfd; }
+    .attr-table td { padding: 5px 12px 5px 0; font-size: 0.8125rem; vertical-align: top; }
+    .attr-table td:first-child { color: #787f81; white-space: nowrap; font-family: monospace; }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html"><i class="fal fa-swatchbook" style="margin-right:4px"></i>Component Library</a>
+    <span>/</span>
+    <a href="forms-demo.html">Forms</a>
+    <span>/</span>
+    <span style="color:#45484a;font-weight:500">Dropdown</span>
+  </nav>
+
+  <h1>Dropdown</h1>
+  <p class="lead">Custom styled single-select dropdown with label, placeholder text, JSON <code>options</code> array, pre-selected value, and disabled state.</p>
+
+  <!-- Variants -->
+  <section>
+    <h2 class="section-title">Variants</h2>
+    <p class="section-sub">Three common configurations: default with placeholder, pre-selected value, and disabled.</p>
+    <div class="demo-block">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px">
+
+        <div>
+          <div class="sub-label">Default — with Placeholder</div>
+          <webropol-dropdown
+            label="Select Country"
+            placeholder="Choose a country…"
+            options='["Finland","Sweden","Norway","Denmark","Estonia"]'>
+          </webropol-dropdown>
+        </div>
+
+        <div>
+          <div class="sub-label">Pre-selected Value</div>
+          <webropol-dropdown
+            label="Response Language"
+            value="English"
+            options='["English","Finnish","Swedish","German","French"]'>
+          </webropol-dropdown>
+        </div>
+
+        <div>
+          <div class="sub-label">Disabled</div>
+          <webropol-dropdown
+            label="Account Plan"
+            value="Enterprise"
+            options='["Basic","Pro","Enterprise"]'
+            disabled>
+          </webropol-dropdown>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Attributes -->
+  <section>
+    <h2 class="section-title">Attributes</h2>
+    <div class="demo-block">
+      <table class="attr-table">
+        <tr><td>label</td><td>Visible label above the dropdown</td></tr>
+        <tr><td>options</td><td>JSON array of string options, e.g. <code>'["A","B","C"]'</code></td></tr>
+        <tr><td>placeholder</td><td>Placeholder option shown when no value is selected</td></tr>
+        <tr><td>value</td><td>Pre-selected option string</td></tr>
+        <tr><td>disabled</td><td>Boolean — disables the dropdown</td></tr>
+        <tr><td>name</td><td>HTML select name for form submission</td></tr>
+        <tr><td>size</td><td><code>sm</code> · <code>md</code> (default) · <code>lg</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <nav class="sibling-nav">
+    <a href="toggle-demo.html"><i class="fal fa-arrow-left"></i> Toggle</a>
+    <a href="radio-demo.html">RadioSpecial <i class="fal fa-arrow-right"></i></a>
+  </nav>
+
+</main>
+</body>
+</html>

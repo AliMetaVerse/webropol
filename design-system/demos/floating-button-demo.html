@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floating Button — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
+              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
+              800: '#215669', 900: '#204859'
+            },
+            'webropol-gray': {
+              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
+              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
+              800: '#515557', 900: '#45484a', 950: '#272a2b'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <script src="../components/interactive/FloatingButton.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 900px; margin: 0 auto; padding: 40px 24px 120px; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .section-title { font-size: 1.125rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .sub-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ba2a4; margin-bottom: 12px; }
+    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+    .divider { height: 1px; background: #e6e7e8; margin: 40px 0; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: #9ba2a4; margin-bottom: 32px; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .attr-table td { padding: 5px 12px 5px 0; font-size: 0.8125rem; vertical-align: top; }
+    .attr-table td:first-child { font-family: monospace; color: #787f81; white-space: nowrap; }
+    .sibling-nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid #e6e7e8; font-size: 0.875rem; }
+    .sibling-nav a { color: #1d809d; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .sibling-nav a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html">Component Library</a>
+    <i class="fal fa-chevron-right" style="font-size:10px"></i>
+    <a href="interactive-demo.html">Interactive</a>
+    <i class="fal fa-chevron-right" style="font-size:10px"></i>
+    <span style="color:#45484a">Floating Button</span>
+  </nav>
+
+  <h1>Floating Button</h1>
+  <p class="lead">Expandable floating action button (FAB) that reveals a radial or list menu. Used on every app page at bottom-center. Position, size, and menu items are fully configurable via attributes.</p>
+
+  <!-- Live Demo -->
+  <section>
+    <h2 class="section-title">Live Demo</h2>
+    <p class="section-sub">The button renders live at the bottom-center of this page. Click the <strong>+</strong> icon to expand the menu.</p>
+    <div class="demo-block">
+      <p style="font-size:0.875rem;color:#787f81;margin:0 0 16px">The floating button is rendered globally below. Scroll down or look at the bottom of the viewport.</p>
+      <div style="background:#f9fafa;border-radius:10px;padding:16px 20px">
+        <div class="sub-label">Example markup</div>
+        <pre style="margin:0;font-size:0.8125rem;color:#272a2b;overflow-x:auto;white-space:pre-wrap"><code>&lt;webropol-floating-button
+  position="bottom-center"
+  items='[
+    { "id": "survey", "label": "Survey", "description": "Create a new survey",
+      "icon": "fal fa-chart-bar", "url": "/surveys/create.html" },
+    { "id": "event",  "label": "Event",  "description": "Plan a new event",
+      "icon": "fal fa-calendar-alt", "url": "/events/create.html" },
+    { "id": "sms",    "label": "SMS",    "description": "Send a message",
+      "icon": "fal fa-comment-alt",  "url": "/sms/create.html" }
+  ]'&gt;
+&lt;/webropol-floating-button&gt;</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Attributes -->
+  <section>
+    <h2 class="section-title">Attributes</h2>
+    <div class="demo-block">
+      <table class="attr-table">
+        <tr><td>position</td><td><code>bottom-left</code> · <code>bottom-center</code> (default) · <code>bottom-right</code> · <code>top-right</code></td></tr>
+        <tr><td>size</td><td><code>sm</code> · <code>md</code> (default) · <code>lg</code></td></tr>
+        <tr><td>items</td><td>JSON array of <code>{ id, label, description?, icon, url }</code></td></tr>
+        <tr><td>show-menu</td><td>Boolean — start expanded on page load</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <nav class="sibling-nav">
+    <span></span>
+    <a href="floating-toolbar-demo.html">Floating Toolbar <i class="fal fa-arrow-right"></i></a>
+  </nav>
+
+</main>
+
+<!-- Live floating button instance -->
+<webropol-floating-button
+  position="bottom-center"
+  items='[
+    {"id":"survey","label":"Survey","description":"Create a new survey","icon":"fal fa-chart-bar","url":"../../surveys/index.html"},
+    {"id":"event","label":"Event","description":"Create a new event","icon":"fal fa-calendar-alt","url":"../../events/events.html"},
+    {"id":"sms","label":"SMS","description":"Send a message","icon":"fal fa-comment-alt","url":"../../sms/index.html"}
+  ]'>
+</webropol-floating-button>
+
+</body>
+</html>
