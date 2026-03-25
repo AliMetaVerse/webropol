@@ -507,7 +507,7 @@ export class WebropolSettingsModal extends BaseComponent {
               Changes saved automatically
             </span>
             <div class="flex items-center gap-2">
-              <button class="reset-button px-4 py-2 text-xs font-medium text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-colors">
+              <button class="reset-button px-5 py-2 text-sm font-medium text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-lg transition-colors">
                 Reset to defaults
               </button>
               <button class="done-button px-5 py-2 text-sm font-medium rounded-lg border border-webropol-primary-400 text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors">
