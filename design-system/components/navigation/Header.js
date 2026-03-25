@@ -230,6 +230,11 @@ export class WebropolHeader extends BaseComponent {
                     Settings
                   </a>
                   <hr class="my-2 border-webropol-gray-200">
+                  <a href="${(() => { const p = window.location.pathname.split('/').filter(Boolean); return (p.length <= 1 ? './' : '../'.repeat(p.length - 1)) + 'design-system/index.html'; })()}" target="_blank" rel="noopener" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                    <i class="fa-duotone fa-thin fa-swatchbook w-4 mr-3"></i>
+                    Design System
+                  </a>
+                  <hr class="my-2 border-webropol-gray-200">
                   <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                     <i class="fa-duotone fa-thin fa-sign-out-alt w-4 mr-3"></i>
                     Sign Out
@@ -1866,9 +1871,15 @@ export class WebropolHeader extends BaseComponent {
     dropdown.className = 'bg-white rounded-xl shadow-lg border border-webropol-gray-200 p-2 opacity-0 translate-y-1 transition-all duration-150';
 
     if (type === 'user') {
+      const _up = window.location.pathname.split('/').filter(Boolean);
+      const _dsPath = (_up.length <= 1 ? './' : '../'.repeat(_up.length - 1)) + 'design-system/index.html';
       dropdown.innerHTML = `
         <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Profile</button>
         <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Settings</button>
+        <div class="my-1 border-t border-webropol-gray-200"></div>
+        <a href="${_dsPath}" target="_blank" rel="noopener" class="flex items-center w-full px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50 text-sm">
+          <i class="fal fa-swatchbook mr-2.5"></i>Design System
+        </a>
         <div class="my-1 border-t border-webropol-gray-200"></div>
         <button data-action="signout" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Sign out</button>
       `;
