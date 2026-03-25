@@ -1,6 +1,11 @@
 // Global two-step Contact Us modal handler (non-design-system)
 // Injects a lightweight modal overlay and intercepts clicks on .contact-footer-btn and #/contact links.
 (function(){
+  if (window.__webropolContactModalInitialized) {
+    return;
+  }
+  window.__webropolContactModalInitialized = true;
+
   const STATE = {
     root: null,
     backdrop: null,
@@ -12,6 +17,16 @@
 
   function ensureModal(){
     if (STATE.root) return STATE.root;
+
+    const existingRoot = document.querySelector('[data-contact-modal-root]');
+    if (existingRoot) {
+      STATE.root = existingRoot;
+      STATE.backdrop = existingRoot.querySelector(':scope > div:first-child');
+      STATE.modal = existingRoot.querySelector('[data-contact-modal]');
+      STATE.content = existingRoot.querySelector('[data-contact-content]');
+      return STATE.root;
+    }
+
     const root = document.createElement('div');
     root.setAttribute('data-contact-modal-root','');
     Object.assign(root.style, { position:'fixed', inset:'0', zIndex:'100000', display:'none' });
@@ -44,23 +59,23 @@
     Object.assign(closeBtn.style, { 
       position:'absolute', top:'16px', right:'16px', 
       width:'48px', height:'48px', borderRadius:'99px', 
-      border:'none', 
-      background:'transparent', 
-      color:'#ffffff', 
+      border:'1px solid #e2e8f0', 
+      background:'#ffffff', 
+      color:'#475569', 
       display:'flex', alignItems:'center', justifyContent:'center', 
       cursor:'pointer',
       pointerEvents:'auto',
-      boxShadow:'none',
+      boxShadow:'0 1px 2px rgba(15, 23, 42, 0.08)',
       transition:'background 150ms ease',
       fontSize:'20px',
       zIndex:'100'
     });
     
     closeBtn.addEventListener('mouseenter', ()=> {
-      closeBtn.style.background = 'rgba(255,255,255,0.15)';
+      closeBtn.style.background = '#f8fafc';
     });
     closeBtn.addEventListener('mouseleave', ()=> {
-      closeBtn.style.background = 'transparent';
+      closeBtn.style.background = '#ffffff';
     });
 
     closeBtn.addEventListener('click', (e) => {
