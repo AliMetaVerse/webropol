@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quote of the Month – Design Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #080e1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 36px 24px 80px;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+
+    /* ─── Toolbar ─── */
+    .toolbar {
+      width: 1200px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-title {
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 500;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .toolbar-sep {
+      width: 1px;
+      height: 20px;
+      background: #2d3748;
+      margin: 0 4px;
+    }
+
+    .btn {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+    .btn:active { transform: translateY(0); }
+    .btn-jpg  { background: #E85F0B; color: #fff; }
+    .btn-png  { background: #0B5065; color: #fff; }
+
+    .upload-label {
+      padding: 9px 18px;
+      background: #1a2235;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #d1d5db;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .upload-label:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+    input[type="file"] { display: none; }
+
+    /* Theme pills */
+    .theme-pills {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .theme-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .theme-pill:hover { transform: scale(1.2); }
+    .theme-pill.active { border-color: #fff; transform: scale(1.15); }
+    .pill-clean  { background: #ffffff; }
+    .pill-teal   { background: linear-gradient(135deg, #0B5065, #48BDD6); }
+    .pill-dark   { background: linear-gradient(135deg, #0f172a, #1e3a5f); }
+    .pill-warm   { background: linear-gradient(135deg, #7c3aed, #db2777); }
+    .pill-sage   { background: linear-gradient(135deg, #064e3b, #6ee7b7); }
+
+    /* ─── Banner shadow wrapper ─── */
+    .banner-shadow {
+      box-shadow: 0 28px 90px rgba(0,0,0,0.7);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════
+       CARD  –  1200 × 550 px
+       ══════════════════════════════════ */
+    #banner {
+      width: 1200px;
+      height: 550px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: #f8fafb;
+      display: flex;
+    }
+
+    /* ── Top accent bar ── */
+    .top-bars {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      height: 5px;
+      z-index: 10;
+    }
+    .bar { height: 100%; flex: 1; }
+    .bar-1 { background: #E85F0B; }
+    .bar-2 { background: #6BB458; }
+    .bar-3 { background: #48BDD6; }
+    .bar-4 { background: #0B5065; }
+
+    /* ── Left panel ── */
+    .panel-left {
+      width: 380px;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px 50px;
+    }
+
+    /* Subtle left background tint */
+    .panel-left-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #eef8fb 0%, #f8fafb 100%);
+    }
+
+    /* Vertical accent line */
+    .panel-left-line {
+      position: absolute;
+      right: 0;
+      top: 60px;
+      bottom: 60px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, #c8e6ed 30%, #c8e6ed 70%, transparent);
+    }
+
+    /* Avatar circle */
+    .avatar-wrap {
+      position: relative;
+      z-index: 2;
+      margin-bottom: 28px;
+    }
+
+    .avatar-ring {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, #48BDD6, #0B5065, #48BDD6);
+      position: relative;
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #d1e8ef;
+      position: relative;
+    }
+
+    .avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    /* Placeholder silhouette when no image */
+    .avatar-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #cce8f0, #a8d8e4);
+    }
+    .avatar-placeholder svg { opacity: 0.45; }
+
+    /* Name tag below avatar */
+    .avatar-name {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .name-main {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0B5065;
+      line-height: 1.3;
+    }
+    .name-role {
+      font-size: 13px;
+      font-weight: 500;
+      color: #5a8a96;
+      margin-top: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    /* Decorative dots in left panel */
+    .deco-dots {
+      position: absolute;
+      bottom: 50px;
+      left: 28px;
+      display: grid;
+      grid-template-columns: repeat(4, 7px);
+      grid-template-rows: repeat(4, 7px);
+      gap: 9px;
+      opacity: 0.25;
+      z-index: 1;
+    }
+    .deco-dots span {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #0B5065;
+      display: block;
+    }
+
+    /* Small logo mark top of left panel */
+    .panel-logo {
+      position: absolute;
+      top: 26px;
+      left: 32px;
+      z-index: 2;
+    }
+    .panel-logo img {
+      height: 22px;
+      width: auto;
+      opacity: 0.65;
+    }
+    .panel-logo-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0B5065;
+      letter-spacing: 0.5px;
+      opacity: 0.65;
+    }
+
+    /* Month badge */
+    .month-badge {
+      position: absolute;
+      top: 26px;
+      right: 28px;
+      background: #0B5065;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      z-index: 2;
+    }
+
+    /* ── Right panel ── */
+    .panel-right {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 70px 72px 60px 64px;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #48BDD6;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 2px;
+      background: #48BDD6;
+      border-radius: 1px;
+    }
+
+    /* Main heading */
+    .quote-heading {
+      font-size: 46px;
+      font-weight: 900;
+      color: #0a1628;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 28px;
+      font-family: 'Inter', sans-serif;
+    }
+    .quote-heading .accent {
+      color: #0B5065;
+    }
+
+    /* Giant opening quote mark */
+    .big-quote {
+      font-size: 120px;
+      line-height: 0.7;
+      color: #48BDD6;
+      opacity: 0.18;
+      font-family: 'Georgia', serif;
+      font-weight: 900;
+      position: absolute;
+      top: 80px;
+      right: 64px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Quote text */
+    .quote-text {
+      font-size: 20px;
+      font-weight: 400;
+      color: #374151;
+      line-height: 1.7;
+      font-style: italic;
+      position: relative;
+      max-width: 640px;
+      margin-bottom: 36px;
+    }
+    .quote-text::before {
+      content: '"';
+      font-size: 28px;
+      color: #48BDD6;
+      font-style: normal;
+      font-weight: 700;
+      margin-right: 4px;
+      vertical-align: -4px;
+    }
+    .quote-text::after {
+      content: '"';
+      font-size: 28px;
+      color: #48BDD6;
+      font-style: normal;
+      font-weight: 700;
+      margin-left: 4px;
+      vertical-align: -4px;
+    }
+
+    /* Author credit */
+    .author-credit {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .author-by {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+    .author-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0B5065;
+      letter-spacing: -0.3px;
+    }
+    .author-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* Decorative circle bottom-right */
+    .deco-circle {
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 2px solid rgba(72, 189, 214, 0.12);
+      pointer-events: none;
+    }
+    .deco-circle-2 {
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 2px solid rgba(72, 189, 214, 0.1);
+      pointer-events: none;
+    }
+
+    /* Bottom accent strip */
+    .bottom-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      display: flex;
+      z-index: 10;
+    }
+
+    /* ────────────────────────────────────────────
+       THEME VARIANTS
+       ──────────────────────────────────────────── */
+
+    /* Theme: Teal gradient */
+    #banner.theme-teal {
+      background: #0d1e2c;
+    }
+    #banner.theme-teal .panel-left-bg {
+      background: linear-gradient(160deg, #0b2d3d 0%, #0d1e2c 100%);
+    }
+    #banner.theme-teal .panel-left-line {
+      background: linear-gradient(180deg, transparent, rgba(72,189,214,0.2) 30%, rgba(72,189,214,0.2) 70%, transparent);
+    }
+    #banner.theme-teal .quote-heading { color: #f0f9ff; }
+    #banner.theme-teal .quote-heading .accent { color: #48BDD6; }
+    #banner.theme-teal .quote-text { color: rgba(240,249,255,0.8); }
+    #banner.theme-teal .quote-text::before,
+    #banner.theme-teal .quote-text::after { color: #48BDD6; }
+    #banner.theme-teal .name-main { color: #7dd3fc; }
+    #banner.theme-teal .name-role { color: rgba(125,211,252,0.6); }
+    #banner.theme-teal .author-name { color: #48BDD6; }
+    #banner.theme-teal .author-title { color: rgba(240,249,255,0.55); }
+    #banner.theme-teal .author-by { color: rgba(240,249,255,0.4); }
+    #banner.theme-teal .month-badge { background: #48BDD6; color: #0a1628; }
+    #banner.theme-teal .panel-logo-text { color: #48BDD6; }
+    #banner.theme-teal .section-label { color: #48BDD6; }
+    #banner.theme-teal .section-label::before { background: #48BDD6; }
+    #banner.theme-teal .deco-dots span { background: #48BDD6; opacity: 0.3; }
+    #banner.theme-teal .big-quote { opacity: 0.12; color: #48BDD6; }
+    #banner.theme-teal .avatar-ring {
+      background: linear-gradient(135deg, #48BDD6, #0b5065, #6ee7b7);
+    }
+
+    /* Theme: Dark Navy */
+    #banner.theme-dark {
+      background: #0a0f1e;
+    }
+    #banner.theme-dark .panel-left-bg {
+      background: linear-gradient(160deg, #0f1827 0%, #0a0f1e 100%);
+    }
+    #banner.theme-dark .panel-left-line {
+      background: linear-gradient(180deg, transparent, rgba(99,102,241,0.2) 30%, rgba(99,102,241,0.2) 70%, transparent);
+    }
+    #banner.theme-dark .quote-heading { color: #f8fafc; }
+    #banner.theme-dark .quote-heading .accent { color: #818cf8; }
+    #banner.theme-dark .section-label { color: #818cf8; }
+    #banner.theme-dark .section-label::before { background: #818cf8; }
+    #banner.theme-dark .quote-text { color: rgba(248,250,252,0.72); }
+    #banner.theme-dark .quote-text::before,
+    #banner.theme-dark .quote-text::after { color: #818cf8; }
+    #banner.theme-dark .big-quote { color: #818cf8; opacity: 0.1; }
+    #banner.theme-dark .name-main { color: #c7d2fe; }
+    #banner.theme-dark .name-role { color: rgba(199,210,254,0.55); }
+    #banner.theme-dark .author-name { color: #818cf8; }
+    #banner.theme-dark .author-title { color: rgba(248,250,252,0.5); }
+    #banner.theme-dark .author-by { color: rgba(248,250,252,0.35); }
+    #banner.theme-dark .month-badge { background: #4f46e5; color: #fff; }
+    #banner.theme-dark .panel-logo-text { color: #818cf8; }
+    #banner.theme-dark .avatar-ring {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed, #818cf8);
+    }
+    #banner.theme-dark .deco-circle { border-color: rgba(129,140,248,0.1); }
+    #banner.theme-dark .deco-circle-2 { border-color: rgba(129,140,248,0.08); }
+    #banner.theme-dark .top-bars .bar-3 { background: #818cf8; }
+    #banner.theme-dark .top-bars .bar-4 { background: #4f46e5; }
+    #banner.theme-dark .bottom-strip .bar:nth-child(3) { background: #818cf8; }
+    #banner.theme-dark .bottom-strip .bar:nth-child(4) { background: #4f46e5; }
+
+    /* Theme: Warm Violet */
+    #banner.theme-warm {
+      background: #1a0a2e;
+    }
+    #banner.theme-warm .panel-left-bg {
+      background: linear-gradient(160deg, #250f42 0%, #1a0a2e 100%);
+    }
+    #banner.theme-warm .panel-left-line {
+      background: linear-gradient(180deg, transparent, rgba(219,39,119,0.2) 30%, rgba(219,39,119,0.2) 70%, transparent);
+    }
+    #banner.theme-warm .quote-heading { color: #fdf4ff; }
+    #banner.theme-warm .quote-heading .accent { color: #e879f9; }
+    #banner.theme-warm .section-label { color: #e879f9; }
+    #banner.theme-warm .section-label::before { background: #e879f9; }
+    #banner.theme-warm .quote-text { color: rgba(253,244,255,0.72); }
+    #banner.theme-warm .quote-text::before,
+    #banner.theme-warm .quote-text::after { color: #e879f9; }
+    #banner.theme-warm .big-quote { color: #e879f9; opacity: 0.1; }
+    #banner.theme-warm .name-main { color: #f0abfc; }
+    #banner.theme-warm .name-role { color: rgba(240,171,252,0.55); }
+    #banner.theme-warm .author-name { color: #e879f9; }
+    #banner.theme-warm .author-title { color: rgba(253,244,255,0.5); }
+    #banner.theme-warm .author-by { color: rgba(253,244,255,0.35); }
+    #banner.theme-warm .month-badge { background: #7c3aed; color: #fff; }
+    #banner.theme-warm .panel-logo-text { color: #e879f9; }
+    #banner.theme-warm .avatar-ring {
+      background: linear-gradient(135deg, #7c3aed, #db2777, #e879f9);
+    }
+    #banner.theme-warm .deco-circle { border-color: rgba(232,121,249,0.1); }
+    #banner.theme-warm .deco-circle-2 { border-color: rgba(232,121,249,0.07); }
+    #banner.theme-warm .top-bars .bar-1 { background: #7c3aed; }
+    #banner.theme-warm .top-bars .bar-2 { background: #db2777; }
+    #banner.theme-warm .top-bars .bar-3 { background: #e879f9; }
+    #banner.theme-warm .top-bars .bar-4 { background: #4a1d96; }
+    #banner.theme-warm .bottom-strip .bar:nth-child(1) { background: #7c3aed; }
+    #banner.theme-warm .bottom-strip .bar:nth-child(2) { background: #db2777; }
+    #banner.theme-warm .bottom-strip .bar:nth-child(3) { background: #e879f9; }
+    #banner.theme-warm .bottom-strip .bar:nth-child(4) { background: #4a1d96; }
+    #banner.theme-warm .deco-dots span { background: #e879f9; }
+
+    /* Theme: Sage Green */
+    #banner.theme-sage {
+      background: #f0fdf4;
+    }
+    #banner.theme-sage .panel-left-bg {
+      background: linear-gradient(160deg, #dcfce7 0%, #f0fdf4 100%);
+    }
+    #banner.theme-sage .panel-left-line {
+      background: linear-gradient(180deg, transparent, #a7f3d0 30%, #a7f3d0 70%, transparent);
+    }
+    #banner.theme-sage .quote-heading { color: #052e16; }
+    #banner.theme-sage .quote-heading .accent { color: #059669; }
+    #banner.theme-sage .section-label { color: #059669; }
+    #banner.theme-sage .section-label::before { background: #059669; }
+    #banner.theme-sage .quote-text { color: #1f2937; }
+    #banner.theme-sage .quote-text::before,
+    #banner.theme-sage .quote-text::after { color: #059669; }
+    #banner.theme-sage .big-quote { color: #059669; opacity: 0.12; }
+    #banner.theme-sage .name-main { color: #064e3b; }
+    #banner.theme-sage .name-role { color: #374151; }
+    #banner.theme-sage .author-name { color: #059669; }
+    #banner.theme-sage .author-title { color: #6b7280; }
+    #banner.theme-sage .author-by { color: #9ca3af; }
+    #banner.theme-sage .month-badge { background: #059669; color: #fff; }
+    #banner.theme-sage .panel-logo-text { color: #059669; }
+    #banner.theme-sage .avatar-ring {
+      background: linear-gradient(135deg, #059669, #064e3b, #6ee7b7);
+    }
+    #banner.theme-sage .deco-circle { border-color: rgba(5,150,105,0.12); }
+    #banner.theme-sage .deco-circle-2 { border-color: rgba(5,150,105,0.08); }
+    #banner.theme-sage .top-bars .bar-1 { background: #059669; }
+    #banner.theme-sage .top-bars .bar-2 { background: #6ee7b7; }
+    #banner.theme-sage .top-bars .bar-3 { background: #34d399; }
+    #banner.theme-sage .top-bars .bar-4 { background: #064e3b; }
+    #banner.theme-sage .bottom-strip .bar:nth-child(1) { background: #059669; }
+    #banner.theme-sage .bottom-strip .bar:nth-child(2) { background: #6ee7b7; }
+    #banner.theme-sage .bottom-strip .bar:nth-child(3) { background: #34d399; }
+    #banner.theme-sage .bottom-strip .bar:nth-child(4) { background: #064e3b; }
+    #banner.theme-sage .deco-dots span { background: #059669; }
+
+    /* ─── Loading overlay ─── */
+    #export-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    #export-overlay.active { display: flex; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Toast ─── */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      z-index: 1000;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── Controls panel ─── */
+    .controls-panel {
+      width: 1200px;
+      margin-top: 28px;
+      background: #0e1626;
+      border: 1px solid #1e2d42;
+      border-radius: 14px;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px 32px;
+    }
+
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ctrl-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #6b7280;
+    }
+    .ctrl-input {
+      background: #162030;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #e5e7eb;
+      font-size: 14px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .ctrl-input:focus {
+      outline: none;
+      border-color: #48BDD6;
+    }
+    textarea.ctrl-input { min-height: 80px; line-height: 1.6; }
+    .ctrl-span-2 { grid-column: span 2; }
+  </style>
+</head>
+<body>
+
+  <div id="export-overlay">
+    <div class="spinner"></div>
+    <span id="overlay-msg">Rendering card…</span>
+  </div>
+  <div id="toast"></div>
+
+  <!-- ─── Toolbar ─── -->
+  <div class="toolbar">
+    <span class="toolbar-title">Webropol · Quote of the Month · 1200 × 550 px</span>
+
+    <label class="upload-label" title="Upload profile photo">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload Photo
+      <input type="file" id="photo-upload" accept="image/*">
+    </label>
+
+    <div class="toolbar-sep"></div>
+
+    <!-- Theme swatches -->
+    <div class="theme-pills">
+      <button class="theme-pill pill-clean active" data-theme="" title="Clean White" onclick="setTheme('', this)"></button>
+      <button class="theme-pill pill-teal" data-theme="theme-teal" title="Teal Dark" onclick="setTheme('theme-teal', this)"></button>
+      <button class="theme-pill pill-dark" data-theme="theme-dark" title="Dark Navy" onclick="setTheme('theme-dark', this)"></button>
+      <button class="theme-pill pill-warm" data-theme="theme-warm" title="Warm Violet" onclick="setTheme('theme-warm', this)"></button>
+      <button class="theme-pill pill-sage" data-theme="theme-sage" title="Sage Green" onclick="setTheme('theme-sage', this)"></button>
+    </div>
+
+    <div class="toolbar-sep"></div>
+
+    <button class="btn btn-jpg" onclick="exportAs('jpeg')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export JPG
+    </button>
+    <button class="btn btn-png" onclick="exportAs('png')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export PNG
+    </button>
+  </div>
+
+  <!-- ─── Banner ─── -->
+  <div class="banner-shadow">
+    <div id="banner">
+
+      <!-- Top bar -->
+      <div class="top-bars">
+        <div class="bar bar-1"></div>
+        <div class="bar bar-2"></div>
+        <div class="bar bar-3"></div>
+        <div class="bar bar-4"></div>
+      </div>
+
+      <!-- Left panel -->
+      <div class="panel-left">
+        <div class="panel-left-bg"></div>
+        <div class="panel-left-line"></div>
+
+        <!-- Logo mark -->
+        <div class="panel-logo">
+          <span class="panel-logo-text">WEBROPOL</span>
+        </div>
+
+        <!-- Month badge -->
+        <div class="month-badge" id="badge-text">MARCH 2026</div>
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <div class="avatar-inner">
+              <div class="avatar-placeholder" id="avatar-placeholder">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                  <circle cx="40" cy="32" r="18" fill="#0B5065" opacity="0.35"/>
+                  <ellipse cx="40" cy="68" rx="26" ry="14" fill="#0B5065" opacity="0.25"/>
+                </svg>
+              </div>
+              <img id="avatar-img" style="display:none;" alt="Author photo">
+            </div>
+          </div>
+        </div>
+
+        <!-- Name under avatar -->
+        <div class="avatar-name">
+          <div class="name-main" id="card-name">M. Kuusisaari</div>
+          <div class="name-role" id="card-role">Customer Success Manager</div>
+        </div>
+
+        <!-- Decorative dots -->
+        <div class="deco-dots">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Right panel -->
+      <div class="panel-right">
+
+        <!-- Big decorative quote -->
+        <div class="big-quote">"</div>
+
+        <!-- Section label -->
+        <div class="section-label">Quote of the Month</div>
+
+        <!-- Heading -->
+        <h2 class="quote-heading" id="card-heading">
+          Inspiring <span class="accent">Words</span><br>That Drive Us
+        </h2>
+
+        <!-- Quote body -->
+        <p class="quote-text" id="card-quote">
+          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+        </p>
+
+        <!-- Author credit -->
+        <div class="author-credit">
+          <span class="author-by">By</span>
+          <span class="author-name" id="card-author">M. Kuusisaari</span>
+          <span class="author-title" id="card-author-title">Customer Success Manager, Webropol</span>
+        </div>
+
+        <!-- Decorative circles -->
+        <div class="deco-circle"></div>
+        <div class="deco-circle-2"></div>
+      </div>
+
+      <!-- Bottom strip -->
+      <div class="bottom-strip">
+        <div class="bar bar-1"></div>
+        <div class="bar bar-2"></div>
+        <div class="bar bar-3"></div>
+        <div class="bar bar-4"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── Controls panel ─── -->
+  <div class="controls-panel">
+
+    <div class="ctrl-group ctrl-span-2">
+      <label class="ctrl-label">Quote Text</label>
+      <textarea class="ctrl-input" id="ctrl-quote" rows="3" placeholder="Enter the quote…">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.</textarea>
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">Card Heading</label>
+      <input type="text" class="ctrl-input" id="ctrl-heading" value="Inspiring Words">
+      <label class="ctrl-label" style="margin-top:10px;">Heading Accent Word</label>
+      <input type="text" class="ctrl-input" id="ctrl-heading-accent" value="Words">
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">Author Name</label>
+      <input type="text" class="ctrl-input" id="ctrl-name" value="M. Kuusisaari">
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">Author Role / Title</label>
+      <input type="text" class="ctrl-input" id="ctrl-role" value="Customer Success Manager">
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">Author Org / Full Title</label>
+      <input type="text" class="ctrl-input" id="ctrl-author-title" value="Customer Success Manager, Webropol">
+    </div>
+
+    <div class="ctrl-group">
+      <label class="ctrl-label">Month Badge</label>
+      <input type="text" class="ctrl-input" id="ctrl-badge" value="MARCH 2026">
+    </div>
+
+  </div>
+
+  <script>
+    // ── Live editing ──────────────────────────────────────────────
+    function bind(inputId, targetId, isHTML) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        if (isHTML) {
+          target.innerHTML = el.value;
+        } else {
+          target.textContent = el.value;
+        }
+      });
+    }
+
+    bind('ctrl-quote', 'card-quote', false);
+    bind('ctrl-name', 'card-name', false);
+    bind('ctrl-name', 'card-author', false);
+    bind('ctrl-role', 'card-role', false);
+    bind('ctrl-author-title', 'card-author-title', false);
+    bind('ctrl-badge', 'badge-text', false);
+
+    // Heading with accent
+    function updateHeading() {
+      const headEl = document.getElementById('ctrl-heading');
+      const accentEl = document.getElementById('ctrl-heading-accent');
+      const target = document.getElementById('card-heading');
+      if (!headEl || !accentEl || !target) return;
+      const full = headEl.value.trim();
+      const accent = accentEl.value.trim();
+      if (accent && full.includes(accent)) {
+        target.innerHTML = full.replace(
+          accent,
+          `<span class="accent">${accent}</span>`
+        ) + '<br>That Drive Us';
+      } else {
+        target.textContent = full;
+      }
+    }
+    document.getElementById('ctrl-heading').addEventListener('input', updateHeading);
+    document.getElementById('ctrl-heading-accent').addEventListener('input', updateHeading);
+
+    // Sync name to both name fields
+    document.getElementById('ctrl-name').addEventListener('input', function() {
+      document.getElementById('card-name').textContent = this.value;
+      document.getElementById('card-author').textContent = this.value;
+    });
+
+    // ── Photo upload ──────────────────────────────────────────────
+    document.getElementById('photo-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = document.getElementById('avatar-img');
+        const placeholder = document.getElementById('avatar-placeholder');
+        img.src = ev.target.result;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ── Theme switcher ────────────────────────────────────────────
+    function setTheme(theme, btn) {
+      const banner = document.getElementById('banner');
+      banner.className = theme ? theme : '';
+      document.querySelectorAll('.theme-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // ── Export ────────────────────────────────────────────────────
+    async function exportAs(format) {
+      const overlay = document.getElementById('export-overlay');
+      const msg = document.getElementById('overlay-msg');
+      overlay.classList.add('active');
+      msg.textContent = 'Rendering card…';
+
+      const banner = document.getElementById('banner');
+      const scale = 2;
+
+      try {
+        const canvas = await html2canvas(banner, {
+          scale,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          logging: false,
+          width: 1200,
+          height: 550,
+          windowWidth: 1200,
+          windowHeight: 550
+        });
+
+        msg.textContent = format === 'jpeg' ? 'Compressing JPG…' : 'Encoding PNG…';
+        await new Promise(r => setTimeout(r, 120));
+
+        const quality = format === 'jpeg' ? 0.93 : 1.0;
+        const mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+        const ext  = format === 'jpeg' ? 'jpg' : 'png';
+
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `quote-of-the-month.${ext}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          overlay.classList.remove('active');
+          showToast(`Exported as ${ext.toUpperCase()} · 1200 × 550 @2x`);
+        }, mime, quality);
+
+      } catch (err) {
+        overlay.classList.remove('active');
+        showToast('Export failed — check console for details.');
+        console.error(err);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
