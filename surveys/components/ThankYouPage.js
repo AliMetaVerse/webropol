@@ -317,34 +317,24 @@ export class ThankYouPage extends BaseComponent {
     <div class="absolute inset-0 pointer-events-none opacity-50" 
          style="background: radial-gradient(ellipse at 50% 150%, rgba(6,182,212,0.15) 0%, transparent 70%);"></div>
 
-    <div class="text-center relative z-10 w-full max-w-lg">
-      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-webropol-gray-200 shadow-sm rounded-full mb-5 transition-shadow hover:shadow-md">
+    <div class="text-center relative z-10 w-full max-w-[280px]">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-webropol-gray-200 shadow-sm rounded-full mb-3 transition-shadow hover:shadow-md">
         <i class="fal fa-bolt text-webropol-primary-500 text-xs shadow-sm"></i>
         <span class="text-[11px] font-bold text-webropol-gray-600 uppercase tracking-widest">Powered by Webropol</span>
       </div>
       
       <a href="https://webropol.com" target="_blank" rel="noopener noreferrer"
-         class="group flex flex-col sm:flex-row items-center gap-5 bg-white px-6 py-5 sm:px-8 sm:py-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] border border-webropol-gray-100 hover:shadow-[0_8px_30px_-4px_rgba(6,182,212,0.15)] hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:ring-offset-2">
+         class="group flex items-center justify-between bg-white px-4 py-3 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] border border-webropol-gray-100 hover:shadow-[0_8px_30px_-4px_rgba(6,182,212,0.15)] hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:ring-offset-2 w-full">
         
-        <div class="flex items-center gap-4">
-          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-webropol-primary-50/50 group-hover:scale-110 transition-transform duration-500 ease-out border border-webropol-primary-100/50 flex-shrink-0 relative overflow-hidden">
-             <!-- Sparkle effect on hover inside the circle -->
-             <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white w-full h-full opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none transform -translate-x-full group-hover:translate-x-full duration-[1.5s]"></div>
-             <img :src="logoSrc" alt="Webropol" class="h-6 w-auto relative z-10" />
-          </div>
-          <div class="text-left hidden sm:block w-32">
-            <div class="text-lg font-bold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors leading-tight">Webropol</div>
-            <div class="text-[10px] font-medium text-webropol-gray-500 mt-0.5 leading-snug">Intelligent Survey &amp; Event Solutions</div>
-          </div>
+        <div class="flex items-center justify-center w-12 h-12 rounded-full bg-webropol-primary-50/50 group-hover:scale-105 transition-transform duration-500 ease-out border border-webropol-primary-100/50 flex-shrink-0 relative overflow-hidden">
+           <!-- Sparkle effect on hover inside the circle -->
+           <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white w-full h-full opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none transform -translate-x-full group-hover:translate-x-full duration-[1.5s]"></div>
+           <img :src="logoSrc" alt="Webropol" class="h-5 w-auto relative z-10" />
         </div>
 
-        <div class="hidden sm:block w-px h-12 bg-webropol-gray-100 flex-shrink-0 relative"></div>
-
-        <div class="flex items-center justify-center sm:justify-start w-full sm:w-auto">
-          <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-50 text-sm font-semibold text-webropol-primary-700 group-hover:bg-webropol-primary-600 group-hover:text-white transition-colors duration-300 w-full justify-center">
-            Learn more <i class="fal fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
-          </span>
-        </div>
+        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-webropol-primary-50/80 text-sm font-semibold text-webropol-primary-700 group-hover:bg-webropol-primary-100 transition-colors duration-300">
+          Learn more <i class="fal fa-arrow-right group-hover:translate-x-1 transition-transform duration-300 text-webropol-primary-600"></i>
+        </span>
       </a>
     </div>
   </div>
