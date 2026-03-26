@@ -91,8 +91,8 @@ export class SurveyActionTabs extends BaseComponent {
             style="cursor: not-allowed; pointer-events: none;"
           >
             <div class="main-primary-row">
-              <span class="inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0">
-                <i class="${tab.icon} ${tab.iconColor}"></i>
+              <span class="main-primary-avatar">
+                <i class="${tab.icon}"></i>
               </span>
               <span class="main-primary-label">${tab.label}</span>
             </div>
