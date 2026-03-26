@@ -1,5 +1,10 @@
 import { BaseComponent } from '../../design-system/utils/base-component.js';
 
+// Resolve logo to an absolute URL relative to this module file so it works in
+// both standalone (surveys/edit.html) and SPA mode (index.html#/surveys/edit),
+// where Alpine :src bindings are not rewritten by the SPA router.
+const _defaultLogoSrc = new URL('../../img/logo/W-logo-dark.svg', import.meta.url).href;
+
 /**
  * WebropolThankYouPage — Web Component
  *
@@ -25,7 +30,7 @@ export class ThankYouPage extends BaseComponent {
                     heading:      cfg.heading      || 'Thank you for your participation!',
                     contactEmail: cfg.contactEmail || '',
                     mode:         cfg.mode         || 'preview',
-                    logoSrc:      cfg.logoSrc      || '../img/logo/W-logo-dark.svg',
+                    logoSrc:      cfg.logoSrc      || _defaultLogoSrc,
 
                     // Settings modal state
                     settingsOpen:  false,
@@ -71,7 +76,13 @@ export class ThankYouPage extends BaseComponent {
         const heading      = this.getAttr('heading', 'Thank you for your participation!');
         const contactEmail = this.getAttr('contact-email', '');
         const mode         = this.getAttr('mode', 'preview');
-        const logoSrc      = this.getAttr('logo-src', '../img/logo/W-logo-dark.svg');
+        const rawLogoSrc  = this.getAttr('logo-src', '');
+        // Resolve relative paths relative to the surveys/ directory (parent of this module),
+        // so they work correctly in SPA mode where the document base is the root page.
+        const _pageBase  = new URL('../', import.meta.url).href;
+        const logoSrc    = rawLogoSrc
+            ? (/^(https?:|\/)/.test(rawLogoSrc) ? rawLogoSrc : new URL(rawLogoSrc, _pageBase).href)
+            : _defaultLogoSrc;
 
         if (!window.__webropolThankYouCfg) window.__webropolThankYouCfg = {};
         if (!this._cfgId) this._cfgId = this.generateId('typage');
@@ -157,17 +168,15 @@ export class ThankYouPage extends BaseComponent {
         x-text="heading"></h2>
 
     <!-- Contact us (only when email is set) -->
-    <div x-show="contactEmail" class="ty-contact mb-6">
-      <a :href="'mailto:' + contactEmail"
-         class="inline-flex items-center gap-2 px-4 py-2 rounded-full
-                bg-webropol-primary-50 hover:bg-webropol-primary-100
-                text-webropol-primary-700 text-sm font-medium
-                border border-webropol-primary-200
-                transition-colors duration-150
-                focus:outline-none focus:ring-2 focus:ring-webropol-primary-300">
-        <i class="fal fa-envelope text-sm"></i>
-        <span x-text="contactEmail"></span>
-      </a>
+    <div x-show="contactEmail" class="ty-contact mb-8 flex justify-center">
+      <div class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-webropol-gray-50 border border-webropol-gray-200 shadow-sm transition-all hover:bg-white hover:shadow-md">
+        <i class="fal fa-building text-webropol-gray-400"></i>
+        <span class="text-sm font-medium text-webropol-gray-600">Survey was provided by:</span>
+        <a :href="'mailto:' + contactEmail"
+           class="text-sm font-bold text-webropol-primary-700 hover:text-webropol-primary-600 hover:underline flex items-center gap-1.5 transition-colors focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 rounded px-1">
+          <span x-text="contactEmail"></span>
+        </a>
+      </div>
     </div>
 
     <style>
@@ -302,61 +311,43 @@ export class ThankYouPage extends BaseComponent {
   </div><!-- /body -->
 
   <!-- ── Powered-by footer — hidden when layout = simple ─────────── -->
-  <a x-show="layout !== 'simple'"
-     href="https://webropol.com" target="_blank" rel="noopener noreferrer"
-     class="ty-powered-footer group flex items-center justify-center gap-3 px-6 py-3.5
-            border-t border-webropol-gray-100
-            rounded-b-2xl overflow-hidden relative
-            transition-all duration-300
-            focus:outline-none focus:ring-2 focus:ring-inset focus:ring-webropol-primary-300"
-     style="background:linear-gradient(90deg,#f0fdff 0%,#f8fffe 50%,#f0fdff 100%);">
+  <div x-show="layout !== 'simple'" 
+       class="bg-webropol-gray-50 border-t border-webropol-gray-200 px-6 py-8 sm:px-10 sm:py-10 rounded-b-2xl flex flex-col items-center justify-center relative overflow-hidden">
+    <!-- Ambient background element -->
+    <div class="absolute inset-0 pointer-events-none opacity-50" 
+         style="background: radial-gradient(ellipse at 50% 150%, rgba(6,182,212,0.15) 0%, transparent 70%);"></div>
 
-    <!-- Subtle shimmer on hover -->
-    <span class="ty-footer-shimmer absolute inset-0 pointer-events-none"></span>
+    <div class="text-center relative z-10 w-full max-w-lg">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-white border border-webropol-gray-200 shadow-sm rounded-full mb-5 transition-shadow hover:shadow-md">
+        <i class="fal fa-bolt text-webropol-primary-500 text-xs shadow-sm"></i>
+        <span class="text-[11px] font-bold text-webropol-gray-600 uppercase tracking-widest">Powered by Webropol</span>
+      </div>
+      
+      <a href="https://webropol.com" target="_blank" rel="noopener noreferrer"
+         class="group flex flex-col sm:flex-row items-center gap-5 bg-white px-6 py-5 sm:px-8 sm:py-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)] border border-webropol-gray-100 hover:shadow-[0_8px_30px_-4px_rgba(6,182,212,0.15)] hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300 focus:ring-offset-2">
+        
+        <div class="flex items-center gap-4">
+          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-webropol-primary-50/50 group-hover:scale-110 transition-transform duration-500 ease-out border border-webropol-primary-100/50 flex-shrink-0 relative overflow-hidden">
+             <!-- Sparkle effect on hover inside the circle -->
+             <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white w-full h-full opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none transform -translate-x-full group-hover:translate-x-full duration-[1.5s]"></div>
+             <img :src="logoSrc" alt="Webropol" class="h-6 w-auto relative z-10" />
+          </div>
+          <div class="text-left hidden sm:block w-32">
+            <div class="text-lg font-bold text-webropol-gray-900 group-hover:text-webropol-primary-700 transition-colors leading-tight">Webropol</div>
+            <div class="text-[10px] font-medium text-webropol-gray-500 mt-0.5 leading-snug">Intelligent Survey &amp; Event Solutions</div>
+          </div>
+        </div>
 
-    <!-- Logo -->
-    <img :src="logoSrc" alt="Webropol"
-         class="h-4 w-auto flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+        <div class="hidden sm:block w-px h-12 bg-webropol-gray-100 flex-shrink-0 relative"></div>
 
-    <!-- Vertical rule -->
-    <span style="width:1px;height:12px;background:rgba(6,182,212,0.3);flex-shrink:0;display:inline-block;"></span>
-
-    <!-- Label -->
-    <span class="text-xs font-semibold tracking-wide"
-          style="background:linear-gradient(90deg,#1d809d 0%,#0e7490 100%);
-                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-      Survey Powered by Webropol
-    </span>
-
-    <!-- Dot -->
-    <span style="width:3px;height:3px;border-radius:50%;background:#06b6d4;opacity:0.55;flex-shrink:0;display:inline-block;"></span>
-
-    <!-- CTA -->
-    <span class="text-xs font-medium transition-colors duration-200"
-          style="color:#e07020;">
-      Click here to read more
-    </span>
-
-    <!-- Arrow -->
-    <i class="fal fa-arrow-right text-[10px] transition-all duration-300 opacity-0 -translate-x-1
-              group-hover:opacity-100 group-hover:translate-x-0 flex-shrink-0"
-       style="color:#e07020;"></i>
-  </a>
-
-  <style>
-    .ty-powered-footer:hover {
-      background: linear-gradient(90deg,#e8fbff 0%,#f0fefc 50%,#e8fbff 100%) !important;
-    }
-    .ty-footer-shimmer {
-      background: linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.6) 50%,transparent 100%);
-      transform: translateX(-100%);
-      transition: transform 0s;
-    }
-    .ty-powered-footer:hover .ty-footer-shimmer {
-      transform: translateX(100%);
-      transition: transform 0.6s ease;
-    }
-  </style>
+        <div class="flex items-center justify-center sm:justify-start w-full sm:w-auto">
+          <span class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-50 text-sm font-semibold text-webropol-primary-700 group-hover:bg-webropol-primary-600 group-hover:text-white transition-colors duration-300 w-full justify-center">
+            Learn more <i class="fal fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+          </span>
+        </div>
+      </a>
+    </div>
+  </div>
 
   <!-- ── Settings Modal ───────────────────────────────────────────── -->
   <div x-show="settingsOpen"
