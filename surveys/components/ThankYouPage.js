@@ -109,12 +109,28 @@ export class ThankYouPage extends BaseComponent {
   <!-- ── Body ──────────────────────────────────────────────────── -->
   <div class="px-10 py-12 text-center">
 
+    <!-- Thumbs up icon -->
+    <div class="ty-thumbs-wrap flex items-center justify-center mb-6">
+      <div class="ty-thumbs-outer relative inline-flex items-center justify-center">
+        <!-- Ripple rings -->
+        <span class="ty-ring ty-ring-1"></span>
+        <span class="ty-ring ty-ring-2"></span>
+        <!-- Icon circle -->
+        <div class="ty-thumbs-circle relative z-10 w-20 h-20 rounded-full flex items-center justify-center"
+             style="background:linear-gradient(135deg,#eefbfd 0%,#d0f5fb 60%,#c7f0fd 100%);
+                    border:2px solid rgba(6,182,212,0.3);
+                    box-shadow:0 4px 24px -4px rgba(6,182,212,0.4),0 0 0 6px rgba(6,182,212,0.07);">
+          <i class="fal fa-thumbs-up text-3xl" style="color:#0e7490;"></i>
+        </div>
+      </div>
+    </div>
+
     <!-- Heading -->
-    <h2 class="text-2xl font-semibold text-webropol-gray-900 mb-7"
+    <h2 class="ty-heading text-2xl font-semibold text-webropol-gray-900 mb-7"
         x-text="heading"></h2>
 
     <!-- Contact us (only when email is set) -->
-    <div x-show="contactEmail" class="mb-6">
+    <div x-show="contactEmail" class="ty-contact mb-6">
       <a :href="'mailto:' + contactEmail"
          class="inline-flex items-center gap-2 px-4 py-2 rounded-full
                 bg-webropol-primary-50 hover:bg-webropol-primary-100
@@ -164,6 +180,52 @@ export class ThankYouPage extends BaseComponent {
       .powered-by-strip:hover {
         box-shadow: 0 4px 20px -4px rgba(6,182,212,0.3) !important;
         transform: translateY(-1px);
+      }
+
+      /* ── Thank You Page Animations ───────────────────────── */
+      @keyframes ty-pop-in {
+        0%   { opacity:0; transform:scale(0.4) translateY(8px); }
+        60%  { opacity:1; transform:scale(1.15) translateY(-4px); }
+        80%  { transform:scale(0.95) translateY(2px); }
+        100% { opacity:1; transform:scale(1) translateY(0); }
+      }
+      @keyframes ty-float {
+        0%,100% { transform:translateY(0); }
+        50%     { transform:translateY(-6px); }
+      }
+      @keyframes ty-ripple {
+        0%   { transform:scale(1); opacity:0.5; }
+        100% { transform:scale(2.4); opacity:0; }
+      }
+      @keyframes ty-fade-up {
+        from { opacity:0; transform:translateY(14px); }
+        to   { opacity:1; transform:translateY(0); }
+      }
+
+      .ty-thumbs-circle {
+        animation: ty-pop-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+      }
+      .ty-thumbs-circle i {
+        animation: ty-float 3.2s ease-in-out 0.7s infinite;
+        display:inline-block;
+      }
+      .ty-ring {
+        position:absolute; border-radius:50%; border:2px solid rgba(6,182,212,0.45);
+        width:80px; height:80px;
+        animation: ty-ripple 2.4s ease-out infinite;
+      }
+      .ty-ring-2 { animation-delay:1.2s; }
+
+      .ty-heading {
+        animation: ty-fade-up 0.5s ease both;
+        animation-delay: 0.35s;
+        opacity:0;
+        animation-fill-mode:both;
+      }
+      .ty-contact {
+        animation: ty-fade-up 0.5s ease both;
+        animation-delay: 0.5s;
+        animation-fill-mode:both;
       }
     </style>
 
