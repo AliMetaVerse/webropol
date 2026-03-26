@@ -55,6 +55,12 @@ export class ThankYouPage extends BaseComponent {
                             const saved = JSON.parse(localStorage.getItem('webropol_ty_settings') || '{}');
                             if (saved.layout) { this.layout = saved.layout; this.pendingLayout = saved.layout; }
                         } catch (e) { /* ignore */ }
+
+                        // z-index: keep header below modal overlay while settings are open
+                        this.$watch('settingsOpen', value => {
+                            if (value) document.body.classList.add('modal-open');
+                            else document.body.classList.remove('modal-open');
+                        });
                     }
                 };
             };
@@ -143,44 +149,8 @@ export class ThankYouPage extends BaseComponent {
       </a>
     </div>
 
-    <!-- Logo + "Powered by" — hidden when layout = simple -->
-    <div x-show="layout !== 'simple'" class="mt-4 flex items-center justify-center">
-      <a href="https://webropol.com" target="_blank" rel="noopener noreferrer"
-         class="powered-by-strip group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full
-                transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-webropol-primary-300"
-         style="background:linear-gradient(135deg,#eefbfd 0%,#f0fdf4 50%,#fdf4ff 100%);
-                border:1px solid rgba(6,182,212,0.18);
-                box-shadow:0 2px 12px -2px rgba(6,182,212,0.15);">
-        <!-- Animated glow ring -->
-        <span class="powered-by-glow-ring absolute inset-0 rounded-full pointer-events-none"></span>
-        <!-- Logo -->
-        <img :src="logoSrc" alt="Webropol"
-             class="h-5 w-auto transition-transform duration-300 group-hover:scale-110" />
-        <!-- Divider -->
-        <span style="width:1px;height:14px;background:linear-gradient(to bottom,transparent,rgba(6,182,212,0.35),transparent);display:inline-block;"></span>
-        <!-- Label -->
-        <span class="text-xs font-semibold tracking-wide"
-              style="background:linear-gradient(90deg,#1d809d 0%,#0e7490 100%);
-                     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-          Survey Powered by Webropol
-        </span>
-        <!-- Dot -->
-        <span style="width:3px;height:3px;border-radius:50%;background:#06b6d4;opacity:0.5;display:inline-block;"></span>
-        <!-- CTA -->
-        <span class="text-xs font-medium transition-all duration-200 group-hover:underline"
-              style="color:#e07020;">Click here to read more</span>
-        <!-- Arrow that slides in on hover -->
-        <i class="fal fa-arrow-right text-[10px] transition-all duration-300 opacity-0 -translate-x-1
-                  group-hover:opacity-100 group-hover:translate-x-0"
-           style="color:#e07020;"></i>
-      </a>
-    </div>
     <style>
-      .powered-by-strip { position: relative; overflow: hidden; }
-      .powered-by-strip:hover {
-        box-shadow: 0 4px 20px -4px rgba(6,182,212,0.3) !important;
-        transform: translateY(-1px);
-      }
+      /* (powered-by footer styles are in the footer block below) */
 
       /* ── Thank You Page Animations ───────────────────────── */
       @keyframes ty-pop-in {
@@ -231,6 +201,63 @@ export class ThankYouPage extends BaseComponent {
 
   </div><!-- /body -->
 
+  <!-- ── Powered-by footer — hidden when layout = simple ─────────── -->
+  <a x-show="layout !== 'simple'"
+     href="https://webropol.com" target="_blank" rel="noopener noreferrer"
+     class="ty-powered-footer group flex items-center justify-center gap-3 px-6 py-3.5
+            border-t border-webropol-gray-100
+            rounded-b-2xl overflow-hidden relative
+            transition-all duration-300
+            focus:outline-none focus:ring-2 focus:ring-inset focus:ring-webropol-primary-300"
+     style="background:linear-gradient(90deg,#f0fdff 0%,#f8fffe 50%,#f0fdff 100%);">
+
+    <!-- Subtle shimmer on hover -->
+    <span class="ty-footer-shimmer absolute inset-0 pointer-events-none"></span>
+
+    <!-- Logo -->
+    <img :src="logoSrc" alt="Webropol"
+         class="h-4 w-auto flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+
+    <!-- Vertical rule -->
+    <span style="width:1px;height:12px;background:rgba(6,182,212,0.3);flex-shrink:0;display:inline-block;"></span>
+
+    <!-- Label -->
+    <span class="text-xs font-semibold tracking-wide"
+          style="background:linear-gradient(90deg,#1d809d 0%,#0e7490 100%);
+                 -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+      Survey Powered by Webropol
+    </span>
+
+    <!-- Dot -->
+    <span style="width:3px;height:3px;border-radius:50%;background:#06b6d4;opacity:0.55;flex-shrink:0;display:inline-block;"></span>
+
+    <!-- CTA -->
+    <span class="text-xs font-medium transition-colors duration-200"
+          style="color:#e07020;">
+      Click here to read more
+    </span>
+
+    <!-- Arrow -->
+    <i class="fal fa-arrow-right text-[10px] transition-all duration-300 opacity-0 -translate-x-1
+              group-hover:opacity-100 group-hover:translate-x-0 flex-shrink-0"
+       style="color:#e07020;"></i>
+  </a>
+
+  <style>
+    .ty-powered-footer:hover {
+      background: linear-gradient(90deg,#e8fbff 0%,#f0fefc 50%,#e8fbff 100%) !important;
+    }
+    .ty-footer-shimmer {
+      background: linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.6) 50%,transparent 100%);
+      transform: translateX(-100%);
+      transition: transform 0s;
+    }
+    .ty-powered-footer:hover .ty-footer-shimmer {
+      transform: translateX(100%);
+      transition: transform 0.6s ease;
+    }
+  </style>
+
   <!-- ── Settings Modal ───────────────────────────────────────────── -->
   <div x-show="settingsOpen"
        x-transition:enter="transition ease-out duration-150"
@@ -241,8 +268,9 @@ export class ThankYouPage extends BaseComponent {
        x-transition:leave-end="opacity-0"
        @click.self="cancelSettings()"
        @keydown.escape.window="cancelSettings()"
-       class="fixed inset-0 z-50 flex items-center justify-center"
-       style="background:rgba(0,0,0,0.35);">
+       :class="{ 'active': settingsOpen }"
+       class="modal-overlay fixed inset-0 flex items-center justify-center"
+       style="background:rgba(0,0,0,0.35); z-index:2147483640 !important;">
 
     <div x-show="settingsOpen"
          x-transition:enter="transition ease-out duration-200"
