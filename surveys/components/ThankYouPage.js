@@ -113,19 +113,40 @@ export class ThankYouPage extends BaseComponent {
   </button>
 
   <!-- ── Body ──────────────────────────────────────────────────── -->
-  <div class="px-10 py-12 text-center">
+  <div class="px-10 py-12 text-center relative overflow-hidden">
 
-    <!-- Thumbs up icon -->
+    <!-- Background blobs (ambient glow) -->
+    <div class="ty-blob ty-blob-1" aria-hidden="true"></div>
+    <div class="ty-blob ty-blob-2" aria-hidden="true"></div>
+    <div class="ty-blob ty-blob-3" aria-hidden="true"></div>
+    <div class="ty-blob ty-blob-4" aria-hidden="true"></div>
+
+    <!-- Confetti burst — CSS-only, plays once on load -->
+    <div class="ty-confetti" aria-hidden="true">
+      <span class="ty-c ty-c-1"></span>
+      <span class="ty-c ty-c-2"></span>
+      <span class="ty-c ty-c-3"></span>
+      <span class="ty-c ty-c-4"></span>
+      <span class="ty-c ty-c-5"></span>
+      <span class="ty-c ty-c-6"></span>
+      <span class="ty-c ty-c-7"></span>
+      <span class="ty-c ty-c-8"></span>
+      <span class="ty-c ty-c-9"></span>
+      <span class="ty-c ty-c-10"></span>
+    </div>
+
+    <!-- Thumbs up icon with sparkles -->
     <div class="ty-thumbs-wrap flex items-center justify-center mb-6">
-      <div class="ty-thumbs-outer relative inline-flex items-center justify-center">
-        <!-- Ripple rings -->
-        <span class="ty-ring ty-ring-1"></span>
-        <span class="ty-ring ty-ring-2"></span>
+      <div class="ty-icon-wrap relative inline-flex items-center justify-center">
+        <!-- Sparkle stars -->
+        <span class="ty-spark ty-spark-1">&#10022;</span>
+        <span class="ty-spark ty-spark-2">&#10022;</span>
+        <span class="ty-spark ty-spark-3">&#10038;</span>
+        <span class="ty-spark ty-spark-4">&#10022;</span>
         <!-- Icon circle -->
-        <div class="ty-thumbs-circle relative z-10 w-20 h-20 rounded-full flex items-center justify-center"
+        <div class="ty-thumbs-circle w-20 h-20 rounded-full flex items-center justify-center relative z-10"
              style="background:linear-gradient(135deg,#eefbfd 0%,#d0f5fb 60%,#c7f0fd 100%);
-                    border:2px solid rgba(6,182,212,0.3);
-                    box-shadow:0 4px 24px -4px rgba(6,182,212,0.4),0 0 0 6px rgba(6,182,212,0.07);">
+                    border:2px solid rgba(6,182,212,0.25);">
           <i class="fal fa-thumbs-up text-3xl" style="color:#0e7490;"></i>
         </div>
       </div>
@@ -153,49 +174,128 @@ export class ThankYouPage extends BaseComponent {
       /* (powered-by footer styles are in the footer block below) */
 
       /* ── Thank You Page Animations ───────────────────────── */
-      @keyframes ty-pop-in {
-        0%   { opacity:0; transform:scale(0.4) translateY(8px); }
-        60%  { opacity:1; transform:scale(1.15) translateY(-4px); }
-        80%  { transform:scale(0.95) translateY(2px); }
-        100% { opacity:1; transform:scale(1) translateY(0); }
+
+      /* Icon: joyful pop-in then slow breathe-glow */
+      @keyframes ty-celebrate-in {
+        0%   { opacity:0; transform:scale(0.45); }
+        55%  { opacity:1; transform:scale(1.14); }
+        75%  { transform:scale(0.96); }
+        100% { opacity:1; transform:scale(1); }
       }
-      @keyframes ty-float {
-        0%,100% { transform:translateY(0); }
-        50%     { transform:translateY(-6px); }
+      @keyframes ty-breathe {
+        0%,100% { transform:scale(1);
+                  box-shadow:0 4px 20px -4px rgba(6,182,212,0.3),
+                             0 0 0 8px rgba(6,182,212,0.06); }
+        50%     { transform:scale(1.05);
+                  box-shadow:0 6px 32px -2px rgba(6,182,212,0.45),
+                             0 0 0 16px rgba(6,182,212,0.09); }
       }
-      @keyframes ty-ripple {
-        0%   { transform:scale(1); opacity:0.5; }
-        100% { transform:scale(2.4); opacity:0; }
-      }
+
+      /* Text entries */
       @keyframes ty-fade-up {
-        from { opacity:0; transform:translateY(14px); }
+        from { opacity:0; transform:translateY(10px); }
         to   { opacity:1; transform:translateY(0); }
       }
+      @keyframes ty-heading-pulse {
+        0%,100% { transform:scale(1); }
+        50%     { transform:scale(1.025); }
+      }
 
+      /* Confetti fall */
+      @keyframes ty-fall {
+        0%   { transform:translateY(-8px) rotate(0deg) scaleX(1); opacity:1; }
+        100% { transform:translateY(220px) rotate(600deg) scaleX(0.4); opacity:0; }
+      }
+
+      /* Sparkles twinkle */
+      @keyframes ty-sparkle {
+        0%,100% { opacity:0; transform:scale(0) rotate(0deg); }
+        40%,60% { opacity:1; transform:scale(1) rotate(25deg); }
+      }
+
+      /* Background blob drifts */
+      @keyframes ty-blob-1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(14px,-12px) scale(1.07);} }
+      @keyframes ty-blob-2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-12px,14px) scale(0.95);} }
+      @keyframes ty-blob-3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(10px,8px) scale(1.05);} }
+      @keyframes ty-blob-4 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-8px,-12px) scale(1.09);} }
+
+      /* ── Apply ──────────────────────────────────────────── */
       .ty-thumbs-circle {
-        animation: ty-pop-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+        animation:
+          ty-celebrate-in 0.7s cubic-bezier(0.34,1.2,0.64,1) both,
+          ty-breathe 5s ease-in-out 0.9s infinite;
       }
-      .ty-thumbs-circle i {
-        animation: ty-float 3.2s ease-in-out 0.7s infinite;
-        display:inline-block;
-      }
-      .ty-ring {
-        position:absolute; border-radius:50%; border:2px solid rgba(6,182,212,0.45);
-        width:80px; height:80px;
-        animation: ty-ripple 2.4s ease-out infinite;
-      }
-      .ty-ring-2 { animation-delay:1.2s; }
-
       .ty-heading {
-        animation: ty-fade-up 0.5s ease both;
-        animation-delay: 0.35s;
-        opacity:0;
-        animation-fill-mode:both;
+        animation:
+          ty-fade-up 0.5s ease 0.4s both,
+          ty-heading-pulse 0.45s ease 1.1s both;
       }
       .ty-contact {
-        animation: ty-fade-up 0.5s ease both;
-        animation-delay: 0.5s;
+        animation: ty-fade-up 0.5s ease 0.6s both;
         animation-fill-mode:both;
+      }
+
+      /* Confetti */
+      .ty-confetti {
+        position:absolute; top:0; left:0; right:0;
+        height:0; pointer-events:none; overflow:visible;
+      }
+      .ty-c {
+        position:absolute; top:2px;
+        animation: ty-fall linear forwards;
+        border-radius:2px;
+      }
+      .ty-c-1  { width:8px;  height:8px;  left:8%;  background:#06b6d4; border-radius:50%; animation-duration:1.6s; animation-delay:0.05s; }
+      .ty-c-2  { width:6px;  height:10px; left:17%; background:#f59e0b; border-radius:1px;  animation-duration:1.8s; animation-delay:0.18s; }
+      .ty-c-3  { width:7px;  height:7px;  left:27%; background:#0e7490; border-radius:50%; animation-duration:2.0s; animation-delay:0.03s; }
+      .ty-c-4  { width:5px;  height:9px;  left:36%; background:#a78bfa; border-radius:1px;  animation-duration:1.7s; animation-delay:0.22s; }
+      .ty-c-5  { width:9px;  height:5px;  left:46%; background:#34d399; border-radius:1px;  animation-duration:1.9s; animation-delay:0.10s; }
+      .ty-c-6  { width:6px;  height:6px;  left:55%; background:#fbbf24; border-radius:50%; animation-duration:1.6s; animation-delay:0.30s; }
+      .ty-c-7  { width:9px;  height:6px;  left:64%; background:#06b6d4; border-radius:1px;  animation-duration:1.5s; animation-delay:0.14s; }
+      .ty-c-8  { width:7px;  height:7px;  left:73%; background:#f87171; border-radius:50%; animation-duration:2.1s; animation-delay:0.07s; }
+      .ty-c-9  { width:5px;  height:10px; left:82%; background:#10b981; border-radius:1px;  animation-duration:1.8s; animation-delay:0.25s; }
+      .ty-c-10 { width:8px;  height:5px;  left:91%; background:#818cf8; border-radius:1px;  animation-duration:1.6s; animation-delay:0.12s; }
+
+      /* Sparkles */
+      .ty-spark {
+        position:absolute;
+        pointer-events:none;
+        line-height:1;
+        animation: ty-sparkle 2.8s ease-in-out infinite;
+      }
+      .ty-spark-1 { font-size:12px; color:#06b6d4; top:-16px;  left:50%;  transform:translateX(-50%); animation-delay:0s;    }
+      .ty-spark-2 { font-size:16px; color:#f59e0b; top:50%;   right:-20px; transform:translateY(-50%); animation-delay:0.7s;  }
+      .ty-spark-3 { font-size:10px; color:#a78bfa; bottom:-14px; left:50%;  transform:translateX(-50%); animation-delay:1.4s;  }
+      .ty-spark-4 { font-size:14px; color:#34d399; top:50%;   left:-20px;  transform:translateY(-50%); animation-delay:1.05s; }
+
+      /* Background blobs */
+      .ty-blob {
+        position:absolute; border-radius:50%;
+        pointer-events:none; filter:blur(48px); will-change:transform;
+      }
+      .ty-blob-1 {
+        width:220px; height:220px;
+        background:radial-gradient(circle,rgba(6,182,212,0.2) 0%,transparent 70%);
+        top:-50px; right:6%;
+        animation:ty-blob-1 9s ease-in-out infinite;
+      }
+      .ty-blob-2 {
+        width:170px; height:170px;
+        background:radial-gradient(circle,rgba(14,116,144,0.14) 0%,transparent 70%);
+        bottom:-20px; left:4%;
+        animation:ty-blob-2 11s ease-in-out infinite;
+      }
+      .ty-blob-3 {
+        width:130px; height:130px;
+        background:radial-gradient(circle,rgba(167,139,250,0.11) 0%,transparent 70%);
+        top:40%; left:35%;
+        animation:ty-blob-3 13s ease-in-out infinite;
+      }
+      .ty-blob-4 {
+        width:160px; height:160px;
+        background:radial-gradient(circle,rgba(245,158,11,0.12) 0%,transparent 70%);
+        bottom:0; right:10%;
+        animation:ty-blob-4 10s ease-in-out infinite;
       }
     </style>
 
@@ -299,7 +399,7 @@ export class ThankYouPage extends BaseComponent {
 
       <!-- Body -->
       <div class="px-7 py-6">
-        <div class="border border-webropol-gray-200 rounded-xl p-5">
+        <div class="">
           <p class="text-sm font-semibold text-webropol-gray-700 mb-4">Thank You Page Layout</p>
 
           <!-- Option 1 -->
