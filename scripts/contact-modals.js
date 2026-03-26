@@ -147,7 +147,6 @@
     STATE.content.innerHTML = `
       <div>
         <div class="px-8 pt-6 pb-5 border-b border-webropol-gray-100" style="padding-right:64px">
-          <p class="text-xs font-bold uppercase tracking-widest text-webropol-primary-600 mb-1.5">Webropol Support</p>
           <h2 class="text-lg font-semibold text-webropol-gray-900 mb-0.5">How can we help you?</h2>
           <p class="text-sm text-webropol-gray-500">Choose how you'd like to reach us today.</p>
         </div>
