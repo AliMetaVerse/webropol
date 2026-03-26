@@ -5,8 +5,9 @@ import { BaseComponent } from '../../utils/base-component.js';
  * Navigation tabs for survey/SMS actions in SPA mode (hash-based routing)
  * (Edit, Collect Answers, Follow up, Report, AI Text Analysis)
  * 
- * @attr {string} active  - Currently active tab: 'edit' | 'collect' | 'follow' | 'report' | 'aita'
- * @attr {string} context - Context mode: 'survey' (default) | 'sms'
+ * @attr {string} active         - Currently active tab: 'edit' | 'collect' | 'follow' | 'report' | 'aita'
+ * @attr {string} context        - Context mode: 'survey' (default) | 'sms'
+ * @attr {string} disabled-tabs  - Comma-separated tab IDs to disable, e.g. "collect,follow,report,aita"
  * 
  * @example
  * <webropol-survey-action-tabs active="edit"></webropol-survey-action-tabs>
@@ -14,7 +15,7 @@ import { BaseComponent } from '../../utils/base-component.js';
  */
 export class SurveyActionTabs extends BaseComponent {
   static get observedAttributes() {
-    return ['active', 'context'];
+    return ['active', 'context', 'disabled-tabs'];
   }
 
   /** Returns the tab definitions for a given context ('survey' or 'sms'). */
@@ -72,9 +73,33 @@ export class SurveyActionTabs extends BaseComponent {
     const active = this.getAttr('active', 'edit');
     const context = this.getAttr('context', 'survey');
     const tabs = this.getTabsForContext(context);
+    const disabledAttr = this.getAttr('disabled-tabs', '');
+    const disabledSet = new Set(disabledAttr.split(',').map(s => s.trim()).filter(Boolean));
 
     const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
+      const isDisabled = disabledSet.has(tab.id);
+
+      if (isDisabled) {
+        return `
+          <span
+            class="webropol-tab-main-primary disabled no-underline"
+            role="tab"
+            aria-label="${tab.label}"
+            aria-disabled="true"
+            tabindex="-1"
+            style="cursor: not-allowed; pointer-events: none;"
+          >
+            <div class="main-primary-row">
+              <span class="inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0">
+                <i class="${tab.icon} ${tab.iconColor}"></i>
+              </span>
+              <span class="main-primary-label">${tab.label}</span>
+            </div>
+            <div class="main-primary-indicator"></div>
+          </span>
+        `;
+      }
 
       return `
         <a

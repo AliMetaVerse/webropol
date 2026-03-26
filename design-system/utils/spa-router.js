@@ -24,6 +24,7 @@ class WebropolSPA {
       ['/surveys', 'surveys/index.html'],
       ['/surveys/list', 'surveys/list.html'],
       ['/surveys/edit', 'surveys/edit.html'],
+      ['/surveys/blank-survey', 'surveys/blank-survey.html'],
   // Added explicit routes for survey report, AI text analysis & AI survey creator views
   ['/surveys/report', 'surveys/report.html'],
   ['/surveys/aita', 'surveys/aita.html'],
@@ -444,11 +445,11 @@ class WebropolSPA {
   applyRouteLayoutState(path) {
     try {
       const purePath = (path || '').split('?')[0] || '/';
-      const isSurveyEditRoute = purePath === '/surveys/edit';
+      const isSurveyEditRoute = purePath === '/surveys/edit' || purePath === '/surveys/blank-survey';
       const isSurveyReportRoute = purePath === '/surveys/report';
       // Editor tab routes: hide breadcrumbs for all survey/sms tab pages
       const isEditorTabsRoute = [
-        '/surveys/edit', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
+        '/surveys/edit', '/surveys/blank-survey', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
         '/sms/edit', '/sms/collect', '/sms/aita', '/sms/follow', '/sms/report'
       ].includes(purePath);
       document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
@@ -847,7 +848,7 @@ class WebropolSPA {
       // Update header component title if present (enhanced or legacy)
       // Skip title display on editor tab routes (surveys/sms edit/collect/aita/follow/report)
       const isEditorTabsRoute = [
-        '/surveys/edit', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
+        '/surveys/edit', '/surveys/blank-survey', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
         '/sms/edit', '/sms/collect', '/sms/aita', '/sms/follow', '/sms/report'
       ].includes(purePath);
       const header = document.querySelector('webropol-header-enhanced, webropol-header');
