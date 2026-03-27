@@ -911,26 +911,38 @@
                   <div x-show="loading" class="py-10 flex items-center justify-center">
 
                     <!-- Liquid blob loader -->
-                    <div style="position:relative; width:120px; height:140px; display:flex; justify-content:center;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:16px;">
 
-                      <!-- Diffused outer halo -->
-                      <div style="position:absolute; width:130px; height:130px; top:5px; border-radius:50%; background:radial-gradient(circle, rgba(140,80,224,0.18) 0%, rgba(99,102,241,0.1) 45%, transparent 70%); filter:blur(12px); animation:ai-halo 3.5s ease-in-out infinite;"></div>
+                      <div style="position:relative; width:120px; height:140px; display:flex; justify-content:center;">
 
-                      <!-- Morphing blob -->
-                      <div style="position:absolute; top:15px; width:100px; height:100px; overflow:hidden; background:linear-gradient(135deg, #8c50e0 0%, #6366F1 45%, #06B6D4 100%); background-size:200% 200%; box-shadow:0 8px 28px rgba(140,80,224,0.38), 0 0 50px rgba(6,182,212,0.14); animation:ai-blob-morph 7s ease-in-out infinite, ai-gradient-shift 5s ease-in-out infinite, ai-blob-breathe 3.5s ease-in-out infinite;">
-                        <!-- Shimmer sweep -->
-                        <div style="position:absolute; inset:0; background:linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%); animation:ai-shimmer 3s ease-in-out infinite;"></div>
-                        <!-- Inner highlight spot -->
-                        <div style="position:absolute; top:12%; left:18%; width:38%; height:38%; border-radius:50%; background:rgba(255,255,255,0.10); filter:blur(7px);"></div>
+                        <!-- Diffused outer halo — pulses in sync with the 8 s stage cycle -->
+                        <div style="position:absolute; width:130px; height:130px; top:5px; border-radius:50%; background:radial-gradient(circle, rgba(140,80,224,0.18) 0%, rgba(99,102,241,0.1) 45%, transparent 70%); filter:blur(12px); animation:ai-halo 8s ease-in-out infinite;"></div>
+
+                        <!-- Morphing blob — shape encodes each AI processing stage -->
+                        <div style="position:absolute; top:15px; width:100px; height:100px; overflow:hidden; background:linear-gradient(135deg, #8c50e0 0%, #6366F1 45%, #06B6D4 100%); background-size:200% 200%; box-shadow:0 8px 28px rgba(140,80,224,0.38), 0 0 50px rgba(6,182,212,0.14); animation:ai-blob-morph 8s ease-in-out infinite, ai-gradient-shift 8s ease-in-out infinite, ai-blob-breathe 3.5s ease-in-out infinite;">
+                          <!-- Shimmer sweep -->
+                          <div style="position:absolute; inset:0; background:linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%); animation:ai-shimmer 3s ease-in-out infinite;"></div>
+                          <!-- Inner highlight spot -->
+                          <div style="position:absolute; top:12%; left:18%; width:38%; height:38%; border-radius:50%; background:rgba(255,255,255,0.10); filter:blur(7px);"></div>
+                        </div>
+
+                        <!-- Floating sparks (response data escaping upward) -->
+                        <div style="position:absolute; width:4px; height:4px; border-radius:50%; background:#d8b4fe; left:42px; top:100px; --dx:-20px; animation:ai-spark-float 2.8s ease-out infinite 0s;"></div>
+                        <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#67e8f9; left:76px; top:96px; --dx:16px; animation:ai-spark-float 3.4s ease-out infinite -1.3s;"></div>
+                        <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#a5b4fc; left:30px; top:106px; --dx:-8px; animation:ai-spark-float 2.6s ease-out infinite -0.6s;"></div>
+                        <div style="position:absolute; width:5px; height:5px; border-radius:50%; background:#e9d5ff; left:86px; top:102px; --dx:22px; animation:ai-spark-float 3.1s ease-out infinite -2.0s;"></div>
+                        <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#93c5fd; left:58px; top:108px; --dx:6px; animation:ai-spark-float 3.6s ease-out infinite -0.4s;"></div>
+                        <div style="position:absolute; width:4px; height:4px; border-radius:50%; background:#c4b5fd; left:20px; top:98px; --dx:-14px; animation:ai-spark-float 2.9s ease-out infinite -1.7s;"></div>
+
                       </div>
 
-                      <!-- Floating sparks -->
-                      <div style="position:absolute; width:4px; height:4px; border-radius:50%; background:#d8b4fe; left:42px; top:100px; --dx:-20px; animation:ai-spark-float 2.8s ease-out infinite 0s;"></div>
-                      <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#67e8f9; left:76px; top:96px; --dx:16px; animation:ai-spark-float 3.4s ease-out infinite -1.3s;"></div>
-                      <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#a5b4fc; left:30px; top:106px; --dx:-8px; animation:ai-spark-float 2.6s ease-out infinite -0.6s;"></div>
-                      <div style="position:absolute; width:5px; height:5px; border-radius:50%; background:#e9d5ff; left:86px; top:102px; --dx:22px; animation:ai-spark-float 3.1s ease-out infinite -2.0s;"></div>
-                      <div style="position:absolute; width:3px; height:3px; border-radius:50%; background:#93c5fd; left:58px; top:108px; --dx:6px; animation:ai-spark-float 3.6s ease-out infinite -0.4s;"></div>
-                      <div style="position:absolute; width:4px; height:4px; border-radius:50%; background:#c4b5fd; left:20px; top:98px; --dx:-14px; animation:ai-spark-float 2.9s ease-out infinite -1.7s;"></div>
+                      <!-- Stage labels — each fades in / out in sync with the blob's shape stage -->
+                      <div style="position:relative; height:20px; width:220px; text-align:center;">
+                        <span style="position:absolute; left:0; right:0; font-size:12px; font-weight:500; color:#8c50e0; opacity:0; animation:ai-stage-1 8s ease-in-out infinite;">Reading responses…</span>
+                        <span style="position:absolute; left:0; right:0; font-size:12px; font-weight:500; color:#6366f1; opacity:0; animation:ai-stage-2 8s ease-in-out infinite;">Finding patterns…</span>
+                        <span style="position:absolute; left:0; right:0; font-size:12px; font-weight:500; color:#0891b2; opacity:0; animation:ai-stage-3 8s ease-in-out infinite;">Generating insights…</span>
+                        <span style="position:absolute; left:0; right:0; font-size:12px; font-weight:500; color:#7c3aed; opacity:0; animation:ai-stage-4 8s ease-in-out infinite;">Composing summary…</span>
+                      </div>
 
                     </div>
 
@@ -4494,12 +4506,23 @@
     }
 
     /* ── AI Summary animations ── */
+
+    /* Blob morphs through 4 meaningful stages (8 s cycle):
+       0 – 25 %  → Reading responses   : wide horizontal scan
+       25 – 50 % → Finding patterns    : spiky / irregular (data chaos)
+       50 – 75 % → Generating insights : perfect circle (clarity)
+       75 – 100% → Composing summary   : tall column (text block)
+    */
     @keyframes ai-blob-morph {
-      0%   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-      25%  { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-      50%  { border-radius: 50% 60% 30% 70% / 40% 50% 70% 60%; }
-      75%  { border-radius: 70% 30% 50% 50% / 60% 40% 50% 40%; }
-      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      0%   { border-radius: 76% 24% 62% 38% / 28% 56% 44% 72%; } /* wide scan      */
+      10%  { border-radius: 84% 16% 56% 44% / 25% 62% 38% 75%; } /* full scan      */
+      25%  { border-radius: 48% 52% 28% 72% / 64% 36% 64% 36%; } /* converging     */
+      36%  { border-radius: 26% 74% 54% 46% / 46% 26% 74% 54%; } /* peak spiky     */
+      50%  { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; } /* perfect circle */
+      60%  { border-radius: 46% 54% 46% 54% / 47% 53% 47% 53%; } /* steady circle  */
+      75%  { border-radius: 30% 70% 30% 70% / 76% 76% 24% 24%; } /* tall column    */
+      88%  { border-radius: 38% 62% 56% 44% / 70% 58% 42% 30%; } /* easing back    */
+      100% { border-radius: 76% 24% 62% 38% / 28% 56% 44% 72%; } /* loop           */
     }
     @keyframes ai-gradient-shift {
       0%   { background-position: 0% 50%;   }
@@ -4508,11 +4531,11 @@
     }
     @keyframes ai-blob-breathe {
       0%, 100% { transform: scale(1);    }
-      50%      { transform: scale(1.07); }
+      50%      { transform: scale(1.06); }
     }
     @keyframes ai-halo {
-      0%, 100% { opacity: 0.6; transform: scale(1);    }
-      50%      { opacity: 1;   transform: scale(1.15); }
+      0%, 100% { opacity: 0.5; transform: scale(1);    }
+      50%      { opacity: 1;   transform: scale(1.18); }
     }
     @keyframes ai-shimmer {
       0%   { transform: translateX(-150%); }
@@ -4520,10 +4543,39 @@
       100% { transform: translateX(250%);  }
     }
     @keyframes ai-spark-float {
-      0%   { transform: translateY(0px) translateX(0px) scale(1);                              opacity: 0;   }
+      0%   { transform: translateY(0px) translateX(0px) scale(1); opacity: 0;   }
       12%  { opacity: 1; }
       80%  { opacity: 0.6; }
       100% { transform: translateY(-90px) translateX(var(--dx, 0px)) scale(0.1); opacity: 0; }
+    }
+
+    /* Stage label fade-slide animations (8 s cycle each) */
+    @keyframes ai-stage-1 {
+      0%    { opacity: 0; transform: translateY(5px); }
+      4%    { opacity: 1; transform: translateY(0);   }
+      21%   { opacity: 1; transform: translateY(0);   }
+      26%   { opacity: 0; transform: translateY(-5px);}
+      100%  { opacity: 0; }
+    }
+    @keyframes ai-stage-2 {
+      0%, 26%  { opacity: 0; transform: translateY(5px);  }
+      30%      { opacity: 1; transform: translateY(0);    }
+      46%      { opacity: 1; transform: translateY(0);    }
+      51%      { opacity: 0; transform: translateY(-5px); }
+      100%     { opacity: 0; }
+    }
+    @keyframes ai-stage-3 {
+      0%, 51%  { opacity: 0; transform: translateY(5px);  }
+      55%      { opacity: 1; transform: translateY(0);    }
+      71%      { opacity: 1; transform: translateY(0);    }
+      76%      { opacity: 0; transform: translateY(-5px); }
+      100%     { opacity: 0; }
+    }
+    @keyframes ai-stage-4 {
+      0%, 76%  { opacity: 0; transform: translateY(5px);  }
+      80%      { opacity: 1; transform: translateY(0);    }
+      96%      { opacity: 1; transform: translateY(0);    }
+      100%     { opacity: 0; transform: translateY(-5px); }
     }
   </style>
 
