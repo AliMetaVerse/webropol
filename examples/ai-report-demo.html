@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="../design-system/components/feedback/SmartNotifier.js" type="module"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
@@ -77,6 +78,22 @@
       transition: border-color .15s, background .15s;
     }
     .btn-danger:hover { background: #fff0f0; border-color: #f87171; }
+
+    .demo-select {
+      min-width: 190px;
+      padding: 8px 14px;
+      border-radius: 9px;
+      border: 1px solid #d1d5d6;
+      background: white;
+      color: #45484a;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .demo-select:focus {
+      outline: 2px solid rgba(32,159,186,0.18);
+      outline-offset: 2px;
+      border-color: #79d6e7;
+    }
 
     /* ── Inline prepare loader (3 tiny dots) ── */
     .prep-dots { display: inline-flex; align-items: center; gap: 3px; }
@@ -281,6 +298,7 @@
     .state-stream   { background:#e9f7f0; color:#1a6644; }
     .state-complete { background:#e9f7f0; color:#1a6644; }
     .state-error    { background:#fff5f5; color:#c53030; }
+    .state-olap     { background:#fff7e0; color:#92610a; }
     .state-regen    { background:#fff7e0; color:#92610a; }
   </style>
 </head>
@@ -310,13 +328,13 @@
           <!-- Generate / Preparing button -->
           <button
             class="btn-generate"
-            :disabled="state !== 'idle' && state !== 'complete' && state !== 'error'"
+            :disabled="state !== 'idle' && state !== 'complete' && state !== 'error' && state !== 'olap'"
             @click="generate()"
           >
-            <template x-if="state === 'idle' || state === 'complete'">
+            <template x-if="state === 'idle' || state === 'complete' || state === 'olap'">
               <span style="display:inline-flex;align-items:center;gap:8px;">
-                <i class="fal fa-wand-magic-sparkles"></i>
-                <span x-text="state === 'complete' ? 'Regenerate Report' : 'Generate Report'"></span>
+                <i :class="state === 'olap' ? 'fal fa-rotate-right' : 'fal fa-wand-magic-sparkles'"></i>
+                <span x-text="state === 'complete' ? 'Regenerate Report' : (state === 'olap' ? 'Reload And Check Again' : 'Generate Report')"></span>
               </span>
             </template>
             <template x-if="state === 'preparing' || state === 'skeleton' || state === 'streaming' || state === 'regenerating'">
@@ -337,10 +355,15 @@
             </template>
           </button>
 
-          <!-- Simulate error toggle (only when idle) -->
+          <!-- Simulation mode selector (only when idle) -->
           <template x-if="state === 'idle'">
-            <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;color:#787f81;cursor:pointer;user-select:none;">
-              <input type="checkbox" x-model="simulateError" style="accent-color:#1d809d"> Simulate error
+            <label style="display:inline-flex;align-items:center;gap:8px;font-size:0.8125rem;color:#787f81;user-select:none;">
+              <span>Simulation</span>
+              <select class="demo-select" x-model="simulationMode">
+                <option value="none">Normal flow</option>
+                <option value="error">AI summary error</option>
+                <option value="olap">OLAP delay warning</option>
+              </select>
             </label>
           </template>
         </div>
@@ -420,8 +443,25 @@
         </template>
 
         <!-- ── 3+4. STREAMING / COMPLETE / ERROR / REGENERATING ── -->
-        <template x-if="state === 'streaming' || state === 'complete' || state === 'error' || state === 'regenerating'">
+        <template x-if="state === 'streaming' || state === 'complete' || state === 'error' || state === 'regenerating' || state === 'olap'">
           <div :class="state === 'regenerating' ? 'regen-fade' : ''">
+
+            <template x-if="state === 'olap'">
+              <div class="fade-enter">
+                <webropol-smart-notifier
+                  variant="warning"
+                  icon="fal fa-mug-hot"
+                  title="AI summary is still being prepared"
+                  description="Text analysis is still running for this survey's open feedback. The AI summary will be ready tomorrow morning for reports that do not receive new responses before processing completes."
+                  secondary-label="Back to report"
+                  primary-label="Reload page and check again"
+                  primary-icon="fal fa-rotate-right">
+                </webropol-smart-notifier>
+              </div>
+            </template>
+
+            <template x-if="state !== 'olap'">
+              <div>
 
             <div class="report-card" :class="state === 'complete' ? 'completion-glow' : ''">
 
@@ -492,11 +532,11 @@
                 <div class="error-inline">
                   <i class="fal fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0"></i>
                   <div>
-                    <strong>Could not complete recommendations section</strong><br>
-                    <span style="font-size:0.8125rem;color:#c05050;">The data source returned incomplete results. Partial report above is saved.</span>
+                    <strong>AI summary could not be generated</strong><br>
+                    <span style="font-size:0.8125rem;color:#c05050;">The AI service returned an incomplete payload before any summary content could be streamed. No summary text was saved.</span>
                     <div style="margin-top:10px;">
-                      <button class="btn-danger" @click="retrySection()">
-                        <i class="fal fa-rotate-right"></i> Retry this section
+                      <button class="btn-danger" @click="retrySummary()">
+                        <i class="fal fa-rotate-right"></i> Retry AI summary
                       </button>
                     </div>
                   </div>
@@ -504,6 +544,8 @@
               </div>
 
             </div>
+              </div>
+            </template>
           </div>
         </template>
 
@@ -583,7 +625,13 @@
             <td style="padding:12px 20px;"><span class="state-badge state-error">Error</span></td>
             <td style="padding:12px 20px;color:#787f81;">Section-level failure</td>
             <td style="padding:12px 20px;color:#787f81;">—</td>
-            <td style="padding:12px 20px;color:#45484a;">Partial content kept, inline error, retry action</td>
+            <td style="padding:12px 20px;color:#45484a;">Summary stream stops before output, inline error, retry action</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;background:#fffdf8;">
+            <td style="padding:12px 20px;"><span class="state-badge state-olap">OLAP Warning</span></td>
+            <td style="padding:12px 20px;color:#787f81;">Warehouse analysis still processing</td>
+            <td style="padding:12px 20px;color:#787f81;">—</td>
+            <td style="padding:12px 20px;color:#45484a;">No AI summary shown, warning smart notifier with follow-up action</td>
           </tr>
           <tr>
             <td style="padding:12px 20px;"><span class="state-badge state-regen">Regenerating</span></td>
@@ -640,8 +688,8 @@ function aiReportApp() {
 
   return {
     /* ── state ── */
-    state: 'idle',           // idle | preparing | skeleton | streaming | complete | error | regenerating
-    simulateError: false,
+    state: 'idle',           // idle | preparing | skeleton | streaming | complete | error | olap | regenerating
+    simulationMode: 'none',
     sections: {
       title:           { visible: false, active: false, content: '' },
       summary:         { visible: false, active: false, content: '' },
@@ -659,7 +707,7 @@ function aiReportApp() {
     ],
 
     stateLabel() {
-      return { idle:'Idle', preparing:'Preparing', skeleton:'Loading Skeleton', streaming:'Streaming', complete:'Complete', error:'Error', regenerating:'Regenerating' }[this.state] ?? this.state;
+      return { idle:'Idle', preparing:'Preparing', skeleton:'Loading Skeleton', streaming:'Streaming', complete:'Complete', error:'Error', olap:'OLAP Warning', regenerating:'Regenerating' }[this.state] ?? this.state;
     },
 
     /* ── helpers ── */
@@ -698,9 +746,46 @@ function aiReportApp() {
       };
     },
 
+    _handleSimulation() {
+      if (this.simulationMode === 'error') {
+        this.state = 'error';
+        return true;
+      }
+
+      if (this.simulationMode === 'olap') {
+        this.state = 'olap';
+        return true;
+      }
+
+      return false;
+    },
+
+    _startStreamingFlow() {
+      this.state = 'streaming';
+      this.sections.title.visible = true;
+      this._streamText('title', REPORT_DATA.title, () => {
+        this._after(180, () => {
+          this.sections.summary.visible = true;
+          this._streamText('summary', REPORT_DATA.summary, () => {
+            this._after(160, () => {
+              this.sections.insights.visible = true;
+              this._streamInsights(0, () => {
+                this._after(200, () => {
+                  this.sections.recommendations.visible = true;
+                  this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+                    this._after(200, () => { this.state = 'complete'; });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    },
+
     /* ── main flow ── */
     generate() {
-      if (this.state === 'complete' || this.state === 'error') {
+      if (this.state === 'complete' || this.state === 'error' || this.state === 'olap') {
         this._startRegeneration();
         return;
       }
@@ -712,39 +797,13 @@ function aiReportApp() {
       this._after(300, () => {
         this.state = 'skeleton';
 
-        // After 900ms more → first chunk (title)
+        // After 900ms more → either simulated stop state or first chunk
         this._after(900, () => {
-          this.state = 'streaming';
-          this.sections.title.visible = true;
-          this._streamText('title', REPORT_DATA.title, () => {
+          if (this._handleSimulation()) {
+            return;
+          }
 
-            // Summary — short delay then start
-            this._after(180, () => {
-              this.sections.summary.visible = true;
-              this._streamText('summary', REPORT_DATA.summary, () => {
-
-                // Insights — reveal container, then stream each insight
-                this._after(160, () => {
-                  this.sections.insights.visible = true;
-                  this._streamInsights(0, () => {
-
-                    // Recommendations — only if NOT simulating error
-                    this._after(200, () => {
-                      if (this.simulateError) {
-                        this.state = 'error';
-                        this.sections.recommendations.visible = true;
-                        return;
-                      }
-                      this.sections.recommendations.visible = true;
-                      this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-                        this._after(200, () => { this.state = 'complete'; });
-                      });
-                    });
-                  });
-                });
-              });
-            });
-          });
+          this._startStreamingFlow();
         });
       });
     },
@@ -768,6 +827,9 @@ function aiReportApp() {
 
     _startRegeneration() {
       this._clearAll();
+      if (this.state === 'error' || this.state === 'olap') {
+        this.simulationMode = 'none';
+      }
       this.state = 'regenerating';
       this._after(500, () => {
         this._resetSections();
@@ -775,38 +837,19 @@ function aiReportApp() {
         this._after(300, () => {
           this.state = 'skeleton';
           this._after(900, () => {
-            this.state = 'streaming';
-            this.sections.title.visible = true;
-            this._streamText('title', REPORT_DATA.title, () => {
-              this._after(180, () => {
-                this.sections.summary.visible = true;
-                this._streamText('summary', REPORT_DATA.summary, () => {
-                  this._after(160, () => {
-                    this.sections.insights.visible = true;
-                    this._streamInsights(0, () => {
-                      this._after(200, () => {
-                        this.sections.recommendations.visible = true;
-                        this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-                          this._after(200, () => { this.state = 'complete'; });
-                        });
-                      });
-                    });
-                  });
-                });
-              });
-            });
+            if (this._handleSimulation()) {
+              return;
+            }
+
+            this._startStreamingFlow();
           });
         });
       });
     },
 
-    retrySection() {
-      this.state = 'streaming';
-      this.sections.recommendations.visible = true;
-      this.sections.recommendations.content = '';
-      this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-        this._after(200, () => { this.state = 'complete'; });
-      });
+    retrySummary() {
+      this.simulationMode = 'none';
+      this._startRegeneration();
     },
   };
 }
