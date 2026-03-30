@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Report Generation UX — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7', 400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880', 800: '#215669', 900: '#204859' },
+            'webropol-gray': { 50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6', 400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a', 800: '#515557', 900: '#45484a', 950: '#272a2b' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── Base ── */
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub   { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .divider       { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 0.875rem; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: #b5bbbd; }
+    .sibling-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid #e6e7e8; margin-top: 64px; }
+    .sibling-nav a { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; padding: 8px 14px; border: 1px solid #b0e8f1; border-radius: 8px; background: white; }
+    .sibling-nav a:hover { background: #eefbfd; }
+    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+
+    /* ── Trigger button ── */
+    .btn-generate {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 10px; border: none; cursor: pointer;
+      font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.01em;
+      background: linear-gradient(135deg, #209fba, #1d809d);
+      color: white;
+      box-shadow: 0 2px 12px rgba(32,159,186,0.28);
+      transition: opacity .15s, box-shadow .15s, transform .1s;
+      user-select: none;
+    }
+    .btn-generate:hover:not(:disabled) { box-shadow: 0 4px 20px rgba(32,159,186,0.38); transform: translateY(-1px); }
+    .btn-generate:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 9px; cursor: pointer;
+      font-size: 0.875rem; font-weight: 500;
+      background: white; color: #45484a;
+      border: 1px solid #d1d5d6;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-secondary:hover:not(:disabled) { border-color: #9ba2a4; background: #f9fafa; }
+    .btn-secondary:disabled { opacity: .4; cursor: not-allowed; }
+
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 9px; cursor: pointer;
+      font-size: 0.875rem; font-weight: 500;
+      background: #fff5f5; color: #c53030;
+      border: 1px solid #feb2b2;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-danger:hover { background: #fff0f0; border-color: #f87171; }
+
+    /* ── Inline prepare loader (3 tiny dots) ── */
+    .prep-dots { display: inline-flex; align-items: center; gap: 3px; }
+    .prep-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      animation: prep-bounce 1.2s ease-in-out infinite var(--d,0s);
+    }
+    .prep-dot:nth-child(2) { --d: -0.24s; }
+    .prep-dot:nth-child(3) { --d: -0.48s; }
+    @keyframes prep-bounce {
+      0%,80%,100% { transform: scale(1);   opacity:.6; }
+      40%          { transform: scale(1.5); opacity:1; }
+    }
+
+    /* ── Skeleton shimmer ── */
+    .sk-line {
+      background: linear-gradient(90deg, #e6e7e8 25%, #f3f4f4 50%, #e6e7e8 75%);
+      background-size: 400% 100%;
+      border-radius: 6px;
+      animation: sk-shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes sk-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+    .sk-block {
+      background: linear-gradient(90deg, #e6e7e8 25%, #f3f4f4 50%, #e6e7e8 75%);
+      background-size: 400% 100%;
+      border-radius: 10px;
+      animation: sk-shimmer 1.6s ease-in-out infinite;
+    }
+
+    /* ── Blinking cursor ── */
+    .ai-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: #209fba; border-radius: 1px; margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink .9s step-end infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+    /* ── Background processing indicator ── */
+    .bg-indicator {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; color: #9ba2a4; font-weight: 500;
+      transition: opacity .4s;
+    }
+    .bg-indicator.hidden-indicator { opacity: 0; pointer-events: none; }
+    .bg-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #79d6e7;
+      animation: bg-pulse 1.4s ease-in-out infinite var(--d,0s);
+    }
+    .bg-dot:nth-child(2) { --d: -0.28s; }
+    .bg-dot:nth-child(3) { --d: -0.56s; }
+    @keyframes bg-pulse {
+      0%,80%,100% { transform:scale(1); opacity:.5; }
+      40%          { transform:scale(1.6); opacity:1; }
+    }
+
+    /* ── Report content ── */
+    .report-card {
+      border: 1px solid #e6e7e8; border-radius: 16px;
+      background: white; overflow: hidden;
+    }
+    .report-header {
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid #f3f4f4;
+    }
+    .report-meta {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.75rem; color: #9ba2a4; margin-bottom: 6px;
+    }
+    .report-title-text {
+      font-size: 1.375rem; font-weight: 700; color: #272a2b; line-height: 1.3;
+    }
+    .report-section { padding: 24px 32px; border-bottom: 1px solid #f3f4f4; }
+    .report-section:last-child { border-bottom: none; }
+    .section-heading {
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: #9ba2a4; margin-bottom: 10px;
+    }
+    .report-body { font-size: 0.9375rem; line-height: 1.7; color: #45484a; }
+
+    /* insight pills */
+    .insight-row { display: flex; flex-direction: column; gap: 10px; }
+    .insight-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px; border-radius: 10px;
+      background: #f9fafa; border: 1px solid #f3f4f4;
+      font-size: 0.875rem; color: #45484a; line-height: 1.5;
+    }
+    .insight-icon { flex-shrink:0; margin-top:1px; }
+
+    /* chart placeholder */
+    .chart-placeholder {
+      height: 140px; border-radius: 10px;
+      background: linear-gradient(135deg, #eefbfd, #f3f4f4);
+      border: 1px solid #b0e8f1; display: flex; align-items: center; justify-content: center;
+      color: #9ba2a4; font-size: 0.8125rem; gap: 8px;
+    }
+
+    /* bar chart animation */
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+    .bar {
+      flex: 1; border-radius: 4px 4px 0 0;
+      background: linear-gradient(to top, #1d809d, #79d6e7);
+      transform-origin: bottom;
+      animation: bar-grow .6s cubic-bezier(.34,1.56,.64,1) forwards var(--bd,0s);
+      transform: scaleY(0);
+    }
+    @keyframes bar-grow { to { transform: scaleY(1); } }
+
+    /* ── Error inline ── */
+    .error-inline {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px; border-radius: 10px;
+      background: #fff5f5; border: 1px solid #feb2b2;
+      font-size: 0.875rem; color: #c53030;
+    }
+
+    /* ── Fade transitions ── */
+    .fade-enter { animation: fadeIn .35s ease forwards; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    .section-reveal { animation: sectionIn .3s ease forwards; }
+    @keyframes sectionIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* regen fade-out */
+    .regen-fade { animation: regenFade .4s ease forwards; }
+    @keyframes regenFade { to { opacity:.25; } }
+
+    /* ── Success glow ── */
+    .completion-glow {
+      animation: completeGlow .6s ease forwards;
+    }
+    @keyframes completeGlow {
+      0%   { box-shadow: 0 0 0 0 rgba(32,159,186,0); }
+      50%  { box-shadow: 0 0 0 6px rgba(32,159,186,0.18); }
+      100% { box-shadow: 0 0 0 0 rgba(32,159,186,0); }
+    }
+
+    /* ── State badge ── */
+    .state-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: .05em;
+    }
+    .state-idle     { background:#f3f4f4; color:#61686a; }
+    .state-prep     { background:#fff7e0; color:#92610a; }
+    .state-skeleton { background:#eefbfd; color:#1d809d; }
+    .state-stream   { background:#e9f7f0; color:#1a6644; }
+    .state-complete { background:#e9f7f0; color:#1a6644; }
+    .state-error    { background:#fff5f5; color:#c53030; }
+    .state-regen    { background:#fff7e0; color:#92610a; }
+  </style>
+</head>
+<body>
+<main class="page" x-data="aiReportApp()">
+
+  <nav class="breadcrumb">
+    <a href="../index.html"><i class="fal fa-swatchbook" style="margin-right:4px"></i>Component Library</a>
+    <span>/</span>
+    <span>AI Report Generation UX</span>
+  </nav>
+
+  <h1>AI Report Generation UX</h1>
+  <p class="lead">Interactive demo of the full AI report generation lifecycle — from trigger to completion, including skeleton, streaming, error, and regeneration states.</p>
+
+  <!-- ─────────────────────── DEMO BLOCK ─────────────────────── -->
+  <section>
+    <h2 class="section-title">Interactive Demo</h2>
+    <p class="section-sub">Click "Generate Report" to walk through every state in real time.</p>
+
+    <div class="demo-block" style="padding:0">
+
+      <!-- ── Control bar ── -->
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:20px 28px; border-bottom:1px solid #f3f4f4;">
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+
+          <!-- Generate / Preparing button -->
+          <button
+            class="btn-generate"
+            :disabled="state !== 'idle' && state !== 'complete' && state !== 'error'"
+            @click="generate()"
+          >
+            <template x-if="state === 'idle' || state === 'complete'">
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <i class="fal fa-wand-magic-sparkles"></i>
+                <span x-text="state === 'complete' ? 'Regenerate Report' : 'Generate Report'"></span>
+              </span>
+            </template>
+            <template x-if="state === 'preparing' || state === 'skeleton' || state === 'streaming' || state === 'regenerating'">
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <span>Preparing report</span>
+                <span class="prep-dots">
+                  <span class="prep-dot"></span>
+                  <span class="prep-dot"></span>
+                  <span class="prep-dot"></span>
+                </span>
+              </span>
+            </template>
+            <template x-if="state === 'error'">
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <i class="fal fa-rotate-right"></i>
+                <span>Retry Generation</span>
+              </span>
+            </template>
+          </button>
+
+          <!-- Simulate error toggle (only when idle) -->
+          <template x-if="state === 'idle'">
+            <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;color:#787f81;cursor:pointer;user-select:none;">
+              <input type="checkbox" x-model="simulateError" style="accent-color:#1d809d"> Simulate error
+            </label>
+          </template>
+        </div>
+
+        <!-- State badge -->
+        <span class="state-badge" :class="`state-${state}`">
+          <span x-text="stateLabel()"></span>
+        </span>
+      </div>
+
+      <!-- ── Report area ── -->
+      <div style="padding:28px; min-height:480px;">
+
+        <!-- ── 1. IDLE: prompt ── -->
+        <template x-if="state === 'idle'">
+          <div class="fade-enter" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;gap:16px;color:#9ba2a4;">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#eefbfd,#d5f4f8);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#3fbcd5;">
+              <i class="fal fa-file-chart-column"></i>
+            </div>
+            <p style="font-size:0.9375rem;color:#9ba2a4;max-width:300px;line-height:1.6;margin:0;">Click <strong style="color:#45484a;">Generate Report</strong> to start processing your survey data into a structured AI report.</p>
+          </div>
+        </template>
+
+        <!-- ── 2. SKELETON ── -->
+        <template x-if="state === 'skeleton'">
+          <div class="fade-enter">
+
+            <!-- skeleton header -->
+            <div style="padding-bottom:20px;border-bottom:1px solid #f3f4f4;margin-bottom:24px;">
+              <div class="sk-line" style="height:12px;width:180px;margin-bottom:12px;"></div>
+              <div class="sk-line" style="height:22px;width:72%;margin-bottom:8px;"></div>
+              <div class="sk-line" style="height:22px;width:48%;"></div>
+            </div>
+
+            <!-- skeleton summary -->
+            <div style="margin-bottom:24px;">
+              <div class="sk-line" style="height:10px;width:90px;margin-bottom:14px;"></div>
+              <div class="sk-line" style="height:14px;width:100%;margin-bottom:8px;"></div>
+              <div class="sk-line" style="height:14px;width:94%;margin-bottom:8px;"></div>
+              <div class="sk-line" style="height:14px;width:78%;"></div>
+            </div>
+
+            <!-- skeleton insights -->
+            <div style="margin-bottom:24px;">
+              <div class="sk-line" style="height:10px;width:80px;margin-bottom:14px;"></div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div class="sk-block" style="height:56px;"></div>
+                <div class="sk-block" style="height:56px;"></div>
+                <div class="sk-block" style="height:56px;"></div>
+              </div>
+            </div>
+
+            <!-- skeleton chart -->
+            <div>
+              <div class="sk-line" style="height:10px;width:110px;margin-bottom:14px;"></div>
+              <div class="sk-block" style="height:140px;"></div>
+            </div>
+          </div>
+        </template>
+
+        <!-- ── 3+4. STREAMING / COMPLETE / ERROR / REGENERATING ── -->
+        <template x-if="state === 'streaming' || state === 'complete' || state === 'error' || state === 'regenerating'">
+          <div :class="state === 'regenerating' ? 'regen-fade' : ''">
+
+            <div class="report-card" :class="state === 'complete' ? 'completion-glow' : ''">
+
+              <!-- Report Header -->
+              <div class="report-header section-reveal" x-show="sections.title.visible">
+                <div class="report-meta">
+                  <i class="fal fa-robot" style="color:#3fbcd5"></i>
+                  <span>AI-Generated Report</span>
+                  <span style="color:#e6e7e8">·</span>
+                  <span>Customer Satisfaction Survey 2026</span>
+
+                  <!-- Background processing indicator -->
+                  <span class="bg-indicator" :class="state !== 'streaming' ? 'hidden-indicator' : ''" style="margin-left:auto;">
+                    <span class="bg-dot"></span><span class="bg-dot"></span><span class="bg-dot"></span>
+                    <span>Generating</span>
+                  </span>
+                </div>
+                <div class="report-title-text">
+                  <span x-text="sections.title.content"></span>
+                  <span class="ai-cursor" x-show="sections.title.active"></span>
+                </div>
+              </div>
+
+              <!-- Executive Summary -->
+              <div class="report-section section-reveal" x-show="sections.summary.visible">
+                <div class="section-heading">Executive Summary</div>
+                <div class="report-body">
+                  <span x-text="sections.summary.content"></span>
+                  <span class="ai-cursor" x-show="sections.summary.active"></span>
+                </div>
+              </div>
+
+              <!-- Key Insights -->
+              <div class="report-section section-reveal" x-show="sections.insights.visible">
+                <div class="section-heading">Key Insights</div>
+                <div class="insight-row">
+                  <template x-for="(insight, i) in sections.insights.items" :key="i">
+                    <div class="insight-item section-reveal">
+                      <span class="insight-icon" :style="`color:${insight.color}`">
+                        <i :class="insight.icon"></i>
+                      </span>
+                      <span x-text="insight.text"></span>
+                      <span class="ai-cursor" x-show="sections.insights.activeIndex === i"></span>
+                    </div>
+                  </template>
+                  <!-- placeholder for insights not yet arrived -->
+                  <template x-if="sections.insights.visible && sections.insights.activeIndex < 2 && state === 'streaming'">
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <template x-for="n in (2 - sections.insights.activeIndex)" :key="n">
+                        <div class="sk-block" style="height:48px;"></div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Response Breakdown -->
+              <div class="report-section section-reveal" x-show="sections.chart.visible">
+                <div class="section-heading">Response Breakdown</div>
+                <template x-if="sections.chart.ready">
+                  <div style="display:flex;flex-direction:column;gap:16px;" class="section-reveal">
+                    <div class="bar-chart" style="align-items:flex-end;padding:16px;background:#f9fafa;border-radius:10px;border:1px solid #f3f4f4;">
+                      <div class="bar" style="height:88px;--bd:0s"   title="Very Satisfied 44%"></div>
+                      <div class="bar" style="height:64px;--bd:.1s"  title="Satisfied 32%"></div>
+                      <div class="bar" style="height:28px;--bd:.2s"  title="Neutral 14%"></div>
+                      <div class="bar" style="height:16px;--bd:.3s"  title="Unsatisfied 8%"></div>
+                      <div class="bar" style="height:6px; --bd:.4s"  title="Very Unsatisfied 2%"></div>
+                    </div>
+                    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+                      <template x-for="label in ['Very Satisfied 44%','Satisfied 32%','Neutral 14%','Unsatisfied 8%','Very Unsatisfied 2%']" :key="label">
+                        <span style="font-size:0.75rem;color:#787f81;" x-text="label"></span>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="!sections.chart.ready">
+                  <div class="sk-block" style="height:140px;"></div>
+                </template>
+              </div>
+
+              <!-- Recommendations -->
+              <div class="report-section section-reveal" x-show="sections.recommendations.visible">
+                <div class="section-heading">Recommendations</div>
+                <div class="report-body">
+                  <span x-text="sections.recommendations.content"></span>
+                  <span class="ai-cursor" x-show="sections.recommendations.active"></span>
+                </div>
+              </div>
+
+              <!-- Error section -->
+              <div class="report-section section-reveal" x-show="state === 'error'">
+                <div class="error-inline">
+                  <i class="fal fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0"></i>
+                  <div>
+                    <strong>Could not complete recommendations section</strong><br>
+                    <span style="font-size:0.8125rem;color:#c05050;">The data source returned incomplete results. Partial report above is saved.</span>
+                    <div style="margin-top:10px;">
+                      <button class="btn-danger" @click="retrySection()">
+                        <i class="fal fa-rotate-right"></i> Retry this section
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </template>
+
+        <!-- ── 5. COMPLETE: action bar ── -->
+        <div
+          x-show="state === 'complete'"
+          x-transition
+          style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;"
+        >
+          <button class="btn-generate" @click="generate()" style="font-size:0.875rem;padding:8px 18px;">
+            <i class="fal fa-rotate-right"></i> Regenerate
+          </button>
+          <button class="btn-secondary">
+            <i class="fal fa-arrow-down-to-bracket"></i> Export PDF
+          </button>
+          <button class="btn-secondary">
+            <i class="fal fa-pen"></i> Edit Report
+          </button>
+          <span style="margin-left:auto;font-size:0.8125rem;color:#3fbcd5;display:inline-flex;align-items:center;gap:6px;">
+            <i class="fal fa-circle-check"></i> Report complete
+          </span>
+        </div>
+
+      </div><!-- /padding wrapper -->
+    </div><!-- /demo-block -->
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─────────────────────── STATE REFERENCE ─────────────────────── -->
+  <section>
+    <h2 class="section-title">State Machine Reference</h2>
+    <p class="section-sub">Every state, its trigger, and timing contract.</p>
+
+    <div class="demo-block" style="padding:0;overflow:hidden;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.875rem;">
+        <thead>
+          <tr style="background:#f9fafa;border-bottom:2px solid #e6e7e8;">
+            <th style="padding:12px 20px;text-align:left;font-weight:600;color:#272a2b;">State</th>
+            <th style="padding:12px 20px;text-align:left;font-weight:600;color:#272a2b;">Trigger</th>
+            <th style="padding:12px 20px;text-align:left;font-weight:600;color:#272a2b;">Timing</th>
+            <th style="padding:12px 20px;text-align:left;font-weight:600;color:#272a2b;">Key Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f3f4f4;">
+            <td style="padding:12px 20px;"><span class="state-badge state-idle">Idle</span></td>
+            <td style="padding:12px 20px;color:#787f81;">Page load / after completion</td>
+            <td style="padding:12px 20px;color:#787f81;">—</td>
+            <td style="padding:12px 20px;color:#45484a;">Prompt empty state shown</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;background:#fffdf8;">
+            <td style="padding:12px 20px;"><span class="state-badge state-prep">Preparing</span></td>
+            <td style="padding:12px 20px;color:#787f81;">User clicks Generate</td>
+            <td style="padding:12px 20px;color:#787f81;">&lt;300ms</td>
+            <td style="padding:12px 20px;color:#45484a;">Button disabled, inline dots, no skeleton yet</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;">
+            <td style="padding:12px 20px;"><span class="state-badge state-skeleton">Skeleton</span></td>
+            <td style="padding:12px 20px;color:#787f81;">300ms elapsed, no content</td>
+            <td style="padding:12px 20px;color:#787f81;">300ms – first chunk</td>
+            <td style="padding:12px 20px;color:#45484a;">Full layout skeleton with shimmer</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;background:#f5fbf7;">
+            <td style="padding:12px 20px;"><span class="state-badge state-stream">Streaming</span></td>
+            <td style="padding:12px 20px;color:#787f81;">First token received</td>
+            <td style="padding:12px 20px;color:#787f81;">Section-by-section</td>
+            <td style="padding:12px 20px;color:#45484a;">Progressive reveal, blinking cursor, no layout reflow</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;">
+            <td style="padding:12px 20px;"><span class="state-badge state-complete">Complete</span></td>
+            <td style="padding:12px 20px;color:#787f81;">All sections delivered</td>
+            <td style="padding:12px 20px;color:#787f81;">—</td>
+            <td style="padding:12px 20px;color:#45484a;">Cursor gone, actions enabled, subtle glow</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f3f4f4;background:#fff5f5;">
+            <td style="padding:12px 20px;"><span class="state-badge state-error">Error</span></td>
+            <td style="padding:12px 20px;color:#787f81;">Section-level failure</td>
+            <td style="padding:12px 20px;color:#787f81;">—</td>
+            <td style="padding:12px 20px;color:#45484a;">Partial content kept, inline error, retry action</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 20px;"><span class="state-badge state-regen">Regenerating</span></td>
+            <td style="padding:12px 20px;color:#787f81;">User clicks Regenerate</td>
+            <td style="padding:12px 20px;color:#787f81;">Fade → re-stream</td>
+            <td style="padding:12px 20px;color:#45484a;">Existing content fades, progressive replacement</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─────────────────────── MOTION PRINCIPLES ─────────────────────── -->
+  <section>
+    <h2 class="section-title">Motion Principles</h2>
+    <p class="section-sub">Rules that keep the experience calm and readable.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;">
+      <template x-for="principle in principles" :key="principle.title">
+        <div class="demo-block" style="padding:20px;display:flex;gap:14px;align-items:flex-start;">
+          <div style="flex-shrink:0;width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#eefbfd,#d5f4f8);display:flex;align-items:center;justify-content:center;" :style="`color:${principle.color}`">
+            <i :class="principle.icon"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.875rem;color:#272a2b;margin-bottom:3px;" x-text="principle.title"></div>
+            <div style="font-size:0.8125rem;color:#787f81;line-height:1.5;" x-text="principle.desc"></div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </section>
+
+  <nav class="sibling-nav">
+    <a href="loading-demo.html"><i class="fal fa-arrow-left"></i> Loading</a>
+    <a href="../index.html">Component Library <i class="fal fa-arrow-right"></i></a>
+  </nav>
+
+</main>
+
+<script>
+function aiReportApp() {
+  // Simulated streamed content chunks
+  const REPORT_DATA = {
+    title: 'Customer Satisfaction Report — Q1 2026',
+    summary: 'Analysis of 1,847 survey responses collected between January and March 2026 reveals a strong upward trend in overall customer satisfaction, with an NPS score of +62. Respondents highlight product reliability and support responsiveness as primary drivers of loyalty, while onboarding friction remains the most cited area for improvement.',
+    insights: [
+      { icon: 'fal fa-arrow-trend-up', color: '#1a6644', text: 'NPS improved by 14 points vs Q4 2025, driven by faster support resolution times and proactive follow-up.' },
+      { icon: 'fal fa-triangle-exclamation', color: '#b45309', text: 'Onboarding drop-off rate of 23% identified in weeks 1–2, concentrated in users who skipped guided setup.' },
+      { icon: 'fal fa-star', color: '#0369a1', text: 'Feature satisfaction highest for report exports (4.7/5) and lowest for mobile notifications (3.1/5).' },
+    ],
+    recommendations: 'Prioritise a redesigned onboarding flow with mandatory key-action prompts in the first session. Consider a mobile notification audit before Q2 release. Schedule follow-up pulse surveys for detractors identified in this cycle to measure recovery rate.',
+  };
+
+  return {
+    /* ── state ── */
+    state: 'idle',           // idle | preparing | skeleton | streaming | complete | error | regenerating
+    simulateError: false,
+    sections: {
+      title:           { visible: false, active: false, content: '' },
+      summary:         { visible: false, active: false, content: '' },
+      insights:        { visible: false, activeIndex: -1, items: [] },
+      chart:           { visible: false, ready: false },
+      recommendations: { visible: false, active: false, content: '' },
+    },
+    timers: [],
+    principles: [
+      { icon:'fal fa-feather', color:'#209fba', title:'Subtle over dramatic',      desc:'Animations serve cognition, not spectacle. Keep durations under 400ms.' },
+      { icon:'fal fa-lock',    color:'#7c3aed', title:'Lock completed sections',   desc:'Once a section finishes streaming, it never moves or re-animates.' },
+      { icon:'fal fa-align-left', color:'#059669', title:'No layout jumps',        desc:'Reserve space for content before it arrives. Skeletons match final height.' },
+      { icon:'fal fa-eye',     color:'#b45309', title:'Progress must be visible',  desc:'The user should always be able to tell something is happening.' },
+      { icon:'fal fa-robot',   color:'#0369a1', title:'Content before chrome',     desc:'High-value insights render first. Visualisations and details come last.' },
+      { icon:'fal fa-hand',    color:'#c53030', title:'User stays in control',     desc:'Partial reports are immediately consumable. No blocking full-screen states.' },
+    ],
+
+    stateLabel() {
+      return { idle:'Idle', preparing:'Preparing', skeleton:'Loading Skeleton', streaming:'Streaming', complete:'Complete', error:'Error', regenerating:'Regenerating' }[this.state] ?? this.state;
+    },
+
+    /* ── helpers ── */
+    _after(ms, fn) {
+      const id = setTimeout(fn, ms);
+      this.timers.push(id);
+      return id;
+    },
+    _clearAll() { this.timers.forEach(clearTimeout); this.timers = []; },
+
+    /* type text into a section character-by-character in chunks */
+    _streamText(sectionKey, fullText, done) {
+      const CHUNK = 6; // chars per tick
+      let pos = 0;
+      const tick = () => {
+        if (pos >= fullText.length) {
+          this.sections[sectionKey].active = false;
+          if (done) done();
+          return;
+        }
+        this.sections[sectionKey].content += fullText.slice(pos, pos + CHUNK);
+        pos += CHUNK;
+        this._after(18, tick);
+      };
+      this.sections[sectionKey].active = true;
+      tick();
+    },
+
+    /* reset sections */
+    _resetSections() {
+      this.sections = {
+        title:           { visible: false, active: false, content: '' },
+        summary:         { visible: false, active: false, content: '' },
+        insights:        { visible: false, activeIndex: -1, items: [] },
+        chart:           { visible: false, ready: false },
+        recommendations: { visible: false, active: false, content: '' },
+      };
+    },
+
+    /* ── main flow ── */
+    generate() {
+      if (this.state === 'complete' || this.state === 'error') {
+        this._startRegeneration();
+        return;
+      }
+      this._clearAll();
+      this._resetSections();
+      this.state = 'preparing';
+
+      // After 300ms → skeleton
+      this._after(300, () => {
+        this.state = 'skeleton';
+
+        // After 900ms more → first chunk (title)
+        this._after(900, () => {
+          this.state = 'streaming';
+          this.sections.title.visible = true;
+          this._streamText('title', REPORT_DATA.title, () => {
+
+            // Summary — short delay then start
+            this._after(180, () => {
+              this.sections.summary.visible = true;
+              this._streamText('summary', REPORT_DATA.summary, () => {
+
+                // Insights — reveal container, then stream each insight
+                this._after(160, () => {
+                  this.sections.insights.visible = true;
+                  this._streamInsights(0, () => {
+
+                    // Chart — placeholder first, then data
+                    this._after(200, () => {
+                      this.sections.chart.visible = true;
+                      this._after(500, () => {
+                        this.sections.chart.ready = true;
+
+                        // Recommendations — only if NOT simulating error
+                        this._after(300, () => {
+                          if (this.simulateError) {
+                            this.state = 'error';
+                            this.sections.recommendations.visible = true;
+                            return;
+                          }
+                          this.sections.recommendations.visible = true;
+                          this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+                            this._after(200, () => { this.state = 'complete'; });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    },
+
+    _streamInsights(index, allDone) {
+      if (index >= REPORT_DATA.insights.length) {
+        this.sections.insights.activeIndex = -1;
+        if (allDone) allDone();
+        return;
+      }
+      this.sections.insights.activeIndex = index;
+      const insight = REPORT_DATA.insights[index];
+      // instant reveal with partial delay between items
+      this._after(60, () => {
+        this.sections.insights.items.push({ ...insight });
+        this._after(350, () => {
+          this._streamInsights(index + 1, allDone);
+        });
+      });
+    },
+
+    _startRegeneration() {
+      this._clearAll();
+      this.state = 'regenerating';
+      this._after(500, () => {
+        this._resetSections();
+        this.state = 'preparing';
+        this._after(300, () => {
+          this.state = 'skeleton';
+          this._after(900, () => {
+            this.state = 'streaming';
+            this.sections.title.visible = true;
+            this._streamText('title', REPORT_DATA.title, () => {
+              this._after(180, () => {
+                this.sections.summary.visible = true;
+                this._streamText('summary', REPORT_DATA.summary, () => {
+                  this._after(160, () => {
+                    this.sections.insights.visible = true;
+                    this._streamInsights(0, () => {
+                      this._after(200, () => {
+                        this.sections.chart.visible = true;
+                        this._after(500, () => {
+                          this.sections.chart.ready = true;
+                          this._after(300, () => {
+                            this.sections.recommendations.visible = true;
+                            this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+                              this._after(200, () => { this.state = 'complete'; });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    },
+
+    retrySection() {
+      this.state = 'streaming';
+      this.sections.recommendations.visible = true;
+      this.sections.recommendations.content = '';
+      this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+        this._after(200, () => { this.state = 'complete'; });
+      });
+    },
+  };
+}
+</script>
+</body>
+</html>
