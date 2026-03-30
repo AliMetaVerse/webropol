@@ -1,10 +1,63 @@
 # Smart Notifier System
 
-The Smart Notifier system provides three types of notification components for the Webropol design system:
+The Smart Notifier system now includes a unified Figma-aligned component for inline actionable notifications, alongside the older alert, toast, and promo building blocks.
 
-## Components
+## Primary Component
 
-### 1. Alert (`<webropol-alert>`)
+### 1. Smart Notifier (`<webropol-smart-notifier>`)
+**Purpose**: Unified high-visibility inline notifier with semantic and royal variants, optional dismiss, and CTA actions.
+
+**Features**:
+- Seven variants: `informative`, `success`, `warning`, `error`, `neutral`, `royal-light`, `royal-dark`
+- Figma-aligned icon treatment, spacing, border radius, and shadow
+- Optional dismiss button
+- Two CTA slots via attributes
+- Forced preview sizes for demos: `desktop`, `tablet`, `mobile`, `mobile-compact`
+
+**Usage**:
+```html
+<webropol-smart-notifier
+  variant="informative"
+  title="Info"
+  description="Your changes have been saved successfully."
+  secondary-label="Not Now"
+  primary-label="Benefits"
+  primary-icon="fal fa-thumbs-up">
+</webropol-smart-notifier>
+
+<webropol-smart-notifier
+  variant="royal-dark"
+  title="Royal Dark"
+  description="This variant is intended for high-visibility, high-value messaging."
+  primary-label="Ask AI Assistant"
+  primary-icon="fal fa-sparkles"
+  secondary-label="Video"
+  secondary-icon="fal fa-circle-play">
+</webropol-smart-notifier>
+```
+
+**Attributes**:
+- `variant`: `informative` (default), `success`, `warning`, `error`, `neutral`, `royal-light`, `royal-dark`
+- `size`: `auto` (default), `desktop`, `tablet`, `mobile`, `mobile-compact`
+- `title`: Heading text
+- `description`: Supporting body copy
+- `icon`: Custom FontAwesome icon class
+- `dismissible`: `true` | `false`
+- `show-icon`: `true` | `false`
+- `show-description`: `true` | `false`
+- `show-actions`: `true` | `false`
+- `primary-label`, `primary-url`, `primary-icon`
+- `secondary-label`, `secondary-url`, `secondary-icon`
+
+**Events**:
+- `dismissed` - Fired when the notifier is closed
+- `action-click` - Fired when a CTA is selected
+
+---
+
+## Legacy Components
+
+### 2. Alert (`<webropol-alert>`)
 **Purpose**: Inline contextual notifications within page content
 
 **Features**:
@@ -48,7 +101,7 @@ The Smart Notifier system provides three types of notification components for th
 
 ---
 
-### 2. Toast (`<webropol-toast>`)
+### 3. Toast (`<webropol-toast>`)
 **Purpose**: Temporary notifications that appear in screen corners
 
 **Features**:
@@ -94,7 +147,7 @@ The Smart Notifier system provides three types of notification components for th
 
 ---
 
-### 3. Promo (`<webropol-promo>`)
+### 4. Promo (`<webropol-promo>`)
 **Purpose**: Bottom slide-in promotional notifications (existing component)
 
 See `PromoToast.js` for full documentation.
@@ -190,6 +243,7 @@ All components include:
 - `/design-system/components/feedback/Alert.js` - Alert component
 - `/design-system/components/feedback/Toast.js` - Toast component
 - `/design-system/components/feedback/PromoToast.js` - Promo component
+- `/design-system/components/feedback/SmartNotifier.js` - Unified smart notifier component
 - `/design-system/components/index.js` - Unified exports
 
 ---
