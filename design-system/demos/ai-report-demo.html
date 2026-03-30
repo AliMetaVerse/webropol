@@ -169,25 +169,6 @@
     }
     .insight-icon { flex-shrink:0; margin-top:1px; }
 
-    /* chart placeholder */
-    .chart-placeholder {
-      height: 140px; border-radius: 10px;
-      background: linear-gradient(135deg, #eefbfd, #f3f4f4);
-      border: 1px solid #b0e8f1; display: flex; align-items: center; justify-content: center;
-      color: #9ba2a4; font-size: 0.8125rem; gap: 8px;
-    }
-
-    /* bar chart animation */
-    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
-    .bar {
-      flex: 1; border-radius: 4px 4px 0 0;
-      background: linear-gradient(to top, #1d809d, #79d6e7);
-      transform-origin: bottom;
-      animation: bar-grow .6s cubic-bezier(.34,1.56,.64,1) forwards var(--bd,0s);
-      transform: scaleY(0);
-    }
-    @keyframes bar-grow { to { transform: scaleY(1); } }
-
     /* ── Error inline ── */
     .error-inline {
       display: flex; align-items: flex-start; gap: 12px;
@@ -341,11 +322,6 @@
               </div>
             </div>
 
-            <!-- skeleton chart -->
-            <div>
-              <div class="sk-line" style="height:10px;width:110px;margin-bottom:14px;"></div>
-              <div class="sk-block" style="height:140px;"></div>
-            </div>
           </div>
         </template>
 
@@ -406,30 +382,6 @@
                     </div>
                   </template>
                 </div>
-              </div>
-
-              <!-- Response Breakdown -->
-              <div class="report-section section-reveal" x-show="sections.chart.visible">
-                <div class="section-heading">Response Breakdown</div>
-                <template x-if="sections.chart.ready">
-                  <div style="display:flex;flex-direction:column;gap:16px;" class="section-reveal">
-                    <div class="bar-chart" style="align-items:flex-end;padding:16px;background:#f9fafa;border-radius:10px;border:1px solid #f3f4f4;">
-                      <div class="bar" style="height:88px;--bd:0s"   title="Very Satisfied 44%"></div>
-                      <div class="bar" style="height:64px;--bd:.1s"  title="Satisfied 32%"></div>
-                      <div class="bar" style="height:28px;--bd:.2s"  title="Neutral 14%"></div>
-                      <div class="bar" style="height:16px;--bd:.3s"  title="Unsatisfied 8%"></div>
-                      <div class="bar" style="height:6px; --bd:.4s"  title="Very Unsatisfied 2%"></div>
-                    </div>
-                    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
-                      <template x-for="label in ['Very Satisfied 44%','Satisfied 32%','Neutral 14%','Unsatisfied 8%','Very Unsatisfied 2%']" :key="label">
-                        <span style="font-size:0.75rem;color:#787f81;" x-text="label"></span>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-                <template x-if="!sections.chart.ready">
-                  <div class="sk-block" style="height:140px;"></div>
-                </template>
               </div>
 
               <!-- Recommendations -->
@@ -600,7 +552,6 @@ function aiReportApp() {
       title:           { visible: false, active: false, content: '' },
       summary:         { visible: false, active: false, content: '' },
       insights:        { visible: false, activeIndex: -1, items: [] },
-      chart:           { visible: false, ready: false },
       recommendations: { visible: false, active: false, content: '' },
     },
     timers: [],
@@ -649,7 +600,6 @@ function aiReportApp() {
         title:           { visible: false, active: false, content: '' },
         summary:         { visible: false, active: false, content: '' },
         insights:        { visible: false, activeIndex: -1, items: [] },
-        chart:           { visible: false, ready: false },
         recommendations: { visible: false, active: false, content: '' },
       };
     },
@@ -684,24 +634,16 @@ function aiReportApp() {
                   this.sections.insights.visible = true;
                   this._streamInsights(0, () => {
 
-                    // Chart — placeholder first, then data
+                    // Recommendations — only if NOT simulating error
                     this._after(200, () => {
-                      this.sections.chart.visible = true;
-                      this._after(500, () => {
-                        this.sections.chart.ready = true;
-
-                        // Recommendations — only if NOT simulating error
-                        this._after(300, () => {
-                          if (this.simulateError) {
-                            this.state = 'error';
-                            this.sections.recommendations.visible = true;
-                            return;
-                          }
-                          this.sections.recommendations.visible = true;
-                          this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-                            this._after(200, () => { this.state = 'complete'; });
-                          });
-                        });
+                      if (this.simulateError) {
+                        this.state = 'error';
+                        this.sections.recommendations.visible = true;
+                        return;
+                      }
+                      this.sections.recommendations.visible = true;
+                      this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+                        this._after(200, () => { this.state = 'complete'; });
                       });
                     });
                   });
@@ -749,15 +691,9 @@ function aiReportApp() {
                     this.sections.insights.visible = true;
                     this._streamInsights(0, () => {
                       this._after(200, () => {
-                        this.sections.chart.visible = true;
-                        this._after(500, () => {
-                          this.sections.chart.ready = true;
-                          this._after(300, () => {
-                            this.sections.recommendations.visible = true;
-                            this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-                              this._after(200, () => { this.state = 'complete'; });
-                            });
-                          });
+                        this.sections.recommendations.visible = true;
+                        this._streamText('recommendations', REPORT_DATA.recommendations, () => {
+                          this._after(200, () => { this.state = 'complete'; });
                         });
                       });
                     });
