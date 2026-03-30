@@ -259,10 +259,128 @@
 
     /* ── Error inline ── */
     .error-inline {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 14px 16px; border-radius: 10px;
-      background: #fff5f5; border: 1px solid #feb2b2;
-      font-size: 0.875rem; color: #c53030;
+      display: grid;
+      grid-template-columns: minmax(128px, 180px) minmax(0, 1fr);
+      align-items: center;
+      gap: 18px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #fff8f8 0%, #fff1f1 100%);
+      border: 1px solid #fecaca;
+      font-size: 0.875rem;
+      color: #c53030;
+      overflow: hidden;
+    }
+    .error-illustration-shell {
+      position: relative;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.95), rgba(255,255,255,0) 55%),
+        linear-gradient(180deg, rgba(254,226,226,0.95) 0%, rgba(255,245,245,0.9) 100%);
+    }
+    .error-illustration {
+      position: relative;
+      z-index: 2;
+      width: 128px;
+      filter: drop-shadow(0 18px 18px rgba(197, 48, 48, 0.12));
+    }
+    .error-shadow {
+      position: absolute;
+      bottom: 18px;
+      width: 92px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(197, 48, 48, 0.16);
+      filter: blur(4px);
+    }
+    .error-snooze {
+      position: absolute;
+      top: 26px;
+      right: 24px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 3px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #4d36b2;
+      text-shadow: 0 8px 18px rgba(77, 54, 178, 0.22);
+      text-transform: none;
+      pointer-events: none;
+    }
+    .error-snooze span {
+      display: inline-block;
+      opacity: 0.24;
+      transform: translateY(8px) scale(0.88);
+      animation: snooze-rise 2.8s ease-in-out infinite;
+    }
+    .error-snooze span:nth-child(1) {
+      font-size: 0.9rem;
+      animation-delay: 0s;
+    }
+    .error-snooze span:nth-child(2) {
+      font-size: 1.15rem;
+      animation-delay: 0.28s;
+    }
+    .error-snooze span:nth-child(3) {
+      font-size: 1.45rem;
+      animation-delay: 0.56s;
+    }
+    .error-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .error-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #991b1b;
+    }
+    .error-detail {
+      font-size: 0.8125rem;
+      line-height: 1.65;
+      color: #c05050;
+      max-width: 56ch;
+    }
+    @keyframes snooze-rise {
+      0%, 100% {
+        opacity: 0.18;
+        transform: translateY(8px) scale(0.88);
+      }
+      35% {
+        opacity: 0.92;
+        transform: translateY(-1px) scale(1);
+      }
+      70% {
+        opacity: 0;
+        transform: translateY(-15px) scale(1.08);
+      }
+    }
+    @media (max-width: 720px) {
+      .error-inline {
+        grid-template-columns: 1fr;
+      }
+      .error-illustration-shell {
+        min-height: 136px;
+      }
+      .error-copy {
+        text-align: center;
+        align-items: center;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .error-snooze span {
+        animation: none;
+        opacity: 0.7;
+        transform: none;
+      }
     }
 
     /* ── Fade transitions ── */
@@ -530,10 +648,17 @@
               <!-- Error section -->
               <div class="report-section section-reveal" x-show="state === 'error'">
                 <div class="error-inline">
-                  <i class="fal fa-triangle-exclamation" style="margin-top:2px;flex-shrink:0"></i>
-                  <div>
-                    <strong>AI summary could not be generated</strong><br>
-                    <span style="font-size:0.8125rem;color:#c05050;">The AI service returned an incomplete payload before any summary content could be streamed. No summary text was saved.</span>
+                  <div class="error-illustration-shell" aria-hidden="true">
+                    <span class="error-snooze"><span>z</span><span>z</span><span>Z</span></span>
+                    <img class="error-illustration" src="svgs/cat-in-cup.svg" alt="" />
+                    <span class="error-shadow"></span>
+                  </div>
+                  <div class="error-copy">
+                    <div class="error-title">
+                      <i class="fal fa-triangle-exclamation"></i>
+                      <span>AI summary could not be generated</span>
+                    </div>
+                    <span class="error-detail">The AI service returned an incomplete payload before any summary content could be streamed. No summary text was saved, so the report is waiting with the cat in the cup until you retry.</span>
                     <div style="margin-top:10px;">
                       <button class="btn-danger" @click="retrySummary()">
                         <i class="fal fa-rotate-right"></i> Retry AI summary
