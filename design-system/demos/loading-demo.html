@@ -765,6 +765,233 @@
     </script>
   </section>
 
+  <div class="divider"></div>
+
+  <!-- Dot Bounce Text Animation -->
+  <section>
+    <h2 class="section-title">Dot Bounce Text Animation</h2>
+    <p class="section-sub">A ball bounces, then slides into position beside "AI Processing:" — built with per-character delays and a clip-path wave fill.</p>
+
+    <style>
+      /* ── TCPDB: Text Clip-Path Dot Bounce ── */
+      .tcpdb-stage {
+        --tcpdb-dur: 6s;
+        --tcpdb-wave-dur: calc(var(--tcpdb-dur) * 0.25);
+        --tcpdb-text-in-delay: calc(var(--tcpdb-dur) * 0.275);
+        --tcpdb-text-in-dur: calc(var(--tcpdb-dur) * 0.1);
+        --tcpdb-ease: cubic-bezier(0.5, 0, 0.5, 1);
+        --tcpdb-dot-color: #06b6d4;
+        --tcpdb-dot-dark: #0e7490;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 40px;
+        min-height: 240px;
+        overflow: visible;
+      }
+
+      .tcpdb-container {
+        display: grid;
+        align-items: center;
+        justify-items: center;
+      }
+      .tcpdb-container > * { grid-area: 1 / 1; }
+
+      .tcpdb-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 48px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+        margin: 0;
+        white-space: nowrap;
+      }
+
+      /* Per-character span */
+      .tcpdb-char {
+        display: inline-block;
+        position: relative;
+        animation: tcpdb-char-in var(--tcpdb-text-in-dur) var(--tcpdb-ease)
+                   calc(var(--tcpdb-text-in-delay) + 0.25s * (1 - var(--distance-percent)))
+                   backwards;
+        transform-origin: center 1em;
+      }
+
+      @keyframes tcpdb-char-in {
+        0%  { opacity: 0; transform: translateX(calc(-0.4em * var(--char-offset))) scale(0); }
+        90% { transform: translateX(0) scale(1.1); }
+      }
+
+      /* Squish the lowercase 'i' in Processing */
+      .tcpdb-char[data-char="i"] {
+        visibility: hidden;
+        --sq-scale: 0.9;
+        --sq-y: 5%;
+      }
+      .tcpdb-char[data-char="i"]::before {
+        content: 'i';
+        position: absolute;
+        visibility: visible;
+        transform-origin: center 1em;
+        animation: tcpdb-squish var(--tcpdb-dur) var(--tcpdb-ease) forwards;
+      }
+      @keyframes tcpdb-squish {
+        47.5%, 52.5% { transform: none; }
+        50%           { transform: translateY(5%) scaleY(0.9); }
+      }
+
+      /* Last char bonks when dot arrives */
+      .tcpdb-title .tcpdb-char:last-child {
+        animation: tcpdb-char-in var(--tcpdb-text-in-dur) var(--tcpdb-ease)
+                     calc(var(--tcpdb-text-in-delay) + 0.25s * (1 - var(--distance-percent)))
+                     backwards,
+                   tcpdb-bonk var(--tcpdb-dur) var(--tcpdb-ease) forwards;
+      }
+      @keyframes tcpdb-bonk {
+        80%, 85%, to { transform: none; }
+        82%           { transform: translateX(-20%); }
+      }
+
+      /* ── Dot ── */
+      .tcpdb-dot {
+        position: relative;
+        font-size: 24px;
+        width: 1em;
+        height: 1em;
+        animation: tcpdb-dot-move var(--tcpdb-dur) var(--tcpdb-ease) both;
+      }
+      @keyframes tcpdb-dot-move {
+        from        { opacity: 0; transform: scale(3); }
+        10%         { opacity: 1; transform: scale(3); }
+        15%         { transform: scale(3) translateY(0.5em) scaleY(1.5); }
+        20%         { transform: scale(1) translateY(-300%); }
+        30%         { transform: translateY(1em) scaleY(0.5); }
+        40%         { transform: translateY(-400%); }
+        50%         { transform: translateY(-1em); }
+        53%         { transform: translateY(-300%); }
+        56%         { transform: translateY(-1em); }
+        59%         { transform: translateY(-200%); }
+        62%         { transform: translateY(1em); }
+        80%, 90%, to { transform: translateY(1em); }
+      }
+
+      .tcpdb-dot-inner {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        overflow: hidden;
+        display: grid;
+        align-items: center;
+        justify-items: center;
+        animation: tcpdb-dot-inner var(--tcpdb-dur) var(--tcpdb-ease) both;
+      }
+      .tcpdb-dot-inner > * { grid-area: 1 / 1; }
+
+      /*
+        "AI Processing:" ≈ 340px wide at 48px Inter → half ≈ 170px
+        dot em = 24px → 170/24 ≈ 7.1em needed → overshoot to ~9em then settle at ~7.5em
+      */
+      @keyframes tcpdb-dot-inner {
+        from, 45% { transform: none; }
+        70%        { transform: translateX(9em); animation-timing-function: cubic-bezier(0.5,0,1,0); }
+        80%        { transform: translateX(7.4em); animation-timing-function: var(--tcpdb-ease); }
+        83%, to    { transform: translateX(7.5em); }
+      }
+
+      /* Wave fill SVG */
+      .tcpdb-wave {
+        width: 200%;
+        height: 200%;
+      }
+      .tcpdb-wave-fg {
+        fill: var(--tcpdb-dot-color);
+        animation: tcpdb-wave-fg-in var(--tcpdb-wave-dur) var(--tcpdb-ease);
+      }
+      .tcpdb-wave-bg {
+        fill: var(--tcpdb-dot-dark);
+        animation: tcpdb-wave-bg-in calc(var(--tcpdb-wave-dur) * 0.95) var(--tcpdb-ease);
+      }
+      @keyframes tcpdb-wave-fg-in {
+        0%  { transform: translateY(100%) translateX(-110%); }
+        70% { transform: translateY(30%)  translateX(0%); }
+      }
+      @keyframes tcpdb-wave-bg-in {
+        0%  { transform: translateY(100%) translateX(110%); }
+        70% { transform: translateY(30%)  translateX(0%); }
+      }
+    </style>
+
+    <div class="demo-block">
+      <div id="tcpdb-wrapper">
+        <div class="tcpdb-stage" id="tcpdb-stage">
+          <div class="tcpdb-container">
+            <h1 class="tcpdb-title" id="tcpdb-title"></h1>
+            <div class="tcpdb-dot">
+              <div class="tcpdb-dot-inner">
+                <svg class="tcpdb-wave tcpdb-wave-bg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M-10 200 L-10 115 Q20 75 50 115 Q80 155 110 115 Q140 75 170 115 Q200 155 210 115 L210 200 Z"/>
+                </svg>
+                <svg class="tcpdb-wave tcpdb-wave-fg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M-10 200 L-10 125 Q20 85 50 125 Q80 165 110 125 Q140 85 170 125 Q200 165 210 125 L210 200 Z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px 24px;background:#f9fafa;border-top:1px solid #e6e7e8;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <button class="tcp-restart-btn" onclick="restartTCPDB()">
+          <i class="fal fa-redo"></i> Replay animation
+        </button>
+        <span style="font-size:0.78rem;color:#9ba2a4">Per-character spans are generated by JS with <code>--char-offset</code> and <code>--distance-percent</code> custom properties. The dot's <code>dot-inner</code> slides to the right at 70% of the timeline.</span>
+      </div>
+    </div>
+
+    <script>
+      const TCPDB_TEXT = 'AI Processing:';
+
+      function buildTCPDB(titleEl) {
+        const chars = [...TCPDB_TEXT];
+        const center = (chars.length - 1) / 2;
+        chars.forEach((char, i) => {
+          const span = document.createElement('span');
+          span.className = 'tcpdb-char';
+          span.dataset.char = char;            // preserve original case for data-char selector
+          const offset = i - center;
+          const distPct = Math.abs(offset) / (chars.length / 2);
+          span.style.setProperty('--char-offset', offset.toFixed(3));
+          span.style.setProperty('--distance-percent', distPct.toFixed(3));
+          span.textContent = char === ' ' ? '\u00a0' : char;
+          titleEl.appendChild(span);
+        });
+      }
+
+      buildTCPDB(document.getElementById('tcpdb-title'));
+
+      function restartTCPDB() {
+        const wrapper = document.getElementById('tcpdb-wrapper');
+        wrapper.innerHTML = `
+          <div class="tcpdb-stage" id="tcpdb-stage">
+            <div class="tcpdb-container">
+              <h1 class="tcpdb-title" id="tcpdb-title"></h1>
+              <div class="tcpdb-dot">
+                <div class="tcpdb-dot-inner">
+                  <svg class="tcpdb-wave tcpdb-wave-bg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-10 200 L-10 115 Q20 75 50 115 Q80 155 110 115 Q140 75 170 115 Q200 155 210 115 L210 200 Z"/>
+                  </svg>
+                  <svg class="tcpdb-wave tcpdb-wave-fg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-10 200 L-10 125 Q20 85 50 125 Q80 165 110 125 Q140 85 170 125 Q200 165 210 125 L210 200 Z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        buildTCPDB(document.getElementById('tcpdb-title'));
+      }
+    </script>
+  </section>
+
   <nav class="sibling-nav">
     <a href="badge-demo.html"><i class="fal fa-arrow-left"></i> Badge</a>
     <a href="toast-demo.html">Toast <i class="fal fa-arrow-right"></i></a>
