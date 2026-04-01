@@ -628,6 +628,161 @@
     </div>
   </section>
 
+  <div class="divider"></div>
+
+  <!-- Text Clip-Path Animation -->
+  <section>
+    <h2 class="section-title">Text Clip-Path Animation</h2>
+    <p class="section-sub">A cinematic loading text reveal using <code>clip-path</code> and slide transitions. Inspired by classic intro-screen loaders.</p>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@700&display=swap');
+
+      /* ── TCP: Text Clip-Path Loader ── */
+      .tcp-stage {
+        background: #1e67c6;
+        background-image: radial-gradient(ellipse at 30% 60%, #1a4fa0 0%, #1e67c6 60%, #0e4a9a 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+        padding: 64px 40px;
+        min-height: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* subtle grid overlay */
+      .tcp-stage::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        border-radius: 12px;
+        pointer-events: none;
+      }
+
+      .tcp-container {
+        width: 440px;
+        height: 180px;
+        position: relative;
+      }
+
+      .tcp-h1, .tcp-h2 {
+        font-family: 'Baloo Paaji 2', 'Baloo Paaji', cursive;
+        font-size: 72px;
+        font-weight: 700;
+        text-transform: uppercase;
+        line-height: 1.1;
+        margin: 0;
+      }
+
+      .tcp-h1 span,
+      .tcp-h2 span {
+        width: 100%;
+        float: left;
+        color: #ffffff;
+        clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+        transform: translateY(-50px);
+        opacity: 0;
+        animation-name: tcp-title;
+        animation-timing-function: ease;
+        animation-duration: 3s;
+        animation-fill-mode: forwards;
+      }
+
+      /* h1 — first message */
+      .tcp-h1 span:first-child { animation-delay: 0.7s; }
+      .tcp-h1 span:not(:first-child):not(:last-child) { animation-delay: 0.6s; }
+      .tcp-h1 span:last-child  { color: #ffe221; animation-delay: 0.5s; }
+
+      /* h2 — second message (absolute, fades in after h1 exits) */
+      .tcp-h2 {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .tcp-h2 span:first-child { animation-delay: 4.2s; }
+      .tcp-h2 span:not(:first-child):not(:last-child) { animation-delay: 4.1s; }
+      .tcp-h2 span:last-child  { color: #ffe221; animation-delay: 4.0s; }
+
+      @keyframes tcp-title {
+        0% {
+          transform: translateY(-50px);
+          opacity: 0;
+          clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
+        }
+        20% {
+          transform: translateY(0);
+          opacity: 1;
+          clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+        }
+        80% {
+          transform: translateY(0);
+          opacity: 1;
+          clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 15%);
+        }
+        100% {
+          transform: translateY(50px);
+          opacity: 0;
+          clip-path: polygon(100% 0, 100% 0%, 0 100%, 0 100%);
+        }
+      }
+
+      /* Restart button */
+      .tcp-restart-btn {
+        margin-top: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #1d809d;
+        background: white;
+        border: 1px solid #b0e8f1;
+        border-radius: 8px;
+        padding: 7px 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .tcp-restart-btn:hover { background: #eefbfd; }
+    </style>
+
+    <div class="demo-block" style="padding:0;overflow:hidden;border-radius:16px">
+      <div class="tcp-stage" id="tcp-stage">
+        <div class="tcp-container">
+          <!-- First message -->
+          <h1 class="tcp-h1">
+            <span>Loading</span>
+            <span>Survey</span>
+          </h1>
+          <!-- Second message (overlaps at t=4s) -->
+          <h2 class="tcp-h2">
+            <span>Almost</span>
+            <span>Done!</span>
+          </h2>
+        </div>
+      </div>
+      <div style="padding:16px 24px;background:#f9fafa;border-top:1px solid #e6e7e8;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <button class="tcp-restart-btn" onclick="restartTCP()">
+          <i class="fal fa-redo"></i> Replay animation
+        </button>
+        <span style="font-size:0.78rem;color:#9ba2a4">Animation runs once on load — click replay to restart. Spans use <code>clip-path</code> + <code>translateY</code> with staggered delays.</span>
+      </div>
+    </div>
+
+    <script>
+      function restartTCP() {
+        const stage = document.getElementById('tcp-stage');
+        const clone = stage.cloneNode(true);
+        stage.parentNode.replaceChild(clone, stage);
+        clone.id = 'tcp-stage';
+      }
+    </script>
+  </section>
+
   <nav class="sibling-nav">
     <a href="badge-demo.html"><i class="fal fa-arrow-left"></i> Badge</a>
     <a href="toast-demo.html">Toast <i class="fal fa-arrow-right"></i></a>
