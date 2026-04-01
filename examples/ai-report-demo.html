@@ -225,12 +225,23 @@
 
     /* ── Report content ── */
     .report-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
       border: 1px solid #e6e7e8; border-radius: 16px;
-      background: white; overflow: hidden;
+      background: white; height: 420px; overflow: hidden;
     }
     .report-header {
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
       padding: 28px 32px 20px;
       border-bottom: 1px solid #f3f4f4;
+      background: white;
+      transition: box-shadow .2s ease;
+    }
+    .report-header.scrolled {
+      box-shadow: 0 10px 24px rgba(39, 42, 43, 0.08);
     }
     .report-meta {
       display: flex; align-items: center; gap: 10px;
@@ -238,6 +249,39 @@
     }
     .report-title-text {
       font-size: 1.375rem; font-weight: 700; color: #272a2b; line-height: 1.3;
+    }
+    .report-scroll {
+      position: relative;
+      flex: 1;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .report-scroll::before,
+    .report-scroll::after {
+      content: '';
+      position: sticky;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      z-index: 1;
+    }
+    .report-scroll::before {
+      top: 0;
+      margin-bottom: -18px;
+      background: linear-gradient(180deg, rgba(39, 42, 43, 0.10), rgba(39, 42, 43, 0));
+    }
+    .report-scroll::after {
+      bottom: 0;
+      margin-top: -18px;
+      background: linear-gradient(0deg, rgba(39, 42, 43, 0.12), rgba(39, 42, 43, 0));
+    }
+    .report-scroll.has-top-shadow::before,
+    .report-scroll.has-bottom-shadow::after {
+      opacity: 1;
     }
     .report-section { padding: 24px 32px; border-bottom: 1px solid #f3f4f4; }
     .report-section:last-child { border-bottom: none; }
@@ -584,9 +628,8 @@
             <div class="report-card" :class="state === 'complete' ? 'completion-glow' : ''">
 
               <!-- Report Header -->
-              <div class="report-header section-reveal" x-show="sections.title.visible">
+              <div class="report-header section-reveal" :class="reportScrollTop > 0 ? 'scrolled' : ''" x-show="sections.title.visible">
                 <div class="report-meta">
-                  <i class="fal fa-robot" style="color:#3fbcd5"></i>
                   <span>AI-Generated Report</span>
                   <span style="color:#e6e7e8">·</span>
                   <span>Customer Satisfaction Survey 2026</span>
@@ -602,6 +645,16 @@
                   <span class="ai-cursor" x-show="sections.title.active"></span>
                 </div>
               </div>
+
+              <div
+                class="report-scroll"
+                :class="{
+                  'has-top-shadow': reportScrollTop > 0,
+                  'has-bottom-shadow': reportHasOverflow && !reportAtBottom
+                }"
+                @scroll="updateReportScroll($event)"
+                x-ref="reportScroll"
+              >
 
               <!-- Executive Summary -->
               <div class="report-section section-reveal" x-show="sections.summary.visible">
@@ -668,6 +721,8 @@
                 </div>
               </div>
 
+              </div>
+
             </div>
               </div>
             </template>
@@ -686,12 +741,6 @@
           <button class="btn-secondary">
             <i class="fal fa-arrow-down-to-bracket"></i> Export PDF
           </button>
-          <button class="btn-secondary">
-            <i class="fal fa-pen"></i> Edit Report
-          </button>
-          <span style="margin-left:auto;font-size:0.8125rem;color:#3fbcd5;display:inline-flex;align-items:center;gap:6px;">
-            <i class="fal fa-circle-check"></i> Report complete
-          </span>
         </div>
 
       </div><!-- /padding wrapper -->
@@ -815,6 +864,9 @@ function aiReportApp() {
     /* ── state ── */
     state: 'idle',           // idle | preparing | skeleton | streaming | complete | error | olap | regenerating
     simulationMode: 'none',
+    reportScrollTop: 0,
+    reportHasOverflow: false,
+    reportAtBottom: false,
     sections: {
       title:           { visible: false, active: false, content: '' },
       summary:         { visible: false, active: false, content: '' },
@@ -842,6 +894,29 @@ function aiReportApp() {
       return id;
     },
     _clearAll() { this.timers.forEach(clearTimeout); this.timers = []; },
+    refreshReportScroll() {
+      this.$nextTick(() => {
+        const container = this.$refs.reportScroll;
+        if (!container) {
+          this.reportScrollTop = 0;
+          this.reportHasOverflow = false;
+          this.reportAtBottom = false;
+          return;
+        }
+
+        const maxScrollTop = Math.max(container.scrollHeight - container.clientHeight, 0);
+        this.reportScrollTop = container.scrollTop;
+        this.reportHasOverflow = maxScrollTop > 0;
+        this.reportAtBottom = maxScrollTop === 0 || container.scrollTop >= maxScrollTop - 2;
+      });
+    },
+    updateReportScroll(event) {
+      const container = event.target;
+      const maxScrollTop = Math.max(container.scrollHeight - container.clientHeight, 0);
+      this.reportScrollTop = container.scrollTop;
+      this.reportHasOverflow = maxScrollTop > 0;
+      this.reportAtBottom = maxScrollTop === 0 || container.scrollTop >= maxScrollTop - 2;
+    },
 
     /* type text into a section character-by-character in chunks */
     _streamText(sectionKey, fullText, done) {
@@ -855,6 +930,7 @@ function aiReportApp() {
         }
         this.sections[sectionKey].content += fullText.slice(pos, pos + CHUNK);
         pos += CHUNK;
+        this.refreshReportScroll();
         this._after(18, tick);
       };
       this.sections[sectionKey].active = true;
@@ -869,6 +945,15 @@ function aiReportApp() {
         insights:        { visible: false, activeIndex: -1, items: [] },
         recommendations: { visible: false, active: false, content: '' },
       };
+      this.reportScrollTop = 0;
+      this.reportHasOverflow = false;
+      this.reportAtBottom = false;
+      this.$nextTick(() => {
+        const container = this.$refs.reportScroll;
+        if (container) {
+          container.scrollTop = 0;
+        }
+      });
     },
 
     _handleSimulation() {
@@ -888,17 +973,24 @@ function aiReportApp() {
     _startStreamingFlow() {
       this.state = 'streaming';
       this.sections.title.visible = true;
+      this.refreshReportScroll();
       this._streamText('title', REPORT_DATA.title, () => {
         this._after(180, () => {
           this.sections.summary.visible = true;
+          this.refreshReportScroll();
           this._streamText('summary', REPORT_DATA.summary, () => {
             this._after(160, () => {
               this.sections.insights.visible = true;
+              this.refreshReportScroll();
               this._streamInsights(0, () => {
                 this._after(200, () => {
                   this.sections.recommendations.visible = true;
+                  this.refreshReportScroll();
                   this._streamText('recommendations', REPORT_DATA.recommendations, () => {
-                    this._after(200, () => { this.state = 'complete'; });
+                    this._after(200, () => {
+                      this.state = 'complete';
+                      this.refreshReportScroll();
+                    });
                   });
                 });
               });
@@ -944,6 +1036,7 @@ function aiReportApp() {
       // instant reveal with partial delay between items
       this._after(60, () => {
         this.sections.insights.items.push({ ...insight });
+        this.refreshReportScroll();
         this._after(350, () => {
           this._streamInsights(index + 1, allDone);
         });
