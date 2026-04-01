@@ -892,6 +892,7 @@
 function aiReportApp() {
   const PREPARING_DELAY_MS = 300;
   const SKELETON_DURATION_MS = 10000;
+  const SIMULATION_WARNING_DELAY_MS = 3000;
 
   // Simulated streamed content chunks
   const REPORT_DATA = {
@@ -1014,6 +1015,13 @@ function aiReportApp() {
 
       return false;
     },
+    _getSkeletonDelay() {
+      if (this.simulationMode === 'error' || this.simulationMode === 'olap') {
+        return SIMULATION_WARNING_DELAY_MS;
+      }
+
+      return SKELETON_DURATION_MS;
+    },
 
     _startStreamingFlow() {
       this.state = 'streaming';
@@ -1059,8 +1067,8 @@ function aiReportApp() {
       this._after(PREPARING_DELAY_MS, () => {
         this.state = 'skeleton';
 
-        // Hold skeleton for 10 seconds before first chunk
-        this._after(SKELETON_DURATION_MS, () => {
+        // For warning/error simulations, resolve earlier than the normal flow
+        this._after(this._getSkeletonDelay(), () => {
           if (this._handleSimulation()) {
             return;
           }
@@ -1099,7 +1107,7 @@ function aiReportApp() {
         this.state = 'preparing';
         this._after(PREPARING_DELAY_MS, () => {
           this.state = 'skeleton';
-          this._after(SKELETON_DURATION_MS, () => {
+          this._after(this._getSkeletonDelay(), () => {
             if (this._handleSimulation()) {
               return;
             }
