@@ -119,6 +119,8 @@
     @keyframes sk-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     .sk-shell {
+        position: relative;
+        overflow: hidden;
       border: 1px solid #ebeff0;
       border-radius: 18px;
       background: linear-gradient(180deg, #ffffff 0%, #fbfcfc 100%);
@@ -127,6 +129,58 @@
       flex-direction: column;
       gap: 16px;
     }
+      .sk-ring-orbits {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 7.5em;
+        height: 7.5em;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 2;
+        filter: drop-shadow(0 12px 20px rgba(32,159,186,0.14));
+      }
+      .sk-ring-orbits .pl__ring { animation: sk-ringA 2s linear infinite; }
+      .sk-ring-orbits .pl__ring--a { stroke: #823bdd; }
+      .sk-ring-orbits .pl__ring--b { animation-name: sk-ringB; stroke: #6366F1; }
+      .sk-ring-orbits .pl__ring--c { animation-name: sk-ringC; stroke: #06B6D4; }
+      .sk-ring-orbits .pl__ring--d { animation-name: sk-ringD; stroke: #6922c4; }
+      @keyframes sk-ringA {
+        from, 4%  { stroke-dasharray: 0 660;  stroke-width: 20; stroke-dashoffset: -330; }
+        12%       { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -335; }
+        32%       { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -595; }
+        40%, 54%  { stroke-dasharray: 0 660;  stroke-width: 20; stroke-dashoffset: -660; }
+        62%       { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -665; }
+        82%       { stroke-dasharray: 60 600; stroke-width: 30; stroke-dashoffset: -925; }
+        90%, to   { stroke-dasharray: 0 660;  stroke-width: 20; stroke-dashoffset: -990; }
+      }
+      @keyframes sk-ringB {
+        from, 12% { stroke-dasharray: 0 220;  stroke-width: 20; stroke-dashoffset: -110; }
+        20%       { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -115; }
+        40%       { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -195; }
+        48%, 62%  { stroke-dasharray: 0 220;  stroke-width: 20; stroke-dashoffset: -220; }
+        70%       { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -225; }
+        90%       { stroke-dasharray: 20 200; stroke-width: 30; stroke-dashoffset: -305; }
+        98%, to   { stroke-dasharray: 0 220;  stroke-width: 20; stroke-dashoffset: -330; }
+      }
+      @keyframes sk-ringC {
+        from      { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: 0; }
+        8%        { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -5; }
+        28%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -175; }
+        36%, 58%  { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: -220; }
+        66%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -225; }
+        86%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -395; }
+        94%, to   { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: -440; }
+      }
+      @keyframes sk-ringD {
+        from, 8%  { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: 0; }
+        16%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -5; }
+        36%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -175; }
+        44%, 50%  { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: -220; }
+        58%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -225; }
+        78%       { stroke-dasharray: 40 400; stroke-width: 30; stroke-dashoffset: -395; }
+        86%, to   { stroke-dasharray: 0 440;  stroke-width: 20; stroke-dashoffset: -440; }
+      }
     .sk-header {
       display: flex;
       flex-direction: column;
@@ -231,6 +285,22 @@
       border: 1px solid #e6e7e8; border-radius: 16px;
       background: white; height: 420px; overflow: hidden;
     }
+    .report-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease;
+      background: linear-gradient(0deg, rgba(39, 42, 43, 0.14), rgba(39, 42, 43, 0));
+      z-index: 2;
+    }
+    .report-card.has-bottom-shadow::after {
+      opacity: 1;
+    }
     .report-header {
       position: relative;
       z-index: 2;
@@ -255,33 +325,6 @@
       flex: 1;
       overflow-x: hidden;
       overflow-y: auto;
-    }
-    .report-scroll::before,
-    .report-scroll::after {
-      content: '';
-      position: sticky;
-      left: 0;
-      display: block;
-      width: 100%;
-      height: 18px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity .2s ease;
-      z-index: 1;
-    }
-    .report-scroll::before {
-      top: 0;
-      margin-bottom: -18px;
-      background: linear-gradient(180deg, rgba(39, 42, 43, 0.10), rgba(39, 42, 43, 0));
-    }
-    .report-scroll::after {
-      bottom: 0;
-      margin-top: -18px;
-      background: linear-gradient(0deg, rgba(39, 42, 43, 0.12), rgba(39, 42, 43, 0));
-    }
-    .report-scroll.has-top-shadow::before,
-    .report-scroll.has-bottom-shadow::after {
-      opacity: 1;
     }
     .report-section { padding: 24px 32px; border-bottom: 1px solid #f3f4f4; }
     .report-section:last-child { border-bottom: none; }
@@ -549,6 +592,12 @@
         <!-- ── 2. SKELETON ── -->
         <template x-if="state === 'skeleton'">
           <div class="fade-enter sk-shell">
+            <svg class="sk-ring-orbits" width="240" height="240" viewBox="0 0 240 240" aria-hidden="true">
+              <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+              <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+              <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+              <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+            </svg>
             <div class="sk-header">
               <div class="sk-line" style="height:11px;width:150px;"></div>
               <div class="sk-line" style="height:24px;width:74%;"></div>
@@ -622,10 +671,10 @@
             <template x-if="state !== 'olap'">
               <div>
 
-            <div class="report-card" :class="state === 'complete' ? 'completion-glow' : ''">
+            <div class="report-card" :class="[(state === 'complete' ? 'completion-glow' : ''), (reportHasOverflow && !reportAtBottom ? 'has-bottom-shadow' : '')]">
 
               <!-- Report Header -->
-              <div class="report-header section-reveal" :class="reportScrollTop > 0 ? 'scrolled' : ''" x-show="sections.title.visible">
+              <div class="report-header section-reveal" :class="reportHasOverflow ? 'scrolled' : ''" x-show="sections.title.visible">
                 <div class="report-meta">
                   <span>AI-Generated Report</span>
                   <span style="color:#e6e7e8">·</span>
@@ -645,10 +694,6 @@
 
               <div
                 class="report-scroll"
-                :class="{
-                  'has-top-shadow': reportScrollTop > 0,
-                  'has-bottom-shadow': reportHasOverflow && !reportAtBottom
-                }"
                 @scroll="updateReportScroll($event)"
                 x-ref="reportScroll"
               >
@@ -777,8 +822,8 @@
           <tr style="border-bottom:1px solid #f3f4f4;">
             <td style="padding:12px 20px;"><span class="state-badge state-skeleton">Skeleton</span></td>
             <td style="padding:12px 20px;color:#787f81;">300ms elapsed, no content</td>
-            <td style="padding:12px 20px;color:#787f81;">300ms – first chunk</td>
-            <td style="padding:12px 20px;color:#45484a;">Full layout skeleton with shimmer</td>
+            <td style="padding:12px 20px;color:#787f81;">10 seconds</td>
+            <td style="padding:12px 20px;color:#45484a;">Full layout skeleton with Ring Orbits loading on top</td>
           </tr>
           <tr style="border-bottom:1px solid #f3f4f4;background:#f5fbf7;">
             <td style="padding:12px 20px;"><span class="state-badge state-stream">Streaming</span></td>
@@ -845,6 +890,9 @@
 
 <script>
 function aiReportApp() {
+  const PREPARING_DELAY_MS = 300;
+  const SKELETON_DURATION_MS = 10000;
+
   // Simulated streamed content chunks
   const REPORT_DATA = {
     title: 'Customer Satisfaction Report — Q1 2026',
@@ -1008,11 +1056,11 @@ function aiReportApp() {
       this.state = 'preparing';
 
       // After 300ms → skeleton
-      this._after(300, () => {
+      this._after(PREPARING_DELAY_MS, () => {
         this.state = 'skeleton';
 
-        // After 900ms more → either simulated stop state or first chunk
-        this._after(900, () => {
+        // Hold skeleton for 10 seconds before first chunk
+        this._after(SKELETON_DURATION_MS, () => {
           if (this._handleSimulation()) {
             return;
           }
@@ -1049,9 +1097,9 @@ function aiReportApp() {
       this._after(500, () => {
         this._resetSections();
         this.state = 'preparing';
-        this._after(300, () => {
+        this._after(PREPARING_DELAY_MS, () => {
           this.state = 'skeleton';
-          this._after(900, () => {
+          this._after(SKELETON_DURATION_MS, () => {
             if (this._handleSimulation()) {
               return;
             }
