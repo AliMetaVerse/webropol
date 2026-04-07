@@ -352,7 +352,6 @@ function ensureStyles() {
       display: inline-block;
       width: auto;
       max-width: min(100%, 42rem);
-      padding: 2px;
       border-radius: 32px;
       box-sizing: border-box;
       isolation: isolate;
@@ -369,31 +368,6 @@ function ensureStyles() {
         radial-gradient(circle at 52% 80%, rgba(6,182,212,0.12), transparent 34%);
       filter: blur(20px);
       z-index: -2;
-    }
-    .wrld-clip-shell::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 2px;
-      pointer-events: none;
-      background:
-        conic-gradient(
-          from 0deg,
-          rgba(255,255,255,0) 0deg,
-          rgba(255,255,255,0) 232deg,
-          rgba(196,181,253,0.18) 252deg,
-          rgba(130,59,221,0.96) 284deg,
-          rgba(99,102,241,0.9) 312deg,
-          rgba(6,182,212,0.82) 338deg,
-          rgba(255,255,255,0) 360deg
-        );
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      animation: wrld-clip-border-spin 4.6s linear infinite;
-      z-index: -1;
     }
     .wrld-clip-frame {
       position: relative;
@@ -486,9 +460,6 @@ function ensureStyles() {
       background-clip: text;
       -webkit-text-fill-color: transparent;
       animation-delay: 3.64s;
-    }
-    @keyframes wrld-clip-border-spin {
-      to { transform: rotate(360deg); }
     }
     @keyframes wrld-clip-stack-a {
       0%, 46% { opacity: 1; }
