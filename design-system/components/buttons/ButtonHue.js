@@ -1,14 +1,14 @@
 /**
  * Webropol Button Hue Component
  * Category-selector buttons with icon + label, faithfully reproduced from the
- * Webropol Royal Design System (Figma node 12641:1144).
+ * Webropol Royal Design System (Figma nodes 12641:1144 and 13801:39791).
  *
  * Attributes
  * ----------
  *   hue          string   Color theme: royal-blue | royal-turquoise | royal-violet |
  *                         primary | accent | success | warning | error  (default: primary)
  *   orientation  string   Layout: vertical | horizontal | icon  (default: vertical)
- *   theme        string   Fill style: filled | outline  (default: filled)
+ *   theme        string   Fill style: filled | outline | icon  (default: filled)
  *   size         string   Button size: micro | sm | md | lg  (default: md)
  *   icon         string   FontAwesome icon class, e.g. "fal fa-chart-bar"  (default: fal fa-heart)
  *   label        string   Primary label text  (default: Button Label)
@@ -164,13 +164,15 @@ const DISABLED_TOKENS = {
 // ─── Size configs (Figma base = md) ──────────────────────────────────────────
 const SIZE_CONFIG = {
   micro: {
-    minWidth:     '190px',
+    minWidth:     '96px',
     padX:         '12px',
     padY:         '8px',
     padIcon:      '8px',
+    iconButtonSize:'40px',
     gap:          '4px',
     avatarSize:   '24px',
     iconSize:     '12px',
+    iconOnlyIconSize: '16px',
     avatarPad:    '4px',
     avatarRadius: '6px',
     btnRadius:    '8px',
@@ -183,9 +185,11 @@ const SIZE_CONFIG = {
     padX:         '16px',
     padY:         '10px',
     padIcon:      '10px',
+    iconButtonSize:'56px',
     gap:          '8px',
     avatarSize:   '36px',
     iconSize:     '16px',
+    iconOnlyIconSize: '20px',
     avatarPad:    '6px',
     avatarRadius: '6px',
     btnRadius:    '10px',
@@ -198,9 +202,11 @@ const SIZE_CONFIG = {
     padX:         '32px',
     padY:         '12px',
     padIcon:      '12px',
+    iconButtonSize:'72px',
     gap:          '12px',
     avatarSize:   '48px',
     iconSize:     '24px',
+    iconOnlyIconSize: '28px',
     avatarPad:    '10px',
     avatarRadius: '8px',
     btnRadius:    '12px',
@@ -213,9 +219,11 @@ const SIZE_CONFIG = {
     padX:         '40px',
     padY:         '16px',
     padIcon:      '16px',
+    iconButtonSize:'88px',
     gap:          '14px',
     avatarSize:   '56px',
     iconSize:     '28px',
+    iconOnlyIconSize: '32px',
     avatarPad:    '12px',
     avatarRadius: '10px',
     btnRadius:    '14px',
@@ -252,10 +260,11 @@ export class WebropolButtonHue extends BaseComponent {
   render() {
     const hue         = this.getAttr('hue', 'primary');
     const orientation = this.getAttr('orientation', 'vertical');   // vertical | horizontal | icon
-    const theme       = this.getAttr('theme', 'filled');           // filled | outline
+    const requestedTheme = this.getAttr('theme', 'filled');        // filled | outline | icon
     const size        = this.getAttr('size', 'md');                // micro | sm | md | lg
     const iconClass   = this.getAttr('icon', 'fal fa-heart');
-    const label       = escHtml(this.getAttr('label', 'Button Label'));
+    const rawLabel    = this.getAttr('label', '');
+    const label       = escHtml(rawLabel || 'Button Label');
     const description = escHtml(this.getAttr('description', ''));
     const disabled    = this.getBoolAttr('disabled');
     const href        = this.getAttr('href', '');
@@ -263,15 +272,20 @@ export class WebropolButtonHue extends BaseComponent {
 
     const t  = HUE_TOKENS[hue] || HUE_TOKENS['primary'];
     const sc = SIZE_CONFIG[size]  || SIZE_CONFIG['md'];
+    const isVertical   = orientation === 'vertical';
+    const isHorizontal = orientation === 'horizontal';
+    const isIconOnly   = orientation === 'icon';
+    const theme        = isIconOnly ? 'icon' : requestedTheme;
+    const iconAriaLabel = escHtml(rawLabel || `${hue.replace(/-/g, ' ')} icon button`);
 
     // Resolve colours for each part
-    const bgColor      = disabled ? DISABLED_TOKENS.bg      : (theme === 'outline' ? '#ffffff'         : t.bg);
+    const bgColor      = disabled ? DISABLED_TOKENS.bg      : (theme === 'outline' ? '#ffffff' : t.bg);
     const bgHover      = disabled ? DISABLED_TOKENS.bg      : t.bg; // outline hovers to tinted bg
     const borderColor  = disabled ? DISABLED_TOKENS.border  : t.border;
     const hoverBorder  = disabled ? DISABLED_TOKENS.border  : t.hoverBorder;
     const activeBorder = disabled ? DISABLED_TOKENS.border  : t.activeBorder;
-    const avatarBg     = disabled ? DISABLED_TOKENS.avatarBg : t.avatarBg;
-    const avatarBorder = disabled ? DISABLED_TOKENS.avatarBorder : 'white';
+    const avatarBg     = isIconOnly ? 'transparent' : (disabled ? DISABLED_TOKENS.avatarBg : t.avatarBg);
+    const avatarBorder = isIconOnly ? '0' : (disabled ? `2px solid ${DISABLED_TOKENS.avatarBorder}` : '2px solid white');
     const iconColor    = disabled ? DISABLED_TOKENS.iconColor : t.iconColor;
     const textColor    = disabled ? DISABLED_TOKENS.textColor  : t.textColor;
 
@@ -282,21 +296,19 @@ export class WebropolButtonHue extends BaseComponent {
     this.style.setProperty('--wbh-hover-border', hoverBorder);
     this.style.setProperty('--wbh-active-border',activeBorder);
 
-    const isVertical   = orientation === 'vertical';
-    const isHorizontal = orientation === 'horizontal';
-    const isIconOnly   = orientation === 'icon';
-
     // ── Outer wrapper (button|a) ──────────────────────────────────────────────
     const outerStyles = [
-      `min-width:${fitContent ? 'max-content' : (isIconOnly ? sc.avatarSize : sc.minWidth)}`,
-      `width:${fitContent ? 'auto' : 'initial'}`,
+      `min-width:${fitContent && !isIconOnly ? 'max-content' : (isIconOnly ? sc.iconButtonSize : sc.minWidth)}`,
+      `width:${isIconOnly ? sc.iconButtonSize : (fitContent ? 'auto' : 'initial')}`,
+      `height:${isIconOnly ? sc.iconButtonSize : 'auto'}`,
       `border-radius:${sc.btnRadius}`,
       `display:inline-flex`,
       `flex-direction:${isVertical ? 'column' : 'row'}`,
       `align-items:center`,
-      `justify-content:${isHorizontal ? 'flex-start' : 'center'}`,
+      `justify-content:${isHorizontal && !isIconOnly ? 'flex-start' : 'center'}`,
       `cursor:${disabled ? 'not-allowed' : 'pointer'}`,
       `padding:0`,
+      `box-sizing:border-box`,
     ].join(';');
 
     // ── Inner container ───────────────────────────────────────────────────────
@@ -305,12 +317,15 @@ export class WebropolButtonHue extends BaseComponent {
 
     const containerStyles = [
       `display:flex`,
+      `width:100%`,
+      `height:100%`,
       `flex-direction:${isVertical ? 'column' : 'row'}`,
       `align-items:center`,
-      `justify-content:${isHorizontal ? 'flex-start' : 'center'}`,
+      `justify-content:${isHorizontal && !isIconOnly ? 'flex-start' : 'center'}`,
       `gap:${isIconOnly ? '0' : sc.gap}`,
       `padding:${padY} ${padX}`,
       `border-radius:${sc.btnRadius}`,
+      `box-sizing:border-box`,
     ].join(';');
 
     // ── Avatar (icon container) ───────────────────────────────────────────────
@@ -319,18 +334,20 @@ export class WebropolButtonHue extends BaseComponent {
       `height:${sc.avatarSize}`,
       `min-width:${sc.avatarSize}`,
       `background-color:${avatarBg}`,
-      `border:2px solid ${avatarBorder}`,
+      `border:${avatarBorder}`,
       `border-radius:${sc.avatarRadius}`,
       `display:flex`,
       `align-items:center`,
       `justify-content:center`,
       `flex-shrink:0`,
+      `padding:${isIconOnly ? sc.avatarPad : '0'}`,
+      `box-sizing:border-box`,
     ].join(';');
 
     // ── Icon ──────────────────────────────────────────────────────────────────
     const iconHtml = `
       <div style="${avatarStyles}">
-        <i class="${iconClass}" style="color:${iconColor};font-size:${sc.iconSize};width:${sc.iconSize};text-align:center;display:block;" aria-hidden="true"></i>
+        <i class="${iconClass}" style="color:${iconColor};font-size:${isIconOnly ? sc.iconOnlyIconSize : sc.iconSize};width:${isIconOnly ? sc.iconOnlyIconSize : sc.iconSize};text-align:center;display:block;line-height:1;" aria-hidden="true"></i>
       </div>`;
 
     // ── Label block ───────────────────────────────────────────────────────────
@@ -373,7 +390,7 @@ export class WebropolButtonHue extends BaseComponent {
         <a class="wbh-btn"
            href="${href}"
            style="${outerStyles}"
-           aria-label="${label}">
+           aria-label="${isIconOnly ? iconAriaLabel : label}">
           ${innerContent}
         </a>`;
     } else {
@@ -381,6 +398,7 @@ export class WebropolButtonHue extends BaseComponent {
         <button class="wbh-btn"
                 type="button"
                 style="${outerStyles}"
+                aria-label="${isIconOnly ? iconAriaLabel : label}"
                 ${disabled ? 'disabled aria-disabled="true"' : 'aria-disabled="false"'}>
           ${innerContent}
         </button>`;
