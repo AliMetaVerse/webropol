@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../utils/base-component.js';
+import '../buttons/ButtonHue.js';
 
 /**
  * PageQuickActions Component
@@ -59,36 +60,16 @@ export class PageQuickActions extends BaseComponent {
     }
   }
 
-  getColorClasses(color) {
-    const colorMap = {
-      primary: {
-        icon: 'text-webropol-primary-500 group-hover:text-webropol-primary-600',
-        border: 'hover:border-webropol-primary-300',
-        text: 'hover:text-webropol-primary-700'
-      },
-      purple: {
-        icon: 'text-purple-500 group-hover:text-purple-600',
-        border: 'hover:border-purple-300',
-        text: 'hover:text-purple-700'
-      },
-      orange: {
-        icon: 'text-orange-500 group-hover:text-orange-600',
-        border: 'hover:border-orange-300',
-        text: 'hover:text-orange-700'
-      },
-      green: {
-        icon: 'text-green-500 group-hover:text-green-600',
-        border: 'hover:border-green-300',
-        text: 'hover:text-green-700'
-      },
-      red: {
-        icon: 'text-red-500 group-hover:text-red-600',
-        border: 'hover:border-red-300',
-        text: 'hover:text-red-700'
-      }
+  getHue(color) {
+    const hueMap = {
+      primary: 'primary',
+      purple: 'royal-violet',
+      orange: 'accent',
+      green: 'success',
+      red: 'error'
     };
 
-    return colorMap[color] || colorMap.primary;
+    return hueMap[color] || 'primary';
   }
 
   render() {
@@ -113,16 +94,18 @@ export class PageQuickActions extends BaseComponent {
               ` : ''}
               
               ${actions.map(action => {
-                const colors = this.getColorClasses(action.color);
+                const hue = this.getHue(action.color);
                 return `
-                  <button 
-                    type="button" 
+                  <webropol-button-hue
                     data-action-id="${action.id}"
-                    class="group inline-flex items-center gap-2 px-3 py-2 bg-white hover:bg-webropol-gray-50 border border-webropol-gray-200 ${colors.border} rounded-lg text-sm text-webropol-gray-600 ${colors.text} transition-all duration-200"
-                  >
-                    <i class="${action.icon} ${colors.icon}"></i>
-                    <span>${action.label}</span>
-                  </button>
+                    orientation="horizontal"
+                    theme="outline"
+                    size="micro"
+                    fit-content
+                    hue="${hue}"
+                    icon="${action.icon}"
+                    label="${action.label}"
+                  ></webropol-button-hue>
                 `;
               }).join('')}
             </div>

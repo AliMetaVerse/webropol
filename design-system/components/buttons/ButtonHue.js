@@ -9,12 +9,13 @@
  *                         primary | accent | success | warning | error  (default: primary)
  *   orientation  string   Layout: vertical | horizontal | icon  (default: vertical)
  *   theme        string   Fill style: filled | outline  (default: filled)
- *   size         string   Button size: sm | md | lg  (default: md)
+ *   size         string   Button size: micro | sm | md | lg  (default: md)
  *   icon         string   FontAwesome icon class, e.g. "fal fa-chart-bar"  (default: fal fa-heart)
  *   label        string   Primary label text  (default: Button Label)
  *   description  string   Optional sub-label below label  (default: '')
  *   disabled     boolean  Disabled / non-interactive state
  *   href         string   When set, renders as <a> instead of <button>
+ *   fit-content  boolean  Size to content width instead of the preset minimum width
  *
  * Events emitted
  * --------------
@@ -162,6 +163,21 @@ const DISABLED_TOKENS = {
 
 // ─── Size configs (Figma base = md) ──────────────────────────────────────────
 const SIZE_CONFIG = {
+  micro: {
+    minWidth:     '190px',
+    padX:         '12px',
+    padY:         '8px',
+    padIcon:      '8px',
+    gap:          '6px',
+    avatarSize:   '24px',
+    iconSize:     '12px',
+    avatarPad:    '4px',
+    avatarRadius: '6px',
+    btnRadius:    '8px',
+    fontSize:     '10px',
+    lineH:        '14px',
+    descSize:     '10px',
+  },
   sm: {
     minWidth:     '130px',
     padX:         '16px',
@@ -221,7 +237,7 @@ function escHtml(str) {
 // ─── Component ────────────────────────────────────────────────────────────────
 export class WebropolButtonHue extends BaseComponent {
   static get observedAttributes() {
-    return ['hue', 'orientation', 'theme', 'size', 'icon', 'label', 'description', 'disabled', 'href'];
+    return ['hue', 'orientation', 'theme', 'size', 'icon', 'label', 'description', 'disabled', 'href', 'fit-content'];
   }
 
   init() {
@@ -237,12 +253,13 @@ export class WebropolButtonHue extends BaseComponent {
     const hue         = this.getAttr('hue', 'primary');
     const orientation = this.getAttr('orientation', 'vertical');   // vertical | horizontal | icon
     const theme       = this.getAttr('theme', 'filled');           // filled | outline
-    const size        = this.getAttr('size', 'md');                // sm | md | lg
+    const size        = this.getAttr('size', 'md');                // micro | sm | md | lg
     const iconClass   = this.getAttr('icon', 'fal fa-heart');
     const label       = escHtml(this.getAttr('label', 'Button Label'));
     const description = escHtml(this.getAttr('description', ''));
     const disabled    = this.getBoolAttr('disabled');
     const href        = this.getAttr('href', '');
+    const fitContent  = this.getBoolAttr('fit-content');
 
     const t  = HUE_TOKENS[hue] || HUE_TOKENS['primary'];
     const sc = SIZE_CONFIG[size]  || SIZE_CONFIG['md'];
@@ -271,7 +288,8 @@ export class WebropolButtonHue extends BaseComponent {
 
     // ── Outer wrapper (button|a) ──────────────────────────────────────────────
     const outerStyles = [
-      `min-width:${isIconOnly ? sc.avatarSize : sc.minWidth}`,
+      `min-width:${fitContent ? 'max-content' : (isIconOnly ? sc.avatarSize : sc.minWidth)}`,
+      `width:${fitContent ? 'auto' : 'initial'}`,
       `border-radius:${sc.btnRadius}`,
       `display:inline-flex`,
       `flex-direction:${isVertical ? 'column' : 'row'}`,
