@@ -108,11 +108,16 @@ function ensureStyles() {
       86%, to { stroke-dasharray: 0 440; stroke-width: 20; stroke-dashoffset: -440; }
     }
     .wrld-server {
-      width: 94px;
-      height: 136px;
+      width: 152px;
+      height: 168px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .wrld-server .wrld-svg-global {
-      zoom: 1.55;
+      display: block;
+      width: 152px;
+      height: 168px;
       overflow: visible;
     }
     .wrld-server .wrld-particle { animation: wrld-float-up linear infinite; }
@@ -344,14 +349,15 @@ function ensureStyles() {
     @keyframes wrld-ai-shimmer { to { background-position: 240% center; } }
     .wrld-clip-shell {
       width: min(100%, 560px);
-      min-width: 320px;
-      padding: 24px 28px;
+      min-width: 0;
+      padding: 24px;
       border: 1px solid rgba(199,210,254,0.72);
       border-radius: 28px;
       background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,248,255,0.96));
       box-shadow: 0 18px 44px rgba(99,102,241,0.12);
       position: relative;
       overflow: hidden;
+      box-sizing: border-box;
     }
     .wrld-clip-shell::before,
     .wrld-clip-shell::after {
@@ -377,7 +383,7 @@ function ensureStyles() {
     }
     .wrld-clip-stage {
       position: relative;
-      height: 208px;
+      min-height: 208px;
       z-index: 1;
     }
     .wrld-clip-title {
@@ -387,7 +393,7 @@ function ensureStyles() {
       flex-direction: column;
       justify-content: center;
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: clamp(3.25rem, 6vw, 4.9rem);
+      font-size: clamp(2.7rem, 8vw, 4.35rem);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: -0.06em;
@@ -396,7 +402,7 @@ function ensureStyles() {
     }
     .wrld-clip-line {
       display: block;
-      width: fit-content;
+      width: 100%;
       max-width: 100%;
       color: #272a2b;
       clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
@@ -404,6 +410,7 @@ function ensureStyles() {
       opacity: 0;
       animation: wrld-clip-loop 7.2s cubic-bezier(0.22,1,0.36,1) infinite;
       text-shadow: 0 10px 22px rgba(99,102,241,0.08);
+      white-space: nowrap;
     }
     .wrld-clip-title--a .wrld-clip-line:first-child { animation-delay: 0.18s; }
     .wrld-clip-title--a .wrld-clip-line:last-child {
