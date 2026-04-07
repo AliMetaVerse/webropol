@@ -348,93 +348,177 @@ function ensureStyles() {
     }
     @keyframes wrld-ai-shimmer { to { background-position: 240% center; } }
     .wrld-clip-shell {
-      width: min(100%, 560px);
-      min-width: 0;
-      padding: 24px;
-      border: 1px solid rgba(199,210,254,0.72);
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,248,255,0.96));
-      box-shadow: 0 18px 44px rgba(99,102,241,0.12);
       position: relative;
+      display: inline-block;
+      width: auto;
+      max-width: min(100%, 42rem);
+      padding: 2px;
+      border-radius: 32px;
+      box-sizing: border-box;
+      isolation: isolate;
+    }
+    .wrld-clip-shell::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border-radius: 44px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(130,59,221,0.16), transparent 34%),
+        radial-gradient(circle at 84% 18%, rgba(99,102,241,0.14), transparent 30%),
+        radial-gradient(circle at 52% 80%, rgba(6,182,212,0.12), transparent 34%);
+      filter: blur(20px);
+      z-index: -2;
+    }
+    .wrld-clip-shell::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 2px;
+      pointer-events: none;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(255,255,255,0) 0deg,
+          rgba(255,255,255,0) 232deg,
+          rgba(196,181,253,0.18) 252deg,
+          rgba(130,59,221,0.96) 284deg,
+          rgba(99,102,241,0.9) 312deg,
+          rgba(6,182,212,0.82) 338deg,
+          rgba(255,255,255,0) 360deg
+        );
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      animation: wrld-clip-border-spin 4.6s linear infinite;
+      z-index: -1;
+    }
+    .wrld-clip-frame {
+      position: relative;
+      display: inline-block;
+      width: auto;
+      max-width: 100%;
+      padding: 2rem 2.25rem;
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,248,255,0.96)),
+        linear-gradient(135deg, rgba(255,255,255,0.35), rgba(224,231,255,0.12));
+      box-shadow: 0 18px 44px rgba(99,102,241,0.12), inset 0 1px 0 rgba(255,255,255,0.88);
       overflow: hidden;
       box-sizing: border-box;
     }
-    .wrld-clip-shell::before,
-    .wrld-clip-shell::after {
+    .wrld-clip-frame::before,
+    .wrld-clip-frame::after {
       content: '';
       position: absolute;
       border-radius: 999px;
       pointer-events: none;
-      filter: blur(18px);
+      filter: blur(16px);
     }
-    .wrld-clip-shell::before {
-      width: 180px;
-      height: 180px;
-      top: -40px;
-      right: -24px;
+    .wrld-clip-frame::before {
+      width: 160px;
+      height: 160px;
+      top: -54px;
+      right: -30px;
       background: rgba(99,102,241,0.1);
     }
-    .wrld-clip-shell::after {
-      width: 220px;
-      height: 220px;
-      left: -70px;
-      bottom: -90px;
+    .wrld-clip-frame::after {
+      width: 190px;
+      height: 190px;
+      left: -76px;
+      bottom: -104px;
       background: rgba(130,59,221,0.08);
     }
     .wrld-clip-stage {
       position: relative;
-      min-height: 208px;
+      display: grid;
+      grid-template-columns: max-content;
+      grid-template-rows: auto;
+      justify-content: start;
+      min-height: clamp(8.5rem, 18vw, 12.5rem);
       z-index: 1;
     }
     .wrld-clip-title {
-      position: absolute;
-      inset: 0;
+      grid-area: 1 / 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-self: center;
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: clamp(2.7rem, 8vw, 4.35rem);
+      font-size: clamp(2.9rem, 7vw, 4.9rem);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: -0.06em;
-      line-height: 0.95;
+      letter-spacing: -0.065em;
+      line-height: 0.92;
       margin: 0;
     }
+    .wrld-clip-title--a { animation: wrld-clip-stack-a 7.2s linear infinite; }
+    .wrld-clip-title--b { animation: wrld-clip-stack-b 7.2s linear infinite; }
     .wrld-clip-line {
       display: block;
-      width: 100%;
+      width: max-content;
       max-width: 100%;
       color: #272a2b;
-      clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%);
-      transform: translateY(36px) scale(0.96);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 82%);
+      transform: translateY(26px) scale(0.97);
       opacity: 0;
       animation: wrld-clip-loop 7.2s cubic-bezier(0.22,1,0.36,1) infinite;
       text-shadow: 0 10px 22px rgba(99,102,241,0.08);
       white-space: nowrap;
     }
-    .wrld-clip-title--a .wrld-clip-line:first-child { animation-delay: 0.18s; }
+    .wrld-clip-title--a .wrld-clip-line:first-child { animation-delay: 0.22s; }
     .wrld-clip-title--a .wrld-clip-line:last-child {
       background: linear-gradient(90deg, #c4b5fd 0%, #818cf8 45%, #67e8f9 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation-delay: 0s;
+      animation-delay: 0.04s;
     }
     .wrld-clip-title--b .wrld-clip-line:first-child {
       color: #45484a;
-      animation-delay: 3.82s;
+      animation-delay: 3.84s;
     }
     .wrld-clip-title--b .wrld-clip-line:last-child {
       background: linear-gradient(90deg, #06b6d4 0%, #6366f1 50%, #823bdd 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation-delay: 3.62s;
+      animation-delay: 3.64s;
+    }
+    @keyframes wrld-clip-border-spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes wrld-clip-stack-a {
+      0%, 46% { opacity: 1; }
+      50%, 96% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes wrld-clip-stack-b {
+      0%, 44% { opacity: 0; }
+      50%, 96% { opacity: 1; }
+      100% { opacity: 0; }
     }
     @keyframes wrld-clip-loop {
-      0%, 8% { transform: translateY(40px) scale(0.95); opacity: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 80%); }
-      14%, 38% { transform: translateY(0) scale(1); opacity: 1; clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 10%); }
-      46%, 100% { transform: translateY(-34px) scale(1.02); opacity: 0; clip-path: polygon(100% 0, 100% 0, 0 100%, 0 100%); }
+      0%, 6% { transform: translateY(28px) scale(0.96); opacity: 0; clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 82%); }
+      12%, 42% { transform: translateY(0) scale(1); opacity: 1; clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 12%); }
+      48%, 100% { transform: translateY(-24px) scale(1.01); opacity: 0; clip-path: polygon(100% 0, 100% 0, 0 100%, 0 100%); }
+    }
+    @media (max-width: 640px) {
+      .wrld-clip-frame {
+        padding: 1.5rem 1.4rem;
+        border-radius: 24px;
+      }
+      .wrld-clip-shell {
+        width: min(100%, 24rem);
+      }
+      .wrld-clip-title {
+        font-size: clamp(2rem, 13vw, 3.2rem);
+      }
+      .wrld-clip-line {
+        white-space: normal;
+      }
     }
   `;
 
@@ -547,15 +631,17 @@ export class WebropolRoyalLoader extends BaseComponent {
 
     return `
       <div class="wrld-clip-shell" aria-label="Clip reveal loader">
-        <div class="wrld-clip-stage">
-          <h3 class="wrld-clip-title wrld-clip-title--a">
-            <span class="wrld-clip-line">${line1}</span>
-            <span class="wrld-clip-line">${line2}</span>
-          </h3>
-          <h3 class="wrld-clip-title wrld-clip-title--b">
-            <span class="wrld-clip-line">${line3}</span>
-            <span class="wrld-clip-line">${line4}</span>
-          </h3>
+        <div class="wrld-clip-frame">
+          <div class="wrld-clip-stage">
+            <h3 class="wrld-clip-title wrld-clip-title--a">
+              <span class="wrld-clip-line">${line1}</span>
+              <span class="wrld-clip-line">${line2}</span>
+            </h3>
+            <h3 class="wrld-clip-title wrld-clip-title--b">
+              <span class="wrld-clip-line">${line3}</span>
+              <span class="wrld-clip-line">${line4}</span>
+            </h3>
+          </div>
         </div>
       </div>
     `;
