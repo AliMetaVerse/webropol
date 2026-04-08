@@ -47,6 +47,7 @@ export { WebropolRadioSpecial } from './forms/RadioSpecial.js';
 // Feedback components
 export { Badge } from './feedback/Badge.js';
 export { Loading } from './feedback/Loading.js';
+export { WebropolLoaderFootprint } from './feedback/LoaderFootprint.js';
 export { Tooltip } from './feedback/Tooltip.js';
 export { WebropolPromo } from './feedback/PromoToast.js';
 export { WebropolAlert } from './feedback/Alert.js';
@@ -87,6 +88,7 @@ import './forms/Input.js';
 import './forms/RadioSpecial.js';
 import './feedback/Badge.js';
 import './feedback/Loading.js';
+import './feedback/LoaderFootprint.js';
 import './feedback/Tooltip.js';
 import './feedback/PromoToast.js';
 import './feedback/SmartNotifier.js';
@@ -125,6 +127,7 @@ window.WebropolComponents = {
   Input: 'webropol-input',
   Badge: 'webropol-badge',
   Loading: 'webropol-loading',
+  LoaderFootprint: 'webropol-loader-footprint',
   Tooltip: 'webropol-tooltip',
   Promo: 'webropol-promo',
   SmartNotifier: 'webropol-smart-notifier',

@@ -154,6 +154,32 @@ See `PromoToast.js` for full documentation.
 
 ---
 
+### 5. Loader Footprint (`<webropol-loader-footprint>`)
+**Purpose**: Non-production spacing guide for loader placement, showing the reserved width and height with optional corner brackets and grid.
+
+**Features**:
+- Wraps any slotted loader or artwork without changing the loader itself
+- Optional corner brackets for safe-area indication
+- Optional guide grid for motion and balance checks
+- Optional size badge, such as `220 x 220`
+
+**Usage**:
+```html
+<webropol-loader-footprint width="220" height="220" label="220 x 220" show-grid>
+  <webropol-royal-loader type="ring-orbits" size="lg"></webropol-royal-loader>
+</webropol-loader-footprint>
+```
+
+**Attributes**:
+- `width`: footprint width, in px by default when numeric
+- `height`: footprint height, in px by default when numeric
+- `label`: optional size label shown inside the guide
+- `show-grid`: enables a light alignment grid
+- `show-corners`: shows corner brackets, enabled by default
+- `show-label`: shows the size badge, enabled by default
+
+---
+
 ## Design Tokens
 
 All components use Webropol design tokens for consistent styling:
