@@ -656,6 +656,42 @@
     .state-error    { background:#fff5f5; color:#c53030; }
     .state-olap     { background:#fff7e0; color:#92610a; }
     .state-regen    { background:#fff7e0; color:#92610a; }
+
+    .state-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .state-preview-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: white;
+      border: 1px solid #e6e7e8;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .state-preview-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .state-preview-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .state-preview-copy strong {
+      font-size: 0.9375rem;
+      color: #272a2b;
+    }
+    .state-preview-copy span {
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      color: #787f81;
+      max-width: 42ch;
+    }
   </style>
 </head>
 <body>
@@ -951,6 +987,63 @@
 
       </div><!-- /padding wrapper -->
     </div><!-- /demo-block -->
+  </section>
+
+  <section style="margin-top:28px;">
+    <h2 class="section-title">Warning And Error States</h2>
+    <p class="section-sub">Reference examples for delayed analysis and failed AI summary generation.</p>
+
+    <div class="state-preview-grid">
+      <div class="state-preview-card">
+        <div class="state-preview-head">
+          <div class="state-preview-copy">
+            <strong>Warning State</strong>
+            <span>Use this when open feedback analysis is still processing and the AI summary is temporarily unavailable.</span>
+          </div>
+          <span class="state-badge state-olap">OLAP Warning</span>
+        </div>
+
+        <webropol-smart-notifier
+          variant="warning"
+          icon="fal fa-mug-hot"
+          title="AI summary is still being prepared"
+          description="Text analysis is still running for this survey's open feedback. The AI summary will be ready tomorrow morning for reports that do not receive new responses before processing completes."
+          secondary-label="Back to report"
+          primary-label="Reload page and check again"
+          primary-icon="fal fa-rotate-right">
+        </webropol-smart-notifier>
+      </div>
+
+      <div class="state-preview-card">
+        <div class="state-preview-head">
+          <div class="state-preview-copy">
+            <strong>Error State</strong>
+            <span>Use this when summary generation fails before any report content can be streamed to the page.</span>
+          </div>
+          <span class="state-badge state-error">Error</span>
+        </div>
+
+        <div class="error-inline">
+          <div class="error-illustration-shell" aria-hidden="true">
+            <span class="error-snooze"><span>z</span><span>z</span><span>Z</span></span>
+            <img class="error-illustration" src="svgs/cat-in-cup.svg" alt="" />
+            <span class="error-shadow"></span>
+          </div>
+          <div class="error-copy">
+            <div class="error-title">
+              <i class="fal fa-triangle-exclamation"></i>
+              <span>AI summary could not be generated</span>
+            </div>
+            <span class="error-detail">The AI service returned an incomplete payload before any summary content could be streamed. No summary text was saved, so the report is waiting with the cat in the cup until you retry.</span>
+            <div style="margin-top:10px;">
+              <button class="btn-danger" type="button">
+                <i class="fal fa-rotate-right"></i> Retry AI summary
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <div class="divider"></div>
