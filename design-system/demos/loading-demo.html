@@ -24,12 +24,15 @@
     }
   </script>
 
+  <script src="../components/buttons/Button.js" type="module"></script>
   <script src="../components/feedback/Loading.js" type="module"></script>
   <script src="../components/feedback/RoyalLoader.js" type="module"></script>
 
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
     .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .page-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .page-chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; border: 1px solid #d5f4f8; background: #eefbfd; color: #1d809d; font-size: 0.8125rem; font-weight: 700; letter-spacing: .02em; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
     .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
     .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
@@ -50,10 +53,101 @@
     .loader-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 24px; }
     .loader-cell { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px; border: 1px solid #f3f4f4; border-radius: 12px; }
     .loader-cell span { font-size: 0.75rem; color: #9ba2a4; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+    .menu-shell { position: relative; }
+    webropol-button.menu-trigger,
+    webropol-button.spec-trigger { display: inline-flex; }
+    .menu-panel { position: absolute; right: 0; top: calc(100% + 10px); width: 280px; padding: 10px; border: 1px solid #e6e7e8; border-radius: 16px; background: rgba(255,255,255,0.98); box-shadow: 0 22px 50px rgba(39,42,43,0.12); backdrop-filter: blur(10px); z-index: 40; }
+    .menu-title { font-size: 0.72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ba2a4; padding: 4px 8px 10px; }
+    .menu-item { width: 100%; display: flex; align-items: flex-start; gap: 12px; text-align: left; padding: 11px 12px; border: 0; border-radius: 12px; background: transparent; color: #45484a; cursor: pointer; transition: background .2s ease; }
+    .menu-item:hover { background: #f3f4f4; }
+    .menu-item i { width: 16px; margin-top: 2px; color: #1d809d; }
+    .menu-item strong { display: block; font-size: 0.875rem; font-weight: 600; color: #272a2b; }
+    .menu-item small { display: block; margin-top: 2px; font-size: 0.75rem; line-height: 1.4; color: #787f81; }
+    .export-panel { margin: 0 0 28px; padding: 18px; border: 1px solid #d5f4f8; border-radius: 22px; background: linear-gradient(180deg, rgba(238,251,253,0.9), rgba(255,255,255,0.96)); box-shadow: 0 20px 48px rgba(32,159,186,0.08); }
+    .export-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+    .export-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #1d809d; }
+    .export-title { margin: 0; font-size: 1.1rem; font-weight: 700; color: #272a2b; }
+    .export-sub { margin: 4px 0 0; font-size: 0.875rem; line-height: 1.5; color: #61686a; }
+    .export-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .export-button { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; border: 1px solid #b0e8f1; background: white; color: #1d809d; font-size: 0.82rem; font-weight: 700; cursor: pointer; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+    .export-button:hover { background: #eefbfd; border-color: #79d6e7; }
+    .export-button--primary { border-color: #1d809d; background: #1d809d; color: white; }
+    .export-button--primary:hover { background: #1e6880; border-color: #1e6880; }
+    .export-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .export-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,0.9); border: 1px solid #d5f4f8; color: #61686a; font-size: 0.76rem; font-weight: 700; }
+    .export-textarea { width: 100%; min-height: 260px; padding: 16px; border: 1px solid #d1d5d6; border-radius: 18px; background: white; color: #272a2b; font: 0.82rem/1.55 SFMono-Regular, Consolas, monospace; resize: vertical; }
+    .spec-card { position: relative; overflow: visible; }
+    .spec-group { position: absolute; top: 10px; right: 10px; z-index: 8; }
+    .spec-trigger { transform: translateY(0); transition: transform .18s ease; }
+    .spec-group:hover .spec-trigger,
+    .spec-group:focus-within .spec-trigger { transform: translateY(-1px); }
+    .spec-popover { position: absolute; right: 0; top: calc(100% + 10px); width: 244px; padding: 14px 14px 12px; border: 1px solid #e6e7e8; border-radius: 16px; background: rgba(255,255,255,0.98); box-shadow: 0 24px 44px rgba(39,42,43,0.12); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: opacity .18s ease, transform .18s ease, visibility .18s ease; pointer-events: none; }
+    .spec-group:hover .spec-popover, .spec-group:focus-within .spec-popover { opacity: 1; visibility: visible; transform: translateY(0); }
+    .spec-popover h3 { margin: 0 0 10px; font-size: 0.9rem; font-weight: 700; color: #272a2b; }
+    .spec-list { display: grid; gap: 8px; }
+    .spec-row { display: grid; gap: 2px; }
+    .spec-row dt { font-size: 0.68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9ba2a4; }
+    .spec-row dd { margin: 0; font-size: 0.78rem; line-height: 1.45; color: #45484a; }
+    .clip-reveal-spec-card { position: relative; padding-top: 6px; }
+    .clip-reveal-spec-card .spec-group { top: -10px; right: -4px; }
+    .page-toast { position: fixed; right: 24px; bottom: 24px; display: inline-flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; background: #272a2b; color: white; box-shadow: 0 18px 40px rgba(39,42,43,0.22); font-size: 0.875rem; z-index: 60; }
+    .page-toast i { color: #67e8f9; }
+    @media (max-width: 640px) {
+      .page-topbar { align-items: flex-start; }
+      .page-chip { padding: 9px 12px; }
+      .menu-panel { width: min(280px, calc(100vw - 48px)); }
+      .spec-popover { width: min(244px, calc(100vw - 72px)); }
+      .export-head { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
-<main class="page">
+<main class="page" data-loading-demo-page>
+
+  <div class="page-topbar">
+    <div class="page-chip"><i class="fal fa-sparkles"></i>Loader specs and handoff tools</div>
+    <div class="menu-shell" data-menu-shell>
+      <webropol-button class="menu-trigger" data-menu-toggle variant="tertiary" size="sm" roundness="full" icon-only icon="ellipsis-h" aria-expanded="false" aria-haspopup="true" aria-label="Open loader export menu"></webropol-button>
+      <div class="menu-panel" data-menu-panel hidden>
+        <div class="menu-title">Export and Copy</div>
+        <button type="button" class="menu-item" data-export-mode="json">
+          <i class="fal fa-brackets-curly"></i>
+          <span>
+            <strong>Copy specs JSON</strong>
+            <small>Copies the full loader catalog with size, palette, usage, and handoff notes.</small>
+          </span>
+        </button>
+        <button type="button" class="menu-item" data-export-mode="snippets">
+          <i class="fal fa-code"></i>
+          <span>
+            <strong>Copy component snippets</strong>
+            <small>Copies all HTML component examples so engineering or motion teams can paste them directly.</small>
+          </span>
+        </button>
+        <button type="button" class="menu-item" data-export-mode="notes">
+          <i class="fal fa-note-sticky"></i>
+          <span>
+            <strong>Copy Figma handoff notes</strong>
+            <small>Copies a plain-text summary optimized for Figma notes, FigJam, or other design tools.</small>
+          </span>
+        </button>
+        <button type="button" class="menu-item" data-export-mode="json">
+          <i class="fal fa-file-arrow-down"></i>
+          <span>
+            <strong>Export specs JSON</strong>
+            <small>Downloads a reusable handoff file for design ops, tokens, or motion documentation.</small>
+          </span>
+        </button>
+        <button type="button" class="menu-item" data-export-mode="html">
+          <i class="fal fa-window-maximize"></i>
+          <span>
+            <strong>Export handoff HTML</strong>
+            <small>Downloads a standalone loader inventory page for browser-based capture into Figma or other platforms.</small>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <nav class="breadcrumb">
     <a href="../index.html"><i class="fal fa-swatchbook" style="margin-right:4px"></i>Component Library</a>
@@ -66,25 +160,52 @@
   <h1>Loading</h1>
   <p class="lead">Animated loading indicators with four animation types (<code>spinner</code>, <code>dots</code>, <code>pulse</code>, <code>bars</code>) and three sizes (<code>sm</code>, <code>md</code>, <code>lg</code>).</p>
 
+  <section class="export-panel" data-export-panel hidden>
+    <div class="export-head">
+      <div>
+        <div class="export-eyebrow"><i class="fal fa-share-nodes"></i>Design handoff</div>
+        <h2 class="export-title" data-export-title></h2>
+        <p class="export-sub" data-export-description></p>
+      </div>
+      <div class="export-actions">
+        <button type="button" class="export-button export-button--primary" data-copy-export>
+          <i class="fal fa-copy"></i>Copy
+        </button>
+        <button type="button" class="export-button" data-download-export>
+          <i class="fal fa-download"></i>Download
+        </button>
+        <button type="button" class="export-button" data-close-export>
+          <i class="fal fa-xmark"></i>Close
+        </button>
+      </div>
+    </div>
+    <div class="export-meta">
+      <div class="export-badge"><i class="fal fa-file-lines"></i><span data-export-filename></span></div>
+      <div class="export-badge"><i class="fal fa-layer-group"></i><span data-loader-count></span></div>
+      <div class="export-badge"><i class="fal fa-wand-magic-sparkles"></i>Figma-ready handoff</div>
+    </div>
+    <textarea class="export-textarea" data-export-content spellcheck="false"></textarea>
+  </section>
+
   <!-- Types -->
   <section>
     <h2 class="section-title">Animation Types — Medium</h2>
     <p class="section-sub">All four types at the default <code>md</code> size with label text via the default slot.</p>
     <div class="demo-block">
       <div class="loader-grid">
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-spinner-md" data-name="Spinner / Medium" data-component="webropol-loading" data-type="spinner" data-shown-size="md" data-space-needed="24 x 24 px for the loader, reserve about 96 x 56 px when the Loading label is shown." data-supported-sizes="sm, md, lg, xl" data-palette="webropol-primary-600 (#1d809d)" data-usage="General inline waits, save states, and content fetches." data-handoff="SVG-friendly. Recreate as a stroked ring with a single rotating segment when motion needs to be mocked in design." data-snippet='<webropol-loading type="spinner" size="md">Loading...</webropol-loading>'>
           <webropol-loading type="spinner" size="md">Loading…</webropol-loading>
           <span>spinner</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-dots-md" data-name="Dots / Medium" data-component="webropol-loading" data-type="dots" data-shown-size="md" data-space-needed="About 28 x 8 px for the dots, reserve around 96 x 40 px if paired with label text." data-supported-sizes="sm, md, lg" data-palette="webropol-primary-600 (#1d809d)" data-usage="Short conversational waits, progress between UI steps, and lighter async states." data-handoff="Best rebuilt as three circles with staggered Smart Animate timing in design tools." data-snippet='<webropol-loading type="dots" size="md">Loading...</webropol-loading>'>
           <webropol-loading type="dots" size="md">Loading…</webropol-loading>
           <span>dots</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-pulse-md" data-name="Pulse / Medium" data-component="webropol-loading" data-type="pulse" data-shown-size="md" data-space-needed="24 x 24 px for the pulse, reserve around 96 x 56 px if text is included." data-supported-sizes="sm, md, lg, xl" data-palette="webropol-primary-600 (#1d809d)" data-usage="Single-point processing states, quiet placeholders, and compact dashboards." data-handoff="Static export is enough for specs. Motion reference should use scale and opacity pulsing." data-snippet='<webropol-loading type="pulse" size="md">Loading...</webropol-loading>'>
           <webropol-loading type="pulse" size="md">Loading…</webropol-loading>
           <span>pulse</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-bars-md" data-name="Bars / Medium" data-component="webropol-loading" data-type="bars" data-shown-size="md" data-space-needed="Roughly 16 x 32 px for the bars, reserve about 96 x 56 px with label text." data-supported-sizes="sm, md, lg" data-palette="webropol-primary-600 (#1d809d)" data-usage="Streaming, data sync, and activity-heavy surfaces where vertical rhythm reads better." data-handoff="Rebuild as four rectangles with staggered height animation. Use exported HTML as the motion reference." data-snippet='<webropol-loading type="bars" size="md">Loading...</webropol-loading>'>
           <webropol-loading type="bars" size="md">Loading…</webropol-loading>
           <span>bars</span>
         </div>
@@ -100,15 +221,15 @@
     <p class="section-sub">Three size options shown with the <code>spinner</code> type.</p>
     <div class="demo-block">
       <div class="loader-grid">
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-spinner-sm" data-name="Spinner / Small" data-component="webropol-loading" data-type="spinner" data-shown-size="sm" data-space-needed="16 x 16 px for the spinner, reserve around 88 x 48 px with a short label." data-supported-sizes="sm, md, lg, xl" data-palette="webropol-primary-600 (#1d809d)" data-usage="Buttons, table rows, and compact inline feedback." data-handoff="Small SVG-friendly loader. Preserve the 16px footprint in handoff specs." data-snippet='<webropol-loading type="spinner" size="sm">Loading...</webropol-loading>'>
           <webropol-loading type="spinner" size="sm">Loading…</webropol-loading>
           <span>sm</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-spinner-md-default" data-name="Spinner / Default" data-component="webropol-loading" data-type="spinner" data-shown-size="md" data-space-needed="24 x 24 px for the spinner, reserve around 96 x 56 px with label text." data-supported-sizes="sm, md, lg, xl" data-palette="webropol-primary-600 (#1d809d)" data-usage="Default choice for panels, cards, and form sections." data-handoff="Use this size as the baseline in cross-platform specs." data-snippet='<webropol-loading type="spinner" size="md">Loading...</webropol-loading>'>
           <webropol-loading type="spinner" size="md">Loading…</webropol-loading>
           <span>md (default)</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-spinner-lg" data-name="Spinner / Large" data-component="webropol-loading" data-type="spinner" data-shown-size="lg" data-space-needed="32 x 32 px for the spinner, reserve at least 112 x 64 px when shown with copy." data-supported-sizes="sm, md, lg, xl" data-palette="webropol-primary-600 (#1d809d)" data-usage="Hero panels, onboarding states, and page-level loading emphasis." data-handoff="Keep additional whitespace around the 32px mark when translating into artboards." data-snippet='<webropol-loading type="spinner" size="lg">Loading...</webropol-loading>'>
           <webropol-loading type="spinner" size="lg">Loading…</webropol-loading>
           <span>lg</span>
         </div>
@@ -124,15 +245,15 @@
     <p class="section-sub">The same three sizes applied to the <code>dots</code> type.</p>
     <div class="demo-block">
       <div class="loader-grid">
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-dots-sm" data-name="Dots / Small" data-component="webropol-loading" data-type="dots" data-shown-size="sm" data-space-needed="About 24 x 6 px for the dots, reserve around 72 x 32 px if text is nearby." data-supported-sizes="sm, md, lg" data-palette="webropol-primary-600 (#1d809d)" data-usage="Compact assistant or list item activity states." data-handoff="Translate into three 8px circles with sequential lift animation." data-snippet='<webropol-loading type="dots" size="sm"></webropol-loading>'>
           <webropol-loading type="dots" size="sm"></webropol-loading>
           <span>sm</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-dots-md-default" data-name="Dots / Default" data-component="webropol-loading" data-type="dots" data-shown-size="md" data-space-needed="About 28 x 8 px for the dots, reserve around 88 x 36 px if text is paired with them." data-supported-sizes="sm, md, lg" data-palette="webropol-primary-600 (#1d809d)" data-usage="General conversational loading, chat waits, and supportive transitions." data-handoff="Use the exported HTML as timing reference when motion details matter." data-snippet='<webropol-loading type="dots" size="md"></webropol-loading>'>
           <webropol-loading type="dots" size="md"></webropol-loading>
           <span>md (default)</span>
         </div>
-        <div class="loader-cell">
+        <div class="loader-cell spec-card" data-loader-id="loading-dots-lg" data-name="Dots / Large" data-component="webropol-loading" data-type="dots" data-shown-size="lg" data-space-needed="About 36 x 10 px for the dots, reserve around 96 x 40 px with surrounding label space." data-supported-sizes="sm, md, lg" data-palette="webropol-primary-600 (#1d809d)" data-usage="Bolder empty-state loaders and marketing-focused waiting surfaces." data-handoff="Good candidate for a motion storyboard frame in Figma or Principle." data-snippet='<webropol-loading type="dots" size="lg"></webropol-loading>'>
           <webropol-loading type="dots" size="lg"></webropol-loading>
           <span>lg</span>
         </div>
@@ -195,28 +316,28 @@
 
     <div class="demo-block">
       <div class="royal-loader-grid">
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="quadrant-spin"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-quadrant-spin" data-name="Quadrant Spin" data-component="webropol-royal-loader" data-type="quadrant-spin" data-shown-size="lg scale" data-space-needed="Reserve about 180 x 180 px to keep the motion readable without clipping." data-supported-sizes="sm, md, lg, xl" data-palette="#823bdd, #6366f1, #06b6d4, #9e67e5" data-usage="Premium brand moments, AI launches, and celebratory loading states." data-handoff="Motion-first. Treat as a color and rhythm reference rather than a final vector export." data-snippet='<webropol-royal-loader type="quadrant-spin" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="quadrant-spin" size="lg"></webropol-royal-loader>
           <span>Quadrant Spin</span>
         </div>
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="ring-orbits"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-ring-orbits" data-name="Ring Orbits" data-component="webropol-royal-loader" data-type="ring-orbits" data-shown-size="lg scale" data-space-needed="Reserve about 220 x 220 px for the full orbit composition and breathing room." data-supported-sizes="sm, md, lg, xl" data-palette="#823bdd, #6366f1, #06b6d4, #6922c4" data-usage="Feature reveals, AI processing, and high-visibility full-page waits." data-handoff="SVG-friendly. Preserve the four-stroke system and dash offsets in any rebuild." data-snippet='<webropol-royal-loader type="ring-orbits" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="ring-orbits" size="lg"></webropol-royal-loader>
           <span>Ring Orbits</span>
         </div>
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="server-node"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-server-node" data-name="Server Node" data-component="webropol-royal-loader" data-type="server-node" data-shown-size="lg scale" data-space-needed="Reserve about 200 x 220 px so the server stack and particles stay fully visible." data-supported-sizes="sm, md, lg, xl" data-palette="#6922c4, #823bdd, #6366f1, #c7d2fe" data-usage="Infrastructure, sync, and network-heavy waiting contexts." data-handoff="SVG-friendly with animated particles. Export as spec plus motion note for non-code tools." data-snippet='<webropol-royal-loader type="server-node" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="server-node" size="lg"></webropol-royal-loader>
           <span>Server Node</span>
         </div>
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="shape-follow"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-shape-follow" data-name="Shape Follow" data-component="webropol-royal-loader" data-type="shape-follow" data-shown-size="lg scale" data-space-needed="Reserve about 220 x 180 px so the shell and floating shape animation have room." data-supported-sizes="sm, md, lg, xl" data-palette="#823bdd, #6366f1, #06b6d4" data-usage="Playful AI or assistant waits where the brand should feel lively and expressive." data-handoff="Best handed off as a motion reference. Static frames do not capture the personality well." data-snippet='<webropol-royal-loader type="shape-follow" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="shape-follow" size="lg"></webropol-royal-loader>
           <span>Shape Follow</span>
         </div>
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="shape-shifter"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-shape-shifter" data-name="Shape Shifter" data-component="webropol-royal-loader" data-type="shape-shifter" data-shown-size="lg scale" data-space-needed="Reserve about 180 x 180 px so the rotating tile group never feels cramped." data-supported-sizes="sm, md, lg, xl" data-palette="#a78bfa, #823bdd, #818cf8, #6366f1, #67e8f9, #06b6d4, #c084fc, #9e67e5" data-usage="Premium motion moments, onboarding, and experimental loading surfaces." data-handoff="Translate as a four-tile motion study. Use exported notes to preserve morph timing." data-snippet='<webropol-royal-loader type="shape-shifter" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="shape-shifter" size="lg"></webropol-royal-loader>
           <span>Shape Shifter</span>
         </div>
-        <div class="royal-loader-cell">
-          <webropol-royal-loader type="google-style"></webropol-royal-loader>
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-google-style" data-name="Google Style" data-component="webropol-royal-loader" data-type="google-style" data-shown-size="lg scale" data-space-needed="Reserve about 220 x 120 px so the traveling dots keep their horizontal spread." data-supported-sizes="sm, md, lg, xl" data-palette="#823bdd, #6366f1, #06b6d4, #9e67e5" data-usage="Rhythmic waiting states for search, discovery, and quick system feedback." data-handoff="Easy to rebuild in design tools using four dots and offset motion curves." data-snippet='<webropol-royal-loader type="google-style" size="lg"></webropol-royal-loader>'>
+          <webropol-royal-loader type="google-style" size="lg"></webropol-royal-loader>
           <span>Google Style</span>
         </div>
       </div>
@@ -232,15 +353,15 @@
 
     <div class="demo-block">
       <div class="royal-loader-grid">
-        <div class="royal-loader-cell">
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-ai-wave-sm" data-name="AI Wave / Small" data-component="webropol-royal-loader" data-type="ai-wave" data-shown-size="sm" data-space-needed="Reserve about 120 x 72 px so the balls and label have enough vertical room." data-supported-sizes="sm, md, lg, xl" data-palette="#7c3aed, #4f46e5, #0369a1, #0d9488, #0e7490" data-usage="Tight inline AI hints, assistant chips, and embedded processing labels." data-handoff="Use as a motion cue with 10px to 14px spheres and a short vertical bounce." data-snippet='<webropol-royal-loader type="ai-wave" size="sm" text="AI is thinking..."></webropol-royal-loader>'>
           <webropol-royal-loader type="ai-wave" size="sm" text="AI is thinking..."></webropol-royal-loader>
           <span>Small</span>
         </div>
-        <div class="royal-loader-cell">
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-ai-wave-md" data-name="AI Wave / Default" data-component="webropol-royal-loader" data-type="ai-wave" data-shown-size="md" data-space-needed="Reserve about 148 x 92 px so the bounce height and label remain legible." data-supported-sizes="sm, md, lg, xl" data-palette="#7c3aed, #4f46e5, #0369a1, #0d9488, #0e7490" data-usage="Primary AI processing state for cards, assistants, and modal content." data-handoff="Use this as the baseline AI loader spec for design handoff." data-snippet='<webropol-royal-loader type="ai-wave" size="md" text="AI is thinking..."></webropol-royal-loader>'>
           <webropol-royal-loader type="ai-wave" size="md" text="AI is thinking..."></webropol-royal-loader>
           <span>Default</span>
         </div>
-        <div class="royal-loader-cell">
+        <div class="royal-loader-cell spec-card" data-loader-id="royal-ai-wave-lg" data-name="AI Wave / Large" data-component="webropol-royal-loader" data-type="ai-wave" data-shown-size="lg" data-space-needed="Reserve about 180 x 120 px so the larger bounce arc and label stay clear." data-supported-sizes="sm, md, lg, xl" data-palette="#7c3aed, #4f46e5, #0369a1, #0d9488, #0e7490" data-usage="Hero AI flows, empty-state loaders, and focused conversational surfaces." data-handoff="Ideal for Figma motion boards or prototype reels rather than a static sticker." data-snippet='<webropol-royal-loader type="ai-wave" size="lg" text="AI is thinking..."></webropol-royal-loader>'>
           <webropol-royal-loader type="ai-wave" size="lg" text="AI is thinking..."></webropol-royal-loader>
           <span>Large</span>
         </div>
@@ -256,13 +377,15 @@
     <p class="section-sub">The text reveal loader is now a shared component variant with configurable message lines.</p>
 
     <div class="demo-block clip-reveal-block">
-      <webropol-royal-loader
-        type="clip-reveal"
-        line1="AI is"
-        line2="Thinking"
-        line3="Almost"
-        line4="Done!"
-      ></webropol-royal-loader>
+      <div class="clip-reveal-spec-card spec-card" data-loader-id="royal-clip-reveal" data-name="Clip Reveal" data-component="webropol-royal-loader" data-type="clip-reveal" data-shown-size="responsive" data-space-needed="Reserve at least 640 x 260 px on desktop, or the full width of its container on smaller screens." data-supported-sizes="responsive" data-palette="#272a2b, #c4b5fd, #818cf8, #67e8f9, #06b6d4, #6366f1, #823bdd" data-usage="Expressive AI stage transitions, narrative loading scenes, and editorial product moments." data-handoff="Best exported as a storyboard reference. Rebuild typography motion directly in the design tool for fidelity." data-snippet='<webropol-royal-loader type="clip-reveal" line1="AI is" line2="Thinking" line3="Almost" line4="Done!"></webropol-royal-loader>'>
+        <webropol-royal-loader
+          type="clip-reveal"
+          line1="AI is"
+          line2="Thinking"
+          line3="Almost"
+          line4="Done!"
+        ></webropol-royal-loader>
+      </div>
     </div>
   </section>
 
@@ -272,5 +395,12 @@
   </nav>
 
 </main>
+
+<div class="page-toast" data-status-toast hidden>
+  <i class="fal fa-circle-check"></i>
+  <span data-status-message></span>
+</div>
+
+<script src="loading-demo.js"></script>
 </body>
 </html>
