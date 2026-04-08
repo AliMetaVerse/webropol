@@ -102,6 +102,10 @@
         '      <i class="fal fa-brackets-curly"></i>',
         '      <span><strong>JSON spec</strong><small>Open this card as structured spec data.</small></span>',
         '    </button>',
+        '    <button type="button" class="card-menu-item" data-card-action="svg">',
+        '      <i class="fal fa-bezier-curve"></i>',
+        '      <span><strong>Copy SVG</strong><small>Open actual SVG markup for Figma paste or SVG download.</small></span>',
+        '    </button>',
         '    <button type="button" class="card-menu-item" data-card-action="html">',
         '      <i class="fal fa-window-maximize"></i>',
         '      <span><strong>HTML handoff</strong><small>Open a standalone handoff page for this card.</small></span>',
@@ -166,6 +170,21 @@
     const specs = specsInput && specsInput.length ? specsInput : getLoaderSpecs(root);
     const isSingle = specs.length === 1;
     const singleName = isSingle ? specs[0].name : 'Loader';
+
+    if (mode === 'svg') {
+      const svgContent = isSingle ? getSvgPayloadForSpec(root, specs[0]) : specs.map((spec) => {
+        const payload = getSvgPayloadForSpec(root, spec);
+        return `<!-- ${spec.name} -->\n${payload.content}`;
+      }).join('\n\n');
+
+      return {
+        title: isSingle ? `${singleName} SVG` : 'Loader SVG assets',
+        description: isSingle ? 'Actual SVG markup for this loader, ready for copy or download.' : 'SVG markup for the selected loaders.',
+        filename: isSingle ? `${specs[0].id}.svg` : 'webropol-loader-assets.svg',
+        mimeType: 'image/svg+xml',
+        content: isSingle ? svgContent.content : svgContent
+      };
+    }
 
     if (mode === 'snippets') {
       return {
@@ -298,6 +317,70 @@
 
     setMenuOpen(root, false);
     closeAllCardMenus(root);
+  }
+
+  function getSvgPayloadForSpec(root, spec) {
+    const card = root.querySelector(`[data-loader-id="${spec.id}"]`);
+    if (!card) {
+      return {
+        title: `${spec.name} SVG`,
+        content: '<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"></svg>'
+      };
+    }
+
+    const stage = card.querySelector('.royal-loader-stage, webropol-loading, webropol-royal-loader') || card;
+    const existingSvg = stage.querySelector ? stage.querySelector('svg') : null;
+    if (existingSvg) {
+      const clone = existingSvg.cloneNode(true);
+      clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      if (!clone.getAttribute('viewBox')) {
+        const width = clone.getAttribute('width') || '220';
+        const height = clone.getAttribute('height') || '220';
+        clone.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      }
+      return {
+        title: `${spec.name} SVG`,
+        content: clone.outerHTML
+      };
+    }
+
+    const stageNode = card.querySelector('.royal-loader-stage, .wrld-root, [role="status"]') || card;
+    const serialized = serializeNodeToSvg(stageNode, spec);
+    return {
+      title: `${spec.name} SVG`,
+      content: serialized
+    };
+  }
+
+  function serializeNodeToSvg(node, spec) {
+    const svgWidth = spec.component === 'webropol-royal-loader' ? 220 : 140;
+    const svgHeight = spec.component === 'webropol-royal-loader' ? 220 : 140;
+    const body = document.body;
+    const computedFont = window.getComputedStyle(body).fontFamily || 'Inter, system-ui, sans-serif';
+    const royalStyleTag = document.getElementById('webropol-royal-loader-styles');
+    const styleText = [
+      `body { margin: 0; font-family: ${computedFont}; }`,
+      '.svg-capture-shell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: white; }',
+      royalStyleTag ? royalStyleTag.textContent : '',
+      '.svg-spinner circle, .svg-spinner path { vector-effect: non-scaling-stroke; }'
+    ].join('\n');
+
+    const html = node.outerHTML
+      .replace(/#/g, '%23')
+      .replace(/\n/g, ' ');
+
+    return [
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}">`,
+      '  <foreignObject width="100%" height="100%">',
+      '    <div xmlns="http://www.w3.org/1999/xhtml" class="svg-capture-shell">',
+      '      <style>',
+      styleText,
+      '      </style>',
+      html,
+      '    </div>',
+      '  </foreignObject>',
+      '</svg>'
+    ].join('\n');
   }
 
   function closeExportPanel(root) {

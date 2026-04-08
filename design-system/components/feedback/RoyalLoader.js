@@ -21,27 +21,27 @@ function ensureStyles() {
     }
     .wrld-quadrant {
       animation: wrld-quad-rotate 1s infinite;
-      height: 50px;
-      width: 50px;
+      height: var(--wrld-quad-size, 50px);
+      width: var(--wrld-quad-size, 50px);
     }
     .wrld-quadrant::before,
     .wrld-quadrant::after {
       content: '';
       display: block;
-      width: 20px;
-      height: 20px;
+      width: var(--wrld-quad-dot-size, 20px);
+      height: var(--wrld-quad-dot-size, 20px);
       border-radius: 50%;
     }
     .wrld-quadrant::before {
       animation: wrld-quad-ball1 1s infinite;
       background-color: #823bdd;
-      box-shadow: 30px 0 0 #6366f1;
-      margin-bottom: 10px;
+      box-shadow: var(--wrld-quad-gap, 30px) 0 0 #6366f1;
+      margin-bottom: var(--wrld-quad-before-margin, 10px);
     }
     .wrld-quadrant::after {
       animation: wrld-quad-ball2 1s infinite;
       background-color: #06b6d4;
-      box-shadow: 30px 0 0 #9e67e5;
+      box-shadow: var(--wrld-quad-gap, 30px) 0 0 #9e67e5;
     }
     @keyframes wrld-quad-rotate {
       0% { transform: rotate(0deg) scale(0.8); }
@@ -49,14 +49,14 @@ function ensureStyles() {
       100% { transform: rotate(720deg) scale(0.8); }
     }
     @keyframes wrld-quad-ball1 {
-      0% { box-shadow: 30px 0 0 #6366f1; }
-      50% { box-shadow: 0 0 0 #6366f1; margin-bottom: 0; transform: translate(15px, 15px); }
-      100% { box-shadow: 30px 0 0 #6366f1; margin-bottom: 10px; }
+      0% { box-shadow: var(--wrld-quad-gap, 30px) 0 0 #6366f1; }
+      50% { box-shadow: 0 0 0 #6366f1; margin-bottom: 0; transform: translate(var(--wrld-quad-shift, 15px), var(--wrld-quad-shift, 15px)); }
+      100% { box-shadow: var(--wrld-quad-gap, 30px) 0 0 #6366f1; margin-bottom: var(--wrld-quad-before-margin, 10px); }
     }
     @keyframes wrld-quad-ball2 {
-      0% { box-shadow: 30px 0 0 #9e67e5; }
-      50% { box-shadow: 0 0 0 #9e67e5; margin-top: -20px; transform: translate(15px, 15px); }
-      100% { box-shadow: 30px 0 0 #9e67e5; margin-top: 0; }
+      0% { box-shadow: var(--wrld-quad-gap, 30px) 0 0 #9e67e5; }
+      50% { box-shadow: 0 0 0 #9e67e5; margin-top: var(--wrld-quad-after-lift, -20px); transform: translate(var(--wrld-quad-shift, 15px), var(--wrld-quad-shift, 15px)); }
+      100% { box-shadow: var(--wrld-quad-gap, 30px) 0 0 #9e67e5; margin-top: 0; }
     }
     .wrld-rings {
       width: 8em;
@@ -514,9 +514,26 @@ export class WebropolRoyalLoader extends BaseComponent {
     const type = this.getAttr('type', 'ring-orbits');
     const size = this.getAttr('size', 'md');
     const scale = { sm: '0.82', md: '1', lg: '1.16', xl: '1.3' }[size] || '1';
+    const rootStyle = [`--wrld-scale:${type === 'quadrant-spin' ? '1' : scale};`];
+
+    if (type === 'quadrant-spin') {
+      const quadrantMetrics = {
+        sm: { size: 42, dot: 16, gap: 26, shift: 13, beforeMargin: 8, afterLift: -16 },
+        md: { size: 50, dot: 20, gap: 30, shift: 15, beforeMargin: 10, afterLift: -20 },
+        lg: { size: 64, dot: 24, gap: 40, shift: 20, beforeMargin: 12, afterLift: -24 },
+        xl: { size: 76, dot: 28, gap: 48, shift: 24, beforeMargin: 14, afterLift: -28 }
+      }[size] || { size: 50, dot: 20, gap: 30, shift: 15, beforeMargin: 10, afterLift: -20 };
+
+      rootStyle.push(`--wrld-quad-size:${quadrantMetrics.size}px;`);
+      rootStyle.push(`--wrld-quad-dot-size:${quadrantMetrics.dot}px;`);
+      rootStyle.push(`--wrld-quad-gap:${quadrantMetrics.gap}px;`);
+      rootStyle.push(`--wrld-quad-shift:${quadrantMetrics.shift}px;`);
+      rootStyle.push(`--wrld-quad-before-margin:${quadrantMetrics.beforeMargin}px;`);
+      rootStyle.push(`--wrld-quad-after-lift:${quadrantMetrics.afterLift}px;`);
+    }
 
     this.innerHTML = `
-      <div class="wrld-root" role="status" aria-live="polite" style="--wrld-scale:${scale};">
+      <div class="wrld-root" role="status" aria-live="polite" style="${rootStyle.join(' ')}">
         <div class="wrld-art">${this.renderVariant(type, size)}</div>
       </div>
     `;
