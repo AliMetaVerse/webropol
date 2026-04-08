@@ -19,6 +19,7 @@
         exportFilename: '',
         exportMimeType: 'text/plain',
         exportContent: '',
+        exportCount: 0,
         statusTimer: null,
         documentClickHandler: null
       });
@@ -64,32 +65,73 @@
 
   function enhanceSpecCards(root) {
     getSpecCards(root).forEach((card) => {
-      if (card.querySelector('.spec-group')) {
+      if (card.querySelector('.card-tools')) {
         return;
       }
 
-      const specGroup = document.createElement('div');
-      specGroup.className = 'spec-group';
-      specGroup.innerHTML = [
-        `<button type="button" class="spec-trigger" aria-label="Open loader specs for ${escapeHtml(card.dataset.name || 'loader')}">`,
-        '  <i class="fal fa-circle-info"></i>',
-        '</button>',
-        '<div class="spec-popover">',
-        `  <h3>${escapeHtml(card.dataset.name || 'Loader')}</h3>`,
-        '  <dl class="spec-list">',
-        '    <div class="spec-row"><dt>Component</dt><dd>' + escapeHtml(card.dataset.component || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Shown scale</dt><dd>' + escapeHtml(card.dataset.shownSize || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Space needed</dt><dd>' + escapeHtml(card.dataset.spaceNeeded || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Supports</dt><dd>' + escapeHtml(card.dataset.supportedSizes || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Palette</dt><dd>' + escapeHtml(card.dataset.palette || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Use</dt><dd>' + escapeHtml(card.dataset.usage || '') + '</dd></div>',
-        '    <div class="spec-row"><dt>Handoff</dt><dd>' + escapeHtml(card.dataset.handoff || '') + '</dd></div>',
-        '  </dl>',
+      const tools = document.createElement('div');
+      tools.className = 'card-tools';
+      tools.innerHTML = [
+        '<div class="spec-group">',
+        `  <webropol-button class="spec-trigger" variant="tertiary" size="sm" roundness="full" icon-only icon="circle-info" aria-label="Open loader specs for ${escapeHtml(card.dataset.name || 'loader')}"></webropol-button>`,
+        '  <div class="spec-popover">',
+        `    <h3>${escapeHtml(card.dataset.name || 'Loader')}</h3>`,
+        '    <dl class="spec-list">',
+        '      <div class="spec-row"><dt>Component</dt><dd>' + escapeHtml(card.dataset.component || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Shown scale</dt><dd>' + escapeHtml(card.dataset.shownSize || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Space needed</dt><dd>' + escapeHtml(card.dataset.spaceNeeded || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Supports</dt><dd>' + escapeHtml(card.dataset.supportedSizes || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Palette</dt><dd>' + escapeHtml(card.dataset.palette || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Use</dt><dd>' + escapeHtml(card.dataset.usage || '') + '</dd></div>',
+        '      <div class="spec-row"><dt>Handoff</dt><dd>' + escapeHtml(card.dataset.handoff || '') + '</dd></div>',
+        '    </dl>',
+        '  </div>',
+        '</div>',
+        '<div class="card-menu-shell" data-card-menu-shell>',
+        `  <webropol-button class="card-menu-trigger" data-card-menu-toggle variant="tertiary" size="sm" roundness="full" icon-only icon="ellipsis-h" aria-expanded="false" aria-haspopup="true" aria-label="Open export actions for ${escapeHtml(card.dataset.name || 'loader')}"></webropol-button>`,
+        '  <div class="card-menu-panel" data-card-menu-panel hidden>',
+        '    <button type="button" class="card-menu-item" data-card-action="snippets">',
+        '      <i class="fal fa-code"></i>',
+        '      <span><strong>Snippet</strong><small>Open this loader snippet for copy or download.</small></span>',
+        '    </button>',
+        '    <button type="button" class="card-menu-item" data-card-action="notes">',
+        '      <i class="fal fa-note-sticky"></i>',
+        '      <span><strong>Handoff notes</strong><small>Open single-loader notes for design handoff.</small></span>',
+        '    </button>',
+        '    <button type="button" class="card-menu-item" data-card-action="json">',
+        '      <i class="fal fa-brackets-curly"></i>',
+        '      <span><strong>JSON spec</strong><small>Open this card as structured spec data.</small></span>',
+        '    </button>',
+        '    <button type="button" class="card-menu-item" data-card-action="html">',
+        '      <i class="fal fa-window-maximize"></i>',
+        '      <span><strong>HTML handoff</strong><small>Open a standalone handoff page for this card.</small></span>',
+        '    </button>',
+        '  </div>',
         '</div>'
       ].join('');
 
-      card.appendChild(specGroup);
+      card.appendChild(tools);
     });
+  }
+
+  function closeAllCardMenus(root) {
+    root.querySelectorAll('[data-card-menu-panel]').forEach((panel) => {
+      panel.hidden = true;
+    });
+    root.querySelectorAll('[data-card-menu-toggle]').forEach((toggle) => {
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function setCardMenuOpen(shell, open) {
+    const toggle = shell.querySelector('[data-card-menu-toggle]');
+    const panel = shell.querySelector('[data-card-menu-panel]');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if (panel) {
+      panel.hidden = !open;
+    }
   }
 
   function setMenuOpen(root, open) {
@@ -120,14 +162,16 @@
     }, 2200);
   }
 
-  function getExportPayload(root, mode) {
-    const specs = getLoaderSpecs(root);
+  function getExportPayload(root, mode, specsInput) {
+    const specs = specsInput && specsInput.length ? specsInput : getLoaderSpecs(root);
+    const isSingle = specs.length === 1;
+    const singleName = isSingle ? specs[0].name : 'Loader';
 
     if (mode === 'snippets') {
       return {
-        title: 'Component snippets',
-        description: 'Paste-ready HTML snippets for engineering, prototyping, or motion tooling.',
-        filename: 'webropol-loader-snippets.txt',
+        title: isSingle ? `${singleName} snippet` : 'Component snippets',
+        description: isSingle ? 'Paste-ready HTML snippet for this loader.' : 'Paste-ready HTML snippets for engineering, prototyping, or motion tooling.',
+        filename: isSingle ? `${specs[0].id}-snippet.txt` : 'webropol-loader-snippets.txt',
         mimeType: 'text/plain',
         content: specs.map((spec) => `[${spec.name}]\n${spec.snippet}`).join('\n\n')
       };
@@ -135,9 +179,9 @@
 
     if (mode === 'notes') {
       return {
-        title: 'Figma handoff notes',
-        description: 'Plain-text notes optimized for Figma comments, FigJam boards, or design documentation.',
-        filename: 'webropol-loader-handoff-notes.txt',
+        title: isSingle ? `${singleName} handoff notes` : 'Figma handoff notes',
+        description: isSingle ? 'Plain-text notes for this loader, optimized for Figma comments or design documentation.' : 'Plain-text notes optimized for Figma comments, FigJam boards, or design documentation.',
+        filename: isSingle ? `${specs[0].id}-handoff-notes.txt` : 'webropol-loader-handoff-notes.txt',
         mimeType: 'text/plain',
         content: specs.map((spec) => [
           spec.name,
@@ -170,9 +214,9 @@
       ].join('\n')).join('\n');
 
       return {
-        title: 'Standalone handoff HTML',
-        description: 'A single self-contained HTML document for browser preview or capture into Figma and other design tools.',
-        filename: 'webropol-loader-handoff.html',
+        title: isSingle ? `${singleName} handoff HTML` : 'Standalone handoff HTML',
+        description: isSingle ? 'A self-contained HTML handoff for this loader.' : 'A single self-contained HTML document for browser preview or capture into Figma and other design tools.',
+        filename: isSingle ? `${specs[0].id}-handoff.html` : 'webropol-loader-handoff.html',
         mimeType: 'text/html',
         content: [
           '<!DOCTYPE html>',
@@ -209,23 +253,25 @@
     }
 
     return {
-      title: 'Loader specs JSON',
-      description: 'Machine-readable loader metadata with size, palette, usage, and handoff notes.',
-      filename: 'webropol-loader-specs.json',
+      title: isSingle ? `${singleName} JSON spec` : 'Loader specs JSON',
+      description: isSingle ? 'Machine-readable metadata for this loader.' : 'Machine-readable loader metadata with size, palette, usage, and handoff notes.',
+      filename: isSingle ? `${specs[0].id}-spec.json` : 'webropol-loader-specs.json',
       mimeType: 'application/json',
       content: JSON.stringify(specs, null, 2)
     };
   }
 
-  function openExportPanel(root, mode) {
+  function openExportPanel(root, mode, specsInput) {
     const state = getState(root);
     const elements = getElements(root);
-    const payload = getExportPayload(root, mode);
+    const specs = specsInput && specsInput.length ? specsInput : getLoaderSpecs(root);
+    const payload = getExportPayload(root, mode, specs);
 
     state.exportTitle = payload.title;
     state.exportFilename = payload.filename;
     state.exportMimeType = payload.mimeType;
     state.exportContent = payload.content;
+    state.exportCount = specs.length;
 
     if (elements.exportPanel) {
       elements.exportPanel.hidden = false;
@@ -246,8 +292,12 @@
         elements.exportContent.select();
       });
     }
+    if (elements.loaderCount) {
+      elements.loaderCount.textContent = `${specs.length} loader${specs.length === 1 ? '' : 's'} documented`;
+    }
 
     setMenuOpen(root, false);
+    closeAllCardMenus(root);
   }
 
   function closeExportPanel(root) {
@@ -314,6 +364,8 @@
     root.addEventListener('click', async (event) => {
       const menuToggle = event.target.closest('[data-menu-toggle]');
       const exportTrigger = event.target.closest('[data-export-mode]');
+      const cardMenuToggle = event.target.closest('[data-card-menu-toggle]');
+      const cardAction = event.target.closest('[data-card-action]');
       const copyExport = event.target.closest('[data-copy-export]');
       const downloadExport = event.target.closest('[data-download-export]');
       const closeExport = event.target.closest('[data-close-export]');
@@ -328,6 +380,27 @@
       if (exportTrigger) {
         event.preventDefault();
         openExportPanel(root, exportTrigger.dataset.exportMode || 'json');
+        return;
+      }
+
+      if (cardMenuToggle) {
+        event.preventDefault();
+        const shell = cardMenuToggle.closest('[data-card-menu-shell]');
+        if (!shell) return;
+        const panel = shell.querySelector('[data-card-menu-panel]');
+        const shouldOpen = !!(panel && panel.hidden);
+        closeAllCardMenus(root);
+        setCardMenuOpen(shell, shouldOpen);
+        return;
+      }
+
+      if (cardAction) {
+        event.preventDefault();
+        const card = cardAction.closest('[data-loader-id]');
+        if (!card) return;
+        const spec = getLoaderSpecs(root).find((item) => item.id === card.dataset.loaderId);
+        if (!spec) return;
+        openExportPanel(root, cardAction.dataset.cardAction || 'json', [spec]);
         return;
       }
 
@@ -356,11 +429,15 @@
     state.documentClickHandler = (event) => {
       if (!root.contains(event.target)) {
         setMenuOpen(root, false);
+        closeAllCardMenus(root);
         return;
       }
 
       if (!event.target.closest('[data-menu-shell]')) {
         setMenuOpen(root, false);
+      }
+      if (!event.target.closest('[data-card-menu-shell]')) {
+        closeAllCardMenus(root);
       }
     };
 
