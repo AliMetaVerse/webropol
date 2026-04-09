@@ -1,5 +1,9 @@
 import { BaseComponent } from '../../utils/base-component.js';
 import '../buttons/ButtonHue.js';
+import '../feedback/Tooltip.js';
+
+const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
+const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
 
 /**
  * PageQuickActions Component
@@ -39,6 +43,21 @@ export class PageQuickActions extends BaseComponent {
   init() {
     this.actions = this.getActions();
     this.showLabel = this.getBoolAttr('show-label', true);
+    this.iconsOnly = false;
+
+    this.handleIconsOnlyChange = (event) => {
+      this.iconsOnly = Boolean(event.detail?.enabled);
+      this.render();
+      this.bindEvents();
+    };
+
+    try {
+      this.iconsOnly = localStorage.getItem(ICONS_ONLY_STORAGE_KEY) === 'true';
+    } catch (e) {
+      this.iconsOnly = false;
+    }
+
+    window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
   }
 
   getActions() {
@@ -87,25 +106,44 @@ export class PageQuickActions extends BaseComponent {
           <div class="bg-webropol-gray-50 px-6 py-3 rounded-full">
             <div class="flex items-center gap-3 flex-wrap justify-center">
               ${this.showLabel ? `
-                <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider">
+                <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider shrink-0">
                   Quick Actions
                 </span>
-                <div class="h-4 w-px bg-webropol-gray-300"></div>
+                <div class="h-4 w-px bg-webropol-gray-300 shrink-0"></div>
               ` : ''}
               
               ${actions.map(action => {
                 const hue = this.getHue(action.color);
+                const buttonMarkup = this.iconsOnly
+                  ? `
+                    <webropol-button-hue
+                      data-action-id="${action.id}"
+                      orientation="icon"
+                      size="micro"
+                      fit-content
+                      hue="${hue}"
+                      icon="${action.icon}"
+                      label="${action.label}"
+                    ></webropol-button-hue>
+                  `
+                  : `
+                    <webropol-button-hue
+                      data-action-id="${action.id}"
+                      orientation="horizontal"
+                      theme="outline"
+                      size="micro"
+                      fit-content
+                      hue="${hue}"
+                      icon="${action.icon}"
+                      label="${action.label}"
+                    ></webropol-button-hue>
+                  `;
                 return `
-                  <webropol-button-hue
-                    data-action-id="${action.id}"
-                    orientation="horizontal"
-                    theme="outline"
-                    size="micro"
-                    fit-content
-                    hue="${hue}"
-                    icon="${action.icon}"
-                    label="${action.label}"
-                  ></webropol-button-hue>
+                    <div class="inline-flex shrink-0">
+                      <webropol-tooltip text="${action.label}" position="top">
+                        ${buttonMarkup}
+                      </webropol-tooltip>
+                    </div>
                 `;
               }).join('')}
             </div>
@@ -129,6 +167,11 @@ export class PageQuickActions extends BaseComponent {
         });
       });
     });
+  }
+
+  cleanup() {
+    window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    super.cleanup();
   }
 }
 

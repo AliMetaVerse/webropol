@@ -37,14 +37,14 @@ export class WebropolTooltip extends BaseComponent {
     const tooltipId = this.generateId('tooltip');
     
     this.innerHTML = `
-      <div class="tooltip-trigger" aria-describedby="${tooltipId}">
+      <div class="webropol-tooltip-trigger" aria-describedby="${tooltipId}">
         ${content}
       </div>
       <div id="${tooltipId}" 
-           class="tooltip-popup absolute z-50 px-3 py-2 text-sm font-medium text-white bg-webropol-gray-900 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 pointer-events-none whitespace-nowrap ${this.getPositionClasses(position)}"
+           class="webropol-tooltip-popup absolute z-50 px-3 py-2 text-sm font-medium text-white bg-webropol-gray-900 rounded-lg shadow-lg opacity-0 invisible transition-all duration-200 pointer-events-none whitespace-nowrap ${this.getPositionClasses(position)}"
            role="tooltip">
         ${text}
-        <div class="tooltip-arrow absolute w-2 h-2 bg-webropol-gray-900 transform rotate-45 ${this.getArrowClasses(position)}"></div>
+        <div class="webropol-tooltip-arrow absolute w-2 h-2 bg-webropol-gray-900 transform rotate-45 ${this.getArrowClasses(position)}"></div>
       </div>
     `;
   }
@@ -70,8 +70,8 @@ export class WebropolTooltip extends BaseComponent {
   }
 
   bindEvents() {
-    const trigger = this.querySelector('.tooltip-trigger');
-    const tooltip = this.querySelector('.tooltip-popup');
+    const trigger = this.querySelector('.webropol-tooltip-trigger');
+    const tooltip = this.querySelector('.webropol-tooltip-popup');
     const triggerType = this.getAttr('trigger', 'hover');
     const delay = parseInt(this.getAttr('delay', '500'));
 

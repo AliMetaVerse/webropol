@@ -1,5 +1,8 @@
 import { BaseComponent } from '../../utils/base-component.js';
 
+const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
+const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
+
 /**
  * SurveyHelperToolbar Component
  * 
@@ -30,11 +33,35 @@ export class SurveyHelperToolbar extends BaseComponent {
     // Load current status from localStorage
     this.currentStatus = this.getAttr('survey-status', 'draft');
     this.loadStatusFromStorage();
+    this.loadIconsOnlyFromStorage();
     
     // Listen for status changes
     window.addEventListener('survey-status-changed', (e) => {
       this.handleStatusChange(e.detail.status);
     });
+  }
+
+  loadIconsOnlyFromStorage() {
+    try {
+      this.menuState.iconsOnly = localStorage.getItem(ICONS_ONLY_STORAGE_KEY) === 'true';
+    } catch (e) {
+      this.menuState.iconsOnly = false;
+      console.warn('Could not load icons-only preference from storage:', e);
+    }
+  }
+
+  persistIconsOnlyPreference(enabled) {
+    this.menuState.iconsOnly = enabled;
+
+    try {
+      localStorage.setItem(ICONS_ONLY_STORAGE_KEY, String(enabled));
+    } catch (e) {
+      console.warn('Could not save icons-only preference to storage:', e);
+    }
+
+    window.dispatchEvent(new CustomEvent(ICONS_ONLY_EVENT, {
+      detail: { enabled }
+    }));
   }
 
   loadStatusFromStorage() {
@@ -227,7 +254,7 @@ export class SurveyHelperToolbar extends BaseComponent {
             <span class="text-webropol-gray-700">Display Icons Only</span>
           </div>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer icons-only-toggle">
+            <input type="checkbox" class="sr-only peer icons-only-toggle" ${this.menuState.iconsOnly ? 'checked' : ''}>
             <div class="w-9 h-5 bg-webropol-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
           </label>
         </div>
@@ -490,6 +517,7 @@ export class SurveyHelperToolbar extends BaseComponent {
     const overlay = this.querySelector('.helper-menu-overlay');
     const closeButtons = this.querySelectorAll('.menu-close-trigger');
     const statusBadge = this.querySelector('.status-badge');
+    const iconsOnlyToggle = this.querySelector('.icons-only-toggle');
 
     const openMenu = () => {
       menu.classList.add('active');
@@ -517,6 +545,10 @@ export class SurveyHelperToolbar extends BaseComponent {
     });
 
     overlay.addEventListener('click', closeMenu);
+
+    iconsOnlyToggle?.addEventListener('change', (event) => {
+      this.persistIconsOnlyPreference(Boolean(event.target.checked));
+    });
 
     closeButtons.forEach(btn => {
       btn.addEventListener('click', closeMenu);

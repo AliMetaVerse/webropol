@@ -45,8 +45,13 @@
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
+import '../buttons/Button.js';
+import '../feedback/Tooltip.js';
 import './SurveyPageItem.js';
 import './SurveyQuestionItem.js';
+
+const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
+const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
 
 export class SurveyStructurePanel extends BaseComponent {
   static get observedAttributes() {
@@ -61,7 +66,23 @@ export class SurveyStructurePanel extends BaseComponent {
     this.activeTab   = this.getAttr('active-tab', 'pages');
     this.storageKey  = this.getAttr('storage-key', '');
     this.selectedCount = 0;
+    this.iconsOnly = false;
     this._rendered   = false;
+
+    this.handleIconsOnlyChange = (event) => {
+      this.iconsOnly = Boolean(event.detail?.enabled);
+      if (this._rendered) {
+        this._updateActionBar();
+      }
+    };
+
+    try {
+      this.iconsOnly = localStorage.getItem(ICONS_ONLY_STORAGE_KEY) === 'true';
+    } catch (e) {
+      this.iconsOnly = false;
+    }
+
+    window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
 
     // Restore persisted tab
     if (this.storageKey) {
@@ -125,9 +146,7 @@ export class SurveyStructurePanel extends BaseComponent {
 
         <!-- Action Buttons (visible only on the Pages tab) -->
         <div class="_action-bar flex flex-wrap gap-2 mb-4${!isPages ? ' hidden' : ''}">
-          <webropol-button variant="secondary" size="sm" icon="arrows-alt" type="button" class="_move-btn"${delDisabled}>Move</webropol-button>
-          <webropol-button variant="secondary" size="sm" icon="copy"       type="button" class="_copy-btn"${delDisabled}>Copy</webropol-button>
-          <webropol-button variant="danger"    size="sm" icon="trash-can"  type="button" class="_delete-btn"${delDisabled}>Delete</webropol-button>
+          ${this._getActionButtonsMarkup()}
         </div>
 
         <!-- Scrollable Content Area -->
@@ -211,7 +230,7 @@ export class SurveyStructurePanel extends BaseComponent {
     const titleEl = this.querySelector('._panel-title');
     if (titleEl) titleEl.textContent = this.panelTitle;
     this._syncTabs();
-    this._syncActionBtns();
+    this._updateActionBar();
   }
 
   _syncTabs() {
@@ -236,6 +255,40 @@ export class SurveyStructurePanel extends BaseComponent {
       if (disabled) btn.setAttribute('disabled', '');
       else          btn.removeAttribute('disabled');
     });
+  }
+
+  _updateActionBar() {
+    const actionBar = this.querySelector('._action-bar');
+    if (!actionBar) return;
+
+    actionBar.innerHTML = this._getActionButtonsMarkup();
+    this._syncActionBtns();
+  }
+
+  _getActionButtonsMarkup() {
+    const disabled = this.selectedCount === 0 ? ' disabled' : '';
+    const actions = [
+      { selector: '_move-btn', label: 'Move', icon: 'arrows-alt', variant: 'secondary' },
+      { selector: '_copy-btn', label: 'Copy', icon: 'copy', variant: 'secondary' },
+      { selector: '_delete-btn', label: 'Delete', icon: 'trash-can', variant: 'danger' }
+    ];
+
+    return actions.map((action) => {
+      const buttonMarkup = this.iconsOnly
+        ? `<webropol-button variant="${action.variant}" size="sm" icon="${action.icon}" icon-only type="button" class="${action.selector}" aria-label="${action.label}" title="${action.label}"${disabled}></webropol-button>`
+        : `<webropol-button variant="${action.variant}" size="sm" icon="${action.icon}" type="button" class="${action.selector}" aria-label="${action.label}" title="${action.label}"${disabled}>${action.label}</webropol-button>`;
+
+      return `
+        <webropol-tooltip text="${action.label}" position="top">
+          ${buttonMarkup}
+        </webropol-tooltip>
+      `;
+    }).join('');
+  }
+
+  cleanup() {
+    window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    super.cleanup();
   }
 
   _esc(str) {
