@@ -125,7 +125,7 @@ export class SurveyActionTabs extends BaseComponent {
         `;
 
         return this.iconsOnly
-          ? `<webropol-tooltip text="${tab.label}" position="top">${disabledMarkup}</webropol-tooltip>`
+          ? `<webropol-tooltip text="${tab.label}" position="right">${disabledMarkup}</webropol-tooltip>`
           : disabledMarkup;
       }
 
@@ -149,7 +149,7 @@ export class SurveyActionTabs extends BaseComponent {
       `;
 
       return this.iconsOnly
-        ? `<webropol-tooltip text="${tab.label}" position="top">${tabMarkup}</webropol-tooltip>`
+        ? `<webropol-tooltip text="${tab.label}" position="right">${tabMarkup}</webropol-tooltip>`
         : tabMarkup;
     }).join('');
 
