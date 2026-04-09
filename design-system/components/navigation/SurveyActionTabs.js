@@ -1,4 +1,8 @@
 import { BaseComponent } from '../../utils/base-component.js';
+import '../feedback/Tooltip.js';
+
+const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
+const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
 
 /**
  * SurveyActionTabs Component
@@ -66,7 +70,21 @@ export class SurveyActionTabs extends BaseComponent {
   }
 
   init() {
-    // Tabs are resolved dynamically per context in render()
+    this.iconsOnly = false;
+
+    try {
+      this.iconsOnly = localStorage.getItem(ICONS_ONLY_STORAGE_KEY) === 'true';
+    } catch (e) {
+      this.iconsOnly = false;
+    }
+
+    this.handleIconsOnlyChange = (event) => {
+      this.iconsOnly = Boolean(event.detail?.enabled);
+      this.render();
+      this.bindEvents();
+    };
+
+    window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
   }
 
   render() {
@@ -79,45 +97,60 @@ export class SurveyActionTabs extends BaseComponent {
     const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
       const isDisabled = disabledSet.has(tab.id);
+      const tabLabelMarkup = this.iconsOnly ? '' : `<span class="main-primary-label">${tab.label}</span>`;
+      const tabIconClass = `${tab.icon} ${tab.iconColor}`;
+      const tabIconWrapperClass = this.iconsOnly
+        ? `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`
+        : `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`;
 
       if (isDisabled) {
-        return `
+        const disabledMarkup = `
           <span
-            class="webropol-tab-main-primary disabled no-underline"
+            class="webropol-tab-main-primary disabled no-underline${this.iconsOnly ? ' !px-3' : ''}"
             role="tab"
             aria-label="${tab.label}"
             aria-disabled="true"
             tabindex="-1"
             style="cursor: not-allowed; pointer-events: none;"
+            title="${tab.label}"
           >
-            <div class="main-primary-row">
-              <span class="main-primary-avatar">
-                <i class="${tab.icon}"></i>
+            <div class="main-primary-row${this.iconsOnly ? ' justify-center' : ''}">
+              <span class="${this.iconsOnly ? tabIconWrapperClass : 'main-primary-avatar'}">
+                <i class="${tabIconClass}"></i>
               </span>
-              <span class="main-primary-label">${tab.label}</span>
+              ${tabLabelMarkup}
             </div>
             <div class="main-primary-indicator"></div>
           </span>
         `;
+
+        return this.iconsOnly
+          ? `<webropol-tooltip text="${tab.label}" position="top">${disabledMarkup}</webropol-tooltip>`
+          : disabledMarkup;
       }
 
-      return `
+      const tabMarkup = `
         <a
           href="${tab.url}"
-          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}"
+          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}${this.iconsOnly ? ' !px-3' : ''}"
           role="tab"
           aria-label="${tab.label}"
+          title="${tab.label}"
           ${isActive ? 'aria-current="page" aria-selected="true"' : ''}
         >
-          <div class="main-primary-row">
-            <span class="inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0">
-              <i class="${tab.icon} ${tab.iconColor}"></i>
+          <div class="main-primary-row${this.iconsOnly ? ' justify-center' : ''}">
+            <span class="${tabIconWrapperClass}">
+              <i class="${tabIconClass}"></i>
             </span>
-            <span class="main-primary-label">${tab.label}</span>
+            ${tabLabelMarkup}
           </div>
           <div class="main-primary-indicator"></div>
         </a>
       `;
+
+      return this.iconsOnly
+        ? `<webropol-tooltip text="${tab.label}" position="top">${tabMarkup}</webropol-tooltip>`
+        : tabMarkup;
     }).join('');
 
     this.innerHTML = `
@@ -129,6 +162,11 @@ export class SurveyActionTabs extends BaseComponent {
 
   bindEvents() {
     // Navigation handled natively by <a href> elements
+  }
+
+  cleanup() {
+    window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    super.cleanup();
   }
 }
 
