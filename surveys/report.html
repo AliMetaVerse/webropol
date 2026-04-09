@@ -14,6 +14,7 @@
   <script src="../design-system/components/interactive/DashboardConfig.js" type="module"></script>
   <script src="../design-system/components/report/ChartColoursModal.js" type="module"></script>
   <script src="../design-system/components/report/ReportIntroModal.js" type="module"></script>
+  <script src="../design-system/components/buttons/Button.js" type="module"></script>
   <script src="../design-system/components/buttons/ButtonHue.js" type="module"></script>
   <script src="../design-system/components/feedback/RoyalLoader.js" type="module"></script>
   <script src="../design-system/components/feedback/CatInCup.js" type="module"></script>
@@ -308,13 +309,8 @@
 </head>
 <body x-data="surveyEditApp()" 
   @click="handlePageClick($event)"
-      @action-click.window="if ($event.detail.action === 'group') { compareGroupsOpen = true; console.log('Compare groups modal opened'); }">
-
-  <!-- ── Accessible chart patterns (always in DOM for url(#id) references) ── -->
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden;pointer-events:none">
-    <defs>
-      <pattern id="hc-pat-0" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11" stroke="white" stroke-width="2.5" fill="none"/></pattern>
-      <pattern id="hc-pat-1" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9" stroke="white" stroke-width="2.5" fill="none"/></pattern>
+                        <webropol-button @click="toggleSummaryVisibility()" variant="royalLight" size="md" roundness="full" :icon="collapsed ? 'eye' : 'eye-slash'" icon-only aria-label="Hide the widget"></webropol-button>
+                        <div class="tooltip-panel tooltip-panel-edge-right" data-placement="bottom" role="tooltip">
       <pattern id="hc-pat-2" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 2.5 L 10 2.5 M 0 7.5 L 10 7.5" stroke="white" stroke-width="2" fill="none"/></pattern>
       <pattern id="hc-pat-3" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 0 L 5 10 L 10 0" stroke="white" stroke-width="1.5" fill="none"/></pattern>
       <pattern id="hc-pat-4" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 2.5 0 L 2.5 10 M 7.5 0 L 7.5 10" stroke="white" stroke-width="2" fill="none"/></pattern>
@@ -740,7 +736,7 @@
           </div>
 
           <!-- Survey Editor Layout (scrollable content area) -->
-          <div class="flex-1 overflow-y-auto min-h-0 pb-2">
+          <div class="flex-1 overflow-y-auto min-h-0 pb-2 pe-6">
           <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
             <!-- Left: Questions Panel -->
             <aside class="lg:col-span-1 lg:sticky lg:top-0">
@@ -869,65 +865,152 @@
               </div>
 
               <!-- AI Summary -->
-              <div id="ai-summary" class="question-section rounded-2xl shadow-card border border-purple-100 transition-all duration-300 mb-4" style="background: linear-gradient(135deg, #f1e9fb 0%, #eef2ff 50%, #ecfeff 100%);"
-                x-data="{ loading: true, stage: 0, collapsed: false, aiContextOpen: false, aiContext: '', aiContextSaved: '', startLoader() { this.stage = 0; this.loading = true; setTimeout(() => this.stage = 1, 1600); setTimeout(() => this.stage = 2, 3100); setTimeout(() => this.stage = 3, 4200); setTimeout(() => { this.loading = false; }, 4600); } }"
+              <div id="ai-summary" class="question-section rounded-2xl shadow-card border border-webropol-gray-200 bg-white transition-all duration-300 mb-4"
+                x-data="{
+                  summaryState: 'loading',
+                  stage: 0,
+                  collapsed: false,
+                  aiContextOpen: false,
+                  aiContext: '',
+                  aiContextSaved: '',
+                  loaderTimers: [],
+                  clearLoaderTimers() {
+                    this.loaderTimers.forEach(timer => clearTimeout(timer));
+                    this.loaderTimers = [];
+                  },
+                  startLoader(targetState = 'ready') {
+                    this.clearLoaderTimers();
+                    this.summaryState = 'loading';
+                    this.stage = 0;
+                    this.loaderTimers.push(setTimeout(() => this.stage = 1, 1600));
+                    this.loaderTimers.push(setTimeout(() => this.stage = 2, 3100));
+                    this.loaderTimers.push(setTimeout(() => this.stage = 3, 4200));
+                    this.loaderTimers.push(setTimeout(() => { this.summaryState = targetState; }, 4600));
+                  },
+                  regenerateSummary() {
+                    this.startLoader('ready');
+                  },
+                  retrySummary() {
+                    this.startLoader('ready');
+                  },
+                  showErrorState() {
+                    this.clearLoaderTimers();
+                    this.summaryState = 'error';
+                  },
+                  toggleSummaryVisibility() {
+                    this.collapsed = !this.collapsed;
+                  }
+                }"
                 x-init="
                   startLoader();
                   $watch('aiContextOpen', v => v ? document.body.classList.add('modal-open') : document.body.classList.remove('modal-open'));
                 ">
-                <div class="p-5" :class="!collapsed ? 'border-b border-purple-100' : ''">
-                  <div class="flex items-center justify-between">
+                <div class="p-5" :class="!collapsed ? 'border-b border-webropol-gray-100' : ''">
+                  <div class="flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #d5bef4, #c7d2fe);">
-                        <i class="fal fa-sparkles" style="color: #6922c4;"></i>
+                      <div class="relative w-10 h-10 rounded-full flex items-center justify-center border border-white/20 shadow-soft" style="background: linear-gradient(135deg, #f1e9fb 0%, #eef2ff 100%);">
+                        <span class="absolute inset-0 rounded-full opacity-60" style="background: radial-gradient(circle at top right, rgba(255,255,255,0.9), rgba(255,255,255,0));"></span>
+                        <i class="fal fa-wand-magic-sparkles relative z-10" style="color: #6922c4;"></i>
                       </div>
                       <div>
-                        <h2 class="text-xl font-semibold text-gray-900">AI Summary</h2>
-                        <p class="text-sm text-gray-500" x-show="!collapsed">Auto-generated based on current report data</p>
+                        <h2 class="text-xl leading-none font-semibold tracking-tight text-webropol-gray-950">AI Summary</h2>
+                        <div class="flex items-center gap-2 mt-1" x-show="!collapsed">
+                          <p class="text-sm text-webropol-gray-600">AI-Generated Quantitative Summary</p>
+                          <div class="tooltip-container">
+                            <button class="tooltip-trigger tooltip-help w-5 h-5" type="button" aria-label="Exclude Questions info">
+                              <i class="fal fa-circle-info text-sm text-webropol-primary-500"></i>
+                            </button>
+                            <div class="tooltip-panel" data-placement="bottom" role="tooltip">
+                              <div class="font-semibold text-white mb-1">Exclude Questions</div>
+                              <div class="text-gray-200">AI Summary excludes Contact Form, Open-ended, and Text Field questions. These are available through the advanced AI Text Analytics feature.</div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="flex items-center gap-1.5">
-                      <!-- Add Context button -->
-                      <button @click="aiContextOpen = true"
-                        class="flex items-center gap-1.5 px-3 h-8 rounded-full text-xs font-medium border transition-all duration-200 hover:bg-purple-100/60"
-                        :class="aiContextSaved ? 'border-purple-300 bg-purple-50/70' : 'border-transparent'"
-                        style="color:#8c50e0;"
-                        title="Add context to improve AI Summary">
-                        <i class="fal fa-sliders text-sm"></i>
-                        <span x-text="aiContextSaved ? 'Context set' : 'Add context'"></span>
-                        <span x-show="aiContextSaved" class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:#8c50e0;"></span>
-                      </button>
-                      <!-- Collapse toggle -->
-                      <button @click="collapsed = !collapsed"
-                        class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-purple-100/60"
-                        style="color:#8c50e0;">
-                        <i class="fal fa-chevron-up transition-transform duration-300" :style="collapsed ? 'transform:rotate(180deg)' : 'transform:rotate(0deg)'"></i>
-                      </button>
+                    <div class="flex items-center gap-2">
+                      <div class="tooltip-container">
+                        <webropol-button @click="toggleSummaryVisibility()" variant="royal" size="md" roundness="full" :icon="collapsed ? 'eye' : 'eye-slash'" icon-only aria-label="Hide the widget"></webropol-button>
+                        <div class="tooltip-panel tooltip-panel-left" data-placement="left" role="tooltip">
+                          <div class="font-semibold text-white mb-1">Hide the widget</div>
+                          <div class="text-gray-200">This widget will be hidden from the dashboard. You can show it again anytime from the Layout / Question order and visibility</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="overflow-hidden transition-all duration-500 ease-in-out" :style="collapsed ? 'max-height:0' : 'max-height:1000px'">
-                <div class="p-5">
-                  <div x-show="loading" class="py-10 flex items-center justify-center">
-                    <div class="flex flex-col items-center gap-5 text-center">
-                      <webropol-cat-in-cup size="md" decorative></webropol-cat-in-cup>
-                      <div class="space-y-1">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.18em]" style="color:#8c50e0;">AI Summary</p>
-                        <p class="text-sm font-medium transition-colors duration-300"
-                          :style="stage === 0 ? 'color:#0891b2;' : stage === 1 ? 'color:#6366f1;' : stage === 2 ? 'color:#0891b2;' : 'color:#8c50e0;'"
-                          x-text="stage === 0 ? 'Reading responses…' : stage === 1 ? 'Finding patterns…' : stage === 2 ? 'Generating insights…' : 'Composing summary…'"></p>
+                <div class="overflow-hidden transition-all duration-500 ease-in-out" :style="collapsed ? 'max-height:0' : 'max-height:1400px'">
+                <div class="p-5 space-y-5">
+                  <template x-if="summaryState === 'loading'">
+                    <div class="space-y-6">
+                      <div class="relative min-h-[196px] px-1 pt-2 pb-1">
+                        <div class="space-y-4">
+                          <div class="h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          <div class="h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          <div class="h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-webropol-gray-200/90"></div>
+                            <div class="flex-1 h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          </div>
+                          <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-webropol-gray-200/90"></div>
+                            <div class="flex-1 h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          </div>
+                          <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-webropol-gray-200/90"></div>
+                            <div class="flex-1 h-5 rounded-lg bg-webropol-gray-200/90"></div>
+                          </div>
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <webropol-royal-loader type="shape-follow" size="md"></webropol-royal-loader>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                        <webropol-button @click="aiContextOpen = true" class="block w-full sm:w-[188px]" variant="royalSecondary" size="md" icon="sliders" full-width>Add context</webropol-button>
+                        <webropol-button class="block w-full sm:w-[188px]" variant="secondary" size="md" icon="rotate-right" full-width disabled>Regenerate</webropol-button>
                       </div>
                     </div>
-                  </div>
-                  <div x-show="!loading" style="display: none;" class="text-gray-800 leading-relaxed" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                    <p class="mb-2"><strong>Overall Sentiment:</strong> Positive with notable improvements in product satisfaction compared to the last quarter.</p>
-                    <p class="mb-2"><strong>Key Highlights:</strong></p>
-                    <ul class="list-disc pl-5 space-y-1 mb-2">
-                      <li>75% of respondents rated the new features as highly valuable.</li>
-                      <li>Customer support feedback shows a 20% increase in resolution speed satisfaction.</li>
-                    </ul>
-                    <p><strong>Areas for Improvement:</strong> A small group of users noted that the onboarding process could be simplified for first-time users.</p>
-                  </div>
+                  </template>
+                  <template x-if="summaryState === 'ready'">
+                    <div class="space-y-6 text-webropol-gray-950 leading-7" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                      <div class="text-base text-webropol-gray-950 space-y-4">
+                        <p>Analysis of 1,847 survey responses collected between January and March 2026 reveals a strong upward trend in overall customer satisfaction, with an NPS score of +62. Respondents highlight product reliability and support responsiveness as primary drivers of loyalty, while onboarding friction remains the most cited area for improvement.</p>
+                        <p>Analysis of 1,847 survey responses collected between January and March 2026 reveals a strong upward trend in overall customer satisfaction, with an NPS score of +62. Respondents highlight product reliability and support responsiveness as primary drivers of loyalty, while onboarding friction remains the most cited area for improvement.</p>
+                      </div>
+                      <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <webropol-button @click="aiContextOpen = true" class="block w-full sm:w-[188px]" variant="royalSecondary" size="md" icon="sliders" full-width>Add context</webropol-button>
+                        <webropol-button @click="regenerateSummary()" class="block w-full sm:w-[188px]" variant="royalLight" size="md" icon="rotate-right" full-width>Regenerate</webropol-button>
+                      </div>
+                    </div>
+                  </template>
+                  <template x-if="summaryState === 'error'">
+                    <div class="space-y-6" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                      <div class="rounded-xl border p-5 flex flex-col lg:flex-row lg:items-center gap-5" style="border-color:#fb7189; background:#ffebed;">
+                        <div class="flex justify-center lg:justify-start lg:w-[190px] flex-shrink-0">
+                          <webropol-cat-in-cup size="md" decorative></webropol-cat-in-cup>
+                        </div>
+                        <div class="flex-1 min-w-0 space-y-3">
+                          <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-2">
+                              <h3 class="text-2xl font-semibold leading-tight" style="color:#88133A;">AI summary could not be generated</h3>
+                              <p class="text-base leading-7" style="color:#b42354;">The AI service returned an incomplete payload before any summary content could be streamed. No summary text was saved, so the report is waiting with the cat in the cup until you retry.</p>
+                            </div>
+                            <button class="text-[#b42354] hover:text-[#88133A] transition-colors" @click="collapsed = true" aria-label="Dismiss AI summary error">
+                              <i class="fal fa-times"></i>
+                            </button>
+                          </div>
+                          <button @click="retrySummary()" class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-white text-base font-medium shadow-soft" style="background: linear-gradient(90deg, #823bdd 0%, #209FBA 100%);">
+                            <i class="fal fa-rotate-right"></i>
+                            <span>Retry AI summary</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                        <webropol-button @click="aiContextOpen = true" class="block w-full sm:w-[188px]" variant="royalSecondary" size="md" icon="sliders" full-width>Add context</webropol-button>
+                        <webropol-button class="block w-full sm:w-[188px]" variant="secondary" size="md" icon="rotate-right" full-width disabled>Regenerate</webropol-button>
+                      </div>
+                    </div>
+                  </template>
                 </div>
                 </div>
 
@@ -977,7 +1060,7 @@
                       <div class="flex gap-2 ml-auto">
                         <button @click="aiContextOpen = false" class="px-4 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-100 transition-all duration-150 border border-gray-200">Cancel</button>
                         <button
-                          @click="aiContextSaved = aiContext; aiContextOpen = false; if(aiContext.trim()){ startLoader(); }"
+                          @click="aiContextSaved = aiContext; aiContextOpen = false; if(aiContext.trim()){ regenerateSummary(); }"
                           :disabled="!aiContext.trim()"
                           class="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
                           style="background:linear-gradient(135deg,#8c50e0,#6366F1);">
@@ -3788,14 +3871,15 @@
     .tooltip-panel {
       position: absolute;
       z-index: 1100;
-      max-width: 320px;
-      width: max-content;
+      width: min(320px, calc(100vw - 32px));
+      max-width: calc(100vw - 32px);
       background: #111827;
       color: #f9fafb;
       border-radius: 0.5rem;
       padding: 0.5rem 0.75rem;
       font-size: 0.8125rem;
       line-height: 1.25rem;
+      white-space: normal;
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2), 0 4px 6px -4px rgba(0,0,0,0.2);
       opacity: 0;
       visibility: hidden;
@@ -3849,6 +3933,46 @@
       border-color: transparent transparent #111827 transparent;
     }
 
+    .tooltip-panel.tooltip-panel-edge-right[data-placement="bottom"] {
+      left: auto;
+      right: 0;
+      transform: translateX(0) translateY(-4px);
+    }
+
+    .tooltip-container:hover .tooltip-panel.tooltip-panel-edge-right[data-placement="bottom"],
+    .tooltip-container:focus-within .tooltip-panel.tooltip-panel-edge-right[data-placement="bottom"] {
+      transform: translateX(0) translateY(0);
+    }
+
+    .tooltip-panel.tooltip-panel-edge-right[data-placement="bottom"]::after {
+      left: auto;
+      right: 12px;
+      transform: none;
+    }
+
+    .tooltip-panel.tooltip-panel-left[data-placement="left"] {
+      top: 50%;
+      right: calc(100% + 8px);
+      left: auto;
+      transform: translateY(-50%) translateX(4px);
+    }
+
+    .tooltip-container:hover .tooltip-panel.tooltip-panel-left[data-placement="left"],
+    .tooltip-container:focus-within .tooltip-panel.tooltip-panel-left[data-placement="left"] {
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .tooltip-panel.tooltip-panel-left[data-placement="left"]::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -6px;
+      transform: translateY(-50%);
+      border-width: 6px 0 6px 6px;
+      border-style: solid;
+      border-color: transparent transparent transparent #111827;
+    }
+
     @media (max-width: 640px) {
       .tooltip-panel[data-placement="top"] {
         top: calc(100% + 8px);
@@ -3862,6 +3986,25 @@
       .tooltip-panel[data-placement="top"]::after {
         top: -6px;
         bottom: auto;
+        border-width: 0 6px 6px 6px;
+        border-color: transparent transparent #111827 transparent;
+      }
+
+      .tooltip-panel.tooltip-panel-left[data-placement="left"] {
+        top: calc(100% + 8px);
+        right: 0;
+        transform: translateY(-4px);
+      }
+
+      .tooltip-container:hover .tooltip-panel.tooltip-panel-left[data-placement="left"],
+      .tooltip-container:focus-within .tooltip-panel.tooltip-panel-left[data-placement="left"] {
+        transform: translateY(0);
+      }
+
+      .tooltip-panel.tooltip-panel-left[data-placement="left"]::after {
+        top: -6px;
+        right: 12px;
+        transform: none;
         border-width: 0 6px 6px 6px;
         border-color: transparent transparent #111827 transparent;
       }

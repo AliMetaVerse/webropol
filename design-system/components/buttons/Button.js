@@ -162,6 +162,8 @@ export class WebropolButton extends BaseComponent {
   }
 }
 
-// Register the component
-customElements.define('webropol-button', WebropolButton);
+// Register the component once even if the module is imported through multiple paths.
+if (!customElements.get('webropol-button')) {
+  customElements.define('webropol-button', WebropolButton);
+}
 
