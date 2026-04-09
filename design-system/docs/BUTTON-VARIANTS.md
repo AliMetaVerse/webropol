@@ -111,10 +111,10 @@ All variants support 4 standard sizes and 4 icon-only sizes:
 ```
 
 ### Icon-Only Sizes (square buttons) ⭐
-- **`icon-sm`**: Small icon (padding: 8px, text: sm)
-- **`icon-md`**: Medium icon (padding: 12px, text: base)
-- **`icon-lg`**: Large icon (padding: 16px, text: lg)
-- **`icon-xl`**: Extra Large icon (padding: 20px, text: xl)
+- **`icon-sm`**: Small icon (`32px × 32px`, text: sm)
+- **`icon-md`**: Medium icon (`40px × 40px`, text: base)
+- **`icon-lg`**: Large icon (`48px × 48px`, text: lg)
+- **`icon-xl`**: Extra Large icon (`56px × 56px`, text: xl)
 
 ```html
 <webropol-button variant="danger" icon="trash" icon-only size="sm"></webropol-button>

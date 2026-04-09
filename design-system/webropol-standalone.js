@@ -133,11 +133,11 @@ class BaseComponent extends HTMLElement {
         sm: 'px-4 py-2 text-sm',
         md: 'px-6 py-3 text-base',
         lg: 'px-8 py-4 text-lg',
-        // Icon-only button sizes (square)
-        'icon-sm': 'p-2 text-sm',
-        'icon-md': 'p-3 text-base',
-        'icon-lg': 'p-4 text-lg',
-        'icon-xl': 'p-5 text-xl'
+        // Icon-only button sizes (fixed square dimensions)
+        'icon-sm': 'w-8 h-8 p-0 text-sm leading-none shrink-0',
+        'icon-md': 'w-10 h-10 p-0 text-base leading-none shrink-0',
+        'icon-lg': 'w-12 h-12 p-0 text-lg leading-none shrink-0',
+        'icon-xl': 'w-14 h-14 p-0 text-xl leading-none shrink-0'
       },
       badge: {
         sm: 'px-2 py-1 text-xs',
