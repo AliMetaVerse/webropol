@@ -60,7 +60,7 @@ export class SurveyEditToolbar extends BaseComponent {
 
       return `
         <div class="toolbar-item-wrap" data-action="${action}" aria-label="${label}" title="${label}" role="button" tabindex="0">
-          <webropol-tooltip text="${label}" position="top">
+          <webropol-tooltip text="${label}" position="bottom">
             ${buttonMarkup}
           </webropol-tooltip>
         </div>

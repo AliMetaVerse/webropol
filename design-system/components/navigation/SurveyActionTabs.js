@@ -99,6 +99,8 @@ export class SurveyActionTabs extends BaseComponent {
       const isDisabled = disabledSet.has(tab.id);
       const tabLabelMarkup = this.iconsOnly ? '' : `<span class="main-primary-label">${tab.label}</span>`;
       const tabIconClass = `${tab.icon} ${tab.iconColor}`;
+      const tabRowClass = this.iconsOnly ? 'main-primary-row justify-center' : 'main-primary-row';
+      const tabRowStyle = this.iconsOnly ? 'style="gap:0;padding:6px 6px 4px;"' : '';
       const tabIconWrapperClass = this.iconsOnly
         ? `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`
         : `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`;
@@ -106,15 +108,14 @@ export class SurveyActionTabs extends BaseComponent {
       if (isDisabled) {
         const disabledMarkup = `
           <span
-            class="webropol-tab-main-primary disabled no-underline${this.iconsOnly ? ' !px-3' : ''}"
+            class="webropol-tab-main-primary disabled no-underline"
             role="tab"
             aria-label="${tab.label}"
             aria-disabled="true"
             tabindex="-1"
             style="cursor: not-allowed; pointer-events: none;"
-            title="${tab.label}"
           >
-            <div class="main-primary-row${this.iconsOnly ? ' justify-center' : ''}">
+            <div class="${tabRowClass}" ${tabRowStyle}>
               <span class="${this.iconsOnly ? tabIconWrapperClass : 'main-primary-avatar'}">
                 <i class="${tabIconClass}"></i>
               </span>
@@ -125,20 +126,19 @@ export class SurveyActionTabs extends BaseComponent {
         `;
 
         return this.iconsOnly
-          ? `<webropol-tooltip text="${tab.label}" position="right">${disabledMarkup}</webropol-tooltip>`
+          ? `<webropol-tooltip text="${tab.label}" position="bottom">${disabledMarkup}</webropol-tooltip>`
           : disabledMarkup;
       }
 
       const tabMarkup = `
         <a
           href="${tab.url}"
-          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}${this.iconsOnly ? ' !px-3' : ''}"
+          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}"
           role="tab"
           aria-label="${tab.label}"
-          title="${tab.label}"
           ${isActive ? 'aria-current="page" aria-selected="true"' : ''}
         >
-          <div class="main-primary-row${this.iconsOnly ? ' justify-center' : ''}">
+          <div class="${tabRowClass}" ${tabRowStyle}>
             <span class="${tabIconWrapperClass}">
               <i class="${tabIconClass}"></i>
             </span>
@@ -149,7 +149,7 @@ export class SurveyActionTabs extends BaseComponent {
       `;
 
       return this.iconsOnly
-        ? `<webropol-tooltip text="${tab.label}" position="right">${tabMarkup}</webropol-tooltip>`
+        ? `<webropol-tooltip text="${tab.label}" position="bottom">${tabMarkup}</webropol-tooltip>`
         : tabMarkup;
     }).join('');
 
