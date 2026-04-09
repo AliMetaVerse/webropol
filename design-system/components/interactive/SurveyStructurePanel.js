@@ -72,6 +72,7 @@ export class SurveyStructurePanel extends BaseComponent {
     this.handleIconsOnlyChange = (event) => {
       this.iconsOnly = Boolean(event.detail?.enabled);
       if (this._rendered) {
+        this._updateTabSwitcher();
         this._updateActionBar();
       }
     };
@@ -127,22 +128,7 @@ export class SurveyStructurePanel extends BaseComponent {
           </button>
         </div>
 
-        ${hasTabs ? `
-        <!-- Pages / Styles Tab Switcher -->
-        <div class="webropol-tabs-unified webropol-tabs-rounded-container mb-4 self-start"
-             role="tablist" aria-label="Structure tabs">
-          <button type="button"
-                  class="webropol-unified-tab webropol-tab-rounded size-md${isPages ? ' active' : ''} _tab-btn"
-                  data-tab="pages" role="tab" aria-selected="${isPages}">
-            <i class="fal fa-file-alt mr-2"></i><span>Pages</span>
-          </button>
-          <button type="button"
-                  class="webropol-unified-tab webropol-tab-rounded size-md${!isPages ? ' active' : ''} _tab-btn"
-                  data-tab="styles" role="tab" aria-selected="${!isPages}">
-            <i class="fal fa-paint-brush mr-2"></i><span>Styles</span>
-          </button>
-        </div>
-        ` : ''}
+        ${hasTabs ? this._getTabSwitcherMarkup() : ''}
 
         <!-- Action Buttons (visible only on the Pages tab) -->
         <div class="_action-bar flex flex-wrap gap-2 mb-4${!isPages ? ' hidden' : ''}">
@@ -170,35 +156,14 @@ export class SurveyStructurePanel extends BaseComponent {
   bindEvents() {
     if (!this._rendered) return;
 
-    // Tab switching
-    this.querySelectorAll('._tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.activeTab = btn.dataset.tab;
-        if (this.storageKey) {
-          try { localStorage.setItem(this.storageKey, this.activeTab); } catch(e) {}
-        }
-        this._syncTabs();
-        this.emit('tab-change', { tab: this.activeTab });
-      });
-    });
+    this._bindTabEvents();
 
     // Dots menu
     this.querySelector('._menu-btn')?.addEventListener('click', () => {
       this.emit('structure-menu', {});
     });
 
-    // Move / Copy / Delete
-    this.querySelector('._move-btn')?.addEventListener('click', () => {
-      if (this.selectedCount > 0) this.emit('structure-move', { selectedCount: this.selectedCount });
-    });
-    this.querySelector('._copy-btn')?.addEventListener('click', () => {
-      if (this.selectedCount > 0) this.emit('structure-copy', { selectedCount: this.selectedCount });
-    });
-    this.querySelector('._delete-btn')?.addEventListener('click', () => {
-      if (this.selectedCount > 0) {
-        this.emit('structure-delete', { selectedCount: this.selectedCount });
-      }
-    });
+    this._bindActionBarEvents();
 
     // Auto-track selection from child webropol-survey-page / webropol-survey-question
     this.addEventListener('page-select', (e) => {
@@ -210,6 +175,35 @@ export class SurveyStructurePanel extends BaseComponent {
       this.selectedCount += e.detail.selected ? 1 : -1;
       if (this.selectedCount < 0) this.selectedCount = 0;
       this._syncActionBtns();
+    });
+  }
+
+  _bindTabEvents() {
+    // Tab switching
+    this.querySelectorAll('._tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.activeTab = btn.dataset.tab;
+        if (this.storageKey) {
+          try { localStorage.setItem(this.storageKey, this.activeTab); } catch(e) {}
+        }
+        this._syncTabs();
+        this.emit('tab-change', { tab: this.activeTab });
+      });
+    });
+  }
+
+  _bindActionBarEvents() {
+    // Move / Copy / Delete
+    this.querySelector('._move-btn')?.addEventListener('click', () => {
+      if (this.selectedCount > 0) this.emit('structure-move', { selectedCount: this.selectedCount });
+    });
+    this.querySelector('._copy-btn')?.addEventListener('click', () => {
+      if (this.selectedCount > 0) this.emit('structure-copy', { selectedCount: this.selectedCount });
+    });
+    this.querySelector('._delete-btn')?.addEventListener('click', () => {
+      if (this.selectedCount > 0) {
+        this.emit('structure-delete', { selectedCount: this.selectedCount });
+      }
     });
   }
 
@@ -229,8 +223,17 @@ export class SurveyStructurePanel extends BaseComponent {
   _updateDynamic() {
     const titleEl = this.querySelector('._panel-title');
     if (titleEl) titleEl.textContent = this.panelTitle;
+    this._updateTabSwitcher();
     this._syncTabs();
     this._updateActionBar();
+  }
+
+  _updateTabSwitcher() {
+    const tabSwitcher = this.querySelector('._tab-switcher');
+    if (!tabSwitcher) return;
+
+    tabSwitcher.outerHTML = this._getTabSwitcherMarkup();
+    this._bindTabEvents();
   }
 
   _syncTabs() {
@@ -262,7 +265,31 @@ export class SurveyStructurePanel extends BaseComponent {
     if (!actionBar) return;
 
     actionBar.innerHTML = this._getActionButtonsMarkup();
+    this._bindActionBarEvents();
     this._syncActionBtns();
+  }
+
+  _getTabSwitcherMarkup() {
+    const isPages = this.activeTab === 'pages';
+    const tabs = [
+      { id: 'pages', label: 'Pages', icon: 'fa-file-alt', active: isPages },
+      { id: 'styles', label: 'Styles', icon: 'fa-paint-brush', active: !isPages }
+    ];
+
+    return `
+      <div class="_tab-switcher webropol-tabs-unified webropol-tabs-rounded-container mb-4 self-start"
+           role="tablist" aria-label="Structure tabs">
+        ${tabs.map((tab) => `
+          <webropol-tooltip text="${tab.label}" position="top">
+            <button type="button"
+                    class="webropol-unified-tab webropol-tab-rounded size-md${tab.active ? ' active' : ''} _tab-btn"
+                    data-tab="${tab.id}" role="tab" aria-selected="${tab.active}" aria-label="${tab.label}" title="${tab.label}">
+              <i class="fal ${tab.icon}${this.iconsOnly ? '' : ' mr-2'}"></i>${this.iconsOnly ? '' : `<span>${tab.label}</span>`}
+            </button>
+          </webropol-tooltip>
+        `).join('')}
+      </div>
+    `;
   }
 
   _getActionButtonsMarkup() {
