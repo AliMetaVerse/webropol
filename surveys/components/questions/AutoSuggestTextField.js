@@ -62,20 +62,24 @@ export class AutoSuggestTextField extends BaseComponent {
 
                     getVisibilityButtonClass() {
                         const visibilityClassMap = {
-                            visible: 'bg-webropol-primary-200 text-webropol-gray-900 hover:bg-webropol-primary-200 hover:text-webropol-gray-900',
+                            visible: '',
                             hidden: 'bg-webropol-warning-200 text-webropol-gray-900 hover:bg-webropol-warning-200 hover:text-webropol-gray-900',
                             disabled: 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900'
                         };
 
-                        return visibilityClassMap[this.visibility] || visibilityClassMap.visible;
+                        return visibilityClassMap[this.visibility] ?? '';
                     },
 
                     getVisibilityMenuItems() {
                         return JSON.stringify([
-                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: this.visibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
-                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-eye-slash', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
+                    },
+
+                    getVisibilityIconClass() {
+                        return this.visibility === 'visible' ? 'fal fa-eye' : 'fal fa-eye-slash';
                     },
 
                     selectVisibility(value) {
@@ -93,7 +97,7 @@ export class AutoSuggestTextField extends BaseComponent {
     }
 
     render() {
-        const toolbarButtonClass = 'w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors';
+        const toolbarButtonClass = 'w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out';
         const dangerToolbarButtonClass = 'w-8 h-8 inline-flex items-center justify-center rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-100 transition-colors';
 
         this.innerHTML = `
@@ -140,7 +144,7 @@ export class AutoSuggestTextField extends BaseComponent {
                         </div>
                         <div class="relative" x-data="{ open: false }">
                             <button type="button" @click="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="${toolbarButtonClass}" title="Visibility">
-                                <i class="fal fa-eye"></i>
+                                <i :class="getVisibilityIconClass()"></i>
                             </button>
                             <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
                                 <webropol-context-menu

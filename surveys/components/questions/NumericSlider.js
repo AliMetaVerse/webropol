@@ -54,22 +54,26 @@ export class NumericSlider extends BaseComponent {
                     getVisibilityButtonClass() {
                         const currentVisibility = this.settings.visibility || 'visible';
                         const visibilityClassMap = {
-                            visible: 'bg-webropol-primary-200 text-webropol-gray-900 hover:bg-webropol-primary-200 hover:text-webropol-gray-900',
+                            visible: '',
                             hidden: 'bg-webropol-warning-200 text-webropol-gray-900 hover:bg-webropol-warning-200 hover:text-webropol-gray-900',
                             disabled: 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900'
                         };
 
-                        return visibilityClassMap[currentVisibility] || visibilityClassMap.visible;
+                        return visibilityClassMap[currentVisibility] ?? '';
                     },
 
                     getVisibilityMenuItems() {
                         const currentVisibility = this.settings.visibility || 'visible';
 
                         return JSON.stringify([
-                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: currentVisibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
-                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-eye-slash', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
+                    },
+
+                    getVisibilityIconClass() {
+                        return (this.settings.visibility || 'visible') === 'visible' ? 'fal fa-eye' : 'fal fa-eye-slash';
                     },
 
                     selectVisibility(value) {
@@ -439,15 +443,15 @@ export class NumericSlider extends BaseComponent {
 
                         <!-- Right: Actions -->
                         <div class="flex items-center gap-1 question-card-toolbar">
-                             <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Rules">
+                             <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Rules">
                                 <i class="fal fa-shuffle"></i>
                             </button>
-                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Mandatory">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Mandatory">
                                 <i class="fal fa-asterisk"></i>
                             </button>
                             <div class="relative" x-data="{ open: false }">
-                                <button type="button" @click.stop="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Visibility">
-                                    <i class="fal fa-eye"></i>
+                                <button type="button" @click.stop="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Visibility">
+                                    <i :class="getVisibilityIconClass()"></i>
                                 </button>
                                 <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
                                     <webropol-context-menu
@@ -457,16 +461,16 @@ export class NumericSlider extends BaseComponent {
                                     ></webropol-context-menu>
                                 </div>
                             </div>
-                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Add Image">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Add Image">
                                 <i class="fal fa-image-circle-plus"></i>
                             </button>
                             
                             <div class="w-px h-4 bg-gray-300 mx-1"></div>
                             
-                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Copy">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Copy">
                                 <i class="fal fa-copy"></i>
                             </button>
-                            <button type="button" @click.stop="showSettings = !showSettings" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors relative" title="Settings">
+                            <button type="button" @click.stop="showSettings = !showSettings" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out relative" title="Settings">
                                 <i class="fal fa-cog"></i>
                                 <span x-show="questionType === 'health-slider'" 
                                       x-transition:enter="transition ease-out duration-200"
