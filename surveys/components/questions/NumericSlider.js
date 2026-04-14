@@ -48,14 +48,17 @@ export class NumericSlider extends BaseComponent {
                         descPlacement: 'below', // 'below' | 'above'
                         
                         // Visibility
-                        visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
+                        visibility: 'visible', // 'visible' | 'hidden' | 'disabled'
+
+                        // Mandatory
+                        isMandatory: false
                     },
 
                     getVisibilityMenuItems() {
                         const currentVisibility = this.settings.visibility || 'visible';
 
                         return JSON.stringify([
-                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: currentVisibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
                             { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
@@ -442,8 +445,18 @@ export class NumericSlider extends BaseComponent {
                              <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Rules">
                                 <i class="fal fa-shuffle"></i>
                             </button>
-                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Mandatory">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Mandatory"
+                                x-data="{ mandatoryOpen: false }"
+                                @click.stop="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false"
+                                :class="settings.isMandatory ? 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900' : ''">
                                 <i class="fal fa-asterisk"></i>
+                                <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64" style="position:absolute; right:0;">
+                                    <webropol-context-menu
+                                        :items="JSON.stringify([{ id: 'not-mandatory', label: 'Question is not mandatory', showRadio: true, radioGroup: 'mandatory', checked: !settings.isMandatory, bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }, { id: 'mandatory', label: 'Question is mandatory', icon: 'fas fa-asterisk', iconClass: 'text-webropol-gray-600', iconPosition: 'right', showRadio: true, radioGroup: 'mandatory', checked: settings.isMandatory, bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }])"
+                                        width="auto"
+                                        @item-click="settings.isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
+                                    ></webropol-context-menu>
+                                </div>
                             </button>
                             <div class="relative" x-data="{ open: false }">
                                 <button type="button" @click.stop="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Visibility">

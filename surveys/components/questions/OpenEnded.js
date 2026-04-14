@@ -71,9 +71,16 @@ export class OpenEnded extends BaseComponent {
                         return visibilityClassMap[this.visibility] ?? '';
                     },
 
+                    getMandatoryMenuItems() {
+                        return JSON.stringify([
+                            { id: 'not-mandatory', label: 'Question is not mandatory', showRadio: true, radioGroup: 'mandatory', checked: !this.isMandatory, bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'mandatory', label: 'Question is mandatory', icon: 'fas fa-asterisk', iconClass: 'text-webropol-gray-600', iconPosition: 'right', showRadio: true, radioGroup: 'mandatory', checked: this.isMandatory, bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                        ]);
+                    },
+
                     getVisibilityMenuItems() {
                         return JSON.stringify([
-                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: this.visibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
                             { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
@@ -127,13 +134,13 @@ export class OpenEnded extends BaseComponent {
                         <button type="button" class="${toolbarButtonClass}" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
                         <div class="relative" x-data="{ mandatoryOpen: false }">
                             <button type="button" @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false"
-                                :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600' : ''"
+                                :class="isMandatory ? 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900' : ''"
                                 class="${toolbarButtonClass}" title="Required field">
                                 <i class="fal fa-asterisk"></i>
                             </button>
                             <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
                                 <webropol-context-menu
-                                    items='[{"id": "not-mandatory", "label": "Question is not mandatory", "showRadio": true, "radioGroup": "mandatory", "checked": true}, {"id": "mandatory", "label": "Question is mandatory", "icon": "fas fa-asterisk", "iconClass": "text-red-600", "iconPosition": "right", "showRadio": true, "radioGroup": "mandatory", "bgClass": "hover:bg-red-50"}]'
+                                    :items="getMandatoryMenuItems()"
                                     width="auto"
                                     @item-click="isMandatory = ($event.detail.id === 'mandatory'); mandatoryOpen = false"
                                 ></webropol-context-menu>
