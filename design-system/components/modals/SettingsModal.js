@@ -471,7 +471,7 @@ export class WebropolSettingsModal extends BaseComponent {
 
     this.innerHTML = `
       <div class="modal-backdrop fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100001] p-4 transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
-<div class="modal-content bg-gray-50 rounded-2xl shadow-xl w-full max-w-7xl flex flex-col overflow-hidden transition-all duration-200 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}"
+<div class="settings-modal-content bg-gray-50 rounded-2xl shadow-xl w-full max-w-7xl flex flex-col overflow-hidden transition-all duration-200 ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}"
              style="max-height: min(90vh, 860px)"
              role="dialog" aria-modal="true" aria-labelledby="settings-title">
 
@@ -557,7 +557,7 @@ export class WebropolSettingsModal extends BaseComponent {
     }
 
     // Prevent modal content clicks from closing modal
-    const modalContent = this.querySelector('.modal-content');
+    const modalContent = this.querySelector('.settings-modal-content');
     if (modalContent) {
       this.addListener(modalContent, 'click', (e) => e.stopPropagation());
     }

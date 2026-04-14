@@ -1495,7 +1495,7 @@ class WebropolSettingsModal extends BaseComponent {
       <div class="modal-backdrop mobile-modal fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100001] p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
            style="transition: opacity 300ms ease-out">
         
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
+        <div class="settings-modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
              style="transition: all 300ms ease-out"
              role="document">
           
@@ -1631,7 +1631,7 @@ class WebropolSettingsModal extends BaseComponent {
       this.addListener(backdrop, 'click', this.handleBackdropClick);
     }
 
-    const modalContent = this.querySelector('.modal-content');
+    const modalContent = this.querySelector('.settings-modal-content');
     if (modalContent) {
       this.addListener(modalContent, 'click', (e) => e.stopPropagation());
     }
