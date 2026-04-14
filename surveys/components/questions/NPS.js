@@ -73,12 +73,8 @@ export class NPSQuestion extends BaseComponent {
                         return JSON.stringify([
                             { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: this.visibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
-                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-eye-slash', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
-                    },
-
-                    getVisibilityIconClass() {
-                        return this.visibility === 'visible' ? 'fal fa-eye' : 'fal fa-eye-slash';
                     },
 
                     selectVisibility(value) {
@@ -144,7 +140,7 @@ export class NPSQuestion extends BaseComponent {
                         </div>
                         <div class="relative" x-data="{ open: false }">
                             <button type="button" @click="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="${toolbarButtonClass}" title="Visibility">
-                                <i :class="getVisibilityIconClass()"></i>
+                                <i class="fal fa-eye"></i>
                             </button>
                             <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
                                 <webropol-context-menu

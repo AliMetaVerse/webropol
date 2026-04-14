@@ -51,29 +51,25 @@ export class NumericSlider extends BaseComponent {
                         visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                     },
 
-                    getVisibilityButtonClass() {
-                        const currentVisibility = this.settings.visibility || 'visible';
-                        const visibilityClassMap = {
-                            visible: '',
-                            hidden: 'bg-webropol-warning-200 text-webropol-gray-900 hover:bg-webropol-warning-200 hover:text-webropol-gray-900',
-                            disabled: 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900'
-                        };
-
-                        return visibilityClassMap[currentVisibility] ?? '';
-                    },
-
                     getVisibilityMenuItems() {
                         const currentVisibility = this.settings.visibility || 'visible';
 
                         return JSON.stringify([
                             { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900' },
                             { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: currentVisibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
-                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-eye-slash', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
                         ]);
                     },
 
                     getVisibilityIconClass() {
-                        return (this.settings.visibility || 'visible') === 'visible' ? 'fal fa-eye' : 'fal fa-eye-slash';
+                        const currentVisibility = this.settings.visibility || 'visible';
+                        const iconClassMap = {
+                            visible: 'fal fa-eye',
+                            hidden: 'fal fa-eye-slash',
+                            disabled: 'fal fa-ban'
+                        };
+
+                        return iconClassMap[currentVisibility] || iconClassMap.visible;
                     },
 
                     selectVisibility(value) {
@@ -451,7 +447,7 @@ export class NumericSlider extends BaseComponent {
                             </button>
                             <div class="relative" x-data="{ open: false }">
                                 <button type="button" @click.stop="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="w-8 h-8 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent text-[#1e6880] hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] active:text-[#204859] focus:outline-none focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 transition-colors duration-150 ease-in-out" title="Visibility">
-                                    <i :class="getVisibilityIconClass()"></i>
+                                    <i class="fal fa-eye"></i>
                                 </button>
                                 <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
                                     <webropol-context-menu
