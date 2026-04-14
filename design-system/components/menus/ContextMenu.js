@@ -67,16 +67,26 @@ export class WebropolContextMenu extends BaseComponent {
     const radioGroup = item.radioGroup || 'default';
     const bgClass = item.bgClass || '';
     const iconClass = item.iconClass || '';
+    const checkedBgClass = item.checkedBgClass || '';
+    const checkedTextClass = item.checkedTextClass || '';
+    const checkedIconClass = item.checkedIconClass || '';
+    const checkedIndicatorIcon = item.checkedIndicatorIcon || '';
+    const checkedIndicatorClass = item.checkedIndicatorClass || '';
+    const containerClass = item.containerClass || '';
+    const checkedContainerClass = item.checkedContainerClass || '';
 
     const variantClasses = this.getMenuItemVariantClasses(variant);
     const hoverClasses = disabled ? '' : (bgClass || this.getMenuItemHoverClasses(variant));
     const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
+    const checkedStateClasses = checked ? `${checkedBgClass} ${checkedTextClass} ${checkedContainerClass}`.trim() : '';
     
     // Only show separator before danger variant items
     const showSeparator = variant === 'danger' && index > 0;
 
     // Build content based on icon position
     let content = '';
+    const defaultLabelClass = variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900';
+    const labelClass = checked && checkedTextClass ? checkedTextClass : defaultLabelClass;
     
     if (showRadio) {
       // Radio button on the left
@@ -93,21 +103,27 @@ export class WebropolContextMenu extends BaseComponent {
         </div>
       `;
     } else if (icon && iconPosition === 'left') {
-      content = `<i class="${icon} text-lg ${variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-600'}"></i>`;
+      const defaultIconClass = variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-700';
+      const resolvedIconClass = checked && checkedIconClass ? checkedIconClass : (iconClass || defaultIconClass);
+      content = `<i class="${icon} text-base ${resolvedIconClass}"></i>`;
     }
     
     // Label in the middle with icon on right if specified
     if (icon && iconPosition === 'right') {
       const defaultIconColor = variant === 'danger' ? 'text-red-500' : 'text-webropol-gray-600';
       const iconColorClass = iconClass || defaultIconColor;
-      content += `<span class="flex-1 text-sm font-medium ${variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900'}">${label}<i class="${icon} text-xs ${iconColorClass}"></i></span>`;
+      content += `<span class="flex-1 text-sm font-medium ${labelClass}">${label}<i class="${icon} text-xs ${iconColorClass}"></i></span>`;
     } else {
-      content += `<span class="flex-1 text-sm font-medium ${variant === 'danger' ? 'text-red-600' : 'text-webropol-gray-900'}">${label}</span>`;
+      content += `<span class="flex-1 text-sm font-medium ${labelClass}">${label}</span>`;
+    }
+
+    if (checked && checkedIndicatorIcon) {
+      content += `<i class="${checkedIndicatorIcon} text-sm ${checkedIndicatorClass || labelClass}"></i>`;
     }
 
     return `
       <div 
-        class="flex items-center gap-3 px-4 py-3 transition-all duration-200 ${variantClasses} ${hoverClasses} ${disabledClasses} ${showSeparator ? 'border-t border-webropol-gray-200' : ''}"
+        class="flex items-center gap-3 px-4 py-3 transition-all duration-200 ${variantClasses} ${hoverClasses} ${disabledClasses} ${checkedStateClasses} ${containerClass} ${showSeparator ? 'border-t border-webropol-gray-200' : ''}"
         role="menuitem"
         data-item-id="${id}"
         data-radio-group="${radioGroup}"

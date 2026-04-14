@@ -51,6 +51,31 @@ export class NumericSlider extends BaseComponent {
                         visibility: 'visible' // 'visible' | 'hidden' | 'disabled'
                     },
 
+                    getVisibilityButtonClass() {
+                        const currentVisibility = this.settings.visibility || 'visible';
+                        const visibilityClassMap = {
+                            visible: 'bg-webropol-primary-200 text-webropol-gray-900 hover:bg-webropol-primary-200 hover:text-webropol-gray-900',
+                            hidden: 'bg-webropol-warning-200 text-webropol-gray-900 hover:bg-webropol-warning-200 hover:text-webropol-gray-900',
+                            disabled: 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900'
+                        };
+
+                        return visibilityClassMap[currentVisibility] || visibilityClassMap.visible;
+                    },
+
+                    getVisibilityMenuItems() {
+                        const currentVisibility = this.settings.visibility || 'visible';
+
+                        return JSON.stringify([
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: currentVisibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: currentVisibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: currentVisibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                        ]);
+                    },
+
+                    selectVisibility(value) {
+                        this.settings.visibility = value;
+                    },
+
                     // Mobile detection & Preview
                     isMobile: false,
                     previewDevice: 'desktop', // 'desktop', 'tablet', 'mobile'
@@ -116,6 +141,23 @@ export class NumericSlider extends BaseComponent {
 
                         // Check if mobile on init
                         this.checkMobileOrientation();
+
+                        try {
+                            const savedVisibility = JSON.parse(localStorage.getItem('webropol_survey_question_visibility') || '{}');
+                            this.settings.visibility = savedVisibility[this.questionId] || this.settings.visibility;
+                        } catch (e) {
+                            this.settings.visibility = this.settings.visibility || 'visible';
+                        }
+
+                        this.$watch('settings.visibility', (value) => {
+                            try {
+                                const savedVisibility = JSON.parse(localStorage.getItem('webropol_survey_question_visibility') || '{}');
+                                savedVisibility[this.questionId] = value;
+                                localStorage.setItem('webropol_survey_question_visibility', JSON.stringify(savedVisibility));
+                            } catch (e) {
+                                console.error('Failed to save numeric slider visibility state:', e);
+                            }
+                        });
                     },
 
                     checkMobileOrientation() {
@@ -397,25 +439,34 @@ export class NumericSlider extends BaseComponent {
 
                         <!-- Right: Actions -->
                         <div class="flex items-center gap-1 question-card-toolbar">
-                             <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Rules">
+                             <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Rules">
                                 <i class="fal fa-shuffle"></i>
                             </button>
-                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Mandatory">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Mandatory">
                                 <i class="fal fa-asterisk"></i>
                             </button>
-                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Visibility">
-                                <i class="fal fa-eye"></i>
-                            </button>
-                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Add Image">
+                            <div class="relative" x-data="{ open: false }">
+                                <button type="button" @click.stop="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Visibility">
+                                    <i class="fal fa-eye"></i>
+                                </button>
+                                <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
+                                    <webropol-context-menu
+                                        :items="getVisibilityMenuItems()"
+                                        width="auto"
+                                        @item-click="selectVisibility($event.detail.id); open = false"
+                                    ></webropol-context-menu>
+                                </div>
+                            </div>
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Add Image">
                                 <i class="fal fa-image-circle-plus"></i>
                             </button>
                             
                             <div class="w-px h-4 bg-gray-300 mx-1"></div>
                             
-                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded" title="Copy">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors" title="Copy">
                                 <i class="fal fa-copy"></i>
                             </button>
-                            <button @click.stop="showSettings = !showSettings" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors p-2 rounded relative" title="Settings">
+                            <button type="button" @click.stop="showSettings = !showSettings" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors relative" title="Settings">
                                 <i class="fal fa-cog"></i>
                                 <span x-show="questionType === 'health-slider'" 
                                       x-transition:enter="transition ease-out duration-200"
@@ -425,7 +476,7 @@ export class NumericSlider extends BaseComponent {
                                     <i class="fa-solid fa-heart-pulse text-white text-[8px]"></i>
                                 </span>
                             </button>
-                            <button class="text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors p-2 rounded" title="Delete">
+                            <button type="button" class="w-8 h-8 inline-flex items-center justify-center rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-100 transition-colors" title="Delete">
                                 <i class="fa-light fa-trash-can"></i>
                             </button>
                         </div>

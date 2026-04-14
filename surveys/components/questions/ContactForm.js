@@ -16,6 +16,7 @@ export class ContactForm extends BaseComponent {
                     questionId: qId,
                     selected: false,
                     isMandatory: false,
+                    visibility: 'visible',
                     title: 'Please fill in your details.',
                     fields: [
                         { key: 'firstName', label: 'First name', type: 'text', placeholder: 'Enter first name' },
@@ -32,6 +33,13 @@ export class ContactForm extends BaseComponent {
                             this.isMandatory = false;
                         }
 
+                        try {
+                            const savedVisibility = JSON.parse(localStorage.getItem('webropol_survey_question_visibility') || '{}');
+                            this.visibility = savedVisibility[this.questionId] || 'visible';
+                        } catch (e) {
+                            this.visibility = 'visible';
+                        }
+
                         this.$watch('isMandatory', (value) => {
                             try {
                                 const saved = JSON.parse(localStorage.getItem('webropol_survey_mandatory_questions') || '{}');
@@ -45,6 +53,38 @@ export class ContactForm extends BaseComponent {
                                 this.$root.updateMandatoryInfo();
                             }
                         });
+
+                        this.$watch('visibility', (value) => {
+                            try {
+                                const savedVisibility = JSON.parse(localStorage.getItem('webropol_survey_question_visibility') || '{}');
+                                savedVisibility[this.questionId] = value;
+                                localStorage.setItem('webropol_survey_question_visibility', JSON.stringify(savedVisibility));
+                            } catch (e) {
+                                console.error('Failed to save contact form visibility state:', e);
+                            }
+                        });
+                    },
+
+                    getVisibilityButtonClass() {
+                        const visibilityClassMap = {
+                            visible: 'bg-webropol-primary-200 text-webropol-gray-900 hover:bg-webropol-primary-200 hover:text-webropol-gray-900',
+                            hidden: 'bg-webropol-warning-200 text-webropol-gray-900 hover:bg-webropol-warning-200 hover:text-webropol-gray-900',
+                            disabled: 'bg-webropol-error-200 text-webropol-gray-900 hover:bg-webropol-error-200 hover:text-webropol-gray-900'
+                        };
+
+                        return visibilityClassMap[this.visibility] || visibilityClassMap.visible;
+                    },
+
+                    getVisibilityMenuItems() {
+                        return JSON.stringify([
+                            { id: 'visible', label: 'Visible', icon: 'fal fa-eye', checked: this.visibility === 'visible', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-primary-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'hidden', label: 'Hidden', icon: 'fal fa-eye-slash', checked: this.visibility === 'hidden', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-warning-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' },
+                            { id: 'disabled', label: 'Disabled', icon: 'fal fa-ban', checked: this.visibility === 'disabled', bgClass: 'hover:bg-webropol-gray-50', checkedBgClass: 'bg-webropol-error-200', checkedTextClass: 'text-webropol-gray-900', checkedIconClass: 'text-webropol-gray-900', checkedIndicatorIcon: 'fal fa-check', checkedIndicatorClass: 'text-webropol-gray-900', checkedContainerClass: 'mx-1 my-1 rounded-md' }
+                        ]);
+                    },
+
+                    selectVisibility(value) {
+                        this.visibility = value;
                     },
 
                     selectQuestion() {
@@ -58,6 +98,9 @@ export class ContactForm extends BaseComponent {
     }
 
     render() {
+        const toolbarButtonClass = 'w-8 h-8 inline-flex items-center justify-center rounded-lg text-webropol-gray-500 hover:text-webropol-primary-700 hover:bg-webropol-primary-50 focus:outline-none focus:ring-2 focus:ring-webropol-primary-200 transition-colors';
+        const dangerToolbarButtonClass = 'w-8 h-8 inline-flex items-center justify-center rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-100 transition-colors';
+
         this.innerHTML = `
             <div x-data="contactFormData('${this.mode}', '${this.questionId}')"
                  @click-question.window="if ($event.detail !== questionId) selected = false"
@@ -85,11 +128,11 @@ export class ContactForm extends BaseComponent {
                         </div>
                     </div>
                     <div class="flex items-center gap-1 question-card-toolbar">
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
+                        <button type="button" class="${toolbarButtonClass}" title="Rules and Jumps"><i class="fal fa-shuffle"></i></button>
                         <div class="relative" x-data="{ mandatoryOpen: false }">
-                            <button @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false"
-                                :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50'"
-                                class="transition-colors px-2 py-1 rounded" title="Required field">
+                            <button type="button" @click="mandatoryOpen = !mandatoryOpen" @click.outside="mandatoryOpen = false"
+                                :class="isMandatory ? 'bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600' : ''"
+                                class="${toolbarButtonClass}" title="Required field">
                                 <i class="fal fa-asterisk"></i>
                             </button>
                             <div x-show="mandatoryOpen" x-transition class="absolute top-full right-0 mt-1 z-50 w-64">
@@ -101,22 +144,22 @@ export class ContactForm extends BaseComponent {
                             </div>
                         </div>
                         <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" @click.outside="open = false" class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Visibility">
+                            <button type="button" @click="open = !open" @click.outside="open = false" :class="getVisibilityButtonClass()" class="${toolbarButtonClass}" title="Visibility">
                                 <i class="fal fa-eye"></i>
                             </button>
                             <div x-show="open" x-transition class="absolute top-full left-0 mt-1 z-50 w-40">
                                 <webropol-context-menu
-                                    items='[{"id": "visible", "label": "Visible", "icon": "fal fa-eye"}, {"id": "hidden", "label": "Hidden", "icon": "fal fa-eye-slash"}, {"id": "disabled", "label": "Disabled", "icon": "fal fa-ban"}]'
+                                    :items="getVisibilityMenuItems()"
                                     width="auto"
-                                    @item-click="open = false"
+                                    @item-click="selectVisibility($event.detail.id); open = false"
                                 ></webropol-context-menu>
                             </div>
                         </div>
                         <div class="js-copy-btn-container inline-flex items-center" :data-question-id="questionId">
-                            <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Copy" @click="copyQuestionNow(questionId)"><i class="fal fa-copy"></i></button>
+                            <button type="button" class="${toolbarButtonClass}" title="Copy" @click="copyQuestionNow(questionId)"><i class="fal fa-copy"></i></button>
                         </div>
-                        <button class="text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors" title="Settings" onclick="openQuestionSettingsModal('contact-form')"><i class="fal fa-cog"></i></button>
-                        <button class="text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><i class="fa-light fa-trash-can"></i></button>
+                        <button type="button" class="${toolbarButtonClass}" title="Settings" onclick="openQuestionSettingsModal('contact-form')"><i class="fal fa-cog"></i></button>
+                        <button type="button" class="${dangerToolbarButtonClass}" title="Delete"><i class="fa-light fa-trash-can"></i></button>
                     </div>
                 </div>
 
