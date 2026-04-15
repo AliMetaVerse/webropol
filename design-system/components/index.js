@@ -54,6 +54,7 @@ export { WebropolPromo } from './feedback/PromoToast.js';
 export { WebropolAlert } from './feedback/Alert.js';
 export { WebropolToast } from './feedback/Toast.js';
 export { WebropolBanner } from './feedback/Banner.js';
+export { WebropolAvatar } from './feedback/Avatar.js';
 export { WebropolSmartNotifier } from './feedback/SmartNotifier.js';
 export { WebropolCatInCup } from './feedback/CatInCup.js';
 
@@ -90,6 +91,7 @@ import './menus/ContextMenu.js';
 import './forms/Input.js';
 import './forms/RadioSpecial.js';
 import './feedback/Badge.js';
+import './feedback/Avatar.js';
 import './feedback/Loading.js';
 import './feedback/LoaderFootprint.js';
 import './feedback/Tooltip.js';
@@ -131,6 +133,7 @@ window.WebropolComponents = {
   ContextMenu: 'webropol-context-menu',
   Input: 'webropol-input',
   Badge: 'webropol-badge',
+  Avatar: 'webropol-avatar',
   Loading: 'webropol-loading',
   LoaderFootprint: 'webropol-loader-footprint',
   Tooltip: 'webropol-tooltip',
