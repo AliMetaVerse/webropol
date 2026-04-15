@@ -889,10 +889,11 @@ export class WebropolSidebarEnhanced extends BaseComponent {
   }
 }
 
-customElements.define('webropol-sidebar-enhanced', WebropolSidebarEnhanced);
-
-// Also register as webropol-sidebar so standalone pages work without a separate file
 if (!customElements.get('webropol-sidebar')) {
   customElements.define('webropol-sidebar', WebropolSidebarEnhanced);
+}
+
+if (!customElements.get('webropol-sidebar-enhanced')) {
+  customElements.define('webropol-sidebar-enhanced', class WebropolSidebarEnhancedAlias extends WebropolSidebarEnhanced {});
 }
 

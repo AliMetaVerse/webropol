@@ -16,6 +16,7 @@ export { WebropolCard } from './cards/Card.js';
 export { WebropolCardLegacy, WebropolCardHeader, WebropolCardContent, WebropolCardList, WebropolCardListItem, WebropolCardActions, WebropolGradientCard } from './cards/CardLegacy.js';
 export { WebropolActionCard } from './cards/ActionCard.js';
 export { WebropolConfigurableCard } from './cards/ConfigurableCard.js';
+export { WebropolHomeWidget } from './cards/HomeWidget.js';
 export { WebropolListCard } from './cards/ListCard.js';
 export { WebropolVideoCard } from './cards/VideoCard.js';
 
@@ -71,6 +72,7 @@ import './cards/Card.js';
 import './cards/CardLegacy.js';
 import './cards/ActionCard.js';
 import './cards/ConfigurableCard.js';
+import './cards/HomeWidget.js';
 import './cards/ListCard.js';
 import './cards/VideoCard.js';
 import './surveys/SurveyList.js';
@@ -112,6 +114,7 @@ window.WebropolComponents = {
   GradientCard: 'webropol-gradient-card',
   ActionCard: 'webropol-action-card',
   ConfigurableCard: 'webropol-configurable-card',
+  HomeWidget: 'webropol-home-widget',
   ListCard: 'webropol-list-card',
   SurveyList: 'webropol-survey-list',
   VideoCard: 'webropol-video-card',

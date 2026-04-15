@@ -27,8 +27,9 @@ export class WebropolListCard extends BaseComponent {
     const badge = this.getAttr('badge');
     const href = this.getAttr('href');
 
-    // Store original content nodes
-    const originalNodes = Array.from(this.childNodes);
+    if (this._singleExtraContent === undefined) {
+      this._singleExtraContent = this.innerHTML.trim();
+    }
     
     const wrapper = document.createElement(href ? 'a' : 'div');
     wrapper.className = 'list-card-wrapper group flex items-center p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm hover:shadow-lg hover:border-gray-300/50 hover:bg-white transition-all duration-200 cursor-pointer relative overflow-hidden';
@@ -80,14 +81,10 @@ export class WebropolListCard extends BaseComponent {
     }
 
     // Add original content if any
-    if (originalNodes.some(node => node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim()))) {
+    if (this._singleExtraContent) {
       const originalContentDiv = document.createElement('div');
       originalContentDiv.className = 'flex-shrink-0 ml-4';
-      originalNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim())) {
-          originalContentDiv.appendChild(node);
-        }
-      });
+      originalContentDiv.innerHTML = this._singleExtraContent;
       contentDiv.appendChild(originalContentDiv);
     }
 
