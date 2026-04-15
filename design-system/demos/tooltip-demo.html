@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooltip — Webropol Design System</title>
+  <title>Tooltips and Popovers — Webropol Design System</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
@@ -16,7 +16,9 @@
         extend: {
           colors: {
             'webropol-primary': { 50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7', 400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880', 800: '#215669', 900: '#204859' },
-            'webropol-gray': { 50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6', 400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a', 800: '#515557', 900: '#45484a', 950: '#272a2b' }
+            'webropol-gray': { 50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6', 400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a', 800: '#515557', 900: '#45484a', 950: '#272a2b' },
+            'webropol-royalViolet': { 50: '#f7f2ff', 100: '#ede3ff', 200: '#d5bef4', 500: '#823bdd', 600: '#6922c4' },
+            'webropol-royalBlue': { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5' }
           },
           fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
         }
@@ -24,79 +26,433 @@
     }
   </script>
 
+  <script src="../components/buttons/Button.js" type="module"></script>
+  <script src="../components/feedback/Badge.js" type="module"></script>
   <script src="../components/feedback/Tooltip.js" type="module"></script>
+  <script src="../components/feedback/Popover.js" type="module"></script>
 
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
-    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
-    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
-    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
-    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
-    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
-    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; }
-    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
-    code { font-family: monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
-    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 0.875rem; }
-    .breadcrumb a { color: #1d809d; text-decoration: none; }
-    .breadcrumb a:hover { text-decoration: underline; }
-    .breadcrumb span { color: #b5bbbd; }
-    .sibling-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid #e6e7e8; margin-top: 64px; }
-    .sibling-nav a { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; padding: 8px 14px; border: 1px solid #b0e8f1; border-radius: 8px; background: white; }
-    .sibling-nav a:hover { background: #eefbfd; }
-    .attr-table td { padding: 5px 12px 5px 0; font-size: 0.8125rem; vertical-align: top; }
-    .attr-table td:first-child { color: #787f81; white-space: nowrap; font-family: monospace; }
-    .direction-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
-    .direction-cell { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 16px; border: 1px solid #f3f4f4; border-radius: 12px; }
-    .direction-cell span { font-size: 0.75rem; color: #9ba2a4; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
-    .help-btn { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #f3f4f4; color: #787f81; font-size: 0.8125rem; cursor: default; border: 1px solid #e6e7e8; }
-    .ctx-row { display: flex; align-items: center; gap: 8px; padding: 10px 0; border-bottom: 1px solid #f3f4f4; font-size: 0.875rem; }
-    .ctx-row:last-child { border-bottom: none; }
-    .ctx-label { color: #272a2b; font-weight: 500; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(176, 232, 241, 0.45), transparent 28%),
+        radial-gradient(circle at top right, rgba(213, 190, 244, 0.3), transparent 26%),
+        linear-gradient(180deg, #f7fdff 0%, #f9fafa 48%, #ffffff 100%);
+      color: #45484a;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px 88px;
+    }
+
+    h1 {
+      font-size: clamp(2.25rem, 5vw, 3.25rem);
+      font-weight: 700;
+      line-height: 1;
+      color: #102e3c;
+      margin: 0;
+    }
+
+    .lead {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #61686a;
+      margin: 18px 0 0;
+      max-width: 720px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(176, 232, 241, 0.7);
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 32px 80px rgba(16, 46, 60, 0.08);
+      padding: 36px;
+      backdrop-filter: blur(16px);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(176, 232, 241, 0.8), rgba(213, 190, 244, 0.55));
+      filter: blur(14px);
+      opacity: 0.7;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(238, 251, 253, 0.95);
+      color: #1e6880;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 0.875rem;
+    }
+
+    .breadcrumb a {
+      color: #1d809d;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb span {
+      color: #9ba2a4;
+    }
+
+    .hero-grid,
+    .demo-grid,
+    .api-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
+      align-items: start;
+      margin-top: 28px;
+    }
+
+    .hero-panel,
+    .demo-card,
+    .api-card {
+      position: relative;
+      border: 1px solid rgba(230, 231, 232, 0.9);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 20px 48px rgba(16, 46, 60, 0.08);
+    }
+
+    .hero-panel {
+      padding: 28px;
+    }
+
+    .hero-panel-title,
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #102e3c;
+      margin: 0 0 6px;
+    }
+
+    .hero-panel-sub,
+    .section-sub {
+      margin: 0 0 22px;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: #61686a;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .demo-card {
+      padding: 28px;
+    }
+
+    .demo-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 32px;
+    }
+
+    .api-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 24px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(176, 232, 241, 0.9), transparent);
+      margin: 52px 0;
+    }
+
+    .placement-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .placement-cell,
+    .surface-card,
+    .info-row,
+    .mini-card {
+      border: 1px solid #edf1f2;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafa 100%);
+    }
+
+    .placement-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      min-height: 190px;
+      padding: 18px;
+    }
+
+    .placement-label,
+    .mini-label,
+    .api-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9ba2a4;
+    }
+
+    .help-dot,
+    .icon-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid #d5f4f8;
+      background: #eefbfd;
+      color: #1e6880;
+    }
+
+    .help-dot {
+      width: 42px;
+      height: 42px;
+      font-size: 0.95rem;
+    }
+
+    .surface-card {
+      padding: 22px;
+    }
+
+    .surface-card h3,
+    .api-card h3,
+    .mini-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #102e3c;
+    }
+
+    .surface-card p,
+    .api-card p,
+    .mini-card p,
+    .info-row p {
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #61686a;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+    }
+
+    .info-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #102e3c;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 20px;
+    }
+
+    .api-card {
+      padding: 22px;
+    }
+
+    .api-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .api-item {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+      gap: 12px;
+      align-items: start;
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    .api-item code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      color: #1e6880;
+      background: #eefbfd;
+      border-radius: 10px;
+      padding: 4px 8px;
+    }
+
+    .code-sample {
+      margin-top: 18px;
+      border-radius: 22px;
+      border: 1px solid #edf1f2;
+      background: #102e3c;
+      color: #eefbfd;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      padding: 18px 20px;
+      overflow: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button,
+    .action-chip {
+      border: 1px solid #d5f4f8;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #102e3c;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 10px 16px;
+    }
+
+    .action-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sibling-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid #e6e7e8;
+      margin-top: 60px;
+    }
+
+    .sibling-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid #b0e8f1;
+      background: rgba(255, 255, 255, 0.92);
+      color: #1d809d;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .sibling-nav a:hover {
+      background: #eefbfd;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid,
+      .demo-grid,
+      .api-grid,
+      .placement-grid,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 24px;
+      }
+
+      .page {
+        padding-inline: 18px;
+      }
+    }
   </style>
 </head>
 <body>
 <main class="page">
-
   <nav class="breadcrumb">
     <a href="../index.html"><i class="fal fa-swatchbook" style="margin-right:4px"></i>Component Library</a>
     <span>/</span>
     <a href="feedback-demo.html">Feedback</a>
     <span>/</span>
-    <span style="color:#45484a;font-weight:500">Tooltip</span>
+    <span style="color:#45484a;font-weight:600">Tooltips and Popovers</span>
   </nav>
 
-  <h1>Tooltip</h1>
-  <p class="lead">Hover-triggered contextual hint shown near a trigger element. Supports four placement directions: <code>top</code>, <code>right</code>, <code>bottom</code>, and <code>left</code>.</p>
+  <section class="hero">
+    <span class="eyebrow"><i class="fal fa-message-lines"></i> Context Surfaces</span>
+    <div class="hero-grid">
+      <div>
+        <h1>Tooltips for hints. Popovers for action.</h1>
+        <p class="lead">These components share one visual system but solve different jobs. Use tooltips for quick explanatory copy on hover or focus. Use popovers when the content needs buttons, choices, or a short workflow.</p>
+        <div class="toolbar" style="margin-top:24px">
+          <webropol-tooltip text="Great for labels, icon buttons, and one-line guidance." position="top" variant="brand">
+            <span class="action-chip"><i class="fal fa-circle-info"></i> Hover the hint surface</span>
+          </webropol-tooltip>
+          <webropol-popover title="Popover pattern" text="This format holds richer content, multiple actions, and dismissal." position="bottom-start" variant="brand" closable>
+            <button class="action-chip"><i class="fal fa-sparkles"></i> Open a richer surface</button>
+            <div slot="panel" class="stack">
+              <div class="surface-card" style="padding:16px;border-radius:20px;background:#f8feff">
+                <h3 style="margin-bottom:4px">Recommended use</h3>
+                <p>Secondary menus, sharing actions, explainers with links, and compact setup steps.</p>
+              </div>
+              <div class="toolbar">
+                <webropol-button variant="primary" size="sm">Primary action</webropol-button>
+                <button class="toolbar button" data-popover-close>Close</button>
+              </div>
+            </div>
+          </webropol-popover>
+        </div>
+      </div>
 
-  <!-- Direction variants -->
-  <section>
-    <h2 class="section-title">Placement Directions</h2>
-    <p class="section-sub">Hover over or focus the icons to see the tooltip in each direction.</p>
-    <div class="demo-block">
-      <div class="direction-grid">
-        <div class="direction-cell">
-          <webropol-tooltip text="This appears above" direction="top">
-            <span class="help-btn"><i class="fal fa-question"></i></span>
-          </webropol-tooltip>
-          <span>top</span>
+      <div class="hero-panel stack">
+        <div>
+          <div class="hero-panel-title">Decision rule</div>
+          <p class="hero-panel-sub">If the surface disappears the moment a user moves away, it is a tooltip. If it needs deliberate opening and interactive content, it is a popover.</p>
         </div>
-        <div class="direction-cell">
-          <webropol-tooltip text="This appears to the right" direction="right">
-            <span class="help-btn"><i class="fal fa-question"></i></span>
-          </webropol-tooltip>
-          <span>right</span>
-        </div>
-        <div class="direction-cell">
-          <webropol-tooltip text="This appears below" direction="bottom">
-            <span class="help-btn"><i class="fal fa-question"></i></span>
-          </webropol-tooltip>
-          <span>bottom (default)</span>
-        </div>
-        <div class="direction-cell">
-          <webropol-tooltip text="This appears to the left" direction="left">
-            <span class="help-btn"><i class="fal fa-question"></i></span>
-          </webropol-tooltip>
-          <span>left</span>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <div class="mini-label">Tooltip</div>
+            <h3>Read-only</h3>
+            <p>Short text, lightweight guidance, and zero required clicks.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-label">Popover</div>
+            <h3>Interactive</h3>
+            <p>Supports lists, toggles, buttons, dismiss controls, and grouped actions.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -104,51 +460,187 @@
 
   <div class="divider"></div>
 
-  <!-- In-context usage -->
   <section>
-    <h2 class="section-title">In Context — Form Fields</h2>
-    <p class="section-sub">Tooltips are commonly used next to form labels to explain field requirements or restrictions.</p>
-    <div class="demo-block" style="max-width:480px">
-      <div class="ctx-row">
-        <span class="ctx-label">Response limit</span>
-        <webropol-tooltip text="Maximum number of responses before the survey auto-closes." direction="right">
-          <span class="help-btn" style="width:20px;height:20px;font-size:0.7rem"><i class="fal fa-info"></i></span>
-        </webropol-tooltip>
+    <h2 class="section-title">Tooltip Design</h2>
+    <p class="section-sub">The tooltip component supports the current `text` and `position` API, adds richer variants, and keeps focus support for keyboard users.</p>
+    <div class="demo-card">
+      <div class="placement-grid">
+        <div class="placement-cell">
+          <webropol-tooltip text="Placed above the trigger for dense toolbars." position="top" variant="default">
+            <span class="help-dot"><i class="fal fa-arrow-up"></i></span>
+          </webropol-tooltip>
+          <span class="placement-label">top</span>
+        </div>
+        <div class="placement-cell">
+          <webropol-tooltip text="A subtle variant fits light form layouts." position="right" variant="subtle">
+            <span class="help-dot"><i class="fal fa-arrow-right"></i></span>
+          </webropol-tooltip>
+          <span class="placement-label">right</span>
+        </div>
+        <div class="placement-cell">
+          <webropol-tooltip text="Bottom placement works well under icon-only actions." position="bottom" variant="brand">
+            <span class="help-dot"><i class="fal fa-arrow-down"></i></span>
+          </webropol-tooltip>
+          <span class="placement-label">bottom</span>
+        </div>
+        <div class="placement-cell">
+          <webropol-tooltip text="Left placement is useful near aligned metadata." position="left" variant="default">
+            <span class="help-dot"><i class="fal fa-arrow-left"></i></span>
+          </webropol-tooltip>
+          <span class="placement-label">left</span>
+        </div>
       </div>
-      <div class="ctx-row">
-        <span class="ctx-label">Anonymous mode</span>
-        <webropol-tooltip text="When enabled, respondent identities are never stored." direction="right">
-          <span class="help-btn" style="width:20px;height:20px;font-size:0.7rem"><i class="fal fa-info"></i></span>
-        </webropol-tooltip>
+    </div>
+
+    <div class="demo-grid">
+      <div class="demo-card stack">
+        <div>
+          <h3 class="section-title" style="font-size:1rem">Form Guidance</h3>
+          <p class="section-sub" style="margin-bottom:0">Use a compact tooltip when a setting needs one sentence of clarification.</p>
+        </div>
+        <div class="stack">
+          <div class="info-row">
+            <span class="info-label">Response limit</span>
+            <webropol-tooltip text="Maximum number of submissions before the survey closes automatically." position="right" variant="subtle">
+              <span class="icon-pill help-dot" style="width:32px;height:32px"><i class="fal fa-circle-info"></i></span>
+            </webropol-tooltip>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Anonymous mode</span>
+            <webropol-tooltip text="Respondent identity data is not stored when this is enabled." position="right" variant="subtle">
+              <span class="icon-pill help-dot" style="width:32px;height:32px"><i class="fal fa-user-secret"></i></span>
+            </webropol-tooltip>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Delivery window</span>
+            <webropol-tooltip text="Uses your workspace timezone and dispatch rules." position="right" variant="subtle">
+              <span class="icon-pill help-dot" style="width:32px;height:32px"><i class="fal fa-clock"></i></span>
+            </webropol-tooltip>
+          </div>
+        </div>
       </div>
-      <div class="ctx-row">
-        <span class="ctx-label">Send date</span>
-        <webropol-tooltip text="Surveys are sent at the start of the selected day in your account timezone." direction="right">
-          <span class="help-btn" style="width:20px;height:20px;font-size:0.7rem"><i class="fal fa-info"></i></span>
-        </webropol-tooltip>
+
+      <div class="demo-card stack">
+        <div>
+          <h3 class="section-title" style="font-size:1rem">Dense Action Bars</h3>
+          <p class="section-sub" style="margin-bottom:0">For icon-only controls, use tooltips to preserve a compact layout without hiding intent.</p>
+        </div>
+        <div class="toolbar">
+          <webropol-tooltip text="Duplicate page" position="top"><button class="toolbar button"><i class="fal fa-copy"></i></button></webropol-tooltip>
+          <webropol-tooltip text="Preview survey" position="top"><button class="toolbar button"><i class="fal fa-eye"></i></button></webropol-tooltip>
+          <webropol-tooltip text="Send test invite" position="top"><button class="toolbar button"><i class="fal fa-paper-plane"></i></button></webropol-tooltip>
+          <webropol-tooltip text="Archive draft" position="top"><button class="toolbar button"><i class="fal fa-box-archive"></i></button></webropol-tooltip>
+        </div>
       </div>
     </div>
   </section>
 
   <div class="divider"></div>
 
-  <!-- Attributes reference -->
   <section>
-    <h2 class="section-title">Attributes</h2>
-    <div class="demo-block">
-      <table class="attr-table">
-        <tr><td>text</td><td>Tooltip content string</td></tr>
-        <tr><td>direction</td><td><code>top</code> · <code>right</code> · <code>bottom</code> (default) · <code>left</code></td></tr>
-      </table>
-      <p style="margin:12px 0 0;font-size:0.8125rem;color:#787f81">The trigger element is provided via the default slot — any focusable or hoverable element works.</p>
+    <h2 class="section-title">Popover Design</h2>
+    <p class="section-sub">The new popover component is built for secondary menus and compact decision points. It supports heading text, rich panel content, close actions, and the same placement language as the tooltip.</p>
+    <div class="demo-grid">
+      <div class="demo-card stack">
+        <div>
+          <h3 class="section-title" style="font-size:1rem">Share Menu</h3>
+          <p class="section-sub" style="margin-bottom:0">A popover can hold a small action list without escalating to a modal.</p>
+        </div>
+        <div class="toolbar">
+          <webropol-popover title="Share survey" text="Choose a delivery route for this campaign." position="bottom-start" variant="brand" closable>
+            <webropol-button variant="secondary" size="md" icon="share-nodes">Open share menu</webropol-button>
+            <div slot="panel" class="stack">
+              <div class="surface-card" style="padding:16px;border-radius:20px">
+                <div class="stack" style="gap:10px">
+                  <div class="info-row" style="padding:12px 14px">
+                    <span class="info-label"><i class="fal fa-envelope"></i> Email invite</span>
+                    <webropol-badge variant="primary" size="sm">Recommended</webropol-badge>
+                  </div>
+                  <div class="info-row" style="padding:12px 14px">
+                    <span class="info-label"><i class="fal fa-message-sms"></i> SMS link</span>
+                    <span class="placement-label">Fast launch</span>
+                  </div>
+                  <div class="info-row" style="padding:12px 14px">
+                    <span class="info-label"><i class="fal fa-link"></i> Public URL</span>
+                    <span class="placement-label">Copy ready</span>
+                  </div>
+                </div>
+              </div>
+              <div class="toolbar">
+                <webropol-button variant="primary" size="sm">Continue</webropol-button>
+                <button class="toolbar button" data-popover-close>Close</button>
+              </div>
+            </div>
+          </webropol-popover>
+        </div>
+      </div>
+
+      <div class="demo-card stack">
+        <div>
+          <h3 class="section-title" style="font-size:1rem">Quick Summary</h3>
+          <p class="section-sub" style="margin-bottom:0">This version uses a richer editorial card with supporting copy and footer actions.</p>
+        </div>
+        <webropol-popover title="Segment insight" text="Corporate respondents opened most often between 09:00 and 11:00." position="bottom-end" variant="royal" closable>
+          <button class="action-chip"><i class="fal fa-chart-mixed"></i> Open insight</button>
+          <div slot="panel" class="stack">
+            <div class="surface-card" style="padding:18px;border-radius:22px;background:linear-gradient(135deg,#ffffff,#f8f4ff)">
+              <h3>Why it matters</h3>
+              <p>Use this window for reminders and follow-ups to improve completion without increasing send volume.</p>
+            </div>
+            <div class="toolbar">
+              <button class="action-chip"><i class="fal fa-calendar-clock"></i> Schedule reminder</button>
+              <button class="action-chip" data-popover-close><i class="fal fa-check"></i> Done</button>
+            </div>
+          </div>
+        </webropol-popover>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <h2 class="section-title">API Notes</h2>
+    <p class="section-sub">Both components use the same default slot for the trigger element. Popover additionally accepts nodes marked with `slot="panel"` or `data-popover-panel` for rich panel content.</p>
+    <div class="api-grid">
+      <div class="api-card">
+        <div class="api-label">Tooltip</div>
+        <h3>Short help surface</h3>
+        <p>Best for a sentence of guidance with no interactive controls.</p>
+        <div class="api-list">
+          <div class="api-item"><code>text</code><span>Tooltip body copy. `content` is supported as an alias.</span></div>
+          <div class="api-item"><code>position</code><span>`top`, `bottom`, `left`, `right`, plus `top-start`, `top-end`, `bottom-start`, `bottom-end`.</span></div>
+          <div class="api-item"><code>variant</code><span>`default`, `subtle`, or `brand`.</span></div>
+          <div class="api-item"><code>trigger</code><span>`hover` by default, with `click` and `both` also supported.</span></div>
+        </div>
+        <div class="code-sample">&lt;webropol-tooltip text="Explains the action" position="top" variant="brand"&gt;
+  &lt;button&gt;Hover me&lt;/button&gt;
+&lt;/webropol-tooltip&gt;</div>
+      </div>
+
+      <div class="api-card">
+        <div class="api-label">Popover</div>
+        <h3>Interactive contextual panel</h3>
+        <p>Use when the surface needs actions, lists, or a close affordance.</p>
+        <div class="api-list">
+          <div class="api-item"><code>title</code><span>Optional header title rendered above the panel content.</span></div>
+          <div class="api-item"><code>text</code><span>Optional supporting copy below the title.</span></div>
+          <div class="api-item"><code>position</code><span>Same placement model as tooltip. Default is `bottom-start`.</span></div>
+          <div class="api-item"><code>closable</code><span>Adds a close button in the header.</span></div>
+          <div class="api-item"><code>open</code><span>Boolean attribute for controlled/manual state.</span></div>
+        </div>
+        <div class="code-sample">&lt;webropol-popover title="Share survey" position="bottom-start" closable&gt;
+  &lt;button&gt;Open menu&lt;/button&gt;
+  &lt;div slot="panel"&gt;...rich content...&lt;/div&gt;
+&lt;/webropol-popover&gt;</div>
+      </div>
     </div>
   </section>
 
   <nav class="sibling-nav">
     <a href="toast-demo.html"><i class="fal fa-arrow-left"></i> Toast</a>
-    <span></span>
+    <a href="feedback-demo.html">Back to Feedback <i class="fal fa-arrow-right"></i></a>
   </nav>
-
 </main>
 </body>
 </html>
