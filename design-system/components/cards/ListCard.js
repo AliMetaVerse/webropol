@@ -32,7 +32,7 @@ export class WebropolListCard extends BaseComponent {
     }
     
     const wrapper = document.createElement(href ? 'a' : 'div');
-    wrapper.className = 'list-card-wrapper group flex items-center p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm hover:shadow-lg hover:border-gray-300/50 hover:bg-white transition-all duration-200 cursor-pointer relative overflow-hidden';
+    wrapper.className = 'list-card-wrapper group relative flex items-center overflow-hidden rounded-2xl border border-webropol-gray-200/90 bg-white/90 p-4 shadow-card transition-all duration-200 hover:border-webropol-primary-200 hover:shadow-medium hover:bg-white';
     wrapper.setAttribute('role', href ? 'link' : 'button');
     wrapper.setAttribute('tabindex', '0');
     
@@ -42,7 +42,7 @@ export class WebropolListCard extends BaseComponent {
 
     // Add subtle gradient background on hover
     const gradientOverlay = document.createElement('div');
-    gradientOverlay.className = 'absolute inset-0 bg-gradient-to-r from-blue-50/0 to-indigo-50/0 group-hover:from-blue-50/50 group-hover:to-indigo-50/30 transition-all duration-300 pointer-events-none';
+    gradientOverlay.className = 'pointer-events-none absolute inset-0 bg-gradient-to-r from-webropol-primary-50/0 to-webropol-gray-50/0 transition-all duration-300 group-hover:from-webropol-primary-50/70 group-hover:to-white';
     wrapper.appendChild(gradientOverlay);
 
     // Create content container
@@ -52,8 +52,8 @@ export class WebropolListCard extends BaseComponent {
     // Add icon
     if (icon) {
       const iconDiv = document.createElement('div');
-      iconDiv.className = 'flex-shrink-0 w-10 h-10 bg-sun-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-200';
-      iconDiv.innerHTML = `<i class="fal fa-${icon} text-white text-sm"></i>`;
+      iconDiv.className = 'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl border border-white/70 bg-webropol-gray-100 text-webropol-gray-700 shadow-soft transition-all duration-200 group-hover:scale-105 group-hover:bg-webropol-primary-100 group-hover:text-webropol-primary-700';
+      iconDiv.innerHTML = `<i class="fal fa-${icon} text-sm"></i>`;
       contentDiv.appendChild(iconDiv);
     }
 
@@ -63,10 +63,10 @@ export class WebropolListCard extends BaseComponent {
     
     let textHtml = '';
     if (title) {
-      textHtml += `<h3 class="font-medium text-gray-900 group-hover:text-blue-900 transition-colors duration-200 truncate">${title}</h3>`;
+      textHtml += `<h3 class="truncate text-sm font-semibold text-webropol-gray-900 transition-colors duration-200 group-hover:text-webropol-primary-700">${title}</h3>`;
     }
     if (subtitle) {
-      textHtml += `<p class="text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">${subtitle}</p>`;
+      textHtml += `<p class="truncate text-sm text-webropol-gray-600 transition-colors duration-200 group-hover:text-webropol-gray-700">${subtitle}</p>`;
     }
     
     textDiv.innerHTML = textHtml;
@@ -76,7 +76,7 @@ export class WebropolListCard extends BaseComponent {
     if (badge) {
       const badgeDiv = document.createElement('div');
       badgeDiv.className = 'flex-shrink-0';
-      badgeDiv.innerHTML = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 group-hover:bg-blue-200 transition-colors duration-200">${badge}</span>`;
+      badgeDiv.innerHTML = this.renderBadgeMarkup(badge, 'neutral');
       contentDiv.appendChild(badgeDiv);
     }
 
@@ -90,7 +90,7 @@ export class WebropolListCard extends BaseComponent {
 
     // Add arrow indicator
     const arrowDiv = document.createElement('div');
-    arrowDiv.className = 'flex-shrink-0 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200';
+    arrowDiv.className = 'flex-shrink-0 text-webropol-gray-400 transition-all duration-200 group-hover:translate-x-1 group-hover:text-webropol-primary-700';
     arrowDiv.innerHTML = '<i class="fal fa-chevron-right text-sm"></i>';
     contentDiv.appendChild(arrowDiv);
 
@@ -126,60 +126,56 @@ export class WebropolListCard extends BaseComponent {
     }
 
     this.innerHTML = `
-      <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="overflow-hidden rounded-2xl border border-webropol-gray-200/90 bg-white/95 shadow-card backdrop-blur-sm">
         ${title ? `
-          <div class="px-6 py-4 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-blue-50/30">
-            <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
+          <div class="border-b border-webropol-gray-200/90 bg-webropol-gray-50/80 px-6 py-4">
+            <h3 class="text-lg font-semibold text-webropol-gray-900">${title}</h3>
           </div>
         ` : ''}
         
-        <div class="divide-y divide-gray-100/50">
+        <div class="divide-y divide-webropol-gray-100">
           ${items.map(item => `
-            <div class="flex items-center justify-between p-4 hover:bg-blue-50/30 transition-all duration-200 cursor-pointer group relative overflow-hidden"
+            <div class="group relative flex cursor-pointer items-center justify-between overflow-hidden p-4 transition-all duration-200 hover:bg-webropol-primary-50/40"
                  data-item-id="${item.id || ''}" role="button" tabindex="0">
               
               <!-- Hover gradient overlay -->
-              <div class="absolute inset-0 bg-gradient-to-r from-blue-50/0 to-indigo-50/0 group-hover:from-blue-50/50 group-hover:to-indigo-50/30 transition-all duration-300 pointer-events-none"></div>
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-webropol-primary-50/0 to-white transition-all duration-300 group-hover:from-webropol-primary-50/70"></div>
               
               <div class="flex items-center flex-1 min-w-0 relative z-10">
                 ${item.icon ? `
-                  <div class="w-8 h-8 mr-3 flex items-center justify-center bg-sun-to-br from-blue-500 to-indigo-600 rounded-lg group-hover:scale-105 transition-transform duration-200">
-                    <i class="fal fa-${item.icon} text-white text-xs"></i>
+                  <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-xl border border-white/70 bg-webropol-gray-100 text-webropol-gray-700 shadow-soft transition-all duration-200 group-hover:scale-105 group-hover:bg-webropol-primary-100 group-hover:text-webropol-primary-700">
+                    <i class="fal fa-${item.icon} text-xs"></i>
                   </div>
                 ` : ''}
                 
                 <div class="flex-1 min-w-0">
-                  <div class="font-medium text-gray-900 group-hover:text-blue-900 transition-colors duration-200 truncate">${item.name || item.title || ''}</div>
+                  <div class="truncate font-semibold text-webropol-gray-900 transition-colors duration-200 group-hover:text-webropol-primary-700">${item.name || item.title || ''}</div>
                   ${item.description ? `
-                    <div class="text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200 truncate">${item.description}</div>
+                    <div class="truncate text-sm text-webropol-gray-600 transition-colors duration-200 group-hover:text-webropol-gray-700">${item.description}</div>
                   ` : ''}
                   ${item.meta ? `
-                    <div class="text-xs text-gray-500 mt-1">${item.meta}</div>
+                    <div class="mt-1 text-xs text-webropol-gray-500">${item.meta}</div>
                   ` : ''}
                 </div>
               </div>
               
               <div class="flex items-center space-x-3 ml-4 relative z-10">
                 ${item.answers ? `
-                  <span class="flex items-center text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200">
-                    <i class="fal fa-paper-plane text-blue-600 mr-1"></i>
+                  <span class="flex items-center text-sm text-webropol-gray-600 transition-colors duration-200 group-hover:text-webropol-gray-700">
+                    <i class="fal fa-paper-plane mr-1 text-webropol-primary-600"></i>
                     ${item.answers} answers
                   </span>
                 ` : ''}
                 
                 ${item.status ? `
-                  <span class="px-3 py-1 rounded-full text-xs font-medium ${this.getStatusClasses(item.status)}">
-                    ${item.status}
-                  </span>
+                  ${this.renderBadgeMarkup(item.status, this.getStatusVariant(item.status))}
                 ` : ''}
                 
                 ${item.badge ? `
-                  <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-700 text-white">
-                    ${item.badge}
-                  </span>
+                  ${this.renderBadgeMarkup(item.badge, 'neutral')}
                 ` : ''}
                 
-                <div class="text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all duration-200">
+                <div class="text-webropol-gray-400 transition-all duration-200 group-hover:translate-x-1 group-hover:text-webropol-primary-700">
                   <i class="fal fa-chevron-right text-sm"></i>
                 </div>
               </div>
@@ -188,7 +184,7 @@ export class WebropolListCard extends BaseComponent {
         </div>
         
         ${items.length === 0 ? `
-          <div class="p-8 text-center text-gray-500">
+          <div class="p-8 text-center text-webropol-gray-500">
             <i class="fal fa-inbox text-2xl mb-2 block opacity-50"></i>
             <p>No items to display</p>
           </div>
@@ -197,15 +193,23 @@ export class WebropolListCard extends BaseComponent {
     `;
   }
 
-  getStatusClasses(status) {
-    const statusClasses = {
-      'Open': 'bg-green-100 text-green-700',
-      'Draft': 'bg-yellow-100 text-yellow-700',
-      'Closed': 'bg-red-100 text-red-700',
-      'Active': 'bg-blue-100 text-blue-700',
-      'Answered': 'bg-webropol-primary-100 text-webropol-primary-700'
+  renderBadgeMarkup(label, variant = 'neutral') {
+    return `<span class="${this.classNames(
+      'inline-flex items-center whitespace-nowrap rounded-md border border-white/50 font-semibold leading-none shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]',
+      this.getVariantClasses('badge', variant),
+      this.getSizeClasses('badge', 'sm')
+    )}">${label}</span>`;
+  }
+
+  getStatusVariant(status) {
+    const statusVariants = {
+      Open: 'success',
+      Draft: 'warning',
+      Closed: 'error',
+      Active: 'primary',
+      Answered: 'secondary'
     };
-    return statusClasses[status] || 'bg-webropol-gray-100 text-webropol-gray-700';
+    return statusVariants[status] || 'neutral';
   }
 
   bindEvents() {

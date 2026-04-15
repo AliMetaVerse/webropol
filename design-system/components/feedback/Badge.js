@@ -21,7 +21,7 @@ export class WebropolBadge extends BaseComponent {
     
     // Base classes — Figma uses rounded-[4px], not pill
     const baseClasses = this.classNames(
-      'inline-flex items-center font-medium rounded',
+      'inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-white/50 font-semibold leading-none shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]',
       this.getVariantClasses('badge', variant),
       this.getSizeClasses('badge', size)
     );
@@ -31,7 +31,7 @@ export class WebropolBadge extends BaseComponent {
     
     // Create dismiss button if dismissible
     const dismissHtml = dismissible ? `
-      <button class="badge-dismiss ml-1.5 -mr-1 p-0.5 hover:bg-black/10 rounded-full transition-colors" 
+      <button class="badge-dismiss ml-1 -mr-0.5 rounded-md p-0.5 hover:bg-black/10 transition-colors" 
               aria-label="Remove ${text}">
         <i class="fal fa-times text-xs"></i>
       </button>

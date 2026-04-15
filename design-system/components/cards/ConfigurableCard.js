@@ -26,11 +26,11 @@ export class WebropolConfigurableCard extends BaseComponent {
 
     // Status color mapping
     const statusColors = {
-      'active': 'bg-green-100 text-green-800',
-      'pending': 'bg-yellow-100 text-yellow-800',
-      'draft': 'bg-gray-100 text-gray-800',
-      'completed': 'bg-blue-100 text-blue-800',
-      'error': 'bg-red-100 text-red-800'
+      active: this.getVariantClasses('badge', 'success'),
+      pending: this.getVariantClasses('badge', 'warning'),
+      draft: this.getVariantClasses('badge', 'neutral'),
+      completed: this.getVariantClasses('badge', 'primary'),
+      error: this.getVariantClasses('badge', 'error')
     };
 
     this.innerHTML = `
@@ -40,8 +40,8 @@ export class WebropolConfigurableCard extends BaseComponent {
           <div class="flex items-start justify-between">
             <div class="flex items-start space-x-4 flex-1">
               ${icon ? `
-                <div class="w-12 h-12 bg-sun-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <i class="fal fa-${icon} text-white text-lg"></i>
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-white/70 bg-webropol-gray-100 text-webropol-gray-700 shadow-soft">
+                  <i class="fal fa-${icon} text-lg"></i>
                 </div>
               ` : ''}
               
@@ -49,7 +49,7 @@ export class WebropolConfigurableCard extends BaseComponent {
                 <div class="flex items-center justify-between mb-2">
                   <h3 class="font-semibold text-webropol-gray-900 truncate">${title || 'Configurable Card'}</h3>
                   ${badge ? `
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-webropol-primary-100 text-webropol-primary-800">
+                    <span class="inline-flex items-center whitespace-nowrap rounded-md border border-white/50 bg-[#D1D5D6] px-2 py-1 text-xs font-semibold leading-none text-[#61686A] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
                       ${badge}
                     </span>
                   ` : ''}
@@ -61,7 +61,7 @@ export class WebropolConfigurableCard extends BaseComponent {
                 
                 ${status ? `
                   <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status] || statusColors.draft}">
+                    <span class="inline-flex items-center whitespace-nowrap rounded-md border border-white/50 px-2 py-1 text-xs font-semibold leading-none shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] ${statusColors[status] || statusColors.draft}">
                       ${status.charAt(0).toUpperCase() + status.slice(1)}
                     </span>
                   </div>

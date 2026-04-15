@@ -41,7 +41,7 @@ export class WebropolCard extends BaseComponent {
       
       // Base classes with glass morphism
       const baseClasses = this.classNames(
-        'card-wrapper bg-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-webropol-gray-100/80 transition-all duration-300',
+        'card-wrapper bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-card border border-webropol-gray-200/90 transition-all duration-300',
         clickable ? 'cursor-pointer hover:shadow-2xl hover:transform hover:scale-[1.02]' : 'hover:shadow-2xl',
         this.getVariantClasses('card', variant),
         this.getSizeClasses('card', size)
@@ -67,15 +67,19 @@ export class WebropolCard extends BaseComponent {
 
           if (icon) {
             const iconContainer = document.createElement('div');
-            iconContainer.className = 'w-12 h-12 bg-gradient-to-br from-webropol-primary-600 to-webropol-primary-700 rounded-2xl flex items-center justify-center';
-            iconContainer.innerHTML = `<i class="fal fa-${icon} text-white text-lg"></i>`;
+            iconContainer.className = 'flex h-12 w-12 items-center justify-center rounded-2xl border border-white/70 bg-webropol-gray-100 text-webropol-gray-700 shadow-soft';
+            iconContainer.innerHTML = `<i class="fal fa-${icon} text-lg"></i>`;
             iconBadgeRow.appendChild(iconContainer);
           }
 
           if (badge) {
             const badgeElement = document.createElement('span');
             const badgeClasses = this.getBadgeClasses(status || 'default');
-            badgeElement.className = `${badgeClasses} text-xs px-3 py-1 rounded-full font-medium`;
+            badgeElement.className = this.classNames(
+              'inline-flex items-center whitespace-nowrap rounded-md border border-white/50 font-semibold leading-none shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]',
+              badgeClasses,
+              this.getSizeClasses('badge', 'sm')
+            );
             badgeElement.textContent = badge;
             iconBadgeRow.appendChild(badgeElement);
           }
@@ -133,12 +137,12 @@ export class WebropolCard extends BaseComponent {
 
   getBadgeClasses(status) {
     const statusClasses = {
-      'live': 'bg-emerald-100 text-emerald-700',
-      'active': 'bg-blue-100 text-blue-700',
-      'pro': 'bg-yellow-100 text-yellow-700',
-      'recent': 'bg-webropol-primary-100 text-webropol-primary-700',
-      'draft': 'bg-gray-100 text-gray-700',
-      'default': 'bg-webropol-gray-100 text-webropol-gray-700'
+      live: this.getVariantClasses('badge', 'success'),
+      active: this.getVariantClasses('badge', 'primary'),
+      pro: this.getVariantClasses('badge', 'warning'),
+      recent: this.getVariantClasses('badge', 'secondary'),
+      draft: this.getVariantClasses('badge', 'neutral'),
+      default: this.getVariantClasses('badge', 'neutral')
     };
     return statusClasses[status] || statusClasses.default;
   }

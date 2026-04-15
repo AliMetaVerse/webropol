@@ -45,9 +45,10 @@ export class WebropolVideoCard extends BaseComponent {
     };
 
     const backgroundImage = background && backgroundImages[background] ? backgroundImages[background] : null;
+    const overlayBadgeBase = 'inline-flex items-center whitespace-nowrap rounded-md border border-white/20 px-2 py-1 text-xs font-semibold leading-none shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]';
 
     this.innerHTML = `
-      <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden hover:shadow-2xl hover:border-gray-300/50 transition-all duration-300 group cursor-pointer">
+      <div class="group cursor-pointer overflow-hidden rounded-2xl border border-webropol-gray-200/90 bg-white/95 shadow-card backdrop-blur-sm transition-all duration-300 hover:border-webropol-primary-200 hover:shadow-2xl">
         
         <!-- Video Thumbnail with Background -->
         <div class="relative aspect-video overflow-hidden">
@@ -59,31 +60,31 @@ export class WebropolVideoCard extends BaseComponent {
                  class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
           ` : `
-            <div class="w-full h-full bg-sun-to-br from-blue-500 to-purple-600"></div>
+            <div class="h-full w-full bg-webropol-gray-100"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
           `}
           
           <!-- Play Button Overlay -->
           <div class="absolute inset-0 flex items-center justify-center">
             <div class="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transform scale-90 group-hover:scale-110 transition-all duration-300 group-hover:bg-white">
-              <i class="fal fa-play-circle text-blue-600 text-xl ml-1 group-hover:text-blue-700"></i>
+              <i class="fal fa-play-circle ml-1 text-xl text-webropol-primary-600 group-hover:text-webropol-primary-700"></i>
             </div>
           </div>
           
           <!-- Duration Badge -->
           ${duration ? `
-            <div class="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+            <div class="absolute bottom-3 right-3 ${overlayBadgeBase} bg-black/80 text-white">
               ${duration}
             </div>
           ` : ''}
           
           <!-- Category/Tag Badge -->
           ${category ? `
-            <div class="absolute top-3 left-3 bg-blue-600/90 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+            <div class="absolute top-3 left-3 ${overlayBadgeBase} bg-webropol-primary-700/90 text-white">
               ${category}
             </div>
           ` : tag ? `
-            <div class="absolute top-3 left-3 bg-purple-600/90 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full font-medium">
+            <div class="absolute top-3 left-3 ${overlayBadgeBase} bg-webropol-gray-700/90 text-white">
               ${tag}
             </div>
           ` : ''}
@@ -104,18 +105,18 @@ export class WebropolVideoCard extends BaseComponent {
         </div>
         
         <!-- Card Footer -->
-        <div class="p-4 bg-gradient-to-r from-gray-50 to-blue-50/30">
+        <div class="bg-webropol-gray-50/80 p-4">
           <div class="flex items-center justify-between">
-            <button class="video-play-btn flex items-center text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors group/btn">
+            <button class="video-play-btn group/btn flex items-center text-sm font-medium text-webropol-primary-600 transition-colors hover:text-webropol-primary-700">
               <i class="fal fa-play-circle mr-2 group-hover/btn:scale-110 transition-transform duration-200"></i>
               Watch Video
             </button>
             
             <div class="flex items-center space-x-2">
-              <button class="video-bookmark-btn p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+              <button class="video-bookmark-btn rounded-lg p-2 text-webropol-gray-400 transition-colors hover:bg-webropol-primary-50 hover:text-webropol-primary-600">
                 <i class="far fa-bookmark"></i>
               </button>
-              <button class="video-share-btn p-2 text-gray-400 hover:text-blue-600 transition-colors rounded-lg hover:bg-blue-50">
+              <button class="video-share-btn rounded-lg p-2 text-webropol-gray-400 transition-colors hover:bg-webropol-primary-50 hover:text-webropol-primary-600">
                 <i class="fal fa-share-alt"></i>
               </button>
             </div>
