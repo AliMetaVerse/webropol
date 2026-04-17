@@ -1,5 +1,7 @@
 # Webropol Design System - Usage Guide
 
+For the canonical token and button reference, see `design-system/docs/COLORS-AND-BUTTONS.md`.
+
 ## Quick Start
 
 ### 1. Import the Design System

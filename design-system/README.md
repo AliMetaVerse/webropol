@@ -60,10 +60,13 @@ design-system/
 - **Border Radius**: `rounded-xl` (12px) for cards, `rounded-full` for pills
 - **Shadows**: `shadow-card`, `shadow-soft`, `shadow-medium`
 
+### Canonical Reference
+- Colors and buttons: `design-system/docs/COLORS-AND-BUTTONS.md`
+
 ## 🧩 Components
 
 ### Core Components
-- **Button** - Premium buttons with 13 variants including royal gradients (primary, secondary, tertiary, danger, danger-outline, success, royal, royalViolet, royalBlue, royalTurquoise, royalLight, royalSecondary, royalTertiary, royalIcon)
+- **Button** - Unified button component with 11 source-backed variants (`primary`, `secondary`, `tertiary`, `danger`, `danger-outline`, `success`, `royal`, `royalLight`, `royalSecondary`, `royalTertiary`, `royalIcon`) and sizes `micro`, `sm`, `md`, `lg`, `xl`
 - **Card** - Content containers with various layouts
 - **Modal** - Overlays and dialogs
 - **Badge** - Status indicators and labels
