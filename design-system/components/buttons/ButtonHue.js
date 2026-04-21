@@ -8,11 +8,16 @@
  *   hue          string   Color theme: royal-blue | royal-turquoise | royal-violet |
  *                         primary | accent | success | warning | error  (default: primary)
  *   orientation  string   Layout: vertical | horizontal | icon  (default: vertical)
- *   theme        string   Fill style: filled | outline | icon  (default: filled)
+ *   theme        string   Fill style: filled | outline | icon | ai-assistant  (default: filled)
+ *   shape        string   Corner shape: rounded | pill  (default: rounded)
  *   size         string   Button size: micro | sm | md | lg  (default: md)
  *   icon         string   FontAwesome icon class, e.g. "fal fa-chart-bar"  (default: fal fa-heart)
  *   label        string   Primary label text  (default: Button Label)
  *   description  string   Optional sub-label below label  (default: '')
+ *   badge        string   Optional inline badge text (e.g. "In Use", "Active")
+ *   badge-tone   string   Badge color: warning | success | info | neutral | accent  (default: warning)
+ *   trailing-icon string  FontAwesome class for a small icon at the right edge
+ *                         (e.g. "fal fa-chevron-down", "fal fa-circle-info")
  *   disabled     boolean  Disabled / non-interactive state
  *   href         string   When set, renders as <a> instead of <button>
  *   fit-content  boolean  Size to content width instead of the preset minimum width
@@ -49,15 +54,15 @@ import { BaseComponent } from '../../utils/base-component.js';
     }
     webropol-button-hue .wbh-btn {
       border: 1px solid var(--wbh-border);
-      background-color: var(--wbh-bg);
-      transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+      background: var(--wbh-bg);
+      transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease, background-color 150ms ease;
       text-decoration: none;
       outline: none;
       font-family: inherit;
     }
     webropol-button-hue .wbh-btn:not([disabled]):hover {
       border-color: var(--wbh-hover-border);
-      background-color: var(--wbh-hover-bg);
+      background: var(--wbh-hover-bg);
       box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
     }
     webropol-button-hue .wbh-btn:not([disabled]):active {
@@ -161,6 +166,27 @@ const DISABLED_TOKENS = {
   avatarBorder:'#e2e8f0',
 };
 
+// ─── Badge tone tokens (small inline pill — e.g. "In Use", "Active") ────────
+const BADGE_TONES = {
+  warning: { bg: '#fde047', fg: '#78320f' }, // amber pill from Figma
+  success: { bg: '#bbf7d0', fg: '#14532d' },
+  info:    { bg: '#bae6fd', fg: '#075985' },
+  neutral: { bg: '#e2e8f0', fg: '#334155' },
+  accent:  { bg: '#fed7aa', fg: '#7c2d12' },
+  violet:  { bg: '#e9d5ff', fg: '#4c1d95' },
+};
+
+// ─── AI Assistant theme tokens (prompt-style gradient button) ───────────────
+const AI_ASSISTANT_TOKENS = {
+  bg:          'linear-gradient(90deg, #f1e9fb 0%, #eef2ff 100%)',
+  border:      '#d5bef4',
+  avatarBg:    '#ffffff',
+  iconColor:   '#823bdd',
+  textColor:   '#511a98',
+  hoverBorder: '#823bdd',
+  activeBorder:'#511a98',
+};
+
 // ─── Size configs (Figma base = md) ──────────────────────────────────────────
 const SIZE_CONFIG = {
   micro: {
@@ -245,7 +271,8 @@ function escHtml(str) {
 // ─── Component ────────────────────────────────────────────────────────────────
 export class WebropolButtonHue extends BaseComponent {
   static get observedAttributes() {
-    return ['hue', 'orientation', 'theme', 'size', 'icon', 'label', 'description', 'disabled', 'href', 'fit-content'];
+    return ['hue', 'orientation', 'theme', 'shape', 'size', 'icon', 'label', 'description',
+            'badge', 'badge-tone', 'trailing-icon', 'disabled', 'href', 'fit-content'];
   }
 
   init() {
@@ -260,34 +287,43 @@ export class WebropolButtonHue extends BaseComponent {
   render() {
     const hue         = this.getAttr('hue', 'primary');
     const orientation = this.getAttr('orientation', 'vertical');   // vertical | horizontal | icon
-    const requestedTheme = this.getAttr('theme', 'filled');        // filled | outline | icon
+    const requestedTheme = this.getAttr('theme', 'filled');        // filled | outline | icon | ai-assistant
+    const shape       = this.getAttr('shape', 'rounded');          // rounded | pill
     const size        = this.getAttr('size', 'md');                // micro | sm | md | lg
     const iconClass   = this.getAttr('icon', 'fal fa-heart');
     const rawLabel    = this.getAttr('label', '');
     const label       = escHtml(rawLabel || 'Button Label');
     const description = escHtml(this.getAttr('description', ''));
+    const badgeText   = escHtml(this.getAttr('badge', ''));
+    const badgeTone   = this.getAttr('badge-tone', 'warning');
+    const trailingIcon= this.getAttr('trailing-icon', '');
     const disabled    = this.getBoolAttr('disabled');
     const href        = this.getAttr('href', '');
     const fitContent  = this.getBoolAttr('fit-content');
 
-    const t  = HUE_TOKENS[hue] || HUE_TOKENS['primary'];
+    const isAi         = requestedTheme === 'ai-assistant';
+    const t  = isAi ? AI_ASSISTANT_TOKENS : (HUE_TOKENS[hue] || HUE_TOKENS['primary']);
     const sc = SIZE_CONFIG[size]  || SIZE_CONFIG['md'];
     const isVertical   = orientation === 'vertical';
     const isHorizontal = orientation === 'horizontal';
     const isIconOnly   = orientation === 'icon';
     const theme        = isIconOnly ? 'icon' : requestedTheme;
+    const isPill       = shape === 'pill' || shape === 'fully-rounded';
     const iconAriaLabel = escHtml(rawLabel || `${hue.replace(/-/g, ' ')} icon button`);
 
     // Resolve colours for each part
     const bgColor      = disabled ? DISABLED_TOKENS.bg      : (theme === 'outline' ? '#ffffff' : t.bg);
-    const bgHover      = disabled ? DISABLED_TOKENS.bg      : t.bg; // outline hovers to tinted bg
+    const bgHover      = disabled ? DISABLED_TOKENS.bg      : (isAi ? t.bg : t.bg); // outline hovers to tinted bg
     const borderColor  = disabled ? DISABLED_TOKENS.border  : t.border;
     const hoverBorder  = disabled ? DISABLED_TOKENS.border  : t.hoverBorder;
     const activeBorder = disabled ? DISABLED_TOKENS.border  : t.activeBorder;
     const avatarBg     = isIconOnly ? 'transparent' : (disabled ? DISABLED_TOKENS.avatarBg : t.avatarBg);
-    const avatarBorder = isIconOnly ? '0' : (disabled ? `2px solid ${DISABLED_TOKENS.avatarBorder}` : '2px solid white');
+    const avatarBorder = isIconOnly ? '0' : (disabled ? `2px solid ${DISABLED_TOKENS.avatarBorder}` : (isAi ? `1px solid ${t.border}` : '2px solid white'));
     const iconColor    = disabled ? DISABLED_TOKENS.iconColor : t.iconColor;
     const textColor    = disabled ? DISABLED_TOKENS.textColor  : t.textColor;
+
+    // Effective corner radius — pill = use button height (large value covers all sizes)
+    const btnRadius    = isPill && !isIconOnly ? '9999px' : (isIconOnly ? sc.btnRadius : sc.btnRadius);
 
     // Push CSS custom-properties onto the host so the shared stylesheet can use them
     this.style.setProperty('--wbh-bg',           bgColor);
@@ -329,13 +365,14 @@ export class WebropolButtonHue extends BaseComponent {
     ].join(';');
 
     // ── Avatar (icon container) ───────────────────────────────────────────────
+    const avatarRadius = isPill ? '9999px' : sc.avatarRadius;
     const avatarStyles = [
       `width:${sc.avatarSize}`,
       `height:${sc.avatarSize}`,
       `min-width:${sc.avatarSize}`,
       `background-color:${avatarBg}`,
       `border:${avatarBorder}`,
-      `border-radius:${sc.avatarRadius}`,
+      `border-radius:${avatarRadius}`,
       `display:flex`,
       `align-items:center`,
       `justify-content:center`,
@@ -376,13 +413,52 @@ export class WebropolButtonHue extends BaseComponent {
       `opacity:0.75`,
     ].join(';');
 
+    // ── Badge (small inline pill, e.g. "In Use", "Active") ───────────────────────
+    let badgeHtml = '';
+    if (badgeText && !isIconOnly) {
+      const tone = BADGE_TONES[badgeTone] || BADGE_TONES.warning;
+      const badgeFontSize = size === 'micro' ? '9px' : (size === 'sm' ? '10px' : '11px');
+      const badgeStyles = [
+        `display:inline-flex`,
+        `align-items:center`,
+        `background-color:${disabled ? DISABLED_TOKENS.avatarBg : tone.bg}`,
+        `color:${disabled ? DISABLED_TOKENS.textColor : tone.fg}`,
+        `font-family:Roboto,Inter,system-ui,sans-serif`,
+        `font-size:${badgeFontSize}`,
+        `font-weight:600`,
+        `line-height:1`,
+        `padding:3px 6px`,
+        `border-radius:9999px`,
+        `margin-top:2px`,
+        `white-space:nowrap`,
+      ].join(';');
+      badgeHtml = `<span style="${badgeStyles}">${badgeText}</span>`;
+    }
+
+    // ── Trailing icon (chevron / info / etc.) ───────────────────────────────
+    let trailingIconHtml = '';
+    if (trailingIcon && !isIconOnly) {
+      const tIconSize = size === 'micro' ? '10px' : (size === 'sm' ? '12px' : '14px');
+      const trailingStyles = [
+        `color:${iconColor}`,
+        `font-size:${tIconSize}`,
+        `line-height:1`,
+        `margin-left:auto`,
+        `padding-left:8px`,
+        `flex-shrink:0`,
+        `opacity:${disabled ? '0.6' : '0.85'}`,
+      ].join(';');
+      trailingIconHtml = `<i class="${trailingIcon}" style="${trailingStyles}" aria-hidden="true"></i>`;
+    }
+
     const labelHtml = !isIconOnly ? `
       <div style="${labelStyles}">
         <span style="${labelTextStyles}">${label}</span>
         ${description ? `<span style="${descTextStyles}">${description}</span>` : ''}
+        ${badgeHtml}
       </div>` : '';
 
-    const innerContent = `<div style="${containerStyles}">${iconHtml}${labelHtml}</div>`;
+    const innerContent = `<div style="${containerStyles}">${iconHtml}${labelHtml}${trailingIconHtml}</div>`;
 
     // ── Render ────────────────────────────────────────────────────────────────
     if (href && !disabled) {
