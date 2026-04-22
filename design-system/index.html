@@ -540,23 +540,73 @@
           this.categories.forEach(cat => {
             this.expandedCategories[cat.id] = true;
           });
-          // Auto-open atoms and select Color Palette on first load
+          // Auto-open atoms on first load
           this.expandedCategories['atoms'] = true;
           this.filterComponents();
+
+          // Restore state from URL hash on load (e.g. #cards/Card)
+          this.applyRouteFromHash();
+
+          // Update view when user navigates back/forward or hash changes
+          window.addEventListener('hashchange', () => this.applyRouteFromHash());
+        },
+
+        // Hash format: #<categoryId>/<ComponentName>  (component is optional)
+        applyRouteFromHash() {
+          const hash = (location.hash || '').replace(/^#\/?/, '').trim();
+          if (!hash) {
+            // No hash => overview
+            this.selectedDemo = null;
+            this.selectedComp = null;
+            this.selectedCat  = null;
+            return;
+          }
+          const [catId, ...rest] = hash.split('/');
+          const compName = decodeURIComponent(rest.join('/') || '');
+          const cat = this.categories.find(c => c.id === catId);
+          if (!cat) return;
+          this.expandedCategories[cat.id] = true;
+          if (!compName) {
+            this.selectedDemo = null;
+            this.selectedComp = null;
+            this.selectedCat  = cat;
+            return;
+          }
+          const comp = cat.components.find(c => c.name === compName);
+          if (!comp) return;
+          this.selectedDemo  = comp.demoUrl || null;
+          this.selectedComp  = comp.name;
+          this.selectedCat   = cat;
+          this.iframeLoading = !!comp.demoUrl;
+        },
+
+        updateHash() {
+          let next = '';
+          if (this.selectedComp && this.selectedCat) {
+            next = `#${this.selectedCat.id}/${encodeURIComponent(this.selectedComp)}`;
+          } else if (this.selectedCat) {
+            next = `#${this.selectedCat.id}`;
+          }
+          // Use replaceState to avoid spamming history while clicking around
+          if (next !== location.hash) {
+            history.replaceState(null, '', next || location.pathname + location.search);
+          }
         },
 
         selectDemo(url, compName, cat) {
           this.selectedDemo  = url;
           this.selectedComp  = compName;
           this.selectedCat   = cat || null;
-          this.iframeLoading = true;
+          this.iframeLoading = !!url;
           if (cat) this.expandedCategories[cat.id] = true;
+          this.updateHash();
         },
 
         selectOverview() {
           this.selectedDemo = null;
           this.selectedComp = null;
           this.selectedCat  = null;
+          this.updateHash();
         },
 
         toggleCategory(id) {
