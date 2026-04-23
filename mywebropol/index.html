@@ -382,7 +382,7 @@
                                     <template x-for="item in visibleItems(category.id)" :key="item.title">
                                         <div>
                                             <template x-if="item.url">
-                                                <a :href="item.url" class="feature-card is-link">
+                                                <a :href="resolveUrl(item.url)" class="feature-card is-link">
                                                     <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
                                                     <div class="feature-body">
                                                         <p class="feature-title" x-text="item.title"></p>
@@ -436,6 +436,7 @@
                 activeTab: 'all',
                 searchQuery: '',
                 preferenceKey: 'webropol_mywebropol_dashboard',
+                moduleBase: '/mywebropol/',
                 categories: [
                     {
                         id: 'templates',
@@ -544,6 +545,22 @@
 
                 hasAnyResults() {
                     return this.categories.some(c => this.showSection(c.id));
+                },
+
+                resolveUrl(url) {
+                    if (!url) return url;
+                    if (/^(https?:|mailto:|tel:|#)/i.test(url)) return url;
+                    // In SPA mode, convert relative module paths to hash routes so the SPA router handles them
+                    if (window.WebropolSPA) {
+                        try {
+                            const abs = new URL(url, 'http://x' + this.moduleBase);
+                            const route = abs.pathname.replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
+                            return '#' + route + (abs.search || '');
+                        } catch (_) {
+                            return url;
+                        }
+                    }
+                    return url;
                 }
             };
         }
