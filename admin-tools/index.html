@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+?<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -32,58 +32,247 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design-system/styles/tokens.css">
+  <link rel="stylesheet" href="../design-system/styles/tabs.css">
+  <link rel="stylesheet" href="../design-system/styles/tabs-unified.css">
   <style>
-    [x-cloak] {
-      display: none !important;
-    }
+    [x-cloak] { display: none !important; }
 
     body {
       scrollbar-width: thin;
       scrollbar-color: #cbd5e1 #f8fafc;
       font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(204, 247, 254, 0.8), transparent 30%),
+        radial-gradient(circle at top right, rgba(237, 233, 254, 0.65), transparent 28%),
+        linear-gradient(180deg, rgba(248, 250, 252, 1) 0%, rgba(240, 253, 255, 0.65) 100%);
     }
 
-    body::-webkit-scrollbar {
-      width: 6px;
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+
+    /* Feature cards */
+    .feature-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.875rem 1rem;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.875rem;
+      transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+      text-decoration: none;
+      color: inherit;
+      width: 100%;
     }
 
-    body::-webkit-scrollbar-track {
-      background: #f8fafc;
+    .feature-grid {
+      display: grid;
+      gap: 0.625rem;
+      grid-template-columns: 1fr;
     }
 
-    body::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 6px;
-    }
+    .feature-card.is-link { cursor: pointer; }
 
-    .glass-effect {
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .hover-lift {
-      transition: all 0.2s ease;
-    }
-
-    .hover-lift:hover {
+    .feature-card.is-link:hover {
+      border-color: #99effd;
+      box-shadow: 0 10px 28px -16px rgba(8, 145, 178, 0.30);
       transform: translateY(-1px);
-      box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-card.is-link:hover .feature-arrow {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+
+    .feature-arrow {
+      margin-left: auto;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 200ms ease, transform 200ms ease;
+    }
+
+    .feature-body { min-width: 0; flex: 1; }
+
+    .feature-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    .feature-sub {
+      margin-top: 0.2rem;
+      font-size: 0.825rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    .feature-badge {
+      flex-shrink: 0;
+      padding: 0.15rem 0.55rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 9999px;
+    }
+
+    .feature-badge--neutral { background: #f1f5f9; color: #475569; }
+    .feature-badge--success { background: #dcfce7; color: #15803d; }
+    .feature-badge--warning { background: #ffedd5; color: #c2410c; }
+
+    /* Category sections in responsive grid */
+    .category-grid {
+      display: grid;
+      gap: 2rem 2.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+
+    .category-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .category-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    /* Search */
+    .search-shell { display: flex; justify-content: center; }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 36rem;
+      padding: 0.65rem 0.85rem 0.65rem 1.1rem;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      border-radius: 9999px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      backdrop-filter: blur(8px);
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .search-box:hover { border-color: #99effd; }
+
+    .search-box:focus-within {
+      border-color: #06b6d4;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+    }
+
+    .search-box.is-active { background: #ffffff; }
+
+    .search-box__icon {
+      color: #94a3b8;
+      font-size: 1rem;
+      transition: color 180ms ease;
+    }
+
+    .search-box:focus-within .search-box__icon { color: #0e7490; }
+
+    .search-box__input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      font-size: 0.9rem;
+      color: #0f172a;
+      outline: none;
+      padding: 0;
+    }
+
+    .search-box__input::placeholder { color: #94a3b8; }
+    .search-box__input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+    .search-box__meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .search-box__count {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #0e7490;
+      background: #ecfeff;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+    }
+
+    .search-box__clear {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 9999px;
+      border: 0;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .search-box__clear:hover { background: #f1f5f9; color: #0f172a; }
+
+    .search-box__kbd {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.15rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-box__kbd-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 1.4rem;
+      padding: 0.1rem 0.35rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #475569;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-bottom-width: 2px;
+      border-radius: 0.4rem;
+      line-height: 1;
     }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/navigation/Tabs.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
   <script src="../design-system/components/modals/Modal.js" type="module"></script>
   <script src="../design-system/components/modals/SettingsModal.js" type="module"></script>
+  <script src="../design-system/components/feedback/Avatar.js" type="module"></script>
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
-    
-    <!-- Global Analytics Tracker -->
-    <script src="../scripts/analytics-global-tracker.js"></script>
+
+  <!-- Global Analytics Tracker -->
+  <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
 
-<body x-data="adminApp()">
+<body x-data="adminApp()" x-init="init()">
   <div class="flex h-screen">
     <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -92,660 +281,113 @@
         <webropol-breadcrumbs
           trail='[{"label":"Home","url":"../index.html"},{"label":"Admin Tools","url":"index.html"}]'></webropol-breadcrumbs>
       </div>
-      <main class="flex-1 overflow-y-auto px-4 py-4 lg:px-8 pb-16" role="main">
-        <div class="max-w-7xl mx-auto">
-          <!-- Enhanced Header Section -->
-          <div class="mb-8">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-6">
-              <div class="text-center lg:text-left lg:flex-1">
-                <h1 class="page-title">
-                  Admin Tools
-                </h1>
-                <p class="text-lg text-webropol-gray-600 max-w-2xl lg:mx-0 mx-auto leading-relaxed">
-                  Manage your organization settings, users, and system configurations
-                </p>
-              </div>
-              <div class="mt-4 lg:mt-0 w-full lg:w-96 flex justify-center lg:justify-end">
-                <div class="relative w-full">
-                  <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400"></i>
-                  <input x-model="searchQuery" type="text" placeholder="Search settings..." class="pl-10 pr-4 py-2 border border-webropol-gray-200 rounded-lg bg-white text-webropol-gray-700 focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 text-sm w-full" />
-                </div>
+      <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
+        <div class="mx-auto max-w-7xl space-y-8">
+
+          <header class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h1 class="mt-2 text-3xl font-bold text-webropol-gray-900">Admin Tools</h1>
+              <p class="mt-2 max-w-xl text-sm text-webropol-gray-600">Manage users, security, modules and tooling — organised in one calm place.</p>
+            </div>
+            <webropol-tabs
+              id="admin-tabs"
+              variant="unified"
+              active-tab="all"
+              size="sm"
+              shape="rounded"
+              alignment="start"
+              no-panels
+              tabs='[
+                {"id":"all","label":"All"},
+                {"id":"users","label":"Users"},
+                {"id":"security","label":"Security"},
+                {"id":"modules","label":"Modules"},
+                {"id":"other","label":"Other"}
+              ]'>
+            </webropol-tabs>
+          </header>
+
+          <div class="search-shell">
+            <div class="search-box" :class="{ 'is-active': searchQuery }">
+              <i class="fa-light fa-magnifying-glass search-box__icon"></i>
+              <input
+                x-ref="searchInput"
+                type="search"
+                x-model="searchQuery"
+                @keydown.escape.prevent="searchQuery = ''; $event.target.blur()"
+                placeholder="Search admin tools…"
+                aria-label="Search Admin Tools"
+                class="search-box__input"
+              />
+              <div class="search-box__meta">
+                <span x-show="searchQuery" x-cloak class="search-box__count">
+                  <span x-text="totalResults()"></span>
+                  <span class="hidden sm:inline">&nbsp;result<span x-show="totalResults() !== 1">s</span></span>
+                </span>
+                <button
+                  type="button"
+                  x-show="searchQuery"
+                  x-cloak
+                  @click="searchQuery = ''; $refs.searchInput.focus()"
+                  aria-label="Clear search"
+                  class="search-box__clear">
+                  <i class="fa-light fa-xmark"></i>
+                </button>
+                <kbd x-show="!searchQuery" class="search-box__kbd">
+                  <span class="search-box__kbd-key">⌘</span>
+                  <span class="search-box__kbd-key">K</span>
+                </kbd>
               </div>
             </div>
           </div>
 
-          <!-- Admin Tools Content -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-            <!-- Left Column -->
-            <div class="space-y-6">
-
-              <!-- User Management Section -->
-              <section id="user-management"
-                class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300 hover-lift"
-                aria-labelledby="user-management-heading">
-                <div class="mb-6">
-                  <h2 id="user-management-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
-                    User Management and Rights
-                  </h2>
-                  <p class="text-webropol-gray-600 text-sm leading-relaxed">
-                    Manage users, permissions, and access control for your organization
-                  </p>
+          <div class="category-grid">
+            <template x-for="category in categories" :key="category.id">
+              <section x-show="showSection(category.id)" class="category-section">
+                <div class="category-header">
+                  <p class="category-title" x-text="category.title"></p>
                 </div>
-                <nav class="space-y-3" aria-label="User Management">
-                  <a href="user-manage-list.html" x-show="cardVisible('User Management and New User Creation')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access User Management and New User Creation">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-user-plus text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">User Management and
-                          New User Creation</span>
-                        <span class="text-webropol-gray-500 text-xs">Create and manage user accounts</span>
-                      </div>
+                <div class="feature-grid">
+                  <template x-for="item in visibleItems(category.id)" :key="item.title">
+                    <div>
+                      <template x-if="item.url">
+                        <a :href="item.url" class="feature-card is-link">
+                          <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
+                          <div class="feature-body">
+                            <p class="feature-title" x-text="item.title"></p>
+                            <p class="feature-sub" x-text="item.sub"></p>
+                          </div>
+                          <template x-if="item.badge">
+                            <span class="feature-badge" :class="'feature-badge--' + (item.badgeTone || 'neutral')" x-text="item.badge"></span>
+                          </template>
+                          <i class="fal fa-arrow-right feature-arrow"></i>
+                        </a>
+                      </template>
+                      <template x-if="!item.url">
+                        <div class="feature-card">
+                          <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
+                          <div class="feature-body">
+                            <p class="feature-title" x-text="item.title"></p>
+                            <p class="feature-sub" x-text="item.sub"></p>
+                          </div>
+                          <template x-if="item.badge">
+                            <span class="feature-badge" :class="'feature-badge--' + (item.badgeTone || 'neutral')" x-text="item.badge"></span>
+                          </template>
+                        </div>
+                      </template>
                     </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about User Management">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="survey-folder-rights.html" x-show="cardVisible('Survey and Folder Rights')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Survey and Folder Rights">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-folder-open text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Survey and Folder
-                          Rights</span>
-                        <span class="text-webropol-gray-500 text-xs">Configure access permissions</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Survey and Folder Rights">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('User Group Management')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access User Group Management">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-users-cog text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">User Group
-                          Management</span>
-                        <span class="text-webropol-gray-500 text-xs">Organize users into groups</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about User Group Management">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Access Requests')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Access Requests">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-user-check text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Access Requests</span>
-                        <span class="text-webropol-gray-500 text-xs">Pending access requests <span
-                            class="text-orange-600 font-medium">(0)</span></span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Access Requests">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                </nav>
-              </section>
-
-              <!-- Security and Data Protection Section -->
-              <section id="security"
-                class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300 hover-lift"
-                aria-labelledby="security-heading">
-                <div class="mb-6">
-                  <h2 id="security-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
-                    Security and Data Protection
-                  </h2>
-                  <p class="text-webropol-gray-600 text-sm leading-relaxed">
-                    Learn about our security measures and compliance standards
-                  </p>
+                  </template>
                 </div>
-                <nav class="space-y-3" aria-label="Security and Data Protection">
-                  <a href="#" x-show="cardVisible('User Environment Cleaning')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access User Environment Cleaning">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-broom text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">User Environment
-                          Cleaning</span>
-                        <span class="text-webropol-gray-500 text-xs">Clean up user environments (5542)</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <span
-                        class="px-2 py-1 bg-webropol-gray-100 text-webropol-gray-600 text-xs rounded-lg font-medium">5542</span>
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-red-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about User Environment Cleaning">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-red-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-red-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Restore Surveys')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Restore Surveys">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-undo text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Restore Surveys</span>
-                        <span class="text-webropol-gray-500 text-xs">Recover deleted surveys</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Restore Surveys">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Personal Data Management')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Personal Data Management (GDPR)">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-user-shield text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Personal Data
-                          Management (GDPR)</span>
-                        <span class="text-webropol-gray-500 text-xs">Data privacy compliance</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-purple-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Personal Data Management (GDPR)">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-purple-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-purple-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Password Policy')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Password Policy">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-key text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Password Policy</span>
-                        <span class="text-webropol-gray-500 text-xs">Configure password requirements</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-orange-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Password Policy">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-orange-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-orange-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Two Factor')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Two Factor Authentication">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-mobile-alt text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Two Factor
-                          Authentication</span>
-                        <span class="text-webropol-gray-500 text-xs">Status: Not in use</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <span
-                        class="px-2 py-1 bg-webropol-gray-100 text-webropol-gray-600 text-xs rounded-lg font-medium">Not
-                        in use</span>
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Two Factor Authentication">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('IP Restrictions')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access IP Restrictions">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-ban text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">IP Restrictions</span>
-                        <span class="text-webropol-gray-500 text-xs">Control access by IP address</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-purple-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about IP Restrictions">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-purple-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-purple-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                </nav>
               </section>
+            </template>
 
+            <div x-show="!hasAnyResults()" x-cloak class="col-span-full flex flex-col items-center gap-2 py-12 text-center">
+              <i class="fal fa-magnifying-glass text-3xl text-webropol-gray-300"></i>
+              <p class="text-sm font-medium text-webropol-gray-700">No results match "<span x-text="searchQuery"></span>"</p>
+              <button @click="searchQuery = ''" class="text-xs font-semibold text-webropol-primary-700 hover:text-webropol-primary-800">Clear search</button>
             </div>
-
-            <!-- Right Column -->
-            <div class="space-y-6">
-
-              <!-- Additional Modules Section -->
-              <section id="additional-modules"
-                class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300 hover-lift"
-                aria-labelledby="additional-modules-heading">
-                <div class="mb-6">
-                  <h2 id="additional-modules-heading"
-                    class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
-                    Additional Modules
-                  </h2>
-                  <p class="text-webropol-gray-600 text-sm leading-relaxed">
-                    Extended functionality and specialized survey tools
-                  </p>
-                </div>
-                <nav class="space-y-3" aria-label="Additional Modules">
-                  <a href="#" x-show="cardVisible('360 Evaluations')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access 360 Evaluations">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-sync-alt text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">360 Evaluations</span>
-                        <span class="text-webropol-gray-500 text-xs">Multi-source feedback system</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about 360 Evaluations">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Hierarchy')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Hierarchy">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-sitemap text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Hierarchy</span>
-                        <span class="text-webropol-gray-500 text-xs">Organizational structure management</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Hierarchy">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Hierarchy Admins')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Hierarchy Administrators">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-user-shield text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Hierarchy
-                          Administrators</span>
-                        <span class="text-webropol-gray-500 text-xs">Manage hierarchy admins</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Hierarchy Administrators">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Suomi.fi Messages')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Suomi.fi Messages">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-envelope-open-text text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Suomi.fi
-                          Messages</span>
-                        <span class="text-webropol-gray-500 text-xs">Status: In use</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <span
-                        class="px-2 py-1 bg-webropol-green-100 text-webropol-green-600 text-xs rounded-lg font-medium">In
-                        use</span>
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Suomi.fi Messages">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Online Payments')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Online Payments and Receipts">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-credit-card text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Online Payments and
-                          Receipts</span>
-                        <span class="text-webropol-gray-500 text-xs">Payment processing system</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Online Payments and Receipts">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Answering with Voice')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Answering with Voice">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-microphone text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Answering with
-                          Voice</span>
-                        <span class="text-webropol-gray-500 text-xs">Voice response collection</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Answering with Voice">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Wott Management')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Wott Management">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-cogs text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Wott Management</span>
-                        <span class="text-webropol-gray-500 text-xs">Advanced workflow tools</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Wott Management">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                </nav>
-              </section>
-
-              <!-- Other Tools Section -->
-              <section id="other-tools"
-                class="bg-white/90 backdrop-blur-lg rounded-3xl p-6 border border-webropol-gray-100/80 hover:shadow-2xl transition-all duration-300 hover-lift"
-                aria-labelledby="other-tools-heading">
-                <div class="mb-6">
-                  <h2 id="other-tools-heading" class="text-xl font-bold text-webropol-gray-900 mb-2 tracking-tight">
-                    Other Tools
-                  </h2>
-                  <p class="text-webropol-gray-600 text-sm leading-relaxed">
-                    Additional utilities and management tools for your surveys
-                  </p>
-                </div>
-                <nav class="space-y-3" aria-label="Other Tools">
-                  <a href="#" x-show="cardVisible('Respondent Login')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Respondent Login Page">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-sign-in-alt text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Respondent Login
-                          Page</span>
-                        <span class="text-webropol-gray-500 text-xs">Customize user experience</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Respondent Login Page">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Define Question Keywords')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Define Question Keywords for Environment">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-tags text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Define Question
-                          Keywords
-                          for Environment</span>
-                        <span class="text-webropol-gray-500 text-xs">Manage question tagging system</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Define Question Keywords for Environment">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Create Question IDs')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Create Question IDs">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-fingerprint text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Create Question
-                          IDs</span>
-                        <span class="text-webropol-gray-500 text-xs">Generate unique question identifiers</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Create Question IDs">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="#" x-show="cardVisible('Respondent Panel')"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Respondent Panel">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-users text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Respondent
-                          Panel</span>
-                        <span class="text-webropol-gray-500 text-xs">Manage participant database</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Respondent Panel">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                  <a href="do-not-contact.html"
-                    class="group flex items-center justify-between p-4 rounded-2xl bg-webropol-gray-50/50 hover:bg-webropol-primary-50 border border-transparent hover:border-webropol-primary-200 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-webropol-primary-100 focus:border-webropol-primary-300 hover:shadow-md hover-lift"
-                    role="button" aria-label="Access Do-Not-Contact List">
-                    <div class="flex items-center">
-                      <div
-                        class="w-12 h-12 bg-sky-to-br from-webropol-primary-100 to-webropol-primary-100 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fal fa-user-slash text-webropol-primary-600 text-lg" aria-hidden="true"></i>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-webropol-gray-900 text-base block mb-0.5">Do-Not-Contact
-                          List</span>
-                        <span class="text-webropol-gray-500 text-xs">Manage blocked contacts</span>
-                      </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                      <button
-                        class="w-8 h-8 rounded-xl bg-webropol-gray-100 hover:bg-webropol-primary-100 flex items-center justify-center transition-colors group/info"
-                        aria-label="More information about Do-Not-Contact List">
-                        <i class="fal fa-info-circle text-webropol-gray-400 group-hover/info:text-webropol-primary-600 transition-colors text-sm"
-                          aria-hidden="true"></i>
-                      </button>
-                      <i class="fal fa-chevron-right text-webropol-gray-400 group-hover:text-webropol-primary-600 group-hover:translate-x-1 transition-all duration-300 text-sm"
-                        aria-hidden="true"></i>
-                    </div>
-                  </a>
-                </nav>
-              </section>
-
-            </div>
-
           </div>
+
         </div>
       </main>
     </div>
@@ -757,58 +399,132 @@
   <script>
     function adminApp() {
       return {
-        // Enhanced admin tools functionality
-        showContextMenu: null,
-        // Search query for filtering setting cards
+        activeTab: 'all',
         searchQuery: '',
-
-        // Initialize any admin-specific features
-        init() {
-          this.setupInteractiveElements();
-        },
-
-        setupInteractiveElements() {
-          // Add any admin-specific interactive features here
-          console.log('Admin Tools initialized');
-        },
-
-        // Determine if a card should be visible by title
-        cardVisible(title) {
-          if (!this.searchQuery || this.searchQuery.trim() === '') return true;
-          try {
-            return String(title).toLowerCase().includes(this.searchQuery.trim().toLowerCase());
-          } catch (e) {
-            return true;
+        preferenceKey: 'webropol_admin_tools_dashboard',
+        categories: [
+          {
+            id: 'users',
+            title: 'User Management & Rights',
+            items: [
+              { title: 'User Management and New User Creation', sub: 'Create and manage user accounts.', icon: 'user-plus', url: 'user-manage-list.html' },
+              { title: 'Survey and Folder Rights', sub: 'Configure access permissions.', icon: 'folder-open', url: 'survey-folder-rights.html' },
+              { title: 'User Group Management', sub: 'Organize users into groups.', icon: 'users-cog', url: '#' },
+              { title: 'Access Requests', sub: 'Pending access requests (0).', icon: 'user-check', url: '#' }
+            ]
+          },
+          {
+            id: 'security',
+            title: 'Security & Data Protection',
+            items: [
+              { title: 'User Environment Cleaning', sub: 'Clean up inactive user environments.', icon: 'broom', url: '#', badge: '5542' },
+              { title: 'Restore Surveys', sub: 'Recover deleted surveys.', icon: 'undo', url: '#' },
+              { title: 'Personal Data Management (GDPR)', sub: 'Data privacy compliance.', icon: 'user-shield', url: '#' },
+              { title: 'Password Policy', sub: 'Configure password requirements.', icon: 'key', url: '#' },
+              { title: 'Two Factor Authentication', sub: 'Status: Not in use.', icon: 'mobile-alt', url: '#', badge: 'Not in use', badgeTone: 'neutral' },
+              { title: 'IP Restrictions', sub: 'Control access by IP address.', icon: 'ban', url: '#' }
+            ]
+          },
+          {
+            id: 'modules',
+            title: 'Additional Modules',
+            items: [
+              { title: '360 Evaluations', sub: 'Multi-source feedback system.', icon: 'sync-alt', url: '#' },
+              { title: 'Hierarchy', sub: 'Organisational structure management.', icon: 'sitemap', url: '#' },
+              { title: 'Hierarchy Administrators', sub: 'Manage hierarchy admins.', icon: 'user-shield', url: '#' },
+              { title: 'Suomi.fi Messages', sub: 'Status: In use.', icon: 'envelope-open-text', url: '#', badge: 'In use', badgeTone: 'success' },
+              { title: 'Online Payments and Receipts', sub: 'Payment processing system.', icon: 'credit-card', url: '#' },
+              { title: 'Answering with Voice', sub: 'Voice response collection.', icon: 'microphone', url: '#' },
+              { title: 'Wott Management', sub: 'Advanced workflow tools.', icon: 'cogs', url: '#' }
+            ]
+          },
+          {
+            id: 'other',
+            title: 'Other Tools',
+            items: [
+              { title: 'Respondent Login Page', sub: 'Customize user experience.', icon: 'sign-in-alt', url: '#' },
+              { title: 'Define Question Keywords for Environment', sub: 'Manage question tagging system.', icon: 'tags', url: '#' },
+              { title: 'Create Question IDs', sub: 'Generate unique question identifiers.', icon: 'fingerprint', url: '#' },
+              { title: 'Respondent Panel', sub: 'Manage participant database.', icon: 'users', url: '#' },
+              { title: 'Do-Not-Contact List', sub: 'Manage blocked contacts.', icon: 'user-slash', url: 'do-not-contact.html' }
+            ]
           }
+        ],
+
+        init() {
+          this.loadPreferences();
+
+          // Global ⌘/Ctrl+K shortcut to focus search
+          this._keydownHandler = (event) => {
+            if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+              event.preventDefault();
+              this.$refs.searchInput?.focus();
+              this.$refs.searchInput?.select();
+            }
+          };
+          window.addEventListener('keydown', this._keydownHandler);
+
+          this.$nextTick(() => {
+            const tabs = document.getElementById('admin-tabs');
+            if (tabs) {
+              tabs.setAttribute('active-tab', this.activeTab);
+              tabs.addEventListener('webropol-tab-change', (event) => {
+                this.activeTab = event.detail.activeTab;
+                this.savePreferences();
+              });
+            }
+          });
+        },
+
+        loadPreferences() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            this.activeTab = existing.activeTab || 'all';
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        savePreferences() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            existing.activeTab = this.activeTab;
+            localStorage.setItem(this.preferenceKey, JSON.stringify(existing));
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        matchesSearch(item) {
+          const q = (this.searchQuery || '').trim().toLowerCase();
+          if (!q) return true;
+          return (item.title || '').toLowerCase().includes(q)
+            || (item.sub || '').toLowerCase().includes(q);
+        },
+
+        visibleItems(sectionId) {
+          const cat = this.categories.find(c => c.id === sectionId);
+          if (!cat) return [];
+          return cat.items.filter(item => this.matchesSearch(item));
+        },
+
+        totalResults() {
+          return this.categories.reduce((sum, c) => {
+            if (this.activeTab !== 'all' && this.activeTab !== c.id) return sum;
+            return sum + this.visibleItems(c.id).length;
+          }, 0);
+        },
+
+        showSection(sectionId) {
+          const inTab = this.activeTab === 'all' || this.activeTab === sectionId;
+          return inTab && this.visibleItems(sectionId).length > 0;
+        },
+
+        hasAnyResults() {
+          return this.categories.some(c => this.showSection(c.id));
         }
       }
     }
-
-    // Additional enhancements for admin tools
-    document.addEventListener('DOMContentLoaded', function () {
-      // Add enhanced hover effects
-      const cards = document.querySelectorAll('.hover-lift');
-      cards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-          card.style.transform = 'translateY(-2px)';
-        });
-        card.addEventListener('mouseleave', () => {
-          card.style.transform = 'translateY(0)';
-        });
-      });
-
-      // Smooth scroll to sections if needed
-      const links = document.querySelectorAll('a[href^="#"]');
-      links.forEach(link => {
-        link.addEventListener('click', (e) => {
-          const target = document.querySelector(link.getAttribute('href'));
-          if (target) {
-            e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        });
-      });
-    });
   </script>
 </body>
 
