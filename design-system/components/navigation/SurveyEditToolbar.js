@@ -1,5 +1,4 @@
 import { BaseComponent } from '../../utils/base-component.js';
-import '../buttons/ButtonHue.js';
 import '../feedback/Tooltip.js';
 
 const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
@@ -32,50 +31,42 @@ export class SurveyEditToolbar extends BaseComponent {
     const itemsAttr = this.getAttr('items', '');
     const filter = itemsAttr ? itemsAttr.split(',').map(s => s.trim()) : null;
 
-    const tool = (action, label, icon, hue = 'primary') => {
+    const tool = (action, label, icon, hue = 'primary', primary = false) => {
       if (filter && !filter.includes(action)) return '';
-      const buttonMarkup = this.iconsOnly
-        ? `
-          <webropol-button-hue
-            orientation="icon"
-            theme="icon"
-            size="micro"
-            fit-content
-            hue="${hue}"
-            icon="${icon}"
-            label="${label}"
-          ></webropol-button-hue>
-        `
-        : `
-          <webropol-button-hue
-            orientation="vertical"
-            theme="outline"
-            size="micro"
-            fit-content
-            hue="${hue}"
-            icon="${icon}"
-            label="${label}"
-          ></webropol-button-hue>
-        `;
+
+      const classes = [
+        'tb-btn',
+        `tb-hue-${hue}`,
+        primary ? 'tb-btn-primary' : '',
+        this.iconsOnly ? 'tb-btn-icon-only' : ''
+      ].filter(Boolean).join(' ');
+
+      const labelHTML = this.iconsOnly ? '' : `<span class="tb-btn-label">${label}</span>`;
 
       return `
-        <div class="toolbar-item-wrap" data-action="${action}" aria-label="${label}" title="${label}" role="button" tabindex="0">
-          <webropol-tooltip text="${label}" position="bottom">
-            ${buttonMarkup}
-          </webropol-tooltip>
-        </div>
+        <webropol-tooltip text="${label}" position="bottom">
+          <button
+            type="button"
+            class="${classes}"
+            data-action="${action}"
+            aria-label="${label}"
+          >
+            <span class="tb-btn-icon"><i class="${icon}" aria-hidden="true"></i></span>
+            ${labelHTML}
+          </button>
+        </webropol-tooltip>
       `;
     };
 
-    const sep = () => '<div class="toolbar-separator"></div>';
+    const sep = () => '<span class="tb-separator" aria-hidden="true"></span>';
 
     // Define groups; separators are placed between non-empty groups
     const groups = [
-      [tool('add-question', 'Add Question', 'fal fa-plus-circle', 'accent')],
-      [tool('etest', 'eTest', 'fal fa-flask'), tool('library', 'Library', 'fal fa-books')],
-      [tool('add-page', 'Add Page', 'fal fa-file-plus'), tool('add-phase', 'Add Phase', 'fal fa-layer-plus')],
-      [tool('language', 'Language', 'fal fa-globe'), tool('image-gallery', 'Image Gallery', 'fal fa-images'), tool('layout', 'Layout', 'fal fa-palette')],
-      [tool('personal-data', 'Personal Data', 'fal fa-user-shield'), tool('settings', 'Settings', 'fal fa-cog'), tool('preview', 'Preview & Test', 'fal fa-eye')],
+      [tool('add-question', 'Add Question', 'fal fa-plus', 'danger', true)],
+      [tool('etest', 'eTest', 'fal fa-flask', 'primary'), tool('library', 'Library', 'fal fa-books', 'primary')],
+      [tool('add-page', 'Add Page', 'fal fa-file-plus', 'primary'), tool('add-phase', 'Add Phase', 'fal fa-layer-plus', 'primary')],
+      [tool('language', 'Language', 'fal fa-globe', 'primary'), tool('image-gallery', 'Image Gallery', 'fal fa-images', 'primary'), tool('layout', 'Layout', 'fal fa-palette', 'primary')],
+      [tool('personal-data', 'Personal Data', 'fal fa-user-shield', 'primary'), tool('settings', 'Settings', 'fal fa-cog', 'primary'), tool('preview', 'Preview & Test', 'fal fa-eye', 'primary')],
     ];
 
     const visibleGroups = groups.map(g => g.filter(Boolean).join('\n        ')).filter(g => g.trim());
@@ -83,48 +74,197 @@ export class SurveyEditToolbar extends BaseComponent {
 
     this.innerHTML = `
       <style>
+        :host, webropol-survey-edit-toolbar { display: block; }
+
         .survey-edit-toolbar {
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 16px;
+          --tb-radius: 18px;
+          --tb-btn-radius: 12px;
+          --tb-transition: 180ms cubic-bezier(.4, 0, .2, 1);
+
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
           padding: 8px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+          border-radius: var(--tb-radius);
+          background:
+            linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(248,250,252,.92) 100%);
+          border: 1px solid rgba(226, 232, 240, .9);
+          box-shadow:
+            0 1px 0 rgba(255,255,255,.8) inset,
+            0 1px 2px rgba(15, 23, 42, .04),
+            0 8px 24px -12px rgba(15, 23, 42, .12);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Decorative top sheen */
+        .survey-edit-toolbar::before {
+          content: '';
+          position: absolute;
+          inset: 0 0 auto 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
+          border-radius: var(--tb-radius) var(--tb-radius) 0 0;
+          pointer-events: none;
+        }
+
+        /* Tooltip wrapper should not break flex flow */
+        .survey-edit-toolbar webropol-tooltip {
+          display: inline-flex;
+        }
+
+        /* Base button */
+        .survey-edit-toolbar .tb-btn {
+          --hue-50:  #f0fdff;
+          --hue-100: #ecfeff;
+          --hue-500: #06b6d4;
+          --hue-600: #0891b2;
+          --hue-700: #0e7490;
+
+          appearance: none;
+          border: 1px solid transparent;
+          background: transparent;
+          color: #334155;
+          cursor: pointer;
           display: inline-flex;
           align-items: center;
           gap: 8px;
-        }
-        .survey-edit-toolbar .toolbar-item-wrap {
-          display: inline-flex;
-          flex-shrink: 0;
-          cursor: pointer;
-          border-radius: 12px;
+          padding: 8px 12px;
+          min-height: 36px;
+          font: 500 12.5px/1 'Inter', system-ui, sans-serif;
+          letter-spacing: .01em;
+          border-radius: var(--tb-btn-radius);
+          white-space: nowrap;
+          transition: background var(--tb-transition), color var(--tb-transition),
+                      border-color var(--tb-transition), transform var(--tb-transition),
+                      box-shadow var(--tb-transition);
         }
 
-        .survey-edit-toolbar .toolbar-item-wrap:focus-visible {
-          outline: 2px solid #06b6d4;
+        .survey-edit-toolbar .tb-btn-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          color: var(--hue-600);
+          font-size: 15px;
+          transition: transform var(--tb-transition), color var(--tb-transition);
+        }
+
+        .survey-edit-toolbar .tb-btn-label {
+          font-weight: 500;
+          color: #475569;
+          transition: color var(--tb-transition);
+        }
+
+        /* Hover */
+        .survey-edit-toolbar .tb-btn:hover {
+          background: var(--hue-50);
+          border-color: color-mix(in srgb, var(--hue-500) 18%, transparent);
+          color: var(--hue-700);
+        }
+        .survey-edit-toolbar .tb-btn:hover .tb-btn-label { color: var(--hue-700); }
+        .survey-edit-toolbar .tb-btn:hover .tb-btn-icon { transform: translateY(-1px); color: var(--hue-700); }
+
+        /* Active press */
+        .survey-edit-toolbar .tb-btn:active {
+          transform: translateY(0);
+          background: color-mix(in srgb, var(--hue-500) 14%, white);
+        }
+
+        /* Focus */
+        .survey-edit-toolbar .tb-btn:focus-visible {
+          outline: 2px solid var(--hue-500);
           outline-offset: 2px;
         }
 
-        .toolbar-separator {
+        /* Icons-only mode → square pill */
+        .survey-edit-toolbar .tb-btn-icon-only {
+          padding: 0;
+          width: 36px;
+          height: 36px;
+          justify-content: center;
+        }
+
+        /* Primary CTA — Add Question (danger / red) */
+        .survey-edit-toolbar .tb-btn-primary {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+          color: #ffffff;
+          border-color: transparent;
+          box-shadow:
+            0 1px 0 rgba(255,255,255,.25) inset,
+            0 6px 14px -6px rgba(220, 38, 38, .55),
+            0 2px 4px rgba(220, 38, 38, .25);
+        }
+        .survey-edit-toolbar .tb-btn-primary .tb-btn-icon,
+        .survey-edit-toolbar .tb-btn-primary .tb-btn-label { color: #ffffff; }
+        .survey-edit-toolbar .tb-btn-primary:hover {
+          background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+          color: #ffffff;
+          border-color: transparent;
+          box-shadow:
+            0 1px 0 rgba(255,255,255,.3) inset,
+            0 10px 20px -8px rgba(185, 28, 28, .6),
+            0 3px 6px rgba(185, 28, 28, .3);
+        }
+        .survey-edit-toolbar .tb-btn-primary:hover .tb-btn-label,
+        .survey-edit-toolbar .tb-btn-primary:hover .tb-btn-icon { color: #ffffff; }
+
+        /* Hue palettes */
+        .survey-edit-toolbar .tb-hue-primary {
+          --hue-50:#f0fdff; --hue-100:#ecfeff; --hue-500:#06b6d4; --hue-600:#0891b2; --hue-700:#0e7490;
+        }
+        .survey-edit-toolbar .tb-hue-accent {
+          --hue-50:#f0fdff; --hue-100:#ecfeff; --hue-500:#06b6d4; --hue-600:#0891b2; --hue-700:#0e7490;
+        }
+        .survey-edit-toolbar .tb-hue-violet {
+          --hue-50:#f5f3ff; --hue-100:#ede9fe; --hue-500:#8b5cf6; --hue-600:#7c3aed; --hue-700:#6d28d9;
+        }
+        .survey-edit-toolbar .tb-hue-blue {
+          --hue-50:#eff6ff; --hue-100:#dbeafe; --hue-500:#3b82f6; --hue-600:#2563eb; --hue-700:#1d4ed8;
+        }
+        .survey-edit-toolbar .tb-hue-amber {
+          --hue-50:#fffbeb; --hue-100:#fef3c7; --hue-500:#f59e0b; --hue-600:#d97706; --hue-700:#b45309;
+        }
+        .survey-edit-toolbar .tb-hue-green {
+          --hue-50:#ecfdf5; --hue-100:#d1fae5; --hue-500:#10b981; --hue-600:#059669; --hue-700:#047857;
+        }
+        .survey-edit-toolbar .tb-hue-slate {
+          --hue-50:#f8fafc; --hue-100:#f1f5f9; --hue-500:#64748b; --hue-600:#475569; --hue-700:#334155;
+        }
+        .survey-edit-toolbar .tb-hue-danger {
+          --hue-50:#fef2f2; --hue-100:#fee2e2; --hue-500:#ef4444; --hue-600:#dc2626; --hue-700:#b91c1c;
+        }
+
+        /* Separator */
+        .survey-edit-toolbar .tb-separator {
+          flex: 0 0 auto;
           width: 1px;
-          height: 40px;
-          background: #e2e8f0;
+          height: 24px;
           margin: 0 4px;
+          background: linear-gradient(180deg, transparent, rgba(148, 163, 184, .35), transparent);
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .survey-edit-toolbar {
-            padding: 6px;
-            gap: 4px;
             overflow-x: auto;
             max-width: 100%;
             justify-content: flex-start;
+            scrollbar-width: thin;
           }
+          .survey-edit-toolbar .tb-btn-label { display: none; }
+          .survey-edit-toolbar .tb-btn { padding: 0; width: 36px; height: 36px; justify-content: center; }
+          .survey-edit-toolbar .tb-btn-primary { width: auto; padding: 0 14px; }
+          .survey-edit-toolbar .tb-btn-primary .tb-btn-label { display: inline; }
+          .survey-edit-toolbar .tb-separator { height: 20px; margin: 0 2px; }
+        }
 
-          .toolbar-separator {
-            display: none;
-          }
+        @media (prefers-reduced-motion: reduce) {
+          .survey-edit-toolbar .tb-btn,
+          .survey-edit-toolbar .tb-btn-icon,
+          .survey-edit-toolbar .tb-btn-label { transition: none; }
         }
       </style>
       <div class="survey-edit-toolbar" role="toolbar" aria-label="Survey quick actions">
