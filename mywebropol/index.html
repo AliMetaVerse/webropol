@@ -63,32 +63,82 @@
             border-radius: 6px;
         }
 
-        .stats-grid > * {
-            display: block;
+        .feature-card {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+            text-decoration: none;
+            color: inherit;
+            width: 100%;
+            min-width: 280px;
+            max-width: 420px;
         }
 
-        .widget-grid {
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(12, minmax(0, 1fr));
-            gap: 1.5rem;
+            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 420px));
         }
 
-        .widget-grid > * {
-            grid-column: span 12;
+        .feature-card.is-link {
+            cursor: pointer;
         }
 
-        @media (min-width: 1024px) {
-            .widget-grid > .widget-span-7 {
-                grid-column: span 7;
-            }
+        .feature-card.is-link:hover {
+            border-color: #99effd;
+            box-shadow: 0 10px 28px -16px rgba(8, 145, 178, 0.30);
+            transform: translateY(-1px);
+        }
 
-            .widget-grid > .widget-span-5 {
-                grid-column: span 5;
-            }
+        .feature-card.is-link:hover .feature-arrow {
+            opacity: 1;
+            transform: translateX(2px);
+        }
 
-            .widget-grid > .widget-span-6 {
-                grid-column: span 6;
-            }
+        .feature-arrow {
+            margin-left: auto;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 200ms ease, transform 200ms ease;
+        }
+
+        .feature-body {
+            min-width: 0;
+        }
+
+        .feature-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.25;
+        }
+
+        .feature-sub {
+            margin-top: 0.2rem;
+            font-size: 0.825rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .section-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0));
+            flex: 1;
         }
     </style>
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
@@ -114,80 +164,13 @@
             </div>
 
             <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
-                <div class="mx-auto max-w-7xl space-y-8">
-                    <section class="stats-grid grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <a href="../design-gen/email-people.html" class="group relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white p-5 text-webropol-gray-900 shadow-card transition-all duration-300 hover:border-webropol-primary-200 hover:shadow-lg">
-                            <div class="absolute top-0 right-0 h-32 w-32 rounded-full bg-webropol-primary-50 -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150"></div>
-                            <div class="relative flex h-full flex-col justify-between gap-5">
-                                <div class="flex items-start justify-between gap-4">
-                                    <webropol-avatar class="group-hover:scale-110 transition-transform duration-300" variant="primary" size="lg" icon="envelope"></webropol-avatar>
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-webropol-primary-700">Email Templates</p>
-                                        <p class="mt-1 text-3xl font-bold text-webropol-gray-900">24</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-webropol-gray-600">Ready to use</span>
-                                    <span class="font-semibold text-webropol-primary-700">Open</span>
-                                </div>
-                            </div>
-                        </a>
+                <div class="mx-auto max-w-5xl space-y-10">
 
-                        <a href="lib/library.html" class="group relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white p-5 text-webropol-gray-900 shadow-card transition-all duration-300 hover:border-webropol-primary-200 hover:shadow-lg">
-                            <div class="absolute top-0 right-0 h-32 w-32 rounded-full bg-webropol-green-50 -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150"></div>
-                            <div class="relative flex h-full flex-col justify-between gap-5">
-                                <div class="flex items-start justify-between gap-4">
-                                    <webropol-avatar class="group-hover:scale-110 transition-transform duration-300" variant="success" size="lg" icon="book-open"></webropol-avatar>
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-webropol-green-700">Library Content</p>
-                                        <p class="mt-1 text-3xl font-bold text-webropol-gray-900">156</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm text-webropol-gray-600">
-                                    <span>132 questions</span>
-                                    <span>24 surveys</span>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="layout-templates.html" class="group relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white p-5 text-webropol-gray-900 shadow-card transition-all duration-300 hover:border-webropol-primary-200 hover:shadow-lg">
-                            <div class="absolute top-0 right-0 h-32 w-32 rounded-full bg-webropol-purple-50 -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150"></div>
-                            <div class="relative flex h-full flex-col justify-between gap-5">
-                                <div class="flex items-start justify-between gap-4">
-                                    <webropol-avatar class="group-hover:scale-110 transition-transform duration-300" variant="violet" size="lg" icon="layer-group"></webropol-avatar>
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-webropol-purple-700">Branding</p>
-                                        <p class="mt-1 text-3xl font-bold text-webropol-gray-900">18</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-webropol-gray-600">Brand assets maintained</span>
-                                    <span class="font-semibold text-webropol-purple-700">View</span>
-                                </div>
-                            </div>
-                        </a>
-
-                        <a href="../shop/sms-credits.html" class="group relative overflow-hidden rounded-2xl border border-webropol-gray-200 bg-white p-5 text-webropol-gray-900 shadow-card transition-all duration-300 hover:border-webropol-primary-200 hover:shadow-lg">
-                            <div class="absolute top-0 right-0 h-32 w-32 rounded-full bg-webropol-orange-50 -mr-16 -mt-16 transition-transform duration-500 group-hover:scale-150"></div>
-                            <div class="relative flex h-full flex-col justify-between gap-5">
-                                <div class="flex items-start justify-between gap-4">
-                                    <webropol-avatar class="group-hover:scale-110 transition-transform duration-300" variant="orange" size="lg" icon="sms"></webropol-avatar>
-                                    <div class="text-right">
-                                        <p class="text-sm font-medium text-webropol-orange-700">SMS Credits</p>
-                                        <p class="mt-1 text-3xl font-bold text-webropol-gray-900">5,420</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between text-sm">
-                                    <span class="text-webropol-gray-600">Available right now</span>
-                                    <span class="font-semibold text-webropol-orange-700">Manage</span>
-                                </div>
-                            </div>
-                        </a>
-                    </section>
-
-                    <section class="rounded-3xl bg-white/85 p-5 shadow-card ring-1 ring-webropol-gray-200 backdrop-blur-sm">
-                        <div class="mb-4">
-                            <h2 class="text-2xl font-bold text-webropol-gray-900">Browse by work area</h2>
+                    <header class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-widest text-webropol-primary-700">MyWebropol</p>
+                            <h1 class="mt-2 text-3xl font-bold text-webropol-gray-900">Your workspace essentials</h1>
+                            <p class="mt-2 max-w-xl text-sm text-webropol-gray-600">Templates, libraries, tools and resources — organised in one calm place.</p>
                         </div>
                         <webropol-tabs
                             id="mywebropol-tabs"
@@ -199,77 +182,126 @@
                             no-panels
                             tabs='[
                                 {"id":"all","label":"All"},
-                                {"id":"templates","label":"Templates & Libraries"},
+                                {"id":"templates","label":"Templates"},
                                 {"id":"tools","label":"Tools"},
                                 {"id":"support","label":"Support"},
                                 {"id":"security","label":"Security"}
                             ]'>
                         </webropol-tabs>
+                    </header>
+
+                    <section x-show="showSection('templates')" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h2 class="section-title">Templates &amp; Libraries</h2>
+                            <span class="section-divider"></span>
+                        </div>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <webropol-avatar variant="primary" size="sm" icon="envelope"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Email Templates</p>
+                                    <p class="feature-sub">Pre-designed layouts for newsletters, invites, and confirmations.</p>
+                                </div>
+                            </div>
+                            <a href="layout-templates.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="layer-group"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Branding</p>
+                                    <p class="feature-sub">Brand assets and reusable layout templates.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                            <a href="lib/library.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="book-open"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Question &amp; Survey Library</p>
+                                    <p class="feature-sub">Ready-made question blocks and survey blueprints.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                        </div>
                     </section>
 
-                    <section class="widget-grid">
-                        <webropol-home-widget
-                            x-show="showSection('templates')"
-                            class="widget-span-7"
-                            title="Templates and Libraries"
-                            icon="books"
-                            tone="primary">
-                            <webropol-list-card x-show="showItem('Email Templates')" mode="single" title="Email Templates" subtitle="Pre-designed layouts for newsletters, invites, and confirmations" icon="envelope" href="../design-gen/email-people.html">
-                                <webropol-badge variant="primary" size="sm">24</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('Branding')" mode="single" title="Branding" subtitle="Brand assets and reusable layout templates" icon="layer-group" href="layout-templates.html">
-                                <webropol-badge variant="neutral" size="sm">Assets</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('Question & Survey Library')" mode="single" title="Question & Survey Library" subtitle="Ready-made question blocks and survey blueprints" icon="book-open" href="lib/library.html">
-                                <webropol-badge variant="success" size="sm">156</webropol-badge>
-                            </webropol-list-card>
-                        </webropol-home-widget>
-
-                        <webropol-home-widget
-                            x-show="showSection('tools')"
-                            class="widget-span-5"
-                            title="Other Tools"
-                            icon="screwdriver-wrench"
-                            tone="accent">
-                            <webropol-list-card x-show="showItem('Login and Landing Pages')" mode="single" title="Login and Landing Pages" subtitle="Customize entry points and first-touch experiences" icon="sign-in-alt" href="../create/index.html">
-                                <webropol-badge variant="secondary" size="sm">UX</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('View and Manage SMS Credits')" mode="single" title="View and Manage SMS Credits" subtitle="Check balances, pricing, and purchase options" icon="sms" href="../shop/sms-credits.html">
-                                <webropol-badge variant="warning" size="sm">5,420</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('Training Videos')" mode="single" title="Training Videos" subtitle="Onboarding, feature walkthroughs, and best practices" icon="play-circle" href="../training-videos/index.html">
-                                <webropol-badge variant="neutral" size="sm">New</webropol-badge>
-                            </webropol-list-card>
-                        </webropol-home-widget>
-
-                        <webropol-home-widget
-                            x-show="showSection('support')"
-                            class="widget-span-6"
-                            title="Help Centre and Agreements"
-                            icon="life-ring"
-                            tone="royal">
-                            <webropol-list-card x-show="showItem('Help Centre')" mode="single" title="Help Centre" subtitle="Guides, how-to content, and onboarding support" icon="circle-question" href="../training-videos/index.html">
-                                <webropol-badge variant="primary" size="sm">Popular</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('Agreements')" mode="single" title="Agreements" subtitle="Review terms, contracts, and shared policies" icon="file-contract" href="#agreements">
-                                <webropol-badge variant="neutral" size="sm">Legal</webropol-badge>
-                            </webropol-list-card>
-                        </webropol-home-widget>
-
-                        <webropol-home-widget
-                            x-show="showSection('security')"
-                            class="widget-span-6"
-                            title="Data Security"
-                            icon="shield-check"
-                            tone="success">
-                            <webropol-list-card x-show="showItem('Data Security White Paper')" mode="single" title="Data Security White Paper" subtitle="Security posture, compliance, and information governance" icon="file-shield" href="#security-white-paper">
-                                <webropol-badge variant="success" size="sm">Updated</webropol-badge>
-                            </webropol-list-card>
-                            <webropol-list-card x-show="showItem('Status and Governance')" mode="single" title="Status and Governance" subtitle="Operational readiness and internal trust references" icon="badge-check" href="#status-governance">
-                                <webropol-badge variant="secondary" size="sm">Internal</webropol-badge>
-                            </webropol-list-card>
-                        </webropol-home-widget>
+                    <section x-show="showSection('tools')" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h2 class="section-title">Tools</h2>
+                            <span class="section-divider"></span>
+                        </div>
+                        <div class="feature-grid">
+                            <a href="../create/index.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="sign-in-alt"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Login &amp; Landing Pages</p>
+                                    <p class="feature-sub">Customize entry points and first-touch experiences.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                            <a href="../shop/sms-credits.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="sms"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">SMS Credits</p>
+                                    <p class="feature-sub">Check balances, pricing, and purchase options.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                            <a href="../training-videos/index.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="play-circle"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Training Videos</p>
+                                    <p class="feature-sub">Onboarding, walkthroughs, and best practices.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                        </div>
                     </section>
+
+                    <section x-show="showSection('support')" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h2 class="section-title">Help Centre &amp; Agreements</h2>
+                            <span class="section-divider"></span>
+                        </div>
+                        <div class="feature-grid">
+                            <a href="../training-videos/index.html" class="feature-card is-link">
+                                <webropol-avatar variant="primary" size="sm" icon="circle-question"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Help Centre</p>
+                                    <p class="feature-sub">Guides, how-to content, and onboarding support.</p>
+                                </div>
+                                <i class="fal fa-arrow-right feature-arrow"></i>
+                            </a>
+                            <div class="feature-card">
+                                <webropol-avatar variant="primary" size="sm" icon="file-contract"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Agreements</p>
+                                    <p class="feature-sub">Review terms, contracts, and shared policies.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section x-show="showSection('security')" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h2 class="section-title">Data Security</h2>
+                            <span class="section-divider"></span>
+                        </div>
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <webropol-avatar variant="primary" size="sm" icon="file-shield"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Data Security White Paper</p>
+                                    <p class="feature-sub">Security posture, compliance, and information governance.</p>
+                                </div>
+                            </div>
+                            <div class="feature-card">
+                                <webropol-avatar variant="primary" size="sm" icon="badge-check"></webropol-avatar>
+                                <div class="feature-body">
+                                    <p class="feature-title">Status &amp; Governance</p>
+                                    <p class="feature-sub">Operational readiness and internal trust references.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </main>
         </div>
