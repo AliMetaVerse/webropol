@@ -319,14 +319,14 @@
 <body>
   <div class="flex h-screen">
     <webropol-sidebar :active="contentConfig.sidebarActive" base="../"></webropol-sidebar>
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
       <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header-enhanced>
       <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
         <webropol-breadcrumbs :trail="breadcrumbTrail"></webropol-breadcrumbs>
       </div>
       
-      <main class="flex-1 overflow-y-auto" role="main" x-data="universalCreateApp()" @keydown.window.meta.enter.prevent="createItem()" @keydown.window.ctrl.enter.prevent="createItem()">
-        <div class="mx-auto px-6 py-10 w-full" style="max-width: 998px;">
+      <main class="flex-1 overflow-y-auto overflow-x-hidden" role="main" x-data="universalCreateApp()" @keydown.window.meta.enter.prevent="createItem()" @keydown.window.ctrl.enter.prevent="createItem()">
+        <div class="mx-auto w-full max-w-5xl px-6 py-10 overflow-x-hidden">
 
           <!-- Page header -->
           <header class="mb-8">
@@ -1402,11 +1402,39 @@
         createItem() {
           if (!this.isFormValid) return;
 
-          // Simulate creation
+          if (this.contentType === 'survey') {
+            try {
+              const drafts = JSON.parse(localStorage.getItem('webropol_survey_drafts') || '{}');
+              const draftId = 'draft_' + Date.now();
+              drafts[draftId] = {
+                id: draftId,
+                title: this.formData.title,
+                description: this.formData.description,
+                template: this.formData.selectedTemplate,
+                folder: this.formData.selectedFolder,
+                autoDelete: this.formData.autoDelete,
+                deleteDate: this.formData.deleteDate,
+                startMethod: this.startMethod || 'blank',
+                aiPrompt: this.aiPrompt,
+                createdAt: new Date().toISOString()
+              };
+              localStorage.setItem('webropol_survey_drafts', JSON.stringify(drafts));
+              localStorage.setItem('webropol_current_survey_draft', draftId);
+            } catch (error) {
+              console.error('localStorage error:', error);
+            }
+
+            const query = new URLSearchParams({
+              title: this.formData.title,
+              template: this.formData.selectedTemplate || 'blank'
+            });
+            const targetRoute = `/surveys/blank-survey?${query.toString()}`;
+            window.location.href = `../index.html#${targetRoute}`;
+            return;
+          }
+
+          // Simulate creation for non-survey content types
           alert(`${this.contentConfig.title} created successfully! Redirecting to ${this.contentConfig.title.toLowerCase()} management...`);
-          
-          // In a real app, this would redirect to the appropriate management page
-          // window.location.href = `/${this.contentType === 'survey' ? 'surveys' : this.contentType}/`;
         }
       }
     }
