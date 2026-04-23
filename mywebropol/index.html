@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="../design-system/styles/tabs.css">
     <link rel="stylesheet" href="../design-system/styles/tabs-unified.css">
     <style>
+        [x-cloak] { display: none !important; }
         body {
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 #f8fafc;
@@ -67,23 +68,49 @@
             position: relative;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.25rem;
+            gap: 0.875rem;
+            padding: 0.875rem 1rem;
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 1rem;
+            border-radius: 0.875rem;
             transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
             text-decoration: none;
             color: inherit;
             width: 100%;
-            min-width: 280px;
-            max-width: 420px;
         }
 
         .feature-grid {
             display: grid;
-            gap: 0.75rem;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 420px));
+            gap: 0.625rem;
+            grid-template-columns: 1fr;
+        }
+
+        /* Category sections arranged in a responsive multi-column grid */
+        .category-grid {
+            display: grid;
+            gap: 2rem 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .category-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.875rem;
+        }
+
+        .category-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
         }
 
         .feature-card.is-link {
@@ -140,6 +167,128 @@
             background: linear-gradient(to right, rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0));
             flex: 1;
         }
+
+        /* Search */
+        .search-shell {
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 36rem;
+            padding: 0.65rem 0.85rem 0.65rem 1.1rem;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            border-radius: 9999px;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            backdrop-filter: blur(8px);
+            transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+        }
+
+        .search-box:hover {
+            border-color: #99effd;
+        }
+
+        .search-box:focus-within {
+            border-color: #06b6d4;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+        }
+
+        .search-box.is-active {
+            background: #ffffff;
+        }
+
+        .search-box__icon {
+            color: #94a3b8;
+            font-size: 1rem;
+            transition: color 180ms ease;
+        }
+
+        .search-box:focus-within .search-box__icon {
+            color: #0e7490;
+        }
+
+        .search-box__input {
+            flex: 1;
+            min-width: 0;
+            border: 0;
+            background: transparent;
+            font-size: 0.9rem;
+            color: #0f172a;
+            outline: none;
+            padding: 0;
+        }
+
+        .search-box__input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Hide native clear button */
+        .search-box__input::-webkit-search-cancel-button { -webkit-appearance: none; }
+
+        .search-box__meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .search-box__count {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #0e7490;
+            background: #ecfeff;
+            padding: 0.15rem 0.55rem;
+            border-radius: 9999px;
+        }
+
+        .search-box__clear {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 9999px;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: background 150ms ease, color 150ms ease;
+        }
+
+        .search-box__clear:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .search-box__kbd {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.15rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-box__kbd-key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.4rem;
+            padding: 0.1rem 0.35rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #475569;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-bottom-width: 2px;
+            border-radius: 0.4rem;
+            line-height: 1;
+        }
     </style>
     <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
     <script src="../design-system/components/navigation/Header.js" type="module"></script>
@@ -164,12 +313,11 @@
             </div>
 
             <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
-                <div class="mx-auto max-w-5xl space-y-10">
+                <div class="mx-auto max-w-7xl space-y-8">
 
                     <header class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                         <div>
-                            <p class="text-xs font-semibold uppercase tracking-widest text-webropol-primary-700">MyWebropol</p>
-                            <h1 class="mt-2 text-3xl font-bold text-webropol-gray-900">Your workspace essentials</h1>
+                            <h1 class="mt-2 text-3xl font-bold text-webropol-gray-900">MyWebropol</h1>
                             <p class="mt-2 max-w-xl text-sm text-webropol-gray-600">Templates, libraries, tools and resources — organised in one calm place.</p>
                         </div>
                         <webropol-tabs
@@ -190,117 +338,81 @@
                         </webropol-tabs>
                     </header>
 
-                    <section x-show="showSection('templates')" class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <h2 class="section-title">Templates &amp; Libraries</h2>
-                            <span class="section-divider"></span>
-                        </div>
-                        <div class="feature-grid">
-                            <div class="feature-card">
-                                <webropol-avatar variant="primary" size="sm" icon="envelope"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Email Templates</p>
-                                    <p class="feature-sub">Pre-designed layouts for newsletters, invites, and confirmations.</p>
-                                </div>
+                    <div class="search-shell">
+                        <div class="search-box" :class="{ 'is-active': searchQuery }">
+                            <i class="fa-light fa-magnifying-glass search-box__icon"></i>
+                            <input
+                                x-ref="searchInput"
+                                type="search"
+                                x-model="searchQuery"
+                                @keydown.escape.prevent="searchQuery = ''; $event.target.blur()"
+                                placeholder="Search templates, tools, help…"
+                                aria-label="Search MyWebropol"
+                                class="search-box__input"
+                            />
+                            <div class="search-box__meta">
+                                <span x-show="searchQuery" x-cloak class="search-box__count">
+                                    <span x-text="totalResults()"></span>
+                                    <span class="hidden sm:inline">&nbsp;result<span x-show="totalResults() !== 1">s</span></span>
+                                </span>
+                                <button
+                                    type="button"
+                                    x-show="searchQuery"
+                                    x-cloak
+                                    @click="searchQuery = ''; $refs.searchInput.focus()"
+                                    aria-label="Clear search"
+                                    class="search-box__clear">
+                                    <i class="fa-light fa-xmark"></i>
+                                </button>
+                                <kbd x-show="!searchQuery" class="search-box__kbd">
+                                    <span class="search-box__kbd-key">⌘</span>
+                                    <span class="search-box__kbd-key">K</span>
+                                </kbd>
                             </div>
-                            <a href="layout-templates.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="layer-group"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Branding</p>
-                                    <p class="feature-sub">Brand assets and reusable layout templates.</p>
-                                </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
-                            <a href="lib/library.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="book-open"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Question &amp; Survey Library</p>
-                                    <p class="feature-sub">Ready-made question blocks and survey blueprints.</p>
-                                </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
                         </div>
-                    </section>
+                    </div>
 
-                    <section x-show="showSection('tools')" class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <h2 class="section-title">Tools</h2>
-                            <span class="section-divider"></span>
-                        </div>
-                        <div class="feature-grid">
-                            <a href="../create/index.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="sign-in-alt"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Login &amp; Landing Pages</p>
-                                    <p class="feature-sub">Customize entry points and first-touch experiences.</p>
+                    <div class="category-grid">
+                        <template x-for="category in categories" :key="category.id">
+                            <section x-show="showSection(category.id)" class="category-section">
+                                <div class="category-header">
+                                    <p class="category-title" x-text="category.title"></p>
                                 </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
-                            <a href="../shop/sms-credits.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="sms"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">SMS Credits</p>
-                                    <p class="feature-sub">Check balances, pricing, and purchase options.</p>
+                                <div class="feature-grid">
+                                    <template x-for="item in visibleItems(category.id)" :key="item.title">
+                                        <div>
+                                            <template x-if="item.url">
+                                                <a :href="item.url" class="feature-card is-link">
+                                                    <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
+                                                    <div class="feature-body">
+                                                        <p class="feature-title" x-text="item.title"></p>
+                                                        <p class="feature-sub" x-text="item.sub"></p>
+                                                    </div>
+                                                    <i class="fal fa-arrow-right feature-arrow"></i>
+                                                </a>
+                                            </template>
+                                            <template x-if="!item.url">
+                                                <div class="feature-card">
+                                                    <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
+                                                    <div class="feature-body">
+                                                        <p class="feature-title" x-text="item.title"></p>
+                                                        <p class="feature-sub" x-text="item.sub"></p>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
-                            <a href="../training-videos/index.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="play-circle"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Training Videos</p>
-                                    <p class="feature-sub">Onboarding, walkthroughs, and best practices.</p>
-                                </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
-                        </div>
-                    </section>
+                            </section>
+                        </template>
 
-                    <section x-show="showSection('support')" class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <h2 class="section-title">Help Centre &amp; Agreements</h2>
-                            <span class="section-divider"></span>
+                        <div x-show="!hasAnyResults()" x-cloak class="col-span-full flex flex-col items-center gap-2 py-12 text-center">
+                            <i class="fal fa-magnifying-glass text-3xl text-webropol-gray-300"></i>
+                            <p class="text-sm font-medium text-webropol-gray-700">No results match "<span x-text="searchQuery"></span>"</p>
+                            <button @click="searchQuery = ''" class="text-xs font-semibold text-webropol-primary-700 hover:text-webropol-primary-800">Clear search</button>
                         </div>
-                        <div class="feature-grid">
-                            <a href="../training-videos/index.html" class="feature-card is-link">
-                                <webropol-avatar variant="primary" size="sm" icon="circle-question"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Help Centre</p>
-                                    <p class="feature-sub">Guides, how-to content, and onboarding support.</p>
-                                </div>
-                                <i class="fal fa-arrow-right feature-arrow"></i>
-                            </a>
-                            <div class="feature-card">
-                                <webropol-avatar variant="primary" size="sm" icon="file-contract"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Agreements</p>
-                                    <p class="feature-sub">Review terms, contracts, and shared policies.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
 
-                    <section x-show="showSection('security')" class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <h2 class="section-title">Data Security</h2>
-                            <span class="section-divider"></span>
-                        </div>
-                        <div class="feature-grid">
-                            <div class="feature-card">
-                                <webropol-avatar variant="primary" size="sm" icon="file-shield"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Data Security White Paper</p>
-                                    <p class="feature-sub">Security posture, compliance, and information governance.</p>
-                                </div>
-                            </div>
-                            <div class="feature-card">
-                                <webropol-avatar variant="primary" size="sm" icon="badge-check"></webropol-avatar>
-                                <div class="feature-body">
-                                    <p class="feature-title">Status &amp; Governance</p>
-                                    <p class="feature-sub">Operational readiness and internal trust references.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
 
                 </div>
             </main>
@@ -322,16 +434,57 @@
         function mywebropolApp() {
             return {
                 activeTab: 'all',
+                searchQuery: '',
                 preferenceKey: 'webropol_mywebropol_dashboard',
-                sectionItems: {
-                    templates: ['Email Templates', 'Branding', 'Question & Survey Library'],
-                    tools: ['Login and Landing Pages', 'View and Manage SMS Credits', 'Training Videos'],
-                    support: ['Help Centre', 'Agreements'],
-                    security: ['Data Security White Paper', 'Status and Governance']
-                },
+                categories: [
+                    {
+                        id: 'templates',
+                        title: 'Templates & Libraries',
+                        items: [
+                            { title: 'Email Templates', sub: 'Pre-designed layouts for newsletters, invites, and confirmations.', icon: 'envelope', url: null },
+                            { title: 'Branding', sub: 'Brand assets and reusable layout templates.', icon: 'layer-group', url: 'layout-templates.html' },
+                            { title: 'Question & Survey Library', sub: 'Ready-made question blocks and survey blueprints.', icon: 'book-open', url: 'lib/library.html' }
+                        ]
+                    },
+                    {
+                        id: 'tools',
+                        title: 'Tools',
+                        items: [
+                            { title: 'Login & Landing Pages', sub: 'Customize entry points and first-touch experiences.', icon: 'sign-in-alt', url: '../create/index.html' },
+                            { title: 'SMS Credits', sub: 'Check balances, pricing, and purchase options.', icon: 'sms', url: '../shop/sms-credits.html' },
+                            { title: 'Training Videos', sub: 'Onboarding, walkthroughs, and best practices.', icon: 'play-circle', url: '../training-videos/index.html' }
+                        ]
+                    },
+                    {
+                        id: 'support',
+                        title: 'Help Centre & Agreements',
+                        items: [
+                            { title: 'Help Centre', sub: 'Guides, how-to content, and onboarding support.', icon: 'circle-question', url: '../training-videos/index.html' },
+                            { title: 'Agreements', sub: 'Review terms, contracts, and shared policies.', icon: 'file-contract', url: null }
+                        ]
+                    },
+                    {
+                        id: 'security',
+                        title: 'Data Security',
+                        items: [
+                            { title: 'Data Security White Paper', sub: 'Security posture, compliance, and information governance.', icon: 'file-shield', url: null },
+                            { title: 'Status & Governance', sub: 'Operational readiness and internal trust references.', icon: 'badge-check', url: null }
+                        ]
+                    }
+                ],
 
                 init() {
                     this.loadPreferences();
+
+                    // Global ⌘/Ctrl+K shortcut to focus search
+                    this._keydownHandler = (event) => {
+                        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+                            event.preventDefault();
+                            this.$refs.searchInput?.focus();
+                            this.$refs.searchInput?.select();
+                        }
+                    };
+                    window.addEventListener('keydown', this._keydownHandler);
 
                     this.$nextTick(() => {
                         const tabs = document.getElementById('mywebropol-tabs');
@@ -364,13 +517,33 @@
                     }
                 },
 
-                showSection(sectionId) {
-                    const inTab = this.activeTab === 'all' || this.activeTab === sectionId;
-                    return inTab && this.sectionItems[sectionId].length > 0;
+                matchesSearch(item) {
+                    const q = (this.searchQuery || '').trim().toLowerCase();
+                    if (!q) return true;
+                    return (item.title || '').toLowerCase().includes(q)
+                        || (item.sub || '').toLowerCase().includes(q);
                 },
 
-                showItem() {
-                    return true;
+                visibleItems(sectionId) {
+                    const cat = this.categories.find(c => c.id === sectionId);
+                    if (!cat) return [];
+                    return cat.items.filter(item => this.matchesSearch(item));
+                },
+
+                totalResults() {
+                    return this.categories.reduce((sum, c) => {
+                        if (this.activeTab !== 'all' && this.activeTab !== c.id) return sum;
+                        return sum + this.visibleItems(c.id).length;
+                    }, 0);
+                },
+
+                showSection(sectionId) {
+                    const inTab = this.activeTab === 'all' || this.activeTab === sectionId;
+                    return inTab && this.visibleItems(sectionId).length > 0;
+                },
+
+                hasAnyResults() {
+                    return this.categories.some(c => this.showSection(c.id));
                 }
             };
         }

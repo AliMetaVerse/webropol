@@ -110,9 +110,6 @@ export class WebropolHeader extends BaseComponent {
               </div>
             </div>
           ` : ''}
-          ${title ? `
-            <h1 class="text-xl font-semibold text-webropol-gray-900">${title}</h1>
-          ` : ''}
           <!-- Desktop sidebar toggle: removed 'hidden md:flex' so it doesn't disappear on some pages -->
           <button class="ml-2 flex w-10 h-10 items-center justify-center text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 rounded-xl transition-all" data-action="toggle-main-sidebar" title="Hide/show sidebar" aria-label="Toggle sidebar">
             <i class="fa-duotone fa-thin fa-columns"></i>
@@ -1713,7 +1710,6 @@ export class WebropolHeader extends BaseComponent {
             <div class="w-8 h-8 bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 rounded-lg flex items-center justify-center">
               <i class="fa-light fa-user-magnifying-glass text-white text-sm"></i>
             </div>
-            ${title ? `<span class="ml-2 font-semibold text-webropol-gray-900 text-sm truncate max-w-[120px]">${title}</span>` : ''}
           </div>
         </div>
         <div class="flex items-center space-x-2">
