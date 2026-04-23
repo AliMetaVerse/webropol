@@ -324,35 +324,41 @@ class WebropolSPA {
   // Rewrite internal links and asset URLs inside injected content to be SPA- and base-aware
   this.rewriteContentUrls(baseUrl, this.container);
 
-      // Ensure fluid layout by removing max-width caps from common containers (applies in all modes)
+      // Ensure fluid layout by removing max-width caps from common containers.
+      // Preserve page-owned content widths for routes that intentionally rely on them.
       try {
-        // Target typical layout wrappers that center content
-        const candidates = this.container.querySelectorAll('.mx-auto, main, [class*="max-w-"], .container');
-        candidates.forEach((el) => {
-          if (!el.classList) return;
-          // Skip elements inside modals — their max-w-* classes are intentional sizing
-          if (el.closest('.modal-overlay, [class*="modal"], .fixed[class*="inset-0"]') || el.classList.contains('modal-overlay')) return;
-          // Remove any Tailwind max-w-* classes, including arbitrary values like max-w-[1600px]
-          const toRemove = [];
-          el.classList.forEach((c) => {
-            if (c.startsWith('max-w-') || c === 'container') toRemove.push(c);
-          });
-          toRemove.forEach((c) => el.classList.remove(c));
+        const routePath = path.split('?')[0];
+        const preservePageWidths = routePath === '/create';
 
-          // For common wrappers, make them fluid and centered
-          if (toRemove.length || el.classList.contains('mx-auto') || el.tagName.toLowerCase() === 'main') {
-            try { el.classList.add('w-full'); } catch(_) {}
-            // Center if it’s intended as a centered wrapper
-            if (!el.style.marginLeft && !el.style.marginRight) {
-              el.style.marginLeft = 'auto';
-              el.style.marginRight = 'auto';
+        if (!preservePageWidths) {
+          // Target typical layout wrappers that center content
+          const candidates = this.container.querySelectorAll('.mx-auto, main, [class*="max-w-"], .container');
+          candidates.forEach((el) => {
+            if (!el.classList) return;
+            // Skip elements inside modals — their max-w-* classes are intentional sizing
+            if (el.closest('.modal-overlay, [class*="modal"], .fixed[class*="inset-0"]') || el.classList.contains('modal-overlay')) return;
+            // Remove any Tailwind max-w-* classes, including arbitrary values like max-w-[1600px]
+            const toRemove = [];
+            el.classList.forEach((c) => {
+              if (c.startsWith('max-w-') || c === 'container') toRemove.push(c);
+            });
+            toRemove.forEach((c) => el.classList.remove(c));
+
+            // For common wrappers, make them fluid and centered
+            if (toRemove.length || el.classList.contains('mx-auto') || el.tagName.toLowerCase() === 'main') {
+              try { el.classList.add('w-full'); } catch(_) {}
+              // Center if it’s intended as a centered wrapper
+              if (!el.style.marginLeft && !el.style.marginRight) {
+                el.style.marginLeft = 'auto';
+                el.style.marginRight = 'auto';
+              }
+              // Do not enforce any inline max-width; let the page expand fully
+              if (el.style.maxWidth) {
+                el.style.maxWidth = '';
+              }
             }
-            // Do not enforce any inline max-width; let the page expand fully
-            if (el.style.maxWidth) {
-              el.style.maxWidth = '';
-            }
-          }
-        });
+          });
+        }
       } catch (_) { /* no-op */ }
 
       // Attach modal/pop-up elements that live outside <main> in the source page
