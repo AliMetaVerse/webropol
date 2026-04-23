@@ -1184,6 +1184,22 @@
           return true;
         },
 
+        getSurveyCreateRoute() {
+          const title = (this.formData.title || '').trim() || 'Survey';
+          const template = this.formData.selectedTemplate || 'blank';
+          const query = new URLSearchParams({ title, template });
+          return `/surveys/blank-survey?${query.toString()}`;
+        },
+
+        navigateToSpaRoute(route) {
+          if (window.WebropolSPA && typeof window.WebropolSPA.navigate === 'function') {
+            window.WebropolSPA.navigate(route);
+            return;
+          }
+
+          window.location.href = `../index.html#${route}`;
+        },
+
         // Pick a start method and focus the title field
         chooseMethod(method) {
           this.startMethod = method;
@@ -1424,12 +1440,8 @@
               console.error('localStorage error:', error);
             }
 
-            const query = new URLSearchParams({
-              title: this.formData.title,
-              template: this.formData.selectedTemplate || 'blank'
-            });
-            const targetRoute = `/surveys/blank-survey?${query.toString()}`;
-            window.location.href = `../index.html#${targetRoute}`;
+            const targetRoute = this.getSurveyCreateRoute();
+            this.navigateToSpaRoute(targetRoute);
             return;
           }
 
