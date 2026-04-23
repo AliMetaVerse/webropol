@@ -356,19 +356,19 @@
                 </div>
               </button>
 
-              <!-- Import / Duplicate -->
+              <!-- Import from library -->
               <button
                 type="button"
                 @click="chooseMethod('import')"
                 class="method-card group text-left bg-white rounded-2xl p-5 shadow-card"
               >
                 <div class="w-12 h-12 rounded-full bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
-                  <i class="fal fa-clone text-lg text-white"></i>
+                  <i class="fal fa-book-open text-lg text-white"></i>
                 </div>
-                <h3 class="font-semibold text-webropol-gray-900 mb-1">Duplicate existing</h3>
-                <p class="text-sm text-webropol-gray-600" x-text="`Copy from one of your ${contentConfig.title.toLowerCase()}s or import a file.`"></p>
+                <h3 class="font-semibold text-webropol-gray-900 mb-1">Import from library</h3>
+                <p class="text-sm text-webropol-gray-600" x-text="`Copy from one of your existing ${contentConfig.title.toLowerCase()}s.`"></p>
                 <div class="mt-4 text-xs text-webropol-gray-500 flex items-center">
-                  <i class="fal fa-arrow-up-from-bracket mr-1.5"></i> Import supported
+                  <i class="fal fa-folder-tree mr-1.5"></i> Your library
                 </div>
               </button>
             </div>
@@ -407,10 +407,10 @@
               <div class="space-y-5">
 
                 <!-- Method-specific panel: AI prompt -->
-                <div x-show="startMethod === 'ai'" x-transition class="bg-white rounded-2xl p-6 shadow-soft border border-webropol-primary-100">
+                <div x-show="startMethod === 'ai'" x-transition class="bg-white rounded-2xl p-6 shadow-soft border border-webropol-royalViolet-100">
                   <div class="flex items-start gap-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 flex items-center justify-center shrink-0">
-                      <i class="fal fa-sparkles text-webropol-primary-600"></i>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-webropol-royalViolet-500 to-webropol-royalBlue-600 flex items-center justify-center shrink-0 shadow-sm">
+                      <i class="fal fa-sparkles text-white"></i>
                     </div>
                     <div>
                       <h3 class="font-semibold text-webropol-gray-900">Describe what you want to measure</h3>
@@ -421,7 +421,7 @@
                     x-model="aiPrompt"
                     rows="4"
                     placeholder="e.g. A short survey to measure customer satisfaction after a support call — include NPS, a rating for helpfulness, and one open comment."
-                    class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all text-sm"
+                    class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-royalViolet-500 focus:border-transparent transition-all text-sm"
                   ></textarea>
                   <!-- Prompt suggestions -->
                   <div class="mt-3">
@@ -431,7 +431,7 @@
                         <button
                           type="button"
                           @click="aiPrompt = s"
-                          class="px-3 py-1.5 text-xs rounded-full bg-webropol-gray-100 text-webropol-gray-700 hover:bg-webropol-primary-50 hover:text-webropol-primary-700 transition-colors"
+                          class="px-3 py-1.5 text-xs rounded-full bg-webropol-gray-100 text-webropol-gray-700 hover:bg-webropol-royalViolet-50 hover:text-webropol-royalViolet-700 transition-colors"
                           x-text="s"
                         ></button>
                       </template>
@@ -537,32 +537,18 @@
                   </div>
                 </div>
 
-                <!-- Method-specific panel: Import -->
+                <!-- Method-specific panel: Import from library -->
                 <div x-show="startMethod === 'import'" x-transition class="bg-white rounded-2xl p-6 shadow-soft">
-                  <h3 class="font-semibold text-webropol-gray-900 mb-1">Duplicate or import</h3>
-                  <p class="text-sm text-webropol-gray-600 mb-4" x-text="`Start from one of your ${contentConfig.title.toLowerCase()}s or upload a file.`"></p>
+                  <h3 class="font-semibold text-webropol-gray-900 mb-1">Import from library</h3>
+                  <p class="text-sm text-webropol-gray-600 mb-4" x-text="`Pick one of your existing ${contentConfig.title.toLowerCase()}s to use as a starting point.`"></p>
 
                   <!-- Duplicate from existing -->
-                  <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Duplicate from</label>
+                  <label class="block text-sm font-medium text-webropol-gray-700 mb-2" x-text="`Copy from ${contentConfig.title.toLowerCase()}`"></label>
                   <webropol-dropdown
                     :value="formData.duplicateFrom"
                     @change="formData.duplicateFrom = $event.detail.value"
-                    options='[{"value":"","label":"Choose an existing item..."},{"value":"cs-2025","label":"Customer Satisfaction 2025"},{"value":"event-feedback","label":"Event Feedback — Q1"},{"value":"nps-q1","label":"NPS Pulse — Q1"}]'
+                    options='[{"value":"","label":"Choose from your library..."},{"value":"cs-2025","label":"Customer Satisfaction 2025"},{"value":"event-feedback","label":"Event Feedback — Q1"},{"value":"nps-q1","label":"NPS Pulse — Q1"}]'
                   ></webropol-dropdown>
-
-                  <div class="my-5 flex items-center gap-3 text-xs text-webropol-gray-400">
-                    <span class="flex-1 h-px bg-webropol-gray-200"></span>
-                    <span>OR</span>
-                    <span class="flex-1 h-px bg-webropol-gray-200"></span>
-                  </div>
-
-                  <!-- File upload dropzone -->
-                  <label class="block border-2 border-dashed border-webropol-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-webropol-primary-400 hover:bg-webropol-primary-50/40 transition-all">
-                    <input type="file" class="hidden" accept=".json,.xlsx,.csv">
-                    <i class="fal fa-cloud-arrow-up text-3xl text-webropol-gray-400 mb-2 block"></i>
-                    <p class="text-sm font-medium text-webropol-gray-900">Drop a file or click to upload</p>
-                    <p class="text-xs text-webropol-gray-500 mt-1">Supports .json, .xlsx and .csv</p>
-                  </label>
                 </div>
 
                 <!-- Basic details (always visible once method chosen, or for types without templates) -->
@@ -702,14 +688,13 @@
                   <span x-show="isFormValid" class="truncate">Ready to create. <kbd class="ml-1">Ctrl</kbd> + <kbd>Enter</kbd></span>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                  <button type="button" class="px-4 py-2.5 text-sm font-medium text-webropol-gray-700 hover:text-webropol-primary-700 hover:bg-webropol-gray-50 rounded-xl transition-colors">
-                    <i class="fal fa-floppy-disk mr-1.5"></i> Save as draft
-                  </button>
                   <button
                     @click="createItem()"
                     :disabled="!isFormValid"
-                    :class="!isFormValid ? 'opacity-50 cursor-not-allowed' : 'hover:from-webropol-primary-600 hover:to-webropol-primary-700 hover:shadow-lg'"
-                    class="px-6 py-3 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-semibold rounded-xl shadow-medium transition-all inline-flex items-center justify-center gap-2"
+                    :class="startMethod === 'ai'
+                      ? (!isFormValid ? 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-webropol-royalViolet-500 to-webropol-royalBlue-600 hover:from-webropol-royalViolet-600 hover:to-webropol-royalBlue-700 hover:shadow-lg')
+                      : (!isFormValid ? 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 hover:from-webropol-primary-600 hover:to-webropol-primary-700 hover:shadow-lg')"
+                    class="px-6 py-3 text-white font-semibold rounded-xl shadow-medium transition-all inline-flex items-center justify-center gap-2"
                   >
                     <i x-show="startMethod === 'ai'" class="fal fa-sparkles"></i>
                     <i x-show="startMethod !== 'ai'" :class="contentConfig.icon"></i>
@@ -1048,7 +1033,7 @@
         },
 
         get startMethodLabel() {
-          const map = { blank: 'Blank', template: 'Template', ai: 'AI assist', import: 'Duplicate/Import' };
+          const map = { blank: 'Blank', template: 'Template', ai: 'AI assist', import: 'From library' };
           return this.startMethod ? (map[this.startMethod] || '—') : '—';
         },
 
