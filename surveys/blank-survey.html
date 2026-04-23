@@ -20,6 +20,7 @@
   <script src="../surveys/components/questions/OpenEnded.js" type="module"></script>
   <script src="../surveys/components/questions/NPS.js" type="module"></script>
   <script src="../surveys/components/questions/NumericSlider.js" type="module"></script>
+  <script src="../surveys/components/ai-question-generator/AIQuestionGenerator.js" type="module"></script>
   <script src="../design-system/components/interactive/PageQuickActions.js" type="module"></script>
   <script src="../design-system/components/interactive/ContentSelector.js" type="module"></script>
   <!-- Removed dynamic survey-name.js; static label used -->
@@ -793,7 +794,7 @@
                       <p class="text-sm text-webropol-gray-500 max-w-sm">Describe what you want to measure and let AI generate your questions instantly.</p>
                     </div>
                     <button
-                      @click="$dispatch('open-ai-survey')"
+                      @click="openAISurveyGenerator()"
                       class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
                       style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 55%, #06b6d4 100%);"
                     >
@@ -3452,6 +3453,15 @@
             }
           }
           this.showMandatoryInfo = hasMandatory;
+        },
+
+        openAISurveyGenerator() {
+          if (window.AIQuestionGenerator && typeof window.AIQuestionGenerator.open === 'function') {
+            window.AIQuestionGenerator.open();
+            return;
+          }
+
+          console.warn('AIQuestionGenerator is not available on blank-survey.html');
         },
         
         init() {
