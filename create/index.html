@@ -15,7 +15,8 @@
           colors: {
             'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
             'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
-            'webropol-primary-': { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+            'webropol-royalViolet': { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95' },
+            'webropol-royalBlue':   { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
@@ -33,129 +34,213 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="../design-system/styles/animations.css" rel="stylesheet">
   <style>
-    [x-cloak] {
-      display: none !important;
-    }
+    [x-cloak] { display: none !important; }
 
     body {
       scrollbar-width: thin;
       scrollbar-color: #cbd5e1 #f8fafc;
       font-family: 'Inter', sans-serif;
     }
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
 
-    body::-webkit-scrollbar {
-      width: 6px;
+    /* Start-method card */
+    .method-card {
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      border: 1.5px solid #e2e8f0;
+    }
+    .method-card:hover {
+      transform: translateY(-2px);
+      border-color: #06b6d4;
+      box-shadow: 0 8px 24px -6px rgba(6, 182, 212, 0.18);
+    }
+    .method-card:focus-visible {
+      outline: none;
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.18);
     }
 
-    body::-webkit-scrollbar-track {
-      background: #f8fafc;
-    }
-
-    body::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 6px;
-    }
-
-    .glass-effect {
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .template-card {
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .template-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-
-    .template-card.selected {
-      border: 2px solid #06b6d4;
-      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
-    }
-
-    .preview-container {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .preview-form {
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-
-    .step-indicator {
-      transition: all 0.3s ease;
-    }
-
-    .step-indicator.active {
-      background: linear-gradient(135deg, #06b6d4, #0891b2);
-      color: white;
-    }
-
-    .step-indicator.completed {
-      background: #10b981;
-      color: white;
-    }
-
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .template-gradient-1 {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .template-gradient-2 {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-
-    .template-gradient-3 {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    }
-
-    .template-gradient-4 {
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    }
-
-    .template-gradient-5 {
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    }
-
-    .template-gradient-6 {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-    }
-
-    .floating-particles {
+    /* Decorative stacked template chips on "Use a template" card */
+    .method-card-template { isolation: isolate; }
+    .method-card-template::before {
+      content: '';
       position: absolute;
-      width: 100%;
-      height: 100%;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.12), transparent 70%);
       pointer-events: none;
+      z-index: 0;
     }
-
-    .particle {
+    .tpl-stack {
       position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      animation: float 20s infinite linear;
+      top: 14px;
+      right: 14px;
+      width: 64px;
+      height: 56px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .tpl-stack-chip {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+      transition: transform .25s ease;
+    }
+    .tpl-stack-chip-1 {
+      width: 44px; height: 40px;
+      top: 14px; right: 0;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      justify-content: center;
+      z-index: 3;
+    }
+    .tpl-stack-chip-2 {
+      width: 44px; height: 40px;
+      top: 8px; right: 8px;
+      transform: rotate(-6deg);
+      background: #f0fdff;
+      border-color: #ccf7fe;
+      z-index: 2;
+    }
+    .tpl-stack-chip-3 {
+      width: 44px; height: 40px;
+      top: 2px; right: 16px;
+      transform: rotate(-14deg);
+      background: #e0f7ff;
+      border-color: #99effd;
+      z-index: 1;
+    }
+    .tpl-stack-bar {
+      height: 3px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      display: block;
+    }
+    .tpl-stack-bar.w-70 { width: 70%; background: #06b6d4; }
+    .tpl-stack-bar.w-50 { width: 50%; }
+    .tpl-stack-bar.w-40 { width: 40%; }
+    .method-card-template:hover .tpl-stack-chip-2 { transform: rotate(-3deg) translateX(-1px); }
+    .method-card-template:hover .tpl-stack-chip-3 { transform: rotate(-10deg) translateX(-2px); }
+
+    /* Template card — simple UI preview + name */
+    .template-card {
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      border: 1.5px solid #e2e8f0;
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+    }
+    .template-card:hover {
+      transform: translateY(-2px);
+      border-color: #06b6d4;
+      box-shadow: 0 10px 22px -10px rgba(6, 182, 212, 0.22);
+    }
+    .template-card.selected {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.18);
+    }
+    .template-card.selected .template-check {
+      opacity: 1;
+      transform: scale(1);
     }
 
-    @keyframes float {
-      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    /* Thumbnail area that holds a schematic UI preview */
+    .template-thumb {
+      position: relative;
+      background: #f8fafc;
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid #eef2f6;
+      min-height: 130px;
+    }
+    .template-thumb-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+
+    /* Mini mockup of a form/template UI */
+    .tpl-ui {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px;
+      box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 0 0 1px rgba(15,23,42,.04);
+    }
+    .tpl-ui-title {
+      height: 6px;
+      width: 55%;
+      background: #cbd5e1;
+      border-radius: 3px;
+      margin-bottom: 10px;
+    }
+    .tpl-ui-row {
+      height: 4px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-bottom: 6px;
+    }
+    .tpl-ui-row.w-90 { width: 90%; }
+    .tpl-ui-row.w-75 { width: 75%; }
+    .tpl-ui-row.w-60 { width: 60%; }
+    .tpl-ui-btn {
+      height: 8px;
+      width: 34%;
+      background: #06b6d4;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    /* Selected check badge */
+    .template-check {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #06b6d4;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(6, 182, 212, 0.35);
+      opacity: 0;
+      transform: scale(.6);
+      transition: opacity .18s ease, transform .18s ease;
+      font-size: 10px;
+      z-index: 2;
+    }
+
+    /* Gradient classes become thin accent bars */
+    .template-gradient-1 { background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); }
+    .template-gradient-2 { background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%); }
+    .template-gradient-3 { background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); }
+    .template-gradient-4 { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); }
+    .template-gradient-5 { background: linear-gradient(90deg, #fa709a 0%, #fee140 100%); }
+    .template-gradient-6 { background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%); }
+
+    .fade-in { animation: fadeIn .35s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Keyboard shortcut hint */
+    kbd {
+      font-family: inherit;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
     }
   </style>
   <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
@@ -182,223 +267,458 @@
         <webropol-breadcrumbs :trail="breadcrumbTrail"></webropol-breadcrumbs>
       </div>
       
-      <main class="flex-1 overflow-hidden rounded-3xl" role="main" x-data="universalCreateApp()">
-        <div class="h-full flex">
-          <!-- Left Panel - Creation Form -->
-          <div class="w-1/2 overflow-y-auto px-8 py-8 bg-white/50">
-            <div class="max-w-2xl mx-auto">
-              <!-- Header -->
-              <div class="mb-8">
-                <h1 class="page-title" x-text="`Create a New ${contentConfig.title}`"></h1>
-                <p class="text-webropol-gray-600" x-text="contentConfig.description"></p>
+      <main class="flex-1 overflow-y-auto" role="main" x-data="universalCreateApp()" @keydown.window.meta.enter.prevent="createItem()" @keydown.window.ctrl.enter.prevent="createItem()">
+        <div class="max-w-5xl mx-auto px-6 py-10">
+
+          <!-- Page header -->
+          <header class="mb-8">
+            <div class="flex items-start gap-4">
+              <div class="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-700 flex items-center justify-center shadow-soft">
+                <i :class="contentConfig.icon" class="text-white text-2xl"></i>
               </div>
-
-              <!-- Step Indicator -->
-              <div class="flex items-center mb-8" x-show="contentConfig.showSteps">
-                <div class="step-indicator active w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-3">1</div>
-                <div class="flex-1 h-px bg-webropol-gray-200 mr-3"></div>
-                <div class="step-indicator w-8 h-8 rounded-full bg-webropol-gray-200 flex items-center justify-center text-sm font-semibold mr-3">2</div>
-                <div class="flex-1 h-px bg-webropol-gray-200 mr-3"></div>
-                <div class="step-indicator w-8 h-8 rounded-full bg-webropol-gray-200 flex items-center justify-center text-sm font-semibold">3</div>
+              <div class="flex-1 min-w-0">
+                <h1 class="text-3xl font-semibold text-webropol-gray-900 tracking-tight" x-text="`Create a new ${contentConfig.title.toLowerCase()}`"></h1>
+                <p class="text-webropol-gray-600 mt-1" x-text="contentConfig.description"></p>
               </div>
+            </div>
+          </header>
 
-              <!-- Basic Details -->
-              <div class="bg-white rounded-2xl p-6 shadow-soft mb-6 fade-in">
-                <h2 class="text-xl font-semibold text-webropol-gray-900 mb-4" x-text="`${contentConfig.title} Details`"></h2>
-                
-                <div class="space-y-6">
-                  <!-- Title -->
-                  <div>
-                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2" x-text="`${contentConfig.title} Title *`"></label>
-                    <input 
-                      type="text" 
-                      x-model="formData.title"
-                      :placeholder="`Enter your ${contentConfig.title.toLowerCase()} title...`"
-                      class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                    >
-                  </div>
+          <!-- =========================================================
+               STEP 1 — Pick a starting method (surveys/events/exw only)
+               ========================================================= -->
+          <section
+            x-show="contentConfig.showTemplates && !startMethod"
+            x-transition.opacity
+            class="fade-in"
+          >
+            <div class="mb-5 flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-webropol-gray-900">How would you like to start?</h2>
+              <span class="text-xs text-webropol-gray-500 hidden sm:inline">Pick the fastest path for you</span>
+            </div>
 
-                  <!-- Description -->
-                  <div>
-                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description (Optional)</label>
-                    <textarea 
-                      x-model="formData.description"
-                      :placeholder="`Brief description of your ${contentConfig.title.toLowerCase()}...`"
-                      rows="3"
-                      class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                    ></textarea>
-                  </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Blank -->
+              <button
+                type="button"
+                @click="chooseMethod('blank')"
+                class="method-card group text-left bg-white rounded-2xl p-5 shadow-card"
+              >
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
+                  <i class="fal fa-file-plus text-lg text-white"></i>
+                </div>
+                <h3 class="font-semibold text-webropol-gray-900 mb-1">Start from scratch</h3>
+                <p class="text-sm text-webropol-gray-600">A blank canvas. You design every question.</p>
+                <div class="mt-4 text-xs text-webropol-gray-500 flex items-center">
+                  <i class="fal fa-bolt-lightning mr-1.5"></i> Fastest
+                </div>
+              </button>
 
-                  <!-- Content-specific fields -->
-                  <template x-for="field in contentConfig.customFields" :key="field.name">
+              <!-- Template -->
+              <button
+                type="button"
+                @click="chooseMethod('template')"
+                class="method-card method-card-template group text-left bg-white rounded-2xl p-5 shadow-card relative overflow-hidden"
+              >
+                <!-- Decorative stacked template chips -->
+                <div class="tpl-stack" aria-hidden="true">
+                  <span class="tpl-stack-chip tpl-stack-chip-3"></span>
+                  <span class="tpl-stack-chip tpl-stack-chip-2"></span>
+                  <span class="tpl-stack-chip tpl-stack-chip-1">
+                    <span class="tpl-stack-bar w-70"></span>
+                    <span class="tpl-stack-bar w-50"></span>
+                    <span class="tpl-stack-bar w-40"></span>
+                  </span>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow relative">
+                  <i class="fal fa-layer-group text-lg text-white"></i>
+                </div>
+                <h3 class="font-semibold text-webropol-gray-900 mb-1 relative">Use a template</h3>
+                <p class="text-sm text-webropol-gray-600 relative" x-text="`Ready-made ${contentConfig.title.toLowerCase()}s for common scenarios.`"></p>
+                <div class="mt-4 text-xs text-webropol-gray-500 flex items-center relative">
+                  <i class="fal fa-grid-2 mr-1.5"></i>
+                  <span x-text="(contentConfig.templates ? contentConfig.templates.length : 0) + ' templates'"></span>
+                </div>
+              </button>
+
+              <!-- AI -->
+              <button
+                type="button"
+                @click="chooseMethod('ai')"
+                class="method-card group text-left bg-white rounded-2xl p-5 shadow-card"
+              >
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-webropol-royalViolet-500 to-webropol-royalBlue-600 flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
+                  <i class="fal fa-sparkles text-lg text-white"></i>
+                </div>
+                <h3 class="font-semibold text-webropol-gray-900 mb-1">Generate with AI</h3>
+                <p class="text-sm text-webropol-gray-600">Describe your goal — we'll draft questions for you.</p>
+                <div class="mt-4 text-xs text-webropol-royalViolet-700 flex items-center">
+                  <i class="fal fa-wand-magic-sparkles mr-1.5"></i> AI-powered
+                </div>
+              </button>
+
+              <!-- Import / Duplicate -->
+              <button
+                type="button"
+                @click="chooseMethod('import')"
+                class="method-card group text-left bg-white rounded-2xl p-5 shadow-card"
+              >
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-webropol-primary-500 to-webropol-primary-600 flex items-center justify-center mb-4 shadow-sm group-hover:shadow-md transition-shadow">
+                  <i class="fal fa-clone text-lg text-white"></i>
+                </div>
+                <h3 class="font-semibold text-webropol-gray-900 mb-1">Duplicate existing</h3>
+                <p class="text-sm text-webropol-gray-600" x-text="`Copy from one of your ${contentConfig.title.toLowerCase()}s or import a file.`"></p>
+                <div class="mt-4 text-xs text-webropol-gray-500 flex items-center">
+                  <i class="fal fa-arrow-up-from-bracket mr-1.5"></i> Import supported
+                </div>
+              </button>
+            </div>
+
+            <!-- Helpful tip for first-time users -->
+            <div class="mt-6 bg-webropol-primary-50/60 border border-webropol-primary-100 rounded-xl p-4 flex items-start gap-3">
+              <i class="fal fa-lightbulb text-webropol-primary-600 mt-0.5"></i>
+              <div class="text-sm text-webropol-gray-700">
+                <strong class="text-webropol-gray-900">New here?</strong>
+                Try <button @click="chooseMethod('ai')" class="text-webropol-royalViolet-700 font-medium underline underline-offset-2 hover:text-webropol-royalViolet-800">Generate with AI</button>
+                — tell it what you want to measure and you'll have a working draft in seconds.
+              </div>
+            </div>
+          </section>
+
+          <!-- =========================================================
+               STEP 2 — Build (method chosen, or types without templates)
+               ========================================================= -->
+          <section
+            x-show="!contentConfig.showTemplates || startMethod"
+            x-transition.opacity
+            class="fade-in"
+          >
+            <!-- Back to method picker -->
+            <div x-show="contentConfig.showTemplates && startMethod" class="mb-4">
+              <button
+                @click="startMethod = ''"
+                class="inline-flex items-center text-sm text-webropol-gray-600 hover:text-webropol-primary-700 font-medium transition-colors"
+              >
+                <i class="fal fa-arrow-left mr-2"></i> Back to start options
+              </button>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+
+              <div class="space-y-5">
+
+                <!-- Method-specific panel: AI prompt -->
+                <div x-show="startMethod === 'ai'" x-transition class="bg-white rounded-2xl p-6 shadow-soft border border-webropol-primary-100">
+                  <div class="flex items-start gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-webropol-primary-50 to-webropol-primary-100 flex items-center justify-center shrink-0">
+                      <i class="fal fa-sparkles text-webropol-primary-600"></i>
+                    </div>
                     <div>
-                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2" x-text="field.label + (field.required ? ' *' : '')"></label>
-                      <template x-if="field.type === 'select'">
-                        <webropol-dropdown
-                          :value="formData[field.name]"
-                          @change="formData[field.name] = $event.detail.value"
-                          :options="JSON.stringify(field.options)"
-                        ></webropol-dropdown>
-                      </template>
-                      <template x-if="field.type === 'date'">
-                        <input 
-                          type="date"
-                          x-model="formData[field.name]"
-                          class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                        >
-                      </template>
-                      <template x-if="field.type === 'time'">
-                        <input 
-                          type="time"
-                          x-model="formData[field.name]"
-                          class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                        >
-                      </template>
-                      <template x-if="field.type === 'textarea'">
-                        <textarea 
-                          x-model="formData[field.name]"
-                          :placeholder="field.placeholder"
-                          :rows="field.rows || 3"
-                          class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                        ></textarea>
-                      </template>
-                      <template x-if="field.type === 'number'">
-                        <input 
-                          type="number"
-                          x-model="formData[field.name]"
-                          :placeholder="field.placeholder"
-                          :min="field.min"
-                          :max="field.max"
-                          class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
-                        >
+                      <h3 class="font-semibold text-webropol-gray-900">Describe what you want to measure</h3>
+                      <p class="text-sm text-webropol-gray-600">Webropol AI will draft questions you can review and edit.</p>
+                    </div>
+                  </div>
+                  <textarea
+                    x-model="aiPrompt"
+                    rows="4"
+                    placeholder="e.g. A short survey to measure customer satisfaction after a support call — include NPS, a rating for helpfulness, and one open comment."
+                    class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all text-sm"
+                  ></textarea>
+                  <!-- Prompt suggestions -->
+                  <div class="mt-3">
+                    <p class="text-xs text-webropol-gray-500 mb-2">Or try a quick start:</p>
+                    <div class="flex flex-wrap gap-2">
+                      <template x-for="(s, i) in aiSuggestions" :key="i">
+                        <button
+                          type="button"
+                          @click="aiPrompt = s"
+                          class="px-3 py-1.5 text-xs rounded-full bg-webropol-gray-100 text-webropol-gray-700 hover:bg-webropol-primary-50 hover:text-webropol-primary-700 transition-colors"
+                          x-text="s"
+                        ></button>
                       </template>
                     </div>
-                  </template>
+                  </div>
+                </div>
 
-                  <!-- Auto-delete Settings (for applicable content types) -->
-                  <div x-show="contentConfig.showAutoDelete" class="bg-webropol-gray-50 rounded-xl p-4">
-                    <div class="flex items-center justify-between mb-3">
-                      <label class="flex items-center text-sm font-medium text-webropol-gray-700">
-                        <input type="checkbox" x-model="formData.autoDelete" class="mr-2 rounded text-webropol-primary-600">
-                        Automatic Deletion Date
-                      </label>
-                      <i class="fal fa-info-circle text-webropol-gray-400 cursor-help" :title="`${contentConfig.title} will be automatically deleted after this date`"></i>
+                <!-- Method-specific panel: Template gallery -->
+                <div x-show="startMethod === 'template'" x-transition class="bg-white rounded-2xl p-6 shadow-soft">
+                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                    <div>
+                      <h3 class="font-semibold text-webropol-gray-900" x-text="`Pick a ${contentConfig.title.toLowerCase()} template`"></h3>
+                      <p class="text-xs text-webropol-gray-500 mt-0.5" x-text="`${filteredTemplates.length} of ${(contentConfig.templates || []).filter(t => t.category === activeCategory).length} shown`"></p>
                     </div>
-                    <div x-show="formData.autoDelete" x-transition>
-                      <input 
-                        type="date" 
-                        x-model="formData.deleteDate"
-                        class="w-full px-4 py-2 border border-webropol-gray-200 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
+                    <div class="relative w-full sm:w-64">
+                      <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 text-sm"></i>
+                      <input
+                        type="text"
+                        x-model="templateSearch"
+                        placeholder="Search templates..."
+                        class="w-full pl-9 pr-8 py-2 text-sm border border-webropol-gray-200 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent"
                       >
-                      <p class="text-xs text-webropol-gray-500 mt-1" x-text="`${contentConfig.title} will be automatically deleted after this date.`"></p>
+                      <button
+                        x-show="templateSearch"
+                        @click="templateSearch = ''"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 text-webropol-gray-400 hover:text-webropol-gray-700 p-1"
+                        aria-label="Clear search"
+                      >
+                        <i class="fal fa-times text-xs"></i>
+                      </button>
                     </div>
                   </div>
 
-                  <!-- Folder Selection (for applicable content types) -->
-                  <div x-show="contentConfig.showFolder">
-                    <label class="block text-sm font-medium text-webropol-gray-700 mb-2" x-text="`${contentConfig.title} Folder`"></label>
-                    <div class="flex gap-2">
-                      <div class="flex-1">
-                        <webropol-dropdown
-                          :value="formData.selectedFolder"
-                          @change="formData.selectedFolder = $event.detail.value"
-                          :options="JSON.stringify(contentConfig.folders)"
-                        ></webropol-dropdown>
-                      </div>
-                      <button class="px-4 py-3 border border-webropol-gray-200 rounded-xl hover:bg-webropol-gray-50 transition-all">
-                        <i class="fal fa-folder-plus text-webropol-gray-600"></i>
+                  <!-- Category chips + popular filter -->
+                  <div class="flex flex-wrap items-center gap-2 mb-5">
+                    <template x-for="category in contentConfig.templateCategories" :key="category.id">
+                      <button
+                        type="button"
+                        @click="activeCategory = category.id"
+                        :class="activeCategory === category.id ? 'bg-webropol-primary-600 text-white border-webropol-primary-600' : 'bg-white text-webropol-gray-700 border-webropol-gray-200 hover:border-webropol-primary-300'"
+                        class="px-3 py-1.5 rounded-full border text-xs font-medium transition-all"
+                      >
+                        <span x-text="category.name"></span>
+                        <span class="ml-1 opacity-70" x-text="'(' + category.count + ')'"></span>
+                      </button>
+                    </template>
+                    <span class="mx-1 text-webropol-gray-200">|</span>
+                    <button
+                      type="button"
+                      @click="popularOnly = !popularOnly"
+                      :class="popularOnly ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-white text-webropol-gray-700 border-webropol-gray-200 hover:border-amber-300'"
+                      class="px-3 py-1.5 rounded-full border text-xs font-medium transition-all inline-flex items-center gap-1.5"
+                    >
+                      <i class="fal fa-fire"></i> Popular only
+                    </button>
+                  </div>
+
+                  <!-- Grid of simple template cards -->
+                  <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 max-h-[640px] overflow-y-auto pr-1 -mr-1">
+                    <template x-for="template in filteredTemplates" :key="template.id">
+                      <button
+                        type="button"
+                        @click="formData.selectedTemplate = template.id"
+                        :class="formData.selectedTemplate === template.id ? 'template-card selected' : 'template-card'"
+                        class="text-left rounded-xl flex flex-col"
+                      >
+                        <!-- Selected check -->
+                        <span class="template-check">
+                          <i class="fas fa-check"></i>
+                        </span>
+
+                        <!-- UI preview thumbnail -->
+                        <div class="template-thumb">
+                          <div :class="template.gradient" class="template-thumb-accent"></div>
+                          <div class="tpl-ui">
+                            <div class="tpl-ui-title"></div>
+                            <div class="tpl-ui-row w-90"></div>
+                            <div class="tpl-ui-row w-75"></div>
+                            <div class="tpl-ui-row w-60"></div>
+                            <div class="tpl-ui-btn"></div>
+                          </div>
+                        </div>
+
+                        <!-- Name only -->
+                        <div class="px-3 py-2.5">
+                          <h4 class="font-medium text-sm text-webropol-gray-900 leading-snug truncate" x-text="template.name"></h4>
+                        </div>
+                      </button>
+                    </template>
+
+                    <!-- Empty state -->
+                    <div x-show="filteredTemplates.length === 0" class="col-span-full text-center py-14 text-sm text-webropol-gray-500 border-2 border-dashed border-webropol-gray-200 rounded-xl">
+                      <i class="fal fa-search-minus text-3xl mb-3 block text-webropol-gray-400"></i>
+                      <p class="font-medium text-webropol-gray-700">No templates match your filters</p>
+                      <p class="text-xs mt-1">Try clearing the search or switching categories.</p>
+                      <button
+                        @click="templateSearch = ''; popularOnly = false"
+                        class="mt-4 text-xs font-medium text-webropol-primary-700 hover:text-webropol-primary-800 underline underline-offset-2"
+                      >
+                        Reset filters
                       </button>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Template Selection (shown only for content types that have templates) -->
-              <div x-show="contentConfig.showTemplates" class="bg-white rounded-2xl p-6 shadow-soft fade-in">
-                <h2 class="text-xl font-semibold text-webropol-gray-900 mb-4">Choose a Template</h2>
-                
-                <!-- Template Categories -->
-                <div class="flex gap-2 mb-6">
-                  <template x-for="(category, index) in contentConfig.templateCategories" :key="index">
-                    <button 
-                      @click="activeCategory = category.id"
-                      :class="activeCategory === category.id ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 text-webropol-gray-700 hover:bg-webropol-gray-200'"
-                      class="px-4 py-2 rounded-lg font-medium transition-all text-sm"
-                      x-text="category.name + ' (' + category.count + ')'"
-                    ></button>
-                  </template>
+                <!-- Method-specific panel: Import -->
+                <div x-show="startMethod === 'import'" x-transition class="bg-white rounded-2xl p-6 shadow-soft">
+                  <h3 class="font-semibold text-webropol-gray-900 mb-1">Duplicate or import</h3>
+                  <p class="text-sm text-webropol-gray-600 mb-4" x-text="`Start from one of your ${contentConfig.title.toLowerCase()}s or upload a file.`"></p>
+
+                  <!-- Duplicate from existing -->
+                  <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Duplicate from</label>
+                  <webropol-dropdown
+                    :value="formData.duplicateFrom"
+                    @change="formData.duplicateFrom = $event.detail.value"
+                    options='[{"value":"","label":"Choose an existing item..."},{"value":"cs-2025","label":"Customer Satisfaction 2025"},{"value":"event-feedback","label":"Event Feedback — Q1"},{"value":"nps-q1","label":"NPS Pulse — Q1"}]'
+                  ></webropol-dropdown>
+
+                  <div class="my-5 flex items-center gap-3 text-xs text-webropol-gray-400">
+                    <span class="flex-1 h-px bg-webropol-gray-200"></span>
+                    <span>OR</span>
+                    <span class="flex-1 h-px bg-webropol-gray-200"></span>
+                  </div>
+
+                  <!-- File upload dropzone -->
+                  <label class="block border-2 border-dashed border-webropol-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-webropol-primary-400 hover:bg-webropol-primary-50/40 transition-all">
+                    <input type="file" class="hidden" accept=".json,.xlsx,.csv">
+                    <i class="fal fa-cloud-arrow-up text-3xl text-webropol-gray-400 mb-2 block"></i>
+                    <p class="text-sm font-medium text-webropol-gray-900">Drop a file or click to upload</p>
+                    <p class="text-xs text-webropol-gray-500 mt-1">Supports .json, .xlsx and .csv</p>
+                  </label>
                 </div>
 
-                <!-- Template Grid -->
-                <div class="grid grid-cols-2 gap-4">
-                  <template x-for="(template, index) in filteredTemplates" :key="index">
-                    <div 
-                      @click="formData.selectedTemplate = template.id"
-                      :class="formData.selectedTemplate === template.id ? 'template-card selected' : 'template-card'"
-                      class="border border-webropol-gray-200 rounded-xl p-4 cursor-pointer"
-                    >
-                      <div :class="template.gradient" class="w-full h-24 rounded-lg mb-3 flex items-center justify-center">
-                        <i :class="template.icon" class="text-white text-2xl"></i>
+                <!-- Basic details (always visible once method chosen, or for types without templates) -->
+                <div class="bg-white rounded-2xl p-6 shadow-soft">
+                  <h3 class="font-semibold text-webropol-gray-900 mb-4" x-text="`${contentConfig.title} details`"></h3>
+                  <div class="space-y-5">
+                    <!-- Title -->
+                    <div>
+                      <label class="flex items-center justify-between text-sm font-medium text-webropol-gray-700 mb-2">
+                        <span x-text="`${contentConfig.title} title`"></span>
+                        <span class="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        x-ref="titleInput"
+                        x-model="formData.title"
+                        :placeholder="`e.g. ${contentConfig.titlePlaceholder || 'My ' + contentConfig.title}`"
+                        class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
+                      >
+                      <p class="text-xs text-webropol-gray-500 mt-1.5">Visible to respondents. You can change this later.</p>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                      <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Description <span class="text-webropol-gray-400 font-normal">(optional)</span></label>
+                      <textarea
+                        x-model="formData.description"
+                        :placeholder="`Brief internal description of your ${contentConfig.title.toLowerCase()}...`"
+                        rows="2"
+                        class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"
+                      ></textarea>
+                    </div>
+
+                    <!-- Content-specific required fields (events, cases, exw) -->
+                    <template x-for="field in requiredCustomFields" :key="field.name">
+                      <div>
+                        <label class="block text-sm font-medium text-webropol-gray-700 mb-2">
+                          <span x-text="field.label"></span>
+                          <span x-show="field.required" class="text-red-500">*</span>
+                        </label>
+                        <template x-if="field.type === 'select'">
+                          <webropol-dropdown
+                            :value="formData[field.name]"
+                            @change="formData[field.name] = $event.detail.value"
+                            :options="JSON.stringify(field.options)"
+                          ></webropol-dropdown>
+                        </template>
+                        <template x-if="field.type === 'date'">
+                          <input type="date" x-model="formData[field.name]" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all">
+                        </template>
+                        <template x-if="field.type === 'time'">
+                          <input type="time" x-model="formData[field.name]" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all">
+                        </template>
+                        <template x-if="field.type === 'textarea'">
+                          <textarea x-model="formData[field.name]" :placeholder="field.placeholder" :rows="field.rows || 3" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"></textarea>
+                        </template>
+                        <template x-if="field.type === 'number'">
+                          <input type="number" x-model="formData[field.name]" :placeholder="field.placeholder" :min="field.min" :max="field.max" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all">
+                        </template>
                       </div>
-                      <h3 class="font-semibold text-webropol-gray-900 mb-1" x-text="template.name"></h3>
-                      <p class="text-xs text-webropol-gray-600" x-text="template.description"></p>
-                      <div class="mt-2">
-                        <button 
-                          class="w-full py-2 text-sm font-medium rounded-lg transition-all"
-                          :class="formData.selectedTemplate === template.id ? 'bg-webropol-primary-500 text-white' : 'bg-webropol-gray-100 text-webropol-gray-700 hover:bg-webropol-gray-200'"
-                        >
-                          <span x-text="formData.selectedTemplate === template.id ? 'Selected' : 'Select'"></span>
-                        </button>
+                    </template>
+
+                    <!-- Advanced options (collapsible) -->
+                    <div x-show="hasAdvancedOptions" class="pt-2 border-t border-webropol-gray-100">
+                      <button
+                        type="button"
+                        @click="showAdvanced = !showAdvanced"
+                        class="w-full flex items-center justify-between text-sm font-medium text-webropol-gray-700 hover:text-webropol-primary-700 py-2"
+                      >
+                        <span class="flex items-center">
+                          <i class="fal fa-sliders-h mr-2"></i> Advanced options
+                        </span>
+                        <i class="fal transition-transform" :class="showAdvanced ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                      </button>
+
+                      <div x-show="showAdvanced" x-transition class="space-y-5 mt-3">
+                        <!-- Folder -->
+                        <div x-show="contentConfig.showFolder">
+                          <label class="block text-sm font-medium text-webropol-gray-700 mb-2">Folder</label>
+                          <div class="flex gap-2">
+                            <div class="flex-1">
+                              <webropol-dropdown
+                                :value="formData.selectedFolder"
+                                @change="formData.selectedFolder = $event.detail.value"
+                                :options="JSON.stringify(contentConfig.folders)"
+                              ></webropol-dropdown>
+                            </div>
+                            <button type="button" class="px-4 py-3 border border-webropol-gray-200 rounded-xl hover:bg-webropol-gray-50 transition-all" title="Create new folder">
+                              <i class="fal fa-folder-plus text-webropol-gray-600"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                        <!-- Optional custom fields (not required) -->
+                        <template x-for="field in optionalCustomFields" :key="field.name">
+                          <div>
+                            <label class="block text-sm font-medium text-webropol-gray-700 mb-2" x-text="field.label"></label>
+                            <template x-if="field.type === 'select'">
+                              <webropol-dropdown
+                                :value="formData[field.name]"
+                                @change="formData[field.name] = $event.detail.value"
+                                :options="JSON.stringify(field.options)"
+                              ></webropol-dropdown>
+                            </template>
+                            <template x-if="field.type === 'textarea'">
+                              <textarea x-model="formData[field.name]" :placeholder="field.placeholder" :rows="field.rows || 3" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all"></textarea>
+                            </template>
+                            <template x-if="field.type === 'number'">
+                              <input type="number" x-model="formData[field.name]" :placeholder="field.placeholder" :min="field.min" :max="field.max" class="w-full px-4 py-3 border border-webropol-gray-200 rounded-xl focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all">
+                            </template>
+                          </div>
+                        </template>
+
+                        <!-- Auto-delete -->
+                        <div x-show="contentConfig.showAutoDelete" class="bg-webropol-gray-50 rounded-xl p-4">
+                          <label class="flex items-center text-sm font-medium text-webropol-gray-700">
+                            <input type="checkbox" x-model="formData.autoDelete" class="mr-2 rounded text-webropol-primary-600">
+                            Delete automatically after a date
+                          </label>
+                          <div x-show="formData.autoDelete" x-transition class="mt-3">
+                            <input type="date" x-model="formData.deleteDate" class="w-full px-4 py-2 border border-webropol-gray-200 rounded-lg focus:ring-2 focus:ring-webropol-primary-500 focus:border-transparent transition-all">
+                            <p class="text-xs text-webropol-gray-500 mt-1">Helps keep your workspace tidy.</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </template>
+                  </div>
                 </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="flex gap-4 mt-8">
-                <button 
-                  @click="createItem()"
-                  :disabled="!isFormValid"
-                  :class="!isFormValid ? 'opacity-50 cursor-not-allowed' : 'hover:from-webropol-primary-600 hover:to-webropol-primary-700'"
-                  class="flex-1 py-4 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-semibold rounded-xl shadow-medium transition-all"
-                >
-                  <i :class="contentConfig.icon" class="mr-2"></i>
-                  <span x-text="`Create Your ${contentConfig.title}`"></span>
-                </button>
-                <button class="px-6 py-4 border border-webropol-gray-200 text-webropol-gray-700 font-semibold rounded-xl hover:bg-webropol-gray-50 transition-all">
-                  Save as Draft
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right Panel - Live Preview -->
-          <div class="w-1/2 preview-container relative">
-            <!-- Floating Particles -->
-            <div class="floating-particles">
-              <div class="particle" style="left: 10%; width: 8px; height: 8px; animation-delay: 0s;"></div>
-              <div class="particle" style="left: 20%; width: 12px; height: 12px; animation-delay: 2s;"></div>
-              <div class="particle" style="left: 35%; width: 6px; height: 6px; animation-delay: 4s;"></div>
-              <div class="particle" style="left: 50%; width: 10px; height: 10px; animation-delay: 6s;"></div>
-              <div class="particle" style="left: 65%; width: 8px; height: 8px; animation-delay: 8s;"></div>
-              <div class="particle" style="left: 80%; width: 14px; height: 14px; animation-delay: 10s;"></div>
-              <div class="particle" style="left: 90%; width: 6px; height: 6px; animation-delay: 12s;"></div>
-            </div>
-
-            <div class="flex items-start justify-center h-full p-8 pt-12">
-              <div class="preview-form w-full max-w-md p-8">
-                <div class="text-center mb-6">
-                  <h3 class="text-2xl font-bold text-webropol-gray-900 mb-2">Live Preview</h3>
-                  <p class="text-webropol-gray-600" x-text="`See how your ${contentConfig.title.toLowerCase()} will look`"></p>
+              <!-- Action bar (bottom of form, full width) -->
+              <div class="mt-6 bg-white rounded-2xl shadow-soft border border-webropol-gray-100 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-start gap-2 text-sm text-webropol-gray-600 min-w-0">
+                  <i x-show="!isFormValid" class="fal fa-circle-info text-webropol-gray-400 mt-0.5 shrink-0"></i>
+                  <i x-show="isFormValid" class="fal fa-circle-check text-webropol-primary-600 mt-0.5 shrink-0"></i>
+                  <span x-show="!isFormValid" x-text="validationHint" class="truncate"></span>
+                  <span x-show="isFormValid" class="truncate">Ready to create. <kbd class="ml-1">Ctrl</kbd> + <kbd>Enter</kbd></span>
                 </div>
-
-                <!-- Dynamic Preview Content -->
-                <div class="space-y-6" x-html="previewContent">
+                <div class="flex items-center gap-2 shrink-0">
+                  <button type="button" class="px-4 py-2.5 text-sm font-medium text-webropol-gray-700 hover:text-webropol-primary-700 hover:bg-webropol-gray-50 rounded-xl transition-colors">
+                    <i class="fal fa-floppy-disk mr-1.5"></i> Save as draft
+                  </button>
+                  <button
+                    @click="createItem()"
+                    :disabled="!isFormValid"
+                    :class="!isFormValid ? 'opacity-50 cursor-not-allowed' : 'hover:from-webropol-primary-600 hover:to-webropol-primary-700 hover:shadow-lg'"
+                    class="px-6 py-3 bg-gradient-to-r from-webropol-primary-500 to-webropol-primary-600 text-white font-semibold rounded-xl shadow-medium transition-all inline-flex items-center justify-center gap-2"
+                  >
+                    <i x-show="startMethod === 'ai'" class="fal fa-sparkles"></i>
+                    <i x-show="startMethod !== 'ai'" :class="contentConfig.icon"></i>
+                    <span x-text="primaryCtaLabel"></span>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </main>
     </div>
@@ -415,7 +735,20 @@
           return params.get('type') || 'survey';
         },
         activeCategory: 'webropol',
-        
+
+        // Redesigned-UI state
+        startMethod: '',            // '', 'blank', 'template', 'ai', 'import'
+        templateSearch: '',
+        popularOnly: false,
+        showAdvanced: false,
+        aiPrompt: '',
+        aiSuggestions: [
+          'Customer satisfaction after a support call (NPS + helpfulness + open comment)',
+          'Employee engagement pulse — 5 quick questions',
+          'Post-event feedback for a workshop',
+          'Product feedback from beta testers'
+        ],
+
         // Track content type changes
         _lastContentType: '',
         
@@ -463,8 +796,21 @@
             autoDelete: false,
             deleteDate: '',
             selectedFolder: 'root',
-            selectedTemplate: 'blank'
+            selectedTemplate: 'blank',
+            duplicateFrom: ''
           };
+
+          // Reset redesigned-UI state
+          this.startMethod = '';
+          this.templateSearch = '';
+          this.popularOnly = false;
+          this.showAdvanced = false;
+          this.aiPrompt = '';
+
+          // Types without templates go straight to the build step
+          if (!this.contentConfig.showTemplates) {
+            this.startMethod = 'blank';
+          }
           
           // Set default date to 30 days from now for auto-delete
           const futureDate = new Date();
@@ -495,6 +841,7 @@
         contentConfigs: {
           survey: {
             title: 'Survey',
+            titlePlaceholder: 'Customer Satisfaction — Q2 2026',
             description: 'Build engaging surveys with our intuitive tools and templates',
             icon: 'fal fa-chart-bar',
             sidebarActive: 'surveys',
@@ -515,18 +862,19 @@
               { id: 'shared', name: 'Shared Templates', count: 12 }
             ],
             templates: [
-              { id: 'blank', category: 'webropol', name: 'Blank Template', description: 'Start from scratch', icon: 'fal fa-file-alt', gradient: 'template-gradient-1' },
-              { id: 'customer-satisfaction', category: 'webropol', name: 'Customer Satisfaction', description: 'Measure customer happiness', icon: 'fal fa-smile', gradient: 'template-gradient-2' },
-              { id: 'employee-engagement', category: 'webropol', name: 'Employee Engagement', description: 'Assess workplace satisfaction', icon: 'fal fa-users', gradient: 'template-gradient-3' },
-              { id: 'market-research', category: 'webropol', name: 'Market Research', description: 'Gather market insights', icon: 'fal fa-chart-line', gradient: 'template-gradient-4' },
-              { id: 'event-feedback', category: 'webropol', name: 'Event Feedback', description: 'Post-event evaluation', icon: 'fal fa-calendar-alt', gradient: 'template-gradient-5' },
-              { id: 'product-feedback', category: 'webropol', name: 'Product Feedback', description: 'Product improvement insights', icon: 'fal fa-star', gradient: 'template-gradient-6' },
-              { id: 'nps', category: 'webropol', name: 'Net Promoter Score', description: 'Measure customer loyalty', icon: 'fal fa-thumbs-up', gradient: 'template-gradient-1' },
-              { id: 'training-evaluation', category: 'webropol', name: 'Training Evaluation', description: 'Assess training effectiveness', icon: 'fal fa-graduation-cap', gradient: 'template-gradient-2' }
+              { id: 'blank', category: 'webropol', name: 'Blank Template', description: 'Start from scratch with a clean canvas', icon: 'fal fa-file-alt', gradient: 'template-gradient-1', questions: 0, minutes: 0, tag: 'Flexible' },
+              { id: 'customer-satisfaction', category: 'webropol', name: 'Customer Satisfaction', description: 'Measure customer happiness across touchpoints', icon: 'fal fa-smile', gradient: 'template-gradient-2', questions: 8, minutes: 3, popular: true, tag: 'CX' },
+              { id: 'employee-engagement', category: 'webropol', name: 'Employee Engagement', description: 'Assess workplace satisfaction and motivation', icon: 'fal fa-users', gradient: 'template-gradient-3', questions: 12, minutes: 5, tag: 'HR' },
+              { id: 'market-research', category: 'webropol', name: 'Market Research', description: 'Gather insights about markets and preferences', icon: 'fal fa-chart-line', gradient: 'template-gradient-4', questions: 15, minutes: 7, tag: 'Research' },
+              { id: 'event-feedback', category: 'webropol', name: 'Event Feedback', description: 'Capture attendee reactions after any event', icon: 'fal fa-calendar-alt', gradient: 'template-gradient-5', questions: 7, minutes: 3, tag: 'Events' },
+              { id: 'product-feedback', category: 'webropol', name: 'Product Feedback', description: 'Gather product improvement ideas from users', icon: 'fal fa-star', gradient: 'template-gradient-6', questions: 10, minutes: 4, tag: 'Product' },
+              { id: 'nps', category: 'webropol', name: 'Net Promoter Score', description: 'The classic one-question loyalty benchmark', icon: 'fal fa-thumbs-up', gradient: 'template-gradient-1', questions: 3, minutes: 1, popular: true, tag: 'Loyalty' },
+              { id: 'training-evaluation', category: 'webropol', name: 'Training Evaluation', description: 'Assess training effectiveness and learning', icon: 'fal fa-graduation-cap', gradient: 'template-gradient-2', questions: 9, minutes: 4, tag: 'L&D' }
             ]
           },
           event: {
             title: 'Event',
+            titlePlaceholder: 'Spring Product Launch Webinar',
             description: 'Create and manage events with registration and tracking capabilities',
             icon: 'fal fa-calendar-alt',
             sidebarActive: 'events',
@@ -551,16 +899,17 @@
               { id: 'my', name: 'My Templates', count: 2 }
             ],
             templates: [
-              { id: 'conference', category: 'webropol', name: 'Conference', description: 'Large scale conferences', icon: 'fal fa-users', gradient: 'template-gradient-1' },
-              { id: 'workshop', category: 'webropol', name: 'Workshop', description: 'Interactive workshops', icon: 'fal fa-tools', gradient: 'template-gradient-2' },
-              { id: 'webinar', category: 'webropol', name: 'Webinar', description: 'Online presentations', icon: 'fal fa-video', gradient: 'template-gradient-3' },
-              { id: 'meetup', category: 'webropol', name: 'Meetup', description: 'Casual gatherings', icon: 'fal fa-coffee', gradient: 'template-gradient-4' },
-              { id: 'training', category: 'webropol', name: 'Training Session', description: 'Educational events', icon: 'fal fa-graduation-cap', gradient: 'template-gradient-5' },
-              { id: 'networking', category: 'webropol', name: 'Networking Event', description: 'Professional networking', icon: 'fal fa-handshake', gradient: 'template-gradient-6' }
+              { id: 'conference', category: 'webropol', name: 'Conference', description: 'Large scale multi-day conferences', icon: 'fal fa-users', gradient: 'template-gradient-1', questions: 10, minutes: 4, tag: 'Large scale' },
+              { id: 'workshop', category: 'webropol', name: 'Workshop', description: 'Hands-on interactive workshops', icon: 'fal fa-tools', gradient: 'template-gradient-2', questions: 6, minutes: 3, popular: true, tag: 'Hands-on' },
+              { id: 'webinar', category: 'webropol', name: 'Webinar', description: 'Online presentations with Q&A', icon: 'fal fa-video', gradient: 'template-gradient-3', questions: 5, minutes: 2, popular: true, tag: 'Online' },
+              { id: 'meetup', category: 'webropol', name: 'Meetup', description: 'Casual community gatherings', icon: 'fal fa-coffee', gradient: 'template-gradient-4', questions: 4, minutes: 2, tag: 'Community' },
+              { id: 'training', category: 'webropol', name: 'Training Session', description: 'Structured educational events', icon: 'fal fa-graduation-cap', gradient: 'template-gradient-5', questions: 8, minutes: 3, tag: 'L&D' },
+              { id: 'networking', category: 'webropol', name: 'Networking Event', description: 'Professional networking nights', icon: 'fal fa-handshake', gradient: 'template-gradient-6', questions: 5, minutes: 2, tag: 'Networking' }
             ]
           },
           exw: {
             title: 'Employee Experience Survey',
+            titlePlaceholder: 'Engagement Pulse — April 2026',
             description: 'Create employee satisfaction and engagement surveys',
             icon: 'fal fa-user-chart',
             sidebarActive: 'exw',
@@ -587,15 +936,16 @@
               { id: 'webropol', name: 'EXW Templates', count: 5 }
             ],
             templates: [
-              { id: 'engagement', category: 'webropol', name: 'Employee Engagement', description: 'Measure engagement levels', icon: 'fal fa-heart', gradient: 'template-gradient-1' },
-              { id: 'pulse', category: 'webropol', name: 'Pulse Survey', description: 'Quick pulse checks', icon: 'fal fa-pulse', gradient: 'template-gradient-2' },
-              { id: 'satisfaction', category: 'webropol', name: 'Job Satisfaction', description: 'Overall job satisfaction', icon: 'fal fa-smile', gradient: 'template-gradient-3' },
-              { id: 'exit', category: 'webropol', name: 'Exit Interview', description: 'Departing employee feedback', icon: 'fal fa-door-open', gradient: 'template-gradient-4' },
-              { id: 'onboarding', category: 'webropol', name: 'Onboarding Feedback', description: 'New hire experience', icon: 'fal fa-user-plus', gradient: 'template-gradient-5' }
+              { id: 'engagement', category: 'webropol', name: 'Employee Engagement', description: 'Measure engagement levels company-wide', icon: 'fal fa-heart', gradient: 'template-gradient-1', questions: 12, minutes: 5, popular: true, tag: 'Engagement' },
+              { id: 'pulse', category: 'webropol', name: 'Pulse Survey', description: 'Quick recurring pulse checks', icon: 'fal fa-heart-pulse', gradient: 'template-gradient-2', questions: 5, minutes: 2, popular: true, tag: 'Pulse' },
+              { id: 'satisfaction', category: 'webropol', name: 'Job Satisfaction', description: 'Overall job satisfaction benchmark', icon: 'fal fa-smile', gradient: 'template-gradient-3', questions: 10, minutes: 4, tag: 'Satisfaction' },
+              { id: 'exit', category: 'webropol', name: 'Exit Interview', description: 'Structured departing employee feedback', icon: 'fal fa-door-open', gradient: 'template-gradient-4', questions: 8, minutes: 4, tag: 'Exit' },
+              { id: 'onboarding', category: 'webropol', name: 'Onboarding Feedback', description: 'New hire experience and fit', icon: 'fal fa-user-plus', gradient: 'template-gradient-5', questions: 7, minutes: 3, tag: 'Onboarding' }
             ]
           },
           'case-management': {
             title: 'Case',
+            titlePlaceholder: 'Unable to sign in — account support',
             description: 'Create and manage support cases and customer inquiries',
             icon: 'fal fa-briefcase',
             sidebarActive: 'case-management',
@@ -633,6 +983,7 @@
           },
           sms: {
             title: '2-Way SMS Campaign',
+            titlePlaceholder: 'Spring Sale — Reply YES to opt in',
             description: 'Create interactive SMS campaigns and messaging workflows',
             icon: 'fal fa-sms',
             sidebarActive: 'sms',
@@ -672,19 +1023,82 @@
 
         get filteredTemplates() {
           if (!this.contentConfig.templates) return [];
-          return this.contentConfig.templates.filter(template => template.category === this.activeCategory);
+          const q = (this.templateSearch || '').trim().toLowerCase();
+          return this.contentConfig.templates
+            .filter(t => t.category === this.activeCategory)
+            .filter(t => !this.popularOnly || t.popular)
+            .filter(t => !q
+              || t.name.toLowerCase().includes(q)
+              || (t.description || '').toLowerCase().includes(q)
+              || (t.tag || '').toLowerCase().includes(q));
+        },
+
+        get requiredCustomFields() {
+          return (this.contentConfig.customFields || []).filter(f => f.required);
+        },
+
+        get optionalCustomFields() {
+          return (this.contentConfig.customFields || []).filter(f => !f.required);
+        },
+
+        get hasAdvancedOptions() {
+          return this.contentConfig.showFolder
+              || this.contentConfig.showAutoDelete
+              || this.optionalCustomFields.length > 0;
+        },
+
+        get startMethodLabel() {
+          const map = { blank: 'Blank', template: 'Template', ai: 'AI assist', import: 'Duplicate/Import' };
+          return this.startMethod ? (map[this.startMethod] || '—') : '—';
+        },
+
+        get selectedTemplateName() {
+          if (this.startMethod !== 'template') return '';
+          const t = (this.contentConfig.templates || []).find(x => x.id === this.formData.selectedTemplate);
+          return t ? t.name : '';
+        },
+
+        get selectedFolderLabel() {
+          const f = (this.contentConfig.folders || []).find(x => x.value === this.formData.selectedFolder);
+          return f ? f.label : '—';
+        },
+
+        get primaryCtaLabel() {
+          if (this.startMethod === 'ai') return 'Generate with AI';
+          if (this.startMethod === 'import') return 'Create from source';
+          return `Create ${this.contentConfig.title.toLowerCase()}`;
+        },
+
+        get validationHint() {
+          if (!this.formData.title) return `Give your ${this.contentConfig.title.toLowerCase()} a title to continue.`;
+          if (this.startMethod === 'template' && !this.formData.selectedTemplate) return 'Select a template to continue.';
+          if (this.startMethod === 'ai' && !this.aiPrompt.trim()) return 'Describe what you want to measure.';
+          for (const field of this.requiredCustomFields) {
+            if (!this.formData[field.name]) return `Fill in "${field.label}" to continue.`;
+          }
+          return '';
         },
 
         get isFormValid() {
           if (!this.formData.title) return false;
-          if (this.contentConfig.showTemplates && !this.formData.selectedTemplate) return false;
-          
+          if (this.startMethod === 'template' && !this.formData.selectedTemplate) return false;
+          if (this.startMethod === 'ai' && !this.aiPrompt.trim()) return false;
+
           // Check required custom fields
-          for (const field of this.contentConfig.customFields) {
-            if (field.required && !this.formData[field.name]) return false;
+          for (const field of this.requiredCustomFields) {
+            if (!this.formData[field.name]) return false;
           }
-          
+
           return true;
+        },
+
+        // Pick a start method and focus the title field
+        chooseMethod(method) {
+          this.startMethod = method;
+          if (method === 'blank') this.formData.selectedTemplate = 'blank';
+          this.$nextTick(() => {
+            if (this.$refs.titleInput) this.$refs.titleInput.focus();
+          });
         },
 
         get previewContent() {
