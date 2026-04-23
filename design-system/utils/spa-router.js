@@ -11,22 +11,6 @@ class WebropolSPA {
     this.pageStyleNodes = [];
   this.pageScriptNodes = [];
   this.pageModalNodes = [];
-  // Per-route scroll position memory (key: full route incl. query, value: pixel offset)
-  this.scrollPositions = new Map();
-  this._scrollEl = null;
-  this._scrollHandler = null;
-  this._currentLoadedRoute = null;
-  this._scrollStorageKey = 'webropol_spa_scroll_positions';
-  // Hydrate from sessionStorage so positions survive a hard refresh within the same tab
-  try {
-    const raw = sessionStorage.getItem(this._scrollStorageKey);
-    if (raw) {
-      const obj = JSON.parse(raw);
-      if (obj && typeof obj === 'object') {
-        Object.keys(obj).forEach((k) => this.scrollPositions.set(k, Number(obj[k]) || 0));
-      }
-    }
-  } catch (_) { /* ignore */ }
   // Detect hosting base segment (e.g., "/webropol" on GitHub Pages project sites)
   const seg = (location.pathname || '/')
     .split('/')
@@ -117,12 +101,6 @@ class WebropolSPA {
       return;
     }
 
-    // Manage scroll restoration manually so the browser doesn't fight us on hashchange/back/forward
-    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (_) {}
-
-    // Attach a scroll listener to the actual scrolling ancestor so we can remember per-route positions
-    this.attachScrollListener();
-
     // Intercept clicks on internal links to navigate client-side
   document.addEventListener('click', (e) => {
       // Respect modifier keys and targets
@@ -185,13 +163,7 @@ class WebropolSPA {
       // Immediately clear home content to avoid flash while async fetch runs
       this.container.innerHTML = '<div class="flex items-center justify-center" style="height:60vh"><div style="width:2.5rem;height:2.5rem;border:3px solid #e2e8f0;border-top-color:#06b6d4;border-radius:50%;animation:spa-spin .7s linear infinite"></div></div><style>@keyframes spa-spin{to{transform:rotate(360deg)}}</style>';
       this.load(initialRoute);
-    } else {
-      // Home shell is the initial view — track it so its scroll is also remembered
-      this._currentLoadedRoute = initialRoute;
     }
-
-    // Persist scroll positions on tab close/refresh
-    window.addEventListener('beforeunload', () => this.persistScrollPositions());
   }
 
   currentRouteFromHash() {
@@ -265,8 +237,6 @@ class WebropolSPA {
   }
 
   async load(path) {
-    // Snapshot current scroll position for the route we're about to leave
-    this.saveCurrentScroll();
     this.applyRouteLayoutState(path);
     const file = this.pathToFile(path);
     if (!file) return;
@@ -463,7 +433,7 @@ class WebropolSPA {
   this.updateBreadcrumbs(path);
   this.updateSidebarActive(path);
   this.updatePageTitle(path);
-      this.restoreScrollForRoute(path);
+      this.scrollToTop();
     } catch (err) {
       console.error('[SPA] Failed to load route', path, err);
       this.container.innerHTML = `<div class="p-6 rounded-xl bg-red-50 border border-red-200 text-red-700">Failed to load ${path}</div>`;
@@ -905,85 +875,6 @@ class WebropolSPA {
     } catch (_) {
       this.container.scrollTop = 0;
     }
-  }
-
-  // ---- Per-route scroll memory ----
-  getScrollEl() {
-    if (this._scrollEl && document.contains(this._scrollEl)) return this._scrollEl;
-    let el = this.container && this.container.parentElement;
-    while (el && el !== document.body && el !== document.documentElement) {
-      try {
-        const cs = window.getComputedStyle(el);
-        const oy = cs && cs.overflowY;
-        if (oy === 'auto' || oy === 'scroll') {
-          this._scrollEl = el;
-          return el;
-        }
-      } catch (_) {}
-      el = el.parentElement;
-    }
-    // Fallback: window/document scroller
-    this._scrollEl = window;
-    return window;
-  }
-
-  attachScrollListener() {
-    const el = this.getScrollEl();
-    if (this._scrollHandler) return;
-    let ticking = false;
-    this._scrollHandler = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
-        if (!this._currentLoadedRoute) return;
-        const pos = (el === window)
-          ? (window.scrollY || document.documentElement.scrollTop || 0)
-          : (el.scrollTop || 0);
-        this.scrollPositions.set(this._currentLoadedRoute, pos);
-      });
-    };
-    const target = (el === window) ? window : el;
-    try { target.addEventListener('scroll', this._scrollHandler, { passive: true }); } catch (_) {}
-  }
-
-  saveCurrentScroll() {
-    if (!this._currentLoadedRoute) return;
-    const el = this.getScrollEl();
-    const pos = (el === window)
-      ? (window.scrollY || document.documentElement.scrollTop || 0)
-      : (el.scrollTop || 0);
-    this.scrollPositions.set(this._currentLoadedRoute, pos);
-  }
-
-  restoreScrollForRoute(path) {
-    this._currentLoadedRoute = path;
-    const saved = this.scrollPositions.get(path);
-    const top = typeof saved === 'number' ? saved : 0;
-    // Re-resolve scroll element after content swap (clientHeight may have changed)
-    this._scrollEl = null;
-    const el = this.getScrollEl();
-    // Wait two frames so injected styles/layout/Alpine init can settle
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        try {
-          if (el === window) window.scrollTo({ top, left: 0, behavior: 'auto' });
-          else el.scrollTo({ top, left: 0, behavior: 'auto' });
-        } catch (_) {
-          if (el === window) window.scrollTo(0, top);
-          else el.scrollTop = top;
-        }
-      });
-    });
-  }
-
-  persistScrollPositions() {
-    try {
-      this.saveCurrentScroll();
-      const obj = {};
-      this.scrollPositions.forEach((v, k) => { obj[k] = v; });
-      sessionStorage.setItem(this._scrollStorageKey, JSON.stringify(obj));
-    } catch (_) { /* ignore quota / privacy errors */ }
   }
 
   cap(s) {
