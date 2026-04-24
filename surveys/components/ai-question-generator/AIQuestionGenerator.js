@@ -33,6 +33,14 @@
     });
   }
 
+  // Lazy-register the design-system tooltip so we can use <webropol-tooltip>
+  // for question-type info hints.
+  if (!customElements.get('webropol-tooltip')) {
+    import('../../../design-system/components/feedback/Tooltip.js').catch(err => {
+      console.warn('[AIQuestionGenerator] Failed to load webropol-tooltip:', err);
+    });
+  }
+
   // Feature flag — flip to false to hide all entry points.
   if (typeof window.WEBROPOL_AI_GEN_ENABLED === 'undefined') {
     window.WEBROPOL_AI_GEN_ENABLED = true;
@@ -260,7 +268,32 @@
     'scale': 'fal fa-sliders-h'
   };
 
-  // Mirrors the Add Question modal grouping/colors so the picker variant looks consistent.
+  const QUESTION_TYPE_DESCRIPTIONS = {
+    'open-ended': 'Free-form text answer for qualitative feedback.',
+    'contact': 'Collect respondent contact details (name, email, phone).',
+    'text': 'Short single-line text input.',
+    'numeric': 'Numeric input with validation.',
+    'single-choice': 'Pick exactly one option from a list.',
+    'multi-choice': 'Pick one or more options from a list.',
+    'dropdown': 'Pick one option from a compact dropdown list.',
+    'picture-selection': 'Pick one option presented as images.',
+    'picture-multiselection': 'Pick multiple options presented as images.',
+    'matrix': 'Rate multiple items on the same scale.',
+    'matrix-multi': 'Multi-select choices across multiple rows.',
+    'position': 'Place an item on a horizontal axis.',
+    'nps': 'Net Promoter Score — likelihood to recommend (0–10).',
+    'ces': 'Customer Effort Score — how easy was the experience.',
+    'csat': 'Customer Satisfaction — overall satisfaction rating.',
+    'file': 'Allow respondents to upload a file with their answer.',
+    'fourfold': 'Plot answers on a 2×2 importance/satisfaction grid.',
+    'calendar': 'Pick a date or date range from a calendar.',
+    'question-table': 'Group several questions in a compact table.',
+    'hierarchical': 'Nested categories that drill down on selection.',
+    'ranking': 'Order options by preference.',
+    'slider': 'Pick a value on a numeric slider.',
+    'autosuggest': 'Text field with suggested completions.',
+    'scale': 'Pick a value on a labeled scale.'
+  };
   const QUESTION_TYPE_GROUPS = [
     { title: 'Text', color: 'orange', types: ['open-ended', 'contact', 'text', 'numeric'] },
     { title: 'Selection', color: 'blue', types: ['single-choice', 'multi-choice', 'dropdown', 'picture-selection', 'picture-multiselection'] },
@@ -933,6 +966,7 @@
       const renderCard = (val, color) => {
         const label = QUESTION_TYPE_LABELS[val] || val;
         const icon = QUESTION_TYPE_ICONS[val] || 'fal fa-circle';
+        const description = QUESTION_TYPE_DESCRIPTIONS[val] || label;
         const order = draftIndex(val);
         const checked = order !== -1;
         const matches = !search || label.toLowerCase().includes(search);
@@ -942,15 +976,21 @@
             class="group relative flex items-center justify-between gap-2 p-2 w-full text-left transition-all border rounded-lg cursor-pointer ${checked ? `bg-${color}-50 border-${color}-300 ring-1 ring-${color}-300` : `bg-white border-transparent hover:bg-${color}-50 hover:border-${color}-100`} ${matches ? '' : 'hidden'}"
             aria-pressed="${checked}">
             <span class="flex items-center gap-2 min-w-0">
+              <span data-role="picker-badge"
+                class="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold ${checked ? 'ai-gen-royal-grad' : 'bg-webropol-gray-100 text-webropol-gray-400'}">
+                ${checked ? (order + 1) : '<i class="fal fa-plus text-[10px]"></i>'}
+              </span>
               <span class="flex items-center justify-center w-8 h-8 text-sm text-${color}-600 bg-${color}-100 rounded-md">
                 <i class="${icon}"></i>
               </span>
               <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 truncate">${escapeHtml(label)}</span>
             </span>
-            <span data-role="picker-badge"
-              class="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold ${checked ? 'ai-gen-royal-grad' : 'bg-webropol-gray-100 text-webropol-gray-400'}">
-              ${checked ? (order + 1) : '<i class="fal fa-plus text-[10px]"></i>'}
-            </span>
+            <webropol-tooltip text="${escapeHtml(description)}" position="top" max-width="14rem" data-role="picker-info" data-value="${val}" class="shrink-0">
+              <span aria-label="More info about ${escapeHtml(label)}"
+                class="inline-flex items-center justify-center w-4 h-4 rounded-full text-webropol-gray-400 text-[10px] hover:text-webropol-primary-600 transition-colors">
+                <i class="fal fa-info-circle"></i>
+              </span>
+            </webropol-tooltip>
           </button>
         `;
       };
@@ -1068,9 +1108,20 @@
         });
       }
 
+      // Info button: don't toggle selection when clicked
+      this.querySelectorAll('[data-role="picker-info"]').forEach(info => {
+        info.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+        info.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') e.stopPropagation();
+        });
+      });
+
       // Card toggle (multi-select with ordered draft)
       this.querySelectorAll('[data-role="picker-card"]').forEach(card => {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('[data-role="picker-info"]')) return;
           if (!Array.isArray(this._typesPickerDraft)) {
             this._typesPickerDraft = [...this._types];
           }
