@@ -276,8 +276,26 @@ export class WebropolTooltip extends BaseComponent {
     const arrowLeft = Math.max(18, Math.min(triggerRect.left + (triggerRect.width / 2) - left - 6, popupWidth - 24));
     const arrowTop = Math.max(18, Math.min(triggerRect.top + (triggerRect.height / 2) - top - 6, popupHeight - 24));
 
-    arrow.className = `webropol-tooltip-arrow absolute h-3 w-3 rotate-45 ${this.getVariantClasses(this.getAttr('variant', 'default')).arrow}`;
+    const variantArrow = this.getVariantClasses(this.getAttr('variant', 'default')).arrow
+      // Strip any default border-side classes so we can apply placement-specific ones below.
+      .replace(/border-[ltrb]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
 
+    // Outward-facing edges of the rotated diamond per placement so the visible
+    // tip carries the surface border colour while the half overlapping the
+    // surface stays seamless.
+    const placementBorderClasses = (() => {
+      if (placement.startsWith('top')) return 'border-r border-b';
+      if (placement.startsWith('bottom')) return 'border-l border-t';
+      if (placement === 'left') return 'border-t border-r';
+      return 'border-b border-l';
+    })();
+
+    arrow.className = `webropol-tooltip-arrow absolute h-3 w-3 rotate-45 ${placementBorderClasses} ${variantArrow}`;
+
+    // Position arrow so its centre sits on the surface edge — half overlaps
+    // the surface (hiding the seam), half extends outward as the visible tip.
     if (placement.startsWith('top')) {
       arrow.style.left = `${arrowLeft}px`;
       arrow.style.top = `${popupHeight - 6}px`;

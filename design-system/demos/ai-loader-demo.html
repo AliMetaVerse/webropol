@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Loader — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7', 400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880', 800: '#215669', 900: '#204859' },
+            'webropol-gray': { 50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6', 400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a', 800: '#515557', 900: '#45484a', 950: '#272a2b' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <script src="../components/buttons/Button.js" type="module"></script>
+  <script src="../components/feedback/AiLoader.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: #272a2b; margin: 0 0 4px; }
+    .section-sub { font-size: 0.875rem; color: #787f81; margin: 0 0 24px; }
+    .divider { height: 1px; background: #e6e7e8; margin: 48px 0; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    .lead { font-size: 1rem; color: #787f81; margin: 0 0 40px; max-width: 720px; }
+    .demo-block { background: white; border: 1px solid #e6e7e8; border-radius: 16px; padding: 32px; }
+    .preview-frame {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 520px;
+      background:
+        radial-gradient(circle at 20% 20%, #f5f3ff 0%, transparent 55%),
+        radial-gradient(circle at 80% 30%, #ecfeff 0%, transparent 55%),
+        radial-gradient(circle at 50% 90%, #fdf4ff 0%, transparent 55%),
+        #ffffff;
+      border: 1px solid #ede9fe;
+    }
+    .preview-frame webropol-ai-loader .wail-overlay {
+      position: absolute;
+      background: rgba(255,255,255,0.7);
+    }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 18px; }
+    .control-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 14px; border-radius: 999px; border: 1px solid #d5f4f8;
+      background: white; color: #1d809d; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; transition: background .2s ease, border-color .2s ease;
+    }
+    .control-btn:hover { background: #eefbfd; border-color: #79d6e7; }
+    .control-btn--primary { background: linear-gradient(135deg,#7c3aed,#d946ef); border-color: transparent; color: white; }
+    .control-btn--primary:hover { filter: brightness(1.05); }
+    .progress-readout {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: #f3f4f4; color: #515557;
+      font-size: 0.78rem; font-weight: 600; font-variant-numeric: tabular-nums;
+    }
+    code { font-family: SFMono-Regular, Consolas, monospace; font-size: 0.8125rem; background: #f3f4f4; padding: 1px 5px; border-radius: 4px; color: #272a2b; }
+    pre { margin: 0; padding: 18px 20px; border-radius: 14px; background: #0f172a; color: #e2e8f0; overflow-x: auto; font-size: 0.8125rem; line-height: 1.55; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; font-size: 0.875rem; }
+    .breadcrumb a { color: #1d809d; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { color: #b5bbbd; }
+    .attr-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .attr-table th, .attr-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.8125rem; vertical-align: top; }
+    .attr-table th { color: #515557; font-weight: 600; background: #f9fafa; }
+    .attr-table td:first-child { font-family: monospace; color: #1d809d; white-space: nowrap; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: #ede9fe; color: #6d28d9; font-size: 0.72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .sibling-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid #e6e7e8; margin-top: 64px; }
+    .sibling-nav a { display: inline-flex; align-items: center; gap: 6px; color: #1d809d; font-size: 0.875rem; text-decoration: none; padding: 8px 14px; border: 1px solid #b0e8f1; border-radius: 8px; background: white; }
+    .sibling-nav a:hover { background: #eefbfd; }
+  </style>
+</head>
+<body x-data="aiLoaderDemo()" x-init="init()">
+<div class="page">
+
+  <nav class="breadcrumb">
+    <a href="../index.html"><i class="fal fa-swatchbook" style="margin-right:4px"></i>Component Library</a>
+    <span>/</span>
+    <a href="../index.html#feedback">Feedback</a>
+    <span>/</span>
+    <span style="color:#45484a;font-weight:500">AI Loader</span>
+  </nav>
+
+  <h1>AI Loader</h1>
+  <p class="lead">Full-screen overlay used while an AI flow is generating content (AI Survey Creator, AI Question Generator, AI Reports). Pairs an animated sparkles badge, a gradient progress bar that drives an auto-advancing step caption, and shimmering skeleton previews of the result.</p>
+
+  <div class="badge-row">
+    <span class="pill"><i class="fal fa-sparkles"></i> AI</span>
+    <span class="pill" style="background:#cffafe;color:#0e7490"><i class="fal fa-bolt"></i> Overlay</span>
+    <span class="pill" style="background:#dcfce7;color:#15803d"><i class="fal fa-universal-access"></i> ARIA live</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Live preview -->
+  <section>
+    <h2 class="section-title">Live preview</h2>
+    <p class="section-sub">Click <em>Play simulation</em> to drive <code>progress</code> from 0 to 100%. The step caption advances automatically across the four <code>steps</code>.</p>
+
+    <div class="demo-block">
+      <div class="controls">
+        <button type="button" class="control-btn control-btn--primary" @click="play()">
+          <i class="fal fa-play"></i> Play simulation
+        </button>
+        <button type="button" class="control-btn" @click="reset()">
+          <i class="fal fa-rotate-left"></i> Reset
+        </button>
+        <button type="button" class="control-btn" @click="active = !active">
+          <i class="fal" :class="active ? 'fa-eye-slash' : 'fa-eye'"></i>
+          <span x-text="active ? 'Hide overlay' : 'Show overlay'"></span>
+        </button>
+        <span class="progress-readout">
+          <i class="fal fa-gauge-simple-high"></i>
+          <span x-text="`${Math.round(progress)}%`"></span>
+        </span>
+      </div>
+
+      <div class="preview-frame">
+        <webropol-ai-loader
+          :active="active"
+          :progress="progress"
+          title="Generating your survey…"
+          subtitle="AI is crafting the perfect questions"
+          steps='["Analyzing your prompt…","Selecting optimal questions…","Structuring survey logic…","Finalising your survey…"]'
+          skeletons="3">
+        </webropol-ai-loader>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Inline variant -->
+  <section>
+    <h2 class="section-title">Inline variant</h2>
+    <p class="section-sub">Add <code>inline</code> to render the loader inside its parent box instead of a fixed overlay — useful for in-card or in-panel AI generations.</p>
+    <div class="demo-block" style="background:#fafafa">
+      <div style="border:1px dashed #cbd5e1;border-radius:18px;background:white">
+        <webropol-ai-loader
+          active
+          inline
+          progress="62"
+          title="Drafting your insight…"
+          subtitle="Reading 1,248 responses"
+          steps='["Reading responses…","Extracting themes…","Ranking insights…","Composing summary…"]'
+          skeletons="2">
+        </webropol-ai-loader>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Code snippet -->
+  <section>
+    <h2 class="section-title">Usage</h2>
+    <p class="section-sub">Bind <code>active</code> and <code>progress</code> to your Alpine state. The component handles its own animations, ARIA state, and step calculation.</p>
+    <div class="demo-block">
+<pre>&lt;script src="../design-system/components/feedback/AiLoader.js" type="module"&gt;&lt;/script&gt;
+
+&lt;webropol-ai-loader
+  :active="isGenerating"
+  :progress="generationProgress"
+  title="Generating your survey…"
+  subtitle="AI is crafting the perfect questions"
+  steps='["Analyzing your prompt…","Selecting optimal questions…","Structuring survey logic…","Finalising your survey…"]'
+  skeletons="3"&gt;
+&lt;/webropol-ai-loader&gt;</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- API -->
+  <section>
+    <h2 class="section-title">API</h2>
+    <table class="attr-table">
+      <thead>
+        <tr><th>Attribute</th><th>Type</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>active</td><td>boolean</td><td><code>false</code></td><td>Shows the overlay when present (or <code>"true"</code>). Hide by removing the attribute.</td></tr>
+        <tr><td>progress</td><td>number 0–100</td><td><code>0</code></td><td>Drives the gradient progress bar and selects the active step. Updates are patched in place (no re-render flicker).</td></tr>
+        <tr><td>title</td><td>string</td><td>“Generating your content…”</td><td>Headline shown under the badge.</td></tr>
+        <tr><td>subtitle</td><td>string</td><td>“AI is preparing your result”</td><td>Supporting copy under the headline.</td></tr>
+        <tr><td>steps</td><td>JSON array</td><td>4 default steps</td><td>Step captions distributed evenly across 0–100% by index.</td></tr>
+        <tr><td>inline</td><td>boolean</td><td><code>false</code></td><td>Renders inside the parent box instead of a fixed full-screen overlay.</td></tr>
+        <tr><td>skeletons</td><td>number</td><td><code>3</code></td><td>Skeleton preview rows shown beneath the progress bar. Set to <code>0</code> to hide.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Guidance -->
+  <section>
+    <h2 class="section-title">When to use</h2>
+    <p class="section-sub">Reserve this loader for AI-generated content where the wait is meaningful (typically 1.5s+) and the result will replace or fill the surface the user is looking at.</p>
+    <div class="demo-block">
+      <ul style="margin:0;padding-left:20px;line-height:1.7;color:#45484a;font-size:0.9rem">
+        <li><strong style="color:#15803d">Do</strong> use it for AI Survey Creator, AI Question Generator, and AI Report drafting.</li>
+        <li><strong style="color:#15803d">Do</strong> drive <code>progress</code> from real signals when available; otherwise simulate a smooth 0→88% climb and snap to 100% on completion.</li>
+        <li><strong style="color:#b91c1c">Don’t</strong> use it for plain network requests — use <code>&lt;webropol-loading&gt;</code> spinner instead.</li>
+        <li><strong style="color:#b91c1c">Don’t</strong> stack it over a modal; close the modal first or render the loader inside it with <code>inline</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <nav class="sibling-nav">
+    <a href="loading-demo.html"><i class="fal fa-arrow-left"></i> Loading</a>
+    <a href="tooltip-demo.html">Tooltip &amp; Popover <i class="fal fa-arrow-right"></i></a>
+  </nav>
+</div>
+
+<script>
+  function aiLoaderDemo() {
+    return {
+      active: true,
+      progress: 0,
+      _timer: null,
+
+      init() {
+        // Auto-play once on load so the entry experience is alive.
+        this.play();
+      },
+
+      play() {
+        this.reset();
+        this.active = true;
+        this._timer = setInterval(() => {
+          if (this.progress < 88) {
+            this.progress = Math.min(88, this.progress + Math.random() * 8 + 3);
+          } else {
+            this.progress = 100;
+            clearInterval(this._timer);
+            this._timer = null;
+          }
+        }, 380);
+      },
+
+      reset() {
+        if (this._timer) {
+          clearInterval(this._timer);
+          this._timer = null;
+        }
+        this.progress = 0;
+      }
+    }
+  }
+</script>
+</body>
+</html>

@@ -372,7 +372,20 @@ export class WebropolPopover extends BaseComponent {
       const arrowLeft = Math.max(22, Math.min(triggerCenterX - finalRect.left - 6, finalWidth - 28));
       const arrowTop = Math.max(22, Math.min(triggerCenterY - finalRect.top - 6, finalHeight - 28));
 
-      arrow.className = `webropol-popover-arrow absolute h-3 w-3 rotate-45 ${this.getVariantClasses(this.getAttr('variant', 'default')).arrow}`;
+      const variantArrow = this.getVariantClasses(this.getAttr('variant', 'default')).arrow
+        .replace(/border-[ltrb]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      // Outward-facing edges of the rotated diamond per placement.
+      const placementBorderClasses = (() => {
+        if (placement.startsWith('top')) return 'border-r border-b';
+        if (placement.startsWith('bottom')) return 'border-l border-t';
+        if (placement === 'left') return 'border-t border-r';
+        return 'border-b border-l';
+      })();
+
+      arrow.className = `webropol-popover-arrow absolute h-3 w-3 rotate-45 ${placementBorderClasses} ${variantArrow}`;
 
       if (placement.startsWith('top')) {
         arrow.style.left = `${arrowLeft}px`;

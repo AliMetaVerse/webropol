@@ -31,6 +31,7 @@
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/components/feedback/AiLoader.js" type="module"></script>
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
 
@@ -152,49 +153,16 @@
       <main class="flex-1 overflow-y-auto" role="main">
 
         <!-- ═══════════════════════════════════════════════════════════
-             GENERATION LOADING OVERLAY
+             GENERATION LOADING OVERLAY (design system component)
         ════════════════════════════════════════════════════════════ -->
-        <div x-show="isGenerating"
-             x-cloak
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-50 flex items-center justify-center bg-white/85 backdrop-blur-sm">
-          <div class="text-center max-w-xs mx-auto px-8">
-            <!-- Animated icon -->
-            <div class="relative w-20 h-20 mx-auto mb-6">
-              <div class="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 opacity-20 animate-ping"></div>
-              <div class="absolute inset-1 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-15 animate-pulse"></div>
-              <div class="absolute inset-3 rounded-full bg-gradient-to-br from-violet-600 to-fuchsia-500 flex items-center justify-center">
-                <i class="fal fa-sparkles text-white text-xl"></i>
-              </div>
-            </div>
-            <h3 class="text-lg font-bold text-webropol-gray-900 mb-1">Generating your survey…</h3>
-            <p class="text-sm text-webropol-gray-500 mb-6">AI is crafting the perfect questions</p>
-            <!-- Progress bar -->
-            <div class="w-full bg-webropol-gray-200 rounded-full h-1.5 overflow-hidden mb-2">
-              <div class="progress-fill h-1.5 rounded-full" :style="`width: ${generationProgress}%`"></div>
-            </div>
-            <p class="text-xs text-webropol-gray-400"
-               x-text="generationProgress < 35 ? 'Analyzing your prompt…' : generationProgress < 65 ? 'Selecting optimal questions…' : generationProgress < 90 ? 'Structuring survey logic…' : 'Finalising your survey…'">
-            </p>
-            <!-- Skeleton cards preview -->
-            <div class="mt-8 space-y-3 text-left">
-              <template x-for="n in [1,2,3]" :key="n">
-                <div class="p-3 bg-white rounded-xl border border-webropol-gray-100 flex items-center gap-3">
-                  <div class="shimmer-block w-8 h-8 rounded-lg flex-shrink-0"></div>
-                  <div class="flex-1 space-y-1.5">
-                    <div class="shimmer-block h-3 rounded w-4/5"></div>
-                    <div class="shimmer-block h-2.5 rounded w-2/5"></div>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
+        <webropol-ai-loader
+          :active="isGenerating"
+          :progress="generationProgress"
+          title="Generating your survey…"
+          subtitle="AI is crafting the perfect questions"
+          steps='["Analyzing your prompt…","Selecting optimal questions…","Structuring survey logic…","Finalising your survey…"]'
+          skeletons="3">
+        </webropol-ai-loader>
 
         <!-- ═══════════════════════════════════════════════════════════
              SUCCESS STATE
