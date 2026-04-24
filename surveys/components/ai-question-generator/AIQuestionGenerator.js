@@ -201,22 +201,73 @@
   // ─────────────────────────────────────────────────────────────────
 
   const QUESTION_TYPE_LABELS = {
+    // Text
     'open-ended': 'Open ended',
-    'single-choice': 'Single choice',
+    'contact': 'Contact form',
+    'text': 'Text field',
+    'numeric': 'Numeric field',
+    // Selection
+    'single-choice': 'Selection',
     'multi-choice': 'Multiselection',
-    'scale': 'Scale',
+    'dropdown': 'Dropdown',
+    'picture-selection': 'Picture selection',
+    'picture-multiselection': 'Picture multiselection',
+    // Matrix
+    'matrix': 'Matrix (Scale selection)',
+    'matrix-multi': 'Multiselection matrix',
+    'position': 'Position',
+    // Experience & Loyalty
+    'nps': 'NPS',
+    'ces': 'CES',
     'csat': 'CSAT',
-    'nps': 'NPS'
+    // Other
+    'file': 'Attach file to response',
+    'fourfold': 'Fourfold',
+    'calendar': 'Calendar',
+    'question-table': 'Question table',
+    'hierarchical': 'Hierarchical',
+    'ranking': 'Ranking',
+    'slider': 'Numeric slider',
+    'autosuggest': 'Autosuggest text field',
+    // Backwards-compat alias
+    'scale': 'Scale'
   };
 
   const QUESTION_TYPE_ICONS = {
     'open-ended': 'fal fa-font-case',
+    'contact': 'fal fa-address-card',
+    'text': 'fal fa-text',
+    'numeric': 'fal fa-calculator',
     'single-choice': 'fal fa-list-ul',
     'multi-choice': 'fal fa-list-check',
-    'scale': 'fal fa-sliders-h',
-    'csat': 'fal fa-face-smile-hearts',
-    'nps': 'fal fa-star'
+    'dropdown': 'fal fa-caret-square-down',
+    'picture-selection': 'fal fa-image',
+    'picture-multiselection': 'fal fa-images',
+    'matrix': 'fal fa-table',
+    'matrix-multi': 'fal fa-th',
+    'position': 'fal fa-arrows-h',
+    'nps': 'fal fa-tachometer-alt',
+    'ces': 'fal fa-books',
+    'csat': 'fal fa-smile-heart',
+    'file': 'fal fa-paperclip',
+    'fourfold': 'fal fa-border-all',
+    'calendar': 'fal fa-calendar-alt',
+    'question-table': 'fal fa-table',
+    'hierarchical': 'fal fa-sitemap',
+    'ranking': 'fal fa-sort-amount-up',
+    'slider': 'fal fa-sliders-h',
+    'autosuggest': 'fal fa-file-alt',
+    'scale': 'fal fa-sliders-h'
   };
+
+  // Mirrors the Add Question modal grouping/colors so the picker variant looks consistent.
+  const QUESTION_TYPE_GROUPS = [
+    { title: 'Text', color: 'orange', types: ['open-ended', 'contact', 'text', 'numeric'] },
+    { title: 'Selection', color: 'blue', types: ['single-choice', 'multi-choice', 'dropdown', 'picture-selection', 'picture-multiselection'] },
+    { title: 'Matrix', color: 'green', types: ['matrix', 'matrix-multi', 'position'] },
+    { title: 'Experience & Loyalty', color: 'purple', types: ['nps', 'ces', 'csat'] },
+    { title: 'Other', color: 'yellow', types: ['file', 'fourfold', 'calendar', 'question-table', 'hierarchical', 'ranking', 'slider', 'autosuggest'] }
+  ];
 
   const MOCK_BANK = {
     'open-ended': [
@@ -576,7 +627,9 @@
       this._prompt = '';
       this._count = 5;
       this._tone = 'neutral';
-      this._types = ['open-ended', 'single-choice', 'scale'];
+      this._types = [];
+      this._typesPickerOpen = false;
+      this._typesPickerDraft = null;
       this._questions = [];
       this._selectedIds = new Set();
       this._validationError = '';
@@ -595,6 +648,21 @@
     _countPercent() {
       const min = 1, max = 15;
       return Math.max(0, Math.min(100, ((this._count - min) / (max - min)) * 100));
+    }
+
+    _syncCountToTypes() {
+      // Slider reflects the number of question types the user has added (clamped 1–15).
+      const target = Math.max(1, Math.min(15, this._types.length || 1));
+      this._count = target;
+      const countEl = this.querySelector('#ai-gen-count');
+      const countVal = this.querySelector('[data-role="count-value"]');
+      const sliderRoot = this.querySelector('[data-role="slider-root"]');
+      if (countEl) {
+        countEl.value = String(target);
+        countEl.setAttribute('aria-valuenow', String(target));
+      }
+      if (countVal) countVal.textContent = String(target);
+      if (sliderRoot) sliderRoot.style.setProperty('--ai-slider-fill', this._countPercent() + '%');
     }
 
     open() {
@@ -627,7 +695,12 @@
 
     _keydownHandler(e) {
       if (!this._open) return;
-      if (e.key === 'Escape') { e.stopPropagation(); this.close(); return; }
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        if (this._typesPickerOpen) { this._closeTypesPicker(false); return; }
+        this.close();
+        return;
+      }
       if (e.key === 'Tab') this._trapFocus(e);
     }
 
@@ -664,6 +737,7 @@
             </div>
             ${this._renderFooter()}
           </div>
+          ${this._typesPickerOpen ? this._renderTypesPicker() : ''}
         </div>
       `;
 
@@ -671,6 +745,7 @@
       if (this._step === 'input') this._bindInput();
       if (this._step === 'preview') this._bindPreview();
       if (this._step === 'error') this._bindError();
+      if (this._typesPickerOpen) this._bindTypesPicker();
     }
 
     _renderHeader() {
@@ -701,22 +776,38 @@
     }
 
     _renderInputStep() {
-      const typeOptions = Object.entries(QUESTION_TYPE_LABELS).map(([val, label]) => {
-        const checked = this._types.includes(val);
-        return `
-          <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm cursor-pointer transition-colors ${checked ? 'bg-webropol-primary-50 border-webropol-primary-300 text-webropol-primary-700' : 'bg-white border-webropol-gray-200 text-webropol-gray-700 hover:bg-webropol-gray-50'}">
-            <input type="checkbox" class="h-4 w-4 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-400"
-              data-role="type-toggle" value="${val}" ${checked ? 'checked' : ''} aria-label="${escapeHtml(label)}" />
-            <span>${escapeHtml(label)}</span>
-          </label>
-        `;
-      }).join('');
+      const selectedChips = this._types.length
+        ? this._types.map((val, idx) => {
+            const label = QUESTION_TYPE_LABELS[val] || val;
+            const icon = QUESTION_TYPE_ICONS[val] || 'fal fa-circle';
+            return `
+              <span class="inline-flex items-center gap-1.5 pl-1 pr-1 py-1 rounded-full bg-webropol-primary-50 border border-webropol-primary-200 text-webropol-primary-700 text-xs font-medium">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full ai-gen-royal-grad text-[11px] font-semibold" aria-label="Order ${idx + 1}">${idx + 1}</span>
+                <i class="${icon} text-[11px]"></i>
+                <span>${escapeHtml(label)}</span>
+                <button type="button"
+                  class="w-5 h-5 inline-flex items-center justify-center rounded-full text-webropol-primary-600 hover:bg-webropol-primary-100"
+                  data-role="remove-type" data-value="${val}"
+                  aria-label="Remove ${escapeHtml(label)}">
+                  <i class="fal fa-xmark text-[10px]"></i>
+                </button>
+              </span>
+            `;
+          }).join('')
+        : `<span class="text-xs text-webropol-gray-500">No types selected yet. Picking a few helps the AI stay accurate and reduces mistakes.</span>`;
 
       return `
         <div class="space-y-5">
           <div>
-            <label for="ai-gen-prompt" class="block text-sm font-semibold text-webropol-gray-900 mb-1.5">
-              Describe what you want to measure
+            <label for="ai-gen-prompt" class="flex items-center gap-1.5 text-sm font-semibold text-webropol-gray-900 mb-1.5">
+              <span>Describe what you want to measure</span>
+              <span class="relative inline-flex group" tabindex="0" aria-label="Tip">
+                <i class="fal fa-circle-info text-webropol-gray-400 hover:text-webropol-primary-600 focus:text-webropol-primary-600 cursor-help text-sm"></i>
+                <span role="tooltip"
+                  class="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 z-20 w-72 px-3 py-2 rounded-xl bg-webropol-gray-900 text-white text-xs font-normal leading-relaxed shadow-medium opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+                  Be specific about your goal, audience, and the kind of insight you want. The clearer the prompt, the better the suggestions.
+                </span>
+              </span>
             </label>
             <textarea id="ai-gen-prompt" rows="4"
               class="w-full rounded-xl border border-webropol-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-400 focus:border-webropol-primary-400 resize-none"
@@ -765,20 +856,261 @@
           </div>
 
           <div>
-            <span class="block text-sm font-semibold text-webropol-gray-900 mb-2">Include question types</span>
-            <div class="flex flex-wrap gap-2" role="group" aria-label="Question types to include">
-              ${typeOptions}
+            <div class="flex items-center justify-between mb-1">
+              <span class="block text-sm font-semibold text-webropol-gray-900">Include question types</span>
+              <button type="button" data-role="open-types-picker"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-transparent text-[#1e6880] border border-transparent hover:[background-color:#eefbfd] hover:text-[#215669] active:[background-color:#b0e8f1] focus:ring-2 focus:ring-[#1e6880] focus:ring-offset-2 focus:outline-none transition-colors">
+                <i class="fal fa-plus"></i> Add types
+              </button>
             </div>
-          </div>
-
-          <div class="rounded-2xl ai-gen-royal-grad-soft ai-gen-royal-border-soft border p-4 flex items-start gap-3">
-            <i class="fal fa-wand-magic-sparkles ai-gen-royal-text mt-0.5"></i>
-            <p class="text-xs text-webropol-gray-700 leading-relaxed">
-              Tip: be specific about your goal, audience, and the kind of insight you want. The clearer the prompt, the better the suggestions.
-            </p>
+            <p class="text-xs text-webropol-gray-500 mb-2">Selecting question types helps the AI stay focused and reduces mistakes.</p>
+            <div class="flex flex-wrap gap-2 min-h-[32px]" data-role="type-chips" aria-live="polite">
+              ${selectedChips}
+            </div>
           </div>
         </div>
       `;
+    }
+
+    _refreshTypeChips() {
+      const host = this.querySelector('[data-role="type-chips"]');
+      if (!host) return;
+      host.innerHTML = this._types.length
+        ? this._types.map((val, idx) => {
+            const label = QUESTION_TYPE_LABELS[val] || val;
+            const icon = QUESTION_TYPE_ICONS[val] || 'fal fa-circle';
+            return `
+              <span class="inline-flex items-center gap-1.5 pl-1 pr-1 py-1 rounded-full bg-webropol-primary-50 border border-webropol-primary-200 text-webropol-primary-700 text-xs font-medium">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full ai-gen-royal-grad text-[11px] font-semibold" aria-label="Order ${idx + 1}">${idx + 1}</span>
+                <i class="${icon} text-[11px]"></i>
+                <span>${escapeHtml(label)}</span>
+                <button type="button"
+                  class="w-5 h-5 inline-flex items-center justify-center rounded-full text-webropol-primary-600 hover:bg-webropol-primary-100"
+                  data-role="remove-type" data-value="${val}"
+                  aria-label="Remove ${escapeHtml(label)}">
+                  <i class="fal fa-xmark text-[10px]"></i>
+                </button>
+              </span>
+            `;
+          }).join('')
+        : `<span class="text-xs text-webropol-gray-500">No types selected yet. Picking a few helps the AI stay accurate and reduces mistakes.</span>`;
+
+      host.querySelectorAll('[data-role="remove-type"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.value;
+          this._types = this._types.filter(t => t !== val);
+          this._refreshTypeChips();
+          this._syncCountToTypes();
+        });
+      });
+    }
+
+    _openTypesPicker() {
+      // Ordered draft array — the order in which types were checked drives the order badge.
+      this._typesPickerDraft = [...this._types];
+      this._typesPickerSearch = '';
+      this._typesPickerOpen = true;
+      this.render();
+    }
+
+    _closeTypesPicker(commit) {
+      if (commit && Array.isArray(this._typesPickerDraft)) {
+        this._types = [...this._typesPickerDraft];
+        // Slider counts the questions the user added.
+        this._count = Math.max(1, Math.min(15, this._types.length || 1));
+      }
+      this._typesPickerOpen = false;
+      this._typesPickerDraft = null;
+      this._typesPickerSearch = '';
+      this.render();
+    }
+
+    _renderTypesPicker() {
+      const draft = Array.isArray(this._typesPickerDraft) ? this._typesPickerDraft : [...this._types];
+      const search = (this._typesPickerSearch || '').toLowerCase();
+      const draftIndex = (val) => draft.indexOf(val);
+
+      const renderCard = (val, color) => {
+        const label = QUESTION_TYPE_LABELS[val] || val;
+        const icon = QUESTION_TYPE_ICONS[val] || 'fal fa-circle';
+        const order = draftIndex(val);
+        const checked = order !== -1;
+        const matches = !search || label.toLowerCase().includes(search);
+        return `
+          <button type="button"
+            data-role="picker-card" data-value="${val}" data-color="${color}"
+            class="group relative flex items-center justify-between gap-2 p-2 w-full text-left transition-all border rounded-lg cursor-pointer ${checked ? `bg-${color}-50 border-${color}-300 ring-1 ring-${color}-300` : `bg-white border-transparent hover:bg-${color}-50 hover:border-${color}-100`} ${matches ? '' : 'hidden'}"
+            aria-pressed="${checked}">
+            <span class="flex items-center gap-2 min-w-0">
+              <span class="flex items-center justify-center w-8 h-8 text-sm text-${color}-600 bg-${color}-100 rounded-md">
+                <i class="${icon}"></i>
+              </span>
+              <span class="text-sm font-medium text-webropol-gray-700 group-hover:text-webropol-gray-900 truncate">${escapeHtml(label)}</span>
+            </span>
+            <span data-role="picker-badge"
+              class="shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold ${checked ? 'ai-gen-royal-grad' : 'bg-webropol-gray-100 text-webropol-gray-400'}">
+              ${checked ? (order + 1) : '<i class="fal fa-plus text-[10px]"></i>'}
+            </span>
+          </button>
+        `;
+      };
+
+      const renderGroup = (group, extraClass = '') => `
+        <div class="${extraClass}">
+          <h4 class="mb-3 text-base font-bold text-webropol-gray-900">${escapeHtml(group.title)}</h4>
+          <div class="space-y-2">
+            ${group.types.map(t => renderCard(t, group.color)).join('')}
+          </div>
+        </div>
+      `;
+
+      const otherGroup = QUESTION_TYPE_GROUPS.find(g => g.title === 'Other');
+      const topGroups = QUESTION_TYPE_GROUPS.filter(g => ['Text', 'Selection', 'Matrix'].includes(g.title));
+      const expGroup = QUESTION_TYPE_GROUPS.find(g => g.title === 'Experience & Loyalty');
+
+      const otherGrid = otherGroup ? `
+        <div class="col-span-2">
+          <h4 class="mb-3 text-base font-bold text-webropol-gray-900">${otherGroup.title}</h4>
+          <div class="grid grid-cols-2 gap-x-6 gap-y-2">
+            ${otherGroup.types.map(t => renderCard(t, otherGroup.color)).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      const selectedCount = draft.length;
+
+      return `
+        <div class="absolute inset-0 z-[2147483645] flex items-center justify-center p-4"
+             data-role="picker-overlay" role="presentation">
+          <div class="absolute inset-0 bg-webropol-gray-900/60 backdrop-blur-sm" data-role="picker-backdrop"></div>
+          <div role="dialog" aria-modal="true" aria-labelledby="ai-gen-picker-title"
+               class="relative w-full max-w-3xl max-h-[88vh] bg-white rounded-3xl shadow-medium flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-webropol-gray-100">
+              <div class="flex items-center gap-3">
+                <span class="flex items-center justify-center w-10 h-10 rounded-2xl ai-gen-royal-grad shadow-soft">
+                  <i class="fal fa-list-check"></i>
+                </span>
+                <div>
+                  <h3 id="ai-gen-picker-title" class="text-lg font-semibold text-webropol-gray-900">Select question types</h3>
+                  <p class="text-xs text-webropol-gray-500">Numbers show the order they will appear in the survey.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="relative w-56">
+                  <i class="absolute text-webropol-gray-400 transform -translate-y-1/2 fal fa-search left-3 top-1/2 text-sm"></i>
+                  <input type="text" data-role="picker-search" value="${escapeHtml(this._typesPickerSearch || '')}"
+                    class="w-full py-2 pl-10 pr-3 text-sm text-webropol-gray-700 bg-webropol-gray-50 border border-transparent rounded-lg focus:bg-white focus:border-webropol-primary-500 focus:ring-0 outline-none transition-colors"
+                    placeholder="Search question types" />
+                </div>
+                <button type="button" data-role="picker-cancel"
+                  class="flex items-center justify-center w-8 h-8 text-webropol-gray-400 transition-colors rounded-full hover:bg-webropol-gray-100 hover:text-webropol-gray-600"
+                  aria-label="Close">
+                  <i class="fal fa-xmark text-lg"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+              <div class="space-y-6">
+                <div class="grid grid-cols-3 gap-6">
+                  ${topGroups.map(g => renderGroup(g)).join('')}
+                </div>
+                <div class="grid grid-cols-3 gap-6">
+                  ${expGroup ? renderGroup(expGroup) : ''}
+                  ${otherGrid}
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-between gap-2 px-6 py-3 border-t border-webropol-gray-100 bg-webropol-gray-50">
+              <span class="text-xs text-webropol-gray-600" data-role="picker-count">
+                ${selectedCount} selected
+              </span>
+              <div class="flex items-center gap-2">
+                <button type="button" data-role="picker-cancel"
+                  class="px-4 py-2 rounded-full bg-white border border-webropol-gray-200 text-webropol-gray-700 text-sm font-semibold hover:bg-webropol-gray-50">
+                  Cancel
+                </button>
+                <button type="button" data-role="picker-save"
+                  class="px-5 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 ai-gen-royal-grad ai-gen-royal-ring">
+                  <i class="fal fa-check"></i>Add selected
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    _bindTypesPicker() {
+      const backdrop = this.querySelector('[data-role="picker-backdrop"]');
+      backdrop?.addEventListener('click', () => this._closeTypesPicker(false));
+      this.querySelectorAll('[data-role="picker-cancel"]').forEach(btn => {
+        btn.addEventListener('click', () => this._closeTypesPicker(false));
+      });
+      this.querySelector('[data-role="picker-save"]')?.addEventListener('click', () => {
+        this._closeTypesPicker(true);
+      });
+
+      // Search
+      const search = this.querySelector('[data-role="picker-search"]');
+      if (search) {
+        search.addEventListener('input', (e) => {
+          this._typesPickerSearch = e.target.value || '';
+          const q = this._typesPickerSearch.toLowerCase();
+          this.querySelectorAll('[data-role="picker-card"]').forEach(card => {
+            const label = card.querySelector('span span:last-child')?.textContent?.toLowerCase() || '';
+            card.classList.toggle('hidden', !!q && !label.includes(q));
+          });
+        });
+      }
+
+      // Card toggle (multi-select with ordered draft)
+      this.querySelectorAll('[data-role="picker-card"]').forEach(card => {
+        card.addEventListener('click', () => {
+          if (!Array.isArray(this._typesPickerDraft)) {
+            this._typesPickerDraft = [...this._types];
+          }
+          const val = card.dataset.value;
+          const idx = this._typesPickerDraft.indexOf(val);
+          if (idx === -1) this._typesPickerDraft.push(val);
+          else this._typesPickerDraft.splice(idx, 1);
+          this._refreshPickerCards();
+        });
+      });
+    }
+
+    _refreshPickerCards() {
+      const draft = Array.isArray(this._typesPickerDraft) ? this._typesPickerDraft : [];
+      this.querySelectorAll('[data-role="picker-card"]').forEach(card => {
+        const val = card.dataset.value;
+        const color = card.dataset.color || 'primary';
+        const order = draft.indexOf(val);
+        const checked = order !== -1;
+        card.setAttribute('aria-pressed', String(checked));
+        // Toggle selected/unselected card classes
+        card.classList.toggle(`bg-${color}-50`, checked);
+        card.classList.toggle(`border-${color}-300`, checked);
+        card.classList.toggle(`ring-1`, checked);
+        card.classList.toggle(`ring-${color}-300`, checked);
+        card.classList.toggle('bg-white', !checked);
+        card.classList.toggle('border-transparent', !checked);
+        card.classList.toggle(`hover:bg-${color}-50`, !checked);
+        card.classList.toggle(`hover:border-${color}-100`, !checked);
+        // Badge
+        const badge = card.querySelector('[data-role="picker-badge"]');
+        if (badge) {
+          badge.classList.toggle('ai-gen-royal-grad', checked);
+          badge.classList.toggle('bg-webropol-gray-100', !checked);
+          badge.classList.toggle('text-webropol-gray-400', !checked);
+          badge.innerHTML = checked ? String(order + 1) : '<i class="fal fa-plus text-[10px]"></i>';
+        }
+      });
+      const count = this.querySelector('[data-role="picker-count"]');
+      if (count) count.textContent = `${draft.length} selected`;
     }
 
     _renderLoadingStep() {
@@ -956,16 +1288,17 @@
         this._tone = e.detail?.value ?? this._tone;
       });
 
-      this.querySelectorAll('[data-role="type-toggle"]').forEach(cb => {
-        cb.addEventListener('change', () => {
-          const selected = Array.from(this.querySelectorAll('[data-role="type-toggle"]'))
-            .filter(x => x.checked).map(x => x.value);
-          this._types = selected;
-          // Re-render pill styling for selected state
-          this.render();
-          // restore focus to something sensible
-          this.querySelector('#ai-gen-prompt')?.focus();
+      this.querySelectorAll('[data-role="remove-type"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.value;
+          this._types = this._types.filter(t => t !== val);
+          this._refreshTypeChips();
+          this._syncCountToTypes();
         });
+      });
+
+      this.querySelector('[data-role="open-types-picker"]')?.addEventListener('click', () => {
+        this._openTypesPicker();
       });
 
       genBtn.addEventListener('click', () => {
