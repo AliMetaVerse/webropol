@@ -31,6 +31,164 @@
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // Scoped styles — royal palette for AI actions/icons.
+  // Host pages don't always extend Tailwind with the royal tokens,
+  // so we register utility classes once for self-contained styling.
+  // Royal palette: royalViolet-500 #823bdd, royalViolet-700 #511a98,
+  //                royalBlue-500   #6366F1, royalBlue-700   #4338CA
+  // ─────────────────────────────────────────────────────────────────
+  function ensureStyles() {
+    if (document.getElementById('webropol-ai-gen-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'webropol-ai-gen-styles';
+    style.textContent = `
+      .ai-gen-royal-grad {
+        background-image: linear-gradient(135deg, #823bdd 0%, #6366F1 100%);
+        color: #fff;
+      }
+      .ai-gen-royal-grad:hover:not(:disabled) {
+        background-image: linear-gradient(135deg, #6922c4 0%, #4F46E5 100%);
+        box-shadow: 0 10px 25px -10px rgba(105, 34, 196, 0.55);
+      }
+      .ai-gen-royal-grad:disabled {
+        background-image: linear-gradient(135deg, #d5bef4 0%, #C7D2FE 100%);
+        cursor: not-allowed;
+      }
+      .ai-gen-royal-grad-soft {
+        background-image: linear-gradient(135deg, #f1e9fb 0%, #EEF2FF 100%);
+      }
+      .ai-gen-royal-text { color: #6922c4; }
+      .ai-gen-royal-text-strong { color: #511a98; }
+      .ai-gen-royal-bg-soft { background-color: #f1e9fb; }
+      .ai-gen-royal-bg-soft-hover:hover { background-color: #f1e9fb; }
+      .ai-gen-royal-border-soft { border-color: #d5bef4; }
+      .ai-gen-royal-icon-btn {
+        color: #64748b;
+        transition: color .15s ease, background-color .15s ease;
+      }
+      .ai-gen-royal-icon-btn:hover {
+        color: #6922c4;
+        background-color: #f1e9fb;
+      }
+      .ai-gen-royal-ring:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(130, 59, 221, .35);
+      }
+      .ai-gen-spinner-track { border-color: #f1e9fb; }
+      .ai-gen-spinner-head { border-top-color: #823bdd; }
+
+      /* ── Royal slider (Figma: Webropol Royal Design System / Meter) ── */
+      .ai-gen-slider {
+        --ai-slider-fill: 50%;
+        position: relative;
+        padding: 16px 14px 14px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #d1d5d6;
+      }
+      .ai-gen-slider__row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .ai-gen-slider__edge {
+        font: 500 14px/20px 'Inter', system-ui, sans-serif;
+        color: #515557;
+        min-width: 18px;
+        text-align: center;
+      }
+      .ai-gen-slider__track-wrap {
+        position: relative;
+        flex: 1;
+        height: 24px;
+        display: flex;
+        align-items: center;
+      }
+      .ai-gen-slider__cap {
+        width: 1px;
+        height: 14px;
+        background: #cbd5e1;
+        flex: none;
+      }
+      .ai-gen-slider__track {
+        position: relative;
+        flex: 1;
+        height: 8px;
+        border-radius: 9999px;
+        background: #e2e8f0;
+        overflow: hidden;
+      }
+      .ai-gen-slider__fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: var(--ai-slider-fill);
+        background-image: linear-gradient(90deg, #823bdd 0%, #4338CA 100%);
+        border-radius: 9999px;
+        transition: width .12s ease;
+      }
+      .ai-gen-slider__input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 3;
+      }
+      .ai-gen-slider__thumb {
+        position: absolute;
+        top: 50%;
+        left: var(--ai-slider-fill);
+        width: 24px;
+        height: 24px;
+        border-radius: 9999px;
+        background: #ffffff;
+        border: 4px solid #511a98;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 6px rgba(81, 26, 152, 0.25);
+        transition: transform .12s ease, box-shadow .12s ease;
+        pointer-events: none;
+        z-index: 2;
+      }
+      .ai-gen-slider__input:focus-visible + .ai-gen-slider__thumb {
+        box-shadow: 0 0 0 4px rgba(130, 59, 221, .25), 0 2px 6px rgba(81, 26, 152, 0.25);
+      }
+      .ai-gen-slider__input:active + .ai-gen-slider__thumb {
+        transform: translate(-50%, -50%) scale(1.08);
+      }
+      .ai-gen-slider__bubble {
+        position: absolute;
+        bottom: calc(100% + 14px);
+        left: var(--ai-slider-fill);
+        transform: translateX(-50%);
+        background: #511a98;
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 12px;
+        font: 700 18px/22px 'Inter', system-ui, sans-serif;
+        min-width: 44px;
+        text-align: center;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .ai-gen-slider__bubble::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 7px solid transparent;
+        border-top-color: #511a98;
+        border-bottom: 0;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  ensureStyles();
+
+  // ─────────────────────────────────────────────────────────────────
   // Mock data helpers
   // ─────────────────────────────────────────────────────────────────
 
@@ -205,11 +363,11 @@
       const variant = this.getAttribute('variant') || 'primary'; // primary | subtle
       const size = this.getAttribute('size') || 'md';
 
-      const base = 'inline-flex items-center gap-2.5 font-semibold rounded-full transition-all duration-200 hover:shadow-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-webropol-primary-400 focus-visible:ring-offset-2';
+      const base = 'inline-flex items-center gap-2.5 font-semibold rounded-full transition-all duration-200 ai-gen-royal-ring focus:outline-none';
       const sizes = { sm: 'px-4 py-2 text-sm', md: 'px-5 py-2.5 text-sm', lg: 'px-6 py-3 text-base' };
       const variants = {
-        primary: 'bg-gradient-to-r from-webropol-primary-500 via-fuchsia-500 to-violet-500 text-white hover:from-webropol-primary-600 hover:via-fuchsia-600 hover:to-violet-600',
-        subtle: 'bg-white border border-webropol-primary-200 text-webropol-primary-700 hover:bg-webropol-primary-50'
+        primary: 'ai-gen-royal-grad shadow-soft',
+        subtle: 'bg-white border ai-gen-royal-border-soft ai-gen-royal-text ai-gen-royal-bg-soft-hover'
       };
 
       this.innerHTML = `
@@ -245,9 +403,11 @@
       const card = this.querySelector('[data-role="card"]');
       if (!card) return;
       if (this._selected) {
-        card.classList.add('ring-2', 'ring-webropol-primary-400', 'border-webropol-primary-300');
+        card.classList.add('ring-2', 'border-transparent');
+        card.style.boxShadow = '0 0 0 2px #823bdd';
       } else {
-        card.classList.remove('ring-2', 'ring-webropol-primary-400', 'border-webropol-primary-300');
+        card.classList.remove('ring-2', 'border-transparent');
+        card.style.boxShadow = '';
       }
     }
 
@@ -304,7 +464,7 @@
                   </div>` : ''}
                 <div class="flex items-center gap-2 pt-1">
                   <button data-role="edit-save" type="button"
-                    class="px-3 py-1.5 rounded-full bg-webropol-primary-600 text-white text-xs font-semibold hover:bg-webropol-primary-700">Save</button>
+                    class="px-3 py-1.5 rounded-full ai-gen-royal-grad text-xs font-semibold">Save</button>
                   <button data-role="edit-cancel" type="button"
                     class="px-3 py-1.5 rounded-full bg-webropol-gray-100 text-webropol-gray-700 text-xs font-semibold hover:bg-webropol-gray-200">Cancel</button>
                 </div>
@@ -312,12 +472,12 @@
             </div>
             <div class="flex items-center gap-1 shrink-0">
               <button data-role="edit-btn" type="button"
-                class="w-8 h-8 rounded-full text-webropol-gray-500 hover:text-webropol-primary-600 hover:bg-webropol-primary-50 transition-colors"
+                class="w-8 h-8 rounded-full ai-gen-royal-icon-btn"
                 aria-label="Edit question" title="Edit">
                 <i class="fal fa-pen"></i>
               </button>
               <button data-role="regen-btn" type="button"
-                class="w-8 h-8 rounded-full text-webropol-gray-500 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+                class="w-8 h-8 rounded-full ai-gen-royal-icon-btn"
                 aria-label="Regenerate this question" title="Regenerate">
                 <i class="fal fa-arrows-rotate"></i>
               </button>
@@ -413,6 +573,7 @@
       this._selectedIds = new Set();
       this._validationError = '';
       this._errorMessage = '';
+      this._simFail = false;
       this._lastFocus = null;
       this._keydownHandler = this._keydownHandler.bind(this);
     }
@@ -421,6 +582,11 @@
       if (this._rendered) return;
       this._rendered = true;
       this.render();
+    }
+
+    _countPercent() {
+      const min = 1, max = 15;
+      return Math.max(0, Math.min(100, ((this._count - min) / (max - min)) * 100));
     }
 
     open() {
@@ -509,12 +675,12 @@
       return `
         <div class="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-webropol-gray-100">
           <div class="flex items-center gap-3 min-w-0">
-            <span class="inline-flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-webropol-primary-500 via-fuchsia-500 to-violet-500 text-white shadow-soft">
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-2xl ai-gen-royal-grad shadow-soft">
               <i class="fal fa-sparkles"></i>
             </span>
             <div class="min-w-0">
               <h2 id="ai-gen-title" class="text-lg font-semibold text-webropol-gray-900 truncate">${titleByStep[this._step]}</h2>
-              <p class="text-xs text-webropol-gray-500">AI-powered survey creation · UI preview</p>
+              <p class="text-xs text-webropol-gray-500">AI-powered survey creation</p>
             </div>
           </div>
           <button data-role="close" type="button"
@@ -556,15 +722,27 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label for="ai-gen-count" class="block text-sm font-semibold text-webropol-gray-900 mb-1.5">
+              <label for="ai-gen-count" class="block text-sm font-semibold text-webropol-gray-900 mb-2">
                 Number of questions
-                <span class="ml-1 text-webropol-primary-600 font-bold" data-role="count-value">${this._count}</span>
               </label>
-              <input id="ai-gen-count" type="range" min="1" max="15" step="1" value="${this._count}"
-                class="w-full accent-webropol-primary-600"
-                aria-valuemin="1" aria-valuemax="15" aria-valuenow="${this._count}" />
-              <div class="flex justify-between text-[11px] text-webropol-gray-400 mt-1">
-                <span>1</span><span>8</span><span>15</span>
+              <div class="ai-gen-slider" data-role="slider-root" style="--ai-slider-fill: ${this._countPercent()}%">
+                <div class="ai-gen-slider__row">
+                  <span class="ai-gen-slider__edge">1</span>
+                  <div class="ai-gen-slider__track-wrap">
+                    <span class="ai-gen-slider__cap" aria-hidden="true"></span>
+                    <div class="ai-gen-slider__track">
+                      <div class="ai-gen-slider__fill"></div>
+                    </div>
+                    <span class="ai-gen-slider__cap" aria-hidden="true"></span>
+                    <input id="ai-gen-count" type="range" min="1" max="15" step="1" value="${this._count}"
+                      class="ai-gen-slider__input"
+                      aria-label="Number of questions"
+                      aria-valuemin="1" aria-valuemax="15" aria-valuenow="${this._count}" />
+                    <div class="ai-gen-slider__thumb" aria-hidden="true"></div>
+                    <div class="ai-gen-slider__bubble" data-role="count-value" aria-hidden="true">${this._count}</div>
+                  </div>
+                  <span class="ai-gen-slider__edge">15</span>
+                </div>
               </div>
             </div>
             <div>
@@ -585,11 +763,10 @@
             </div>
           </div>
 
-          <div class="rounded-2xl bg-gradient-to-br from-webropol-primary-50 via-violet-50 to-fuchsia-50 border border-webropol-primary-100 p-4 flex items-start gap-3">
-            <i class="fal fa-wand-magic-sparkles text-webropol-primary-600 mt-0.5"></i>
+          <div class="rounded-2xl ai-gen-royal-grad-soft ai-gen-royal-border-soft border p-4 flex items-start gap-3">
+            <i class="fal fa-wand-magic-sparkles ai-gen-royal-text mt-0.5"></i>
             <p class="text-xs text-webropol-gray-700 leading-relaxed">
-              This preview uses mock data. No text is sent to any AI service.
-              <span class="block mt-1 text-webropol-gray-500">Real API wiring happens later in <code class="text-[11px]">insertGeneratedQuestions()</code>.</span>
+              Tip: be specific about your goal, audience, and the kind of insight you want. The clearer the prompt, the better the suggestions.
             </p>
           </div>
         </div>
@@ -600,9 +777,9 @@
       return `
         <div class="py-12 flex flex-col items-center justify-center text-center gap-4" aria-busy="true" aria-live="polite">
           <div class="relative w-14 h-14">
-            <div class="absolute inset-0 rounded-full border-4 border-webropol-primary-100"></div>
-            <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-webropol-primary-600 animate-spin"></div>
-            <i class="fal fa-sparkles absolute inset-0 m-auto text-webropol-primary-600 w-5 h-5 flex items-center justify-center"></i>
+            <div class="absolute inset-0 rounded-full border-4 ai-gen-spinner-track"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-transparent ai-gen-spinner-head animate-spin"></div>
+            <i class="fal fa-sparkles absolute inset-0 m-auto ai-gen-royal-text w-5 h-5 flex items-center justify-center"></i>
           </div>
           <div>
             <p class="text-base font-semibold text-webropol-gray-900">Drafting your questions…</p>
@@ -627,7 +804,7 @@
             </p>
             <div class="flex items-center gap-2">
               <button data-role="select-all" type="button"
-                class="text-xs font-semibold text-webropol-primary-700 hover:underline">
+                class="text-xs font-semibold ai-gen-royal-text hover:underline">
                 ${selectedCount === this._questions.length ? 'Clear selection' : 'Select all'}
               </button>
               <button data-role="back" type="button"
@@ -652,7 +829,7 @@
             <p class="text-sm text-webropol-gray-500 mt-1">${escapeHtml(this._errorMessage || 'The AI service is temporarily unavailable.')}</p>
           </div>
           <button data-role="retry" type="button"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-webropol-primary-600 text-white text-sm font-semibold hover:bg-webropol-primary-700">
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full ai-gen-royal-grad text-sm font-semibold ai-gen-royal-ring">
             <i class="fal fa-rotate"></i>Try again
           </button>
         </div>
@@ -664,7 +841,7 @@
         return `
           <div class="px-6 py-4 border-t border-webropol-gray-100 flex items-center justify-end gap-2">
             <button disabled class="px-4 py-2 rounded-full bg-webropol-gray-100 text-webropol-gray-400 text-sm font-semibold cursor-not-allowed">Cancel</button>
-            <button disabled class="px-5 py-2 rounded-full bg-webropol-primary-300 text-white text-sm font-semibold cursor-not-allowed inline-flex items-center gap-2">
+            <button disabled class="px-5 py-2 rounded-full ai-gen-royal-grad text-sm font-semibold cursor-not-allowed inline-flex items-center gap-2">
               <i class="fal fa-spinner fa-spin"></i>Generating…
             </button>
           </div>
@@ -680,12 +857,12 @@
             </button>
             <div class="flex items-center gap-2">
               <button data-role="insert-selected" type="button"
-                class="px-4 py-2 rounded-full border text-sm font-semibold transition-colors ${selectedCount ? 'border-webropol-primary-300 text-webropol-primary-700 hover:bg-webropol-primary-50' : 'border-webropol-gray-200 text-webropol-gray-400 cursor-not-allowed'}"
+                class="px-4 py-2 rounded-full border text-sm font-semibold transition-colors ${selectedCount ? 'ai-gen-royal-border-soft ai-gen-royal-text ai-gen-royal-bg-soft-hover' : 'border-webropol-gray-200 text-webropol-gray-400 cursor-not-allowed'}"
                 ${selectedCount ? '' : 'disabled'}>
                 Insert selected${selectedCount ? ` (${selectedCount})` : ''}
               </button>
               <button data-role="insert-all" type="button"
-                class="px-5 py-2 rounded-full bg-webropol-primary-600 text-white text-sm font-semibold hover:bg-webropol-primary-700 inline-flex items-center gap-2">
+                class="px-5 py-2 rounded-full ai-gen-royal-grad text-sm font-semibold inline-flex items-center gap-2 ai-gen-royal-ring">
                 <i class="fal fa-circle-plus"></i>Insert all
               </button>
             </div>
@@ -706,8 +883,10 @@
       const disabled = !this._prompt.trim();
       return `
         <div class="px-6 py-4 border-t border-webropol-gray-100 flex items-center justify-between gap-3">
-          <label class="inline-flex items-center gap-2 text-xs text-webropol-gray-500 select-none">
-            <input data-role="sim-fail" type="checkbox" class="h-3.5 w-3.5 rounded border-webropol-gray-300" />
+          <label class="inline-flex items-center gap-2 text-xs text-webropol-gray-500 select-none cursor-pointer">
+            <input data-role="sim-fail" type="checkbox"
+              class="h-3.5 w-3.5 rounded border-webropol-gray-300"
+              ${this._simFail ? 'checked' : ''} />
             <span>Simulate 10% failure</span>
           </label>
           <div class="flex items-center gap-2">
@@ -716,7 +895,7 @@
               Cancel
             </button>
             <button data-role="generate" type="button"
-              class="px-5 py-2 rounded-full text-white text-sm font-semibold inline-flex items-center gap-2 transition-all ${disabled ? 'bg-webropol-primary-300 cursor-not-allowed' : 'bg-gradient-to-r from-webropol-primary-600 via-fuchsia-500 to-violet-500 hover:shadow-medium'}"
+              class="px-5 py-2 rounded-full text-sm font-semibold inline-flex items-center gap-2 ai-gen-royal-grad ai-gen-royal-ring"
               ${disabled ? 'disabled aria-disabled="true"' : ''}>
               <i class="fal fa-sparkles"></i>Generate
             </button>
@@ -739,13 +918,7 @@
       const syncGenerate = () => {
         const disabled = !this._prompt.trim();
         genBtn.disabled = disabled;
-        genBtn.classList.toggle('cursor-not-allowed', disabled);
-        genBtn.classList.toggle('bg-webropol-primary-300', disabled);
-        genBtn.classList.toggle('bg-gradient-to-r', !disabled);
-        genBtn.classList.toggle('from-webropol-primary-600', !disabled);
-        genBtn.classList.toggle('via-fuchsia-500', !disabled);
-        genBtn.classList.toggle('to-violet-500', !disabled);
-        genBtn.classList.toggle('hover:shadow-medium', !disabled);
+        // ai-gen-royal-grad already styles disabled state via :disabled.
       };
 
       ta.addEventListener('input', () => {
@@ -759,10 +932,16 @@
 
       const countEl = this.querySelector('#ai-gen-count');
       const countVal = this.querySelector('[data-role="count-value"]');
+      const sliderRoot = this.querySelector('[data-role="slider-root"]');
       countEl.addEventListener('input', () => {
         this._count = parseInt(countEl.value, 10) || 5;
         countVal.textContent = this._count;
         countEl.setAttribute('aria-valuenow', String(this._count));
+        if (sliderRoot) sliderRoot.style.setProperty('--ai-slider-fill', this._countPercent() + '%');
+      });
+
+      this.querySelector('[data-role="sim-fail"]')?.addEventListener('change', (e) => {
+        this._simFail = !!e.target.checked;
       });
 
       this.querySelector('#ai-gen-tone').addEventListener('change', (e) => {
@@ -790,6 +969,7 @@
           return;
         }
         const simFail = this.querySelector('[data-role="sim-fail"]')?.checked;
+        this._simFail = !!simFail;
         this._runGeneration(simFail);
       });
     }
@@ -871,9 +1051,9 @@
       if (insertSel) {
         insertSel.disabled = !selectedCount;
         insertSel.textContent = `Insert selected${selectedCount ? ` (${selectedCount})` : ''}`;
-        insertSel.classList.toggle('border-webropol-primary-300', !!selectedCount);
-        insertSel.classList.toggle('text-webropol-primary-700', !!selectedCount);
-        insertSel.classList.toggle('hover:bg-webropol-primary-50', !!selectedCount);
+        insertSel.classList.toggle('ai-gen-royal-border-soft', !!selectedCount);
+        insertSel.classList.toggle('ai-gen-royal-text', !!selectedCount);
+        insertSel.classList.toggle('ai-gen-royal-bg-soft-hover', !!selectedCount);
         insertSel.classList.toggle('border-webropol-gray-200', !selectedCount);
         insertSel.classList.toggle('text-webropol-gray-400', !selectedCount);
         insertSel.classList.toggle('cursor-not-allowed', !selectedCount);
