@@ -4,6 +4,9 @@
  */
 
 import { BaseComponent } from '../../utils/base-component.js';
+// Pull in the DS button so the close affordance hydrates as <webropol-button>
+// no matter where Popover is loaded from.
+import '../buttons/Button.js';
 
 export class WebropolPopover extends BaseComponent {
   static get observedAttributes() {
@@ -82,15 +85,13 @@ export class WebropolPopover extends BaseComponent {
         <div class="webropol-popover-surface ${variantClasses.surface}">
           ${showArrow ? `<span class="webropol-popover-arrow absolute h-3 w-3 rotate-45 ${variantClasses.arrow}"></span>` : ''}
           ${title || text || closable ? `
-            <div class="flex items-start justify-between gap-4 border-b border-[#d5f4f8] px-5 py-4 ${this.panelNodes.length ? '' : 'pb-3'}">
+            <div class="webropol-popover-header flex items-start justify-between gap-4 px-5 py-4 ${this.panelNodes.length ? '' : 'pb-3'}">
               <div class="space-y-1">
                 ${title ? `<div class="text-sm font-semibold text-[#102e3c]">${title}</div>` : ''}
                 ${text ? `<p class="text-sm leading-6 text-[#61686a]">${text}</p>` : ''}
               </div>
               ${closable ? `
-                <button type="button" class="webropol-popover-close flex h-9 w-9 items-center justify-center rounded-xl border border-[#d5f4f8] bg-white text-[#61686a] hover:border-[#b0e8f1] hover:bg-[#eefbfd] hover:text-[#102e3c]" aria-label="Close popover">
-                  <i class="fal fa-times text-sm"></i>
-                </button>
+                <webropol-button class="webropol-popover-close" variant="tertiary" size="sm" icon="times" icon-only roundness="lg" aria-label="Close popover"></webropol-button>
               ` : ''}
             </div>
           ` : ''}
@@ -171,20 +172,27 @@ export class WebropolPopover extends BaseComponent {
     document.body.appendChild(this.portalElement);
   }
 
+  /**
+   * Modal-aware stacking. When the popover is triggered from inside a modal,
+   * bump its portal z-index above the modal overlay so the panel is not
+   * buried.
+   */
+  resolveStackZIndex() {
+    const inModal = this.closest('.modal-overlay, [role="dialog"], webropol-modal[open], .webropol-modal[open]');
+    if (inModal) {
+      return 2147483645;
+    }
+    return null;
+  }
+
   getVariantClasses(variant) {
+    // White surface with a light-gray border + soft elevation shadow.
+    const baseSurface = 'relative overflow-hidden rounded-[28px] border border-[#e5e7eb] bg-white shadow-[0_28px_60px_rgba(16,46,60,0.16)]';
+
     const variants = {
-      default: {
-        surface: 'relative overflow-hidden rounded-[28px] border border-[#b0e8f1] bg-white shadow-[0_28px_60px_rgba(16,46,60,0.16)]',
-        arrow: 'border-l border-t border-[#b0e8f1] bg-white'
-      },
-      subtle: {
-        surface: 'relative overflow-hidden rounded-[28px] border border-[#d5f4f8] bg-[#f8feff] shadow-[0_22px_48px_rgba(16,46,60,0.12)]',
-        arrow: 'border-l border-t border-[#d5f4f8] bg-[#f8feff]'
-      },
-      brand: {
-        surface: 'relative overflow-hidden rounded-[28px] border border-[#1e6880] bg-white shadow-[0_28px_60px_rgba(30,104,128,0.18)]',
-        arrow: 'border-l border-t border-[#b0e8f1] bg-[#f8feff]'
-      }
+      default: { surface: baseSurface, arrow: 'border-[#e5e7eb] bg-white' },
+      subtle:  { surface: baseSurface, arrow: 'border-[#e5e7eb] bg-white' },
+      brand:   { surface: baseSurface, arrow: 'border-[#e5e7eb] bg-white' }
     };
 
     return variants[variant] || variants.default;
@@ -356,7 +364,14 @@ export class WebropolPopover extends BaseComponent {
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
 
-    const header = surface.querySelector('.border-b');
+    const stackZ = this.resolveStackZIndex();
+    if (stackZ !== null) {
+      panel.style.zIndex = String(stackZ);
+    } else {
+      panel.style.zIndex = '';
+    }
+
+    const header = surface.querySelector('.webropol-popover-header');
     const chromeHeight = (header?.offsetHeight || 0) + 24;
     const availableBodyHeight = Math.max(140, height - chromeHeight);
     const needsScroll = constrainedByViewport && body.scrollHeight > availableBodyHeight + 2;
@@ -377,7 +392,7 @@ export class WebropolPopover extends BaseComponent {
         .replace(/\s+/g, ' ')
         .trim();
 
-      // Outward-facing edges of the rotated diamond per placement.
+      // Outward-facing edges of the rotated diamond carry the surface border.
       const placementBorderClasses = (() => {
         if (placement.startsWith('top')) return 'border-r border-b';
         if (placement.startsWith('bottom')) return 'border-l border-t';

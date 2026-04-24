@@ -114,26 +114,46 @@ export class WebropolTooltip extends BaseComponent {
     document.body.appendChild(this.tooltipElement);
   }
 
+  /**
+   * Modal-aware stacking. When the tooltip is triggered from inside a modal
+   * (or an open <webropol-modal>), bump the portal's z-index above the modal
+   * overlay so the tip is not buried. Otherwise keep the default tier.
+   */
+  resolveStackZIndex() {
+    const inModal = this.closest('.modal-overlay, [role="dialog"], webropol-modal[open], .webropol-modal[open]');
+    if (inModal) {
+      // Sit just above the modal-overlay tier (2147483640 per project convention).
+      return 2147483645;
+    }
+    return null;
+  }
+
   getPosition() {
     return this.getAttr('position', this.getAttr('direction', 'top'));
   }
 
   getVariantClasses(variant) {
+    // Unified light-gray border + soft elevation shadow on a white surface.
+    // Variants only adjust text emphasis so tooltips stay visually consistent
+    // across the product.
+    const baseSurface = 'relative rounded-2xl border border-[#e5e7eb] bg-white px-3.5 py-2.5 shadow-[0_20px_44px_rgba(16,46,60,0.16)]';
+    const baseText = 'text-sm font-medium leading-5 text-[#102e3c]';
+
     const variants = {
       default: {
-        surface: 'relative rounded-2xl border border-[#b0e8f1] bg-white px-3.5 py-2.5 shadow-[0_20px_44px_rgba(16,46,60,0.16)]',
-        text: 'text-sm font-medium leading-5 text-[#102e3c]',
-        arrow: 'border-l border-t border-[#b0e8f1] bg-white'
+        surface: baseSurface,
+        text: baseText,
+        arrow: 'border-[#e5e7eb] bg-white'
       },
       subtle: {
-        surface: 'relative rounded-2xl border border-[#d5f4f8] bg-[#f8feff] px-3.5 py-2.5 shadow-[0_16px_36px_rgba(16,46,60,0.12)]',
-        text: 'text-sm font-medium leading-5 text-[#102e3c]',
-        arrow: 'border-l border-t border-[#d5f4f8] bg-[#f8feff]'
+        surface: baseSurface,
+        text: `${baseText} text-[#374151]`,
+        arrow: 'border-[#e5e7eb] bg-white'
       },
       brand: {
-        surface: 'relative rounded-2xl border border-[#1e6880] bg-gradient-to-br from-[#204859] to-[#1e6880] px-3.5 py-2.5 shadow-[0_20px_44px_rgba(30,104,128,0.24)]',
-        text: 'text-sm font-medium leading-5 text-white',
-        arrow: 'border-l border-t border-[#1e6880] bg-[#1e6880]'
+        surface: baseSurface,
+        text: `${baseText} text-[#1e6880]`,
+        arrow: 'border-[#e5e7eb] bg-white'
       }
     };
 
@@ -273,18 +293,23 @@ export class WebropolTooltip extends BaseComponent {
     popup.style.left = `${left}px`;
     popup.style.top = `${top}px`;
 
+    const stackZ = this.resolveStackZIndex();
+    if (stackZ !== null) {
+      popup.style.zIndex = String(stackZ);
+    } else {
+      popup.style.zIndex = '';
+    }
+
     const arrowLeft = Math.max(18, Math.min(triggerRect.left + (triggerRect.width / 2) - left - 6, popupWidth - 24));
     const arrowTop = Math.max(18, Math.min(triggerRect.top + (triggerRect.height / 2) - top - 6, popupHeight - 24));
 
     const variantArrow = this.getVariantClasses(this.getAttr('variant', 'default')).arrow
-      // Strip any default border-side classes so we can apply placement-specific ones below.
       .replace(/border-[ltrb]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
 
-    // Outward-facing edges of the rotated diamond per placement so the visible
-    // tip carries the surface border colour while the half overlapping the
-    // surface stays seamless.
+    // Outward-facing edges of the rotated diamond carry the surface border
+    // colour while the half overlapping the surface stays seamless.
     const placementBorderClasses = (() => {
       if (placement.startsWith('top')) return 'border-r border-b';
       if (placement.startsWith('bottom')) return 'border-l border-t';

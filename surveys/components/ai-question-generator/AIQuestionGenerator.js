@@ -834,13 +834,9 @@
           <div>
             <label for="ai-gen-prompt" class="flex items-center gap-1.5 text-sm font-semibold text-webropol-gray-900 mb-1.5">
               <span>Describe what you want to measure</span>
-              <span class="relative inline-flex group" tabindex="0" aria-label="Tip">
-                <i class="fal fa-circle-info text-webropol-gray-400 hover:text-webropol-primary-600 focus:text-webropol-primary-600 cursor-help text-sm"></i>
-                <span role="tooltip"
-                  class="pointer-events-none absolute left-1/2 top-full mt-2 -translate-x-1/2 z-20 w-72 px-3 py-2 rounded-xl bg-webropol-gray-900 text-white text-xs font-normal leading-relaxed shadow-medium opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
-                  Be specific about your goal, audience, and the kind of insight you want. The clearer the prompt, the better the suggestions.
-                </span>
-              </span>
+              <webropol-tooltip text="Be specific about your goal, audience, and the kind of insight you want. The clearer the prompt, the better the suggestions." position="top" max-width="20rem">
+                <i class="fal fa-circle-info text-webropol-gray-400 hover:text-webropol-primary-600 focus:text-webropol-primary-600 cursor-help text-sm" tabindex="0" aria-label="Tip"></i>
+              </webropol-tooltip>
             </label>
             <textarea id="ai-gen-prompt" rows="4"
               class="w-full rounded-xl border border-webropol-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-webropol-primary-400 focus:border-webropol-primary-400 resize-none"
