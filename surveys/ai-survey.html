@@ -31,7 +31,7 @@
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
-  <script src="../design-system/components/feedback/AiLoader.js" type="module"></script>
+  <script src="../design-system/components/feedback/RoyalLoader.js" type="module"></script>
   <script src="../design-system/components/feedback/Tooltip.js" type="module"></script>
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
@@ -156,14 +156,20 @@
         <!-- ═══════════════════════════════════════════════════════════
              GENERATION LOADING OVERLAY (design system component)
         ════════════════════════════════════════════════════════════ -->
-        <webropol-ai-loader
-          :active="isGenerating"
-          :progress="generationProgress"
-          title="Generating your survey…"
-          subtitle="AI is crafting the perfect questions"
-          steps='["Analyzing your prompt…","Selecting optimal questions…","Structuring survey logic…","Finalising your survey…"]'
-          skeletons="3">
-        </webropol-ai-loader>
+        <div
+          x-show="isGenerating"
+          x-transition.opacity
+          class="fixed inset-0 z-50 flex items-center justify-center bg-white/85 backdrop-blur-md"
+          role="status"
+          aria-live="polite"
+          style="display: none;">
+          <webropol-royal-loader
+            type="sparkle-ring"
+            size="lg"
+            title="Generating your survey…"
+            subtitle="AI is crafting the perfect questions">
+          </webropol-royal-loader>
+        </div>
 
         <!-- ═══════════════════════════════════════════════════════════
              SUCCESS STATE

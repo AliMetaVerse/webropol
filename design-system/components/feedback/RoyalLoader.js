@@ -491,6 +491,71 @@ function ensureStyles() {
         white-space: normal;
       }
     }
+    .wrld-sparkle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 1rem;
+      font-family: 'Inter', system-ui, sans-serif;
+      text-align: center;
+    }
+    .wrld-sparkle-ring {
+      position: relative;
+      width: var(--wrld-sparkle-size, 88px);
+      height: var(--wrld-sparkle-size, 88px);
+    }
+    .wrld-sparkle-ring__track,
+    .wrld-sparkle-ring__head {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: var(--wrld-sparkle-stroke, 4px) solid transparent;
+      box-sizing: border-box;
+    }
+    .wrld-sparkle-ring__track {
+      border-color: #f1e9fb;
+    }
+    .wrld-sparkle-ring__head {
+      border-top-color: #823bdd;
+      animation: wrld-sparkle-spin 0.9s linear infinite;
+    }
+    .wrld-sparkle-ring__icon {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 40%;
+      height: 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6922c4;
+      font-size: var(--wrld-sparkle-icon, 1.5rem);
+    }
+    .wrld-sparkle-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .wrld-sparkle-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .wrld-sparkle-subtitle {
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.4;
+    }
+    @keyframes wrld-sparkle-spin {
+      to { transform: rotate(360deg); }
+    }
   `;
 
   document.head.appendChild(style);
@@ -498,7 +563,7 @@ function ensureStyles() {
 
 export class WebropolRoyalLoader extends BaseComponent {
   static get observedAttributes() {
-    return ['type', 'size', 'text', 'line1', 'line2', 'line3', 'line4'];
+    return ['type', 'size', 'text', 'line1', 'line2', 'line3', 'line4', 'title', 'subtitle'];
   }
 
   init() {
@@ -530,6 +595,19 @@ export class WebropolRoyalLoader extends BaseComponent {
       rootStyle.push(`--wrld-quad-shift:${quadrantMetrics.shift}px;`);
       rootStyle.push(`--wrld-quad-before-margin:${quadrantMetrics.beforeMargin}px;`);
       rootStyle.push(`--wrld-quad-after-lift:${quadrantMetrics.afterLift}px;`);
+    }
+
+    if (type === 'sparkle-ring') {
+      const sparkleMetrics = {
+        sm: { size: 56, stroke: 3, icon: '1rem' },
+        md: { size: 72, stroke: 3, icon: '1.25rem' },
+        lg: { size: 88, stroke: 4, icon: '1.5rem' },
+        xl: { size: 112, stroke: 5, icon: '2rem' }
+      }[size] || { size: 88, stroke: 4, icon: '1.5rem' };
+
+      rootStyle.push(`--wrld-sparkle-size:${sparkleMetrics.size}px;`);
+      rootStyle.push(`--wrld-sparkle-stroke:${sparkleMetrics.stroke}px;`);
+      rootStyle.push(`--wrld-sparkle-icon:${sparkleMetrics.icon};`);
     }
 
     this.innerHTML = `
@@ -588,9 +666,35 @@ export class WebropolRoyalLoader extends BaseComponent {
         return this.renderAiWave(size);
       case 'clip-reveal':
         return this.renderClipReveal();
+      case 'sparkle-ring':
+        return this.renderSparkleRing();
       default:
         return this.renderVariant('ring-orbits', size);
     }
+  }
+
+  renderSparkleRing() {
+    const title = this.getAttr('title', this._originalText || '');
+    const subtitle = this.getAttr('subtitle', '');
+    const textBlock = (title || subtitle)
+      ? `
+        <div class="wrld-sparkle-text">
+          ${title ? `<p class="wrld-sparkle-title">${title}</p>` : ''}
+          ${subtitle ? `<p class="wrld-sparkle-subtitle">${subtitle}</p>` : ''}
+        </div>
+      `
+      : '';
+
+    return `
+      <div class="wrld-sparkle" aria-label="Sparkle ring loader">
+        <div class="wrld-sparkle-ring">
+          <div class="wrld-sparkle-ring__track"></div>
+          <div class="wrld-sparkle-ring__head"></div>
+          <i class="fal fa-sparkles wrld-sparkle-ring__icon" aria-hidden="true"></i>
+        </div>
+        ${textBlock}
+      </div>
+    `;
   }
 
   renderAiWave(size) {
