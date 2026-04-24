@@ -25,6 +25,14 @@
   if (window.__webropolAIGenLoaded) return;
   window.__webropolAIGenLoaded = true;
 
+  // Lazy-register the design-system dropdown so we can use <webropol-dropdown>
+  // for the tone selector. Side-effect import; no-op if already registered.
+  if (!customElements.get('webropol-dropdown')) {
+    import('../../../design-system/components/forms/Dropdown.js').catch(err => {
+      console.warn('[AIQuestionGenerator] Failed to load webropol-dropdown:', err);
+    });
+  }
+
   // Feature flag — flip to false to hide all entry points.
   if (typeof window.WEBROPOL_AI_GEN_ENABLED === 'undefined') {
     window.WEBROPOL_AI_GEN_ENABLED = true;
@@ -160,7 +168,7 @@
       }
       .ai-gen-slider__bubble {
         position: absolute;
-        bottom: calc(100% + 14px);
+        bottom: calc(100% + 8px);
         left: var(--ai-slider-fill);
         transform: translateX(-50%);
         background: #511a98;
@@ -746,13 +754,13 @@
               </div>
             </div>
             <div>
-              <label for="ai-gen-tone" class="block text-sm font-semibold text-webropol-gray-900 mb-1.5">Audience / tone</label>
-              <select id="ai-gen-tone"
-                class="w-full rounded-xl border border-webropol-gray-200 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-webropol-primary-400">
-                <option value="neutral" ${this._tone === 'neutral' ? 'selected' : ''}>Neutral</option>
-                <option value="friendly" ${this._tone === 'friendly' ? 'selected' : ''}>Friendly</option>
-                <option value="formal" ${this._tone === 'formal' ? 'selected' : ''}>Formal</option>
-              </select>
+              <label class="block text-sm font-semibold text-webropol-gray-900 mb-1.5">Audience / tone</label>
+              <webropol-dropdown
+                data-role="tone"
+                size="large"
+                value="${this._tone}"
+                options='[{"label":"Neutral","value":"neutral","icon":"fa-circle"},{"label":"Friendly","value":"friendly","icon":"fa-face-smile"},{"label":"Formal","value":"formal","icon":"fa-user-tie"}]'>
+              </webropol-dropdown>
             </div>
           </div>
 
@@ -887,7 +895,7 @@
             <input data-role="sim-fail" type="checkbox"
               class="h-3.5 w-3.5 rounded border-webropol-gray-300"
               ${this._simFail ? 'checked' : ''} />
-            <span>Simulate 10% failure</span>
+            <span>Simulate failure</span>
           </label>
           <div class="flex items-center gap-2">
             <button data-role="cancel" type="button"
@@ -944,8 +952,8 @@
         this._simFail = !!e.target.checked;
       });
 
-      this.querySelector('#ai-gen-tone').addEventListener('change', (e) => {
-        this._tone = e.target.value;
+      this.querySelector('[data-role="tone"]')?.addEventListener('change', (e) => {
+        this._tone = e.detail?.value ?? this._tone;
       });
 
       this.querySelectorAll('[data-role="type-toggle"]').forEach(cb => {
@@ -1074,11 +1082,10 @@
       this._step = 'loading';
       this.render();
       // [API-INTEGRATION] Replace setTimeout with a fetch() to your AI backend.
-      const delay = 900 + Math.floor(Math.random() * 700);
+      const delay = 6000;
       setTimeout(() => {
-        const fail = simulateFailure && Math.random() < 0.1;
-        if (fail) {
-          this._errorMessage = 'Simulated failure (10% chance). Please try again.';
+        if (simulateFailure) {
+          this._errorMessage = 'Simulated failure. Please try again.';
           this._step = 'error';
           this.render();
           return;

@@ -24,6 +24,8 @@ export class WebropolLoading extends BaseComponent {
       xl: 'w-12 h-12'
     };
 
+    WebropolLoading.ensureStyles();
+
     const loadingContent = this.renderLoadingType(type, sizeClasses[size] || sizeClasses.md);
     
     const wrapperClasses = this.classNames(
@@ -74,10 +76,68 @@ export class WebropolLoading extends BaseComponent {
             <div class="w-1 h-3 bg-webropol-primary-600 animate-pulse" style="animation-delay: 0.3s"></div>
           </div>
         `;
-      
+
+      case 'royal': {
+        // Royal AI loader: ring + sparkles, matches the AI Question Generator
+        const dimMap = { sm: 32, md: 40, lg: 56, xl: 72 };
+        const size = this.getAttr('size', 'md');
+        const dim = dimMap[size] || dimMap.md;
+        return `
+          <div class="webropol-royal-loader" style="width:${dim}px;height:${dim}px;">
+            <div class="webropol-royal-loader__track"></div>
+            <div class="webropol-royal-loader__head"></div>
+            <i class="fal fa-sparkles webropol-royal-loader__icon"></i>
+          </div>
+        `;
+      }
+
       default:
         return this.renderLoadingType('spinner', sizeClass);
     }
+  }
+
+  static ensureStyles() {
+    if (typeof document === 'undefined') return;
+    if (document.getElementById('webropol-loading-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'webropol-loading-styles';
+    style.textContent = `
+      .webropol-royal-loader {
+        position: relative;
+        display: inline-block;
+      }
+      .webropol-royal-loader__track,
+      .webropol-royal-loader__head {
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        border: 4px solid transparent;
+        box-sizing: border-box;
+      }
+      .webropol-royal-loader__track {
+        border-color: #f1e9fb;
+      }
+      .webropol-royal-loader__head {
+        border-top-color: #823bdd;
+        animation: webropol-royal-spin 0.9s linear infinite;
+      }
+      .webropol-royal-loader__icon {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 40%;
+        height: 40%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6922c4;
+        font-size: 0.95em;
+      }
+      @keyframes webropol-royal-spin {
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
