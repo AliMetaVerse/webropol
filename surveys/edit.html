@@ -54,6 +54,7 @@
   <link href="../design-system/styles/mobile-responsive.css" rel="stylesheet">
   <link href="../design-system/styles/adaptive.css" rel="stylesheet">
   <script src="../design-system/utils/viewport-store.js"></script>
+  <script src="../design-system/utils/adaptive-controllers.js"></script>
   <link href="../design-system/styles/tabs-unified.css" rel="stylesheet">
   <link href="../design-system/styles/button-classes.css" rel="stylesheet">
   <style>
@@ -439,12 +440,55 @@
     border-color: #a5f3fc;
   }
 
-  /* Hide desktop chrome on mobile — the mode rail + bottom bar take over */
-  body.is-mobile webropol-survey-action-tabs,
+  /* Mobile keeps the route tabs visible; helper chrome moves behind compact controls. */
   body.is-mobile webropol-survey-helper-toolbar,
-  body.is-mobile webropol-survey-edit-toolbar,
-  body.is-mobile .survey-editor-header-bar {
+  body.is-mobile webropol-survey-edit-toolbar {
     display: none !important;
+  }
+
+  body.is-mobile .survey-editor-header-bar {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.25rem 0.25rem 0.5rem !important;
+    background: rgba(255,255,255,0.96);
+    border-bottom: 1px solid rgba(15,23,42,0.08) !important;
+  }
+
+  body.is-mobile .survey-editor-header-bar > webropol-survey-action-tabs {
+    display: block !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  body.is-mobile.mobile-toolbar-open webropol-survey-edit-toolbar {
+    display: block !important;
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 60 !important;
+    padding: 8px 10px !important;
+    background: rgba(255,255,255,0.98) !important;
+    border-top: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 -12px 28px -20px rgba(15,23,42,0.3);
+  }
+
+  body.is-mobile.mobile-toolbar-open webropol-survey-edit-toolbar .survey-edit-toolbar {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    border-radius: 14px;
+    scrollbar-width: none;
+  }
+
+  body.is-mobile.mobile-toolbar-open webropol-survey-edit-toolbar .survey-edit-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.is-mobile.mobile-toolbar-open #surveyEditorLayout {
+    padding-bottom: 10rem !important;
   }
 
   /* Show only the active pane on mobile (driven by body[data-editor-mode]) */
@@ -468,7 +512,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 50;
+    z-index: 70;
     align-items: center;
     gap: 8px;
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
@@ -498,6 +542,11 @@
     width: 44px;
     background: #f1f5f9;
     color: #0f172a;
+  }
+  body.is-mobile .editor-mobile-bottom-bar .btn-icon.is-active {
+    background: #ecfeff;
+    color: #0e7490;
+    border: 1px solid #a5f3fc;
   }
   body.is-mobile webropol-floating-button { display: none !important; }
 
@@ -1148,6 +1197,9 @@
   <div class="editor-mobile-bottom-bar" role="toolbar" aria-label="Editor primary actions">
     <button type="button" class="btn-icon" aria-label="Undo" @click="(window.editorUndo || (() => {}))()">
       <i class="fal fa-undo"></i>
+    </button>
+    <button type="button" class="btn-icon" aria-label="Tools" :class="{ 'is-active': toolbarOpen }" :aria-pressed="toolbarOpen" @click="toggleMobileToolbar()">
+      <i class="fal fa-sliders-h"></i>
     </button>
     <button type="button" class="btn-secondary" @click="setMobileMode('preview')">
       <i class="fal fa-eye mr-1"></i> Preview
@@ -3754,6 +3806,7 @@
 
         // Adaptive mobile mode (mode rail). Desktop ignores this state.
         mobileMode: 'edit', // 'structure' | 'edit' | 'preview' | 'settings'
+        toolbarOpen: false,
         get isMobileViewport() {
           return !!(this.$store && this.$store.viewport && this.$store.viewport.isMobile);
         },
@@ -3784,13 +3837,26 @@
             }
           });
         },
+        toggleMobileToolbar() {
+          this.toolbarOpen = !this.toolbarOpen;
+          document.body.classList.toggle('mobile-toolbar-open', this.toolbarOpen);
+        },
+        closeMobileToolbar() {
+          this.toolbarOpen = false;
+          document.body.classList.remove('mobile-toolbar-open');
+        },
+        openAddQuestionModal() {
+          this.closeMobileToolbar();
+          this.mobileMode = 'edit';
+          document.body.dataset.editorMode = 'edit';
+          const addQuestionModal = document.getElementById('addQuestionModal') || document.querySelector('webropol-add-question-modal');
+          if (addQuestionModal) {
+            if (typeof addQuestionModal.open === 'function') addQuestionModal.open();
+            else addQuestionModal.setAttribute('open', 'true');
+          }
+        },
         addQuestionFromBottomBar() {
-          // Reuse existing add-question modal trigger
-          try {
-            window.dispatchEvent(new CustomEvent('open-add-question-modal'));
-          } catch (e) {}
-          const trigger = document.querySelector('[data-action="add-question"]');
-          if (trigger) trigger.click();
+          this.openAddQuestionModal();
         },
         
         // Check if any questions are marked as mandatory
@@ -3821,9 +3887,22 @@
 
           // Seed body dataset so adaptive CSS reflects current mode immediately
           document.body.dataset.editorMode = this.mobileMode;
+          document.body.classList.toggle('mobile-toolbar-open', this.toolbarOpen);
 
           // SPA-safe global hook for toolbar preview action fallback
           window.previewSurvey = () => this.previewSurvey();
+          window.openAddQuestionModal = () => this.openAddQuestionModal();
+          window.addEventListener('open-add-question-modal', () => this.openAddQuestionModal());
+
+          if (!window.__webropolSurveyQuickActionsBound) {
+            window.__webropolSurveyQuickActionsBound = true;
+            document.addEventListener('action-click', (event) => {
+              const actionId = event.detail?.actionId;
+              if (actionId === 'add-question') {
+                this.openAddQuestionModal();
+              }
+            });
+          }
           
           // Auto-save functionality
           if (this.autoSave) {

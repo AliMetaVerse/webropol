@@ -247,6 +247,362 @@ body.is-mobile .adaptive-stepper__progress span.is-active {
 
 /* ------------------------------------------------------------------ */
 /*  Composite component contract reinforcement                         */
+/*  Webropol composites must render full-bleed on mobile.              */
+/* ------------------------------------------------------------------ */
+
+body.is-mobile webropol-survey-action-tabs,
+body.is-mobile webropol-survey-edit-toolbar,
+body.is-mobile webropol-survey-helper-toolbar,
+body.is-mobile webropol-survey-structure-panel,
+body.is-mobile webropol-page-quick-actions,
+body.is-mobile webropol-tabs,
+body.is-mobile webropol-card,
+body.is-mobile webropol-action-card,
+body.is-mobile webropol-list-card {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+body.is-mobile input,
+body.is-mobile select,
+body.is-mobile textarea {
+  font-size: 16px;
+}
+
+body.is-mobile.is-touch button,
+body.is-mobile.is-touch [role="button"],
+body.is-mobile.is-touch a.btn {
+  min-height: 44px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Adaptive overflow tabs (single row + "More…" dropdown)             */
+/*  Markup contract:                                                   */
+/*    <div class="adaptive-overflow-tabs">                             */
+/*      <div class="adaptive-overflow-tabs__track">                    */
+/*        <button class="adaptive-overflow-tabs__item">…</button>      */
+/*      </div>                                                         */
+/*      <div class="adaptive-overflow-tabs__more" hidden>              */
+/*        <button class="adaptive-overflow-tabs__more-btn">More…</…>   */
+/*        <div class="adaptive-overflow-tabs__menu" hidden>…</div>     */
+/*      </div>                                                         */
+/*    </div>                                                           */
+/*  The JS controller (adaptive-controllers.js) measures overflow and  */
+/*  toggles `data-overflowing` on items + visibility of the more menu. */
+/* ------------------------------------------------------------------ */
+
+.adaptive-overflow-tabs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.adaptive-overflow-tabs__track {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  /* No horizontal scroll – overflow is moved into the More menu. */
+  overflow: hidden;
+}
+
+.adaptive-overflow-tabs__item {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.adaptive-overflow-tabs__item[data-overflowing="true"] {
+  /* Hidden from the row; the JS controller mirrors the item into the menu. */
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.adaptive-overflow-tabs__more {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.adaptive-overflow-tabs__more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.adaptive-overflow-tabs__more-btn:hover {
+  background: rgba(15, 23, 42, 0.04);
+  color: #0f172a;
+}
+.adaptive-overflow-tabs__more-btn[aria-expanded="true"] {
+  background: rgba(6, 182, 212, 0.08);
+  color: #0e7490;
+}
+
+.adaptive-overflow-tabs__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  max-width: 280px;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  padding: 6px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.adaptive-overflow-tabs__menu button,
+.adaptive-overflow-tabs__menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  background: transparent;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+.adaptive-overflow-tabs__menu button:hover,
+.adaptive-overflow-tabs__menu a:hover {
+  background: rgba(6, 182, 212, 0.08);
+  color: #0e7490;
+}
+.adaptive-overflow-tabs__menu button[aria-current="true"] {
+  background: rgba(6, 182, 212, 0.12);
+  color: #0e7490;
+  font-weight: 600;
+}
+
+/* Mobile: defer to component-specific snap-scroll behavior; the
+   "More…" affordance is desktop-only. */
+body.is-mobile .adaptive-overflow-tabs {
+  display: block;
+}
+body.is-mobile .adaptive-overflow-tabs__track {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+body.is-mobile .adaptive-overflow-tabs__item[data-overflowing="true"] {
+  visibility: visible;
+  position: static;
+  pointer-events: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+body.is-mobile .adaptive-overflow-tabs__more {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Adaptive list table — desktop column priority + mobile cards       */
+/*  Markup contract:                                                   */
+/*    <table class="adaptive-list-table">                              */
+/*      <thead>… <th class="col-prio-2">Owner</th> …</thead>           */
+/*      <tbody><tr><td class="col-prio-2">…</td>…</tr></tbody>         */
+/*    </table>                                                         */
+/*  Column priority hides low-priority cols at narrow desktop widths.  */
+/*  data-label is auto-injected on <td>s by adaptive-controllers.js,   */
+/*  enabling the mobile cards transformation.                          */
+/* ------------------------------------------------------------------ */
+
+.adaptive-list-table { width: 100%; border-collapse: collapse; }
+
+/* Desktop column priority: hide lowest-priority columns first as the
+   viewport narrows. Priority 1 = highest (always visible). */
+@media (max-width: 1439px) {
+  .adaptive-list-table .col-prio-5 { display: none; }
+}
+@media (max-width: 1279px) {
+  .adaptive-list-table .col-prio-4 { display: none; }
+}
+@media (max-width: 1099px) {
+  .adaptive-list-table .col-prio-3 { display: none; }
+}
+
+/* Mobile transformation: rows become stacked cards. */
+body.is-mobile .adaptive-list-table,
+body.is-mobile .adaptive-list-table thead,
+body.is-mobile .adaptive-list-table tbody,
+body.is-mobile .adaptive-list-table tr,
+body.is-mobile .adaptive-list-table td {
+  display: block;
+  width: 100%;
+}
+body.is-mobile .adaptive-list-table thead { display: none; }
+body.is-mobile .adaptive-list-table tr {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+body.is-mobile .adaptive-list-table td {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  border: none;
+  font-size: 13px;
+  color: #334155;
+}
+body.is-mobile .adaptive-list-table td::before {
+  content: attr(data-label);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  color: #64748b;
+  flex: 0 0 40%;
+}
+/* Promote second cell as the card title; hide first (checkbox) and last
+   (actions) labels for a cleaner card. */
+body.is-mobile .adaptive-list-table td.adaptive-list-table__title,
+body.is-mobile .adaptive-list-table td:nth-child(2) {
+  order: -1;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+body.is-mobile .adaptive-list-table td.adaptive-list-table__title::before,
+body.is-mobile .adaptive-list-table td:nth-child(2)::before { display: none; }
+body.is-mobile .adaptive-list-table td.adaptive-list-table__hide-mobile,
+body.is-mobile .adaptive-list-table td:first-child,
+body.is-mobile .adaptive-list-table td:last-child { display: none; }
+
+/* ------------------------------------------------------------------ */
+/*  Adaptive quick actions grid                                        */
+/* ------------------------------------------------------------------ */
+
+.adaptive-quick-actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+body.is-tablet .adaptive-quick-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+body.is-mobile .adaptive-quick-actions {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Adaptive modal — promote any modal to bottom sheet on mobile       */
+/*  Apply the class `adaptive-modal--sheet-on-mobile` to the           */
+/*  modal-content container.                                           */
+/* ------------------------------------------------------------------ */
+
+body.is-mobile .adaptive-modal--sheet-on-mobile {
+  position: fixed !important;
+  inset: auto 0 0 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  max-height: 92vh !important;
+  margin: 0 !important;
+  border-radius: 16px 16px 0 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+body.is-mobile .adaptive-modal--sheet-on-mobile .adaptive-modal__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+body.is-mobile .adaptive-modal--sheet-on-mobile .adaptive-modal__header,
+body.is-mobile .adaptive-modal--sheet-on-mobile .adaptive-modal__footer {
+  flex: 0 0 auto;
+  position: sticky;
+  background: #fff;
+  z-index: 1;
+}
+body.is-mobile .adaptive-modal--sheet-on-mobile .adaptive-modal__header { top: 0; }
+body.is-mobile .adaptive-modal--sheet-on-mobile .adaptive-modal__footer { bottom: 0; }
+
+/* Stack multi-column modal bodies on tablet/mobile. */
+body.is-tablet .adaptive-modal__columns,
+body.is-mobile .adaptive-modal__columns {
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+body.is-tablet .adaptive-modal__columns > *,
+body.is-mobile .adaptive-modal__columns > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Survey editor header bar — collapse helper toolbar when crowded    */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 1099px) {
+  .survey-editor-header-bar webropol-survey-helper-toolbar .helper-toolbar-label,
+  .survey-editor-header-bar webropol-survey-helper-toolbar .ht-label {
+    display: none;
+  }
+}
+body.is-mobile .survey-editor-header-bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* Desktop/tablet editor headers: tabs consume the flexible region and the
+   helper toolbar stays pinned to the far right with intrinsic width. */
+.survey-editor-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.survey-editor-header-bar > webropol-survey-action-tabs {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+}
+
+.survey-editor-header-bar > webropol-survey-helper-toolbar {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: max-content;
+  margin-left: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Composite component contract reinforcement                         */
 /*  Every webropol composite must render full-bleed on mobile.         */
 /* ------------------------------------------------------------------ */
 
@@ -277,4 +633,342 @@ body.is-mobile.is-touch button,
 body.is-mobile.is-touch [role="button"],
 body.is-mobile.is-touch a.btn {
   min-height: 44px;
+}
+
+
+/* ================================================================== */
+/*  Mobile fixes appended 2025                                         */
+/*  - Question card top toolbar                                        */
+/*  - Page quick actions strip                                         */
+/*  - Merge pages component                                            */
+/*  - Events list page layout                                          */
+/*  - 2-way SMS edit (aita) toolbar                                    */
+/*  - Survey report scroll & dual-pane layout                          */
+/* ================================================================== */
+
+/* ---- Question card top icon buttons (per-question editor row) ---- */
+@media (max-width: 767px) {
+  .question-card-header {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0.625rem !important;
+    align-items: flex-start !important;
+  }
+  .question-card-header > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .question-card-toolbar {
+    flex-wrap: wrap !important;
+    justify-content: flex-end;
+    gap: 0.25rem !important;
+    width: auto;
+    max-width: 100%;
+  }
+  .question-card-toolbar button {
+    padding: 0.4rem 0.5rem !important;
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 0.875rem;
+  }
+  .question-card-toolbar button span:not(.sr-only) {
+    display: none;
+  }
+}
+
+/* ---- PageQuickActions: hide label, evenly space icon buttons --- */
+@media (max-width: 767px) {
+  webropol-page-quick-actions .page-quick-actions-shell {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  webropol-page-quick-actions .page-quick-actions-panel {
+    width: 100% !important;
+    padding: 0.5rem !important;
+    border-radius: 1rem !important;
+  }
+  webropol-page-quick-actions .page-quick-actions-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+    gap: 0.5rem !important;
+    overflow-x: visible !important;
+    flex-wrap: unset !important;
+  }
+  /* Hide the "Quick Actions" label and divider on mobile */
+  webropol-page-quick-actions .page-quick-actions-strip > span,
+  webropol-page-quick-actions .page-quick-actions-strip > .h-4.w-px {
+    display: none !important;
+  }
+  webropol-page-quick-actions .page-quick-actions-strip > * {
+    min-width: 0 !important;
+  }
+}
+
+/* ---- MergePages: stack the merge button below the page indicator on mobile ---- */
+@media (max-width: 767px) {
+  webropol-merge-pages > div {
+    margin-top: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+  webropol-merge-pages .relative.flex.justify-center.items-center {
+    flex-direction: column !important;
+    gap: 0.625rem !important;
+  }
+  webropol-merge-pages .merge-pages-btn {
+    position: static !important;
+    right: auto !important;
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem 0.875rem !important;
+    font-size: 0.8125rem !important;
+  }
+}
+
+/* ---- Events list page: collapse 80-wide sidebar, single column ---- */
+@media (max-width: 1023px) {
+  body[x-data*="libraryApp"] main[role="main"] > .flex.gap-6 {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  body[x-data*="libraryApp"] main[role="main"] > .flex.gap-6 > .w-80 {
+    width: 100% !important;
+  }
+}
+@media (max-width: 767px) {
+  body[x-data*="libraryApp"] main[role="main"] {
+    padding: 0.75rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  body[x-data*="libraryApp"] main[role="main"] .modern-card {
+    border-radius: 0.875rem !important;
+  }
+  body[x-data*="libraryApp"] main[role="main"] .modern-card .p-6 {
+    padding: 1rem !important;
+  }
+  body[x-data*="libraryApp"] main[role="main"] .grid {
+    grid-template-columns: 1fr !important;
+  }
+  body[x-data*="libraryApp"] .page-title {
+    font-size: 1.375rem !important;
+  }
+  /* Allow the events shell to grow with content on mobile */
+  body[x-data*="libraryApp"] .flex.h-screen,
+  body[x-data*="libraryApp"] .adaptive-shell {
+    height: auto !important;
+    min-height: 100vh;
+  }
+  body[x-data*="libraryApp"] main[role="main"].overflow-hidden {
+    overflow: visible !important;
+  }
+}
+
+/* ---- 2-way SMS edit (sms/aita.html) toolbar/grid ---- */
+@media (max-width: 767px) {
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem !important;
+    border-radius: 1rem !important;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap > div {
+    width: 100%;
+    justify-content: space-between !important;
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap > div:last-child {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    scrollbar-width: none;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap > div:last-child::-webkit-scrollbar {
+    display: none;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap > div:last-child > button {
+    flex: 0 0 auto;
+    font-size: 0.75rem;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] > div > .flex.flex-wrap > div:last-child > button > i {
+    font-size: 1.125rem !important;
+  }
+  /* Main grid: single column, no horizontal scroll */
+  body[x-data*="smsAitaApp"] .grid.grid-cols-1.lg\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  body[x-data*="smsAitaApp"] main[role="main"] {
+    padding: 0.5rem !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ---- Surveys report: ensure scroll works and dual-pane stacks ---- */
+@media (max-width: 1023px) {
+  /* Override any forced 2-col rule that squeezes the report panes */
+  body.is-mobile .lg\:grid-cols-4,
+  body.is-mobile .lg\:grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 767px) {
+  /* Surveys/report standalone shell uses min-h-screen - make sure scroll happens */
+  body[x-data] main[role="main"] section.lg\:col-span-3 {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  body[x-data] main[role="main"] aside,
+  body[x-data] main[role="main"] aside .overflow-y-auto {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  /* Allow page body to scroll vertically */
+  html, body { overflow-y: auto !important; height: auto !important; }
+  /* If the SPA wraps content in flex.h-screen, allow it to grow */
+  .flex.h-screen { height: auto !important; min-height: 100vh; }
+  .flex.h-screen > .flex-1.flex.flex-col.overflow-hidden,
+  .flex-1.flex.flex-col.overflow-hidden {
+    overflow: visible !important;
+  }
+}
+
+
+/* ================================================================== */
+/*  sms/edit.html (2-way SMS editor) - mobile layout                   */
+/*  - Stack the 2-pane editor (structure + question canvas)            */
+/*  - Allow vertical scrolling                                         */
+/*  - Tabs + helper-toolbar share row, helper-toolbar pinned right     */
+/* ================================================================== */
+@media (max-width: 900px) {
+  body[x-data*="smsEditApp"] {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  /* Allow the editor shell to grow with content */
+  body[x-data*="smsEditApp"] .flex.h-screen,
+  body[x-data*="smsEditApp"] .adaptive-shell {
+    height: auto !important;
+    min-height: 100vh;
+  }
+  body[x-data*="smsEditApp"] .flex-1.flex.flex-col.overflow-hidden {
+    overflow: visible !important;
+  }
+  /* Main element: allow scroll */
+  body[x-data*="smsEditApp"] main[role="main"] {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  /* Tabs row + helper-toolbar: keep on one row, helper-toolbar right */
+  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b {
+    gap: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-action-tabs {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-helper-toolbar {
+    display: none !important;
+  }
+
+  /* The 2-pane layout: stack vertically, drop fixed height */
+  body[x-data*="smsEditApp"] .flex.overflow-hidden[class*="h-[calc"],
+  body[x-data*="smsEditApp"] main[role="main"] > .flex.overflow-hidden {
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Structure pane: full width, auto height */
+  body[x-data*="smsEditApp"] #smsStructurePane,
+  body[x-data*="smsEditApp"] .survey-structure-pane {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto;
+    margin-bottom: 0.75rem !important;
+    margin-top: 0.5rem !important;
+  }
+  /* Hide the resizer on mobile (no use without horizontal panes) */
+  body[x-data*="smsEditApp"] .survey-structure-resizer,
+  body[x-data*="smsEditApp"] #smsStructureResizer {
+    display: none !important;
+  }
+  /* Structure card: limit height & enable internal scroll */
+  body[x-data*="smsEditApp"] #smsStructurePane > webropol-survey-structure {
+    display: block;
+    max-height: 45vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Right canvas section: remove forced overflow, full width */
+  body[x-data*="smsEditApp"] section.flex-1.overflow-y-auto {
+    width: 100%;
+    flex: 1 1 auto;
+    overflow: visible !important;
+    padding: 0.5rem !important;
+  }
+  body[x-data*="smsEditApp"] section.flex-1.overflow-y-auto > .max-w-\[760px\] {
+    max-width: 100% !important;
+    padding-bottom: 4rem !important;
+  }
+
+  /* Sticky bottom edit toolbar (Add Question + icons) on mobile */
+  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 -10px 24px -18px rgba(15, 23, 42, 0.35);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar .survey-edit-toolbar {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    border-radius: 0;
+    scrollbar-width: none;
+  }
+  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar .survey-edit-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide its border-b wrapper top-spacing so it doesn't double up */
+  body[x-data*="smsEditApp"] main[role="main"] > .border-b.border-webropol-gray-200 {
+    border-bottom: none !important;
+  }
+}
+
+/* ---- Same generic helper-toolbar/tabs fix for any editor that uses ---- */
+/* a `flex items-center justify-between border-b` container (e.g. aita)   */
+@media (max-width: 900px) {
+  body.is-mobile main[role="main"] > .mb-2 > .flex.items-center.justify-between.border-b > webropol-survey-action-tabs,
+  body.is-mobile main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-action-tabs {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+  body.is-mobile main[role="main"] > .mb-2 > .flex.items-center.justify-between.border-b > webropol-survey-helper-toolbar,
+  body.is-mobile main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-helper-toolbar {
+    flex: 0 0 auto;
+    margin-left: auto;
+    width: auto !important;
+  }
 }

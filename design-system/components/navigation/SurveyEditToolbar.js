@@ -251,16 +251,18 @@ export class SurveyEditToolbar extends BaseComponent {
           background: linear-gradient(180deg, transparent, rgba(148, 163, 184, .35), transparent);
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
+        /* Responsive — keep on a single row when possible, wrap when not.
+           Avoid horizontal scrolling; use icons-only at narrow widths. */
+        @media (max-width: 1199px) {
           .survey-edit-toolbar {
             width: 100%;
-            overflow-x: auto;
             max-width: 100%;
             justify-content: flex-start;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
+            flex-wrap: wrap;
+            row-gap: 6px;
           }
+        }
+        @media (max-width: 900px) {
           .survey-edit-toolbar .tb-btn-label { display: none; }
           .survey-edit-toolbar .tb-btn { padding: 0; width: 36px; height: 36px; justify-content: center; }
           .survey-edit-toolbar .tb-btn-primary { width: auto; padding: 0 14px; }

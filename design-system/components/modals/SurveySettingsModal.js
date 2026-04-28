@@ -301,13 +301,13 @@ export class WebropolSurveySettingsModal extends BaseComponent {
       <div class="modal-backdrop fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
            style="z-index: 12000; transition: opacity 300ms ease-out">
         
-        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
+        <div class="modal-content adaptive-modal--sheet-on-mobile bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] flex flex-col overflow-hidden transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-8'}"
              style="max-width: 1400px; transition: all 300ms ease-out"
              role="document"
              aria-labelledby="survey-settings-title">
           
           <!-- Modal Header -->
-          <div class="modal-header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-white">
+          <div class="modal-header adaptive-modal__header flex items-center justify-between p-6 border-b border-webropol-gray-200 bg-white">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
                 <i class="fal fa-cog text-amber-600 text-xl"></i>
@@ -322,8 +322,8 @@ export class WebropolSurveySettingsModal extends BaseComponent {
           </div>
           
           <!-- Modal Body - All Sections in 3 Columns -->
-          <div class="modal-body flex-1 overflow-y-auto p-8 bg-white">
-            <div class="flex gap-8">
+          <div class="modal-body adaptive-modal__body flex-1 overflow-y-auto p-8 bg-white">
+            <div class="flex gap-8 adaptive-modal__columns">
               <!-- Survey & Notifications Section -->
               ${this.renderSection(
                 'Survey & Notifications',
@@ -348,7 +348,7 @@ export class WebropolSurveySettingsModal extends BaseComponent {
           </div>
           
           <!-- Modal Footer -->
-          <div class="modal-footer flex items-center justify-end p-6 border-t border-webropol-gray-200 bg-white">
+          <div class="modal-footer adaptive-modal__footer flex items-center justify-end p-6 border-t border-webropol-gray-200 bg-white">
             <button class="save-button px-8 py-2.5 bg-white border-2 border-webropol-gray-300 hover:border-webropol-gray-400 text-webropol-gray-700 text-sm font-medium rounded-lg transition-all">
               Close
             </button>

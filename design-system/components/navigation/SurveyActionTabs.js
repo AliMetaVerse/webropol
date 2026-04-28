@@ -108,7 +108,7 @@ export class SurveyActionTabs extends BaseComponent {
       if (isDisabled) {
         const disabledMarkup = `
           <span
-            class="webropol-tab-main-primary disabled no-underline"
+            class="webropol-tab-main-primary adaptive-overflow-tabs__item disabled no-underline"
             role="tab"
             aria-label="${tab.label}"
             aria-disabled="true"
@@ -133,7 +133,7 @@ export class SurveyActionTabs extends BaseComponent {
       const tabMarkup = `
         <a
           href="${tab.url}"
-          class="webropol-tab-main-primary no-underline${isActive ? ' active' : ''}"
+          class="webropol-tab-main-primary adaptive-overflow-tabs__item no-underline${isActive ? ' active' : ''}"
           role="tab"
           aria-label="${tab.label}"
           ${isActive ? 'aria-current="page" aria-selected="true"' : ''}
@@ -165,21 +165,37 @@ export class SurveyActionTabs extends BaseComponent {
         webropol-survey-action-tabs .webropol-tabs-main-primary {
           max-width: 100%;
           min-width: 0;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: thin;
+        }
+
+        /* Desktop: no horizontal scroll — overflow goes into the More menu
+           via the .adaptive-overflow-tabs controller. Mobile keeps the
+           snap-scroll behavior defined in the @media block below. */
+        webropol-survey-action-tabs .adaptive-overflow-tabs {
+          width: 100%;
+        }
+        webropol-survey-action-tabs .adaptive-overflow-tabs__more-btn {
+          padding: 8px 12px;
+          height: 36px;
+          font-weight: 500;
         }
 
         @media (max-width: 900px) {
           webropol-survey-action-tabs {
+            overflow: visible;
+          }
+
+          webropol-survey-action-tabs .adaptive-overflow-tabs {
+            min-width: 0;
             overflow: hidden;
           }
 
           webropol-survey-action-tabs .webropol-tabs-main-primary {
             width: 100%;
             flex-direction: row !important;
-            gap: 0.5rem;
-            padding: 0 0.75rem 0.25rem;
+            gap: 0.375rem;
+            padding: 0 0.5rem 0.25rem;
+            overflow-x: auto;
+            overflow-y: hidden;
             scroll-snap-type: x proximity;
             scrollbar-width: none;
           }
@@ -190,23 +206,28 @@ export class SurveyActionTabs extends BaseComponent {
 
           webropol-survey-action-tabs .webropol-tab-main-primary {
             width: auto;
-            min-width: 4.25rem;
-            max-width: 12rem;
+            min-width: 2.75rem;
+            max-width: 8.5rem;
             flex: 0 0 auto;
             align-items: center;
-            border-radius: 1rem;
+            border-radius: 0.875rem;
             scroll-snap-align: start;
           }
 
           webropol-survey-action-tabs .webropol-tab-main-primary.active {
-            min-width: min(13.5rem, calc(100vw - 1.5rem));
+            min-width: min(8.5rem, calc(100vw - 1rem));
           }
 
           webropol-survey-action-tabs .main-primary-row {
             width: auto;
             max-width: 100%;
-            gap: 0.5rem;
-            padding: 0.5rem 0.625rem;
+            gap: 0.375rem;
+            padding: 0.5rem 0.5rem;
+          }
+
+          webropol-survey-action-tabs .main-primary-row span[class*="w-9"] {
+            width: 2rem;
+            height: 2rem;
           }
 
           webropol-survey-action-tabs .webropol-tab-main-primary:not(.active) .main-primary-label {
@@ -225,8 +246,10 @@ export class SurveyActionTabs extends BaseComponent {
           }
         }
       </style>
-      <div class="webropol-tabs-main-primary flex" role="navigation" aria-label="Survey actions">
-        ${tabsHTML}
+      <div class="adaptive-overflow-tabs" role="navigation" aria-label="Survey actions">
+        <div class="adaptive-overflow-tabs__track webropol-tabs-main-primary flex">
+          ${tabsHTML}
+        </div>
       </div>
     `;
   }

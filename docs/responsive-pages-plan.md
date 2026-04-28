@@ -207,3 +207,95 @@ For each active page below: **Desktop** keeps current density. **Tablet** uses d
 - SMS, create, admin, mywebropol, shop pages migrated to primitives.
 - QA checklist passes on each active route.
 - Email/newsletter and prototype pages either updated, tagged non-production, or tracked separately.
+
+## Adaptive Primitives — Implemented Catalog
+
+The following CSS + JS primitives are implemented and registered for general use. They live in design-system/styles/adaptive.css and design-system/utils/adaptive-controllers.js. Both files are loaded after iewport-store.js on every page that opts in.
+
+### .adaptive-overflow-tabs  (single-row tabs with `More…`)
+
+Always renders tabs in a single row at desktop/tablet widths. When the row would overflow, surplus items are hidden and made available through a `More…` dropdown. On mobile the row reverts to the component's native scroll/wrap behavior (the More menu is a desktop-only affordance).
+
+```html
+<div class="adaptive-overflow-tabs">
+  <div class="adaptive-overflow-tabs__track">
+    <a class="adaptive-overflow-tabs__item">Tab 1</a>
+    <a class="adaptive-overflow-tabs__item">Tab 2</a>
+  </div>
+  <!-- .adaptive-overflow-tabs__more is injected automatically by the controller -->
+</div>
+```n
+The controller measures with a `ResizeObserver`, marks overflowing items with `data-overflowing="true"`, and clones them into the dropdown. Click events on cloned items are forwarded to the originals so existing handlers (router links, Alpine `@click`, etc.) keep working without changes.
+
+Applied to: `webropol-survey-action-tabs`. Other tabs implementations can opt in by adding the wrapper + item classes.
+
+### .adaptive-list-table  (column-priority + auto cards on mobile)
+
+A standard `<table>` enriched with two utilities:
+
+- `.col-prio-3` / `.col-prio-4` / `.col-prio-5` on `<th>`/`<td>` — progressively hidden at `=1099px` / `=1279px` / `=1439px` to keep the table readable on smaller desktop widths without horizontal scroll.
+- On mobile (`body.is-mobile`) the table is automatically re-rendered as a card list. Each row becomes a card; each cell shows a `data-label` (auto-injected from the matching `<th>` text or a `data-col-label` override) above its value. The first cell of each row is treated as the card title via `.adaptive-list-table__title`.
+
+```html
+<table class="adaptive-list-table w-full">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th class="col-prio-4">Owner</th>
+      <th class="col-prio-5">Modified</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="adaptive-list-table__title">Survey A</td>
+      <td>Active</td>
+      <td class="col-prio-4">jane@…</td>
+      <td class="col-prio-5">2025-10-01</td>
+    </tr>
+  </tbody>
+</table>
+```n
+The controller uses a `MutationObserver` so dynamically inserted rows (Alpine `x-for`, SPA route swaps) are picked up automatically. Manual rescan: `window.WebropolAdaptive.rescanTables()`.
+
+Applied to: `sms/list.html`. Other list pages can opt in by adding the class + `col-prio-*` annotations.
+
+### .adaptive-quick-actions  (responsive action grid)
+
+Desktop: auto-fit grid (min 220px tracks). Tablet: tighter padding/gap. Mobile: horizontal swipeable strip with scroll snap. Used by `webropol-page-quick-actions` (`PageQuickActions.js`).
+
+### .adaptive-modal--sheet-on-mobile  (modal ? bottom sheet)
+
+A single class flips a centered modal into a bottom-sheet on mobile with a sticky header and footer and a scrollable body. Used together with three structural helpers:
+
+- `.adaptive-modal__header` — sticky top.
+- `.adaptive-modal__body` — flexible scroll region.
+- `.adaptive-modal__footer` — sticky bottom with safe-area padding.
+- `.adaptive-modal__columns` — multi-column body that stacks at `=1023px`.
+
+Applied to: `SurveySettingsModal`, `AddQuestionModal`.
+
+### Helper toolbar collapse
+
+`webropol-survey-helper-toolbar` collapses progressively as the surrounding header crowds:
+
+- `=1199px` — status badge label width capped to 100px, padding tightened.
+- `=1099px` — status badge collapses to icon-only (text hidden), badge becomes a circular pill.
+- `=767px` — toolbar takes full row width with 44px touch targets (existing behavior).
+
+This ensures `webropol-survey-action-tabs` keeps room to render tabs in a single row on the editor header at narrow desktop widths.
+
+## Controller API
+
+Loaded by `design-system/utils/adaptive-controllers.js` on every adaptive page (after `viewport-store.js`):
+
+```js
+window.WebropolAdaptive.rescanTables();       // Re-inject data-label on .adaptive-list-table cells.
+window.WebropolAdaptive.rescanOverflowTabs(); // Re-measure all .adaptive-overflow-tabs containers.
+```n
+Both are idempotent and safe to call after ad-hoc DOM mutations. The boot sequence already wires:
+
+- `DOMContentLoaded` — initial scan.
+- `viewport:change` — re-measure on breakpoint changes.
+- `MutationObserver` on `document.body` — pick up SPA / Alpine renders without manual rescans.
+

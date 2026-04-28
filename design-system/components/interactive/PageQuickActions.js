@@ -44,9 +44,18 @@ export class PageQuickActions extends BaseComponent {
     this.actions = this.getActions();
     this.showLabel = this.getBoolAttr('show-label', true);
     this.iconsOnly = false;
+    this.isMobile = this.getIsMobile();
 
     this.handleIconsOnlyChange = (event) => {
       this.iconsOnly = Boolean(event.detail?.enabled);
+      this.render();
+      this.bindEvents();
+    };
+
+    this.handleViewportChange = (event) => {
+      const nextIsMobile = Boolean(event.detail?.isMobile);
+      if (nextIsMobile === this.isMobile) return;
+      this.isMobile = nextIsMobile;
       this.render();
       this.bindEvents();
     };
@@ -58,6 +67,21 @@ export class PageQuickActions extends BaseComponent {
     }
 
     window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    window.addEventListener('viewport:change', this.handleViewportChange);
+  }
+
+  getIsMobile() {
+    if (window.WebropolViewport?.state) return Boolean(window.WebropolViewport.state.isMobile);
+    return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 767px)').matches;
+  }
+
+  escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   getActions() {
@@ -113,6 +137,16 @@ export class PageQuickActions extends BaseComponent {
           min-width: 0;
         }
 
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .page-quick-actions-panel {
+            padding: 0.5rem 1rem;
+            border-radius: 1.25rem;
+          }
+          .page-quick-actions-strip {
+            gap: 0.5rem;
+          }
+        }
+
         @media (max-width: 767px) {
           .page-quick-actions-shell {
             margin-top: 1rem;
@@ -122,19 +156,87 @@ export class PageQuickActions extends BaseComponent {
           .page-quick-actions-panel {
             width: 100%;
             border-radius: 1rem;
-            padding: 0.75rem;
+            padding: 0.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            background: rgba(255, 255, 255, 0.96);
           }
 
           .page-quick-actions-strip {
-            justify-content: flex-start;
-            overflow-x: auto;
-            flex-wrap: nowrap;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            align-items: stretch;
+            gap: 0.5rem;
+            justify-content: stretch;
+            overflow: visible;
+            flex-wrap: unset;
           }
 
-          .page-quick-actions-strip::-webkit-scrollbar {
+          .page-quick-actions-strip > * {
+            min-width: 0;
+          }
+
+          .page-quick-actions-strip > span,
+          .page-quick-actions-strip > .h-4.w-px {
             display: none;
+          }
+
+          .page-quick-action-mobile-btn {
+            appearance: none;
+            width: 100%;
+            min-width: 0;
+            min-height: 48px;
+            border: 1px solid var(--quick-border, #bae6fd);
+            border-radius: 0.75rem;
+            background: var(--quick-bg, #f0fdff);
+            color: var(--quick-text, #0e7490);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            padding: 0.45rem 0.375rem;
+            font: 600 0.72rem/1.15 Inter, system-ui, sans-serif;
+            text-align: center;
+            cursor: pointer;
+          }
+
+          .page-quick-action-mobile-btn i {
+            flex: 0 0 auto;
+            font-size: 0.95rem;
+          }
+
+          .page-quick-action-mobile-btn span:last-child {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .page-quick-action-mobile-btn--error,
+          .page-quick-action-mobile-btn--red {
+            --quick-bg: #fff1f2;
+            --quick-border: #fecdd3;
+            --quick-text: #be123c;
+          }
+
+          .page-quick-action-mobile-btn--royal-violet,
+          .page-quick-action-mobile-btn--purple {
+            --quick-bg: #f5f3ff;
+            --quick-border: #ddd6fe;
+            --quick-text: #6d28d9;
+          }
+
+          .page-quick-action-mobile-btn--accent,
+          .page-quick-action-mobile-btn--orange {
+            --quick-bg: #fff7ed;
+            --quick-border: #fed7aa;
+            --quick-text: #c2410c;
+          }
+
+          .page-quick-action-mobile-btn--success,
+          .page-quick-action-mobile-btn--green {
+            --quick-bg: #ecfdf5;
+            --quick-border: #bbf7d0;
+            --quick-text: #047857;
           }
         }
       </style>
@@ -157,7 +259,20 @@ export class PageQuickActions extends BaseComponent {
               
               ${actions.map(action => {
                 const hue = this.getHue(action.color);
-                const buttonMarkup = this.iconsOnly
+                const label = this.escapeHtml(action.label);
+                const icon = this.escapeHtml(action.icon);
+                const mobileMarkup = `
+                    <button
+                      type="button"
+                      class="page-quick-action-mobile-btn page-quick-action-mobile-btn--${hue} page-quick-action-mobile-btn--${this.escapeHtml(action.color)}"
+                      data-action-id="${this.escapeHtml(action.id)}"
+                      aria-label="${label}"
+                    >
+                      <i class="${icon}" aria-hidden="true"></i>
+                      <span>${label}</span>
+                    </button>
+                  `;
+                const buttonMarkup = this.isMobile ? mobileMarkup : (this.iconsOnly
                   ? `
                     <webropol-button-hue
                       data-action-id="${action.id}"
@@ -180,7 +295,7 @@ export class PageQuickActions extends BaseComponent {
                       icon="${action.icon}"
                       label="${action.label}"
                     ></webropol-button-hue>
-                  `;
+                  `);
                 return `
                     <div class="inline-flex shrink-0">
                       <webropol-tooltip text="${action.label}" position="top">
@@ -214,6 +329,7 @@ export class PageQuickActions extends BaseComponent {
 
   cleanup() {
     window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    window.removeEventListener('viewport:change', this.handleViewportChange);
     super.cleanup();
   }
 }

@@ -24,10 +24,10 @@ export class WebropolAddQuestionModal extends BaseComponent {
 
           <!-- Modal panel -->
           <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-          <div class="inline-block w-full text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl sm:my-8 sm:max-w-4xl" style="max-width: 800px; border-radius: 16px; overflow: hidden;">
+          <div class="modal-content adaptive-modal--sheet-on-mobile inline-block w-full text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl sm:my-8 sm:max-w-4xl" style="max-width: 800px; border-radius: 16px; overflow: hidden;">
             
             <!-- Header -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+            <div class="adaptive-modal__header flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
               <div class="flex items-center gap-3">
                 <div class="flex items-center justify-center w-10 h-10 text-orange-500 bg-orange-100 rounded-lg">
                   <i class="fal fa-plus text-lg"></i>
@@ -37,7 +37,7 @@ export class WebropolAddQuestionModal extends BaseComponent {
               
               <div class="flex items-center gap-3">
                  <!-- Search -->
-                 <div class="relative w-64">
+                 <div class="relative w-32 sm:w-64">
                    <i class="absolute text-gray-400 transform -translate-y-1/2 fal fa-search left-3 top-1/2 text-sm"></i>
                    <input type="text" id="question-search-input" class="w-full py-2 pl-10 pr-3 text-sm text-gray-600 bg-gray-50 border-transparent rounded-lg focus:bg-white focus:border-webropol-primary-500 focus:ring-0 outline-none transition-colors" placeholder="Search question types">
                  </div>
@@ -51,10 +51,10 @@ export class WebropolAddQuestionModal extends BaseComponent {
             </div>
 
             <!-- Body -->
-            <div class="p-6 overflow-y-auto max-h-[calc(100vh-200px)] bg-white">
+            <div class="adaptive-modal__body p-6 overflow-y-auto max-h-[calc(100vh-200px)] bg-white">
               <div class="space-y-6">
                 <!-- Top Row: Text, Selection, Matrix -->
-                <div class="grid grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <!-- Column 1: Text -->
                   <div>
                     <h4 class="mb-3 text-base font-bold text-gray-900">Text</h4>
@@ -90,7 +90,7 @@ export class WebropolAddQuestionModal extends BaseComponent {
                 </div>
 
                 <!-- Bottom Row: Experience & Loyalty and Other -->
-                <div class="grid grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   <!-- Column 1: Experience & Loyalty -->
                   <div>
                     <h4 class="mb-3 text-base font-bold text-gray-900">Experience & Loyalty</h4>
@@ -102,9 +102,9 @@ export class WebropolAddQuestionModal extends BaseComponent {
                   </div>
 
                   <!-- Column 2-3: Other (spans 2 columns with internal 2-col grid) -->
-                  <div class="col-span-2">
+                  <div class="sm:col-span-2 lg:col-span-2">
                     <h4 class="mb-3 text-base font-bold text-gray-900">Other</h4>
-                    <div class="grid grid-cols-2 gap-x-6 gap-y-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                       ${this.renderQuestionItem('file', 'Attach file to response', 'paperclip', 'yellow')}
                       ${this.renderQuestionItem('fourfold', 'Fourfold', 'border-all', 'yellow')}
                       ${this.renderQuestionItem('calendar', 'Calendar', 'calendar-alt', 'yellow')}
@@ -120,7 +120,7 @@ export class WebropolAddQuestionModal extends BaseComponent {
             </div>
             
             <!-- Footer -->
-            <div class="flex justify-end px-6 py-4 bg-gray-50 rounded-b-2xl bg-white border-t border-gray-100">
+            <div class="adaptive-modal__footer flex justify-end px-6 py-4 bg-gray-50 rounded-b-2xl bg-white border-t border-gray-100">
               <button type="button" class="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 shadow-sm rounded-full hover:bg-gray-50 focus:outline-none transition-colors" data-action="close">
                 Close
               </button>
