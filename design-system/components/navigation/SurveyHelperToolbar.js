@@ -311,6 +311,13 @@ export class SurveyHelperToolbar extends BaseComponent {
 
     this.innerHTML = `
       <style>
+        webropol-survey-helper-toolbar {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
         .survey-helper-toolbar {
           display: flex;
           align-items: center;
@@ -432,6 +439,45 @@ export class SurveyHelperToolbar extends BaseComponent {
 
         .helper-menu.active {
           display: block;
+        }
+
+        @media (max-width: 767px) {
+          .survey-helper-toolbar {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            gap: 0.5rem;
+            justify-content: space-between;
+          }
+
+          .survey-helper-toolbar .status-badge {
+            flex: 1 1 auto;
+            max-width: none;
+            min-width: 0;
+            padding-left: 0.5rem;
+            padding-right: 0.75rem;
+          }
+
+          .survey-helper-toolbar .status-icon,
+          .survey-action-btn {
+            width: 44px;
+            height: 44px;
+          }
+
+          .survey-helper-toolbar .status-name {
+            max-width: none;
+          }
+
+          .helper-menu {
+            position: fixed;
+            top: 4.75rem;
+            left: 0.75rem;
+            right: 0.75rem;
+            width: auto !important;
+            max-height: calc(100dvh - 6rem);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+          }
         }
 
         .helper-menu-overlay {

@@ -115,7 +115,50 @@ export class SurveyStructurePanel extends BaseComponent {
     const delDisabled = this.selectedCount === 0 ? ' disabled' : '';
 
     this.innerHTML = `
-      <div class="rounded-3xl p-6 shadow-lg border border-white bg-white/20 backdrop-blur h-full flex flex-col">
+      <style>
+        webropol-survey-structure {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .survey-structure-panel-shell {
+          min-width: 0;
+        }
+
+        @media (max-width: 767px) {
+          .survey-structure-panel-shell {
+            height: auto;
+            min-height: 0;
+            border-radius: 1.25rem;
+            padding: 1rem;
+          }
+
+          .survey-structure-panel-shell ._tab-switcher {
+            width: 100%;
+            align-self: stretch;
+          }
+
+          .survey-structure-panel-shell ._action-bar {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.5rem;
+          }
+
+          .survey-structure-panel-shell ._action-bar webropol-tooltip,
+          .survey-structure-panel-shell ._action-bar webropol-button {
+            width: 100%;
+          }
+
+          .survey-structure-panel-shell .survey-scroll-area {
+            max-height: none;
+            padding-right: 0;
+          }
+        }
+      </style>
+      <div class="survey-structure-panel-shell rounded-3xl p-6 shadow-lg border border-white bg-white/20 backdrop-blur h-full flex flex-col">
 
         <!-- Header -->
         <div class="flex items-center justify-between mb-4">

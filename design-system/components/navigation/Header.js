@@ -1790,7 +1790,7 @@ export class WebropolHeader extends BaseComponent {
   }
 
   toggleMobileMenu() {
-    const sidebar = document.querySelector('webropol-sidebar-enhanced');
+    const sidebar = document.querySelector('webropol-sidebar-enhanced, webropol-sidebar');
     if (sidebar) {
       if (typeof sidebar.toggleMobileMenu === 'function') {
         sidebar.toggleMobileMenu();
@@ -1801,7 +1801,7 @@ export class WebropolHeader extends BaseComponent {
       }
     } else {
       setTimeout(() => {
-        const retry = document.querySelector('webropol-sidebar-enhanced');
+        const retry = document.querySelector('webropol-sidebar-enhanced, webropol-sidebar');
         if (retry && typeof retry.toggleMobileMenu === 'function') {
           retry.toggleMobileMenu();
           this.emit('mobile-menu-toggle');

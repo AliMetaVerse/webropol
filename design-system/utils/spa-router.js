@@ -29,7 +29,7 @@ class WebropolSPA {
   ['/surveys/report', 'surveys/report.html'],
   ['/surveys/aita', 'surveys/aita.html'],
   ['/surveys/ai-survey', 'surveys/ai-survey.html'],
-      ['/events', 'events/index.html'],
+      ['/events', 'events/list.html'],
       ['/events/list', 'events/list.html'],
       ['/sms', 'sms/list.html'],
       ['/sms/list', 'sms/list.html'],
@@ -417,6 +417,13 @@ class WebropolSPA {
       try {
         if (window.tailwind && typeof window.tailwind.refresh === 'function') {
           window.tailwind.refresh();
+        }
+      } catch(_) {}
+
+      // Re-emit viewport state so newly mounted vanilla web components can pick up adaptive mode
+      try {
+        if (window.WebropolViewport && typeof window.WebropolViewport.refresh === 'function') {
+          window.WebropolViewport.refresh();
         }
       } catch(_) {}
 

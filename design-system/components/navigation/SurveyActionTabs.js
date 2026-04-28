@@ -154,6 +154,77 @@ export class SurveyActionTabs extends BaseComponent {
     }).join('');
 
     this.innerHTML = `
+      <style>
+        webropol-survey-action-tabs {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        webropol-survey-action-tabs .webropol-tabs-main-primary {
+          max-width: 100%;
+          min-width: 0;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
+        }
+
+        @media (max-width: 900px) {
+          webropol-survey-action-tabs {
+            overflow: hidden;
+          }
+
+          webropol-survey-action-tabs .webropol-tabs-main-primary {
+            width: 100%;
+            flex-direction: row !important;
+            gap: 0.5rem;
+            padding: 0 0.75rem 0.25rem;
+            scroll-snap-type: x proximity;
+            scrollbar-width: none;
+          }
+
+          webropol-survey-action-tabs .webropol-tabs-main-primary::-webkit-scrollbar {
+            display: none;
+          }
+
+          webropol-survey-action-tabs .webropol-tab-main-primary {
+            width: auto;
+            min-width: 4.25rem;
+            max-width: 12rem;
+            flex: 0 0 auto;
+            align-items: center;
+            border-radius: 1rem;
+            scroll-snap-align: start;
+          }
+
+          webropol-survey-action-tabs .webropol-tab-main-primary.active {
+            min-width: min(13.5rem, calc(100vw - 1.5rem));
+          }
+
+          webropol-survey-action-tabs .main-primary-row {
+            width: auto;
+            max-width: 100%;
+            gap: 0.5rem;
+            padding: 0.5rem 0.625rem;
+          }
+
+          webropol-survey-action-tabs .webropol-tab-main-primary:not(.active) .main-primary-label {
+            display: none;
+          }
+
+          webropol-survey-action-tabs .main-primary-label {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          webropol-survey-action-tabs .main-primary-indicator {
+            height: 2px;
+          }
+        }
+      </style>
       <div class="webropol-tabs-main-primary flex" role="navigation" aria-label="Survey actions">
         ${tabsHTML}
       </div>

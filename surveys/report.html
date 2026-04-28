@@ -45,6 +45,46 @@
   <!-- Design System core tokens and button classes -->
   <link href="../design-system/styles/tokens.css" rel="stylesheet">
   <link href="../design-system/styles/tabs.css" rel="stylesheet">
+  <link href="../design-system/styles/mobile-responsive.css" rel="stylesheet">
+  <link href="../design-system/styles/adaptive.css" rel="stylesheet">
+  <script src="../design-system/utils/viewport-store.js"></script>
+  <style>
+    /* ----------------------------------------------------------- */
+    /*  Adaptive (mobile) overrides for the report page             */
+    /*  Preserves dense tables/charts via horizontal scroll instead */
+    /*  of stacking, but unifies side-by-side panels and full-bleed.*/
+    /* ----------------------------------------------------------- */
+    body.is-mobile main { padding-left: 8px !important; padding-right: 8px !important; }
+    body.is-mobile webropol-survey-helper-toolbar,
+    body.is-mobile webropol-survey-action-tabs { width: 100%; }
+    body.is-mobile .grid.grid-cols-2,
+    body.is-mobile .grid.grid-cols-3,
+    body.is-mobile .grid.grid-cols-4 { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 8px !important; }
+    body.is-mobile .lg\\:grid-cols-3,
+    body.is-mobile .lg\\:grid-cols-4,
+    body.is-mobile .md\\:grid-cols-3,
+    body.is-mobile .md\\:grid-cols-4 { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+    body.is-mobile table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    body.is-mobile .min-w-0 { min-width: 0; }
+    body.is-mobile [class*="lg:flex-row"],
+    body.is-mobile [class*="md:flex-row"] { flex-direction: column !important; }
+    /* Sticky filter / action chrome at top of report on mobile */
+    body.is-mobile .report-toolbar,
+    body.is-mobile .report-filters {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(10px);
+      padding: 8px 4px;
+      margin: 0 -8px 8px;
+      border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+    /* KPI cards: 2-up on mobile with reduced padding */
+    body.is-mobile .kpi-card,
+    body.is-mobile [data-kpi-card] {
+      padding: 12px !important;
+      border-radius: 14px !important;
+    }
+  </style>
   <link href="../design-system/styles/button-classes.css" rel="stylesheet">
   <style>
     :root {
@@ -323,7 +363,7 @@
       <pattern id="hc-pat-9" patternUnits="userSpaceOnUse" width="10" height="10"><path d="M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7" stroke="white" stroke-width="2" fill="none"/></pattern>
     </defs>
   </svg>
-  <div class="flex min-h-screen">
+  <div class="flex min-h-screen adaptive-shell">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col min-w-0">
       <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>

@@ -74,7 +74,12 @@ export class SurveyEditToolbar extends BaseComponent {
 
     this.innerHTML = `
       <style>
-        :host, webropol-survey-edit-toolbar { display: block; }
+        :host, webropol-survey-edit-toolbar {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
 
         .survey-edit-toolbar {
           --tb-radius: 18px;
@@ -249,9 +254,11 @@ export class SurveyEditToolbar extends BaseComponent {
         /* Responsive */
         @media (max-width: 900px) {
           .survey-edit-toolbar {
+            width: 100%;
             overflow-x: auto;
             max-width: 100%;
             justify-content: flex-start;
+            -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
           }
           .survey-edit-toolbar .tb-btn-label { display: none; }
@@ -259,6 +266,38 @@ export class SurveyEditToolbar extends BaseComponent {
           .survey-edit-toolbar .tb-btn-primary { width: auto; padding: 0 14px; }
           .survey-edit-toolbar .tb-btn-primary .tb-btn-label { display: inline; }
           .survey-edit-toolbar .tb-separator { height: 20px; margin: 0 2px; }
+        }
+
+        @media (max-width: 900px) {
+          webropol-survey-edit-toolbar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 60;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 -10px 24px -18px rgba(15, 23, 42, 0.35);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+          }
+
+          .survey-edit-toolbar {
+            border-radius: 0;
+            border-left: 0;
+            border-right: 0;
+            border-bottom: 0;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
+
+          .survey-edit-toolbar .tb-btn {
+            width: 44px;
+            height: 44px;
+          }
+
+          .survey-edit-toolbar .tb-btn-primary {
+            min-width: max-content;
+            height: 44px;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {

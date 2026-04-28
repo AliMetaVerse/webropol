@@ -95,7 +95,50 @@ export class PageQuickActions extends BaseComponent {
     const actions = this.getActions();
     
     this.innerHTML = `
-      <div class="mt-8 mb-8 relative">
+      <style>
+        webropol-page-quick-actions {
+          display: block;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        .page-quick-actions-shell {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .page-quick-actions-strip {
+          max-width: 100%;
+          min-width: 0;
+        }
+
+        @media (max-width: 767px) {
+          .page-quick-actions-shell {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+          }
+
+          .page-quick-actions-panel {
+            width: 100%;
+            border-radius: 1rem;
+            padding: 0.75rem;
+          }
+
+          .page-quick-actions-strip {
+            justify-content: flex-start;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+
+          .page-quick-actions-strip::-webkit-scrollbar {
+            display: none;
+          }
+        }
+      </style>
+      <div class="page-quick-actions-shell mt-8 mb-8 relative">
         <!-- Dashed separator line -->
         <div class="absolute inset-0 flex items-center">
           <div class="w-full border-t border-dashed border-webropol-gray-300"></div>
@@ -103,8 +146,8 @@ export class PageQuickActions extends BaseComponent {
         
         <!-- Centered action buttons -->
         <div class="relative flex justify-center">
-          <div class="bg-webropol-gray-50 px-6 py-3 rounded-full">
-            <div class="flex items-center gap-3 flex-wrap justify-center">
+          <div class="page-quick-actions-panel bg-webropol-gray-50 px-6 py-3 rounded-full">
+            <div class="page-quick-actions-strip flex items-center gap-3 flex-wrap justify-center">
               ${this.showLabel ? `
                 <span class="text-xs font-medium text-webropol-gray-500 uppercase tracking-wider shrink-0">
                   Quick Actions

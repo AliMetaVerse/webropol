@@ -51,6 +51,9 @@
   <!-- Design System core tokens and button classes -->
   <link href="../design-system/styles/tokens.css" rel="stylesheet">
   <link href="../design-system/styles/tabs.css" rel="stylesheet">
+  <link href="../design-system/styles/mobile-responsive.css" rel="stylesheet">
+  <link href="../design-system/styles/adaptive.css" rel="stylesheet">
+  <script src="../design-system/utils/viewport-store.js"></script>
   <link href="../design-system/styles/tabs-unified.css" rel="stylesheet">
   <link href="../design-system/styles/button-classes.css" rel="stylesheet">
   <style>
@@ -389,6 +392,194 @@
     }
   .survey-action-btn { width:40px; height:40px; flex-shrink:0; }
 
+  /* ----------------------------------------------------------------- */
+  /*  Adaptive editor (mobile only — driven by body.is-mobile)          */
+  /*  Mode rail replaces vertical tab lists; only the active pane shows;*/
+  /*  desktop helper toolbar / action tabs are hidden on mobile.        */
+  /* ----------------------------------------------------------------- */
+  .editor-mode-rail { display: none; }
+  .editor-mobile-bottom-bar { display: none; }
+
+  body.is-mobile .editor-mode-rail {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15,23,42,0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  body.is-mobile .editor-mode-rail::-webkit-scrollbar { display: none; }
+  body.is-mobile .editor-mode-rail button {
+    flex: 1 1 0;
+    min-width: max-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    background: transparent;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  body.is-mobile .editor-mode-rail button.is-active {
+    background: #ecfeff;
+    color: #0e7490;
+    border-color: #a5f3fc;
+  }
+
+  /* Hide desktop chrome on mobile — the mode rail + bottom bar take over */
+  body.is-mobile webropol-survey-action-tabs,
+  body.is-mobile webropol-survey-helper-toolbar,
+  body.is-mobile webropol-survey-edit-toolbar,
+  body.is-mobile .survey-editor-header-bar {
+    display: none !important;
+  }
+
+  /* Show only the active pane on mobile (driven by body[data-editor-mode]) */
+  body.is-mobile [data-editor-pane] { display: none !important; }
+  body.is-mobile[data-editor-mode="structure"] [data-editor-pane="structure"],
+  body.is-mobile[data-editor-mode="edit"]      [data-editor-pane="edit"],
+  body.is-mobile[data-editor-mode="preview"]   [data-editor-pane="preview"],
+  body.is-mobile[data-editor-mode="settings"]  [data-editor-pane="settings"] {
+    display: block !important;
+  }
+  body.is-mobile #surveyEditorLayout {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    padding: 12px 12px 96px !important;
+  }
+
+  /* Bottom action bar (mobile only) */
+  body.is-mobile .editor-mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 -8px 24px -16px rgba(15,23,42,0.18);
+  }
+  body.is-mobile .editor-mobile-bottom-bar > button {
+    flex: 1 1 0;
+    min-height: 44px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  body.is-mobile .editor-mobile-bottom-bar .btn-primary {
+    background: #06b6d4;
+    color: #fff;
+  }
+  body.is-mobile .editor-mobile-bottom-bar .btn-secondary {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  body.is-mobile .editor-mobile-bottom-bar .btn-icon {
+    flex: 0 0 44px;
+    width: 44px;
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  body.is-mobile webropol-floating-button { display: none !important; }
+
+  @media (max-width: 900px) {
+    body {
+      overflow: hidden;
+    }
+
+    main[role="main"] {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .survey-editor-shell {
+      width: 100%;
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .survey-editor-header-bar {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: stretch !important;
+      gap: 0.75rem;
+      padding-left: 0;
+      padding-right: 0;
+      padding-bottom: 0.75rem;
+    }
+
+    .survey-editor-header-bar > * {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .survey-editor-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: auto;
+      padding: 0.75rem 0.75rem 6.5rem;
+    }
+
+    .survey-structure-pane {
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+    }
+
+    .survey-scroll-area {
+      overflow: visible;
+      padding-right: 0 !important;
+    }
+
+    .survey-background-wrapper {
+      border-radius: 0;
+      padding: 0;
+    }
+
+    .survey-background-wrapper > .relative,
+    .survey-background-wrapper section {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .survey-background-wrapper section {
+      border-radius: 1rem;
+      padding: 1rem !important;
+    }
+
+    .survey-background-wrapper h1,
+    .survey-background-wrapper h2 {
+      font-size: 1.75rem !important;
+      line-height: 1.2 !important;
+      overflow-wrap: anywhere;
+    }
+  }
+
   .survey-structure-resizer {
     display: none;
   }
@@ -494,18 +685,18 @@
     <!-- Global Analytics Tracker -->
     <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
-<body x-data="surveyEditApp()">
+<body x-data="surveyEditApp()" class="route-editor-tabs route-surveys-edit">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
       <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
 
       <main class="flex-1 overflow-hidden px-2 py-2 lg:px-1" role="main">
-        <div class="w-full mx-auto h-full flex flex-col min-h-0">
+        <div class="survey-editor-shell w-full mx-auto h-full flex flex-col min-h-0">
           <!-- Survey Editor Header -->
           <div class="mb-0">
             <!-- Action Tabs -->
-            <div class="flex items-center justify-between border-b border-webropol-gray-300">
+            <div class="survey-editor-header-bar flex items-center justify-between border-b border-webropol-gray-300">
               <webropol-survey-action-tabs active="edit"></webropol-survey-action-tabs>
 
               <webropol-survey-helper-toolbar 
@@ -521,10 +712,38 @@
           <!-- Toolbar -->
           <webropol-survey-edit-toolbar></webropol-survey-edit-toolbar>
 
+          <!-- Adaptive mobile mode rail (visible on mobile only) -->
+          <nav class="editor-mode-rail" role="tablist" aria-label="Editor sections">
+            <button type="button" role="tab"
+                    :class="{ 'is-active': mobileMode === 'structure' }"
+                    :aria-selected="mobileMode === 'structure'"
+                    @click="setMobileMode('structure')">
+              <i class="fal fa-list-tree"></i><span>Structure</span>
+            </button>
+            <button type="button" role="tab"
+                    :class="{ 'is-active': mobileMode === 'edit' }"
+                    :aria-selected="mobileMode === 'edit'"
+                    @click="setMobileMode('edit')">
+              <i class="fal fa-pen"></i><span>Edit</span>
+            </button>
+            <button type="button" role="tab"
+                    :class="{ 'is-active': mobileMode === 'preview' }"
+                    :aria-selected="mobileMode === 'preview'"
+                    @click="setMobileMode('preview')">
+              <i class="fal fa-eye"></i><span>Preview</span>
+            </button>
+            <button type="button" role="tab"
+                    :class="{ 'is-active': mobileMode === 'settings' }"
+                    :aria-selected="mobileMode === 'settings'"
+                    @click="setMobileMode('settings')">
+              <i class="fal fa-cog"></i><span>Settings</span>
+            </button>
+          </nav>
+
           <!-- Survey Editor Layout -->
           <div id="surveyEditorLayout" class="survey-editor-layout grid grid-cols-1 gap-6 pt-6 flex-1 min-h-0">
             <!-- Left Sidebar - Survey Structure -->
-            <div id="surveyStructurePane" class="survey-structure-pane lg:min-h-0" x-data="surveyStructureApp()">
+            <div id="surveyStructurePane" data-editor-pane="structure" class="survey-structure-pane lg:min-h-0" x-data="surveyStructureApp()">
               <webropol-survey-structure
                 title="Survey structure"
                 show-styles
@@ -808,7 +1027,7 @@
             </div>
             
             <!-- Main Canvas Area -->
-            <div class="min-h-0 overflow-y-auto survey-scroll-area lg:pr-2 lg:min-w-0">
+            <div data-editor-pane="edit" class="min-h-0 overflow-y-auto survey-scroll-area lg:pr-2 lg:min-w-0">
               <!-- Survey Background Wrapper -->
               <div id="surveyBackgroundWrapper" class="survey-background-wrapper min-h-full relative p-6">
                 <!-- Page Background Layer (placed above wrapper background) -->
@@ -924,6 +1143,19 @@
 
   <!-- Floating Create Button Component -->
   <webropol-floating-button></webropol-floating-button>
+
+  <!-- Adaptive mobile bottom action bar (visible on mobile only) -->
+  <div class="editor-mobile-bottom-bar" role="toolbar" aria-label="Editor primary actions">
+    <button type="button" class="btn-icon" aria-label="Undo" @click="(window.editorUndo || (() => {}))()">
+      <i class="fal fa-undo"></i>
+    </button>
+    <button type="button" class="btn-secondary" @click="setMobileMode('preview')">
+      <i class="fal fa-eye mr-1"></i> Preview
+    </button>
+    <button type="button" class="btn-primary" @click="addQuestionFromBottomBar()">
+      <i class="fal fa-plus mr-1"></i> Add question
+    </button>
+  </div>
 
   <!-- Survey Status Change Modal -->
   <div id="surveyStatusModal" class="modal-overlay">
@@ -3519,6 +3751,47 @@
         // Survey editor specific logic here
         autoSave: true,
         showMandatoryInfo: false,
+
+        // Adaptive mobile mode (mode rail). Desktop ignores this state.
+        mobileMode: 'edit', // 'structure' | 'edit' | 'preview' | 'settings'
+        get isMobileViewport() {
+          return !!(this.$store && this.$store.viewport && this.$store.viewport.isMobile);
+        },
+        setMobileMode(mode) {
+          // Preview is an action (opens preview), not a persistent mode
+          if (mode === 'preview') {
+            try { (window.previewSurvey || (() => {}))(); } catch (e) {}
+            return;
+          }
+          // Settings opens the styles sheet on mobile
+          if (mode === 'settings') {
+            this.openStylesSheet();
+            return;
+          }
+          this.mobileMode = mode;
+          document.body.dataset.editorMode = mode;
+        },
+        openStylesSheet() {
+          // Switch the internal structure tab to 'styles' and reveal structure pane
+          this.mobileMode = 'structure';
+          document.body.dataset.editorMode = 'structure';
+          this.$nextTick(() => {
+            const structure = document.querySelector('webropol-survey-structure');
+            if (structure && typeof structure.setActiveTab === 'function') {
+              structure.setActiveTab('styles');
+            } else if (structure) {
+              structure.setAttribute('active-tab', 'styles');
+            }
+          });
+        },
+        addQuestionFromBottomBar() {
+          // Reuse existing add-question modal trigger
+          try {
+            window.dispatchEvent(new CustomEvent('open-add-question-modal'));
+          } catch (e) {}
+          const trigger = document.querySelector('[data-action="add-question"]');
+          if (trigger) trigger.click();
+        },
         
         // Check if any questions are marked as mandatory
         hasMandatoryQuestions() {
@@ -3545,6 +3818,9 @@
         
         init() {
           console.log('Survey Editor initialized');
+
+          // Seed body dataset so adaptive CSS reflects current mode immediately
+          document.body.dataset.editorMode = this.mobileMode;
 
           // SPA-safe global hook for toolbar preview action fallback
           window.previewSurvey = () => this.previewSurvey();

@@ -23,6 +23,9 @@
     <!-- Import Global Design Tokens -->
     <link rel="stylesheet" href="../design-system/styles/tokens.css">
     <link rel="stylesheet" href="../design-system/styles/tabs.css">
+    <link rel="stylesheet" href="../design-system/styles/mobile-responsive.css">
+    <link rel="stylesheet" href="../design-system/styles/adaptive.css">
+    <script src="../design-system/utils/viewport-store.js"></script>
 
     <script>
         tailwind.config = {
@@ -297,6 +300,131 @@
             border-color: var(--primary-400);
             box-shadow: 0 0 0 3px rgba(var(--primary-400), 0.1);
         }
+
+        /* -------------------------------------------------------------- */
+        /*  Adaptive (mobile) — driven by body.is-mobile                  */
+        /* -------------------------------------------------------------- */
+        .surveys-folder-pill { display: none; }
+        .folder-drawer-backdrop { display: none; }
+
+        body.is-mobile main { padding-left: 12px !important; padding-right: 12px !important; }
+        body.is-mobile .surveys-layout-row { flex-direction: column; gap: 0 !important; }
+        body.is-mobile .folder-panel-col { width: 100% !important; flex: 1 1 auto !important; }
+        body.is-mobile .surveys-list-col  { width: 100% !important; }
+
+        /* Folder column → bottom-sheet drawer on mobile */
+        body.is-mobile .folder-panel-col {
+            position: fixed;
+            left: 0; right: 0; bottom: 0;
+            z-index: 60;
+            max-height: 80dvh;
+            transform: translateY(100%);
+            transition: transform .25s ease;
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -16px 32px -8px rgba(15,23,42,.24);
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            padding: 8px 12px 16px;
+        }
+        body.is-mobile.folder-drawer-open .folder-panel-col { transform: translateY(0); }
+        body.is-mobile.folder-drawer-open .folder-drawer-backdrop {
+            display: block;
+            position: fixed; inset: 0;
+            background: rgba(15,23,42,.45);
+            z-index: 55;
+        }
+        body.is-mobile .folder-panel-col .modern-card { width: 100%; box-shadow: none; border: 0; }
+        body.is-mobile .folder-panel-col::before {
+            content: '';
+            display: block;
+            width: 40px; height: 4px;
+            background: rgba(15,23,42,.18);
+            border-radius: 999px;
+            margin: 0 auto 8px;
+        }
+        body.is-mobile .folder-panel-col .max-h-96 { max-height: 60dvh; }
+
+        /* Mobile pill trigger */
+        body.is-mobile .surveys-folder-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #ecfeff;
+            color: #0e7490;
+            border: 1px solid #a5f3fc;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 40px;
+        }
+        body.is-mobile .surveys-page-header {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 10px;
+        }
+        body.is-mobile .surveys-page-header > a {
+            justify-content: center;
+        }
+        body.is-mobile .surveys-page-header .surveys-folder-pill { align-self: flex-start; }
+
+        /* Filter row: stack search + toggle on mobile */
+        body.is-mobile .surveys-filter-row { flex-direction: column; align-items: stretch !important; gap: 10px; }
+        body.is-mobile .surveys-filter-row .webropol-tabs-unified { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+        body.is-mobile .surveys-filter-row .webropol-tabs-unified::-webkit-scrollbar { display: none; }
+        body.is-mobile .surveys-filter-row > div:last-child { flex-direction: column; align-items: stretch !important; gap: 10px; }
+        body.is-mobile .surveys-filter-row > div:last-child > div.relative input { width: 100% !important; }
+
+        /* TABLE → CARDS on mobile (data-label injected by Alpine init) */
+        body.is-mobile .mobile-hide-table { overflow: visible !important; }
+        body.is-mobile table.surveys-table { display: block; min-width: 0 !important; width: 100%; }
+        body.is-mobile table.surveys-table thead { display: none; }
+        body.is-mobile table.surveys-table tbody { display: block; }
+        body.is-mobile table.surveys-table tr {
+            display: flex; flex-direction: column; gap: 6px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(15,23,42,.08);
+            border-radius: 14px;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(15,23,42,.04);
+        }
+        body.is-mobile table.surveys-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 0 !important;
+            border-bottom: 1px dashed rgba(15,23,42,.06);
+            padding-bottom: 6px !important;
+            font-size: 13px;
+            min-width: 0;
+        }
+        body.is-mobile table.surveys-table td:last-child { border-bottom: 0; padding-bottom: 0 !important; }
+        body.is-mobile table.surveys-table td::before {
+            content: attr(data-label);
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            flex: 0 0 auto;
+        }
+        body.is-mobile table.surveys-table td:first-child,
+        body.is-mobile table.surveys-table td:last-child { display: none; }
+        body.is-mobile table.surveys-table td:nth-child(2) {
+            order: -1;
+            border-bottom: 1px solid rgba(15,23,42,.08);
+            padding-bottom: 8px !important;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        body.is-mobile table.surveys-table td:nth-child(2)::before { display: none; }
+        body.is-mobile table.surveys-table td:nth-child(2) > * { text-align: right; flex: 1; }
+        body.is-mobile .distribution-methods { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+        body.is-mobile main.flex-1 { padding-bottom: 28px; }
     </style>
     
     <!-- Global Analytics Tracker -->
@@ -304,7 +432,7 @@
 </head>
 
 <body x-data="surveysListApp()" @click="showContextMenu = null">
-    <div class="flex h-screen">
+    <div class="flex h-screen adaptive-shell">
         <webropol-sidebar x-show="interfaceMode === 'classic'" 
                          x-transition:enter="transition ease-out duration-500"
                          x-transition:enter-start="opacity-0 transform -translate-x-full scale-95"
@@ -330,9 +458,15 @@
                   role="main">
                 <div class="mx-auto" :class="interfaceMode === 'prompt' ? 'max-w-6xl' : ''">
                     <!-- Page Header -->
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="surveys-page-header flex items-center justify-between mb-6">
                         <div class="flex items-center space-x-3">
                             <h1 class="page-title">Surveys</h1>
+                            <!-- Mobile-only folder drawer trigger -->
+                            <button type="button" class="surveys-folder-pill" @click="folderDrawerOpen = true" aria-label="Open folders">
+                                <i class="fas fa-folder-open"></i>
+                                <span x-text="selectedFolderName || 'All folders'"></span>
+                                <i class="fal fa-chevron-down text-xs"></i>
+                            </button>
                         </div>
                         <a href="../create/index.html?type=survey" class="bg-webropol-primary-600 hover:bg-webropol-primary-600 text-white px-4 py-2 rounded-full font-medium transition-all flex items-center space-x-2 hover-lift">
                             <i class="fal fa-plus"></i>
@@ -340,10 +474,13 @@
                         </a>
                     </div>
 
+                    <!-- Folder drawer backdrop (mobile only) -->
+                    <div class="folder-drawer-backdrop" @click="folderDrawerOpen = false"></div>
+
                     <!-- Main Layout with Sidebar and Content -->
-                    <div class="flex gap-6">
+                    <div class="surveys-layout-row flex gap-6">
                         <!-- Folder Sidebar -->
-                        <div class="w-80 flex-shrink-0">
+                        <div class="folder-panel-col w-80 flex-shrink-0">
                             <!-- Folders Card -->
                             <div class="modern-card rounded-xl">
                                 <!-- Folders Header -->
@@ -486,12 +623,12 @@
                         </div>
 
                         <!-- Survey List Container -->
-                        <div class="flex-1">
+                        <div class="surveys-list-col flex-1">
                             <!-- Content Container -->
                             <div class="bg-white rounded-2xl shadow-soft border border-webropol-gray-100/80 overflow-hidden">
                                 <!-- Filter Tabs -->
                                 <div class="border-b border-gray-200 px-6 py-4">
-                                    <div class="flex items-center justify-between">
+                                    <div class="surveys-filter-row flex items-center justify-between">
                                         <div class="webropol-tabs-unified webropol-tabs-rounded-container" role="tablist" aria-label="Survey filter">
                                             <button class="webropol-unified-tab webropol-tab-rounded size-sm active" role="tab" aria-selected="true">
                                                 <i class="fas fa-list mr-2"></i>
@@ -532,7 +669,7 @@
                                 <!-- Table -->
                                 <div class="px-6 py-4">
                                     <div class="overflow-x-auto mobile-hide-table">
-                                    <table class="w-full min-w-[720px]">
+                                    <table class="surveys-table w-full min-w-[720px]">
                                         <thead>
                                             <tr class="border-b border-gray-200">
                                                 <th class="text-left py-3 text-sm font-medium text-gray-700 w-8">
@@ -950,6 +1087,7 @@
                 // Interface modes
                 interfaceMode: 'classic', // 'classic' or 'prompt'
                 showContextMenu: null,
+                folderDrawerOpen: false,
                 
                 // Survey list specific
                 selectedSurveys: [],
@@ -1066,6 +1204,40 @@
                     
                     // Save surveys to localStorage for use in admin-tools
                     this.saveSurveysToStorage();
+
+                    // ── Adaptive: inject data-label on every <td> for mobile card view
+                    this.$nextTick(() => this.injectTableLabels());
+
+                    // ── Adaptive: keep body class in sync with folder drawer
+                    this.$watch('folderDrawerOpen', (v) => {
+                        document.body.classList.toggle('folder-drawer-open', !!v);
+                    });
+                },
+
+                get selectedFolderName() {
+                    if (!this.selectedFolderId) return '';
+                    const find = (list) => {
+                        for (const f of list) {
+                            if (f.id === this.selectedFolderId) return f.name;
+                            if (f.children?.length) {
+                                const r = find(f.children);
+                                if (r) return r;
+                            }
+                        }
+                        return null;
+                    };
+                    return find(this.folders) || '';
+                },
+
+                injectTableLabels() {
+                    document.querySelectorAll('table.surveys-table').forEach((tbl) => {
+                        const headers = Array.from(tbl.querySelectorAll('thead th')).map(th => (th.textContent || '').trim());
+                        tbl.querySelectorAll('tbody tr').forEach(tr => {
+                            Array.from(tr.children).forEach((td, i) => {
+                                if (!td.hasAttribute('data-label') && headers[i]) td.setAttribute('data-label', headers[i]);
+                            });
+                        });
+                    });
                 },
                 
                 // Interface mode management
