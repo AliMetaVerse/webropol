@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Permission - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' },
+            'webropol-success': { 50: '#f5faf3', 100: '#e8f4e4', 500: '#579f48', 600: '#448237', 700: '#38672e' },
+            'webropol-warning': { 50: '#fffae9', 100: '#fef2c7', 500: '#f5980b', 600: '#d97106', 700: '#b44e09' },
+            'webropol-danger': { 50: '#ffebed', 100: '#ffe4e7', 500: '#f43f63', 600: '#e11d4e', 700: '#be1241' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design-system/styles/tokens.css">
+  <link rel="stylesheet" href="../design-system/styles/mobile-responsive.css">
+  <link rel="stylesheet" href="../design-system/styles/adaptive.css">
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #f0fdff 100%);
+    }
+
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+
+    .admin-panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 0.875rem;
+      align-items: start;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.875rem;
+      background: #ffffff;
+    }
+
+    .check-row.is-complete {
+      border-color: #cfe9c9;
+      background: #f5faf3;
+    }
+  </style>
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/utils/theme-manager.js" type="module"></script>
+  <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+  <script src="../scripts/analytics-global-tracker.js"></script>
+</head>
+
+<body x-data="aiPermissionApp()">
+  <div class="flex h-screen adaptive-shell">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header-enhanced>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Admin Tools","url":"index.html"},{"label":"AI Permission","url":"ai-permission.html"}]'></webropol-breadcrumbs>
+      </div>
+
+      <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
+        <div class="mx-auto max-w-7xl space-y-8">
+          <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <a href="index.html" class="inline-flex items-center gap-2 text-sm font-semibold text-webropol-primary-700 hover:text-webropol-primary-800">
+                <i class="fal fa-arrow-left" aria-hidden="true"></i>
+                Admin Tools
+              </a>
+              <h1 class="mt-3 text-3xl font-bold text-webropol-gray-900">AI Permission</h1>
+              <p class="mt-2 max-w-2xl text-sm text-webropol-gray-600">Role access and readiness checks for responsible AI use in Finnish customer environments.</p>
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-webropol-gray-200 bg-white px-4 py-2 text-sm text-webropol-gray-600 shadow-card">
+              <i class="fal fa-clock" aria-hidden="true"></i>
+              <span x-text="lastSaved"></span>
+            </div>
+          </header>
+
+          <section class="grid grid-cols-1 gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div class="admin-panel p-6">
+              <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p class="text-sm font-semibold uppercase tracking-wide text-webropol-primary-700">Readiness</p>
+                  <h2 class="mt-2 text-2xl font-bold text-webropol-gray-900">Finnish AI usage checks</h2>
+                  <p class="mt-2 max-w-2xl text-sm leading-6 text-webropol-gray-600">Aligned to EU AI Act, GDPR and Finnish data-protection responsibilities for transparency, oversight and data minimisation.</p>
+                </div>
+                <div class="rounded-2xl bg-webropol-primary-50 px-5 py-4 text-center">
+                  <p class="text-3xl font-bold text-webropol-primary-800" x-text="completionPercent() + '%'"></p>
+                  <p class="mt-1 text-xs font-semibold text-webropol-primary-700">complete</p>
+                </div>
+              </div>
+              <div class="mt-6 h-3 overflow-hidden rounded-full bg-webropol-gray-100" aria-hidden="true">
+                <div class="h-full rounded-full bg-webropol-primary-600 transition-all duration-300" :style="`width: ${completionPercent()}%`"></div>
+              </div>
+              <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div class="rounded-xl border border-webropol-gray-200 bg-white p-4">
+                  <p class="text-2xl font-bold text-webropol-gray-900" x-text="completedChecks()"></p>
+                  <p class="text-xs font-medium text-webropol-gray-500">checks completed</p>
+                </div>
+                <div class="rounded-xl border border-webropol-gray-200 bg-white p-4">
+                  <p class="text-2xl font-bold" :class="requiredOpen() ? 'text-webropol-warning-700' : 'text-webropol-success-700'" x-text="requiredOpen()"></p>
+                  <p class="text-xs font-medium text-webropol-gray-500">required open</p>
+                </div>
+                <div class="rounded-xl border border-webropol-gray-200 bg-white p-4">
+                  <p class="text-2xl font-bold text-webropol-gray-900" x-text="enabledPermissions()"></p>
+                  <p class="text-xs font-medium text-webropol-gray-500">AI roles enabled</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-panel p-6">
+              <h2 class="text-xl font-bold text-webropol-gray-900">Governance owner</h2>
+              <div class="mt-5 space-y-4">
+                <label class="block">
+                  <span class="text-sm font-semibold text-webropol-gray-700">Owner</span>
+                  <input x-model="governance.owner" @change="saveSettings()" type="text" class="mt-2 w-full rounded-xl border border-webropol-gray-200 bg-white px-4 py-2.5 text-sm text-webropol-gray-800 focus:border-webropol-primary-500 focus:outline-none focus:ring-2 focus:ring-webropol-primary-100">
+                </label>
+                <label class="block">
+                  <span class="text-sm font-semibold text-webropol-gray-700">Status</span>
+                  <select x-model="governance.status" @change="saveSettings()" class="mt-2 w-full rounded-xl border border-webropol-gray-200 bg-white px-4 py-2.5 text-sm text-webropol-gray-800 focus:border-webropol-primary-500 focus:outline-none focus:ring-2 focus:ring-webropol-primary-100">
+                    <option>Draft</option>
+                    <option>In legal review</option>
+                    <option>Approved</option>
+                    <option>Suspended</option>
+                  </select>
+                </label>
+                <label class="block">
+                  <span class="text-sm font-semibold text-webropol-gray-700">Next review</span>
+                  <input x-model="governance.reviewDate" @change="saveSettings()" type="date" class="mt-2 w-full rounded-xl border border-webropol-gray-200 bg-white px-4 py-2.5 text-sm text-webropol-gray-800 focus:border-webropol-primary-500 focus:outline-none focus:ring-2 focus:ring-webropol-primary-100">
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+            <div class="admin-panel p-6">
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-bold text-webropol-gray-900">Compliance checks</h2>
+                  <p class="mt-1 text-sm text-webropol-gray-600">Required controls must be complete before broad AI rollout.</p>
+                </div>
+                <span class="rounded-full bg-webropol-warning-50 px-3 py-1 text-xs font-semibold text-webropol-warning-700">Finland ready</span>
+              </div>
+              <div class="mt-5 grid gap-3">
+                <template x-for="check in checks" :key="check.id">
+                  <label class="check-row" :class="{ 'is-complete': check.checked }">
+                    <input type="checkbox" x-model="check.checked" @change="saveSettings()" class="mt-1 h-5 w-5 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
+                    <span>
+                      <span class="block text-sm font-semibold text-webropol-gray-900" x-text="check.label"></span>
+                      <span class="mt-1 block text-sm leading-6 text-webropol-gray-600" x-text="check.note"></span>
+                    </span>
+                    <span class="rounded-full px-2.5 py-1 text-xs font-semibold" :class="check.required ? 'bg-webropol-warning-50 text-webropol-warning-700' : 'bg-webropol-gray-100 text-webropol-gray-600'" x-text="check.required ? 'Required' : 'Optional'"></span>
+                  </label>
+                </template>
+              </div>
+            </div>
+
+            <div class="space-y-6">
+              <div class="admin-panel p-6">
+                <h2 class="text-xl font-bold text-webropol-gray-900">Role permissions</h2>
+                <p class="mt-1 text-sm text-webropol-gray-600">Enable AI features only for roles with an approved business need.</p>
+                <div class="mt-5 grid gap-3">
+                  <template x-for="permission in permissions" :key="permission.id">
+                    <div class="flex items-start justify-between gap-4 rounded-xl border border-webropol-gray-200 bg-white p-4">
+                      <div class="min-w-0">
+                        <p class="text-sm font-semibold text-webropol-gray-900" x-text="permission.label"></p>
+                        <p class="mt-1 text-sm leading-6 text-webropol-gray-600" x-text="permission.note"></p>
+                      </div>
+                      <button type="button" role="switch" :aria-checked="permission.enabled.toString()" @click="togglePermission(permission.id)" class="relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-webropol-primary-500 focus:ring-offset-2" :class="permission.enabled ? 'bg-webropol-primary-600' : 'bg-webropol-gray-200'">
+                        <span class="inline-block h-5 w-5 rounded-full bg-white shadow transition-transform" :class="permission.enabled ? 'translate-x-6' : 'translate-x-1'"></span>
+                      </button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="admin-panel p-6">
+                <h2 class="text-xl font-bold text-webropol-gray-900">Audit posture</h2>
+                <div class="mt-5 grid gap-3 text-sm">
+                  <div class="flex items-center justify-between rounded-xl bg-webropol-gray-50 px-4 py-3">
+                    <span class="font-medium text-webropol-gray-700">Permission changes</span>
+                    <span class="font-semibold text-webropol-success-700">Logged</span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-xl bg-webropol-gray-50 px-4 py-3">
+                    <span class="font-medium text-webropol-gray-700">Human oversight</span>
+                    <span class="font-semibold" :class="governance.owner ? 'text-webropol-success-700' : 'text-webropol-warning-700'" x-text="governance.owner ? 'Assigned' : 'Missing'"></span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-xl bg-webropol-gray-50 px-4 py-3">
+                    <span class="font-medium text-webropol-gray-700">Legal status</span>
+                    <span class="font-semibold text-webropol-gray-800" x-text="governance.status"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <webropol-floating-button></webropol-floating-button>
+
+  <script>
+    function aiPermissionApp() {
+      return {
+        preferenceKey: 'webropol_ai_permission_settings',
+        lastSaved: 'Not saved yet',
+        governance: {
+          owner: 'AI governance team',
+          status: 'Draft',
+          reviewDate: ''
+        },
+        checks: [
+          { id: 'purpose-risk', label: 'Purpose and AI risk level documented', note: 'Each enabled AI workflow has a defined purpose, expected benefit and risk classification.', required: true, checked: false },
+          { id: 'legal-basis', label: 'GDPR legal basis and data minimisation approved', note: 'Personal data use is limited to what is necessary and supported by a valid legal basis.', required: true, checked: false },
+          { id: 'high-risk-review', label: 'High-risk AI assessment completed when required', note: 'Use cases that may affect rights, access or services are reviewed before activation.', required: true, checked: false },
+          { id: 'human-oversight', label: 'Human oversight owner assigned', note: 'A named owner can review outputs, pause use and handle escalations.', required: true, checked: false },
+          { id: 'user-notice', label: 'AI-use notice available for end users', note: 'Users are clearly informed when AI supports content generation, analytics or recommendations.', required: true, checked: false },
+          { id: 'sensitive-data', label: 'Sensitive data restrictions enabled', note: 'Special category data and Finnish personal identity codes are blocked unless separately approved.', required: true, checked: false },
+          { id: 'processor-safeguards', label: 'Processor and transfer safeguards verified', note: 'Vendor, data location, DPA and EU/EEA transfer safeguards are confirmed.', required: true, checked: false },
+          { id: 'audit-incident', label: 'Audit trail and incident escalation enabled', note: 'Permission changes, AI actions and incidents can be reviewed by administrators.', required: false, checked: false }
+        ],
+        permissions: [
+          { id: 'survey-ai', label: 'Survey creators', note: 'Question generation, wording suggestions and survey structure assistance.', enabled: true },
+          { id: 'event-ai', label: 'Event managers', note: 'Attendance prediction, event summaries and participant communication support.', enabled: false },
+          { id: 'analytics-ai', label: 'Analytics users', note: 'Insight generation, anomaly notes and report summaries.', enabled: false },
+          { id: 'distribution-ai', label: 'Distribution admins', note: 'Send-time optimisation and audience segmentation recommendations.', enabled: false },
+          { id: 'context-admins', label: 'AI context editors', note: 'Maintain organisation context, approved sources and restricted data rules.', enabled: true }
+        ],
+
+        init() {
+          this.loadSettings();
+        },
+
+        loadSettings() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            const savedChecks = existing.checks || {};
+            const savedPermissions = existing.permissions || {};
+            this.checks = this.checks.map(check => ({
+              ...check,
+              checked: savedChecks[check.id]?.checked ?? check.checked
+            }));
+            this.permissions = this.permissions.map(permission => ({
+              ...permission,
+              enabled: savedPermissions[permission.id]?.enabled ?? permission.enabled
+            }));
+            this.governance = { ...this.governance, ...(existing.governance || {}) };
+            this.lastSaved = existing.updatedAt ? new Date(existing.updatedAt).toLocaleString() : 'Not saved yet';
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        saveSettings() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            existing.checks = Object.fromEntries(this.checks.map(check => [check.id, { checked: check.checked }]));
+            existing.permissions = Object.fromEntries(this.permissions.map(permission => [permission.id, { enabled: permission.enabled }]));
+            existing.governance = { ...this.governance };
+            existing.updatedAt = new Date().toISOString();
+            localStorage.setItem(this.preferenceKey, JSON.stringify(existing));
+            this.lastSaved = new Date(existing.updatedAt).toLocaleString();
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        togglePermission(permissionId) {
+          const permission = this.permissions.find(item => item.id === permissionId);
+          if (!permission) return;
+          permission.enabled = !permission.enabled;
+          this.saveSettings();
+        },
+
+        completedChecks() {
+          return this.checks.filter(check => check.checked).length;
+        },
+
+        requiredOpen() {
+          return this.checks.filter(check => check.required && !check.checked).length;
+        },
+
+        completionPercent() {
+          if (!this.checks.length) return 0;
+          return Math.round((this.completedChecks() / this.checks.length) * 100);
+        },
+
+        enabledPermissions() {
+          return this.permissions.filter(permission => permission.enabled).length;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

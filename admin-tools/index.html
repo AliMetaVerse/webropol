@@ -60,9 +60,10 @@
     .feature-card {
       position: relative;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.875rem;
       padding: 0.875rem 1rem;
+      min-height: 5.25rem;
       background: #ffffff;
       border: 1px solid #e2e8f0;
       border-radius: 0.875rem;
@@ -76,7 +77,10 @@
       display: grid;
       gap: 0.625rem;
       grid-template-columns: 1fr;
+      align-content: start;
     }
+
+    .feature-card webropol-avatar { flex-shrink: 0; }
 
     .feature-card.is-link { cursor: pointer; }
 
@@ -130,14 +134,20 @@
     /* Category sections in responsive grid */
     .category-grid {
       display: grid;
-      gap: 2rem 2.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+      align-items: start;
+    }
+
+    @media (min-width: 1280px) {
+      .category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
 
     .category-section {
       display: flex;
       flex-direction: column;
       gap: 0.875rem;
+      min-width: 0;
     }
 
     .category-header {
@@ -305,6 +315,7 @@
                 {"id":"all","label":"All"},
                 {"id":"users","label":"Users"},
                 {"id":"security","label":"Security"},
+                {"id":"ai","label":"AI"},
                 {"id":"modules","label":"Modules"},
                 {"id":"other","label":"Other"}
               ]'>
@@ -428,6 +439,14 @@
               { title: 'Password Policy', sub: 'Configure password requirements.', icon: 'key', url: '#' },
               { title: 'Two Factor Authentication', sub: 'Status: Not in use.', icon: 'mobile-alt', url: '#', badge: 'Not in use', badgeTone: 'neutral' },
               { title: 'IP Restrictions', sub: 'Control access by IP address.', icon: 'ban', url: '#' }
+            ]
+          },
+          {
+            id: 'ai',
+            title: 'AI Management',
+            items: [
+              { title: 'AI Permission', sub: 'Finnish AI usage checks, role access and audit readiness.', icon: 'shield-check', url: 'ai-permission.html', badge: 'Checks', badgeTone: 'warning' },
+              { title: 'AI Context', sub: 'Organisation context, approved sources and response boundaries.', icon: 'brain', url: 'ai-context.html', badge: 'Context', badgeTone: 'neutral' }
             ]
           },
           {
