@@ -45,6 +45,7 @@ export class PageQuickActions extends BaseComponent {
     this.showLabel = this.getBoolAttr('show-label', true);
     this.iconsOnly = false;
     this.isMobile = this.getIsMobile();
+    this.quickActionsMenuOpen = false;
 
     this.handleIconsOnlyChange = (event) => {
       this.iconsOnly = Boolean(event.detail?.enabled);
@@ -56,6 +57,14 @@ export class PageQuickActions extends BaseComponent {
       const nextIsMobile = Boolean(event.detail?.isMobile);
       if (nextIsMobile === this.isMobile) return;
       this.isMobile = nextIsMobile;
+      this.quickActionsMenuOpen = false;
+      this.render();
+      this.bindEvents();
+    };
+
+    this.handleDocumentClick = (event) => {
+      if (!this.quickActionsMenuOpen || this.contains(event.target)) return;
+      this.quickActionsMenuOpen = false;
       this.render();
       this.bindEvents();
     };
@@ -68,6 +77,7 @@ export class PageQuickActions extends BaseComponent {
 
     window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
     window.addEventListener('viewport:change', this.handleViewportChange);
+    document.addEventListener('click', this.handleDocumentClick);
   }
 
   getIsMobile() {
@@ -113,6 +123,53 @@ export class PageQuickActions extends BaseComponent {
     };
 
     return hueMap[color] || 'primary';
+  }
+
+  getMobileActionsMarkup(actions) {
+    if (!actions.length) return '';
+
+    const visibleAction = actions.find(action => action.id === 'add-question') || actions[0];
+    const hiddenActions = actions.filter(action => action !== visibleAction);
+    const makeActionButton = (action, extraClass = '') => {
+      const hue = this.getHue(action.color);
+      const label = this.escapeHtml(action.label);
+      const icon = this.escapeHtml(action.icon);
+      return `
+        <button
+          type="button"
+          class="page-quick-action-mobile-btn page-quick-action-mobile-btn--${hue} page-quick-action-mobile-btn--${this.escapeHtml(action.color)} ${extraClass}"
+          data-action-id="${this.escapeHtml(action.id)}"
+          aria-label="${label}"
+        >
+          <i class="${icon}" aria-hidden="true"></i>
+          <span>${label}</span>
+        </button>
+      `;
+    };
+
+    const hiddenMarkup = hiddenActions.map(action => makeActionButton(action, 'page-quick-action-mobile-btn--menu-item')).join('');
+
+    return `
+      <div class="page-quick-actions-primary">
+        ${makeActionButton(visibleAction, 'page-quick-action-mobile-btn--primary-action')}
+      </div>
+      ${hiddenActions.length ? `
+        <div class="page-quick-actions-more-wrap">
+          <button
+            type="button"
+            class="page-quick-actions-more-btn${this.quickActionsMenuOpen ? ' is-open' : ''}"
+            aria-label="More quick actions"
+            aria-haspopup="menu"
+            aria-expanded="${this.quickActionsMenuOpen ? 'true' : 'false'}"
+          >
+            <i class="fal fa-ellipsis-h" aria-hidden="true"></i>
+          </button>
+          <div class="page-quick-actions-more-menu" role="menu" ${this.quickActionsMenuOpen ? '' : 'hidden'}>
+            ${hiddenMarkup}
+          </div>
+        </div>
+      ` : ''}
+    `;
   }
 
   render() {
@@ -162,9 +219,8 @@ export class PageQuickActions extends BaseComponent {
           }
 
           .page-quick-actions-strip {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            align-items: stretch;
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
             justify-content: stretch;
             overflow: visible;
@@ -177,6 +233,55 @@ export class PageQuickActions extends BaseComponent {
 
           .page-quick-actions-strip > span,
           .page-quick-actions-strip > .h-4.w-px {
+            display: none;
+          }
+
+          .page-quick-actions-primary {
+            flex: 1 1 auto;
+            min-width: 0;
+          }
+
+          .page-quick-actions-more-wrap {
+            flex: 0 0 auto;
+            position: relative;
+          }
+
+          .page-quick-actions-more-btn {
+            appearance: none;
+            width: 48px;
+            height: 48px;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background: #ffffff;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          }
+
+          .page-quick-actions-more-btn.is-open {
+            color: #0e7490;
+            border-color: #a5f3fc;
+            background: #ecfeff;
+          }
+
+          .page-quick-actions-more-menu {
+            position: absolute;
+            right: 0;
+            bottom: calc(100% + 0.5rem);
+            min-width: min(16rem, calc(100vw - 2rem));
+            display: grid;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 16px 36px -20px rgba(15, 23, 42, 0.35);
+            z-index: 40;
+          }
+
+          .page-quick-actions-more-menu[hidden] {
             display: none;
           }
 
@@ -209,6 +314,18 @@ export class PageQuickActions extends BaseComponent {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+          }
+
+          .page-quick-action-mobile-btn--primary-action {
+            min-height: 50px;
+            font-size: 0.8rem;
+          }
+
+          .page-quick-action-mobile-btn--menu-item {
+            justify-content: flex-start;
+            min-height: 44px;
+            padding-left: 0.625rem;
+            padding-right: 0.625rem;
           }
 
           .page-quick-action-mobile-btn--error,
@@ -257,22 +374,9 @@ export class PageQuickActions extends BaseComponent {
                 <div class="h-4 w-px bg-webropol-gray-300 shrink-0"></div>
               ` : ''}
               
-              ${actions.map(action => {
+              ${this.isMobile ? this.getMobileActionsMarkup(actions) : actions.map(action => {
                 const hue = this.getHue(action.color);
-                const label = this.escapeHtml(action.label);
-                const icon = this.escapeHtml(action.icon);
-                const mobileMarkup = `
-                    <button
-                      type="button"
-                      class="page-quick-action-mobile-btn page-quick-action-mobile-btn--${hue} page-quick-action-mobile-btn--${this.escapeHtml(action.color)}"
-                      data-action-id="${this.escapeHtml(action.id)}"
-                      aria-label="${label}"
-                    >
-                      <i class="${icon}" aria-hidden="true"></i>
-                      <span>${label}</span>
-                    </button>
-                  `;
-                const buttonMarkup = this.isMobile ? mobileMarkup : (this.iconsOnly
+                const buttonMarkup = this.iconsOnly
                   ? `
                     <webropol-button-hue
                       data-action-id="${action.id}"
@@ -295,7 +399,7 @@ export class PageQuickActions extends BaseComponent {
                       icon="${action.icon}"
                       label="${action.label}"
                     ></webropol-button-hue>
-                  `);
+                  `;
                 return `
                     <div class="inline-flex shrink-0">
                       <webropol-tooltip text="${action.label}" position="top">
@@ -312,17 +416,33 @@ export class PageQuickActions extends BaseComponent {
   }
 
   bindEvents() {
+    const moreButton = this.querySelector('.page-quick-actions-more-btn');
+    if (moreButton) {
+      moreButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.quickActionsMenuOpen = !this.quickActionsMenuOpen;
+        this.render();
+        this.bindEvents();
+      });
+    }
+
     const buttons = this.querySelectorAll('[data-action-id]');
     buttons.forEach(button => {
       button.addEventListener('click', (e) => {
         const actionId = button.getAttribute('data-action-id');
         const action = this.getActions().find(a => a.id === actionId);
+        this.quickActionsMenuOpen = false;
         
         this.emit('action-click', { 
           actionId, 
           action,
           originalEvent: e 
         });
+
+        if (this.isMobile) {
+          this.render();
+          this.bindEvents();
+        }
       });
     });
   }
@@ -330,6 +450,7 @@ export class PageQuickActions extends BaseComponent {
   cleanup() {
     window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
     window.removeEventListener('viewport:change', this.handleViewportChange);
+    document.removeEventListener('click', this.handleDocumentClick);
     super.cleanup();
   }
 }

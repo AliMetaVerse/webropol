@@ -688,9 +688,8 @@ body.is-mobile.is-touch a.btn {
     border-radius: 1rem !important;
   }
   webropol-page-quick-actions .page-quick-actions-strip {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    align-items: stretch !important;
+    display: flex !important;
+    align-items: center !important;
     justify-content: stretch !important;
     gap: 0.5rem !important;
     overflow-x: visible !important;
@@ -841,6 +840,10 @@ body.is-mobile.is-touch a.btn {
 }
 
 
+body.route-sms-edit .editor-mode-rail {
+  display: none;
+}
+
 /* ================================================================== */
 /*  sms/edit.html (2-way SMS editor) - mobile layout                   */
 /*  - Stack the 2-pane editor (structure + question canvas)            */
@@ -848,22 +851,66 @@ body.is-mobile.is-touch a.btn {
 /*  - Tabs + helper-toolbar share row, helper-toolbar pinned right     */
 /* ================================================================== */
 @media (max-width: 900px) {
-  body[x-data*="smsEditApp"] {
+  body.route-sms-edit {
     overflow-x: hidden !important;
     overflow-y: auto !important;
   }
 
+  body.route-sms-edit .editor-mode-rail {
+    display: flex !important;
+    position: sticky;
+    top: 52px;
+    z-index: 55;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15,23,42,0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  body.route-sms-edit .editor-mode-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  body.route-sms-edit .editor-mode-rail button {
+    flex: 1 1 0;
+    min-width: max-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    background: transparent;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  body.route-sms-edit .editor-mode-rail button.is-active {
+    background: #ecfeff;
+    color: #0e7490;
+    border-color: #a5f3fc;
+  }
+
   /* Allow the editor shell to grow with content */
-  body[x-data*="smsEditApp"] .flex.h-screen,
-  body[x-data*="smsEditApp"] .adaptive-shell {
+  body.route-sms-edit .flex.h-screen,
+  body.route-sms-edit .adaptive-shell {
     height: auto !important;
     min-height: 100vh;
   }
-  body[x-data*="smsEditApp"] .flex-1.flex.flex-col.overflow-hidden {
+  body.route-sms-edit .flex-1.flex.flex-col.overflow-hidden {
     overflow: visible !important;
   }
   /* Main element: allow scroll */
-  body[x-data*="smsEditApp"] main[role="main"] {
+  body.route-sms-edit main[role="main"] {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
@@ -873,30 +920,42 @@ body.is-mobile.is-touch a.btn {
   }
 
   /* Tabs row + helper-toolbar: keep on one row, helper-toolbar right */
-  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b {
+  body.route-sms-edit main[role="main"] > .flex.items-center.justify-between.border-b {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     gap: 0.5rem;
     padding-bottom: 0.25rem;
   }
-  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-action-tabs {
+
+  body.route-sms-edit [data-editor-pane] { display: none !important; }
+  body.route-sms-edit[data-editor-mode="structure"] [data-editor-pane="structure"],
+  body.route-sms-edit[data-editor-mode="edit"] [data-editor-pane="edit"] {
+    display: block !important;
+  }
+  body.route-sms-edit main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-action-tabs {
     flex: 1 1 0;
     min-width: 0;
     max-width: 100%;
   }
-  body[x-data*="smsEditApp"] main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-helper-toolbar {
+  body.route-sms-edit main[role="main"] > .flex.items-center.justify-between.border-b > webropol-survey-helper-toolbar {
     display: none !important;
   }
 
   /* The 2-pane layout: stack vertically, drop fixed height */
-  body[x-data*="smsEditApp"] .flex.overflow-hidden[class*="h-[calc"],
-  body[x-data*="smsEditApp"] main[role="main"] > .flex.overflow-hidden {
+  body.route-sms-edit .flex.overflow-hidden[class*="h-[calc"],
+  body.route-sms-edit main[role="main"] > .flex.overflow-hidden {
     flex-direction: column !important;
     height: auto !important;
     overflow: visible !important;
   }
 
   /* Structure pane: full width, auto height */
-  body[x-data*="smsEditApp"] #smsStructurePane,
-  body[x-data*="smsEditApp"] .survey-structure-pane {
+  body.route-sms-edit #smsStructurePane,
+  body.route-sms-edit .survey-structure-pane {
     width: 100% !important;
     max-width: 100% !important;
     flex: 0 0 auto;
@@ -904,12 +963,12 @@ body.is-mobile.is-touch a.btn {
     margin-top: 0.5rem !important;
   }
   /* Hide the resizer on mobile (no use without horizontal panes) */
-  body[x-data*="smsEditApp"] .survey-structure-resizer,
-  body[x-data*="smsEditApp"] #smsStructureResizer {
+  body.route-sms-edit .survey-structure-resizer,
+  body.route-sms-edit #smsStructureResizer {
     display: none !important;
   }
   /* Structure card: limit height & enable internal scroll */
-  body[x-data*="smsEditApp"] #smsStructurePane > webropol-survey-structure {
+  body.route-sms-edit #smsStructurePane > webropol-survey-structure {
     display: block;
     max-height: 45vh;
     overflow-y: auto;
@@ -917,19 +976,19 @@ body.is-mobile.is-touch a.btn {
   }
 
   /* Right canvas section: remove forced overflow, full width */
-  body[x-data*="smsEditApp"] section.flex-1.overflow-y-auto {
+  body.route-sms-edit section.flex-1.overflow-y-auto {
     width: 100%;
     flex: 1 1 auto;
     overflow: visible !important;
     padding: 0.5rem !important;
   }
-  body[x-data*="smsEditApp"] section.flex-1.overflow-y-auto > .max-w-\[760px\] {
+  body.route-sms-edit section.flex-1.overflow-y-auto > .max-w-\[760px\] {
     max-width: 100% !important;
     padding-bottom: 4rem !important;
   }
 
   /* Sticky bottom edit toolbar (Add Question + icons) on mobile */
-  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar {
+  body.route-sms-edit webropol-survey-edit-toolbar {
     position: fixed !important;
     left: 0;
     right: 0;
@@ -939,7 +998,7 @@ body.is-mobile.is-touch a.btn {
     box-shadow: 0 -10px 24px -18px rgba(15, 23, 42, 0.35);
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
-  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar .survey-edit-toolbar {
+  body.route-sms-edit webropol-survey-edit-toolbar .survey-edit-toolbar {
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
@@ -947,11 +1006,11 @@ body.is-mobile.is-touch a.btn {
     border-radius: 0;
     scrollbar-width: none;
   }
-  body[x-data*="smsEditApp"] webropol-survey-edit-toolbar .survey-edit-toolbar::-webkit-scrollbar {
+  body.route-sms-edit webropol-survey-edit-toolbar .survey-edit-toolbar::-webkit-scrollbar {
     display: none;
   }
   /* Hide its border-b wrapper top-spacing so it doesn't double up */
-  body[x-data*="smsEditApp"] main[role="main"] > .border-b.border-webropol-gray-200 {
+  body.route-sms-edit main[role="main"] > .border-b.border-webropol-gray-200 {
     border-bottom: none !important;
   }
 }

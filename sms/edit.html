@@ -218,7 +218,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications show-help show-user-menu show-theme-selector></webropol-header-enhanced>
             <main class="flex-1 overflow-hidden px-2 py-2 lg:px-1" role="main">
-                <div class="flex items-center justify-between border-b border-webropol-gray-300">
+                <div class="survey-editor-header-bar flex items-center justify-between border-b border-webropol-gray-300">
                     <webropol-survey-action-tabs active="edit" context="sms"></webropol-survey-action-tabs>
 
                     <webropol-survey-helper-toolbar
@@ -234,8 +234,29 @@
                     <webropol-survey-edit-toolbar items="add-question,personal-data,settings"></webropol-survey-edit-toolbar>
                 </div>
 
+                <nav class="editor-mode-rail" role="tablist" aria-label="SMS editor sections">
+                    <button type="button" role="tab"
+                            :class="{ 'is-active': mobileMode === 'structure' }"
+                            :aria-selected="mobileMode === 'structure'"
+                            @click="setMobileMode('structure')">
+                        <i class="fal fa-list-tree"></i><span>Structure</span>
+                    </button>
+                    <button type="button" role="tab"
+                            :class="{ 'is-active': mobileMode === 'edit' }"
+                            :aria-selected="mobileMode === 'edit'"
+                            @click="setMobileMode('edit')">
+                        <i class="fal fa-pen"></i><span>Edit</span>
+                    </button>
+                    <button type="button" role="tab"
+                            :class="{ 'is-active': mobileMode === 'preview' }"
+                            :aria-selected="mobileMode === 'preview'"
+                            @click="setMobileMode('preview')">
+                        <i class="fal fa-eye"></i><span>Preview</span>
+                    </button>
+                </nav>
+
                 <div class="flex h-[calc(100vh-265px)] overflow-hidden">
-                    <div id="smsStructurePane" class="survey-structure-pane shrink-0 mb-4 mt-4" style="width: 280px;">
+                    <div id="smsStructurePane" data-editor-pane="structure" class="survey-structure-pane shrink-0 mb-4 mt-4" style="width: 280px;">
                         <webropol-survey-structure title="Survey structure"
                             @structure-move="handleMove($event)"
                             @structure-copy="handleCopy($event)"
@@ -278,7 +299,7 @@
                         <button id="smsStructureResizer" class="survey-structure-resizer" type="button" aria-label="Resize structure panel" title="Resize panel"></button>
                     </div>
 
-                    <section class="flex-1 overflow-y-auto px-8 py-4">
+                    <section data-editor-pane="edit" class="flex-1 overflow-y-auto px-8 py-4">
                         <div class="max-w-[760px] mx-auto pb-10">
 
                             <!-- Q1: Yes / No selection -->
@@ -363,7 +384,39 @@
             return {
                 surveyName: 'HealthCare 2Way SMS Survey',
                 thankYouMessage: 'Thank you for your responses!',
+                mobileMode: 'edit',
+                setMobileMode(mode) {
+                    if (mode === 'preview') {
+                        this.previewSmsSurvey();
+                        return;
+                    }
+                    this.mobileMode = mode;
+                    document.body.dataset.editorMode = mode;
+                },
+                previewSmsSurvey() {
+                    this.mobileMode = 'edit';
+                    document.body.dataset.editorMode = 'edit';
+                    this.$nextTick(() => {
+                        document.querySelector('[question-id="sms-q1"]:not(webropol-survey-question)')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                },
+                openAddQuestionModal() {
+                    this.mobileMode = 'edit';
+                    document.body.dataset.editorMode = 'edit';
+                    this.$nextTick(() => {
+                        document.querySelector('section[data-editor-pane="edit"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                },
                 init() {
+                    const appContent = document.getElementById('app-content');
+                    document.body.classList.add('route-sms-edit', 'route-editor-tabs');
+                    document.body.classList.remove('route-surveys-edit');
+                    appContent?.classList.add('route-sms-edit', 'route-editor-tabs');
+                    appContent?.classList.remove('route-surveys-edit');
+                    document.body.dataset.editorMode = this.mobileMode;
+                    window.previewSurvey = () => this.previewSmsSurvey();
+                    window.openAddQuestionModal = () => this.openAddQuestionModal();
+
                     const query = new URLSearchParams(window.__pageQueryString || window.location.search || '');
                     const id = query.get('id');
                     const names = {
