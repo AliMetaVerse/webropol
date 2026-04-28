@@ -339,6 +339,73 @@
             outline-offset: 2px;
         }
 
+        .platform-skip-link {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            z-index: 2147483641;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 48px;
+            padding: 0.75rem 1.25rem 0.875rem;
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary-700, #1e6880), var(--primary-600, #1d809d));
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            border-top: 0;
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: 0 18px 36px -20px rgba(16, 46, 60, 0.55), inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -115%) scale(0.98);
+            transition: opacity 0.22s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+        }
+
+        .platform-skip-link::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -0.375rem;
+            width: 2.25rem;
+            height: 0.375rem;
+            border-radius: 0 0 999px 999px;
+            background: var(--primary-600, #1d809d);
+            transform: translateX(-50%);
+            box-shadow: 0 10px 22px -12px rgba(16, 46, 60, 0.55);
+        }
+
+        .platform-skip-link:focus,
+        .platform-skip-link:focus-visible {
+            opacity: 1;
+            pointer-events: auto;
+            outline: 3px solid rgba(121, 214, 231, 0.95);
+            outline-offset: 4px;
+            transform: translate(-50%, 0) scale(1);
+        }
+
+        #main-content:focus {
+            outline: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .platform-skip-link {
+                transition: none;
+            }
+        }
+
+        @media (prefers-contrast: high) {
+            .platform-skip-link {
+                color: #ffffff;
+                background: #000000;
+                border: 2px solid #ffffff;
+            }
+        }
+
         /* Animation for tab switching */
         .tab-content-enter {
             opacity: 0;
@@ -845,6 +912,10 @@
 </head>
 
 <body x-data="libraryApp()" @click="showContextMenu = null">
+    <a href="#main-content" class="platform-skip-link" aria-controls="main-content" @click.prevent="skipToContent()">
+        <i class="fal fa-arrow-down" aria-hidden="true"></i>
+        <span>Skip to content</span>
+    </a>
 
     <div class="flex h-screen mobile-responsive-container adaptive-shell">
         <webropol-sidebar-enhanced class="sidebar-transition"
@@ -855,8 +926,8 @@
                 <webropol-breadcrumbs trail='[{"label":"Home","url":"index.html"}]'></webropol-breadcrumbs>
             </div>
         <!-- Page Content -->
-                <main class="flex-1 overflow-y-auto py-2 min-h-screen pb-24 mobile-main-content"
-                  role="main">
+            <main id="main-content" class="flex-1 overflow-y-auto py-2 min-h-screen pb-24 mobile-main-content"
+              role="main" tabindex="-1">
                     <div id="app-content" class="mx-auto w-full rounded-2xl mobile-app-content px-4 lg:px-8">
                     
 
@@ -1787,6 +1858,19 @@
                     
                     // Apply other settings here as needed
                     // For example, if autoSave setting affects some behavior
+                },
+
+                skipToContent() {
+                    const mainContent = document.getElementById('main-content');
+                    if (!mainContent) return;
+
+                    try {
+                        mainContent.focus({ preventScroll: true });
+                    } catch {
+                        mainContent.focus();
+                    }
+
+                    mainContent.scrollIntoView({ block: 'start' });
                 },
 
                 // Keyboard shortcuts
