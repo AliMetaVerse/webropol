@@ -35,7 +35,7 @@ export class ReportTable extends BaseComponent {
   _buildChrome() {
     // Apply zone classes to host
     this.classList.add(
-      'table-zone', 'block', 'relative', 'p-6', 'pt-12', 'group/table'
+      'table-zone', 'block', 'relative', 'p-6', 'pt-12', 'group/table', 'w-full', 'max-w-full', 'min-w-0'
     );
 
     // Build table toolbar

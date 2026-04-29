@@ -35,7 +35,7 @@ export class ReportChart extends BaseComponent {
   _buildChrome() {
     // Apply zone classes to host
     this.classList.add(
-      'chart-zone', 'block', 'relative', 'p-6', 'pt-12', 'group/chart'
+      'chart-zone', 'block', 'relative', 'p-6', 'pt-12', 'group/chart', 'w-full', 'max-w-full', 'min-w-0'
     );
 
     // Build chart toolbar

@@ -36,7 +36,7 @@ export class ReportWidget extends BaseComponent {
     // Apply wrapper classes directly to host element
     this.classList.add(
       'relative', 'block', 'bg-white', 'rounded-2xl',
-      'shadow-card', 'widget-frame', 'group'
+      'shadow-card', 'widget-frame', 'group', 'w-full', 'max-w-full', 'min-w-0'
     );
 
     // Build the settings toolbar (widget-level)

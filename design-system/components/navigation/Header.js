@@ -303,7 +303,7 @@ export class WebropolHeader extends BaseComponent {
                 </button>
                 
                 <!-- Dropdown menu (hidden by default) -->
-                <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown z-[9999]">
+                <div class="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-lg border border-webropol-gray-200 py-2 opacity-0 invisible transition-all duration-200 user-dropdown z-[9999]">
                   <a href="#" data-action="profile" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
                     <i class="fa-duotone fa-thin fa-user-circle w-4 mr-3"></i>
                     Profile
@@ -311,6 +311,10 @@ export class WebropolHeader extends BaseComponent {
                   <a href="#" data-action="settings" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
                     <i class="fa-duotone fa-thin fa-cog w-4 mr-3"></i>
                     Settings
+                  </a>
+                  <a href="#" data-action="hard-refresh" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
+                    <i class="fa-duotone fa-thin fa-rotate-right w-4 mr-3"></i>
+                    Hard Refresh &amp; Clear Cache
                   </a>
                   <hr class="my-2 border-webropol-gray-200">
                   <a href="${(() => { const p = window.location.pathname.split('/').filter(Boolean); return (p.length <= 1 ? './' : '../'.repeat(p.length - 1)) + 'design-system/index.html'; })()}" target="_blank" rel="noopener" class="flex items-center px-4 py-2 text-sm text-webropol-gray-700 hover:bg-webropol-gray-50">
@@ -626,6 +630,110 @@ export class WebropolHeader extends BaseComponent {
     `;
   }
 
+  async openSettingsModal() {
+    try {
+      if (typeof window !== 'undefined' && typeof window.openGlobalSettings === 'function') {
+        window.openGlobalSettings();
+        return;
+      }
+      if (typeof window !== 'undefined' && window.globalSettingsManager?.openSettingsModal) {
+        window.globalSettingsManager.openSettingsModal();
+        return;
+      }
+      if (typeof customElements !== 'undefined') {
+        if (!customElements.get('webropol-settings-modal')) {
+          try {
+            await import('../modals/SettingsModal.js');
+          } catch (err) {
+            console.warn('Failed to load SettingsModal module dynamically', err);
+          }
+        }
+        let modal = document.querySelector('webropol-settings-modal');
+        if (!modal) {
+          modal = document.createElement('webropol-settings-modal');
+          document.body.appendChild(modal);
+        }
+        if (typeof modal.open === 'function') {
+          modal.open();
+        } else {
+          modal.setAttribute('open', '');
+        }
+        return;
+      }
+      this.emit('settings-open');
+    } catch (err) {
+      this.emit('settings-open');
+      console.warn('Failed to open settings modal directly, emitted settings-open instead:', err);
+    }
+  }
+
+  async handleHardRefreshAndClearCache() {
+    if (typeof window === 'undefined') return;
+
+    const confirmed = typeof window.confirm !== 'function'
+      ? true
+      : window.confirm('Clear session cache and hard refresh now? Saved local data stays intact.');
+
+    if (!confirmed) return;
+
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        const sessionKeys = [];
+        for (let index = 0; index < sessionStorage.length; index += 1) {
+          const key = sessionStorage.key(index);
+          if (key && key.startsWith('webropol_')) {
+            sessionKeys.push(key);
+          }
+        }
+        sessionKeys.forEach((key) => sessionStorage.removeItem(key));
+      }
+
+      if ('caches' in window && typeof window.caches.keys === 'function') {
+        const cacheKeys = await window.caches.keys();
+        await Promise.all(cacheKeys.map((key) => window.caches.delete(key)));
+      }
+
+      if (navigator.serviceWorker?.getRegistrations) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+    } catch (err) {
+      console.warn('Failed to fully clear runtime cache before refresh:', err);
+    }
+
+    try {
+      const refreshUrl = new URL(window.location.href);
+      refreshUrl.searchParams.set('webropol_refresh', Date.now().toString());
+      window.location.replace(refreshUrl.toString());
+    } catch (_) {
+      window.location.reload();
+    }
+  }
+
+  bindUserMenuActions(container, closeMenu = () => {}) {
+    if (!container) return;
+
+    const settingsControl = container.querySelector('[data-action="settings"]');
+    if (settingsControl) {
+      settingsControl.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeMenu();
+        await this.openSettingsModal();
+      });
+    }
+
+    const hardRefreshControl = container.querySelector('[data-action="hard-refresh"]');
+    if (hardRefreshControl) {
+      hardRefreshControl.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeMenu();
+        await this.handleHardRefreshAndClearCache();
+      });
+    }
+  }
+
   addDropdownListeners() {
   const userButton = this.querySelector('button[data-action="user-menu-toggle"]');
     const dropdown = this.querySelector('.user-dropdown');
@@ -654,57 +762,9 @@ export class WebropolHeader extends BaseComponent {
       dropdown.addEventListener('click', (e) => {
         e.stopPropagation();
       });
-      
-      // Handle settings link click
-  const settingsLink = dropdown.querySelector('a[data-action="settings"]');
-      if (settingsLink) {
-        settingsLink.addEventListener('click', async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          // Close dropdown
-          dropdown.classList.add('opacity-0', 'invisible');
-          
-          // Try opening the global settings modal directly with graceful fallbacks
-          try {
-            // 1) Preferred: global helper if present
-            if (typeof window !== 'undefined' && typeof window.openGlobalSettings === 'function') {
-              window.openGlobalSettings();
-            // 2) If a global manager exists
-            } else if (typeof window !== 'undefined' && window.globalSettingsManager && typeof window.globalSettingsManager.openSettingsModal === 'function') {
-              window.globalSettingsManager.openSettingsModal();
-            // 3) Direct fallback: ensure element exists and open it
-            } else if (typeof customElements !== 'undefined') {
-              // If not registered, dynamically import the component
-              if (!customElements.get('webropol-settings-modal')) {
-                try {
-                  await import('../modals/SettingsModal.js');
-                } catch (err) {
-                  console.warn('Failed to load SettingsModal module dynamically', err);
-                }
-              }
-              // Create/attach and open
-              let modal = document.querySelector('webropol-settings-modal');
-              if (!modal) {
-                modal = document.createElement('webropol-settings-modal');
-                document.body.appendChild(modal);
-              }
-              if (typeof modal.open === 'function') {
-                modal.open();
-              } else {
-                modal.setAttribute('open', '');
-              }
-            } else {
-              // 4) Last resort: emit event for any page-level listeners
-              this.emit('settings-open');
-            }
-          } catch (err) {
-            // As a safety net, still emit event
-            this.emit('settings-open');
-            console.warn('Failed to open settings modal directly, emitted settings-open instead:', err);
-          }
-        });
-      }
+      this.bindUserMenuActions(dropdown, () => {
+        dropdown.classList.add('opacity-0', 'invisible');
+      });
     }
   }
 
@@ -1965,7 +2025,7 @@ export class WebropolHeader extends BaseComponent {
     dropdown.setAttribute('data-dropdown', type);
     dropdown.style.position = 'fixed';
     dropdown.style.top = `${Math.round(rect.bottom + 8)}px`;
-    const width = type === 'user' ? 192 : 320;
+    const width = type === 'user' ? 288 : 320;
     const left = Math.min(Math.max(8, rect.right - width), window.innerWidth - width - 8);
     dropdown.style.left = `${Math.round(left)}px`;
     dropdown.style.width = `${width}px`;
@@ -1978,6 +2038,7 @@ export class WebropolHeader extends BaseComponent {
       dropdown.innerHTML = `
         <button data-action="profile" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Profile</button>
         <button data-action="settings" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Settings</button>
+        <button data-action="hard-refresh" class="w-full text-left px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50">Hard Refresh &amp; Clear Cache</button>
         <div class="my-1 border-t border-webropol-gray-200"></div>
         <a href="${_dsPath}" target="_blank" rel="noopener" class="flex items-center w-full px-3 py-2 rounded-lg text-webropol-gray-700 hover:bg-webropol-primary-50 text-sm">
           <i class="fal fa-swatchbook mr-2.5"></i>Design System
@@ -2010,26 +2071,8 @@ export class WebropolHeader extends BaseComponent {
     });
     layer.appendChild(dropdown);
     this._activeDropdown = type;
-
     if (type === 'user') {
-      const settingsBtn = dropdown.querySelector('button[data-action="settings"]');
-      if (settingsBtn) {
-        settingsBtn.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          this.closeDropdown();
-          try {
-            if (typeof window.openGlobalSettings === 'function') { window.openGlobalSettings(); return; }
-            if (window.globalSettingsManager?.openSettingsModal) { window.globalSettingsManager.openSettingsModal(); return; }
-            if (!customElements.get('webropol-settings-modal')) {
-              try { await import('../modals/SettingsModal.js'); } catch (_) {}
-            }
-            let modal = document.querySelector('webropol-settings-modal');
-            if (!modal) { modal = document.createElement('webropol-settings-modal'); document.body.appendChild(modal); }
-            if (typeof modal.open === 'function') modal.open(); else modal.setAttribute('open', '');
-          } catch { document.dispatchEvent(new CustomEvent('settings-open')); }
-        });
-      }
+      this.bindUserMenuActions(dropdown, () => this.closeDropdown());
     }
 
     if (window.tailwind?.refresh) try { window.tailwind.refresh(); } catch {}
