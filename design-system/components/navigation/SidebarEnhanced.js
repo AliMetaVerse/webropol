@@ -6,6 +6,7 @@
 
 import { BaseComponent } from '../../utils/base-component.js';
 import './Brand.js';
+import './PlatformVersion.js';
 
 export class WebropolSidebarEnhanced extends BaseComponent {
   static get observedAttributes() {
@@ -428,8 +429,8 @@ export class WebropolSidebarEnhanced extends BaseComponent {
           <i class="fa-duotone fa-thin fa-headset w-5 mr-4"></i>
           <span class="font-medium">Contact Support</span>
         </a>
-        <div class="mt-2 mx-4 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50">
-          <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+        <div class="mt-2 mx-4">
+          <webropol-platform-version version="${this.version}"></webropol-platform-version>
         </div>
       </div>
     `;
@@ -565,8 +566,13 @@ export class WebropolSidebarEnhanced extends BaseComponent {
             <i class="fa-duotone fa-thin fa-headset w-5 flex-shrink-0"></i>
             <span class="ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-2 mx-2 group-hover:mx-4 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+          <!-- Collapsed icon-only (visible when sidebar is in narrow / unhovered state) -->
+          <div class="platform-version-collapsed mt-2 flex justify-center group-hover:hidden" style="display:flex;justify-content:center;">
+            <webropol-platform-version collapsed version="${this.version}"></webropol-platform-version>
+          </div>
+          <!-- Expanded pill (visible on hover) -->
+          <div class="platform-version-expanded mt-2 mx-2 group-hover:mx-4 transition-all duration-300" style="display:none;">
+            <webropol-platform-version version="${this.version}"></webropol-platform-version>
           </div>
         </div>
       </aside>
@@ -628,9 +634,13 @@ export class WebropolSidebarEnhanced extends BaseComponent {
                         opacity-0 w-0
                         group-hover:opacity-100 group-hover:w-auto whitespace-nowrap">Contact Support</span>
           </a>
-          <div class="mt-2 px-3 py-2 border border-webropol-gray-200 rounded-lg bg-webropol-gray-50
-                      xl:opacity-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div class="flex items-center justify-center gap-1.5 text-[11px] text-webropol-gray-500 whitespace-nowrap"><span class="font-medium">Webropol</span><span class="text-webropol-gray-300">/</span><span>Development</span><span class="text-webropol-gray-300">/</span><span class="font-semibold text-webropol-primary-400">v3 Parrot</span></div>
+          <!-- Platform version pill (always visible at the bottom of the sidebar) -->
+          <div class="platform-version-expanded mt-3" style="display:block;">
+            <webropol-platform-version version="${this.version}"></webropol-platform-version>
+          </div>
+          <!-- Collapsed icon-only fallback (only shown when sidebar is in narrow state) -->
+          <div class="platform-version-collapsed mt-3 flex justify-center" style="display:none;">
+            <webropol-platform-version collapsed version="${this.version}"></webropol-platform-version>
           </div>
         </div>
       </aside>

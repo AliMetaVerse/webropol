@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platform Version — Webropol Design System</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': {
+              50: '#eefbfd', 100: '#d5f4f8', 200: '#b0e8f1', 300: '#79d6e7',
+              400: '#3fbcd5', 500: '#209fba', 600: '#1d809d', 700: '#1e6880',
+              800: '#215669', 900: '#204859'
+            },
+            'webropol-gray': {
+              50: '#f9fafa', 100: '#f3f4f4', 200: '#e6e7e8', 300: '#d1d5d6',
+              400: '#b5bbbd', 500: '#9ba2a4', 600: '#787f81', 700: '#61686a',
+              800: '#515557', 900: '#45484a', 950: '#272a2b'
+            },
+            'webropol-warning': {
+              50: '#fffbeb', 100: '#fef2c7', 200: '#fde68a', 300: '#fcd34d',
+              400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b44e09',
+              800: '#92400e', 900: '#78350f'
+            },
+            'webropol-error': {
+              50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5',
+              400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#c61e08',
+              800: '#991b1b', 900: '#7f1d1d'
+            }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            soft: '0 2px 15px 0 rgba(39,42,43,0.08)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="../components/navigation/PlatformVersion.js" type="module"></script>
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafa; color: #45484a; }
+    .page { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 { font-size: 2rem; font-weight: 700; color: #272a2b; margin: 0 0 6px; }
+    h2 { font-size: 1.125rem; font-weight: 600; color: #272a2b; margin: 32px 0 12px; }
+    p.lead { color: #61686a; margin: 0 0 24px; }
+    .row { display: grid; grid-template-columns: 160px 1fr; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px dashed #e6e7e8; }
+    .row > .label { color: #61686a; font-size: 14px; text-align: right; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .panel { background: #fff; border: 1px solid #e6e7e8; border-radius: 12px; padding: 20px; }
+    code.tag { background: #f3f4f4; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Platform Version</h1>
+    <p class="lead">Compact environment indicator for the sidebar — click it to cycle between environments.
+      Built from the Figma <em>Royal Design System / Platform Version</em> spec.</p>
+
+    <div class="panel">
+      <h2 style="margin-top:0">Variants</h2>
+
+      <div class="row">
+        <span class="label">Staging Expanded</span>
+        <div style="max-width: 220px"><webropol-platform-version environment="staging"></webropol-platform-version></div>
+      </div>
+
+      <div class="row">
+        <span class="label">Staging Collapsed</span>
+        <div><webropol-platform-version environment="staging" collapsed></webropol-platform-version></div>
+      </div>
+
+      <div class="row">
+        <span class="label">Testing Expanded</span>
+        <div style="max-width: 220px"><webropol-platform-version environment="testing"></webropol-platform-version></div>
+      </div>
+
+      <div class="row">
+        <span class="label">Testing Collapsed</span>
+        <div><webropol-platform-version environment="testing" collapsed></webropol-platform-version></div>
+      </div>
+    </div>
+
+    <h2>Linked instances (click any to cycle)</h2>
+    <p class="lead">All instances on the page sync via the <code class="tag">platform-env-change</code> window event and persist in <code class="tag">localStorage["webropol_platform_env"]</code>.</p>
+    <div class="grid-2">
+      <div class="panel">
+        <div style="max-width: 220px; margin-bottom: 16px"><webropol-platform-version></webropol-platform-version></div>
+        <webropol-platform-version collapsed></webropol-platform-version>
+      </div>
+      <div class="panel">
+        <div style="max-width: 220px; margin-bottom: 16px"><webropol-platform-version version="v3 Peacock" build="Build 003.0042.0815.4711"></webropol-platform-version></div>
+        <webropol-platform-version collapsed></webropol-platform-version>
+      </div>
+    </div>
+
+    <h2>Usage</h2>
+<pre style="background:#272a2b;color:#eef;padding:16px;border-radius:8px;overflow:auto;font-size:13px;line-height:1.5"><code>&lt;script src="../components/navigation/PlatformVersion.js" type="module"&gt;&lt;/script&gt;
+
+&lt;!-- Expanded pill (default) --&gt;
+&lt;webropol-platform-version environment="staging"&gt;&lt;/webropol-platform-version&gt;
+
+&lt;!-- Collapsed icon-only --&gt;
+&lt;webropol-platform-version environment="testing" collapsed&gt;&lt;/webropol-platform-version&gt;
+
+&lt;!-- Custom labels --&gt;
+&lt;webropol-platform-version
+   environment="staging"
+   version="v3 Peacock"
+   build="Build 003.0042.0815.4711"&gt;&lt;/webropol-platform-version&gt;
+
+&lt;!-- Disable click-to-cycle --&gt;
+&lt;webropol-platform-version clickable="false"&gt;&lt;/webropol-platform-version&gt;</code></pre>
+  </div>
+</body>
+</html>
