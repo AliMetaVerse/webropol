@@ -17,6 +17,9 @@ export class WebropolHeader extends BaseComponent {
     super();
     this.isMobile = false;
     this.checkViewport = this.checkViewport.bind(this);
+    this.handleViewportMediaChange = this.handleViewportMediaChange.bind(this);
+    this.mobileMediaQuery = null;
+    this.touchMediaQuery = null;
     this._dropdownLayer = null;
     this._activeDropdown = null;
     this.handleDocClick = this.handleDocClick.bind(this);
@@ -24,24 +27,70 @@ export class WebropolHeader extends BaseComponent {
   }
 
   connectedCallback() {
+    this.setupViewportMediaQueries();
+    this.isMobile = this.getCurrentIsMobile();
     super.connectedCallback();
-    this.checkViewport();
-    window.addEventListener('resize', this.checkViewport);
+    this.applyStickyHostStyles();
   }
 
-  checkViewport() {
-    const oldIsMobile = this.isMobile;
-    this.isMobile = window.innerWidth <= 767;
-    if (oldIsMobile !== this.isMobile) {
-      this.render();
+  setupViewportMediaQueries() {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    if (this.mobileMediaQuery && this.touchMediaQuery) return;
+
+    this.mobileMediaQuery = window.matchMedia('(max-width: 767px)');
+    this.touchMediaQuery = window.matchMedia('(hover: none) and (pointer: coarse)');
+
+    [this.mobileMediaQuery, this.touchMediaQuery].forEach((query) => {
+      if (query.addEventListener) query.addEventListener('change', this.handleViewportMediaChange);
+      else if (query.addListener) query.addListener(this.handleViewportMediaChange);
+    });
+  }
+
+  removeViewportMediaQueries() {
+    [this.mobileMediaQuery, this.touchMediaQuery].forEach((query) => {
+      if (!query) return;
+      if (query.removeEventListener) query.removeEventListener('change', this.handleViewportMediaChange);
+      else if (query.removeListener) query.removeListener(this.handleViewportMediaChange);
+    });
+    this.mobileMediaQuery = null;
+    this.touchMediaQuery = null;
+  }
+
+  handleViewportMediaChange() {
+    const nextIsMobile = this.getCurrentIsMobile();
+    if (nextIsMobile !== this.isMobile) {
+      this.checkViewport(true);
+      return;
     }
+
+    this.applyStickyHostStyles();
+  }
+
+  getCurrentIsMobile() {
+    return this.mobileMediaQuery
+      ? this.mobileMediaQuery.matches
+      : typeof window !== 'undefined' && window.innerWidth <= 767;
+  }
+
+  checkViewport(forceRender = false) {
+    const oldIsMobile = this.isMobile;
+    this.isMobile = this.getCurrentIsMobile();
+
+    if (forceRender || oldIsMobile !== this.isMobile) {
+      this.render();
+      return;
+    }
+
+    this.applyStickyHostStyles();
   }
 
   applyStickyHostStyles() {
     const touchMobile = this.isMobile
-      && typeof window !== 'undefined'
-      && typeof window.matchMedia === 'function'
-      && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      && (this.touchMediaQuery
+        ? this.touchMediaQuery.matches
+        : typeof window !== 'undefined'
+          && typeof window.matchMedia === 'function'
+          && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
     const body = typeof document !== 'undefined' ? document.body : null;
 
     if (body) {
@@ -1365,10 +1414,23 @@ export class WebropolHeader extends BaseComponent {
     if (!btn) return;
     const sidebar = document.querySelector('webropol-sidebar-enhanced');
 
+    if (this._hamburgerResizeHandler) {
+      window.removeEventListener('resize', this._hamburgerResizeHandler);
+      this._hamburgerResizeHandler = null;
+    }
+    if (this._hamburgerDesktopMql && this._hamburgerMediaHandler) {
+      if (this._hamburgerDesktopMql.removeEventListener) this._hamburgerDesktopMql.removeEventListener('change', this._hamburgerMediaHandler);
+      else if (this._hamburgerDesktopMql.removeListener) this._hamburgerDesktopMql.removeListener(this._hamburgerMediaHandler);
+      this._hamburgerDesktopMql = null;
+      this._hamburgerMediaHandler = null;
+    }
+
     const setVisibility = () => {
       const collapsed = !!(sidebar && (sidebar.getAttribute('collapsed') === 'true' || sidebar.hasAttribute('collapsed')));
       // Only show on desktop
-      const isDesktop = window.innerWidth >= 1024;
+      const isDesktop = typeof window !== 'undefined' && window.matchMedia
+        ? window.matchMedia('(min-width: 1024px)').matches
+        : window.innerWidth >= 1024;
       btn.style.display = collapsed && isDesktop ? 'flex' : 'none';
     };
 
@@ -1394,10 +1456,17 @@ export class WebropolHeader extends BaseComponent {
       try { this._hamburgerObserver.observe(sidebar, { attributes: true, attributeFilter: ['collapsed'] }); } catch {}
     }
 
-    // React to viewport changes
-    const resizeHandler = () => setVisibility();
-    window.addEventListener('resize', resizeHandler);
-    this._hamburgerResizeHandler = resizeHandler;
+    // React to breakpoint changes instead of every resize event.
+    const viewportHandler = () => setVisibility();
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      this._hamburgerDesktopMql = window.matchMedia('(min-width: 1024px)');
+      this._hamburgerMediaHandler = viewportHandler;
+      if (this._hamburgerDesktopMql.addEventListener) this._hamburgerDesktopMql.addEventListener('change', viewportHandler);
+      else if (this._hamburgerDesktopMql.addListener) this._hamburgerDesktopMql.addListener(viewportHandler);
+    } else {
+      window.addEventListener('resize', viewportHandler);
+      this._hamburgerResizeHandler = viewportHandler;
+    }
 
     // Initial state
     setVisibility();
@@ -1984,7 +2053,21 @@ export class WebropolHeader extends BaseComponent {
     if (typeof document !== 'undefined' && document.body) {
       document.body.classList.remove('has-fixed-mobile-header');
     }
-    window.removeEventListener('resize', this.checkViewport);
+    this.removeViewportMediaQueries();
+    if (this._hamburgerResizeHandler) {
+      window.removeEventListener('resize', this._hamburgerResizeHandler);
+      this._hamburgerResizeHandler = null;
+    }
+    if (this._hamburgerDesktopMql && this._hamburgerMediaHandler) {
+      if (this._hamburgerDesktopMql.removeEventListener) this._hamburgerDesktopMql.removeEventListener('change', this._hamburgerMediaHandler);
+      else if (this._hamburgerDesktopMql.removeListener) this._hamburgerDesktopMql.removeListener(this._hamburgerMediaHandler);
+      this._hamburgerDesktopMql = null;
+      this._hamburgerMediaHandler = null;
+    }
+    if (this._hamburgerObserver) {
+      this._hamburgerObserver.disconnect();
+      this._hamburgerObserver = null;
+    }
     document.removeEventListener('click', this.handleDocClick, true);
     document.removeEventListener('keydown', this.handleKeyDown, true);
     this.destroyDropdownLayer();

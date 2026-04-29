@@ -8,6 +8,15 @@ class WebropolSPA {
     this.sidebar = null;
     this.breadcrumbs = null;
     this.loadedExternalScripts = new Set();
+    this.routeHtmlCache = new Map();
+    this.routeCacheLimit = 32;
+    this.activeLoadToken = 0;
+    this.prefetchQueue = new Set();
+    this.postRouteRefreshFrame = 0;
+    this.postRouteIdle = 0;
+    this.handleDocumentClick = this.handleDocumentClick.bind(this);
+    this.handleDocumentPrefetch = this.handleDocumentPrefetch.bind(this);
+    this.handleHashChange = this.handleHashChange.bind(this);
     this.pageStyleNodes = [];
   this.pageScriptNodes = [];
   this.pageModalNodes = [];
@@ -92,6 +101,7 @@ class WebropolSPA {
   }
 
   init() {
+    if (this.initialized) return;
     this.container = document.querySelector('#app-content');
     this.sidebar = document.querySelector('webropol-sidebar');
     this.breadcrumbs = document.querySelector('webropol-breadcrumbs');
@@ -101,45 +111,16 @@ class WebropolSPA {
       return;
     }
 
+    this.initialized = true;
+    this.ensureDesktopScrollbarGuard();
+
     // Intercept clicks on internal links to navigate client-side
-  document.addEventListener('click', (e) => {
-      // Respect modifier keys and targets
-      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const anchor = e.target.closest('a');
-      if (!anchor) return;
-      const href = anchor.getAttribute('href');
-      const target = anchor.getAttribute('target');
-      if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || target === '_blank') {
-        return;
-      }
-
-      // Handle hash routes like #/surveys/list directly
-      if (href.startsWith('#/')) {
-        e.preventDefault();
-        this.navigate(href.substring(1));
-        return;
-      }
-
-      // Handle html page links possibly with query (e.g., surveys/list.html or surveys/list.html?x=1)
-      if (/\.html(\?|$)/i.test(href)) {
-        e.preventDefault();
-        const { route, query } = this.hrefToRoute(href);
-        this.navigate(query ? `${route}?${query}` : route);
-        return;
-      }
-    });
+  document.addEventListener('click', this.handleDocumentClick);
+    document.addEventListener('pointerover', this.handleDocumentPrefetch, { passive: true });
+    document.addEventListener('focusin', this.handleDocumentPrefetch);
 
     // React to hash changes
-    window.addEventListener('hashchange', () => {
-      const route = this.currentRouteFromHash();
-      const normalizedHash = `#${route.startsWith('/') ? route : `/${route}`}`;
-      // If the hash contains the repo base segment, rewrite it once to a clean hash
-      if (location.hash !== normalizedHash) {
-        location.replace(normalizedHash);
-        return; // wait for next hashchange or proceed on next event
-      }
-      this.load(route);
-    });
+    window.addEventListener('hashchange', this.handleHashChange);
 
     // Initial navigation
     const initialRoute = this.currentRouteFromHash() || '/home';
@@ -164,6 +145,55 @@ class WebropolSPA {
       this.container.innerHTML = '<div class="flex items-center justify-center" style="height:60vh"><div style="width:2.5rem;height:2.5rem;border:3px solid #e2e8f0;border-top-color:#06b6d4;border-radius:50%;animation:spa-spin .7s linear infinite"></div></div><style>@keyframes spa-spin{to{transform:rotate(360deg)}}</style>';
       this.load(initialRoute);
     }
+  }
+
+  handleDocumentClick(e) {
+    // Respect modifier keys and targets
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const route = this.routeFromAnchor(e.target.closest('a'));
+    if (!route) return;
+
+    e.preventDefault();
+    this.navigate(route);
+  }
+
+  handleDocumentPrefetch(e) {
+    const route = this.routeFromAnchor(e.target.closest('a'));
+    if (!route) return;
+    this.prefetchRoute(route);
+  }
+
+  handleHashChange() {
+    const route = this.currentRouteFromHash();
+    const normalizedHash = `#${route.startsWith('/') ? route : `/${route}`}`;
+    // If the hash contains the repo base segment, rewrite it once to a clean hash
+    if (location.hash !== normalizedHash) {
+      location.replace(normalizedHash);
+      return; // wait for next hashchange or proceed on next event
+    }
+    this.load(route);
+  }
+
+  routeFromAnchor(anchor) {
+    if (!anchor) return '';
+    const href = anchor.getAttribute('href');
+    const target = anchor.getAttribute('target');
+    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || target === '_blank') {
+      return '';
+    }
+
+    // Handle hash routes like #/surveys/list directly
+    if (href.startsWith('#/')) {
+      return href.substring(1);
+    }
+
+    // Handle html page links possibly with query (e.g., surveys/list.html or surveys/list.html?x=1)
+    if (/\.html(\?|$)/i.test(href)) {
+      const { route, query } = this.hrefToRoute(href);
+      return query ? `${route}?${query}` : route;
+    }
+
+    return '';
   }
 
   currentRouteFromHash() {
@@ -237,6 +267,7 @@ class WebropolSPA {
   }
 
   async load(path) {
+    const loadToken = ++this.activeLoadToken;
     this.applyRouteLayoutState(path);
     const file = this.pathToFile(path);
     if (!file) return;
@@ -247,8 +278,8 @@ class WebropolSPA {
   this._currentBaseUrl = baseUrl.href;
     this.setLoading(true);
     try {
-      const res = await fetch(file, { cache: 'no-cache' });
-      const html = await res.text();
+      const html = await this.fetchRouteHtml(file);
+      if (loadToken !== this.activeLoadToken) return;
       const doc = new DOMParser().parseFromString(html, 'text/html');
 
       // Extract main content if present; else body content
@@ -405,6 +436,7 @@ class WebropolSPA {
 
   // Attach page-specific styles from fetched document (respecting base path)
   this.attachPageStyles(doc, baseUrl);
+  this.ensureDesktopScrollbarGuard();
 
       // Execute inline and external scripts before Alpine initialization so route-scoped
       // x-data functions exist when the shared SPA container is initialized.
@@ -424,26 +456,7 @@ class WebropolSPA {
         console.warn('[SPA] Alpine.js re-initialization failed:', e);
       }
 
-      // Ask Tailwind Play CDN (if present) to rescan the DOM and generate any needed utilities
-      try {
-        if (window.tailwind && typeof window.tailwind.refresh === 'function') {
-          window.tailwind.refresh();
-        }
-      } catch(_) {}
-
-      // Re-emit viewport state so newly mounted vanilla web components can pick up adaptive mode
-      try {
-        if (window.WebropolViewport && typeof window.WebropolViewport.refresh === 'function') {
-          window.WebropolViewport.refresh();
-        }
-      } catch(_) {}
-
-      // Re-apply global settings after content load so UI reflects current configuration
-      try {
-        if (window.globalSettingsManager && typeof window.globalSettingsManager.applySettings === 'function') {
-          window.globalSettingsManager.applySettings();
-        }
-      } catch (_) {}
+      this.queuePostRouteRefresh();
 
   // Emit custom event AFTER scripts and settings are applied so pages can listen during SPA loads
       window.dispatchEvent(new CustomEvent('spa-route-change', { 
@@ -456,11 +469,228 @@ class WebropolSPA {
   this.updatePageTitle(path);
       this.scrollToTop();
     } catch (err) {
+      if (loadToken !== this.activeLoadToken) return;
       console.error('[SPA] Failed to load route', path, err);
       this.container.innerHTML = `<div class="p-6 rounded-xl bg-red-50 border border-red-200 text-red-700">Failed to load ${path}</div>`;
     } finally {
-      this.setLoading(false);
+      if (loadToken === this.activeLoadToken) {
+        this.setLoading(false);
+      }
     }
+  }
+
+  async fetchRouteHtml(file) {
+    const key = this.getRouteCacheKey(file);
+    const cached = this.routeHtmlCache.get(key);
+    if (cached) {
+      if (cached.html) return cached.html;
+      if (cached.promise) return cached.promise;
+    }
+
+    const promise = fetch(file, { cache: 'default' })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status} while loading ${file}`);
+        }
+        return res.text();
+      })
+      .then((html) => {
+        this.rememberRouteHtml(key, html);
+        return html;
+      })
+      .catch((err) => {
+        this.routeHtmlCache.delete(key);
+        throw err;
+      });
+
+    this.routeHtmlCache.set(key, { promise });
+    return promise;
+  }
+
+  getRouteCacheKey(file) {
+    try {
+      return new URL(file, location.href).href;
+    } catch (_) {
+      return file;
+    }
+  }
+
+  rememberRouteHtml(key, html) {
+    this.routeHtmlCache.delete(key);
+    this.routeHtmlCache.set(key, { html, cachedAt: Date.now() });
+
+    while (this.routeHtmlCache.size > this.routeCacheLimit) {
+      const oldestKey = this.routeHtmlCache.keys().next().value;
+      if (!oldestKey) break;
+      this.routeHtmlCache.delete(oldestKey);
+    }
+  }
+
+  prefetchRoute(path) {
+    const file = this.pathToFile(path);
+    if (!file) return;
+    const key = this.getRouteCacheKey(file);
+    if (this.routeHtmlCache.has(key) || this.prefetchQueue.has(key)) return;
+
+    this.prefetchQueue.add(key);
+    const prefetch = () => {
+      this.fetchRouteHtml(file)
+        .catch(() => {})
+        .finally(() => this.prefetchQueue.delete(key));
+    };
+
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(prefetch, { timeout: 1500 });
+    } else {
+      window.setTimeout(prefetch, 120);
+    }
+  }
+
+  queuePostRouteRefresh() {
+    const refreshToken = this.activeLoadToken;
+
+    if (this.postRouteRefreshFrame) {
+      cancelAnimationFrame(this.postRouteRefreshFrame);
+      this.postRouteRefreshFrame = 0;
+    }
+    if (this.postRouteIdle && typeof window.cancelIdleCallback === 'function') {
+      window.cancelIdleCallback(this.postRouteIdle);
+      this.postRouteIdle = 0;
+    }
+
+    this.postRouteRefreshFrame = requestAnimationFrame(() => {
+      this.postRouteRefreshFrame = 0;
+      if (refreshToken !== this.activeLoadToken) return;
+
+      try {
+        if (window.tailwind && typeof window.tailwind.refresh === 'function') {
+          window.tailwind.refresh();
+        }
+      } catch(_) {}
+
+      const applyDeferredWork = () => {
+        this.postRouteIdle = 0;
+        if (refreshToken !== this.activeLoadToken) return;
+
+        // Re-emit viewport state so newly mounted vanilla web components can pick up adaptive mode
+        try {
+          if (window.WebropolViewport && typeof window.WebropolViewport.refresh === 'function') {
+            window.WebropolViewport.refresh();
+          }
+        } catch(_) {}
+
+        // Re-apply global settings after content load so UI reflects current configuration
+        try {
+          if (window.globalSettingsManager && typeof window.globalSettingsManager.applySettings === 'function') {
+            window.globalSettingsManager.applySettings();
+          }
+        } catch (_) {}
+      };
+
+      if (typeof window.requestIdleCallback === 'function') {
+        if (this.postRouteIdle) window.cancelIdleCallback(this.postRouteIdle);
+        this.postRouteIdle = window.requestIdleCallback(applyDeferredWork, { timeout: 700 });
+      } else {
+        applyDeferredWork();
+      }
+    });
+  }
+
+  ensureDesktopScrollbarGuard() {
+    try {
+      const styleId = 'webropol-spa-scrollbar-guard';
+      let style = document.getElementById(styleId);
+      if (!style) {
+        style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+          @media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+            .main-content-transition > main[role="main"],
+            #app-content,
+            #app-content main[role="main"],
+            #app-content .overflow-auto,
+            #app-content .overflow-y-auto,
+            #app-content .overflow-x-auto,
+            #app-content .scrollbar-hide,
+            #app-content .no-scrollbar {
+              -ms-overflow-style: auto !important;
+              scrollbar-width: auto !important;
+              scrollbar-color: var(--primary-500, #209fba) rgba(249, 250, 250, 0.92) !important;
+            }
+
+            .main-content-transition > main[role="main"],
+            #app-content main[role="main"],
+            #app-content .overflow-auto,
+            #app-content .overflow-y-auto {
+              scrollbar-gutter: stable;
+            }
+
+            .main-content-transition > main[role="main"]::-webkit-scrollbar,
+            #app-content::-webkit-scrollbar,
+            #app-content main[role="main"]::-webkit-scrollbar,
+            #app-content .overflow-auto::-webkit-scrollbar,
+            #app-content .overflow-y-auto::-webkit-scrollbar,
+            #app-content .overflow-x-auto::-webkit-scrollbar,
+            #app-content .scrollbar-hide::-webkit-scrollbar,
+            #app-content .no-scrollbar::-webkit-scrollbar {
+              display: block !important;
+              width: 12px !important;
+              height: 12px !important;
+            }
+
+            .main-content-transition > main[role="main"]::-webkit-scrollbar-track,
+            #app-content::-webkit-scrollbar-track,
+            #app-content main[role="main"]::-webkit-scrollbar-track,
+            #app-content .overflow-auto::-webkit-scrollbar-track,
+            #app-content .overflow-y-auto::-webkit-scrollbar-track,
+            #app-content .overflow-x-auto::-webkit-scrollbar-track,
+            #app-content .scrollbar-hide::-webkit-scrollbar-track,
+            #app-content .no-scrollbar::-webkit-scrollbar-track {
+              background: rgba(249, 250, 250, 0.92) !important;
+              border-radius: 999px;
+            }
+
+            .main-content-transition > main[role="main"]::-webkit-scrollbar-thumb,
+            #app-content::-webkit-scrollbar-thumb,
+            #app-content main[role="main"]::-webkit-scrollbar-thumb,
+            #app-content .overflow-auto::-webkit-scrollbar-thumb,
+            #app-content .overflow-y-auto::-webkit-scrollbar-thumb,
+            #app-content .overflow-x-auto::-webkit-scrollbar-thumb,
+            #app-content .scrollbar-hide::-webkit-scrollbar-thumb,
+            #app-content .no-scrollbar::-webkit-scrollbar-thumb {
+              background: linear-gradient(180deg, var(--primary-400, #3fbcd5), var(--primary-600, #1d809d)) !important;
+              border: 3px solid rgba(249, 250, 250, 0.92) !important;
+              border-radius: 999px !important;
+            }
+          }
+        `;
+      }
+
+      document.head.appendChild(style);
+    } catch (_) {}
+  }
+
+  dispose() {
+    if (!this.initialized) return;
+    document.removeEventListener('click', this.handleDocumentClick);
+    document.removeEventListener('pointerover', this.handleDocumentPrefetch);
+    document.removeEventListener('focusin', this.handleDocumentPrefetch);
+    window.removeEventListener('hashchange', this.handleHashChange);
+
+    if (this.postRouteRefreshFrame) {
+      cancelAnimationFrame(this.postRouteRefreshFrame);
+      this.postRouteRefreshFrame = 0;
+    }
+    if (this.postRouteIdle && typeof window.cancelIdleCallback === 'function') {
+      window.cancelIdleCallback(this.postRouteIdle);
+      this.postRouteIdle = 0;
+    }
+
+    this.prefetchQueue.clear();
+    this.cleanupPageStyles();
+    this.cleanupPageScripts();
+    this.cleanupPageModals();
+    this.initialized = false;
   }
 
   applyRouteLayoutState(path) {
@@ -468,6 +698,7 @@ class WebropolSPA {
       const purePath = (path || '').split('?')[0] || '/';
       const isSurveyEditRoute = purePath === '/surveys/edit' || purePath === '/surveys/blank-survey';
       const isSurveyReportRoute = purePath === '/surveys/report';
+      const isSmsEditRoute = purePath === '/sms/edit';
       // Editor tab routes: hide breadcrumbs for all survey/sms tab pages
       const isEditorTabsRoute = [
         '/surveys/edit', '/surveys/blank-survey', '/surveys/collect', '/surveys/aita', '/surveys/follow', '/surveys/report',
@@ -475,6 +706,7 @@ class WebropolSPA {
       ].includes(purePath);
       document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
       document.body.classList.toggle('route-surveys-report', isSurveyReportRoute);
+      document.body.classList.toggle('route-sms-edit', isSmsEditRoute);
       document.body.classList.toggle('route-editor-tabs', isEditorTabsRoute);
     } catch (_) {
       // ignore
@@ -903,12 +1135,23 @@ class WebropolSPA {
   }
 }
 
-// Initialize when DOM is ready
-window.addEventListener('DOMContentLoaded', () => {
+function bootWebropolSPA() {
+  if (window.WebropolSPA instanceof WebropolSPA) return;
+  if (window.WebropolSPA && typeof window.WebropolSPA.dispose === 'function') {
+    try { window.WebropolSPA.dispose(); } catch (_) {}
+  }
+
   const spa = new WebropolSPA();
   spa.init();
   // Expose for sidebar to call navigate
   window.WebropolSPA = spa;
-});
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', bootWebropolSPA, { once: true });
+} else {
+  bootWebropolSPA();
+}
 
 export { WebropolSPA };
