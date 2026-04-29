@@ -4,6 +4,7 @@
 
 Webropol is a **pure frontend survey/event platform** built as a multi-page application (MPA) with:
 - **Tech Stack**: Vanilla HTML5 + Tailwind CSS + Alpine.js + ES6 modules (NO frameworks, NO build tools, NO npm)
+- **Environment Constraint**: Company laptop with restricted installs - DO NOT use Python, install new software, or add package-manager dependencies; keep solutions pure HTML/CSS/JavaScript and use only existing browser/VS Code/PowerShell capabilities for validation when needed
 - **Design System**: Custom Web Components (`webropol-*`) extending `HTMLElement` via `BaseComponent` base class
 - **Data Layer**: 100% localStorage persistence (key: `webropol_*` prefixes) - NEVER mutate without preserving existing structure
 - **AI Features**: Native JavaScript AI models in `webroai/ai-engine.js` (SurveyAI, EventAI, AnalyticsAI, DistributionAI)
