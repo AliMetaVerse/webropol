@@ -498,13 +498,14 @@
   body.is-mobile webropol-survey-edit-toolbar .tb-scroll-slot {
     flex: 1 1 auto;
     min-width: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
   }
 
-  body.is-mobile webropol-survey-edit-toolbar .tb-scroll-slot::-webkit-scrollbar {
-    display: none;
+  body.is-mobile webropol-survey-edit-toolbar .tb-scroll-track {
+    min-width: 0;
+  }
+
+  body.is-mobile webropol-survey-edit-toolbar .adaptive-overflow-tabs__more-btn {
+    min-height: 44px;
   }
 
   /* Show only the active pane on mobile (driven by body[data-editor-mode]) */
@@ -755,7 +756,7 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true" show-theme-selector="true"></webropol-header-enhanced>
 
-      <main class="flex-1 overflow-hidden px-2 py-2 lg:px-1" role="main">
+      <main class="flex-1 overflow-x-hidden overflow-y-visible px-2 py-2 lg:px-1" role="main">
         <div class="survey-editor-shell w-full mx-auto h-full flex flex-col min-h-0">
           <!-- Survey Editor Header -->
           <div class="mb-0">
@@ -779,18 +780,21 @@
           <!-- Adaptive mobile mode rail (visible on mobile only) -->
           <nav class="editor-mode-rail" role="tablist" aria-label="Editor sections">
             <button type="button" role="tab"
+                    data-mobile-editor-mode="structure"
                     :class="{ 'is-active': mobileMode === 'structure' }"
                     :aria-selected="mobileMode === 'structure'"
                     @click="setMobileMode('structure')">
               <i class="fal fa-list-tree"></i><span>Structure</span>
             </button>
             <button type="button" role="tab"
+                    data-mobile-editor-mode="edit"
                     :class="{ 'is-active': mobileMode === 'edit' }"
                     :aria-selected="mobileMode === 'edit'"
                     @click="setMobileMode('edit')">
               <i class="fal fa-pen"></i><span>Edit</span>
             </button>
             <button type="button" role="tab"
+                    data-mobile-editor-mode="preview"
                     :class="{ 'is-active': mobileMode === 'preview' }"
                     :aria-selected="mobileMode === 'preview'"
                     @click="setMobileMode('preview')">
@@ -1207,7 +1211,7 @@
     <button type="button" class="btn-icon" aria-label="Undo" @click="(window.editorUndo || (() => {}))()">
       <i class="fal fa-undo"></i>
     </button>
-    <button type="button" class="btn-secondary" @click="setMobileMode('preview')">
+    <button type="button" class="btn-secondary" data-mobile-editor-mode="preview" @click="setMobileMode('preview')">
       <i class="fal fa-eye mr-1"></i> Preview
     </button>
     <button type="button" class="btn-primary" @click="addQuestionFromBottomBar()">
@@ -3823,6 +3827,9 @@
           }
           this.mobileMode = mode;
           document.body.dataset.editorMode = mode;
+          if (typeof window.syncSurveyEditorModeButtons === 'function') {
+            window.syncSurveyEditorModeButtons(mode);
+          }
         },
         openStylesSheet() {
           // Switch the internal structure tab to 'styles' and reveal structure pane
@@ -3884,9 +3891,48 @@
 
           // Seed body dataset so adaptive CSS reflects current mode immediately
           document.body.dataset.editorMode = this.mobileMode;
+          if (typeof window.syncSurveyEditorModeButtons === 'function') {
+            window.syncSurveyEditorModeButtons(this.mobileMode);
+          }
 
           // SPA-safe global hook for toolbar preview action fallback
           window.previewSurvey = () => this.previewSurvey();
+
+    function getSurveyEditorRoot() {
+      return document.querySelector('#app-content[x-data]') || document.querySelector('body[x-data*="surveyEditApp"]');
+    }
+
+    function syncSurveyEditorModeButtons(mode) {
+      document.querySelectorAll('[data-mobile-editor-mode]').forEach((button) => {
+        const active = button.dataset.mobileEditorMode === mode;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+    }
+
+    window.syncSurveyEditorModeButtons = syncSurveyEditorModeButtons;
+    window.setSurveyEditorMode = function(mode) {
+      try {
+        const root = getSurveyEditorRoot();
+        if (root && window.Alpine && typeof window.Alpine.$data === 'function') {
+          const app = window.Alpine.$data(root);
+          if (app && typeof app.setMobileMode === 'function') {
+            app.setMobileMode(mode);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Survey editor mode fallback failed to reach Alpine app:', e);
+      }
+
+      if (mode === 'preview') {
+        try { (window.previewSurvey || (() => {}))(); } catch (e) {}
+        return;
+      }
+
+      document.body.dataset.editorMode = mode;
+      syncSurveyEditorModeButtons(mode);
+    };
           window.openAddQuestionModal = () => this.openAddQuestionModal();
           window.addEventListener('open-add-question-modal', () => this.openAddQuestionModal());
 
@@ -5147,6 +5193,16 @@
       window.__surveyEditBindingsBound = true;
 
       function bindOnce() {
+        if (!window.__surveyEditorModeRailBound) {
+          window.__surveyEditorModeRailBound = true;
+          document.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-mobile-editor-mode]');
+            if (!trigger) return;
+            event.preventDefault();
+            window.setSurveyEditorMode(trigger.dataset.mobileEditorMode);
+          });
+        }
+
         const fileInput = document.getElementById('csvFile');
         if (fileInput) {
           fileInput.addEventListener('change', function(e) {
@@ -5419,6 +5475,8 @@
       }
 
       function initPerLoad() {
+        syncSurveyEditorModeButtons(document.body.dataset.editorMode || 'edit');
+
         // Sync autosuggest UI state when this route is loaded
         try { syncAutoSuggestUI(); } catch (e) {}
         // Ensure tooltips are keyboard-focusable

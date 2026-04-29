@@ -312,6 +312,16 @@ class WebropolSPA {
       window.__pageRoute = path;
       window.__pageQueryString = queryString;
 
+      // Tear down the previous Alpine scope before reusing the shared SPA container.
+      // Without this, route-scoped state and listeners can leak across navigations.
+      try {
+        if (window.Alpine && typeof window.Alpine.destroyTree === 'function') {
+          window.Alpine.destroyTree(this.container);
+        }
+      } catch (e) {
+        console.warn('[SPA] Alpine.js teardown failed:', e);
+      }
+
   // Clean up previously injected page styles
   this.cleanupPageStyles();
   this.cleanupPageScripts();
@@ -395,21 +405,22 @@ class WebropolSPA {
 
   // Attach page-specific styles from fetched document (respecting base path)
   this.attachPageStyles(doc, baseUrl);
-      // Re-initialize Alpine components within the injected content (if Alpine is present)
+
+      // Execute inline and external scripts before Alpine initialization so route-scoped
+      // x-data functions exist when the shared SPA container is initialized.
+      this.runPageScripts(doc, baseUrl);
+
+      // Re-initialize Alpine components within the injected content (if Alpine is present).
       try {
         if (window.Alpine && typeof window.Alpine.initTree === 'function') {
-          // Give Alpine a moment to detect the new DOM structure
-          setTimeout(() => {
-            window.Alpine.initTree(this.container);
-            // Also init any appended modals/popups (kept inside container for Alpine scope)
-            if (this.pageModalNodes && this.pageModalNodes.length) {
-              this.pageModalNodes.forEach((n) => {
-                try { window.Alpine.initTree(n); } catch(_) {}
-              });
-            }
-          }, 10);
+          window.Alpine.initTree(this.container);
+          if (this.pageModalNodes && this.pageModalNodes.length) {
+            this.pageModalNodes.forEach((n) => {
+              try { window.Alpine.initTree(n); } catch (_) {}
+            });
+          }
         }
-      } catch(e) {
+      } catch (e) {
         console.warn('[SPA] Alpine.js re-initialization failed:', e);
       }
 
@@ -426,9 +437,6 @@ class WebropolSPA {
           window.WebropolViewport.refresh();
         }
       } catch(_) {}
-
-      // Execute inline and external scripts inside main/body of fetched doc (respecting base path)
-      this.runPageScripts(doc, baseUrl);
 
       // Re-apply global settings after content load so UI reflects current configuration
       try {

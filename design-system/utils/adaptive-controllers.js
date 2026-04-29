@@ -85,6 +85,37 @@
     return more;
   }
 
+  function getMoreReserveWidth(more) {
+    const button = more?.querySelector('.adaptive-overflow-tabs__more-btn');
+    if (!button) return 80;
+
+    const wasHidden = more.hidden;
+    const previousPosition = more.style.position;
+    const previousVisibility = more.style.visibility;
+    const previousPointerEvents = more.style.pointerEvents;
+    const previousInset = more.style.inset;
+
+    if (wasHidden) {
+      more.hidden = false;
+      more.style.position = 'absolute';
+      more.style.visibility = 'hidden';
+      more.style.pointerEvents = 'none';
+      more.style.inset = '0 auto auto 0';
+    }
+
+    const width = Math.ceil(button.getBoundingClientRect().width);
+
+    if (wasHidden) {
+      more.hidden = true;
+      more.style.position = previousPosition;
+      more.style.visibility = previousVisibility;
+      more.style.pointerEvents = previousPointerEvents;
+      more.style.inset = previousInset;
+    }
+
+    return width || 80;
+  }
+
   function syncOverflow(container) {
     const track = container.querySelector(':scope > .adaptive-overflow-tabs__track');
     if (!track) return;
@@ -92,6 +123,7 @@
     // On mobile, prefer the existing snap-scroll/wrap behavior; the More
     // dropdown is a desktop affordance.
     const isMobile = document.body && document.body.classList.contains('is-mobile');
+    const allowMobileOverflow = container.dataset.overflowOnMobile === 'true';
     const items = Array.from(track.children).filter(el =>
       el.classList && el.classList.contains('adaptive-overflow-tabs__item')
     );
@@ -105,7 +137,7 @@
     menu.innerHTML = '';
     more.hidden = true;
 
-    if (isMobile) return;
+    if (isMobile && !allowMobileOverflow) return;
 
     // Force layout, measure. If every tab already fits in the available
     // header space, do not reserve room for More; that reserve would create
@@ -117,8 +149,8 @@
 
     const trackRect = track.getBoundingClientRect();
     const trackRight = trackRect.right;
-    // Reserve space for the More button (approx 80px) when needed.
-    const moreReserve = 80;
+    // Reserve only the width the More trigger actually needs.
+    const moreReserve = getMoreReserveWidth(more);
     const overflowing = [];
 
     for (let i = 0; i < items.length; i++) {

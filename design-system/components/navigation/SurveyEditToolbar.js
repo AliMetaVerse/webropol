@@ -1,5 +1,4 @@
 import { BaseComponent } from '../../utils/base-component.js';
-import '../feedback/Tooltip.js';
 
 const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
 const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
@@ -36,6 +35,7 @@ export class SurveyEditToolbar extends BaseComponent {
 
       const classes = [
         'tb-btn',
+        primary ? '' : 'adaptive-overflow-tabs__item',
         `tb-hue-${hue}`,
         primary ? 'tb-btn-primary' : '',
         this.iconsOnly && !primary ? 'tb-btn-icon-only' : ''
@@ -44,21 +44,18 @@ export class SurveyEditToolbar extends BaseComponent {
       const labelHTML = this.iconsOnly && !primary ? '' : `<span class="tb-btn-label">${label}</span>`;
 
       return `
-        <webropol-tooltip text="${label}" position="bottom">
-          <button
-            type="button"
-            class="${classes}"
-            data-action="${action}"
-            aria-label="${label}"
-          >
-            <span class="tb-btn-icon"><i class="${icon}" aria-hidden="true"></i></span>
-            ${labelHTML}
-          </button>
-        </webropol-tooltip>
+        <button
+          type="button"
+          class="${classes}"
+          data-action="${action}"
+          aria-label="${label}"
+          title="${label}"
+        >
+          <span class="tb-btn-icon"><i class="${icon}" aria-hidden="true"></i></span>
+          ${labelHTML}
+        </button>
       `;
     };
-
-    const sep = () => '<span class="tb-separator" aria-hidden="true"></span>';
 
     const primaryAction = tool('add-question', 'Add Question', 'fal fa-plus', 'danger', true);
 
@@ -71,15 +68,17 @@ export class SurveyEditToolbar extends BaseComponent {
     ];
 
     const visibleGroups = groups.map(g => g.filter(Boolean).join('\n            ')).filter(g => g.trim());
-    const secondaryToolsHTML = visibleGroups.join(`\n            ${sep()}\n            `);
+    const secondaryToolsHTML = visibleGroups.join('\n            ');
     const primarySlotHTML = primaryAction ? `
         <div class="tb-primary-slot">
           ${primaryAction}
         </div>
       ` : '';
     const scrollSlotHTML = secondaryToolsHTML ? `
-        <div class="tb-scroll-slot">
-          ${secondaryToolsHTML}
+        <div class="tb-scroll-slot adaptive-overflow-tabs" data-overflow-on-mobile="true">
+          <div class="tb-scroll-track adaptive-overflow-tabs__track">
+            ${secondaryToolsHTML}
+          </div>
         </div>
       ` : '';
 
@@ -90,6 +89,9 @@ export class SurveyEditToolbar extends BaseComponent {
           width: 100%;
           max-width: 100%;
           min-width: 0;
+          position: relative;
+          z-index: 20;
+          overflow: visible;
         }
 
         .survey-edit-toolbar {
@@ -98,6 +100,7 @@ export class SurveyEditToolbar extends BaseComponent {
           --tb-transition: 180ms cubic-bezier(.4, 0, .2, 1);
 
           position: relative;
+          z-index: 1;
           display: flex;
           align-items: center;
           gap: 4px;
@@ -132,6 +135,14 @@ export class SurveyEditToolbar extends BaseComponent {
           flex: 1 1 auto;
         }
 
+        .survey-edit-toolbar .tb-scroll-track {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          min-width: 0;
+          flex: 1 1 auto;
+        }
+
         /* Decorative top sheen */
         .survey-edit-toolbar::before {
           content: '';
@@ -141,11 +152,6 @@ export class SurveyEditToolbar extends BaseComponent {
           background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent);
           border-radius: var(--tb-radius) var(--tb-radius) 0 0;
           pointer-events: none;
-        }
-
-        /* Tooltip wrapper should not break flex flow */
-        .survey-edit-toolbar webropol-tooltip {
-          display: inline-flex;
         }
 
         /* Base button */
@@ -271,27 +277,39 @@ export class SurveyEditToolbar extends BaseComponent {
           --hue-50:#fef2f2; --hue-100:#fee2e2; --hue-500:#ef4444; --hue-600:#dc2626; --hue-700:#b91c1c;
         }
 
-        /* Separator */
-        .survey-edit-toolbar .tb-separator {
-          flex: 0 0 auto;
-          width: 1px;
-          height: 24px;
-          margin: 0 4px;
-          background: linear-gradient(180deg, transparent, rgba(148, 163, 184, .35), transparent);
+        .survey-edit-toolbar .adaptive-overflow-tabs__more-btn {
+          min-height: 36px;
+          padding: 8px 12px;
+          border-radius: var(--tb-btn-radius);
+          border: 1px solid rgba(226, 232, 240, .9);
+          background: rgba(255, 255, 255, 0.92);
+          color: #475569;
+          box-shadow: 0 1px 2px rgba(15, 23, 42, .06);
         }
 
-        /* Responsive — keep on a single row when possible, wrap when not.
-           Avoid horizontal scrolling; use icons-only at narrow widths. */
+        .survey-edit-toolbar .adaptive-overflow-tabs__more-btn:hover {
+          background: var(--hue-50);
+          border-color: rgba(6, 182, 212, .18);
+          color: #0e7490;
+        }
+
+        .survey-edit-toolbar .adaptive-overflow-tabs__menu {
+          z-index: 9999;
+        }
+
+        .survey-edit-toolbar .adaptive-overflow-tabs__menu .tb-btn-label {
+          display: inline;
+        }
+
+        .survey-edit-toolbar .adaptive-overflow-tabs__menu .tb-btn-icon {
+          color: #475569;
+        }
+
         @media (max-width: 1199px) {
           .survey-edit-toolbar {
             width: 100%;
             max-width: 100%;
             justify-content: flex-start;
-          }
-
-          .survey-edit-toolbar .tb-scroll-slot {
-            flex-wrap: wrap;
-            row-gap: 6px;
           }
         }
         @media (max-width: 900px) {
@@ -299,22 +317,14 @@ export class SurveyEditToolbar extends BaseComponent {
             gap: 8px;
           }
 
-          .survey-edit-toolbar .tb-scroll-slot {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: none;
-          }
-
-          .survey-edit-toolbar .tb-scroll-slot::-webkit-scrollbar {
-            display: none;
-          }
-
-          .survey-edit-toolbar .tb-btn-label { display: none; }
+          .survey-edit-toolbar .tb-scroll-track .tb-btn-label { display: none; }
           .survey-edit-toolbar .tb-btn { padding: 0; width: 36px; height: 36px; justify-content: center; }
           .survey-edit-toolbar .tb-btn-primary { width: auto; padding: 0 14px; }
           .survey-edit-toolbar .tb-btn-primary .tb-btn-label { display: inline; }
-          .survey-edit-toolbar .tb-separator { height: 20px; margin: 0 2px; }
+          .survey-edit-toolbar .adaptive-overflow-tabs__more-btn {
+            min-height: 44px;
+            padding: 0 12px;
+          }
         }
 
         @media (max-width: 900px) {
@@ -346,6 +356,13 @@ export class SurveyEditToolbar extends BaseComponent {
           .survey-edit-toolbar .tb-btn-primary {
             min-width: max-content;
             height: 44px;
+          }
+
+          .survey-edit-toolbar .adaptive-overflow-tabs__menu {
+            top: auto;
+            bottom: calc(100% + 8px);
+            max-height: min(60vh, 22rem);
+            overflow-y: auto;
           }
         }
 
