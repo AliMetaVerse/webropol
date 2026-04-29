@@ -37,7 +37,44 @@ export class WebropolHeader extends BaseComponent {
     }
   }
 
+  applyStickyHostStyles() {
+    const touchMobile = this.isMobile
+      && typeof window !== 'undefined'
+      && typeof window.matchMedia === 'function'
+      && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    const body = typeof document !== 'undefined' ? document.body : null;
+
+    if (body) {
+      body.classList.toggle('has-fixed-mobile-header', touchMobile);
+    }
+
+    // Keep the custom-element host pinned even on pages that bypass shared shell CSS.
+    this.style.display = 'block';
+    this.style.width = '100%';
+    this.style.flexShrink = '0';
+    this.style.alignSelf = 'stretch';
+
+    if (touchMobile) {
+      this.style.setProperty('position', 'fixed', 'important');
+      this.style.setProperty('top', '0', 'important');
+      this.style.setProperty('left', '0', 'important');
+      this.style.setProperty('right', '0', 'important');
+      this.style.setProperty('width', '100%', 'important');
+      this.style.setProperty('z-index', '40', 'important');
+      return;
+    }
+
+    this.style.setProperty('position', 'sticky', 'important');
+    this.style.setProperty('top', '0', 'important');
+    this.style.removeProperty('left');
+    this.style.removeProperty('right');
+    this.style.setProperty('width', '100%', 'important');
+    this.style.setProperty('z-index', '40', 'important');
+  }
+
   render() {
+    this.applyStickyHostStyles();
+
     if (this.isMobile) {
       const username = this.getAttr('username', 'Ali Al-Zuhairi');
       const title = this.getAttr('title');
@@ -1944,6 +1981,9 @@ export class WebropolHeader extends BaseComponent {
   // Cleanup method
   disconnectedCallback() {
     super.disconnectedCallback();
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.remove('has-fixed-mobile-header');
+    }
     window.removeEventListener('resize', this.checkViewport);
     document.removeEventListener('click', this.handleDocClick, true);
     document.removeEventListener('keydown', this.handleKeyDown, true);

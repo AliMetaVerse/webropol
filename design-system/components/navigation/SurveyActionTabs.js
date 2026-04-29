@@ -97,10 +97,12 @@ export class SurveyActionTabs extends BaseComponent {
     const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
       const isDisabled = disabledSet.has(tab.id);
-      const tabLabelMarkup = this.iconsOnly ? '' : `<span class="main-primary-label">${tab.label}</span>`;
+      const showLabel = !this.iconsOnly || isActive;
+      const useTooltip = this.iconsOnly && !isActive;
+      const tabLabelMarkup = showLabel ? `<span class="main-primary-label">${tab.label}</span>` : '';
       const tabIconClass = `${tab.icon} ${tab.iconColor}`;
-      const tabRowClass = this.iconsOnly ? 'main-primary-row justify-center' : 'main-primary-row';
-      const tabRowStyle = this.iconsOnly ? 'style="gap:0;padding:6px 6px 4px;"' : '';
+      const tabRowClass = showLabel ? 'main-primary-row' : 'main-primary-row justify-center';
+      const tabRowStyle = showLabel ? '' : 'style="gap:0;padding:6px 6px 4px;"';
       const tabIconWrapperClass = this.iconsOnly
         ? `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`
         : `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`;
@@ -125,7 +127,7 @@ export class SurveyActionTabs extends BaseComponent {
           </span>
         `;
 
-        return this.iconsOnly
+        return useTooltip
           ? `<webropol-tooltip text="${tab.label}" position="bottom">${disabledMarkup}</webropol-tooltip>`
           : disabledMarkup;
       }
@@ -148,7 +150,7 @@ export class SurveyActionTabs extends BaseComponent {
         </a>
       `;
 
-      return this.iconsOnly
+      return useTooltip
         ? `<webropol-tooltip text="${tab.label}" position="bottom">${tabMarkup}</webropol-tooltip>`
         : tabMarkup;
     }).join('');

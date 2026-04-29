@@ -25,6 +25,72 @@ body.is-mobile .adaptive-shell #app-content {
   padding-right: 0;
 }
 
+.adaptive-shell > .flex-1,
+.adaptive-shell > .flex-1.flex.flex-col,
+.adaptive-shell .flex-1.flex.flex-col.overflow-hidden,
+.adaptive-shell .main-content-transition,
+.adaptive-shell .mobile-main-content {
+  min-height: 0 !important;
+}
+
+.adaptive-shell main[role="main"],
+.adaptive-shell > main {
+  min-height: 0 !important;
+}
+
+@media (max-width: 767px) {
+  .adaptive-shell {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden;
+  }
+
+  .adaptive-shell > .flex-1,
+  .adaptive-shell > .flex-1.flex.flex-col,
+  .adaptive-shell .flex-1.flex.flex-col.overflow-hidden,
+  .adaptive-shell .main-content-transition,
+  .adaptive-shell .mobile-main-content {
+    min-height: 0 !important;
+  }
+
+  .adaptive-shell main[role="main"],
+  .adaptive-shell > main {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 767px) {
+  body.has-fixed-mobile-header {
+    overflow-y: auto !important;
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important;
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell > .flex-1,
+  body.has-fixed-mobile-header .adaptive-shell > .flex-1.flex.flex-col,
+  body.has-fixed-mobile-header .adaptive-shell .flex-1.flex.flex-col.overflow-hidden,
+  body.has-fixed-mobile-header .adaptive-shell .main-content-transition,
+  body.has-fixed-mobile-header .adaptive-shell .mobile-main-content {
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding-top: calc(var(--mobile-header-height, 64px) + env(safe-area-inset-top, 0px));
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell main[role="main"],
+  body.has-fixed-mobile-header .adaptive-shell > main {
+    min-height: calc(100vh - var(--mobile-header-height, 64px)) !important;
+    overflow: visible !important;
+    overscroll-behavior: auto;
+  }
+}
+
 body.is-mobile .adaptive-page {
   padding: 12px 12px 96px; /* leave room for adaptive-bottom-bar */
 }
@@ -774,11 +840,15 @@ body.is-mobile.is-touch a.btn {
   body[x-data*="libraryApp"] .page-title {
     font-size: 1.375rem !important;
   }
-  /* Allow the events shell to grow with content on mobile */
+  /* Keep the header sticky by leaving main as the mobile scroll owner */
   body[x-data*="libraryApp"] .flex.h-screen,
   body[x-data*="libraryApp"] .adaptive-shell {
-    height: auto !important;
-    min-height: 100vh;
+    height: 100dvh !important;
+    min-height: 100dvh;
+  }
+  body[x-data*="libraryApp"] .flex-1.flex.flex-col.overflow-hidden,
+  body[x-data*="libraryApp"] main[role="main"] {
+    min-height: 0 !important;
   }
   body[x-data*="libraryApp"] main[role="main"].overflow-hidden {
     overflow: visible !important;
@@ -840,22 +910,29 @@ body.is-mobile.is-touch a.btn {
   }
 }
 @media (max-width: 767px) {
-  /* Surveys/report standalone shell uses min-h-screen - make sure scroll happens */
-  body[x-data] main[role="main"] section.lg\:col-span-3 {
+  /* Only report-style layouts should opt into document scrolling on mobile */
+  body:has(main[role="main"] section.lg\:col-span-3) main[role="main"] section.lg\:col-span-3 {
     max-height: none !important;
     overflow: visible !important;
   }
-  body[x-data] main[role="main"] aside,
-  body[x-data] main[role="main"] aside .overflow-y-auto {
+  body:has(main[role="main"] section.lg\:col-span-3) main[role="main"] aside,
+  body:has(main[role="main"] section.lg\:col-span-3) main[role="main"] aside .overflow-y-auto {
     max-height: none !important;
     overflow: visible !important;
   }
-  /* Allow page body to scroll vertically */
-  html, body { overflow-y: auto !important; height: auto !important; }
-  /* If the SPA wraps content in flex.h-screen, allow it to grow */
-  .flex.h-screen { height: auto !important; min-height: 100vh; }
-  .flex.h-screen > .flex-1.flex.flex-col.overflow-hidden,
-  .flex-1.flex.flex-col.overflow-hidden {
+  /* Report-style layouts can use document scrolling without affecting other shells */
+  html:has(body:has(main[role="main"] section.lg\:col-span-3)),
+  body:has(main[role="main"] section.lg\:col-span-3) {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+  body:has(main[role="main"] section.lg\:col-span-3) .flex.h-screen,
+  body:has(main[role="main"] section.lg\:col-span-3) .adaptive-shell {
+    height: auto !important;
+    min-height: 100vh;
+  }
+  body:has(main[role="main"] section.lg\:col-span-3) .flex.h-screen > .flex-1.flex.flex-col.overflow-hidden,
+  body:has(main[role="main"] section.lg\:col-span-3) .flex-1.flex.flex-col.overflow-hidden {
     overflow: visible !important;
   }
 }
@@ -921,14 +998,14 @@ body.route-sms-edit .editor-mode-rail {
     border-color: #a5f3fc;
   }
 
-  /* Allow the editor shell to grow with content */
+  /* Keep the header sticky by preserving a viewport-bound shell */
   body.route-sms-edit .flex.h-screen,
   body.route-sms-edit .adaptive-shell {
-    height: auto !important;
-    min-height: 100vh;
+    height: 100dvh !important;
+    min-height: 100dvh;
   }
   body.route-sms-edit .flex-1.flex.flex-col.overflow-hidden {
-    overflow: visible !important;
+    min-height: 0 !important;
   }
   /* Main element: allow scroll */
   body.route-sms-edit main[role="main"] {
@@ -1033,6 +1110,35 @@ body.route-sms-edit .editor-mode-rail {
   /* Hide its border-b wrapper top-spacing so it doesn't double up */
   body.route-sms-edit main[role="main"] > .border-b.border-webropol-gray-200 {
     border-bottom: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body.has-fixed-mobile-header {
+    overflow-y: auto !important;
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell > .flex-1,
+  body.has-fixed-mobile-header .adaptive-shell > .flex-1.flex.flex-col,
+  body.has-fixed-mobile-header .adaptive-shell .flex-1.flex.flex-col.overflow-hidden,
+  body.has-fixed-mobile-header .adaptive-shell .main-content-transition,
+  body.has-fixed-mobile-header .adaptive-shell .mobile-main-content {
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding-top: calc(var(--mobile-header-height, 64px) + env(safe-area-inset-top, 0px)) !important;
+  }
+
+  body.has-fixed-mobile-header .adaptive-shell main[role="main"],
+  body.has-fixed-mobile-header .adaptive-shell > main {
+    min-height: calc(100vh - var(--mobile-header-height, 64px)) !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
   }
 }
 

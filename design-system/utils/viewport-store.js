@@ -21,6 +21,7 @@
     wide: '(min-width: 1280px)'
   };
   const TOUCH_QUERY = '(hover: none) and (pointer: coarse)';
+  let bodySyncQueued = false;
 
   function detectMode() {
     if (typeof window === 'undefined' || !window.matchMedia) return 'desktop';
@@ -37,11 +38,31 @@
   }
 
   function syncBodyClasses(mode, touch) {
-    if (typeof document === 'undefined' || !document.body) return;
+    if (typeof document === 'undefined' || !document.body) {
+      queueBodySync();
+      return false;
+    }
     const body = document.body;
     ['is-mobile', 'is-tablet', 'is-desktop', 'is-wide'].forEach(c => body.classList.remove(c));
     body.classList.add('is-' + mode);
     body.classList.toggle('is-touch', !!touch);
+    return true;
+  }
+
+  function queueBodySync() {
+    if (typeof document === 'undefined' || bodySyncQueued) return;
+    bodySyncQueued = true;
+    const rerun = () => {
+      bodySyncQueued = false;
+      refresh(true);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', rerun, { once: true });
+      return;
+    }
+
+    setTimeout(rerun, 0);
   }
 
   const state = {
