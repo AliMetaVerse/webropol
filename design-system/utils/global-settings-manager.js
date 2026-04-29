@@ -70,10 +70,10 @@ export class GlobalSettingsManager {
     modules: {
       surveysEnabled: true,
   dashboardsEnabled: false,
-  adminToolsEnabled: false,
+  adminToolsEnabled: true,
   brandingEnabled: false,
   shopEnabled: false,
-  eventsEnabled: false,
+  eventsEnabled: true,
       mywebropolEnabled: true,
   newsEnabled: true,
   trainingEnabled: false,
