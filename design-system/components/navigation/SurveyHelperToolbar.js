@@ -495,13 +495,12 @@ export class SurveyHelperToolbar extends BaseComponent {
           }
 
           .survey-helper-toolbar .status-badge {
-            flex: 0 0 auto;
-            max-width: none;
-            min-width: auto;
-            padding: 0.375rem;
+            display: none;
           }
 
-          .survey-helper-toolbar .status-text {
+          .survey-helper-toolbar .status-text,
+          .survey-helper-toolbar .divider,
+          .survey-helper-toolbar > .survey-action-btn {
             display: none;
           }
 

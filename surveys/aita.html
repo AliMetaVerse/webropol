@@ -126,6 +126,7 @@
   <script src="../design-system/components/navigation/Header.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyActionTabs.js" type="module"></script>
   <script src="../design-system/components/navigation/SurveyHelperToolbar.js" type="module"></script>
+  <script src="../design-system/components/menus/ContextMenu.js" type="module"></script>
   <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
   <script src="../design-system/components/modals/Modal.js" type="module"></script>
   <script src="../design-system/components/modals/SettingsModal.js" type="module"></script>
@@ -135,7 +136,7 @@
     <!-- Global Analytics Tracker -->
     <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
-<body x-data="surveyEditApp()" x-init="migrateOldData()">
+<body x-data="surveyEditApp()" x-init="migrateOldData()" class="route-editor-tabs route-surveys-aita">
   <div class="flex h-screen">
     <webropol-sidebar active="surveys" base="../"></webropol-sidebar>
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -160,43 +161,67 @@
           </div>
           <br>
           <!-- Toolbar row: moved directly under main tabs, full width -->
-          <div class="flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
-            <div class="flex items-center gap-3">
-              <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
+          <div class="report-toolbar report-toolbar-row flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
+            <div class="report-selector-group flex items-center gap-3 flex-1">
+              <div class="report-selector-btn inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-webropol-primary-50 text-webropol-primary-800 border border-webropol-primary-200">
                 <span class="font-semibold">(Edited)</span>
-                <span>Basic dashboard</span>
+                <span class="report-name-label">Basic dashboard</span>
                 <i class="fal fa-angle-down ml-1"></i>
               </div>
-              <button class="px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
+              <button class="aita-toolbar-secondary-action px-3 py-1.5 rounded-full bg-webropol-gray-100 hover:bg-webropol-gray-200 text-webropol-gray-700 border border-webropol-gray-200">
                 <i class="fal fa-save mr-2"></i>Save
               </button>
-              <button class="px-3 py-1.5 rounded-full bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 border border-webropol-gray-200">
+              <button class="aita-toolbar-secondary-action px-3 py-1.5 rounded-full bg-white hover:bg-webropol-gray-50 text-webropol-gray-700 border border-webropol-gray-200">
                 <i class="fal fa-save mr-2"></i>Save as
               </button>
             </div>
-            <div class="flex items-center gap-8 text-webropol-gray-700">
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+            <div class="report-actions flex items-center gap-8 text-webropol-gray-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-filter text-xl mb-1"></i><span>Filter</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-sliders-h text-xl mb-1"></i><span>Compare</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-users text-xl mb-1"></i><span>Respondents</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-palette text-xl mb-1"></i><span>Layout</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-plus-square text-xl mb-1"></i><span>Add Elements</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-chart-line text-xl mb-1"></i><span>Analytics</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
-                <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
-              </button>
-              <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareOpen = true" title="Export & Share">
+              <details class="report-more-action relative" name="aita-toolbar-menu">
+                <summary class="flex flex-col items-center text-sm hover:text-webropol-primary-700 list-none cursor-pointer" aria-label="More AITA actions">
+                  <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
+                </summary>
+                 <div class="report-disclosure-menu absolute right-0 mt-2 z-50"
+                   onclick="if (event.target.closest('[data-item-id]')) this.closest('details')?.removeAttribute('open')"
+                   @item-click.window="$el.closest('details')?.removeAttribute('open')">
+                  <webropol-context-menu
+                    items='[
+                      {"id": "save", "label": "Save", "icon": "fal fa-save", "containerClass": "report-more-mobile-item"},
+                      {"id": "save-as", "label": "Save as", "icon": "fal fa-save", "containerClass": "report-more-mobile-item"},
+                      {"id": "filter", "label": "Filter", "icon": "fal fa-filter", "containerClass": "report-more-mobile-item"},
+                      {"id": "compare", "label": "Compare", "icon": "fal fa-sliders-h", "containerClass": "report-more-mobile-item"},
+                      {"id": "respondents", "label": "Respondents", "icon": "fal fa-users", "containerClass": "report-more-mobile-item"},
+                      {"id": "layout", "label": "Layout", "icon": "fal fa-palette", "containerClass": "report-more-mobile-item"},
+                      {"id": "add-elements", "label": "Add Elements", "icon": "fal fa-plus-square", "containerClass": "report-more-mobile-item"},
+                      {"id": "analytics", "label": "Analytics", "icon": "fal fa-chart-line", "containerClass": "report-more-mobile-item"},
+                      {"id": "weighting", "label": "Respondents Weighting", "icon": "fal fa-balance-scale"},
+                      {"id": "multiple", "label": "Multiple Reports", "icon": "fal fa-layer-group"},
+                      {"id": "timeline", "label": "Timeline", "icon": "fal fa-chart-network"},
+                      {"id": "personal", "label": "Personal data", "icon": "fal fa-shield-check"}
+                    ]'
+                    width="md"
+                    rounded="lg"
+                  ></webropol-context-menu>
+                </div>
+              </details>
+              <button class="report-export-action flex flex-col items-center text-sm text-orange-700 hover:text-orange-800" @click="exportShareOpen = true" title="Export & Share" aria-label="Export and share">
                 <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
               </button>
             </div>
@@ -1772,6 +1797,19 @@
         editAllowCommenting: false,
         selectedLink: null,
         publicLinks: JSON.parse(localStorage.getItem('webropol_public_links') || '[]'),
+
+        init() {
+          this._toolbarDisclosurePointerHandler = (event) => {
+            const target = event.target;
+            document.querySelectorAll('.report-toolbar-row details[open]').forEach((details) => {
+              if (!details.contains(target)) {
+                details.removeAttribute('open');
+              }
+            });
+          };
+
+          window.addEventListener('pointerdown', this._toolbarDisclosurePointerHandler, true);
+        },
         
         // Accordion state - closed by default, persisted in localStorage
         

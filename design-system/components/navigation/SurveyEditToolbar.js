@@ -75,7 +75,7 @@ export class SurveyEditToolbar extends BaseComponent {
         </div>
       ` : '';
     const scrollSlotHTML = secondaryToolsHTML ? `
-        <div class="tb-scroll-slot adaptive-overflow-tabs" data-overflow-on-mobile="true">
+        <div class="tb-scroll-slot adaptive-overflow-tabs" data-overflow-on-mobile="true" data-min-visible-mobile="2">
           <div class="tb-scroll-track adaptive-overflow-tabs__track">
             ${secondaryToolsHTML}
           </div>
@@ -323,7 +323,12 @@ export class SurveyEditToolbar extends BaseComponent {
           .survey-edit-toolbar .tb-btn-primary .tb-btn-label { display: inline; }
           .survey-edit-toolbar .adaptive-overflow-tabs__more-btn {
             min-height: 44px;
-            padding: 0 12px;
+            width: 44px;
+            padding: 0;
+            justify-content: center;
+          }
+          .survey-edit-toolbar .adaptive-overflow-tabs__more-btn span {
+            display: none;
           }
         }
 
@@ -354,8 +359,21 @@ export class SurveyEditToolbar extends BaseComponent {
           }
 
           .survey-edit-toolbar .tb-btn-primary {
+            flex: 0 1 auto;
             min-width: max-content;
+            max-width: calc(100vw - 188px);
             height: 44px;
+            padding-left: 12px;
+            padding-right: 12px;
+          }
+
+          .survey-edit-toolbar .tb-scroll-slot {
+            flex: 1 1 auto;
+            min-width: 136px;
+          }
+
+          .survey-edit-toolbar .tb-scroll-track {
+            gap: 4px;
           }
 
           .survey-edit-toolbar .adaptive-overflow-tabs__menu {

@@ -697,7 +697,10 @@ class WebropolSPA {
     try {
       const purePath = (path || '').split('?')[0] || '/';
       const isSurveyEditRoute = purePath === '/surveys/edit' || purePath === '/surveys/blank-survey';
+      const isSurveyCollectRoute = purePath === '/surveys/collect';
+      const isSurveyFollowRoute = purePath === '/surveys/follow';
       const isSurveyReportRoute = purePath === '/surveys/report';
+      const isSurveyAitaRoute = purePath === '/surveys/aita';
       const isSmsEditRoute = purePath === '/sms/edit';
       // Editor tab routes: hide breadcrumbs for all survey/sms tab pages
       const isEditorTabsRoute = [
@@ -705,7 +708,10 @@ class WebropolSPA {
         '/sms/edit', '/sms/collect', '/sms/aita', '/sms/follow', '/sms/report'
       ].includes(purePath);
       document.body.classList.toggle('route-surveys-edit', isSurveyEditRoute);
+      document.body.classList.toggle('route-surveys-collect', isSurveyCollectRoute);
+      document.body.classList.toggle('route-surveys-follow', isSurveyFollowRoute);
       document.body.classList.toggle('route-surveys-report', isSurveyReportRoute);
+      document.body.classList.toggle('route-surveys-aita', isSurveyAitaRoute);
       document.body.classList.toggle('route-sms-edit', isSmsEditRoute);
       document.body.classList.toggle('route-editor-tabs', isEditorTabsRoute);
     } catch (_) {

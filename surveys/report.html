@@ -349,7 +349,7 @@
     <!-- Global Analytics Tracker -->
     <script src="../scripts/analytics-global-tracker.js"></script>
 </head>
-<body x-data="surveyEditApp()" 
+<body x-data="surveyEditApp()" class="route-editor-tabs route-surveys-report" 
   @click="handlePageClick($event)">
   <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
     <defs>
@@ -388,31 +388,24 @@
             </div>
           </div>
           <!-- Toolbar row: moved directly under main tabs, full width -->
-          <div class="flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
-            <div class="flex items-center gap-3 flex-1">
+          <div class="report-toolbar report-toolbar-row flex flex-wrap mb-4 items-center justify-between gap-4 bg-white/80 rounded-2xl border border-webropol-gray-100 shadow-card p-4 w-full">
+            <div class="report-selector-group flex items-center gap-3 flex-1">
               <!-- Report Dropdown -->
-              <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                <button @click="dropdownOpen = !dropdownOpen" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-50 hover:bg-webropol-primary-100 text-webropol-primary-800 border border-webropol-primary-200 hover:border-webropol-primary-300 transition-all font-medium">
+              <details class="report-dropdown relative" name="report-toolbar-menu">
+                <summary class="report-selector-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-webropol-primary-50 hover:bg-webropol-primary-100 text-webropol-primary-800 border border-webropol-primary-200 hover:border-webropol-primary-300 transition-all font-medium list-none cursor-pointer">
                   <span x-show="!isSavedReport" class="text-xs font-semibold text-blue-600">[Original]</span>
                   <span x-show="isSavedReport && hasUnsavedChanges" class="text-xs font-semibold text-orange-600">[Edited]</span>
-                  <span x-text="currentReportName"></span>
-                  <i class="fal fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': dropdownOpen }"></i>
-                </button>
+                  <span class="report-name-label" x-text="currentReportName"></span>
+                  <i class="report-selector-chevron fal fa-chevron-down text-sm transition-transform"></i>
+                </summary>
                 
                 <!-- Dropdown Menu -->
-                <div x-show="dropdownOpen" 
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="opacity-100 scale-100"
-                     x-transition:leave-end="opacity-0 scale-95"
-                     class="absolute top-full left-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-webropol-gray-200 z-50 overflow-hidden"
-                     style="display: none;">
+                <div class="report-disclosure-menu absolute top-full left-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-webropol-gray-200 z-50 overflow-hidden"
+                     onclick="if (event.target.closest('button')) this.closest('details')?.removeAttribute('open')">
                   
                   <!-- Basic Report -->
                   <div class="border-b border-webropol-gray-100">
-                    <button @click="switchToReport('Basic report', false); dropdownOpen = false" 
+                        <button @click="switchToReport('Basic report', false)" 
                             class="w-full px-4 py-3 text-left hover:bg-webropol-gray-50 transition-colors flex items-center justify-between group"
                             :class="{ 'bg-webropol-primary-50': !isSavedReport }">
                       <div class="flex items-center gap-3">
@@ -435,7 +428,7 @@
                     <!-- Dynamic Saved Reports List -->
                     <template x-for="report in savedReports" :key="report.name">
                       <div class="flex items-center gap-2 px-3 py-2 hover:bg-webropol-primary-50 transition-colors rounded-lg group">
-                        <button @click="switchToReport(report.name, true); dropdownOpen = false" 
+                        <button @click="switchToReport(report.name, true)" 
                                 class="flex items-center gap-3 flex-1 min-w-0 text-left"
                                 :class="{ 'font-semibold': isSavedReport && currentReportName === report.name }">
                           <div class="w-8 h-8 rounded-lg bg-webropol-primary-100 flex items-center justify-center flex-shrink-0">
@@ -484,14 +477,14 @@
                   
                   <!-- Save As Button -->
                   <div class="border-t border-webropol-gray-100 p-2">
-                    <button @click="saveAsModalOpen = true; dropdownOpen = false" 
+                        <button @click="saveAsModalOpen = true" 
                             class="w-full px-3 py-2 text-left hover:bg-webropol-gray-50 transition-colors flex items-center gap-2 rounded-lg text-webropol-primary-600 hover:text-webropol-primary-700 font-medium">
                       <i class="fal fa-plus-circle"></i>
                       <span>Save current view as...</span>
                     </button>
                   </div>
                 </div>
-              </div>
+              </details>
               
               <!-- Save Button (only for saved reports) -->
               <button @click="saveReport()" x-show="isSavedReport && hasUnsavedChanges" x-cloak
@@ -499,18 +492,18 @@
                 <i class="fal fa-save mr-2"></i>Save
               </button>
             </div>
-            <div class="flex items-center gap-8 text-webropol-gray-700">
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+            <div class="report-actions flex items-center gap-8 text-webropol-gray-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-filter text-xl mb-1"></i><span>Filter</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-sliders-h text-xl mb-1"></i><span>Compare</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-users text-xl mb-1"></i><span>Respondents</span>
               </button>
               <!-- Layout Dropdown -->
-              <div class="relative" @click.away="layoutOpen = false">
+              <div class="report-secondary-action relative" @click.away="layoutOpen = false">
                 <button @click="layoutOpen = !layoutOpen" class="flex flex-col items-center text-sm hover:text-webropol-primary-700" :class="{ 'text-webropol-primary-700': layoutOpen }">
                   <span class="inline-block mb-1">
                     <i class="fal fa-palette text-xl"></i>
@@ -590,35 +583,34 @@
                   </button>
                 </div>
               </div>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-plus-square text-xl mb-1"></i><span>Add Elements</span>
               </button>
-              <button class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <button class="report-secondary-action flex flex-col items-center text-sm hover:text-webropol-primary-700">
                 <i class="fal fa-chart-line text-xl mb-1"></i><span>Analytics</span>
               </button>
               
-              <div class="relative" x-data="{ open: false }" @click.away="open = false">
-                <button @click="open = !open" class="flex flex-col items-center text-sm hover:text-webropol-primary-700">
+              <details class="report-more-action relative" name="report-toolbar-menu">
+                <summary class="flex flex-col items-center text-sm hover:text-webropol-primary-700 list-none cursor-pointer" aria-label="More report actions">
                   <i class="fal fa-ellipsis-vertical text-xl mb-1"></i><span>More</span>
-                </button>
-                <div x-show="open" 
-                     x-transition:enter="transition ease-out duration-100"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-1 scale-100"
-                     x-transition:leave="transition ease-in duration-75"
-                     x-transition:leave-start="opacity-1 scale-100"
-                     x-transition:leave-end="opacity-0 scale-95"
-                     class="absolute right-0 mt-2 z-50"
-                     style="display: none;"
+                </summary>
+                <div class="report-disclosure-menu absolute right-0 mt-2 z-50"
+                     onclick="if (event.target.closest('[data-item-id]')) this.closest('details')?.removeAttribute('open')"
                      @item-click.window="
                        if ($event.detail.id === 'combine') {
                          combineReportsOpen = true;
-                         open = false;
                        }
+                       $el.closest('details')?.removeAttribute('open');
                      ">
                   <webropol-context-menu
                     id="moreContextMenu"
                     items='[
+                      {"id": "filter", "label": "Filter", "icon": "fal fa-filter", "containerClass": "report-more-mobile-item"},
+                      {"id": "compare", "label": "Compare", "icon": "fal fa-sliders-h", "containerClass": "report-more-mobile-item"},
+                      {"id": "respondents", "label": "Respondents", "icon": "fal fa-users", "containerClass": "report-more-mobile-item"},
+                      {"id": "layout", "label": "Layout", "icon": "fal fa-palette", "containerClass": "report-more-mobile-item"},
+                      {"id": "add-elements", "label": "Add Elements", "icon": "fal fa-plus-square", "containerClass": "report-more-mobile-item"},
+                      {"id": "analytics", "label": "Analytics", "icon": "fal fa-chart-line", "containerClass": "report-more-mobile-item"},
                       {"id": "weighting", "label": "Respondents Weighting", "icon": "fal fa-balance-scale"},
                       {"id": "combine", "label": "Combine Reports", "icon": "fal fa-object-group"},
                       {"id": "multiple", "label": "Multiple Reports", "icon": "fal fa-layer-group"},
@@ -629,10 +621,10 @@
                     rounded="lg"
                   ></webropol-context-menu>
                 </div>
-              </div>
+              </details>
 
-              <div class="relative" @click.away="exportShareMenuOpen = false">
-                <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800 transition-colors" @click="exportShareMenuOpen = !exportShareMenuOpen" title="Export & Share" :class="{ 'text-orange-800': exportShareMenuOpen }">
+              <div class="report-export-action relative" @click.away="exportShareMenuOpen = false">
+                <button class="flex flex-col items-center text-sm text-orange-700 hover:text-orange-800 transition-colors" @click="exportShareMenuOpen = !exportShareMenuOpen" title="Export & Share" aria-label="Export and share" :class="{ 'text-orange-800': exportShareMenuOpen }">
                   <i class="fal fa-share-square text-xl mb-1"></i><span>Export & Share</span>
                 </button>
 
@@ -5243,6 +5235,12 @@
           this._outsidePointerHandler = (event) => {
             const target = event.target;
 
+            document.querySelectorAll('.report-toolbar-row details[open]').forEach((details) => {
+              if (!details.contains(target)) {
+                details.removeAttribute('open');
+              }
+            });
+
             if (this.colorPopupTarget && !this.isInsideActiveColorUi(target)) {
               this.closeColorPopup();
             }
@@ -5253,6 +5251,20 @@
           };
 
           window.addEventListener('pointerdown', this._outsidePointerHandler, true);
+
+          this._toolbarMenuItemHandler = (event) => {
+            const menu = event.target.closest?.('.report-more-action');
+            if (!menu) return;
+
+            const { id } = event.detail || {};
+            menu.removeAttribute('open');
+
+            if (id === 'combine') {
+              this.combineReportsOpen = true;
+            }
+          };
+
+          window.addEventListener('item-click', this._toolbarMenuItemHandler);
 
           // Sync with "Colours for chart, mean & index" modal
           window.addEventListener('webropol:chart-colours-closed', (e) => {

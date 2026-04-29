@@ -152,8 +152,12 @@
     // Reserve only the width the More trigger actually needs.
     const moreReserve = getMoreReserveWidth(more);
     const overflowing = [];
+    const minVisibleMobile = isMobile && allowMobileOverflow
+      ? Math.max(0, parseInt(container.dataset.minVisibleMobile || '0', 10) || 0)
+      : 0;
 
     for (let i = 0; i < items.length; i++) {
+      if (i < minVisibleMobile) continue;
       const rect = items[i].getBoundingClientRect();
       const limit = (i === items.length - 1) ? trackRight : trackRight - moreReserve;
       if (rect.right > limit + 0.5) {
