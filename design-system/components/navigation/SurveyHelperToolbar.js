@@ -432,11 +432,15 @@ export class SurveyHelperToolbar extends BaseComponent {
 
         @media (max-width: 640px) {
           webropol-survey-helper-toolbar {
-            width: 100%;
+            width: auto;
+            flex: 0 0 auto;
+            max-width: 100%;
           }
 
           .survey-helper-toolbar {
-            width: 100%;
+            width: auto;
+            max-width: 100%;
+            justify-content: flex-end;
           }
 
           .survey-helper-toolbar .status-name {
@@ -476,20 +480,29 @@ export class SurveyHelperToolbar extends BaseComponent {
         }
 
         @media (max-width: 767px) {
+          webropol-survey-helper-toolbar {
+            width: auto;
+            flex: 0 0 auto;
+            max-width: 100%;
+          }
+
           .survey-helper-toolbar {
-            width: 100%;
+            width: auto;
             max-width: 100%;
             min-width: 0;
             gap: 0.5rem;
-            justify-content: space-between;
+            justify-content: flex-end;
           }
 
           .survey-helper-toolbar .status-badge {
-            flex: 1 1 auto;
+            flex: 0 0 auto;
             max-width: none;
-            min-width: 0;
-            padding-left: 0.5rem;
-            padding-right: 0.75rem;
+            min-width: auto;
+            padding: 0.375rem;
+          }
+
+          .survey-helper-toolbar .status-text {
+            display: none;
           }
 
           .survey-helper-toolbar .status-icon,
@@ -499,7 +512,7 @@ export class SurveyHelperToolbar extends BaseComponent {
           }
 
           .survey-helper-toolbar .status-name {
-            max-width: none;
+            max-width: 0;
           }
 
           .helper-menu {

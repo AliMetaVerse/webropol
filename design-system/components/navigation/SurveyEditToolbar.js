@@ -38,10 +38,10 @@ export class SurveyEditToolbar extends BaseComponent {
         'tb-btn',
         `tb-hue-${hue}`,
         primary ? 'tb-btn-primary' : '',
-        this.iconsOnly ? 'tb-btn-icon-only' : ''
+        this.iconsOnly && !primary ? 'tb-btn-icon-only' : ''
       ].filter(Boolean).join(' ');
 
-      const labelHTML = this.iconsOnly ? '' : `<span class="tb-btn-label">${label}</span>`;
+      const labelHTML = this.iconsOnly && !primary ? '' : `<span class="tb-btn-label">${label}</span>`;
 
       return `
         <webropol-tooltip text="${label}" position="bottom">
@@ -60,17 +60,28 @@ export class SurveyEditToolbar extends BaseComponent {
 
     const sep = () => '<span class="tb-separator" aria-hidden="true"></span>';
 
+    const primaryAction = tool('add-question', 'Add Question', 'fal fa-plus', 'danger', true);
+
     // Define groups; separators are placed between non-empty groups
     const groups = [
-      [tool('add-question', 'Add Question', 'fal fa-plus', 'danger', true)],
       [tool('etest', 'eTest', 'fal fa-flask', 'primary'), tool('library', 'Library', 'fal fa-books', 'primary')],
       [tool('add-page', 'Add Page', 'fal fa-file-plus', 'primary'), tool('add-phase', 'Add Phase', 'fal fa-layer-plus', 'primary')],
       [tool('language', 'Language', 'fal fa-globe', 'primary'), tool('image-gallery', 'Image Gallery', 'fal fa-images', 'primary'), tool('layout', 'Layout', 'fal fa-palette', 'primary')],
       [tool('personal-data', 'Personal Data', 'fal fa-user-shield', 'primary'), tool('settings', 'Settings', 'fal fa-cog', 'primary'), tool('preview', 'Preview & Test', 'fal fa-eye', 'primary')],
     ];
 
-    const visibleGroups = groups.map(g => g.filter(Boolean).join('\n        ')).filter(g => g.trim());
-    const toolsHTML = visibleGroups.join(`\n        ${sep()}\n        `);
+    const visibleGroups = groups.map(g => g.filter(Boolean).join('\n            ')).filter(g => g.trim());
+    const secondaryToolsHTML = visibleGroups.join(`\n            ${sep()}\n            `);
+    const primarySlotHTML = primaryAction ? `
+        <div class="tb-primary-slot">
+          ${primaryAction}
+        </div>
+      ` : '';
+    const scrollSlotHTML = secondaryToolsHTML ? `
+        <div class="tb-scroll-slot">
+          ${secondaryToolsHTML}
+        </div>
+      ` : '';
 
     this.innerHTML = `
       <style>
@@ -87,7 +98,7 @@ export class SurveyEditToolbar extends BaseComponent {
           --tb-transition: 180ms cubic-bezier(.4, 0, .2, 1);
 
           position: relative;
-          display: inline-flex;
+          display: flex;
           align-items: center;
           gap: 4px;
           padding: 8px;
@@ -101,6 +112,24 @@ export class SurveyEditToolbar extends BaseComponent {
             0 8px 24px -12px rgba(15, 23, 42, .12);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
+        }
+
+        .survey-edit-toolbar .tb-primary-slot,
+        .survey-edit-toolbar .tb-scroll-slot {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          min-width: 0;
+        }
+
+        .survey-edit-toolbar .tb-primary-slot {
+          flex: 0 0 auto;
+          position: relative;
+          z-index: 1;
+        }
+
+        .survey-edit-toolbar .tb-scroll-slot {
+          flex: 1 1 auto;
         }
 
         /* Decorative top sheen */
@@ -258,11 +287,29 @@ export class SurveyEditToolbar extends BaseComponent {
             width: 100%;
             max-width: 100%;
             justify-content: flex-start;
+          }
+
+          .survey-edit-toolbar .tb-scroll-slot {
             flex-wrap: wrap;
             row-gap: 6px;
           }
         }
         @media (max-width: 900px) {
+          .survey-edit-toolbar {
+            gap: 8px;
+          }
+
+          .survey-edit-toolbar .tb-scroll-slot {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+          }
+
+          .survey-edit-toolbar .tb-scroll-slot::-webkit-scrollbar {
+            display: none;
+          }
+
           .survey-edit-toolbar .tb-btn-label { display: none; }
           .survey-edit-toolbar .tb-btn { padding: 0; width: 36px; height: 36px; justify-content: center; }
           .survey-edit-toolbar .tb-btn-primary { width: auto; padding: 0 14px; }
@@ -309,7 +356,8 @@ export class SurveyEditToolbar extends BaseComponent {
         }
       </style>
       <div class="survey-edit-toolbar" role="toolbar" aria-label="Survey quick actions">
-        ${toolsHTML}
+        ${primarySlotHTML}
+        ${scrollSlotHTML}
       </div>
     `;
   }

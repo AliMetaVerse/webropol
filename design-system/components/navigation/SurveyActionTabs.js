@@ -181,10 +181,16 @@ export class SurveyActionTabs extends BaseComponent {
 
         @media (max-width: 900px) {
           webropol-survey-action-tabs {
+            flex: 1 1 0;
+            width: auto;
+            max-width: 100%;
+            min-width: 0;
             overflow: visible;
           }
 
           webropol-survey-action-tabs .adaptive-overflow-tabs {
+            width: 100%;
+            max-width: 100%;
             min-width: 0;
             overflow: hidden;
           }
