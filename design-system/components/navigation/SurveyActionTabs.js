@@ -85,6 +85,17 @@ export class SurveyActionTabs extends BaseComponent {
     };
 
     window.addEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+
+    // Re-render when crossing the 900 px breakpoint so mobile/desktop layout switches
+    let resizeTimer;
+    this.handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        this.render();
+        this.bindEvents();
+      }, 150);
+    };
+    window.addEventListener('resize', this.handleResize);
   }
 
   render() {
@@ -94,11 +105,16 @@ export class SurveyActionTabs extends BaseComponent {
     const disabledAttr = this.getAttr('disabled-tabs', '');
     const disabledSet = new Set(disabledAttr.split(',').map(s => s.trim()).filter(Boolean));
 
+    // On mobile (≤900 px) every tab is icon-only with a bottom tooltip
+    const isMobile = window.matchMedia('(max-width: 900px)').matches;
+
     const tabsHTML = tabs.map(tab => {
       const isActive = tab.id === active;
       const isDisabled = disabledSet.has(tab.id);
-      const showLabel = !this.iconsOnly || isActive;
-      const useTooltip = this.iconsOnly && !isActive;
+      // Show label only on desktop when not in icons-only mode (or when active)
+      const showLabel = !isMobile && (!this.iconsOnly || isActive);
+      // Show tooltip whenever there is no label
+      const useTooltip = !showLabel;
       const tabLabelMarkup = showLabel ? `<span class="main-primary-label">${tab.label}</span>` : '';
       const tabIconClass = `${tab.icon} ${tab.iconColor}`;
       const tabRowClass = showLabel ? 'main-primary-row' : 'main-primary-row justify-center';
@@ -118,7 +134,7 @@ export class SurveyActionTabs extends BaseComponent {
             style="cursor: not-allowed; pointer-events: none;"
           >
             <div class="${tabRowClass}" ${tabRowStyle}>
-              <span class="${this.iconsOnly ? tabIconWrapperClass : 'main-primary-avatar'}">
+              <span class="${!showLabel ? tabIconWrapperClass : 'main-primary-avatar'}">
                 <i class="${tabIconClass}"></i>
               </span>
               ${tabLabelMarkup}
@@ -223,7 +239,7 @@ export class SurveyActionTabs extends BaseComponent {
           }
 
           webropol-survey-action-tabs .webropol-tab-main-primary.active {
-            min-width: min(8.5rem, calc(100vw - 1rem));
+            min-width: 2.75rem;
           }
 
           webropol-survey-action-tabs .main-primary-row {
@@ -238,8 +254,12 @@ export class SurveyActionTabs extends BaseComponent {
             height: 2rem;
           }
 
-          webropol-survey-action-tabs .webropol-tab-main-primary:not(.active) .main-primary-label {
+          /* Label visibility is fully controlled by JS (showLabel); this rule is a defensive fallback */
+          webropol-survey-action-tabs .main-primary-label {
             display: none;
+          }
+          webropol-survey-action-tabs .webropol-tab-main-primary.has-label .main-primary-label {
+            display: inline;
           }
 
           webropol-survey-action-tabs .main-primary-label {
@@ -268,6 +288,7 @@ export class SurveyActionTabs extends BaseComponent {
 
   cleanup() {
     window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
+    if (this.handleResize) window.removeEventListener('resize', this.handleResize);
     super.cleanup();
   }
 }
