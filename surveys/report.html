@@ -563,6 +563,10 @@
                       </span>
                     </span>
                   </button>
+                  <button @click="window.dispatchEvent(new CustomEvent('webropol:open-chart-colours-simple')); layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
+                    <i class="fal fa-swatchbook w-5 text-webropol-gray-500"></i>
+                    <span>Colours for chart, mean &amp; index [simple]</span>
+                  </button>
                   <!-- Total respondent count -->
                   <button @click="layoutOpen = false" class="w-full text-left px-4 py-2.5 hover:bg-webropol-gray-50 transition-colors flex items-center gap-3 text-sm text-webropol-gray-700">
                     <i class="fal fa-hashtag w-5 text-webropol-gray-500"></i>
@@ -3655,7 +3659,7 @@
       align-items: center;
       justify-content: center;
       /* Use CSS variable with fallback so we can centrally tune layering. */
-      z-index: var(--webropol-page-modal-z, 16000) !important;
+      z-index: var(--webropol-page-modal-z, 2147483640) !important;
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s ease;
@@ -3670,10 +3674,14 @@
     /* Ensure header stays behind modals when they're active */
     /* Primary (modern) :has selector */
     body:has(.modal-overlay.active) webropol-header,
+    body:has(.modal-overlay.active) webropol-header-enhanced,
     /* Fallback when JS toggles .modal-open on body */
     body.modal-open webropol-header,
+    body.modal-open webropol-header-enhanced,
     body:has(.modal-overlay.active) webropol-header header,
-    body.modal-open webropol-header header { z-index: 10 !important; }
+    body:has(.modal-overlay.active) webropol-header-enhanced header,
+    body.modal-open webropol-header header,
+    body.modal-open webropol-header-enhanced header { z-index: 10 !important; }
 
     /* Ensure Upload modal can appear above Question Settings modal */
     #uploadModal {
