@@ -138,7 +138,36 @@ export class SurveyStructurePanel extends BaseComponent {
           .survey-structure-panel-shell ._tab-switcher {
             width: 100%;
             align-self: stretch;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
           }
+
+          .survey-structure-panel-shell ._tab-switcher .webropol-unified-tab {
+            width: 100%;
+            justify-self: stretch;            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+          }
+
+          .survey-structure-panel-shell ._tab-switcher .webropol-unified-tab {
+            width: 100%;
+            justify-self: stretch;
+            min-width: 0 !important;
+            padding: 0.65rem 0.85rem !important;
+          }
+
+          .survey-structure-panel-shell ._tab-switcher .webropol-unified-tab.active {
+            padding: 0.65rem 0.85rem !important;
+          }
+
+          .survey-structure-panel-shell ._tab-switcher .webropol-unified-tab span {
+            white-space: normal;
+            overflow-wrap: anywhere;
+          }
+
+          .survey-structure-panel-shell ._tab-switcher .webropol-unified-tab i {
+            margin-right: 0.4rem;          }
 
           .survey-structure-panel-shell ._action-bar {
             width: 100%;
