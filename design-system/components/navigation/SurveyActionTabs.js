@@ -1,5 +1,4 @@
 import { BaseComponent } from '../../utils/base-component.js';
-import '../feedback/Tooltip.js';
 
 const ICONS_ONLY_STORAGE_KEY = 'webropol_display_icons_only';
 const ICONS_ONLY_EVENT = 'webropol-icons-only-changed';
@@ -96,6 +95,32 @@ export class SurveyActionTabs extends BaseComponent {
       }, 150);
     };
     window.addEventListener('resize', this.handleResize);
+
+    // Create a single shared tooltip popup appended to body (portal)
+    this._tooltipEl = document.createElement('div');
+    this._tooltipEl.className = 'sat-tooltip-portal';
+    this._tooltipEl.setAttribute('role', 'tooltip');
+    this._tooltipEl.setAttribute('aria-hidden', 'true');
+    this._tooltipEl.style.cssText = [
+      'position:fixed',
+      'z-index:2147483600',
+      'pointer-events:none',
+      'opacity:0',
+      'transition:opacity 0.15s ease',
+      'padding:8px 12px',
+      'background:#fff',
+      'border:1px solid #e5e7eb',
+      'border-radius:12px',
+      'box-shadow:0 8px 24px rgba(16,46,60,0.14)',
+      'font:500 13px/1.4 Inter,system-ui,sans-serif',
+      'color:#102e3c',
+      'white-space:nowrap',
+      'max-width:220px',
+    ].join(';');
+    document.body.appendChild(this._tooltipEl);
+
+    this._tooltipHideTimer = null;
+    this._tooltipShowTimer = null;
   }
 
   render() {
@@ -105,7 +130,7 @@ export class SurveyActionTabs extends BaseComponent {
     const disabledAttr = this.getAttr('disabled-tabs', '');
     const disabledSet = new Set(disabledAttr.split(',').map(s => s.trim()).filter(Boolean));
 
-    // On mobile (≤900 px) every tab is icon-only with a bottom tooltip
+    // On mobile (≤900 px) every tab is icon-only
     const isMobile = window.matchMedia('(max-width: 900px)').matches;
 
     const tabsHTML = tabs.map(tab => {
@@ -113,24 +138,24 @@ export class SurveyActionTabs extends BaseComponent {
       const isDisabled = disabledSet.has(tab.id);
       // Show label only on desktop when not in icons-only mode (or when active)
       const showLabel = !isMobile && (!this.iconsOnly || isActive);
-      // Show tooltip whenever there is no label
-      const useTooltip = !showLabel;
       const tabLabelMarkup = showLabel ? `<span class="main-primary-label">${tab.label}</span>` : '';
       const tabIconClass = `${tab.icon} ${tab.iconColor}`;
       const tabRowClass = showLabel ? 'main-primary-row' : 'main-primary-row justify-center';
       const tabRowStyle = showLabel ? '' : 'style="gap:0;padding:6px 6px 4px;"';
-      const tabIconWrapperClass = this.iconsOnly
-        ? `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`
-        : `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`;
+      const tabIconWrapperClass = `inline-flex w-9 h-9 rounded-lg ${tab.iconBg} items-center justify-center flex-shrink-0`;
+
+      // Always add data-tooltip so our portal tooltip can pick it up on hover
+      const tooltipAttr = `data-tooltip="${tab.label}"`;
 
       if (isDisabled) {
-        const disabledMarkup = `
+        return `
           <span
             class="webropol-tab-main-primary adaptive-overflow-tabs__item disabled no-underline"
             role="tab"
             aria-label="${tab.label}"
             aria-disabled="true"
             tabindex="-1"
+            ${tooltipAttr}
             style="cursor: not-allowed; pointer-events: none;"
           >
             <div class="${tabRowClass}" ${tabRowStyle}>
@@ -142,18 +167,15 @@ export class SurveyActionTabs extends BaseComponent {
             <div class="main-primary-indicator"></div>
           </span>
         `;
-
-        return useTooltip
-          ? `<webropol-tooltip text="${tab.label}" position="bottom">${disabledMarkup}</webropol-tooltip>`
-          : disabledMarkup;
       }
 
-      const tabMarkup = `
+      return `
         <a
           href="${tab.url}"
           class="webropol-tab-main-primary adaptive-overflow-tabs__item no-underline${isActive ? ' active' : ''}"
           role="tab"
           aria-label="${tab.label}"
+          ${tooltipAttr}
           ${isActive ? 'aria-current="page" aria-selected="true"' : ''}
         >
           <div class="${tabRowClass}" ${tabRowStyle}>
@@ -165,10 +187,6 @@ export class SurveyActionTabs extends BaseComponent {
           <div class="main-primary-indicator"></div>
         </a>
       `;
-
-      return useTooltip
-        ? `<webropol-tooltip text="${tab.label}" position="bottom">${tabMarkup}</webropol-tooltip>`
-        : tabMarkup;
     }).join('');
 
     this.innerHTML = `
@@ -206,18 +224,32 @@ export class SurveyActionTabs extends BaseComponent {
             overflow: visible;
           }
 
+          /* Outer adaptive container: flex row, vertically centered, tabs + more button */
           webropol-survey-action-tabs .adaptive-overflow-tabs {
             width: 100%;
             max-width: 100%;
             min-width: 0;
             overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+          }
+
+          /* More button sits at the far right with left margin for separation */
+          webropol-survey-action-tabs .adaptive-overflow-tabs__more {
+            flex: 0 0 auto;
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+            align-self: center;
           }
 
           webropol-survey-action-tabs .webropol-tabs-main-primary {
-            width: 100%;
+            flex: 1 1 0;
             flex-direction: row !important;
+            justify-content: flex-start;
+            align-items: center;
             gap: 0.375rem;
-            padding: 0 0.5rem 0.25rem;
+            padding: 0 0 0.25rem 0.25rem;
             overflow-x: auto;
             overflow-y: hidden;
             scroll-snap-type: x proximity;
@@ -254,19 +286,8 @@ export class SurveyActionTabs extends BaseComponent {
             height: 2rem;
           }
 
-          /* Label visibility is fully controlled by JS (showLabel); this rule is a defensive fallback */
           webropol-survey-action-tabs .main-primary-label {
             display: none;
-          }
-          webropol-survey-action-tabs .webropol-tab-main-primary.has-label .main-primary-label {
-            display: inline;
-          }
-
-          webropol-survey-action-tabs .main-primary-label {
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
           }
 
           webropol-survey-action-tabs .main-primary-indicator {
@@ -283,12 +304,72 @@ export class SurveyActionTabs extends BaseComponent {
   }
 
   bindEvents() {
-    // Navigation handled natively by <a href> elements
+    // Navigation handled natively by <a href> elements.
+    // Attach portal tooltip to every [data-tooltip] tab.
+    const tip = this._tooltipEl;
+    if (!tip) return;
+
+    const showTip = (text, triggerEl) => {
+      clearTimeout(this._tooltipHideTimer);
+      clearTimeout(this._tooltipShowTimer);
+      this._tooltipShowTimer = setTimeout(() => {
+        tip.textContent = text;
+        tip.style.opacity = '0';
+        tip.removeAttribute('aria-hidden');
+
+        // Make visible off-screen first to measure dimensions
+        tip.style.visibility = 'visible';
+        const rect = triggerEl.getBoundingClientRect();
+        const tipW = tip.offsetWidth;
+        const tipH = tip.offsetHeight;
+        const gap = 8;
+        const pad = 8;
+
+        let left = rect.left + rect.width / 2 - tipW / 2;
+        let top = rect.bottom + gap;
+
+        // Flip to top if not enough space below
+        if (top + tipH > window.innerHeight - pad) {
+          top = rect.top - tipH - gap;
+        }
+
+        // Clamp horizontally
+        left = Math.max(pad, Math.min(left, window.innerWidth - tipW - pad));
+
+        tip.style.left = `${left}px`;
+        tip.style.top = `${top}px`;
+        tip.style.opacity = '1';
+        tip.setAttribute('aria-hidden', 'false');
+      }, 120);
+    };
+
+    const hideTip = () => {
+      clearTimeout(this._tooltipShowTimer);
+      this._tooltipHideTimer = setTimeout(() => {
+        tip.style.opacity = '0';
+        tip.setAttribute('aria-hidden', 'true');
+      }, 60);
+    };
+
+    // Re-attach listeners on every render (old ones are removed when
+    // innerHTML is replaced and the elements are recreated).
+    this.querySelectorAll('[data-tooltip]').forEach(el => {
+      el.addEventListener('mouseenter', () => showTip(el.dataset.tooltip, el));
+      el.addEventListener('mouseleave', hideTip);
+      el.addEventListener('focusin', () => showTip(el.dataset.tooltip, el));
+      el.addEventListener('focusout', hideTip);
+    });
   }
 
   cleanup() {
     window.removeEventListener(ICONS_ONLY_EVENT, this.handleIconsOnlyChange);
     if (this.handleResize) window.removeEventListener('resize', this.handleResize);
+    clearTimeout(this._tooltipShowTimer);
+    clearTimeout(this._tooltipHideTimer);
+    if (this._tooltipEl?.parentNode) {
+      this._tooltipEl.parentNode.removeChild(this._tooltipEl);
+    }
+    this._tooltipEl = null;
     super.cleanup();
   }
 }
