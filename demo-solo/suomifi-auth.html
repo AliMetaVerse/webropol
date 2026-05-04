@@ -12,8 +12,7 @@
       theme: {
         extend: {
           colors: {
-            'suomifi-orange': { 500: '#C85B1A', 600: '#B34F16', 700: '#9A4312' },
-            'suomifi-bg': '#EEF2F7'
+            'webropol-primary': { 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490' }
           },
           fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
         }
@@ -32,17 +31,17 @@
 
     /* ── Pulse ring on the auth button ── */
     @keyframes pulseRing {
-      0%   { box-shadow: 0 0 0 0   rgba(200,91,26,.45); }
-      70%  { box-shadow: 0 0 0 12px rgba(200,91,26,0);  }
-      100% { box-shadow: 0 0 0 0   rgba(200,91,26,0);   }
+      0%   { box-shadow: 0 0 0 0   rgba(6,182,212,.4); }
+      70%  { box-shadow: 0 0 0 12px rgba(6,182,212,0);  }
+      100% { box-shadow: 0 0 0 0   rgba(6,182,212,0);   }
     }
-    .btn-suomifi:hover { animation: pulseRing 1.2s ease-out infinite; }
+    .btn-primary:hover { animation: pulseRing 1.2s ease-out infinite; }
 
     /* ── Language tab indicator ── */
     .lang-tab.active {
-      color: #1a1a1a;
+      color: #0e7490;
       font-weight: 600;
-      border-bottom: 2px solid #C85B1A;
+      border-bottom: 2px solid #06b6d4;
     }
 
     /* ── Logo shimmer ── */
@@ -59,24 +58,21 @@
       animation: shimmer 3s linear infinite;
     }
   </style>
+  <script src="../design-system/components/feedback/SmartNotifier.js" type="module"></script>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
 
   <!-- ── Survey branding bar ── -->
   <div class="w-full max-w-lg mb-6 flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <!-- Webropol W logo (inline SVG) -->
-      <svg width="32" height="24" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M0 4L16 56L30 20L44 56L58 4H46L38 34L28 4H16L6 34L0 4Z" fill="#0099C6"/>
-        <path d="M44 4L56 34L62 4H74L64 56L50 20L44 4Z" fill="#6CBF46"/>
-      </svg>
+      <img src="../img/logo/w-logo-dark.svg" class="h-8 w-auto" alt="Webropol">
       <span class="text-sm font-medium text-gray-500">Webropol Survey</span>
     </div>
     <!-- Language tabs -->
     <div class="flex items-center gap-4 text-sm text-gray-400">
-      <button class="lang-tab active pb-1 transition-colors hover:text-gray-700">FI</button>
-      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">SV</button>
-      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">EN</button>
+      <button class="lang-tab active pb-1 transition-colors hover:text-gray-700" data-lang="fi">FI</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700" data-lang="sv">SV</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700" data-lang="en">EN</button>
     </div>
   </div>
 
@@ -89,7 +85,7 @@
       <div class="h-1 flex-1 bg-gray-200 rounded-tr-2xl"></div>
     </div>
     <div class="px-8 pt-2 pb-0 flex items-center justify-between text-[11px] text-gray-400 font-medium">
-      <span>Tunnistus · Authentication</span>
+      <span data-i18n="true" data-fi="Tunnistus · Authentication" data-sv="Identifiering · Autentisering" data-en="Authentication">Tunnistus · Authentication</span>
       <span>1 / 2</span>
     </div>
 
@@ -109,39 +105,46 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-xl font-bold text-gray-900 leading-tight">Suomi.fi-tunnistus</h1>
-          <p class="text-sm text-gray-500 mt-0.5">Suomi.fi e-Identification</p>
+          <h1 class="text-xl font-bold text-gray-900 leading-tight" data-i18n="true" data-fi="Suomi.fi-tunnistus" data-sv="Suomi.fi-identifiering" data-en="Suomi.fi e-Identification">Suomi.fi-tunnistus</h1>
+          <p class="text-sm text-gray-500 mt-0.5" data-i18n="true" data-fi="Suomi.fi e-Identification" data-sv="Suomi.fi e-Identifiering" data-en="Suomi.fi e-Identification">Suomi.fi e-Identification</p>
         </div>
       </div>
 
       <!-- Description -->
-      <p class="text-sm text-gray-600 leading-relaxed mb-8">
+      <p class="text-sm text-gray-600 leading-relaxed mb-8" data-i18n="true"
+         data-fi="Tämä lomake vaatii henkilöllisyyden vahvistamisen Suomi.fi-tunnistuspalvelun kautta ennen vastaamista."
+         data-sv="Det här formuläret kräver identifiering via Suomi.fi-tjänsten innan du kan svara."
+         data-en="This form requires identity verification via Suomi.fi identification service before responding.">
         Tämä lomake vaatii henkilöllisyyden vahvistamisen Suomi.fi-tunnistuspalvelun kautta ennen vastaamista.
       </p>
 
       <!-- Auth button -->
       <a href="suomifi-thankyou.html"
-         class="btn-suomifi w-full flex items-center justify-center gap-3 bg-suomifi-orange-500 hover:bg-suomifi-orange-600 active:bg-suomifi-orange-700 text-white font-semibold text-[15px] px-6 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg group">
+         class="btn-primary w-full flex items-center justify-center gap-3 bg-webropol-primary-500 hover:bg-webropol-primary-600 active:bg-webropol-primary-700 text-white font-semibold text-[15px] px-6 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg group">
         <i class="fal fa-shield-check text-lg opacity-90"></i>
-        <span>Tunnistaudu Suomi.fi:ssä</span>
-        <i class="fal fa-external-link text-sm opacity-70 group-hover:translate-x-0.5 group-hover:opacity-100 transition-all"></i>
+        <span data-i18n="true" data-fi="Tunnistaudu Suomi.fi:ssä" data-sv="Identifiera dig via Suomi.fi" data-en="Identify via Suomi.fi">Tunnistaudu Suomi.fi:ssä</span>
+        <i class="fal fa-arrow-right text-sm opacity-70 group-hover:translate-x-0.5 group-hover:opacity-100 transition-all"></i>
       </a>
 
       <!-- Divider -->
       <div class="flex items-center gap-3 my-6">
         <div class="flex-1 h-px bg-gray-100"></div>
-        <span class="text-xs text-gray-400 font-medium">tai · or</span>
+        <span class="text-xs text-gray-400 font-medium" data-i18n="true" data-fi="tai · or" data-sv="eller · or" data-en="or">tai · or</span>
         <div class="flex-1 h-px bg-gray-100"></div>
       </div>
 
-      <!-- Info box -->
-      <div class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3.5 text-sm text-blue-800">
-        <i class="fal fa-info-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
-        <p class="leading-relaxed">
-          Tunnistautuminen onnistuu pankkitunnuksilla, mobiilivarmenteella tai HST-kortilla.
-          <a href="#" onclick="return false;" class="underline hover:text-blue-900 transition-colors ml-1">Lisätietoa Suomi.fi-tunnistuksesta</a>
-        </p>
-      </div>
+      <!-- Info notifier -->
+      <webropol-smart-notifier
+        id="info-notifier"
+        variant="informative"
+        show-actions="false"
+        dismissible="false"
+        title=""
+        description="Tunnistautuminen onnistuu pankkitunnuksilla, mobiilivarmenteella tai HST-kortilla."
+        data-fi-desc="Tunnistautuminen onnistuu pankkitunnuksilla, mobiilivarmenteella tai HST-kortilla."
+        data-sv-desc="Identifieringen fungerar med bankkoder, mobilcertifikat eller HST-kort."
+        data-en-desc="Identification works with online banking credentials, mobile certificate, or ID card.">
+      </webropol-smart-notifier>
 
     </div>
 
@@ -149,7 +152,7 @@
     <div class="border-t border-gray-100 px-8 py-4 bg-gray-50/60 flex items-center justify-between">
       <div class="flex items-center gap-2 text-xs text-gray-400">
         <i class="fal fa-lock text-gray-300"></i>
-        <span>Suojattu yhteys</span>
+        <span data-i18n="true" data-fi="Suojattu yhteys" data-sv="Säker anslutning" data-en="Secure connection">Suojattu yhteys</span>
       </div>
       <div class="flex items-center gap-1.5">
         <span class="text-xs text-gray-400">Powered by</span>
@@ -161,12 +164,25 @@
   </div>
 
   <script>
-    // Language tab switching
-    document.querySelectorAll('.lang-tab').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
+    function setLang(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const text = el.getAttribute('data-' + lang);
+        if (text !== null) el.textContent = text;
       });
+      // Update SmartNotifier description
+      const notifier = document.getElementById('info-notifier');
+      if (notifier) {
+        const desc = notifier.getAttribute('data-' + lang + '-desc');
+        if (desc) notifier.setAttribute('description', desc);
+      }
+      document.querySelectorAll('.lang-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+    }
+
+    document.querySelectorAll('.lang-tab').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
   </script>
 </body>
