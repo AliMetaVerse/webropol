@@ -1374,7 +1374,7 @@
                 <!-- Rank Chart -->
                 <div class="space-y-6">
                   <!-- Rank Visualization Chart -->
-                  <div class="chart-wrapper" style="position: relative;">
+                  <div class="chart-wrapper" style="position: relative;" x-ref="rankChartWrapper">
                     <!-- Context-Aware Rank Chart Toolbar -->
                     <div class="absolute right-2 top-2 z-20 group/toolbar">
                         <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
@@ -1409,97 +1409,11 @@
                             <div class="w-12 text-left text-sm font-medium text-webropol-gray-700" x-text="row.label"></div>
                             <div class="flex-1 flex gap-1 mx-4">
                               <template x-for="(pct, bi) in row.bars" :key="bi">
-                                <div class="h-6 chart-bar-animate chart-element-clickable relative"
+                                <div class="h-6 chart-bar-animate chart-element-clickable"
                                     :data-popup-target="'rank-' + ri + '-' + bi"
                                      :style="`width: ${pct}%; background-color: ${getPatternColor(bi, rankColors[bi])}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s${getPatternBg(bi)}`"
                                      :class="colorPopupTarget === 'rank-' + ri + '-' + bi ? 'ring-active' : ''"
-                                     @click.stop="openColorPopup('rank-' + ri + '-' + bi, 'rank-chart-1')">
-                                  <!-- Color Popup -->
-                                  <div class="color-popup" x-cloak
-                                      :data-popup-target="'rank-' + ri + '-' + bi"
-                                       x-show="colorPopupTarget === 'rank-' + ri + '-' + bi"
-                                       x-transition:enter="transition ease-out duration-200"
-                                       x-transition:enter-start="opacity-0 scale-95 translate-y-1"
-                                       x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                                       x-transition:leave="transition ease-in duration-150"
-                                       x-transition:leave-start="opacity-100 scale-100"
-                                       x-transition:leave-end="opacity-0 scale-95"
-                                       @click.stop>
-                                    <!-- Header -->
-                                    <div class="px-3 pt-3 pb-2.5"
-                                         :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
-                                      <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-1.5">
-                                          <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
-                                          <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
-                                                x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
-                                        </div>
-                                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                                              :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
-                                              x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
-                                      </div>
-                                    </div>
-                                    <!-- Pattern active notice -->
-                                    <div x-show="activePatterns.length > 0" style="display:none"
-                                         class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
-                                      <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
-                                      <span class="text-[10px] font-semibold text-purple-700"
-                                            x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
-                                    </div>
-                                    <!-- Swatches -->
-                                    <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
-                                      <div class="flex items-start gap-2.5">
-                                        <div class="swatch-grid flex-1">
-                                          <template x-for="c in getPopupPalette()" :key="c">
-                                            <button @click.stop="changeRankColor(bi, c)"
-                                                    class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
-                                                    :style="`background-color: ${c}`"
-                                                    :class="rankColors[bi] === c
-                                                      ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
-                                                      : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
-                                          </template>
-                                        </div>
-                                        <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
-                                        <!-- Custom colour picker -->
-                                        <label @click.stop title="Custom colour"
-                                               class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
-                                               :class="isCustomColor(rankColors[bi]) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
-                                               :style="isCustomColor(rankColors[bi]) ? `background-color: ${rankColors[bi]}` : ''">
-                                          <input type="color" class="sr-only" :value="rankColors[bi]"
-                                                 @input.stop="changeRankColor(bi, $event.target.value)"
-                                                 @change.stop="changeRankColor(bi, $event.target.value)">
-                                          <i class="fal fa-plus text-[10px] pointer-events-none"
-                                             :class="isCustomColor(rankColors[bi]) ? 'text-white' : ''"></i>
-                                        </label>
-                                      </div>
-                                    </div>
-                                    <!-- Apply RAG to this question -->
-                                    <div class="px-3 pb-2">
-                                      <button @click.stop="applyRAGToQuestion('rank')"
-                                              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
-                                        <div class="flex items-center gap-px flex-shrink-0">
-                                          <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
-                                          <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
-                                          <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
-                                          <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
-                                          <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
-                                        </div>
-                                        <div class="flex-1 text-left">
-                                          <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
-                                          <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
-                                        </div>
-                                        <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
-                                      </button>
-                                    </div>
-                                    <!-- Filter -->
-                                    <div class="border-t border-gray-100 px-3 py-2">
-                                      <button @click.stop="filterByElement('rank', bi)"
-                                              class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-50 text-gray-500 hover:text-blue-600 transition-colors text-xs font-medium">
-                                        <i class="fal fa-filter text-[11px]"></i>
-                                        <span>Filter by this answer</span>
-                                      </button>
-                                    </div>
-                                  </div>
+                                     @click.stop="openColorPopup('rank-' + ri + '-' + bi, 'rank-chart-1', $event, 'rankChartWrapper')">
                                 </div>
                               </template>
                             </div>
@@ -1521,6 +1435,91 @@
                             <span class="chart-legend-label" x-text="li + 1"></span>
                           </div>
                         </template>
+                      </div>
+                    </div>
+                    <!-- Rank Chart Color Popup (outside overflow container) -->
+                    <div class="color-popup" x-cloak
+                         x-show="activeRankBi !== null && colorPopupTarget !== null && colorPopupTarget.startsWith('rank-')"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-1"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         :style="`${rankPopupStyle}; bottom: auto; transform: translate(-50%, -100%);`"
+                         @click.stop>
+                      <!-- Header -->
+                      <div class="px-3 pt-3 pb-2.5"
+                           :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
+                            <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
+                                  x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                          </div>
+                          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
+                                x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
+                        </div>
+                      </div>
+                      <!-- Pattern active notice -->
+                      <div x-show="activePatterns.length > 0" style="display:none"
+                           class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
+                        <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                        <span class="text-[10px] font-semibold text-purple-700"
+                              x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
+                      </div>
+                      <!-- Swatches -->
+                      <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
+                        <div class="flex items-start gap-2.5">
+                          <div class="swatch-grid flex-1">
+                            <template x-for="c in getPopupPalette()" :key="c">
+                              <button @click.stop="changeRankColor(activeRankBi, c)"
+                                      class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
+                                      :style="`background-color: ${c}`"
+                                      :class="rankColors[activeRankBi] === c
+                                        ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
+                                        : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
+                            </template>
+                          </div>
+                          <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
+                          <label @click.stop title="Custom colour"
+                                 class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
+                                 :class="isCustomColor(rankColors[activeRankBi]) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
+                                 :style="isCustomColor(rankColors[activeRankBi]) ? `background-color: ${rankColors[activeRankBi]}` : ''">
+                            <input type="color" class="sr-only" :value="rankColors[activeRankBi] || '#000000'"
+                                   @input.stop="changeRankColor(activeRankBi, $event.target.value)"
+                                   @change.stop="changeRankColor(activeRankBi, $event.target.value)">
+                            <i class="fal fa-plus text-[10px] pointer-events-none"
+                               :class="isCustomColor(rankColors[activeRankBi]) ? 'text-white' : ''"></i>
+                          </label>
+                        </div>
+                      </div>
+                      <!-- Apply RAG to this question -->
+                      <div class="px-3 pb-2">
+                        <button @click.stop="applyRAGToQuestion('rank')"
+                                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
+                          <div class="flex items-center gap-px flex-shrink-0">
+                            <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
+                            <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
+                          </div>
+                          <div class="flex-1 text-left">
+                            <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
+                            <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
+                          </div>
+                          <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                        </button>
+                      </div>
+                      <!-- Filter -->
+                      <div class="border-t border-gray-100 px-3 py-2">
+                        <button @click.stop="filterByElement('rank', activeRankBi)"
+                                class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-50 text-gray-500 hover:text-blue-600 transition-colors text-xs font-medium">
+                          <i class="fal fa-filter text-[11px]"></i>
+                          <span>Filter by this answer</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1854,7 +1853,7 @@
                   </div>
                 </div>
 
-                <div class="chart-wrapper" style="position: relative;">
+                <div class="chart-wrapper" style="position: relative;" x-ref="matrixChartWrapper">
                   <div class="chart-container"
                        :class="{ 'selected': selectedWidget === 'matrix-chart-1' }"
                        @click="selectWidget('matrix-chart-1')">
@@ -1871,93 +1870,11 @@
                                      si === row.segments.length - 1 ? 'flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner' : '',
                                      colorPopupTarget === 'matrix-' + ri + '-' + si ? 'ring-active' : ''
                                    ]"
-                                   @click.stop="openColorPopup('matrix-' + ri + '-' + si, 'matrix-chart-1')">
+                                   @click.stop="openColorPopup('matrix-' + ri + '-' + si, 'matrix-chart-1', $event, 'matrixChartWrapper')">
                                 <span x-text="si === row.segments.length - 1 ? row.score : ''"></span>
                               </div>
                             </template>
                           </div>
-                          <!-- Per-segment color popup (shown outside the bar for better UX) -->
-                          <template x-for="(seg, si) in row.segments" :key="'popup-'+ri+'-'+si">
-                               <div class="relative" x-show="colorPopupTarget === 'matrix-' + ri + '-' + si" x-cloak
-                                 :data-popup-target="'matrix-' + ri + '-' + si">
-                              <div class="absolute bottom-full mb-2 right-0 bg-white rounded-2xl z-50 overflow-hidden min-w-[240px]"
-                                   style="box-shadow: 0 24px 64px rgba(0,0,0,.14), 0 6px 20px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.05);"
-                                   x-transition:enter="transition ease-out duration-200"
-                                   x-transition:enter-start="opacity-0 scale-95 translate-y-1"
-                                   x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                                   x-transition:leave="transition ease-in duration-150"
-                                   x-transition:leave-start="opacity-100 scale-100"
-                                   x-transition:leave-end="opacity-0 scale-95"
-                                   @click.stop>
-                                <!-- Header -->
-                                <div class="px-3 pt-3 pb-2.5"
-                                     :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
-                                  <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-1.5">
-                                      <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
-                                      <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
-                                            x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
-                                    </div>
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                                          :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
-                                          x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
-                                  </div>
-                                </div>
-                                <!-- Pattern active notice -->
-                                <div x-show="activePatterns.length > 0" style="display:none"
-                                     class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
-                                  <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
-                                  <span class="text-[10px] font-semibold text-purple-700"
-                                        x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
-                                </div>
-                                <!-- Swatches -->
-                                <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
-                                  <div class="flex items-start gap-2.5">
-                                    <div class="swatch-grid flex-1">
-                                      <template x-for="c in getPopupPalette()" :key="c">
-                                        <button @click.stop="changeMatrixSegColor(ri, si, c)"
-                                                class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
-                                                :style="`background-color: ${c}`"
-                                                :class="seg.color === c
-                                                  ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
-                                                  : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
-                                      </template>
-                                    </div>
-                                    <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
-                                    <!-- Custom colour picker -->
-                                    <label @click.stop title="Custom colour"
-                                           class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
-                                           :class="isCustomColor(seg.color) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
-                                           :style="isCustomColor(seg.color) ? `background-color: ${seg.color}` : ''">
-                                      <input type="color" class="sr-only" :value="seg.color"
-                                             @input.stop="changeMatrixSegColor(ri, si, $event.target.value)"
-                                             @change.stop="changeMatrixSegColor(ri, si, $event.target.value)">
-                                      <i class="fal fa-plus text-[10px] pointer-events-none"
-                                         :class="isCustomColor(seg.color) ? 'text-white' : ''"></i>
-                                    </label>
-                                  </div>
-                                </div>
-                                <!-- Apply RAG to this question -->
-                                <div class="px-3 pb-3">
-                                  <button @click.stop="applyRAGToQuestion('matrix')"
-                                          class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
-                                    <div class="flex items-center gap-px flex-shrink-0">
-                                      <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
-                                      <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
-                                      <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
-                                      <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
-                                      <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
-                                    </div>
-                                    <div class="flex-1 text-left">
-                                      <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
-                                      <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
-                                    </div>
-                                    <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </template>
                         </div>
                       </template>
                     </div>
@@ -1972,6 +1889,83 @@
                           <span class="chart-legend-label" x-text="si + 1"></span>
                         </div>
                       </template>
+                    </div>
+                  </div>
+                  <!-- Matrix Chart Color Popup (outside overflow container) -->
+                  <div class="color-popup" x-cloak
+                       x-show="activeMatrixSi !== null && colorPopupTarget !== null && colorPopupTarget.startsWith('matrix-')"
+                       x-transition:enter="transition ease-out duration-200"
+                       x-transition:enter-start="opacity-0 scale-95 translate-y-1"
+                       x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                       x-transition:leave="transition ease-in duration-150"
+                       x-transition:leave-start="opacity-100 scale-100"
+                       x-transition:leave-end="opacity-0 scale-95"
+                       :style="`${matrixPopupStyle}; bottom: auto; transform: translate(-50%, -100%);`"
+                       @click.stop>
+                    <!-- Header -->
+                    <div class="px-3 pt-3 pb-2.5"
+                         :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                          <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
+                          <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
+                                x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                        </div>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                              :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
+                              x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
+                      </div>
+                    </div>
+                    <!-- Pattern active notice -->
+                    <div x-show="activePatterns.length > 0" style="display:none"
+                         class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
+                      <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                      <span class="text-[10px] font-semibold text-purple-700"
+                            x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
+                    </div>
+                    <!-- Swatches -->
+                    <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
+                      <div class="flex items-start gap-2.5">
+                        <div class="swatch-grid flex-1">
+                          <template x-for="c in getPopupPalette()" :key="c">
+                            <button @click.stop="changeMatrixSegColor(0, activeMatrixSi, c)"
+                                    class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
+                                    :style="`background-color: ${c}`"
+                                    :class="(matrixRows[0]?.segments[activeMatrixSi]?.color === c)
+                                      ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
+                                      : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
+                          </template>
+                        </div>
+                        <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
+                        <label @click.stop title="Custom colour"
+                               class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
+                               :class="isCustomColor(matrixRows[0]?.segments[activeMatrixSi]?.color) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
+                               :style="isCustomColor(matrixRows[0]?.segments[activeMatrixSi]?.color) ? `background-color: ${matrixRows[0]?.segments[activeMatrixSi]?.color}` : ''">
+                          <input type="color" class="sr-only" :value="matrixRows[0]?.segments[activeMatrixSi]?.color || '#000000'"
+                                 @input.stop="changeMatrixSegColor(0, activeMatrixSi, $event.target.value)"
+                                 @change.stop="changeMatrixSegColor(0, activeMatrixSi, $event.target.value)">
+                          <i class="fal fa-plus text-[10px] pointer-events-none"
+                             :class="isCustomColor(matrixRows[0]?.segments[activeMatrixSi]?.color) ? 'text-white' : ''"></i>
+                        </label>
+                      </div>
+                    </div>
+                    <!-- Apply RAG to this question -->
+                    <div class="px-3 pb-3">
+                      <button @click.stop="applyRAGToQuestion('matrix')"
+                              class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
+                        <div class="flex items-center gap-px flex-shrink-0">
+                          <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
+                          <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
+                          <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
+                          <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
+                          <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
+                        </div>
+                        <div class="flex-1 text-left">
+                          <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
+                          <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
+                        </div>
+                        <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -5098,6 +5092,10 @@
         activeGanttIndex: null,
         barPopupStyle: '',
         activeBarIndex: null,
+        rankPopupStyle: '',
+        activeRankBi: null,
+        matrixPopupStyle: '',
+        activeMatrixSi: null,
         useAccessiblePalette: false,
         defaultAccessiblePaletteName: 'IBM Colour Blind Safe',
         activeAccessiblePaletteName: 'IBM Colour Blind Safe',
@@ -5204,6 +5202,10 @@
           this.activeGanttIndex = null;
           this.barPopupStyle = '';
           this.activeBarIndex = null;
+          this.rankPopupStyle = '';
+          this.activeRankBi = null;
+          this.matrixPopupStyle = '';
+          this.activeMatrixSi = null;
         },
         
         deselectWidget() {
@@ -5252,6 +5254,12 @@
           this.activeBarIndex = target.startsWith('barchart-')
             ? Number.parseInt(target.replace('barchart-', ''), 10)
             : null;
+          this.activeRankBi = target.startsWith('rank-')
+            ? Number.parseInt(target.split('-')[2], 10)
+            : null;
+          this.activeMatrixSi = target.startsWith('matrix-')
+            ? Number.parseInt(target.split('-')[2], 10)
+            : null;
 
           if (anchorRef && event?.currentTarget) {
             const wrapper = this.$refs[anchorRef];
@@ -5267,11 +5275,17 @@
                 this.ganttPopupStyle = `left: ${left}px; top: ${top}px;`;
               } else if (target.startsWith('barchart-')) {
                 this.barPopupStyle = `left: ${left}px; top: ${top}px;`;
+              } else if (target.startsWith('rank-')) {
+                this.rankPopupStyle = `left: ${left}px; top: ${top}px;`;
+              } else if (target.startsWith('matrix-')) {
+                this.matrixPopupStyle = `left: ${left}px; top: ${top}px;`;
               }
             }
           } else {
             this.ganttPopupStyle = '';
             this.barPopupStyle = '';
+            this.rankPopupStyle = '';
+            this.matrixPopupStyle = '';
           }
 
           this.colorPopupTarget = target;

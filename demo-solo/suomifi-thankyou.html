@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiitos · Suomi.fi-tunnistus · Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'suomifi-orange': { 500: '#C85B1A', 600: '#B34F16' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #EEF2F7; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-appear { animation: fadeUp 0.45s ease both; }
+
+    @keyframes checkBounce {
+      0%   { transform: scale(0.4); opacity: 0; }
+      60%  { transform: scale(1.15); opacity: 1; }
+      80%  { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    .check-bounce { animation: checkBounce 0.55s cubic-bezier(.175,.885,.32,1.275) 0.2s both; }
+
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+    .logo-shimmer {
+      background: linear-gradient(90deg, #0099c6 0%, #4aafc5 40%, #0099c6 60%, #6cbf46 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    .lang-tab.active {
+      color: #1a1a1a;
+      font-weight: 600;
+      border-bottom: 2px solid #C85B1A;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+
+  <!-- ── Survey branding bar ── -->
+  <div class="w-full max-w-lg mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg width="32" height="24" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 4L16 56L30 20L44 56L58 4H46L38 34L28 4H16L6 34L0 4Z" fill="#0099C6"/>
+        <path d="M44 4L56 34L62 4H74L64 56L50 20L44 4Z" fill="#6CBF46"/>
+      </svg>
+      <span class="text-sm font-medium text-gray-500">Webropol Survey</span>
+    </div>
+    <div class="flex items-center gap-4 text-sm text-gray-400">
+      <button class="lang-tab active pb-1 transition-colors hover:text-gray-700">FI</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">SV</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">EN</button>
+    </div>
+  </div>
+
+  <!-- ── Main card ── -->
+  <div class="card-appear w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+
+    <!-- Green top bar -->
+    <div class="h-1.5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-t-2xl"></div>
+
+    <div class="px-8 py-10 text-center">
+
+      <!-- Animated check icon -->
+      <div class="check-bounce w-20 h-20 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-6">
+        <i class="fal fa-check-circle text-4xl text-green-500"></i>
+      </div>
+
+      <!-- Multilingual content -->
+      <div class="space-y-6 text-left border border-gray-100 rounded-2xl overflow-hidden mb-8">
+
+        <!-- Finnish -->
+        <div class="px-6 py-5 bg-blue-50/40 border-b border-gray-100">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full tracking-wide">FI</span>
+            <span class="text-sm font-bold text-gray-800">Kiitos!</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Olet kirjautunut ulos Suomi.fi-tunnistuksesta.<br>
+            Jos sinulla on lomakkeeseen liittyviä kysymyksiä, käänny lomakkeen julkaisseen organisaation puoleen, kiitos.
+          </p>
+        </div>
+
+        <!-- Swedish -->
+        <div class="px-6 py-5 border-b border-gray-100">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full tracking-wide">SV</span>
+            <span class="text-sm font-bold text-gray-800">Tack!</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Du har nu blivit utloggad från Suomi.fi-identifiering.<br>
+            Ifall du har frågor relaterade til enkäten, vänligen kontakta organisationen som publicerade den.
+          </p>
+        </div>
+
+        <!-- English -->
+        <div class="px-6 py-5">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full tracking-wide">EN</span>
+            <span class="text-sm font-bold text-gray-800">Thank you!</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            You have now logged out of Suomi.fi e-Identification.<br>
+            For questions about the form, please contact the organisation that published it.
+          </p>
+        </div>
+      </div>
+
+      <!-- Webropol footer -->
+      <div class="flex flex-col items-center gap-2.5">
+        <svg width="40" height="30" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 4L16 56L30 20L44 56L58 4H46L38 34L28 4H16L6 34L0 4Z" fill="#0099C6"/>
+          <path d="M44 4L56 34L62 4H74L64 56L50 20L44 4Z" fill="#6CBF46"/>
+        </svg>
+        <p class="text-sm text-gray-500">Survey Powered by <span class="font-semibold logo-shimmer">Webropol</span></p>
+        <a href="#" onclick="return false;"
+           class="text-sm text-suomifi-orange-500 hover:text-suomifi-orange-600 transition-colors">
+          <span class="underline font-medium">Click here</span> to read more
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Card footer -->
+    <div class="border-t border-gray-100 px-8 py-4 bg-gray-50/60 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <i class="fal fa-lock text-gray-300"></i>
+        <span>Suojattu yhteys</span>
+      </div>
+      <a href="suomifi-auth.html"
+         class="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors">
+        <i class="fal fa-arrow-left text-[10px]"></i>
+        <span>Back to auth</span>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    document.querySelectorAll('.lang-tab').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
