@@ -1645,7 +1645,7 @@
 
                 <div class="space-y-6">
                   <!-- Bar Chart -->
-                  <div class="chart-wrapper" style="position: relative;">
+                  <div class="chart-wrapper" style="position: relative;" x-ref="barChartWrapper">
                     <div class="absolute right-2 top-2 z-20 group/toolbar">
                         <div class="flex flex-row-reverse items-center bg-white border border-gray-200 rounded-full shadow-sm transition-all duration-300 ease-out overflow-hidden h-9 bg-opacity-90 backdrop-blur-sm"
                              :class="(selectedWidget === 'bar-chart-1') ? 'max-w-[400px] pl-2' : 'max-w-[36px] group-hover/toolbar:max-w-[400px] group-hover/toolbar:pl-2'">
@@ -1675,94 +1675,8 @@
                              :data-popup-target="'barchart-' + index"
                                :style="`height: ${bar.percent}%; background-color: ${getPatternColor(index, bar.color)}${getPatternBg(index)}`"
                                :class="colorPopupTarget === 'barchart-' + index ? 'ring-active' : ''"
-                               @click.stop="openColorPopup('barchart-' + index, 'bar-chart-1')">
+                               @click.stop="openColorPopup('barchart-' + index, 'bar-chart-1', $event, 'barChartWrapper')">
                             <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700 text-sm" x-text="bar.percent + '%'"></div>
-                            <!-- Color Popup -->
-                            <div class="color-popup" x-cloak
-                                 :data-popup-target="'barchart-' + index"
-                                 x-show="colorPopupTarget === 'barchart-' + index"
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 scale-95 translate-y-1"
-                                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                                 x-transition:leave="transition ease-in duration-150"
-                                 x-transition:leave-start="opacity-100 scale-100"
-                                 x-transition:leave-end="opacity-0 scale-95"
-                                 @click.stop>
-                              <!-- Header -->
-                              <div class="px-3 pt-3 pb-2.5"
-                                   :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
-                                <div class="flex items-center justify-between">
-                                  <div class="flex items-center gap-1.5">
-                                    <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
-                                    <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
-                                          x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
-                                  </div>
-                                  <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-                                        :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
-                                        x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
-                                </div>
-                              </div>
-                              <!-- Pattern active notice -->
-                              <div x-show="activePatterns.length > 0" style="display:none"
-                                   class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
-                                <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
-                                <span class="text-[10px] font-semibold text-purple-700"
-                                      x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
-                              </div>
-                              <!-- Swatches -->
-                              <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
-                                <div class="flex items-start gap-2.5">
-                                  <div class="swatch-grid flex-1">
-                                    <template x-for="c in getPopupPalette()" :key="c">
-                                      <button @click.stop="changeBarChartColor(index, c)"
-                                              class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
-                                              :style="`background-color: ${c}`"
-                                              :class="bar.color === c
-                                                ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
-                                                : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
-                                    </template>
-                                  </div>
-                                  <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
-                                  <!-- Custom colour picker -->
-                                  <label @click.stop title="Custom colour"
-                                         class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
-                                         :class="isCustomColor(bar.color) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
-                                         :style="isCustomColor(bar.color) ? `background-color: ${bar.color}` : ''">
-                                    <input type="color" class="sr-only" :value="bar.color"
-                                           @input.stop="changeBarChartColor(index, $event.target.value)"
-                                           @change.stop="changeBarChartColor(index, $event.target.value)">
-                                    <i class="fal fa-plus text-[10px] pointer-events-none"
-                                       :class="isCustomColor(bar.color) ? 'text-white' : ''"></i>
-                                  </label>
-                                </div>
-                              </div>
-                              <!-- Apply RAG to this question -->
-                              <div class="px-3 pb-2">
-                                <button @click.stop="applyRAGToQuestion('bar')"
-                                        class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
-                                  <div class="flex items-center gap-px flex-shrink-0">
-                                    <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
-                                    <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
-                                    <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
-                                    <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
-                                    <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
-                                  </div>
-                                  <div class="flex-1 text-left">
-                                    <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
-                                    <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
-                                  </div>
-                                  <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
-                                </button>
-                              </div>
-                              <!-- Filter -->
-                              <div class="border-t border-gray-100 px-3 py-2">
-                                <button @click.stop="filterByElement('bar', index)"
-                                        class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-50 text-gray-500 hover:text-blue-600 transition-colors text-xs font-medium">
-                                  <i class="fal fa-filter text-[11px]"></i>
-                                  <span>Filter by this answer</span>
-                                </button>
-                              </div>
-                            </div>
                           </div>
                         </template>
                       </div>
@@ -1776,6 +1690,93 @@
                             <span class="chart-legend-label" x-text="bar.label"></span>
                           </div>
                         </template>
+                      </div>
+                    </div>
+                    <!-- Bar Chart Color Popup (outside overflow container, avoids chart-container overflow-x clip) -->
+                    <div class="color-popup" x-cloak
+                         :data-popup-target="activeBarIndex !== null ? 'barchart-' + activeBarIndex : ''"
+                         x-show="activeBarIndex !== null && colorPopupTarget === 'barchart-' + activeBarIndex"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-1"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         :style="`${barPopupStyle}; bottom: auto; transform: translate(-50%, -100%);`"
+                         @click.stop>
+                      <!-- Header -->
+                      <div class="px-3 pt-3 pb-2.5"
+                           :class="useAccessiblePalette ? 'bg-gradient-to-r from-amber-50 to-orange-50' : 'bg-gradient-to-r from-slate-50 to-gray-50'">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-1.5">
+                            <i class="fal fa-swatchbook text-[12px]" :class="useAccessiblePalette ? 'text-amber-500' : 'text-webropol-primary-500'"></i>
+                            <span class="text-[11px] font-semibold" :class="useAccessiblePalette ? 'text-amber-800' : 'text-gray-700'"
+                                  x-text="useAccessiblePalette ? 'Accessible palette' : 'Standard palette'"></span>
+                          </div>
+                          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                :class="useAccessiblePalette ? 'bg-amber-100 text-amber-600' : 'bg-gray-200/80 text-gray-500'"
+                                x-text="useAccessiblePalette ? activeAccessiblePaletteName : 'Manual'"></span>
+                        </div>
+                      </div>
+                      <!-- Pattern active notice -->
+                      <div x-show="activePatterns.length > 0" style="display:none"
+                           class="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border-y border-purple-100">
+                        <i class="fal fa-layer-group text-purple-500 text-[11px]"></i>
+                        <span class="text-[10px] font-semibold text-purple-700"
+                              x-text="activePatterns.length + (activePatterns.length > 1 ? ' patterns active' : ' pattern active') + ' \u00b7 overlaying colours'"></span>
+                      </div>
+                      <!-- Swatches -->
+                      <div class="px-3 pt-2.5 pb-2 border-t border-gray-100/80">
+                        <div class="flex items-start gap-2.5">
+                          <div class="swatch-grid flex-1">
+                            <template x-for="c in getPopupPalette()" :key="c">
+                              <button @click.stop="changeBarChartColor(activeBarIndex, c)"
+                                      class="w-[26px] h-[26px] rounded-lg hover:scale-110 active:scale-95 transition-all ring-offset-1 shadow-sm"
+                                      :style="`background-color: ${c}`"
+                                      :class="(barChartData[activeBarIndex]?.color === c)
+                                        ? (useAccessiblePalette ? 'ring-2 ring-amber-500 scale-110' : 'ring-2 ring-webropol-primary-500 scale-110')
+                                        : (useAccessiblePalette ? 'ring-1 ring-transparent hover:ring-amber-300' : 'ring-1 ring-transparent hover:ring-webropol-primary-300')"></button>
+                            </template>
+                          </div>
+                          <div class="w-px self-stretch bg-gray-100 mx-0.5"></div>
+                          <!-- Custom colour picker -->
+                          <label @click.stop title="Custom colour"
+                                 class="w-[26px] h-[26px] flex-shrink-0 rounded-lg border-2 border-dashed flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer ring-offset-1 shadow-sm"
+                                 :class="isCustomColor(barChartData[activeBarIndex]?.color) ? 'ring-2 ring-webropol-primary-500 scale-110 border-transparent' : 'border-gray-300 text-gray-400 hover:border-webropol-primary-400 hover:text-webropol-primary-500'"
+                                 :style="isCustomColor(barChartData[activeBarIndex]?.color) ? `background-color: ${barChartData[activeBarIndex]?.color}` : ''">
+                            <input type="color" class="sr-only" :value="barChartData[activeBarIndex]?.color || '#000000'"
+                                   @input.stop="changeBarChartColor(activeBarIndex, $event.target.value)"
+                                   @change.stop="changeBarChartColor(activeBarIndex, $event.target.value)">
+                            <i class="fal fa-plus text-[10px] pointer-events-none"
+                               :class="isCustomColor(barChartData[activeBarIndex]?.color) ? 'text-white' : ''"></i>
+                          </label>
+                        </div>
+                      </div>
+                      <!-- Apply RAG to this question -->
+                      <div class="px-3 pb-2">
+                        <button @click.stop="applyRAGToQuestion('bar')"
+                                class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl border border-amber-200/80 bg-gradient-to-r from-red-50 via-amber-50 to-green-50 hover:from-red-100 hover:via-amber-100 hover:to-green-100 hover:border-amber-300 hover:shadow-sm transition-all group">
+                          <div class="flex items-center gap-px flex-shrink-0">
+                            <div class="w-2.5 h-[18px] rounded-l-sm" style="background:#C03020"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#F08270"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#F5A623"></div>
+                            <div class="w-2.5 h-[18px]" style="background:#72BF6E"></div>
+                            <div class="w-2.5 h-[18px] rounded-r-sm" style="background:#2E9648"></div>
+                          </div>
+                          <div class="flex-1 text-left">
+                            <div class="text-[11px] font-semibold text-amber-800 leading-tight">Apply RAG scale</div>
+                            <div class="text-[9px] text-amber-600 leading-tight">to this question only</div>
+                          </div>
+                          <i class="fal fa-arrow-right text-[10px] text-amber-500 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                        </button>
+                      </div>
+                      <!-- Filter -->
+                      <div class="border-t border-gray-100 px-3 py-2">
+                        <button @click.stop="filterByElement('bar', activeBarIndex)"
+                                class="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-blue-50 text-gray-500 hover:text-blue-600 transition-colors text-xs font-medium">
+                          <i class="fal fa-filter text-[11px]"></i>
+                          <span>Filter by this answer</span>
+                        </button>
                       </div>
                     </div>
                     <hr class="divider">
@@ -5095,6 +5096,8 @@
         colorPopupTarget: null,  // e.g. 'nps-0', 'rank-1-2'
         ganttPopupStyle: '',
         activeGanttIndex: null,
+        barPopupStyle: '',
+        activeBarIndex: null,
         useAccessiblePalette: false,
         defaultAccessiblePaletteName: 'IBM Colour Blind Safe',
         activeAccessiblePaletteName: 'IBM Colour Blind Safe',
@@ -5199,6 +5202,8 @@
           this.colorPopupTarget = null;
           this.ganttPopupStyle = '';
           this.activeGanttIndex = null;
+          this.barPopupStyle = '';
+          this.activeBarIndex = null;
         },
         
         deselectWidget() {
@@ -5244,6 +5249,9 @@
           this.activeGanttIndex = target.startsWith('gantt-')
             ? Number.parseInt(target.replace('gantt-', ''), 10)
             : null;
+          this.activeBarIndex = target.startsWith('barchart-')
+            ? Number.parseInt(target.replace('barchart-', ''), 10)
+            : null;
 
           if (anchorRef && event?.currentTarget) {
             const wrapper = this.$refs[anchorRef];
@@ -5255,10 +5263,15 @@
               const left = triggerRect.left - wrapperRect.left + (triggerRect.width / 2);
               const top = triggerRect.top - wrapperRect.top - 8;
 
-              this.ganttPopupStyle = `left: ${left}px; top: ${top}px;`;
+              if (target.startsWith('gantt-')) {
+                this.ganttPopupStyle = `left: ${left}px; top: ${top}px;`;
+              } else if (target.startsWith('barchart-')) {
+                this.barPopupStyle = `left: ${left}px; top: ${top}px;`;
+              }
             }
           } else {
             this.ganttPopupStyle = '';
+            this.barPopupStyle = '';
           }
 
           this.colorPopupTarget = target;

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suomi.fi-tunnistus · Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'suomifi-orange': { 500: '#C85B1A', 600: '#B34F16', 700: '#9A4312' },
+            'suomifi-bg': '#EEF2F7'
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #EEF2F7; }
+
+    /* ── Fade-in for the card ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-appear { animation: fadeUp 0.45s ease both; }
+
+    /* ── Pulse ring on the auth button ── */
+    @keyframes pulseRing {
+      0%   { box-shadow: 0 0 0 0   rgba(200,91,26,.45); }
+      70%  { box-shadow: 0 0 0 12px rgba(200,91,26,0);  }
+      100% { box-shadow: 0 0 0 0   rgba(200,91,26,0);   }
+    }
+    .btn-suomifi:hover { animation: pulseRing 1.2s ease-out infinite; }
+
+    /* ── Language tab indicator ── */
+    .lang-tab.active {
+      color: #1a1a1a;
+      font-weight: 600;
+      border-bottom: 2px solid #C85B1A;
+    }
+
+    /* ── Logo shimmer ── */
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+    .logo-shimmer {
+      background: linear-gradient(90deg, #0099c6 0%, #4aafc5 40%, #0099c6 60%, #6cbf46 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
+
+  <!-- ── Survey branding bar ── -->
+  <div class="w-full max-w-lg mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <!-- Webropol W logo (inline SVG) -->
+      <svg width="32" height="24" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M0 4L16 56L30 20L44 56L58 4H46L38 34L28 4H16L6 34L0 4Z" fill="#0099C6"/>
+        <path d="M44 4L56 34L62 4H74L64 56L50 20L44 4Z" fill="#6CBF46"/>
+      </svg>
+      <span class="text-sm font-medium text-gray-500">Webropol Survey</span>
+    </div>
+    <!-- Language tabs -->
+    <div class="flex items-center gap-4 text-sm text-gray-400">
+      <button class="lang-tab active pb-1 transition-colors hover:text-gray-700">FI</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">SV</button>
+      <button class="lang-tab pb-1 transition-colors hover:text-gray-700">EN</button>
+    </div>
+  </div>
+
+  <!-- ── Main card ── -->
+  <div class="card-appear w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+
+    <!-- Progress indicator (step 1 of 2) -->
+    <div class="flex gap-0">
+      <div class="h-1 flex-1 bg-suomifi-orange-500 rounded-tl-2xl"></div>
+      <div class="h-1 flex-1 bg-gray-200 rounded-tr-2xl"></div>
+    </div>
+    <div class="px-8 pt-2 pb-0 flex items-center justify-between text-[11px] text-gray-400 font-medium">
+      <span>Tunnistus · Authentication</span>
+      <span>1 / 2</span>
+    </div>
+
+    <!-- Card body -->
+    <div class="px-8 py-8">
+
+      <!-- Suomi.fi emblem + title -->
+      <div class="flex items-center gap-4 mb-8">
+        <!-- Suomi.fi emblem placeholder -->
+        <div class="w-14 h-14 rounded-xl bg-blue-700 flex items-center justify-center shadow-md flex-shrink-0">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Finnish coat of arms lion silhouette (simplified) -->
+            <circle cx="16" cy="16" r="14" fill="white" fill-opacity="0.15"/>
+            <path d="M10 22 C10 22 8 18 10 14 C11 12 13 11 16 11 C19 11 22 13 22 16 C22 20 19 22 16 22 Z" fill="white"/>
+            <path d="M14 9 L16 7 L18 9" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <circle cx="16" cy="16" r="3" fill="#003580"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900 leading-tight">Suomi.fi-tunnistus</h1>
+          <p class="text-sm text-gray-500 mt-0.5">Suomi.fi e-Identification</p>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <p class="text-sm text-gray-600 leading-relaxed mb-8">
+        Tämä lomake vaatii henkilöllisyyden vahvistamisen Suomi.fi-tunnistuspalvelun kautta ennen vastaamista.
+      </p>
+
+      <!-- Auth button -->
+      <a href="#" onclick="return false;"
+         class="btn-suomifi w-full flex items-center justify-center gap-3 bg-suomifi-orange-500 hover:bg-suomifi-orange-600 active:bg-suomifi-orange-700 text-white font-semibold text-[15px] px-6 py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg group">
+        <i class="fal fa-shield-check text-lg opacity-90"></i>
+        <span>Tunnistaudu Suomi.fi:ssä</span>
+        <i class="fal fa-external-link text-sm opacity-70 group-hover:translate-x-0.5 group-hover:opacity-100 transition-all"></i>
+      </a>
+
+      <!-- Divider -->
+      <div class="flex items-center gap-3 my-6">
+        <div class="flex-1 h-px bg-gray-100"></div>
+        <span class="text-xs text-gray-400 font-medium">tai · or</span>
+        <div class="flex-1 h-px bg-gray-100"></div>
+      </div>
+
+      <!-- Info box -->
+      <div class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3.5 text-sm text-blue-800">
+        <i class="fal fa-info-circle text-blue-500 mt-0.5 flex-shrink-0"></i>
+        <p class="leading-relaxed">
+          Tunnistautuminen onnistuu pankkitunnuksilla, mobiilivarmenteella tai HST-kortilla.
+          <a href="#" onclick="return false;" class="underline hover:text-blue-900 transition-colors ml-1">Lisätietoa Suomi.fi-tunnistuksesta</a>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Card footer -->
+    <div class="border-t border-gray-100 px-8 py-4 bg-gray-50/60 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <i class="fal fa-lock text-gray-300"></i>
+        <span>Suojattu yhteys</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="text-xs text-gray-400">Powered by</span>
+        <!-- small Webropol wordmark -->
+        <span class="text-xs font-bold logo-shimmer">Webropol</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Second state: Thank-you / Logout confirmation ── -->
+  <!-- Shown after auth by toggling JS -->
+  <div id="thankyou-card"
+       class="card-appear hidden w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mt-4">
+    <div class="h-1 bg-green-500 rounded-t-2xl"></div>
+    <div class="px-8 py-10 text-center">
+      <!-- Check icon -->
+      <div class="w-16 h-16 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-6">
+        <i class="fal fa-check-circle text-3xl text-green-500"></i>
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">Kiitos!</h2>
+      <p class="text-sm text-gray-500 mb-6">Tunnistautuminen onnistui · Authentication successful</p>
+
+      <div class="space-y-5 text-left border border-gray-100 rounded-xl p-5 bg-gray-50/60 mb-8">
+        <!-- Finnish -->
+        <div>
+          <p class="text-sm font-semibold text-gray-800 mb-1">Suomi</p>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Olet kirjautunut ulos Suomi.fi-tunnistuksesta.<br>
+            Jos sinulla on lomakkeeseen liittyviä kysymyksiä, käänny lomakkeen julkaisseen organisaation puoleen, kiitos.
+          </p>
+        </div>
+        <div class="h-px bg-gray-200"></div>
+        <!-- Swedish -->
+        <div>
+          <p class="text-sm font-semibold text-gray-800 mb-1">Svenska</p>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Du har nu blivit utloggad från Suomi.fi-identifiering.<br>
+            Ifall du har frågor relaterade til enkäten, vänligen kontakta organisationen som publicerade den.
+          </p>
+        </div>
+        <div class="h-px bg-gray-200"></div>
+        <!-- English -->
+        <div>
+          <p class="text-sm font-semibold text-gray-800 mb-1">English</p>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            You have now logged out of Suomi.fi e-Identification.<br>
+            For questions about the form, please contact the organisation that published it.
+          </p>
+        </div>
+      </div>
+
+      <!-- Webropol footer -->
+      <div class="flex flex-col items-center gap-2">
+        <svg width="40" height="30" viewBox="0 0 80 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 4L16 56L30 20L44 56L58 4H46L38 34L28 4H16L6 34L0 4Z" fill="#0099C6"/>
+          <path d="M44 4L56 34L62 4H74L64 56L50 20L44 4Z" fill="#6CBF46"/>
+        </svg>
+        <p class="text-sm text-gray-500">Survey Powered by <span class="font-semibold logo-shimmer">Webropol</span></p>
+        <a href="#" onclick="return false;" class="text-sm text-suomifi-orange-500 hover:text-suomifi-orange-600 underline transition-colors">
+          <span class="font-medium">Click here</span> to read more
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Demo toggle ── -->
+  <button onclick="toggleState()"
+          class="mt-8 text-xs text-gray-400 hover:text-gray-600 border border-gray-200 hover:border-gray-300 rounded-full px-4 py-1.5 transition-colors bg-white shadow-sm">
+    <i class="fal fa-sync-alt mr-1.5"></i> Toggle state (demo)
+  </button>
+
+  <script>
+    let showThankyou = false;
+    function toggleState() {
+      showThankyou = !showThankyou;
+      document.querySelector('.card-appear:not(#thankyou-card)').classList.toggle('hidden', showThankyou);
+      document.getElementById('thankyou-card').classList.toggle('hidden', !showThankyou);
+    }
+
+    // Language tab switching
+    document.querySelectorAll('.lang-tab').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
