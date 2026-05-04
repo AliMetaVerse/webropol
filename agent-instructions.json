@@ -92,6 +92,16 @@
       }
     },
     {
+      "id": "demo-pages-logo",
+      "description": "Demo pages in demo-solo/ must use the real Webropol logo from img/logo/w-logo-dark.svg as an <img> tag. Never use inline SVG approximations of the Webropol logo. From demo-solo/, the relative path is ../img/logo/w-logo-dark.svg.",
+      "example": "<img src=\"../img/logo/w-logo-dark.svg\" class=\"h-8 w-auto\" alt=\"Webropol\">"
+    },
+    {
+      "id": "demo-language-switching",
+      "description": "When demo pages have language tab switchers (FI/SV/EN), make them fully functional. Add data-lang to each tab button. Add data-i18n=\"true\" with data-fi/data-sv/data-en attributes to every translatable text element. For multi-block content (separate cards per language), add data-lang-block=\"fi/sv/en\" to each block and hide non-default blocks with style=\"display:none\". Implement a setLang(lang) function that updates all [data-i18n] textContent and toggles [data-lang-block] visibility.",
+      "example": "<button class=\"lang-tab\" data-lang=\"fi\">FI</button>\n<span data-i18n=\"true\" data-fi=\"Kiitos\" data-sv=\"Tack\" data-en=\"Thank you\">Kiitos</span>\n<div data-lang-block=\"sv\" style=\"display:none\">...</div>\n\nfunction setLang(lang) {\n  document.querySelectorAll('[data-i18n]').forEach(el => {\n    const t = el.getAttribute('data-' + lang);\n    if (t !== null) el.textContent = t;\n  });\n  document.querySelectorAll('[data-lang-block]').forEach(el => {\n    el.style.display = el.dataset.langBlock === lang ? '' : 'none';\n  });\n  document.querySelectorAll('.lang-tab').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));\n}"
+    },
+    {
       "id": "preserve-localstorage",
       "description": "Data stored in localStorage should remain unchanged, and any updates should be applied without disrupting or affecting the existing localStorage functionality.",
       "action": "preserve"
