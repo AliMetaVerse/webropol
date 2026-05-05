@@ -1189,7 +1189,7 @@
                     <div class="nps-bar" style="border: 1px solid #cbd5e1;">
                       <template x-for="(seg, si) in npsSegments" :key="seg.key">
                         <div class="nps-segment chart-bar-animate"
-                             :style="`width: ${seg.percent}%; background-color: ${getPatternColor(si, getNpsColor(seg.key))}; animation-delay: ${0.1 + si*0.1}s${getPatternBg(si)}`">
+                             :style="`width: ${seg.percent}%; background-color: ${getPatternColor(si, getNpsColor(seg.key))}; animation-delay: ${0.1 + si*0.1}s${getPatternBg(si)}${getBarBorderStyle(getPatternColor(si, getNpsColor(seg.key)))}`">
                           <div class="flex flex-col items-center">
                             <span class="text-lg font-semibold" x-text="seg.percent + '%'"></span>
                             <span class="text-xs" x-text="'n = ' + seg.count"></span>
@@ -1409,11 +1409,15 @@
                             <div class="w-12 text-left text-sm font-medium text-webropol-gray-700" x-text="row.label"></div>
                             <div class="flex-1 flex gap-1 mx-4">
                               <template x-for="(pct, bi) in row.bars" :key="bi">
-                                <div class="h-6 chart-bar-animate chart-element-clickable"
+                                <div class="h-6 chart-bar-animate chart-element-clickable flex items-center justify-center overflow-hidden"
                                     :data-popup-target="'rank-' + ri + '-' + bi"
-                                     :style="`width: ${pct}%; background-color: ${getPatternColor(bi, rankColors[bi])}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s${getPatternBg(bi)}`"
+                                     :style="`width: ${pct}%; background-color: ${getPatternColor(bi, rankColors[bi])}; animation-delay: ${0.15 + ri*0.1 + bi*0.05}s${getPatternBg(bi)}${getBarBorderStyle(getPatternColor(bi, rankColors[bi]))}`"
                                      :class="colorPopupTarget === 'rank-' + ri + '-' + bi ? 'ring-active' : ''"
                                      @click.stop="openColorPopup('rank-' + ri + '-' + bi, 'rank-chart-1', $event, 'rankChartWrapper')">
+                                  <span x-show="pct >= 10"
+                                        class="text-[10px] font-semibold leading-none pointer-events-none"
+                                        :style="`color: ${getBarTextColour(getPatternColor(bi, rankColors[bi]))}`"
+                                        x-text="pct + '%'"></span>
                                 </div>
                               </template>
                             </div>
@@ -1670,12 +1674,14 @@
                          @click="selectWidget('bar-chart-1')">
                       <div class="h-64 flex items-end justify-center gap-2 sm:gap-6 px-4 border-b border-gray-100 pb-2">
                         <template x-for="(bar, index) in barChartData" :key="'bar-'+index">
-                          <div class="w-16 sm:w-24 rounded-t-lg chart-element-clickable relative"
+                          <div class="w-16 sm:w-24 rounded-t-lg chart-element-clickable relative flex items-end justify-center pb-1"
                              :data-popup-target="'barchart-' + index"
-                               :style="`height: ${bar.percent}%; background-color: ${getPatternColor(index, bar.color)}${getPatternBg(index)}`"
+                               :style="`height: ${bar.percent}%; background-color: ${getPatternColor(index, bar.color)}${getPatternBg(index)}${getBarBorderStyle(getPatternColor(index, bar.color))}`"
                                :class="colorPopupTarget === 'barchart-' + index ? 'ring-active' : ''"
                                @click.stop="openColorPopup('barchart-' + index, 'bar-chart-1', $event, 'barChartWrapper')">
-                            <div class="absolute -top-6 left-1/2 -translate-x-1/2 font-bold text-gray-700 text-sm" x-text="bar.percent + '%'"></div>
+                            <span class="font-bold text-xs leading-none pointer-events-none"
+                                  :style="`color: ${getBarTextColour(getPatternColor(index, bar.color))}`"
+                                  x-text="bar.percent + '%'"></span>
                           </div>
                         </template>
                       </div>
@@ -1863,15 +1869,18 @@
                           <div class="w-36 text-sm font-medium text-webropol-gray-600 text-right" x-text="row.label"></div>
                           <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden flex">
                             <template x-for="(seg, si) in row.segments" :key="si">
-                              <div class="chart-element-clickable relative"
+                              <div class="chart-element-clickable relative flex items-center justify-center overflow-hidden"
                                 :data-popup-target="'matrix-' + ri + '-' + si"
-                                   :style="`width: ${seg.pct}%; background-color: ${getPatternColor(si, seg.color)}${getPatternBg(si)}`"
+                                   :style="`width: ${seg.pct}%; background-color: ${getPatternColor(si, seg.color)}${getPatternBg(si)}${getBarBorderStyle(getPatternColor(si, seg.color))}`"
                                    :class="[
-                                     si === row.segments.length - 1 ? 'flex items-center justify-end px-2 text-xs font-bold text-white shadow-inner' : '',
+                                     si === row.segments.length - 1 ? 'px-2 shadow-inner' : '',
                                      colorPopupTarget === 'matrix-' + ri + '-' + si ? 'ring-active' : ''
                                    ]"
                                    @click.stop="openColorPopup('matrix-' + ri + '-' + si, 'matrix-chart-1', $event, 'matrixChartWrapper')">
-                                <span x-text="si === row.segments.length - 1 ? row.score : ''"></span>
+                                <span x-show="seg.pct >= 8"
+                                      class="text-[10px] font-semibold leading-none pointer-events-none"
+                                      :style="`color: ${getBarTextColour(getPatternColor(si, seg.color))}`"
+                                      x-text="si === row.segments.length - 1 ? row.score : seg.pct + '%'"></span>
                               </div>
                             </template>
                           </div>
@@ -2017,7 +2026,7 @@
                             <div class="flex-1 relative h-full">
                               <div class="absolute top-2 bottom-2 rounded-md shadow-sm opacity-80 flex items-center px-2 chart-element-clickable"
                                 :data-popup-target="'gantt-' + gi"
-                                   :style="`left: ${bar.left}%; width: ${bar.width}%; background-color: ${getPatternColor(gi, bar.color)}${getPatternBg(gi)}`"
+                                   :style="`left: ${bar.left}%; width: ${bar.width}%; background-color: ${getPatternColor(gi, bar.color)}${getPatternBg(gi)}${getBarBorderStyle(getPatternColor(gi, bar.color))}`"
                                    :class="colorPopupTarget === 'gantt-' + gi ? 'ring-active opacity-100' : ''"
                                    @click.stop="openColorPopup('gantt-' + gi, 'gantt-chart-1', $event, 'ganttChartWrapper')">
                                 <span class="text-xs text-white font-medium truncate" x-text="bar.duration"></span>
@@ -5101,6 +5110,7 @@
         activeAccessiblePaletteName: 'IBM Colour Blind Safe',
         accessiblePaletteReversed: false,
         activePatterns: [],      // pattern IDs from ChartColoursModal
+        showBarBorder: false,    // colour-matched outline ring on each chart bar
 
         // Generic 12-colour palette from "Colours for chart, mean & index" modal
         standardColors: [
@@ -5535,6 +5545,22 @@
           return defaultColor;
         },
 
+        // Returns box-shadow string for colour-matched bar border (when enabled).
+        getBarBorderStyle(color) {
+          if (!this.showBarBorder) return '';
+          return `; box-shadow: 0 0 0 2px #fff, 0 0 0 4px ${color}`;
+        },
+
+        // Returns white or dark text colour based on perceived luminance of the bar background.
+        getBarTextColour(color) {
+          if (!color || color.length < 7) return '#ffffff';
+          const h = color.replace('#', '');
+          const r = parseInt(h.substring(0,2),16);
+          const g = parseInt(h.substring(2,4),16);
+          const b = parseInt(h.substring(4,6),16);
+          return (r*299 + g*587 + b*114) / 1000 > 145 ? '#1e293b' : '#ffffff';
+        },
+
         filterByElement(chartType, index) {
           if (chartType === 'nps') {
             alert(`Filtering by: ${this.npsSegments[index].label}`);
@@ -5710,6 +5736,9 @@
               }
               if (e.detail.barColours) {
                 this.standardColors = [...e.detail.barColours];
+              }
+              if (e.detail.showBorder !== undefined) {
+                this.showBarBorder = e.detail.showBorder;
               }
 
               this.applyPaletteToAllCharts();
