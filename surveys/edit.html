@@ -1129,6 +1129,7 @@
                     actions='[
                       {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
                       {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-hero","label":"Add Hero","icon":"fal fa-stars","color":"primary"},
                       {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
                     ]'
                   ></webropol-page-quick-actions>
@@ -1140,6 +1141,7 @@
                     actions='[
                       {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
                       {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-hero","label":"Add Hero","icon":"fal fa-stars","color":"primary"},
                       {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
                     ]'
                   ></webropol-page-quick-actions>
@@ -1154,6 +1156,7 @@
                     actions='[
                       {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
                       {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-hero","label":"Add Hero","icon":"fal fa-stars","color":"primary"},
                       {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
                     ]'
                   ></webropol-page-quick-actions>
@@ -1184,6 +1187,7 @@
                     actions='[
                       {"id":"add-question","label":"Add Question","icon":"fas fa-square-plus","color":"red"},
                       {"id":"add-text","label":"Add Text/Media","icon":"fal fa-block-quote","color":"purple"},
+                      {"id":"add-hero","label":"Add Hero","icon":"fal fa-stars","color":"primary"},
                       {"id":"add-break","label":"Add Page Break","icon":"fal fa-file-dashed-line","color":"orange"}
                     ]'
                   ></webropol-page-quick-actions>
@@ -1981,7 +1985,7 @@
   <script>
     // Modal utility for this page (legacy bespoke modals).
     (function(){
-      const MODAL_IDS = ['uploadModal','questionSettingsModal','colorPickerModal','questionModeModal','surveyStatusModal'];
+      const MODAL_IDS = ['uploadModal','questionSettingsModal','colorPickerModal','questionModeModal','surveyStatusModal','heroModal'];
       function portal(el){
         if(!el) return; 
         // Always keep at end of body to outrank siblings with higher stacking contexts.
@@ -2021,6 +2025,8 @@
       window.closeQuestionModeModal = () => closeModal('questionModeModal');
       window.openSurveyStatusModal = () => openModal('surveyStatusModal');
       window.closeSurveyStatusModal = () => closeModal('surveyStatusModal');
+      window.openHeroModal = () => openModal('heroModal');
+      window.closeHeroModal = () => closeModal('heroModal');
       // Initial portal (in case HTML loaded before script runs)
       MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
       // Close when clicking outside content
@@ -2090,6 +2096,306 @@
         }
       }
     };
+
+    // ============================================================
+    // Hero Section Modal Logic
+    // ============================================================
+    (function () {
+      // State
+      const state = {
+        bg: 'photo-crystal',
+        overlayOpacity: 0,
+        align: 'left',
+        textColor: 'light',
+        heading: '',
+        subtext: '',
+        editTargetId: null   // set when editing an existing hero
+      };
+
+      // Background CSS map — photos + custom-upload entry added dynamically
+      const BG_MAP = {
+        'photo-crystal':  { type: 'image', value: "url('../img/surveybg/abstract-crystal-prism.jpg')" },
+        'photo-smoke':    { type: 'image', value: "url('../img/surveybg/abstract-smoke-dark.jpg')" },
+        'photo-pink':     { type: 'image', value: "url('../img/surveybg/fluid-abstract-pink.jpg')" },
+        'photo-forest':   { type: 'image', value: "url('../img/surveybg/forest-nature-green.jpg')" },
+        'photo-colorful': { type: 'image', value: "url('../img/surveybg/gradient-colorful-abstract.jpg')" },
+        'photo-mountain': { type: 'image', value: "url('../img/surveybg/mountain-landscape-misty.jpg')" },
+        'photo-sunset':   { type: 'image', value: "url('../img/surveybg/nature-landscape-sunset.jpg')" }
+      };
+
+      const FALLBACK_BG = 'photo-crystal';
+
+      function syncPreview() {
+        const shell = document.getElementById('heroPreviewShell');
+        const overlay = document.getElementById('heroPreviewOverlay');
+        const content = document.getElementById('heroPreviewContent');
+        const headingEl = document.getElementById('heroPreviewHeading');
+        const subtextEl = document.getElementById('heroPreviewSubtext');
+        if (!shell) return;
+
+        const bgEntry = BG_MAP[state.bg] || BG_MAP[FALLBACK_BG];
+        if (bgEntry.type === 'image') {
+          shell.style.background = '';
+          shell.style.backgroundImage = bgEntry.value;
+          shell.style.backgroundSize = 'cover';
+          shell.style.backgroundPosition = 'center';
+        } else {
+          shell.style.backgroundImage = '';
+          shell.style.backgroundSize = '';
+          shell.style.backgroundPosition = '';
+          shell.style.background = bgEntry.value;
+        }
+        overlay.style.background = `rgba(0,0,0,${state.overlayOpacity / 100})`;
+        content.style.textAlign = state.align;
+
+        const isLight = state.textColor === 'light';
+        headingEl.style.color = isLight ? '#ffffff' : '#0f172a';
+        subtextEl.style.color = isLight ? 'rgba(255,255,255,0.85)' : 'rgba(15,23,42,0.65)';
+
+        const headingVal = document.getElementById('heroHeading')?.value || '';
+        const subtextVal = document.getElementById('heroSubtext')?.value || '';
+        headingEl.textContent = headingVal || 'Welcome to our survey';
+        subtextEl.textContent = subtextVal || 'Tell respondents what this survey is about…';
+        headingEl.style.opacity = headingVal ? '1' : '0.4';
+        subtextEl.style.opacity = subtextVal ? '1' : '0.4';
+      }
+
+      // Sync opacity slider track fill
+      function syncSliderTrack(val) {
+        const slider = document.getElementById('heroOverlayOpacity');
+        const label = document.getElementById('heroOpacityLabel');
+        if (slider) {
+          const pct = (val / 80) * 100;
+          slider.style.background = `linear-gradient(to right, #06b6d4 ${pct}%, #e2e8f0 ${pct}%)`;
+        }
+        if (label) label.textContent = `${val}%`;
+      }
+
+      window.selectHeroBg = function (btn, bg) {
+        state.bg = bg;
+        document.querySelectorAll('.hero-bg-swatch').forEach(s => s.classList.remove('hero-bg-swatch--active'));
+        btn.classList.add('hero-bg-swatch--active');
+        syncPreview();
+      };
+
+      window.updateHeroOverlay = function (val) {
+        state.overlayOpacity = Number(val);
+        syncSliderTrack(state.overlayOpacity);
+        syncPreview();
+      };
+
+      window.updateHeroPreview = function () {
+        syncPreview();
+      };
+
+      window.setHeroAlign = function (btn, align) {
+        state.align = align;
+        document.querySelectorAll('.hero-align-btn').forEach(b => b.classList.remove('hero-align-btn--active'));
+        btn.classList.add('hero-align-btn--active');
+        syncPreview();
+      };
+
+      window.setHeroTextColor = function (btn, color) {
+        state.textColor = color;
+        document.querySelectorAll('.hero-textcolor-btn').forEach(b => b.classList.remove('hero-textcolor-btn--active'));
+        btn.classList.add('hero-textcolor-btn--active');
+        syncPreview();
+      };
+
+      window.insertHeroSection = function () {
+        const heading = document.getElementById('heroHeading')?.value.trim() || 'Welcome to our survey';
+        const subtext = document.getElementById('heroSubtext')?.value.trim() || '';
+        const isLight = state.textColor === 'light';
+        const overlayStyle = state.overlayOpacity > 0
+          ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,${state.overlayOpacity / 100});border-radius:inherit;pointer-events:none;"></div>`
+          : '';
+
+        const bgEntry = BG_MAP[state.bg] || BG_MAP[FALLBACK_BG];
+        const bgStyle = bgEntry.type === 'image'
+          ? `background-image: ${bgEntry.value}; background-size: cover; background-position: center;`
+          : `background: ${bgEntry.value};`;
+
+        // Persist state in a data attribute so edit mode can reload it
+        const heroStateData = JSON.stringify({
+          bg: state.bg,
+          overlayOpacity: state.overlayOpacity,
+          align: state.align,
+          textColor: state.textColor,
+          heading,
+          subtext,
+          customUploadSrc: state.bg === 'custom-upload' ? (BG_MAP['custom-upload']?.rawSrc || '') : ''
+        }).replace(/'/g, '&#39;');
+
+        const heroHTML = `
+          <!-- Hero Section -->
+          <div class="webropol-hero-section" id="webropol-hero-section" data-hero-state='${heroStateData}' style="
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            padding: 3.5rem 2.5rem;
+            ${bgStyle}
+            text-align: ${state.align};
+            margin-bottom: 1.5rem;
+          ">
+            ${overlayStyle}
+            <!-- Edit / Delete controls (visible on hover) -->
+            <div class="hero-edit-bar">
+              <button type="button" class="hero-edit-bar-btn" onclick="openHeroModalForEdit()" title="Edit hero">
+                <i class="fal fa-pen"></i> Edit
+              </button>
+              <button type="button" class="hero-edit-bar-btn hero-edit-bar-btn--danger" onclick="removeHeroSection()" title="Remove hero">
+                <i class="fal fa-trash"></i>
+              </button>
+            </div>
+            <div style="position:relative;z-index:1;">
+              <h2 style="font-size:2rem;font-weight:700;color:${isLight ? '#ffffff' : '#0f172a'};margin:0 0 0.75rem;line-height:1.2;">${heading}</h2>
+              ${subtext ? `<p style="font-size:1rem;color:${isLight ? 'rgba(255,255,255,0.85)' : 'rgba(15,23,42,0.65)'};margin:0;max-width:600px;${state.align === 'center' ? 'margin-inline:auto;' : ''}">${subtext}</p>` : ''}
+            </div>
+          </div>
+        `;
+
+        if (state.editTargetId) {
+          // Edit mode: replace the existing hero element
+          const existing = document.getElementById(state.editTargetId);
+          if (existing) {
+            existing.outerHTML = heroHTML.trim();
+          }
+          state.editTargetId = null;
+        } else {
+          // Insert mode: add before first page section
+          const canvas = document.querySelector('.survey-scroll-area .space-y-8');
+          if (canvas) {
+            const firstSection = canvas.querySelector('section');
+            if (firstSection) {
+              firstSection.insertAdjacentHTML('beforebegin', heroHTML);
+            } else {
+              canvas.insertAdjacentHTML('afterbegin', heroHTML);
+            }
+          }
+        }
+
+        // Persist to localStorage
+        try {
+          const existing = JSON.parse(localStorage.getItem('webropol_survey_hero') || '{}');
+          Object.assign(existing, { bg: state.bg, overlayOpacity: state.overlayOpacity, align: state.align, textColor: state.textColor, heading, subtext });
+          localStorage.setItem('webropol_survey_hero', JSON.stringify(existing));
+        } catch (e) { /* non-fatal */ }
+
+        window.closeHeroModal();
+      };
+
+      // Remove the inserted hero section
+      window.removeHeroSection = function () {
+        const el = document.getElementById('webropol-hero-section');
+        if (el) el.remove();
+        try { localStorage.removeItem('webropol_survey_hero'); } catch (e) {}
+      };
+
+      // Open modal pre-filled with the current hero's saved state
+      window.openHeroModalForEdit = function () {
+        const el = document.getElementById('webropol-hero-section');
+        if (!el) return;
+        let saved = {};
+        try { saved = JSON.parse(el.dataset.heroState || '{}'); } catch (e) {}
+
+        // Restore state
+        state.bg = saved.bg || 'ocean';
+        state.overlayOpacity = saved.overlayOpacity ?? 0;
+        state.align = saved.align || 'left';
+        state.textColor = saved.textColor || 'light';
+        state.editTargetId = 'webropol-hero-section';
+
+        // If there was a custom upload image, restore it
+        if (state.bg === 'custom-upload' && saved.customUploadSrc) {
+          BG_MAP['custom-upload'] = { type: 'image', value: `url('${saved.customUploadSrc}')`, rawSrc: saved.customUploadSrc };
+          const swatch = document.getElementById('heroUploadSwatch');
+          const img = document.getElementById('heroUploadPreviewImg');
+          if (swatch && img) { img.src = saved.customUploadSrc; swatch.style.display = ''; }
+        }
+
+        window.openHeroModal();
+
+        // After modal opens, populate fields
+        requestAnimationFrame(() => {
+          const headingEl = document.getElementById('heroHeading');
+          const subtextEl = document.getElementById('heroSubtext');
+          const opacityEl = document.getElementById('heroOverlayOpacity');
+          if (headingEl) headingEl.value = saved.heading || '';
+          if (subtextEl) subtextEl.value = saved.subtext || '';
+          if (opacityEl) { opacityEl.value = state.overlayOpacity; updateHeroOverlay(state.overlayOpacity); }
+
+          // Update swatch active state
+          document.querySelectorAll('.hero-bg-swatch').forEach(s => s.classList.remove('hero-bg-swatch--active'));
+          const activeSwatch = document.querySelector(`.hero-bg-swatch[data-bg="${state.bg}"]`);
+          if (activeSwatch) activeSwatch.classList.add('hero-bg-swatch--active');
+
+          // Update align buttons
+          document.querySelectorAll('.hero-align-btn').forEach(b => {
+            b.classList.toggle('hero-align-btn--active', b.dataset.align === state.align);
+          });
+
+          // Update text color buttons
+          document.querySelectorAll('.hero-textcolor-btn').forEach(b => {
+            b.classList.toggle('hero-textcolor-btn--active', b.dataset.color === state.textColor);
+          });
+
+          // Update insert button label
+          const label = document.getElementById('heroInsertBtnLabel');
+          if (label) label.textContent = 'Update Hero Section';
+
+          syncPreview();
+        });
+      };
+
+      // Handle custom image upload
+      window.handleHeroImageUpload = function (input) {
+        const file = input.files[0];
+        if (!file) return;
+        // Revoke previous blob URL if any
+        if (BG_MAP['custom-upload']?.rawSrc?.startsWith('blob:')) {
+          URL.revokeObjectURL(BG_MAP['custom-upload'].rawSrc);
+        }
+        const blobUrl = URL.createObjectURL(file);
+        BG_MAP['custom-upload'] = { type: 'image', value: `url('${blobUrl}')`, rawSrc: blobUrl };
+        // Show and select the upload swatch
+        const swatch = document.getElementById('heroUploadSwatch');
+        const img = document.getElementById('heroUploadPreviewImg');
+        if (swatch && img) {
+          img.src = blobUrl;
+          swatch.style.display = '';
+          selectHeroBg(swatch, 'custom-upload');
+        }
+        // Reset input so same file can be re-selected
+        input.value = '';
+      };
+
+      // Clear the custom upload and revert to first gradient
+      window.clearHeroUpload = function (event) {
+        event.stopPropagation();
+        if (BG_MAP['custom-upload']?.rawSrc?.startsWith('blob:')) {
+          URL.revokeObjectURL(BG_MAP['custom-upload'].rawSrc);
+        }
+        delete BG_MAP['custom-upload'];
+        const swatch = document.getElementById('heroUploadSwatch');
+        if (swatch) swatch.style.display = 'none';
+        // Revert to ocean
+        const firstPhoto = document.querySelector('.hero-bg-swatch[data-bg="photo-crystal"]');
+        if (firstPhoto) selectHeroBg(firstPhoto, 'photo-crystal');
+      };
+
+      // Re-sync preview every time the modal opens (fresh insert mode)
+      const _origOpen = window.openHeroModal;
+      window.openHeroModal = function () {
+        // Only reset to insert mode if not being called from openHeroModalForEdit
+        if (!state.editTargetId) {
+          const label = document.getElementById('heroInsertBtnLabel');
+          if (label) label.textContent = 'Insert Hero Section';
+        }
+        _origOpen();
+        requestAnimationFrame(syncPreview);
+        requestAnimationFrame(() => syncSliderTrack(state.overlayOpacity));
+      };
+    })();
   </script>
 
   <!-- Question Mode Modal -->
@@ -2217,6 +2523,204 @@
 
   <!-- Copy Question Modal removed: Copy now duplicates immediately on click -->
 
+  <!-- ===================== HERO SECTION MODAL ===================== -->
+  <div id="heroModal" class="modal-overlay">
+    <div class="modal-content hero-modal-content" style="max-width: 760px; width: 100%;">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-title-section">
+          <h2 class="modal-title">
+            <div class="w-10 h-10 bg-gradient-to-br from-webropol-primary-100 to-webropol-primary-200 rounded-full flex items-center justify-center">
+              <i class="fal fa-stars text-webropol-primary-600 text-lg"></i>
+            </div>
+            Add Hero Section
+          </h2>
+          <p class="text-sm text-webropol-gray-500 mt-0.5 ml-12">Add a full-width banner at the top of your survey page</p>
+        </div>
+        <button class="modal-close" onclick="closeHeroModal()" aria-label="Close modal">
+          <i class="fal fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body hero-modal-body">
+        <!-- Two-column layout: config left, preview right -->
+        <div class="hero-modal-layout">
+
+          <!-- LEFT COLUMN: Config -->
+          <div class="hero-modal-config space-y-6">
+
+            <!-- Background Picker -->
+            <div>
+              <label class="hero-field-label">
+                <i class="fal fa-palette"></i>
+                Background
+              </label>
+              <div class="hero-bg-grid hero-bg-grid--photos" id="heroBgGrid">
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo hero-bg-swatch--active" data-bg="photo-crystal"
+                  style="background-image:url('../img/surveybg/abstract-crystal-prism.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-crystal')" title="Crystal Prism">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-smoke"
+                  style="background-image:url('../img/surveybg/abstract-smoke-dark.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-smoke')" title="Dark Smoke">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-pink"
+                  style="background-image:url('../img/surveybg/fluid-abstract-pink.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-pink')" title="Pink Abstract">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-forest"
+                  style="background-image:url('../img/surveybg/forest-nature-green.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-forest')" title="Forest">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-colorful"
+                  style="background-image:url('../img/surveybg/gradient-colorful-abstract.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-colorful')" title="Colorful Gradient">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-mountain"
+                  style="background-image:url('../img/surveybg/mountain-landscape-misty.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-mountain')" title="Misty Mountain">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <button type="button" class="hero-bg-swatch hero-bg-swatch--photo" data-bg="photo-sunset"
+                  style="background-image:url('../img/surveybg/nature-landscape-sunset.jpg'); background-size:cover; background-position:center;"
+                  onclick="selectHeroBg(this, 'photo-sunset')" title="Landscape Sunset">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                </button>
+                <!-- Custom upload swatch (shown after image is chosen) -->
+                <button type="button" class="hero-bg-swatch hero-upload-swatch" id="heroUploadSwatch"
+                  data-bg="custom-upload" onclick="selectHeroBg(this, 'custom-upload')" title="Custom image"
+                  style="display:none; position:relative;">
+                  <img id="heroUploadPreviewImg" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+                  <span class="hero-bg-check"><i class="fas fa-check"></i></span>
+                  <button type="button" class="hero-upload-swatch-clear" onclick="clearHeroUpload(event)" title="Remove image">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </button>
+              </div>
+
+              <!-- Upload trigger -->
+              <button type="button" class="hero-upload-btn" onclick="document.getElementById('heroImageUpload').click()">
+                <i class="fal fa-cloud-upload"></i>
+                Upload custom image
+              </button>
+              <input type="file" id="heroImageUpload" accept="image/*" style="display:none;" onchange="handleHeroImageUpload(this)">
+            </div>
+
+            <!-- Overlay opacity slider -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="hero-field-label mb-0">
+                  <i class="fal fa-droplet-half"></i>
+                  Overlay Opacity
+                </label>
+                <span class="text-xs font-semibold text-webropol-primary-600 bg-webropol-primary-50 px-2 py-0.5 rounded-full" id="heroOpacityLabel">0%</span>
+              </div>
+              <input type="range" id="heroOverlayOpacity" min="0" max="80" value="0"
+                class="w-full h-1.5 appearance-none rounded-full cursor-pointer accent-webropol-primary-600"
+                style="background: linear-gradient(to right, #06b6d4 0%, #06b6d4 0%, #e2e8f0 0%, #e2e8f0 100%);"
+                oninput="updateHeroOverlay(this.value)">
+            </div>
+
+            <hr class="border-webropol-gray-100">
+
+            <!-- Heading text -->
+            <div>
+              <label class="hero-field-label" for="heroHeading">
+                <i class="fal fa-heading"></i>
+                Heading
+              </label>
+              <input type="text" id="heroHeading" class="hero-text-input"
+                placeholder="Welcome to our survey"
+                oninput="updateHeroPreview()" maxlength="120">
+            </div>
+
+            <!-- Subtext -->
+            <div>
+              <label class="hero-field-label" for="heroSubtext">
+                <i class="fal fa-align-left"></i>
+                Subtext
+              </label>
+              <textarea id="heroSubtext" class="hero-text-input hero-textarea"
+                placeholder="Tell respondents what this survey is about…"
+                rows="2" oninput="updateHeroPreview()" maxlength="280"></textarea>
+            </div>
+
+            <!-- Text alignment -->
+            <div>
+              <label class="hero-field-label">
+                <i class="fal fa-align-center"></i>
+                Alignment
+              </label>
+              <div class="hero-align-group">
+                <button type="button" class="hero-align-btn hero-align-btn--active" data-align="left" onclick="setHeroAlign(this, 'left')" title="Left">
+                  <i class="fal fa-align-left"></i>
+                </button>
+                <button type="button" class="hero-align-btn" data-align="center" onclick="setHeroAlign(this, 'center')" title="Center">
+                  <i class="fal fa-align-center"></i>
+                </button>
+                <button type="button" class="hero-align-btn" data-align="right" onclick="setHeroAlign(this, 'right')" title="Right">
+                  <i class="fal fa-align-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Text color -->
+            <div>
+              <label class="hero-field-label">
+                <i class="fal fa-font"></i>
+                Text Color
+              </label>
+              <div class="hero-align-group">
+                <button type="button" class="hero-textcolor-btn hero-textcolor-btn--active" data-color="light" onclick="setHeroTextColor(this, 'light')" title="Light text">
+                  <span class="w-4 h-4 rounded-full bg-white border border-webropol-gray-200 inline-block"></span>
+                  <span class="text-xs font-medium">Light</span>
+                </button>
+                <button type="button" class="hero-textcolor-btn" data-color="dark" onclick="setHeroTextColor(this, 'dark')" title="Dark text">
+                  <span class="w-4 h-4 rounded-full bg-webropol-gray-900 inline-block"></span>
+                  <span class="text-xs font-medium">Dark</span>
+                </button>
+              </div>
+            </div>
+
+          </div><!-- end hero-modal-config -->
+
+          <!-- RIGHT COLUMN: Live Preview -->
+          <div class="hero-modal-preview-col">
+            <label class="hero-field-label mb-3">
+              <i class="fal fa-eye"></i>
+              Preview
+            </label>
+            <div class="hero-preview-shell" id="heroPreviewShell">
+              <div class="hero-preview-overlay" id="heroPreviewOverlay"></div>
+              <div class="hero-preview-content" id="heroPreviewContent">
+                <p class="hero-preview-heading" id="heroPreviewHeading">Welcome to our survey</p>
+                <p class="hero-preview-subtext" id="heroPreviewSubtext">Tell respondents what this survey is about…</p>
+              </div>
+            </div>
+            <p class="text-xs text-webropol-gray-400 mt-2 text-center">This is how your hero will look on the survey</p>
+          </div>
+
+        </div><!-- end hero-modal-layout -->
+      </div><!-- end modal-body -->
+
+      <div class="modal-footer">
+        <div class="footer-actions justify-end w-full">
+          <button class="btn btn-secondary" onclick="closeHeroModal()">Cancel</button>
+          <button class="btn btn-primary" id="heroInsertBtn" onclick="insertHeroSection()">
+            <i class="fal fa-stars"></i>
+            <span id="heroInsertBtnLabel">Insert Hero Section</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =================== END HERO SECTION MODAL =================== -->
+
   <style>
     /* Modal Styles */
     .modal-overlay {
@@ -2248,7 +2752,8 @@
     #questionSettingsModal.modal-overlay,
     #colorPickerModal.modal-overlay,
     #questionModeModal.modal-overlay,
-    #surveyStatusModal.modal-overlay {
+    #surveyStatusModal.modal-overlay,
+    #heroModal.modal-overlay {
       z-index: 99999 !important;
     }
 
@@ -2294,6 +2799,371 @@
     #uploadModal.above-settings {
       z-index: 10000;
     }
+
+    /* ============================================================
+       Hero Section Modal Styles
+    ============================================================ */
+    .hero-modal-content {
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+
+    .hero-modal-body {
+      padding: 1.5rem 1.75rem;
+    }
+
+    /* Two-column layout */
+    .hero-modal-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 600px) {
+      .hero-modal-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Field labels */
+    .hero-field-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-field-label i {
+      color: #06b6d4;
+    }
+
+    /* Background swatch grid */
+    .hero-bg-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+
+    .hero-bg-swatch {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 0.625rem;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      overflow: hidden;
+    }
+
+    .hero-bg-swatch:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    }
+
+    .hero-bg-swatch--active {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.25);
+    }
+
+    .hero-bg-check {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #ffffff;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      background: rgba(6,182,212,0.35);
+    }
+
+    .hero-bg-check--dark {
+      color: #0f172a;
+    }
+
+    .hero-bg-swatch--active .hero-bg-check {
+      opacity: 1;
+    }
+
+    /* Text inputs */
+    .hero-text-input {
+      width: 100%;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: #0f172a;
+      background: #f8fafc;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+    }
+
+    .hero-text-input:focus {
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+      background: #fff;
+    }
+
+    .hero-textarea {
+      resize: none;
+      line-height: 1.5;
+    }
+
+    /* Alignment toggles */
+    .hero-align-group {
+      display: flex;
+      gap: 0.375rem;
+    }
+
+    .hero-align-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 0.625rem;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 0.9rem;
+    }
+
+    .hero-align-btn:hover {
+      border-color: #06b6d4;
+      color: #0e7490;
+      background: #f0fdff;
+    }
+
+    .hero-align-btn--active {
+      border-color: #06b6d4;
+      background: #ecfeff;
+      color: #0e7490;
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+    }
+
+    /* Text color toggles */
+    .hero-textcolor-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.875rem;
+      border-radius: 0.625rem;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .hero-textcolor-btn:hover {
+      border-color: #06b6d4;
+      color: #0e7490;
+    }
+
+    .hero-textcolor-btn--active {
+      border-color: #06b6d4;
+      background: #ecfeff;
+      color: #0e7490;
+      box-shadow: 0 0 0 3px rgba(6,182,212,0.15);
+    }
+
+    /* Preview panel */
+    .hero-modal-preview-col {
+      position: sticky;
+      top: 0;
+    }
+
+    .hero-preview-shell {
+      position: relative;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      min-height: 160px;
+      background-image: url('../img/surveybg/abstract-crystal-prism.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 30px rgba(6,182,212,0.25);
+      transition: background 0.3s ease;
+    }
+
+    .hero-preview-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      transition: background 0.3s ease;
+    }
+
+    .hero-preview-content {
+      position: relative;
+      z-index: 1;
+      padding: 1.5rem;
+      width: 100%;
+      transition: text-align 0.2s ease;
+    }
+
+    .hero-preview-heading {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 0.375rem;
+      line-height: 1.25;
+      word-break: break-word;
+      transition: color 0.2s ease;
+    }
+
+    .hero-preview-subtext {
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.85);
+      margin: 0;
+      word-break: break-word;
+      transition: color 0.2s ease;
+    }
+
+    /* Custom upload swatch clear button */
+    .hero-upload-swatch-clear {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      border: none;
+      color: #fff;
+      font-size: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 3;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .hero-upload-swatch-clear:hover {
+      background: rgba(239,68,68,0.85);
+    }
+
+    /* Upload trigger button */
+    .hero-upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      width: 100%;
+      padding: 0.55rem 0.875rem;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 0.75rem;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      justify-content: center;
+    }
+
+    .hero-upload-btn:hover {
+      border-color: #06b6d4;
+      color: #0e7490;
+      background: #f0fdff;
+    }
+
+    .hero-upload-btn i {
+      font-size: 0.9rem;
+    }
+
+    /* Edit / delete bar on inserted hero (visible on hover) */
+    .webropol-hero-section {
+      position: relative;
+    }
+
+    .hero-edit-bar {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 10;
+      display: flex;
+      gap: 0.375rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .webropol-hero-section:hover .hero-edit-bar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .hero-edit-bar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 0.5rem;
+      border: none;
+      background: rgba(255,255,255,0.92);
+      color: #0e7490;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      backdrop-filter: blur(4px);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .hero-edit-bar-btn:hover {
+      background: #ffffff;
+      color: #0891b2;
+    }
+
+    .hero-edit-bar-btn--danger {
+      color: #e11d48;
+    }
+
+    .hero-edit-bar-btn--danger:hover {
+      color: #be123c;
+    }
+
+    /* Photo swatches — taller aspect ratio so the image is more visible */
+    .hero-bg-swatch--photo {
+      aspect-ratio: 16 / 9;
+    }
+
+    .hero-bg-grid--photos {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 0.25rem;
+    }
+
+    /* Section divider label (Gradients / Photos) */
+    .hero-bg-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin: 0.75rem 0 0.35rem;
+    }
+
+    /* ============================================================
+       End Hero Modal Styles
+    ============================================================ */
 
     /* Button Styles from auto-suggest.html */
     .btn {
@@ -3952,6 +4822,8 @@
               const actionId = event.detail?.actionId;
               if (actionId === 'add-question') {
                 this.openAddQuestionModal();
+              } else if (actionId === 'add-hero') {
+                if (typeof window.openHeroModal === 'function') window.openHeroModal();
               }
             });
           }
