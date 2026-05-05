@@ -33,6 +33,18 @@ function _registerColoursModal() {
       '#118AB2', '#FFD166', '#073B4C', '#8338EC'
     ];
 
+    const LIGHT_THEME_COLOURS = [
+      '#A8D8EA', '#AA96DA', '#FCBAD3', '#FFFFD2',
+      '#B5EAD7', '#C7CEEA', '#FFD1DC', '#FFDAC1',
+      '#E2F0CB', '#A0C4FF', '#FFC6FF', '#CAFFBF'
+    ];
+
+    const RAG_THEME_COLOURS = [
+      '#C03020', '#C03020', '#F08270', '#F08270',
+      '#F5A623', '#F5A623', '#F5A623', '#72BF6E',
+      '#72BF6E', '#72BF6E', '#2E9648', '#2E9648'
+    ];
+
     return {
       // ── Modal visibility ──────────────────────────────────────────────────
       isOpen: false,
@@ -45,6 +57,7 @@ function _registerColoursModal() {
       palettePreviewReversed: false,
       accessiblePaletteReversed: false,
       patternsEnabled: false,
+      theme: 'dark',         // 'light' | 'dark' | 'rag' | 'custom'
 
       // ── Averages / excluded rows ──────────────────────────────────────────
       indexType: 'mean',   // 'mean' | 'index'
@@ -202,6 +215,21 @@ function _registerColoursModal() {
         this.selectedAccessiblePalette = null;
         this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
+        this.theme = 'dark';
+        this.syncPatternColoursWithBarColours();
+      },
+
+      applyTheme(name) {
+        this.theme = name;
+        if (name === 'dark') {
+          this.barColours = [...DEFAULT_BAR_COLOURS];
+        } else if (name === 'light') {
+          this.barColours = [...LIGHT_THEME_COLOURS];
+        } else if (name === 'rag') {
+          this.barColours = [...RAG_THEME_COLOURS];
+        }
+        // 'custom' preserves whatever the user has manually set
+        this.selectedAccessiblePalette = null;
         this.syncPatternColoursWithBarColours();
       },
 
@@ -212,6 +240,7 @@ function _registerColoursModal() {
         this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
         this.patternsEnabled = false;
+        this.theme = 'dark';
         this.indexType = 'mean';
         this.averageRows = [];
         this.excludedRows = [];
@@ -375,24 +404,23 @@ class WebropolChartColoursModal extends HTMLElement {
         <!-- ── BAR COLOURS ── -->
         <div class="mb-5">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-[11px] font-semibold uppercase tracking-widest text-webropol-gray-400">Bar colours</span>
-            <button @click="resetBarColours()" class="text-xs text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors flex items-center gap-1">
-              <i class="fal fa-undo text-[10px]"></i> Reset
+            <h3 class="text-sm font-semibold text-webropol-gray-900">Bar colours</h3>
+            <button @click="resetBarColours()"
+                    class="inline-flex items-center gap-1.5 rounded-full border border-rose-300 px-3 py-1 text-xs text-rose-600 hover:bg-rose-50 transition-colors">
+              <i class="fal fa-undo text-[10px]"></i> Reset bar colour to default
             </button>
           </div>
-          <div class="grid grid-cols-4 gap-y-2 gap-x-2">
+          <div class="grid grid-cols-6 gap-x-2 gap-y-3">
             <template x-for="(colour, index) in barColours" :key="'sc-' + index">
-              <div class="flex items-center gap-2 py-1">
-                <div class="relative flex-shrink-0">
+              <div class="flex flex-col items-center gap-1">
+                <span class="text-[10px] text-webropol-gray-500" x-text="'Option ' + (index + 1)"></span>
+                <div class="relative">
                   <button type="button"
-                          class="w-7 h-7 rounded-md ring-1 ring-webropol-gray-200 hover:scale-110 transition-transform"
+                          class="w-10 h-10 rounded-xl ring-1 ring-webropol-gray-200 hover:scale-110 transition-transform flex items-center justify-center text-white font-semibold text-sm shadow-sm"
                           :style="'background:' + colour"
-                          @click="$el.nextElementSibling.click()"></button>
+                          @click="$el.nextElementSibling.click()">T</button>
                   <input type="color" :value="colour" @input="setBarColour(index, $event.target.value)" class="sr-only" tabindex="-1">
                 </div>
-                <input type="text" :value="colour" maxlength="7"
-                       @change="setBarColour(index, $event.target.value)"
-                       class="w-full text-[11px] font-mono uppercase px-1.5 py-1 rounded border border-webropol-gray-200 bg-webropol-gray-50 focus:outline-none focus:border-webropol-primary-400 text-webropol-gray-600 tracking-wide">
               </div>
             </template>
           </div>
@@ -400,71 +428,88 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <div class="border-t border-webropol-gray-100 mb-5"></div>
 
-        <!-- ── AVERAGES ── -->
+        <!-- ── THEMES ── -->
         <div class="mb-5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-[11px] font-semibold uppercase tracking-widest text-webropol-gray-400">Averages &amp; index</span>
-            <div class="flex items-center gap-3">
-              <div class="inline-flex rounded-lg border border-webropol-gray-200 bg-webropol-gray-50 p-0.5">
-                <label class="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-medium transition-all"
-                       :class="indexType === 'mean' ? 'bg-white text-webropol-primary-700 shadow-sm' : 'text-webropol-gray-500 hover:text-webropol-gray-700'">
-                  <input type="radio" name="simpleIndexType" value="mean" x-model="indexType" class="sr-only"> Mean
-                </label>
-                <label class="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-medium transition-all"
-                       :class="indexType === 'index' ? 'bg-white text-webropol-primary-700 shadow-sm' : 'text-webropol-gray-500 hover:text-webropol-gray-700'">
-                  <input type="radio" name="simpleIndexType" value="index" x-model="indexType" class="sr-only"> Index
-                </label>
-              </div>
-              <button x-show="averageRows.length > 0" @click="averageRows = []" class="text-xs text-webropol-gray-400 hover:text-red-500 transition-colors">
-                <i class="fal fa-undo text-[10px]"></i>
+          <h3 class="text-sm font-semibold text-webropol-gray-900 mb-3">Themes</h3>
+          <div class="flex items-center gap-5">
+            <template x-for="t in [{label:'Light',value:'light'},{label:'Dark',value:'dark'},{label:'RAG',value:'rag'},{label:'Custom',value:'custom'}]" :key="t.value">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="radio" name="simpleTheme" :value="t.value"
+                       :checked="theme === t.value"
+                       @change="applyTheme(t.value)"
+                       class="w-4 h-4 accent-webropol-primary-600">
+                <span class="text-sm text-webropol-gray-700" x-text="t.label"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+
+        <div class="border-t border-webropol-gray-100 mb-5"></div>
+
+        <!-- ── AVERAGES & INDEX ── -->
+        <div class="mb-5">
+          <div class="flex items-start justify-between mb-1">
+            <h3 class="text-sm font-semibold text-webropol-gray-900">Averages &amp; index</h3>
+            <div class="flex items-center gap-1.5 flex-shrink-0 ml-3">
+              <button @click="indexType = 'mean'" type="button"
+                      class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium border transition-colors"
+                      :class="indexType === 'mean' ? 'bg-webropol-primary-600 text-white border-webropol-primary-600 shadow-sm' : 'border-webropol-gray-300 text-webropol-gray-600 hover:border-webropol-primary-400 bg-white'">
+                Mean
+              </button>
+              <button @click="indexType = 'index'" type="button"
+                      class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium border transition-colors"
+                      :class="indexType === 'index' ? 'bg-webropol-primary-600 text-white border-webropol-primary-600 shadow-sm' : 'border-webropol-gray-300 text-webropol-gray-600 hover:border-webropol-primary-400 bg-white'">
+                Index Value
               </button>
             </div>
           </div>
+          <p class="text-xs text-webropol-gray-500 mb-3">Set min and max color limits for averages and index percentages in tables and charts.</p>
 
           <!-- column headers -->
           <div x-show="averageRows.length > 0"
                class="grid gap-2 px-1 mb-1 text-[10px] font-semibold uppercase tracking-wider text-webropol-gray-400"
-               style="grid-template-columns:26px 26px 1fr 1fr 1fr 52px 24px">
-            <span class="col-span-2 pl-1">Colours</span><span>Min</span><span>Max</span><span>Title</span><span class="text-center">Preview</span><span></span>
+               style="grid-template-columns:56px 1fr 1fr 1fr 28px">
+            <span>Colours</span><span>Min</span><span>Max</span><span>Title</span><span></span>
           </div>
 
-          <div class="space-y-1">
+          <div class="space-y-1.5">
             <template x-for="(row, idx) in averageRows" :key="'sa-' + idx">
-              <div class="grid items-center gap-2 px-1 py-1.5 rounded-lg hover:bg-webropol-gray-50 group"
-                   style="grid-template-columns:26px 26px 1fr 1fr 1fr 52px 24px">
-                <!-- font swatch -->
-                <div class="relative">
-                  <button type="button" class="w-[26px] h-[26px] rounded-md ring-1 ring-webropol-gray-200 block" :style="'background:' + row.fontColour" @click="$el.nextElementSibling.click()"></button>
-                  <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only" tabindex="-1">
+              <div class="grid items-center gap-2 px-1 py-1.5 rounded-lg hover:bg-webropol-gray-50"
+                   style="grid-template-columns:56px 1fr 1fr 1fr 28px">
+                <div class="flex items-center gap-1.5">
+                  <div class="relative">
+                    <button type="button"
+                            class="w-6 h-6 rounded-md ring-1 ring-webropol-gray-200 block shadow-sm hover:scale-110 transition-transform"
+                            :style="'background:' + row.fontColour"
+                            @click="$el.nextElementSibling.click()"></button>
+                    <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only" tabindex="-1">
+                  </div>
+                  <div class="relative">
+                    <button type="button"
+                            class="w-6 h-6 rounded-md ring-1 ring-webropol-gray-200 block shadow-sm hover:scale-110 transition-transform"
+                            :style="'background:' + row.bgColour"
+                            @click="$el.nextElementSibling.click()"></button>
+                    <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only" tabindex="-1">
+                  </div>
                 </div>
-                <!-- bg swatch -->
-                <div class="relative">
-                  <button type="button" class="w-[26px] h-[26px] rounded-md ring-1 ring-webropol-gray-200 block" :style="'background:' + row.bgColour" @click="$el.nextElementSibling.click()"></button>
-                  <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only" tabindex="-1">
-                </div>
-                <input type="number" x-model="row.minValue" placeholder="0"
+                <input type="text" x-model="row.minValue" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
-                <input type="number" x-model="row.maxValue" placeholder="0"
+                <input type="text" x-model="row.maxValue" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
                 <input type="text" x-model="row.title" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
-                <div class="rounded-md px-1.5 py-1.5 text-xs font-semibold text-center truncate"
-                     :style="'background:' + row.bgColour + '; color:' + row.fontColour"
-                     x-text="row.title || '4.2'"></div>
-                <button @click="averageRows.splice(idx,1)"
-                        class="w-6 h-6 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-webropol-gray-300 hover:text-red-500 transition-all"
+                <button @click="averageRows.splice(idx, 1)"
+                        class="w-7 h-7 flex items-center justify-center rounded-lg text-webropol-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
                         aria-label="Remove">
-                  <i class="fal fa-times text-xs"></i>
+                  <i class="fal fa-trash text-xs"></i>
                 </button>
               </div>
             </template>
           </div>
 
-          <p x-show="averageRows.length === 0" class="text-xs text-webropol-gray-400 italic py-1">No rules — add one below.</p>
-
           <button @click="addAverageRow()"
                   class="mt-2 text-xs text-webropol-primary-600 hover:text-webropol-primary-800 transition-colors flex items-center gap-1">
-            <i class="fal fa-plus text-[10px]"></i> Add rule
+            <i class="fal fa-plus text-[10px]"></i> Add Rule
           </button>
         </div>
 
@@ -472,54 +517,54 @@ class WebropolChartColoursModal extends HTMLElement {
 
         <!-- ── EXCLUDED ── -->
         <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-[11px] font-semibold uppercase tracking-widest text-webropol-gray-400">Excluded option colours</span>
-            <button x-show="excludedRows.length > 0" @click="excludedRows = []" class="text-xs text-webropol-gray-400 hover:text-red-500 transition-colors">
-              <i class="fal fa-undo text-[10px]"></i>
-            </button>
-          </div>
+          <h3 class="text-sm font-semibold text-webropol-gray-900 mb-1">Excluded option colours</h3>
+          <p class="text-xs text-webropol-gray-500 mb-3">Excluded option column colours Specify colour limit min and max values for excluded option column</p>
 
+          <!-- column headers -->
           <div x-show="excludedRows.length > 0"
                class="grid gap-2 px-1 mb-1 text-[10px] font-semibold uppercase tracking-wider text-webropol-gray-400"
-               style="grid-template-columns:26px 26px 1fr 1fr 1fr 52px 24px">
-            <span class="col-span-2 pl-1">Colours</span><span>Min</span><span>Max</span><span>Title</span><span class="text-center">Preview</span><span></span>
+               style="grid-template-columns:56px 1fr 1fr 1fr 28px">
+            <span>Colours</span><span>Min</span><span>Max</span><span>Title</span><span></span>
           </div>
 
-          <div class="space-y-1">
+          <div class="space-y-1.5">
             <template x-for="(row, idx) in excludedRows" :key="'se-' + idx">
-              <div class="grid items-center gap-2 px-1 py-1.5 rounded-lg hover:bg-webropol-gray-50 group"
-                   style="grid-template-columns:26px 26px 1fr 1fr 1fr 52px 24px">
-                <div class="relative">
-                  <button type="button" class="w-[26px] h-[26px] rounded-md ring-1 ring-webropol-gray-200 block" :style="'background:' + row.fontColour" @click="$el.nextElementSibling.click()"></button>
-                  <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only" tabindex="-1">
+              <div class="grid items-center gap-2 px-1 py-1.5 rounded-lg hover:bg-webropol-gray-50"
+                   style="grid-template-columns:56px 1fr 1fr 1fr 28px">
+                <div class="flex items-center gap-1.5">
+                  <div class="relative">
+                    <button type="button"
+                            class="w-6 h-6 rounded-md ring-1 ring-webropol-gray-200 block shadow-sm hover:scale-110 transition-transform"
+                            :style="'background:' + row.fontColour"
+                            @click="$el.nextElementSibling.click()"></button>
+                    <input type="color" :value="row.fontColour" @input="row.fontColour = $event.target.value" class="sr-only" tabindex="-1">
+                  </div>
+                  <div class="relative">
+                    <button type="button"
+                            class="w-6 h-6 rounded-md ring-1 ring-webropol-gray-200 block shadow-sm hover:scale-110 transition-transform"
+                            :style="'background:' + row.bgColour"
+                            @click="$el.nextElementSibling.click()"></button>
+                    <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only" tabindex="-1">
+                  </div>
                 </div>
-                <div class="relative">
-                  <button type="button" class="w-[26px] h-[26px] rounded-md ring-1 ring-webropol-gray-200 block" :style="'background:' + row.bgColour" @click="$el.nextElementSibling.click()"></button>
-                  <input type="color" :value="row.bgColour" @input="row.bgColour = $event.target.value" class="sr-only" tabindex="-1">
-                </div>
-                <input type="number" x-model="row.minValue" placeholder="0"
+                <input type="text" x-model="row.minValue" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
-                <input type="number" x-model="row.maxValue" placeholder="0"
+                <input type="text" x-model="row.maxValue" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
                 <input type="text" x-model="row.title" placeholder="Label"
                        class="w-full px-2 py-1.5 text-xs border border-webropol-gray-200 rounded-lg bg-white focus:outline-none focus:border-webropol-primary-400">
-                <div class="rounded-md px-1.5 py-1.5 text-xs font-semibold text-center truncate"
-                     :style="'background:' + row.bgColour + '; color:' + row.fontColour"
-                     x-text="row.title || '4.2'"></div>
-                <button @click="excludedRows.splice(idx,1)"
-                        class="w-6 h-6 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 text-webropol-gray-300 hover:text-red-500 transition-all"
+                <button @click="excludedRows.splice(idx, 1)"
+                        class="w-7 h-7 flex items-center justify-center rounded-lg text-webropol-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
                         aria-label="Remove">
-                  <i class="fal fa-times text-xs"></i>
+                  <i class="fal fa-trash text-xs"></i>
                 </button>
               </div>
             </template>
           </div>
 
-          <p x-show="excludedRows.length === 0" class="text-xs text-webropol-gray-400 italic py-1">No rules — add one below.</p>
-
           <button @click="addExcludedRow()"
                   class="mt-2 text-xs text-webropol-primary-600 hover:text-webropol-primary-800 transition-colors flex items-center gap-1">
-            <i class="fal fa-plus text-[10px]"></i> Add rule
+            <i class="fal fa-plus text-[10px]"></i> Add Rule
           </button>
         </div>
 
@@ -967,10 +1012,19 @@ class WebropolChartColoursModal extends HTMLElement {
 
     <!-- ── Footer ──────────────────────────────────────────────────────── -->
     <div class="border-t border-webropol-gray-100 px-6 py-4 flex items-center justify-between gap-3 bg-webropol-gray-50 rounded-b-2xl">
-      <button class="btn btn-secondary" @click="resetAll()">Reset All</button>
+      <button class="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+              :class="modalVariant === 'simple' ? 'border-rose-300 text-rose-600 hover:bg-rose-50' : 'border-webropol-gray-300 text-webropol-gray-600 hover:bg-webropol-gray-100'"
+              @click="resetAll()">
+        <i class="fal fa-undo text-xs"></i>
+        <span>Reset all</span>
+      </button>
       <div class="flex justify-end gap-3">
-      <button class="btn btn-secondary" @click="close()">Cancel</button>
-      <button class="btn btn-primary" @click="save()">Save</button>
+        <button class="btn btn-secondary" @click="close()">
+          <span x-text="modalVariant === 'simple' ? 'Close' : 'Cancel'"></span>
+        </button>
+        <button class="btn btn-primary" @click="save()">
+          <span x-text="modalVariant === 'simple' ? 'Apply' : 'Save'"></span>
+        </button>
       </div>
     </div>
 
