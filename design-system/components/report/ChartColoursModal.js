@@ -27,16 +27,18 @@ function _registerColoursModal() {
   Alpine._coloursModalRegistered = true;
   Alpine.data('coloursModal', () => {
 
+    // Dark theme — vibrant Tailwind-700 hues, white text readable
     const DEFAULT_BAR_COLOURS = [
-      '#4361EE', '#F72585', '#4CC9F0', '#7209B7',
-      '#3A0CA3', '#F77F00', '#06D6A0', '#EF476F',
-      '#118AB2', '#FFD166', '#073B4C', '#8338EC'
+      '#B91C1C', '#C2410C', '#B45309', '#4D7C0F',
+      '#047857', '#0F766E', '#1D4ED8', '#4338CA',
+      '#7E22CE', '#BE185D', '#0369A1', '#0E7490'
     ];
 
+    // Light theme — same 12 hues at Tailwind-300 level, black text readable
     const LIGHT_THEME_COLOURS = [
-      '#A8D8EA', '#AA96DA', '#FCBAD3', '#FFFFD2',
-      '#B5EAD7', '#C7CEEA', '#FFD1DC', '#FFDAC1',
-      '#E2F0CB', '#A0C4FF', '#FFC6FF', '#CAFFBF'
+      '#FCA5A5', '#FDBA74', '#FCD34D', '#BEF264',
+      '#6EE7B7', '#5EEAD4', '#93C5FD', '#A5B4FC',
+      '#D8B4FE', '#F9A8D4', '#7DD3FC', '#67E8F9'
     ];
 
     const RAG_THEME_COLOURS = [
@@ -58,6 +60,7 @@ function _registerColoursModal() {
       accessiblePaletteReversed: false,
       patternsEnabled: false,
       theme: 'dark',         // 'light' | 'dark' | 'rag' | 'custom'
+      showBorder: false,
 
       // ── Averages / excluded rows ──────────────────────────────────────────
       indexType: 'mean',   // 'mean' | 'index'
@@ -173,7 +176,8 @@ function _registerColoursModal() {
             accessiblePaletteName: this.selectedAccessiblePalette,
             accessiblePaletteReversed: this.accessiblePaletteReversed,
             averageRows:    [...this.averageRows],
-            excludedRows:   [...this.excludedRows]
+            excludedRows:   [...this.excludedRows],
+            showBorder:     this.showBorder
           }
         }));
       },
@@ -216,7 +220,20 @@ function _registerColoursModal() {
         this.palettePreviewReversed = false;
         this.accessiblePaletteReversed = false;
         this.theme = 'dark';
+        this.showBorder = false;
         this.syncPatternColoursWithBarColours();
+      },
+
+      getTextColourForSwatch(colour) {
+        // Compute relative luminance to choose black or white text
+        const hex = colour.replace('#', '');
+        if (hex.length !== 6) return '#ffffff';
+        const toLinear = c => { const s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+        const r = toLinear(parseInt(hex.substring(0, 2), 16));
+        const g = toLinear(parseInt(hex.substring(2, 4), 16));
+        const b = toLinear(parseInt(hex.substring(4, 6), 16));
+        const L = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return L > 0.179 ? '#000000' : '#ffffff';
       },
 
       applyTheme(name) {
@@ -241,6 +258,7 @@ function _registerColoursModal() {
         this.accessiblePaletteReversed = false;
         this.patternsEnabled = false;
         this.theme = 'dark';
+        this.showBorder = false;
         this.indexType = 'mean';
         this.averageRows = [];
         this.excludedRows = [];
@@ -416,8 +434,9 @@ class WebropolChartColoursModal extends HTMLElement {
                 <span class="text-[10px] text-webropol-gray-500" x-text="'Option ' + (index + 1)"></span>
                 <div class="relative">
                   <button type="button"
-                          class="w-10 h-10 rounded-xl ring-1 ring-webropol-gray-200 hover:scale-110 transition-transform flex items-center justify-center text-white font-semibold text-sm shadow-sm"
-                          :style="'background:' + colour"
+                          class="w-10 h-10 rounded-xl hover:scale-110 transition-all flex items-center justify-center font-semibold text-sm shadow-sm"
+                          :style="'background:' + colour + '; color:' + getTextColourForSwatch(colour) + (showBorder ? '; box-shadow: 0 0 0 2px #fff, 0 0 0 4px ' + colour : '')"
+                          :class="showBorder ? 'ring-0' : 'ring-1 ring-webropol-gray-200'"
                           @click="$el.nextElementSibling.click()">T</button>
                   <input type="color" :value="colour" @input="setBarColour(index, $event.target.value)" class="sr-only" tabindex="-1">
                 </div>
@@ -429,9 +448,9 @@ class WebropolChartColoursModal extends HTMLElement {
         <div class="border-t border-webropol-gray-100 mb-5"></div>
 
         <!-- ── THEMES ── -->
-        <div class="mb-5">
+        <div class="mb-4">
           <h3 class="text-sm font-semibold text-webropol-gray-900 mb-3">Themes</h3>
-          <div class="flex items-center gap-5">
+          <div class="flex items-center gap-4 flex-wrap">
             <template x-for="t in [{label:'Light',value:'light'},{label:'Dark',value:'dark'},{label:'RAG',value:'rag'},{label:'Custom',value:'custom'}]" :key="t.value">
               <label class="flex items-center gap-1.5 cursor-pointer select-none">
                 <input type="radio" name="simpleTheme" :value="t.value"
@@ -442,6 +461,23 @@ class WebropolChartColoursModal extends HTMLElement {
               </label>
             </template>
           </div>
+        </div>
+
+        <!-- ── BORDER OPTION ── -->
+        <div class="mb-5 flex items-center justify-between rounded-xl border border-webropol-gray-200 bg-webropol-gray-50 px-4 py-2.5">
+          <div>
+            <span class="text-sm font-medium text-webropol-gray-800">Add border to bar colours</span>
+            <p class="text-xs text-webropol-gray-500 mt-0.5">Shows a colour-matched outline ring on each chart bar</p>
+          </div>
+          <button type="button"
+                  @click="showBorder = !showBorder"
+                  class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                  :class="showBorder ? 'bg-webropol-primary-600' : 'bg-webropol-gray-300'"
+                  role="switch"
+                  :aria-checked="showBorder">
+            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                  :class="showBorder ? 'translate-x-5' : 'translate-x-0'"></span>
+          </button>
         </div>
 
         <div class="border-t border-webropol-gray-100 mb-5"></div>
