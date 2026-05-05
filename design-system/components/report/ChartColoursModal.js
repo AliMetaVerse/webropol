@@ -29,34 +29,34 @@ function _registerColoursModal() {
 
     // Dark theme — 12 hues ~30° apart on the colour wheel, all dark enough for white text
     const DEFAULT_BAR_COLOURS = [
-      '#991B1B',  // crimson      ~0°
-      '#C2410C',  // burnt orange ~20°
-      '#854D0E',  // dark amber   ~48°  (replaces #CA8A04 which was too bright)
-      '#4D7C0F',  // lime         ~83°
-      '#166534',  // forest green ~138°
-      '#065F46',  // deep emerald ~155°
-      '#0F766E',  // dark teal    ~177°
-      '#0C4A6E',  // deep sky     ~203°
       '#1E3A8A',  // navy         ~232°
-      '#4C1D95',  // deep violet  ~269°
-      '#86198F',  // dark fuchsia ~295°
+      '#0C4A6E',  // deep sky     ~203°
+      '#0F766E',  // dark teal    ~177°
+      '#065F46',  // deep emerald ~155°
+      '#166534',  // forest green ~138°
+      '#4D7C0F',  // lime         ~83°
+      '#854D0E',  // dark amber   ~48°
+      '#C2410C',  // burnt orange ~20°
+      '#991B1B',  // crimson      ~0°
       '#BE185D',  // hot pink     ~333°
+      '#86198F',  // dark fuchsia ~295°
+      '#4C1D95',  // deep violet  ~269°
     ];
 
     // Light theme — matching 12 hues at Tailwind-300 level, black text readable
     const LIGHT_THEME_COLOURS = [
-      '#FCA5A5',  // red-300
-      '#FDBA74',  // orange-300
-      '#FCD34D',  // amber-300
-      '#BEF264',  // lime-300
-      '#86EFAC',  // green-300
-      '#6EE7B7',  // emerald-300
-      '#5EEAD4',  // teal-300
-      '#7DD3FC',  // sky-300
       '#93C5FD',  // blue-300
-      '#C4B5FD',  // violet-300
-      '#F0ABFC',  // fuchsia-300
+      '#7DD3FC',  // sky-300
+      '#5EEAD4',  // teal-300
+      '#6EE7B7',  // emerald-300
+      '#86EFAC',  // green-300
+      '#BEF264',  // lime-300
+      '#FCD34D',  // amber-300
+      '#FDBA74',  // orange-300
+      '#FCA5A5',  // red-300
       '#FDA4AF',  // rose-300
+      '#F0ABFC',  // fuchsia-300
+      '#C4B5FD',  // violet-300
     ];
 
     const RAG_THEME_COLOURS = [
