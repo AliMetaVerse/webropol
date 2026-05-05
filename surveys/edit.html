@@ -2248,8 +2248,8 @@
               </button>
             </div>
             <div style="position:relative;z-index:1;">
-              <h2 style="font-size:2rem;font-weight:700;color:${isLight ? '#ffffff' : '#0f172a'};margin:0 0 0.75rem;line-height:1.2;">${heading}</h2>
-              ${subtext ? `<p style="font-size:1rem;color:${isLight ? 'rgba(255,255,255,0.85)' : 'rgba(15,23,42,0.65)'};margin:0;max-width:600px;${state.align === 'center' ? 'margin-inline:auto;' : ''}">${subtext}</p>` : ''}
+              <h2 contenteditable="true" data-placeholder="Your heading…" oninput="heroTextInput(this,'heading')" onkeydown="if(event.key==='Enter'){event.preventDefault();}" spellcheck="false" style="font-size:2rem;font-weight:700;color:${isLight ? '#ffffff' : '#0f172a'};margin:0 0 0.75rem;line-height:1.2;outline:none;cursor:text;">${heading}</h2>
+              <p contenteditable="true" data-placeholder="Add a subtext…" oninput="heroTextInput(this,'subtext')" onkeydown="if(event.key==='Enter'){event.preventDefault();}" spellcheck="false" style="font-size:1rem;color:${isLight ? 'rgba(255,255,255,0.85)' : 'rgba(15,23,42,0.65)'};margin:0;max-width:600px;${state.align === 'center' ? 'margin-inline:auto;' : ''}outline:none;cursor:text;">${subtext}</p>
             </div>
           </div>
         `;
@@ -2297,6 +2297,12 @@
         if (!el) return;
         let saved = {};
         try { saved = JSON.parse(el.dataset.heroState || '{}'); } catch (e) {}
+
+        // Pick up any inline edits the user made directly on the canvas
+        const liveH2 = el.querySelector('h2[contenteditable]');
+        const liveP  = el.querySelector('p[contenteditable]');
+        if (liveH2) saved.heading = liveH2.innerText.trim();
+        if (liveP)  saved.subtext = liveP.innerText.trim();
 
         // Restore state
         state.bg = saved.bg || 'ocean';
@@ -2370,6 +2376,20 @@
       };
 
       // Clear the custom upload and revert to first gradient
+      // Inline text editing — syncs data-hero-state and localStorage
+      window.heroTextInput = function (el, field) {
+        const hero = document.getElementById('webropol-hero-section');
+        if (!hero) return;
+        try {
+          const s = JSON.parse(hero.getAttribute('data-hero-state') || '{}');
+          s[field] = el.innerText.trim();
+          hero.setAttribute('data-hero-state', JSON.stringify(s));
+          const stored = JSON.parse(localStorage.getItem('webropol_survey_hero') || '{}');
+          stored[field] = s[field];
+          localStorage.setItem('webropol_survey_hero', JSON.stringify(stored));
+        } catch (e) { /* non-fatal */ }
+      };
+
       window.clearHeroUpload = function (event) {
         event.stopPropagation();
         if (BG_MAP['custom-upload']?.rawSrc?.startsWith('blob:')) {
@@ -3139,6 +3159,27 @@
 
     .hero-edit-bar-btn--danger:hover {
       color: #be123c;
+    }
+
+    /* Inline editable text inside hero section */
+    .webropol-hero-section [contenteditable] {
+      border-radius: 0.375rem;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .webropol-hero-section [contenteditable]:hover {
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.35);
+    }
+
+    .webropol-hero-section [contenteditable]:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.7);
+    }
+
+    .webropol-hero-section [contenteditable][data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      opacity: 0.4;
+      pointer-events: none;
     }
 
     /* Photo swatches — taller aspect ratio so the image is more visible */
