@@ -61,6 +61,7 @@ function _registerColoursModal() {
       patternsEnabled: false,
       theme: 'dark',         // 'light' | 'dark' | 'rag' | 'custom'
       showBorder: false,
+      copiedIndex: null,    // index of recently copied swatch, null otherwise
 
       // ── Averages / excluded rows ──────────────────────────────────────────
       indexType: 'mean',   // 'mean' | 'index'
@@ -275,6 +276,25 @@ function _registerColoursModal() {
         this.syncPatternColoursWithBarColours();
       },
 
+      copyHex(index) {
+        const hex = this.barColours[index];
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(hex).catch(() => {});
+        } else {
+          // Fallback for non-secure contexts
+          const el = document.createElement('textarea');
+          el.value = hex;
+          el.style.position = 'fixed';
+          el.style.opacity = '0';
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          document.body.removeChild(el);
+        }
+        this.copiedIndex = index;
+        setTimeout(() => { if (this.copiedIndex === index) this.copiedIndex = null; }, 1500);
+      },
+
       applyAccessiblePalette(palette) {
         this.applyAccessiblePaletteByName(palette.name, false, this.palettePreviewReversed);
       },
@@ -430,8 +450,10 @@ class WebropolChartColoursModal extends HTMLElement {
           </div>
           <div class="grid grid-cols-6 gap-x-2 gap-y-3">
             <template x-for="(colour, index) in barColours" :key="'sc-' + index">
-              <div class="flex flex-col items-center gap-1">
+              <div class="flex flex-col items-center gap-1.5">
                 <span class="text-[10px] text-webropol-gray-500" x-text="'Option ' + (index + 1)"></span>
+
+                <!-- Swatch -->
                 <div class="relative">
                   <button type="button"
                           class="w-10 h-10 rounded-xl hover:scale-110 transition-all flex items-center justify-center font-semibold text-sm shadow-sm"
@@ -440,6 +462,24 @@ class WebropolChartColoursModal extends HTMLElement {
                           @click="$el.nextElementSibling.click()">T</button>
                   <input type="color" :value="colour" @input="setBarColour(index, $event.target.value)" class="sr-only" tabindex="-1">
                 </div>
+
+                <!-- Hex input + copy -->
+                <div class="w-full flex items-center rounded-md border border-webropol-gray-200 bg-webropol-gray-50 overflow-hidden focus-within:border-webropol-primary-400 focus-within:ring-1 focus-within:ring-webropol-primary-200">
+                  <input type="text"
+                         :value="colour.toUpperCase()"
+                         maxlength="7"
+                         spellcheck="false"
+                         @change="setBarColour(index, $event.target.value)"
+                         @focus="$event.target.select()"
+                         class="w-0 flex-1 bg-transparent text-[10px] font-mono uppercase text-webropol-gray-700 px-1.5 py-1 focus:outline-none min-w-0">
+                  <button type="button"
+                          @click="copyHex(index)"
+                          :title="copiedIndex === index ? 'Copied!' : 'Copy hex'"
+                          class="flex-shrink-0 flex items-center justify-center w-6 h-6 text-webropol-gray-400 hover:text-webropol-primary-600 transition-colors">
+                    <i class="fa-light text-[10px]" :class="copiedIndex === index ? 'fa-check text-green-500' : 'fa-copy'"></i>
+                  </button>
+                </div>
+
               </div>
             </template>
           </div>
