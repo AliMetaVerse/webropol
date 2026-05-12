@@ -1987,7 +1987,21 @@
       </div>
 
       <div class="create-ai-body">
-        <p class="create-ai-disclaimer">Disclaimer: AI can make mistakes and it is the user's responsibility to review what AI has created.</p>
+        <details class="create-ai-accordion">
+          <summary class="create-ai-accordion__summary">
+            <span class="create-ai-accordion__title">
+              <i class="fal fa-circle-info create-ai-accordion__leading" aria-hidden="true"></i>
+              <span>Disclaimer &amp; Context</span>
+            </span>
+            <i class="fal fa-chevron-down create-ai-accordion__chevron" aria-hidden="true"></i>
+          </summary>
+          <div class="create-ai-accordion__body">
+            <p class="create-ai-disclaimer">Disclaimer: AI can make mistakes and it is the user's responsibility to review what AI has created.</p>
+            <div id="createWithAIContextStatus" data-state="missing">
+              <!-- Populated by initCreateWithAIModal() based on Admin Tools org context state -->
+            </div>
+          </div>
+        </details>
 
         <form id="createWithAIForm" class="create-ai-form" onsubmit="event.preventDefault(); submitCreateWithAI();">
           <div class="create-ai-field">
@@ -2046,10 +2060,6 @@
                 <span class="create-ai-size-range">15+ questions</span>
               </label>
             </div>
-          </div>
-
-          <div id="createWithAIContextStatus" data-state="missing">
-            <!-- Populated by initCreateWithAIModal() based on Admin Tools org context state -->
           </div>
 
           <div class="create-ai-actions">
@@ -2149,10 +2159,66 @@
     }
 
     .create-ai-disclaimer {
-      margin-top: 0.35rem;
       font-size: 0.75rem;
       color: #2563eb;
       line-height: 1.5;
+      margin: 0;
+    }
+
+    .create-ai-accordion {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.625rem;
+      background: #f8fafc;
+      overflow: hidden;
+    }
+
+    .create-ai-accordion__summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      user-select: none;
+    }
+
+    .create-ai-accordion__summary::-webkit-details-marker { display: none; }
+
+    .create-ai-accordion__summary:hover { background: #f1f5f9; }
+
+    .create-ai-accordion__title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .create-ai-accordion__leading {
+      color: #7c3aed;
+      font-size: 0.9rem;
+    }
+
+    .create-ai-accordion__chevron {
+      color: #64748b;
+      font-size: 0.75rem;
+      transition: transform 200ms ease;
+    }
+
+    .create-ai-accordion[open] .create-ai-accordion__chevron {
+      transform: rotate(180deg);
+    }
+
+    .create-ai-accordion__body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0.6rem 0.85rem 0.85rem;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
     }
 
     .create-ai-form {
