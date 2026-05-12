@@ -1720,6 +1720,22 @@
         }
       });
 
+      // Live character counter for fields with maxlength
+      function updateCharCounter(el) {
+        const counterId = el.dataset.charCounter;
+        if (!counterId) return;
+        const counter = modal.querySelector('#' + counterId);
+        if (!counter) return;
+        const max = parseInt(el.getAttribute('maxlength'), 10) || 0;
+        const len = (el.value || '').length;
+        counter.textContent = `${len} / ${max}`;
+        counter.classList.toggle('is-at-limit', max > 0 && len >= max);
+      }
+      modal.querySelectorAll('[data-char-counter]').forEach(el => {
+        updateCharCounter(el);
+        el.addEventListener('input', () => updateCharCounter(el));
+      });
+
       function syncSubmitState() {
         const hasGoal = (goalInput.value || '').trim().length > 0;
         const hasAudience = (audienceInput.value || '').trim().length > 0;
@@ -2009,9 +2025,12 @@
               Survey Goal <span aria-hidden="true" class="create-ai-required">*</span>
             </label>
             <textarea id="ai-goal" name="goal" rows="1" required
+              maxlength="300"
               class="create-ai-input create-ai-autoresize"
               data-autoresize
+              data-char-counter="ai-goal-counter"
               placeholder="e.g., Measure customer satisfaction with our services"></textarea>
+            <span id="ai-goal-counter" class="create-ai-char-counter" aria-live="polite">0 / 300</span>
           </div>
 
           <div class="create-ai-field">
@@ -2019,17 +2038,23 @@
               Target Audience <span aria-hidden="true" class="create-ai-required">*</span>
             </label>
             <textarea id="ai-audience" name="audience" rows="1" required
+              maxlength="300"
               class="create-ai-input create-ai-autoresize"
               data-autoresize
+              data-char-counter="ai-audience-counter"
               placeholder="e.g., Current customers, Employees, Partners"></textarea>
+            <span id="ai-audience-counter" class="create-ai-char-counter" aria-live="polite">0 / 300</span>
           </div>
 
           <div class="create-ai-field">
             <label for="ai-comments" class="create-ai-label">Additional Comments</label>
             <textarea id="ai-comments" name="comments" rows="3"
+              maxlength="300"
               class="create-ai-input create-ai-autoresize create-ai-textarea"
               data-autoresize
+              data-char-counter="ai-comments-counter"
               placeholder="Any specific topics or questions you'd like to include..."></textarea>
+            <span id="ai-comments-counter" class="create-ai-char-counter" aria-live="polite">0 / 300</span>
           </div>
 
           <div class="create-ai-field">
@@ -2270,6 +2295,20 @@
     }
 
     .create-ai-textarea { min-height: 4.5rem; }
+
+    .create-ai-char-counter {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .create-ai-char-counter.is-at-limit {
+      color: #dc2626;
+      font-weight: 600;
+    }
 
     .create-ai-size-grid {
       display: grid;

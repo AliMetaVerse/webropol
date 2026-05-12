@@ -181,41 +181,64 @@
             </div>
           </section>
 
-          <!-- Acceptance pending state -->
-          <section class="policy-panel" x-show="!savedAccepted" x-cloak>
-            <label class="flex items-start gap-3">
-              <input type="checkbox" x-model="accepted"
-                class="mt-0.5 h-4 w-4 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
-              <span class="text-sm font-semibold text-webropol-gray-900">I accept the use of AI and all policies</span>
-            </label>
-            <div class="mt-5">
-              <button type="button" class="btn-primary-cyan" :disabled="!accepted" @click="save()">Save</button>
-            </div>
-          </section>
-
-          <!-- Accepted state with revoke option -->
-          <section class="policy-panel" x-show="savedAccepted" x-cloak>
-            <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
-                <i class="fal fa-circle-check text-emerald-600 text-sm"></i>
+          <!-- Per-feature acceptance cards -->
+          <template x-for="feature in features" :key="feature.id">
+            <section class="policy-panel">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-lg bg-webropol-primary-50 flex items-center justify-center flex-shrink-0">
+                  <i :class="`fal fa-${feature.icon} text-webropol-primary-600 text-sm`"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h2 class="text-base font-semibold text-webropol-gray-900" x-text="feature.title"></h2>
+                  <p class="mt-1 text-xs text-webropol-gray-500" x-text="feature.description"></p>
+                </div>
               </div>
-              <div class="min-w-0">
-                <p class="text-sm font-semibold text-webropol-gray-900">Policies accepted</p>
-                <p class="mt-1 text-xs text-webropol-gray-500">
-                  Accepted on <span x-text="acceptedOnLabel"></span>. AI features are enabled for your organization.
-                </p>
-              </div>
-            </div>
-            <div class="mt-5">
-              <button type="button" class="btn-danger" @click="openRevokeModal()">
-                <i class="fal fa-ban mr-1.5"></i>
-                Revoke acceptance
-              </button>
-            </div>
-          </section>
 
-          <div class="flex justify-end">
-            <button type="button" class="btn-secondary-light" @click="cancel()">Cancel</button>
+              <!-- Pending state -->
+              <div class="mt-4 pt-4 border-t border-webropol-gray-100" x-show="!state[feature.id].savedAccepted" x-cloak>
+                <label class="flex items-start gap-3">
+                  <input type="checkbox" x-model="state[feature.id].accepted"
+                    class="mt-0.5 h-4 w-4 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
+                  <span class="text-sm font-medium text-webropol-gray-900" x-text="feature.acceptLabel"></span>
+                </label>
+                <div class="mt-4">
+                  <button type="button" class="btn-primary-cyan" :disabled="!state[feature.id].accepted" @click="save(feature.id)">Save</button>
+                </div>
+              </div>
+
+              <!-- Accepted state -->
+              <div class="mt-4 pt-4 border-t border-webropol-gray-100" x-show="state[feature.id].savedAccepted" x-cloak>
+                <div class="flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                    <i class="fal fa-circle-check text-emerald-600 text-sm"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-sm font-semibold text-webropol-gray-900">Accepted</p>
+                    <p class="mt-1 text-xs text-webropol-gray-500">
+                      Accepted on <span x-text="acceptedOnLabel(feature.id)"></span>.
+                    </p>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <button type="button" class="btn-danger" @click="openRevokeModal(feature.id)">
+                    <i class="fal fa-ban mr-1.5"></i>
+                    Revoke acceptance
+                  </button>
+                </div>
+              </div>
+            </section>
+          </template>
+
+          <!-- Inline toast for save/revoke feedback -->
+          <div
+            x-show="toast.visible"
+            x-cloak
+            x-transition.opacity
+            class="fixed bottom-6 right-6 z-[15000] flex items-center gap-3 rounded-xl bg-webropol-gray-900 text-white px-4 py-3 shadow-2xl max-w-sm"
+            role="status"
+            aria-live="polite">
+            <i :class="`fal fa-${toast.icon}`" class="text-lg flex-shrink-0"></i>
+            <span class="text-sm font-medium" x-text="toast.message"></span>
           </div>
 
           <!-- Revoke confirmation modal -->
@@ -233,16 +256,18 @@
                 <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
                   <i class="fal fa-triangle-exclamation text-red-600"></i>
                 </div>
-                <h2 id="revokeModalTitle" class="text-lg font-bold text-webropol-gray-900">Revoke acceptance?</h2>
+                <h2 id="revokeModalTitle" class="text-lg font-bold text-webropol-gray-900">
+                  Revoke <span x-text="revokeFeatureLabel"></span>?
+                </h2>
                 <button type="button" class="ml-auto w-8 h-8 inline-flex items-center justify-center rounded-full text-webropol-gray-400 hover:text-webropol-gray-700 hover:bg-webropol-gray-100" @click="closeRevokeModal()" aria-label="Close">
                   <i class="fal fa-times"></i>
                 </button>
               </div>
               <div class="px-5 py-4 space-y-3 text-sm text-webropol-gray-600">
-                <p>If you revoke acceptance of the AI Data Usage &amp; Policies:</p>
+                <p>If you revoke acceptance for <span class="font-medium text-webropol-gray-800" x-text="revokeFeatureLabel"></span>:</p>
                 <ul class="list-disc list-inside space-y-1 pl-1">
-                  <li>AI features will be disabled across your organization.</li>
-                  <li>The <span class="font-medium text-webropol-gray-800">Organization context for AI</span> will be locked until policies are accepted again.</li>
+                  <li>This AI feature will be disabled across your organization.</li>
+                  <li>Other accepted AI features remain unaffected.</li>
                   <li>Saved organization context is not deleted &mdash; it will be reapplied when you re-accept.</li>
                 </ul>
                 <p class="pt-1">Are you sure you want to continue?</p>
@@ -267,17 +292,43 @@
     function aiDataPoliciesApp() {
       return {
         preferenceKey: 'webropol_ai_data_policies_settings',
-        accepted: false,           // checkbox state in the editor
-        savedAccepted: false,      // persisted state from localStorage
-        acceptedAt: '',
+        features: [
+          {
+            id: 'summary',
+            title: 'AI Summary',
+            icon: 'chart-line',
+            description: 'Allow AI to generate automated analytics summaries, trend insights and narrative reports from your survey responses.',
+            acceptLabel: 'I accept the use of AI Summary and the related data policies.'
+          },
+          {
+            id: 'surveyCreation',
+            title: 'AI Survey Creation',
+            icon: 'sparkles',
+            description: 'Allow AI to generate survey questions, structures and recommendations tailored to your organization context.',
+            acceptLabel: 'I accept the use of AI Survey Creation and the related data policies.'
+          }
+        ],
+        state: {
+          summary:        { accepted: false, savedAccepted: false, acceptedAt: '' },
+          surveyCreation: { accepted: false, savedAccepted: false, acceptedAt: '' }
+        },
         showRevokeModal: false,
+        revokeTarget: null,
+        toast: { visible: false, message: '', icon: 'circle-check' },
+        _toastTimer: null,
 
-        get acceptedOnLabel() {
-          if (!this.acceptedAt) return '—';
+        get revokeFeatureLabel() {
+          const feat = this.features.find(f => f.id === this.revokeTarget);
+          return feat ? feat.title : '';
+        },
+
+        acceptedOnLabel(featureId) {
+          const at = this.state[featureId]?.acceptedAt;
+          if (!at) return '—';
           try {
-            return new Date(this.acceptedAt).toLocaleString();
+            return new Date(at).toLocaleString();
           } catch (_) {
-            return this.acceptedAt;
+            return at;
           }
         },
 
@@ -288,49 +339,73 @@
         loadSettings() {
           try {
             const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
-            this.savedAccepted = existing.accepted === true;
-            this.accepted = this.savedAccepted;
-            this.acceptedAt = existing.updatedAt || '';
+            this.features.forEach(f => {
+              const stored = existing[f.id] || {};
+              const accepted = stored.accepted === true;
+              this.state[f.id].savedAccepted = accepted;
+              this.state[f.id].accepted = accepted;
+              this.state[f.id].acceptedAt = stored.updatedAt || '';
+            });
           } catch (error) {
             console.error('localStorage error:', error);
           }
         },
 
-        saveSettings() {
+        persist() {
           try {
-            const payload = { accepted: this.accepted, updatedAt: new Date().toISOString() };
+            const payload = {};
+            this.features.forEach(f => {
+              payload[f.id] = {
+                accepted: this.state[f.id].savedAccepted,
+                updatedAt: this.state[f.id].acceptedAt
+              };
+            });
             localStorage.setItem(this.preferenceKey, JSON.stringify(payload));
-            this.savedAccepted = this.accepted;
-            this.acceptedAt = payload.updatedAt;
           } catch (error) {
             console.error('localStorage error:', error);
           }
         },
 
-        save() {
-          this.saveSettings();
-          window.location.href = 'index.html';
+        save(featureId) {
+          if (!this.state[featureId]?.accepted) return;
+          this.state[featureId].savedAccepted = true;
+          this.state[featureId].acceptedAt = new Date().toISOString();
+          this.persist();
+          const feat = this.features.find(f => f.id === featureId);
+          this.showToast(`${feat?.title || 'Feature'} accepted.`, 'circle-check');
         },
 
-        cancel() {
-          window.location.href = 'index.html';
-        },
-
-        openRevokeModal() {
+        openRevokeModal(featureId) {
+          this.revokeTarget = featureId;
           this.showRevokeModal = true;
           document.body.style.overflow = 'hidden';
         },
 
         closeRevokeModal() {
           this.showRevokeModal = false;
+          this.revokeTarget = null;
           document.body.style.overflow = '';
         },
 
         confirmRevoke() {
-          this.accepted = false;
-          this.saveSettings();
+          const featureId = this.revokeTarget;
+          if (featureId && this.state[featureId]) {
+            this.state[featureId].savedAccepted = false;
+            this.state[featureId].accepted = false;
+            this.state[featureId].acceptedAt = '';
+            this.persist();
+            const feat = this.features.find(f => f.id === featureId);
+            this.showToast(`${feat?.title || 'Feature'} acceptance revoked.`, 'ban');
+          }
           this.closeRevokeModal();
-          window.location.href = 'index.html';
+        },
+
+        showToast(message, icon) {
+          this.toast.message = message;
+          this.toast.icon = icon || 'circle-check';
+          this.toast.visible = true;
+          if (this._toastTimer) clearTimeout(this._toastTimer);
+          this._toastTimer = setTimeout(() => { this.toast.visible = false; }, 3000);
         }
       }
     }

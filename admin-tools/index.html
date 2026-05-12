@@ -561,7 +561,11 @@
         loadPoliciesState() {
           try {
             const existing = JSON.parse(localStorage.getItem(this.policiesKey) || '{}');
-            this.policiesAccepted = existing.accepted === true;
+            // New per-feature shape: { summary: { accepted }, surveyCreation: { accepted } }.
+            // Tile unlocks if any AI feature has been accepted.
+            const summaryAccepted = existing.summary?.accepted === true;
+            const surveyCreationAccepted = existing.surveyCreation?.accepted === true;
+            this.policiesAccepted = summaryAccepted || surveyCreationAccepted;
           } catch (error) {
             console.error('localStorage error:', error);
             this.policiesAccepted = false;
