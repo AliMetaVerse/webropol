@@ -6,6 +6,8 @@
   <title>Thank you · Suomi.fi e-Identification · Webropol</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script src="../design-system/components/buttons/TextLink.js" type="module"></script>
+  <script src="../design-system/components/forms/Dropdown.js" type="module"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -24,25 +26,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .card-appear { animation: fadeUp 0.4s ease both; }
-
-    .lang-btn {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #6b7280;
-      padding: 0.3rem 0.8rem;
-      border-radius: 0.4rem;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      line-height: 1.5;
-    }
-    .lang-btn:hover:not(.active) { background-color: #f3f4f6; color: #374151; }
-    .lang-btn.active {
-      background-color: #06b6d4;
-      color: #fff;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center px-4 py-12">
@@ -50,11 +33,9 @@
   <!-- Language selector -->
   <div class="w-full max-w-md mb-5 flex items-center justify-end gap-2.5">
     <span class="text-xs text-gray-500 font-medium select-none">Select Language:</span>
-    <div class="flex items-center bg-white rounded-lg border border-gray-200 p-0.5 gap-0.5">
-      <button class="lang-btn" data-lang="fi">FI</button>
-      <button class="lang-btn" data-lang="sv">SV</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-    </div>
+    <webropol-dropdown id="lang-dropdown"
+      options='[{"label":"Finnish (FI)","value":"fi","icon":"globe"},{"label":"Swedish (SV)","value":"sv","icon":"globe"},{"label":"English (EN)","value":"en","icon":"globe"}]'
+      placeholder="Select Language"></webropol-dropdown>
   </div>
 
   <!-- Main card -->
@@ -72,7 +53,7 @@
               data-fi="Kiitos vastauksestasi"
               data-sv="Tack för ditt svar"
               data-en="Thank you for your response">Thank you for your response</h1>
-          <p class="text-sm text-gray-400 mt-0.5"
+          <p class="text-sm text-gray-600 mt-0.5"
              data-i18n="true"
              data-fi="Ylöjärvi city School transport application"
              data-sv="Ylöjärvi city School transport application"
@@ -103,18 +84,9 @@
     </div>
   </div>
 
-  <!-- Back button -->
-  <div class="w-full max-w-md mt-4">
-    <a href="suomifi-auth.html"
-       class="group flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">
-      <span class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 group-hover:bg-gray-200 transition-colors">
-        <i class="fal fa-arrow-left" style="font-size:0.6rem;"></i>
-      </span>
-      <span data-i18n="true"
-            data-fi="Takaisin tunnistussivulle"
-            data-sv="Tillbaka till identifieringssidan"
-            data-en="Back to identification page">Back to identification page</span>
-    </a>
+  <!-- Back link -->
+  <div class="w-full max-w-md mt-4 flex justify-center">
+    <webropol-text-link id="back-link" variant="primary" href="suomifi-auth.html" icon-left="arrow-left" label="Back to identification page"></webropol-text-link>
   </div>
 
   <!-- Sticky footer -->
@@ -127,7 +99,7 @@
       </span>
       <span class="text-gray-200 select-none">&bull;</span>
       <a href="https://webropol.com" target="_blank" rel="noopener"
-         class="text-sm font-medium text-[#06b6d4] hover:text-[#0891b2] transition-colors"
+         class="text-sm font-medium text-[#06b6d4] hover:text-[#0891b2] underline underline-offset-2 transition-colors"
          data-i18n="true"
          data-fi="Lue lisää"
          data-sv="Läs mer"
@@ -158,19 +130,26 @@
       document.querySelectorAll('[data-lang-block]').forEach(el => {
         el.style.display = el.dataset.langBlock === lang ? '' : 'none';
       });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
+      const dd = document.getElementById('lang-dropdown');
+      if (dd) dd.setAttribute('value', lang);
+      // Update back link label (webropol-text-link re-renders on attribute change)
+      const backTexts = { fi: 'Takaisin tunnistussivulle', sv: 'Tillbaka till identifieringssidan', en: 'Back to identification page' };
+      const backLink = document.getElementById('back-link');
+      if (backLink) backLink.setAttribute('label', backTexts[lang] || backTexts.en);
       try { sessionStorage.setItem('suomifi_lang', lang); } catch (_) {}
     }
 
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-      btn.addEventListener('click', () => setLang(btn.dataset.lang));
-    });
+    document.getElementById('lang-dropdown').addEventListener('change', e => setLang(e.detail.value));
 
     // Auto-detect: prefer saved session lang (from auth page), then browser language
     const saved = (() => { try { return sessionStorage.getItem('suomifi_lang'); } catch (_) { return null; } })();
-    setLang(saved && LANGS.includes(saved) ? saved : detectLang());
+    const initLang = saved && LANGS.includes(saved) ? saved : detectLang();
+    setLang(initLang);
+    // Re-apply once DS components have rendered their inner elements
+    Promise.all([
+      customElements.whenDefined('webropol-text-link'),
+      customElements.whenDefined('webropol-dropdown')
+    ]).then(() => setLang(initLang));
   </script>
 </body>
 </html>
