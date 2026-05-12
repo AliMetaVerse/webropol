@@ -199,6 +199,166 @@
         border-top-color: #511a98;
         border-bottom: 0;
       }
+
+      /* ── Clean slider variant (no bubble padding) ── */
+      .ai-gen-slider--clean {
+        padding: 10px 14px;
+      }
+      .ai-gen-slider--clean .ai-gen-slider__bubble { display: none; }
+
+      /* ── Count widget ── */
+      .ai-gen-count-widget {
+        background: linear-gradient(135deg, #f8f0ff 0%, #eef0ff 100%);
+        border: 1px solid #e0d4f7;
+        border-radius: 16px;
+        padding: 14px 16px 12px;
+      }
+      .ai-gen-count-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .ai-gen-count-number {
+        font: 700 32px/1 'Inter', system-ui, sans-serif;
+        background-image: linear-gradient(135deg, #823bdd 0%, #6366F1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        min-width: 36px;
+        text-align: center;
+      }
+      .ai-gen-count-label {
+        font: 500 13px/1.3 'Inter', system-ui, sans-serif;
+        color: #7c6fa0;
+      }
+      .ai-gen-count-stepper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+      }
+      .ai-gen-count-stepper-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 1.5px solid #d5bef4;
+        background: white;
+        color: #823bdd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: background .15s, border-color .15s, transform .1s;
+        user-select: none;
+      }
+      .ai-gen-count-stepper-btn:hover {
+        background: #f1e9fb;
+        border-color: #823bdd;
+        transform: scale(1.08);
+      }
+      .ai-gen-count-stepper-btn:active { transform: scale(0.95); }
+      .ai-gen-count-stepper-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* ── Pre-prompts accordion ── */
+      .ai-gen-accordion__body {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .ai-gen-accordion__body.open { max-height: 400px; }
+      .ai-gen-acc-chevron { transition: transform 0.25s ease; }
+      .ai-gen-acc-chevron.open { transform: rotate(180deg); }
+      .ai-gen-preprompt-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1.5px solid #e9e0f7;
+        background: white;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color .15s, background .15s, box-shadow .15s;
+        width: 100%;
+      }
+      .ai-gen-preprompt-card:hover {
+        border-color: #b89ee8;
+        background: #faf6ff;
+        box-shadow: 0 2px 10px rgba(130,59,221,0.08);
+      }
+      .ai-gen-preprompt-card.selected {
+        border-color: #823bdd;
+        background: #f7f0ff;
+      }
+      .ai-gen-preprompt-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      /* ── Tone portal dropdown ── */
+      .ai-gen-tone-portal {
+        position: fixed;
+        z-index: 2147483647;
+        background: white;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+        min-width: 190px;
+        overflow: hidden;
+        padding: 6px;
+      }
+      .ai-gen-tone-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: 9px;
+        cursor: pointer;
+        font: 500 14px/1.4 'Inter', system-ui, sans-serif;
+        color: #334155;
+        transition: background .12s, color .12s;
+        width: 100%;
+        border: none;
+        background: none;
+        text-align: left;
+      }
+      .ai-gen-tone-option:hover { background: #f1e9fb; color: #511a98; }
+      .ai-gen-tone-option.active { background: #ede9f9; color: #511a98; font-weight: 600; }
+      .ai-gen-tone-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        font: 500 14px/1.4 'Inter', system-ui, sans-serif;
+        color: #334155;
+        cursor: pointer;
+        transition: border-color .15s, box-shadow .15s;
+      }
+      .ai-gen-tone-btn:hover { border-color: #b89ee8; }
+      .ai-gen-tone-btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(130,59,221,.25);
+        border-color: #823bdd;
+      }
+      .ai-gen-tone-btn.open { border-color: #823bdd; box-shadow: 0 0 0 3px rgba(130,59,221,.2); }
     `;
     document.head.appendChild(style);
   }
@@ -300,6 +460,43 @@
     { title: 'Matrix', color: 'green', types: ['matrix', 'matrix-multi', 'position'] },
     { title: 'Experience & Loyalty', color: 'purple', types: ['nps', 'ces', 'csat'] },
     { title: 'Other', color: 'yellow', types: ['file', 'fourfold', 'calendar', 'question-table', 'hierarchical', 'ranking', 'slider', 'autosuggest'] }
+  ];
+
+  const PRE_PROMPTS = [
+    {
+      id: 'csat',
+      icon: 'fal fa-face-smile',
+      label: 'Customer Satisfaction',
+      color: 'blue',
+      text: 'Measure customer satisfaction with our product or service, focusing on ease of use, support quality, and overall experience.'
+    },
+    {
+      id: 'engagement',
+      icon: 'fal fa-users',
+      label: 'Employee Engagement',
+      color: 'green',
+      text: 'Understand how engaged and motivated our employees feel at work, covering team collaboration, leadership trust, and career growth.'
+    },
+    {
+      id: 'event',
+      icon: 'fal fa-calendar-star',
+      label: 'Event Feedback',
+      color: 'orange',
+      text: 'Gather feedback from attendees on content relevance, speaker quality, logistics, and their overall event experience.'
+    },
+    {
+      id: 'product',
+      icon: 'fal fa-flask',
+      label: 'Product Research',
+      color: 'purple',
+      text: 'Evaluate product-market fit, discover key pain points, and understand which features matter most to users.'
+    }
+  ];
+
+  const TONE_OPTIONS = [
+    { value: 'neutral',  label: 'Neutral',  icon: 'fal fa-minus-circle' },
+    { value: 'friendly', label: 'Friendly', icon: 'fal fa-face-smile'   },
+    { value: 'formal',   label: 'Formal',   icon: 'fal fa-user-tie'     }
   ];
 
   const MOCK_BANK = {
@@ -669,6 +866,9 @@
       this._errorMessage = '';
       this._simFail = false;
       this._lastFocus = null;
+      this._accordionOpen = false;
+      this._tonePortalEl = null;
+      this._tonePortalClose = null;
       this._keydownHandler = this._keydownHandler.bind(this);
     }
 
@@ -684,18 +884,21 @@
     }
 
     _syncCountToTypes() {
-      // Slider reflects the number of question types the user has added (clamped 1–15).
       const target = Math.max(1, Math.min(15, this._types.length || 1));
       this._count = target;
       const countEl = this.querySelector('#ai-gen-count');
       const countVal = this.querySelector('[data-role="count-value"]');
       const sliderRoot = this.querySelector('[data-role="slider-root"]');
+      const decBtn = this.querySelector('[data-role="count-dec"]');
+      const incBtn = this.querySelector('[data-role="count-inc"]');
       if (countEl) {
         countEl.value = String(target);
         countEl.setAttribute('aria-valuenow', String(target));
       }
       if (countVal) countVal.textContent = String(target);
       if (sliderRoot) sliderRoot.style.setProperty('--ai-slider-fill', this._countPercent() + '%');
+      if (decBtn) decBtn.disabled = target <= 1;
+      if (incBtn) incBtn.disabled = target >= 15;
     }
 
     open() {
@@ -717,6 +920,7 @@
     }
 
     close() {
+      this._closeTonePortal();
       this._open = false;
       this.render();
       document.body.classList.remove('modal-open');
@@ -751,7 +955,8 @@
     }
 
     render() {
-      if (!this._open) { this.innerHTML = ''; return; }
+      if (!this._open) { this._closeTonePortal(); this.innerHTML = ''; return; }
+      this._closeTonePortal();
 
       this.innerHTML = `
         <div class="fixed inset-0 z-[2147483640] flex items-center justify-center p-4"
@@ -829,6 +1034,31 @@
           }).join('')
         : `<span class="text-xs text-webropol-gray-500">No types selected yet. Picking a few helps the AI stay accurate and reduces mistakes.</span>`;
 
+      const activeTone = TONE_OPTIONS.find(t => t.value === this._tone) || TONE_OPTIONS[0];
+
+      const prompCards = PRE_PROMPTS.map(p => {
+        const colorMap = {
+          blue: { bg: '#eff6ff', icon: '#2563eb', border: '#bfdbfe' },
+          green: { bg: '#f0fdf4', icon: '#16a34a', border: '#bbf7d0' },
+          orange: { bg: '#fff7ed', icon: '#ea580c', border: '#fed7aa' },
+          purple: { bg: '#f5f3ff', icon: '#7c3aed', border: '#ddd6fe' },
+        };
+        const c = colorMap[p.color] || colorMap.purple;
+        const isSelected = this._prompt.trim() === p.text.trim();
+        return `
+          <button type="button" data-role="preprompt" data-text="${escapeHtml(p.text)}"
+            class="ai-gen-preprompt-card${isSelected ? ' selected' : ''}">
+            <span class="ai-gen-preprompt-icon" style="background:${c.bg};color:${c.icon};border:1px solid ${c.border}">
+              <i class="${p.icon}"></i>
+            </span>
+            <span>
+              <span style="display:block;font:600 12px/1.3 Inter,sans-serif;color:#1e293b;margin-bottom:2px">${escapeHtml(p.label)}</span>
+              <span style="display:block;font:400 11px/1.5 Inter,sans-serif;color:#64748b;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(p.text)}</span>
+            </span>
+          </button>
+        `;
+      }).join('');
+
       return `
         <div class="space-y-5">
           <div>
@@ -843,44 +1073,89 @@
               placeholder="e.g. Measure customer satisfaction with our onboarding experience, focusing on clarity, speed, and support."
               aria-describedby="ai-gen-prompt-help ai-gen-prompt-error">${escapeHtml(this._prompt)}</textarea>
             <p id="ai-gen-prompt-help" class="mt-1 text-xs text-webropol-gray-500">The clearer the goal, the better the suggestions.</p>
-            <p id="ai-gen-prompt-error" class="mt-1 text-xs text-webropol-error-600 ${this._validationError ? '' : 'hidden'}" role="alert">
+            <p id="ai-gen-prompt-error" class="mt-1 text-xs text-red-600 ${this._validationError ? '' : 'hidden'}" role="alert">
               ${escapeHtml(this._validationError)}
             </p>
           </div>
 
+          <!-- Quick-start prompts accordion -->
+          <div>
+            <button type="button" data-role="acc-toggle"
+              class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-webropol-gray-100 bg-webropol-gray-50 hover:bg-webropol-gray-100 text-left transition-colors"
+              aria-expanded="${this._accordionOpen}">
+              <span class="flex items-center gap-2">
+                <i class="fal fa-bolt text-purple-500 text-sm"></i>
+                <span class="text-sm font-semibold text-webropol-gray-900">Quick-start prompts</span>
+                <span class="text-xs text-webropol-gray-400 hidden sm:inline">— pick a template</span>
+              </span>
+              <i class="fal fa-chevron-down ai-gen-acc-chevron${this._accordionOpen ? ' open' : ''} text-webropol-gray-400 text-xs"></i>
+            </button>
+            <div class="ai-gen-accordion__body${this._accordionOpen ? ' open' : ''}" data-role="acc-body">
+              <div class="pt-3 grid grid-cols-2 gap-2">
+                ${prompCards}
+              </div>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Number of questions — redesigned -->
             <div>
               <label for="ai-gen-count" class="block text-sm font-semibold text-webropol-gray-900 mb-2">
                 Number of questions
               </label>
-              <div class="ai-gen-slider" data-role="slider-root" style="--ai-slider-fill: ${this._countPercent()}%">
-                <div class="ai-gen-slider__row">
-                  <span class="ai-gen-slider__edge">1</span>
-                  <div class="ai-gen-slider__track-wrap">
-                    <span class="ai-gen-slider__cap" aria-hidden="true"></span>
-                    <div class="ai-gen-slider__track">
-                      <div class="ai-gen-slider__fill"></div>
-                    </div>
-                    <span class="ai-gen-slider__cap" aria-hidden="true"></span>
-                    <input id="ai-gen-count" type="range" min="1" max="15" step="1" value="${this._count}"
-                      class="ai-gen-slider__input"
-                      aria-label="Number of questions"
-                      aria-valuemin="1" aria-valuemax="15" aria-valuenow="${this._count}" />
-                    <div class="ai-gen-slider__thumb" aria-hidden="true"></div>
-                    <div class="ai-gen-slider__bubble" data-role="count-value" aria-hidden="true">${this._count}</div>
+              <div class="ai-gen-count-widget">
+                <div class="ai-gen-count-display">
+                  <div>
+                    <div class="ai-gen-count-number" data-role="count-value">${this._count}</div>
+                    <div class="ai-gen-count-label">questions</div>
                   </div>
-                  <span class="ai-gen-slider__edge">15</span>
+                  <div class="ai-gen-count-stepper">
+                    <button type="button" data-role="count-dec"
+                      class="ai-gen-count-stepper-btn"
+                      aria-label="Decrease question count"
+                      ${this._count <= 1 ? 'disabled' : ''}>
+                      <i class="fal fa-minus"></i>
+                    </button>
+                    <button type="button" data-role="count-inc"
+                      class="ai-gen-count-stepper-btn"
+                      aria-label="Increase question count"
+                      ${this._count >= 15 ? 'disabled' : ''}>
+                      <i class="fal fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="ai-gen-slider ai-gen-slider--clean" data-role="slider-root" style="--ai-slider-fill: ${this._countPercent()}%">
+                  <div class="ai-gen-slider__row">
+                    <span class="ai-gen-slider__edge">1</span>
+                    <div class="ai-gen-slider__track-wrap">
+                      <div class="ai-gen-slider__track">
+                        <div class="ai-gen-slider__fill"></div>
+                      </div>
+                      <input id="ai-gen-count" type="range" min="1" max="15" step="1" value="${this._count}"
+                        class="ai-gen-slider__input"
+                        aria-label="Number of questions"
+                        aria-valuemin="1" aria-valuemax="15" aria-valuenow="${this._count}" />
+                      <div class="ai-gen-slider__thumb" aria-hidden="true"></div>
+                    </div>
+                    <span class="ai-gen-slider__edge">15</span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Audience / tone — portal dropdown -->
             <div>
               <label class="block text-sm font-semibold text-webropol-gray-900 mb-1.5">Audience / tone</label>
-              <webropol-dropdown
-                data-role="tone"
-                size="large"
-                value="${this._tone}"
-                options='[{"label":"Neutral","value":"neutral","icon":"fa-circle"},{"label":"Friendly","value":"friendly","icon":"fa-face-smile"},{"label":"Formal","value":"formal","icon":"fa-user-tie"}]'>
-              </webropol-dropdown>
+              <button type="button" data-role="tone-btn"
+                class="ai-gen-tone-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false">
+                <span class="flex items-center gap-2">
+                  <i class="${activeTone.icon} text-webropol-gray-500"></i>
+                  <span>${escapeHtml(activeTone.label)}</span>
+                </span>
+                <i class="fal fa-chevron-down text-webropol-gray-400 text-xs"></i>
+              </button>
             </div>
           </div>
 
@@ -1305,7 +1580,6 @@
       const syncGenerate = () => {
         const disabled = !this._prompt.trim();
         genBtn.disabled = disabled;
-        // ai-gen-royal-grad already styles disabled state via :disabled.
       };
 
       ta.addEventListener('input', () => {
@@ -1317,22 +1591,76 @@
         syncGenerate();
       });
 
+      // ── Accordion toggle ──
+      this.querySelector('[data-role="acc-toggle"]')?.addEventListener('click', () => {
+        this._accordionOpen = !this._accordionOpen;
+        const body = this.querySelector('[data-role="acc-body"]');
+        const chevron = this.querySelector('.ai-gen-acc-chevron');
+        const btn = this.querySelector('[data-role="acc-toggle"]');
+        if (body) body.classList.toggle('open', this._accordionOpen);
+        if (chevron) chevron.classList.toggle('open', this._accordionOpen);
+        if (btn) btn.setAttribute('aria-expanded', String(this._accordionOpen));
+      });
+
+      // ── Pre-prompt cards ──
+      this.querySelectorAll('[data-role="preprompt"]').forEach(card => {
+        card.addEventListener('click', () => {
+          const text = card.dataset.text || '';
+          this._prompt = text;
+          ta.value = text;
+          // Highlight selected card
+          this.querySelectorAll('[data-role="preprompt"]').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          if (this._validationError) {
+            this._validationError = '';
+            errEl.classList.add('hidden');
+          }
+          syncGenerate();
+          // Scroll textarea into view and focus
+          ta.focus();
+        });
+      });
+
+      // ── Count slider ──
       const countEl = this.querySelector('#ai-gen-count');
       const countVal = this.querySelector('[data-role="count-value"]');
       const sliderRoot = this.querySelector('[data-role="slider-root"]');
-      countEl.addEventListener('input', () => {
-        this._count = parseInt(countEl.value, 10) || 5;
-        countVal.textContent = this._count;
-        countEl.setAttribute('aria-valuenow', String(this._count));
+
+      const updateCountDisplay = () => {
+        if (countVal) countVal.textContent = this._count;
+        if (countEl) {
+          countEl.value = String(this._count);
+          countEl.setAttribute('aria-valuenow', String(this._count));
+        }
         if (sliderRoot) sliderRoot.style.setProperty('--ai-slider-fill', this._countPercent() + '%');
+        // Update stepper button disabled states
+        const decBtn = this.querySelector('[data-role="count-dec"]');
+        const incBtn = this.querySelector('[data-role="count-inc"]');
+        if (decBtn) decBtn.disabled = this._count <= 1;
+        if (incBtn) incBtn.disabled = this._count >= 15;
+      };
+
+      countEl?.addEventListener('input', () => {
+        this._count = parseInt(countEl.value, 10) || 5;
+        updateCountDisplay();
+      });
+
+      // ── Stepper ──
+      this.querySelector('[data-role="count-dec"]')?.addEventListener('click', () => {
+        if (this._count > 1) { this._count--; updateCountDisplay(); }
+      });
+      this.querySelector('[data-role="count-inc"]')?.addEventListener('click', () => {
+        if (this._count < 15) { this._count++; updateCountDisplay(); }
+      });
+
+      // ── Tone portal dropdown ──
+      this.querySelector('[data-role="tone-btn"]')?.addEventListener('click', (e) => {
+        if (this._tonePortalEl) { this._closeTonePortal(); return; }
+        this._openTonePortal(e.currentTarget);
       });
 
       this.querySelector('[data-role="sim-fail"]')?.addEventListener('change', (e) => {
         this._simFail = !!e.target.checked;
-      });
-
-      this.querySelector('[data-role="tone"]')?.addEventListener('change', (e) => {
-        this._tone = e.detail?.value ?? this._tone;
       });
 
       this.querySelectorAll('[data-role="remove-type"]').forEach(btn => {
@@ -1345,6 +1673,7 @@
       });
 
       this.querySelector('[data-role="open-types-picker"]')?.addEventListener('click', () => {
+        this._closeTonePortal();
         this._openTypesPicker();
       });
 
@@ -1358,8 +1687,76 @@
         }
         const simFail = this.querySelector('[data-role="sim-fail"]')?.checked;
         this._simFail = !!simFail;
+        this._closeTonePortal();
         this._runGeneration(simFail);
       });
+    }
+
+    _openTonePortal(triggerBtn) {
+      const rect = triggerBtn.getBoundingClientRect();
+      const portal = document.createElement('div');
+      portal.className = 'ai-gen-tone-portal';
+      portal.setAttribute('role', 'listbox');
+      portal.setAttribute('aria-label', 'Audience / tone');
+
+      TONE_OPTIONS.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ai-gen-tone-option' + (opt.value === this._tone ? ' active' : '');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', String(opt.value === this._tone));
+        btn.dataset.value = opt.value;
+        btn.innerHTML = `<i class="${opt.icon}" style="width:16px;text-align:center"></i><span>${opt.label}</span>`;
+        btn.addEventListener('click', () => {
+          this._tone = opt.value;
+          this._closeTonePortal();
+          // Update the button label without full re-render
+          const toneBtn = this.querySelector('[data-role="tone-btn"]');
+          if (toneBtn) {
+            const active = TONE_OPTIONS.find(t => t.value === this._tone) || TONE_OPTIONS[0];
+            toneBtn.querySelector('span').innerHTML = `<i class="${active.icon} text-webropol-gray-500"></i><span>${active.label}</span>`;
+          }
+        });
+        portal.appendChild(btn);
+      });
+
+      // Position below the trigger
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const dropH = TONE_OPTIONS.length * 42 + 12;
+      if (spaceBelow >= dropH || spaceBelow >= 100) {
+        portal.style.top = (rect.bottom + 6) + 'px';
+      } else {
+        portal.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+      }
+      portal.style.left = rect.left + 'px';
+      portal.style.minWidth = rect.width + 'px';
+
+      document.body.appendChild(portal);
+      this._tonePortalEl = portal;
+      triggerBtn.classList.add('open');
+      triggerBtn.setAttribute('aria-expanded', 'true');
+
+      // Close on outside click
+      const outside = (e) => {
+        if (!portal.contains(e.target) && e.target !== triggerBtn && !triggerBtn.contains(e.target)) {
+          this._closeTonePortal();
+        }
+      };
+      setTimeout(() => document.addEventListener('click', outside, { once: true }), 0);
+      this._tonePortalClose = outside;
+    }
+
+    _closeTonePortal() {
+      if (this._tonePortalEl) {
+        this._tonePortalEl.remove();
+        this._tonePortalEl = null;
+      }
+      if (this._tonePortalClose) {
+        document.removeEventListener('click', this._tonePortalClose);
+        this._tonePortalClose = null;
+      }
+      const toneBtn = this.querySelector('[data-role="tone-btn"]');
+      if (toneBtn) { toneBtn.classList.remove('open'); toneBtn.setAttribute('aria-expanded', 'false'); }
     }
 
     _bindPreview() {
