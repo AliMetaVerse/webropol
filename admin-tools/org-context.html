@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organization context for AI - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design-system/styles/tokens.css">
+  <link rel="stylesheet" href="../design-system/styles/mobile-responsive.css">
+  <link rel="stylesheet" href="../design-system/styles/adaptive.css">
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #f0fdff 100%);
+    }
+
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+
+    .ctx-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1.5rem 1.5rem 1.75rem;
+    }
+
+    .ctx-field-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .ctx-input {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 0.625rem;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.875rem;
+      color: #0f172a;
+    }
+
+    .ctx-input::placeholder { color: #94a3b8; }
+
+    .ctx-input:focus {
+      outline: none;
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.16);
+    }
+
+    .ctx-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+    }
+
+    .ctx-chip__remove {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 9999px;
+      color: #64748b;
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .ctx-chip__remove:hover { background: #e2e8f0; color: #0f172a; }
+
+    .ctx-info-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #7f1d1d;
+      border-radius: 0.75rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary-cyan {
+      background: #0e7490;
+      color: white;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .btn-primary-cyan:hover { background: #155e75; }
+
+    .btn-secondary-light {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .btn-secondary-light:hover { background: #f8fafc; }
+  </style>
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/utils/theme-manager.js" type="module"></script>
+  <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+  <script src="../scripts/analytics-global-tracker.js"></script>
+</head>
+
+<body x-data="orgContextApp()">
+  <div class="flex h-screen adaptive-shell">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header-enhanced>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Admin tools","url":"index.html"},{"label":"Organization context for AI","url":"org-context.html"}]'></webropol-breadcrumbs>
+      </div>
+
+      <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
+        <div class="mx-auto max-w-4xl space-y-6">
+          <header>
+            <h1 class="text-3xl font-bold text-webropol-gray-900">Organization context for AI</h1>
+            <p class="mt-2 text-sm text-webropol-gray-600">Add context to improve AI generated texts and suggestions in your environment.</p>
+          </header>
+
+          <div class="ctx-info-banner">
+            Based on the context you've shared, AI creates more relevant results. This context is used only within your Webropol environment.
+          </div>
+
+          <!-- Organization basics -->
+          <section class="ctx-panel">
+            <h2 class="text-lg font-bold text-webropol-gray-900">Organization basics</h2>
+            <div class="mt-5 space-y-4">
+              <div>
+                <label for="org-name" class="ctx-field-label">Organization name</label>
+                <input id="org-name" type="text" x-model="context.organizationName" @change="saveSettings()"
+                  class="ctx-input mt-2" placeholder="Enter organization name">
+              </div>
+              <div>
+                <label for="org-description" class="ctx-field-label">Organization description</label>
+                <textarea id="org-description" rows="3" x-model="context.organizationDescription" @change="saveSettings()"
+                  class="ctx-input mt-2" placeholder="Describe your organization's mission and focus areas"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Offerings -->
+          <section class="ctx-panel">
+            <h2 class="text-lg font-bold text-webropol-gray-900">Offerings</h2>
+            <p class="mt-1 text-sm text-webropol-gray-600">Add your main products or services to help AI understand your business context.</p>
+            <div class="mt-4">
+              <div class="flex gap-2">
+                <input type="text" x-model="newOffering"
+                  @keydown.enter.prevent="addOffering()"
+                  class="ctx-input" placeholder="Add offering">
+                <button type="button" @click="addOffering()"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-webropol-gray-200 bg-white text-sm font-semibold text-webropol-gray-700 hover:bg-webropol-gray-50">
+                  <i class="fal fa-plus"></i>
+                  Add
+                </button>
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <template x-for="(offering, index) in context.offerings" :key="offering + index">
+                  <span class="ctx-chip">
+                    <span x-text="offering"></span>
+                    <button type="button" class="ctx-chip__remove" @click="removeOffering(index)" :aria-label="'Remove ' + offering">
+                      <i class="fal fa-xmark text-xs"></i>
+                    </button>
+                  </span>
+                </template>
+              </div>
+            </div>
+          </section>
+
+          <!-- Location and operations -->
+          <section class="ctx-panel">
+            <h2 class="text-lg font-bold text-webropol-gray-900">Location and operations</h2>
+            <p class="mt-1 text-sm text-webropol-gray-600">Specify where your organization operates to help AI provide region-specific content.</p>
+            <div class="mt-4">
+              <label class="ctx-field-label">Regions of operation</label>
+              <div class="mt-2 flex gap-2">
+                <input type="text" x-model="newRegion"
+                  @keydown.enter.prevent="addRegion()"
+                  class="ctx-input" placeholder="Add region">
+                <button type="button" @click="addRegion()"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-webropol-gray-200 bg-white text-sm font-semibold text-webropol-gray-700 hover:bg-webropol-gray-50">
+                  <i class="fal fa-plus"></i>
+                  Add
+                </button>
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <template x-for="(region, index) in context.regions" :key="region + index">
+                  <span class="ctx-chip">
+                    <span x-text="region"></span>
+                    <button type="button" class="ctx-chip__remove" @click="removeRegion(index)" :aria-label="'Remove ' + region">
+                      <i class="fal fa-xmark text-xs"></i>
+                    </button>
+                  </span>
+                </template>
+              </div>
+
+              <div class="mt-5">
+                <label for="ops-notes" class="ctx-field-label">Notes</label>
+                <textarea id="ops-notes" rows="3" x-model="context.notes" @change="saveSettings()"
+                  class="ctx-input mt-2" placeholder="Add any additional context about your operations"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <div class="pt-2 border-t border-webropol-gray-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-xs text-webropol-gray-500">This context is used only within your Webropol environment.</p>
+            <div class="flex items-center gap-2">
+              <button type="button" class="btn-secondary-light" @click="cancel()">Cancel</button>
+              <button type="button" class="btn-primary-cyan" @click="save()">Save</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <webropol-floating-button></webropol-floating-button>
+
+  <script>
+    function orgContextApp() {
+      return {
+        preferenceKey: 'webropol_org_context_settings',
+        newOffering: '',
+        newRegion: '',
+        context: {
+          organizationName: '',
+          organizationDescription: '',
+          offerings: ['Survey tools', 'Data analytics'],
+          regions: ['Europe', 'North America'],
+          notes: ''
+        },
+
+        init() {
+          this.loadSettings();
+        },
+
+        loadSettings() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            if (existing.context) {
+              this.context = { ...this.context, ...existing.context };
+            }
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        saveSettings() {
+          try {
+            const payload = { context: { ...this.context }, updatedAt: new Date().toISOString() };
+            localStorage.setItem(this.preferenceKey, JSON.stringify(payload));
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        addOffering() {
+          const value = (this.newOffering || '').trim();
+          if (!value) return;
+          if (!this.context.offerings.includes(value)) {
+            this.context.offerings.push(value);
+            this.saveSettings();
+          }
+          this.newOffering = '';
+        },
+
+        removeOffering(index) {
+          this.context.offerings.splice(index, 1);
+          this.saveSettings();
+        },
+
+        addRegion() {
+          const value = (this.newRegion || '').trim();
+          if (!value) return;
+          if (!this.context.regions.includes(value)) {
+            this.context.regions.push(value);
+            this.saveSettings();
+          }
+          this.newRegion = '';
+        },
+
+        removeRegion(index) {
+          this.context.regions.splice(index, 1);
+          this.saveSettings();
+        },
+
+        save() {
+          this.saveSettings();
+          window.location.href = 'index.html';
+        },
+
+        cancel() {
+          window.location.href = 'index.html';
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-?<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -130,6 +130,25 @@
     .feature-badge--neutral { background: #f1f5f9; color: #475569; }
     .feature-badge--success { background: #dcfce7; color: #15803d; }
     .feature-badge--warning { background: #ffedd5; color: #c2410c; }
+
+    .feature-badge--lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .feature-card.is-locked {
+      cursor: not-allowed;
+      background: #f8fafc;
+      opacity: 0.65;
+    }
+
+    .feature-card.is-locked .feature-title,
+    .feature-card.is-locked .feature-sub {
+      color: #64748b;
+    }
+
+    .feature-card.is-locked webropol-avatar { filter: grayscale(0.4); }
 
     /* Category sections in responsive grid */
     .category-grid {
@@ -365,7 +384,7 @@
                 <div class="feature-grid">
                   <template x-for="item in visibleItems(category.id)" :key="item.title">
                     <div>
-                      <template x-if="item.url">
+                      <template x-if="item.url && !isLocked(item)">
                         <a :href="resolveUrl(item.url)" class="feature-card is-link">
                           <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
                           <div class="feature-body">
@@ -377,6 +396,20 @@
                           </template>
                           <i class="fal fa-arrow-right feature-arrow"></i>
                         </a>
+                      </template>
+                      <template x-if="item.url && isLocked(item)">
+                        <div class="feature-card is-locked" role="link" aria-disabled="true"
+                             :title="'Accept AI Data Usage & Policies to enable this.'">
+                          <webropol-avatar variant="primary" size="sm" :icon="item.icon"></webropol-avatar>
+                          <div class="feature-body">
+                            <p class="feature-title" x-text="item.title"></p>
+                            <p class="feature-sub" x-text="item.sub"></p>
+                          </div>
+                          <span class="feature-badge feature-badge--neutral feature-badge--lock">
+                            <i class="fal fa-lock" aria-hidden="true"></i>
+                            Requires policies
+                          </span>
+                        </div>
                       </template>
                       <template x-if="!item.url">
                         <div class="feature-card">
@@ -417,6 +450,8 @@
         activeTab: 'all',
         searchQuery: '',
         preferenceKey: 'webropol_admin_tools_dashboard',
+        policiesKey: 'webropol_ai_data_policies_settings',
+        policiesAccepted: false,
         moduleBase: '/admin-tools/',
         categories: [
           {
@@ -445,8 +480,10 @@
             id: 'ai',
             title: 'AI Management',
             items: [
-              { title: 'AI Permission', sub: 'Finnish AI usage checks, role access and audit readiness.', icon: 'shield-check', url: 'ai-permission.html', badge: 'Checks', badgeTone: 'warning' },
-              { title: 'AI Context', sub: 'Organisation context, approved sources and response boundaries.', icon: 'brain', url: 'ai-context.html', badge: 'Context', badgeTone: 'neutral' }
+              { title: 'AI Data Usage & Policies', sub: 'Manage AI data usage policies and acceptance for your organization.', icon: 'file-shield', url: 'ai-data-policies.html', badge: 'Policies', badgeTone: 'warning' },
+              { title: 'Organization context for AI', sub: 'Manage organization context, offerings and regions used by AI.', icon: 'sparkles', url: 'org-context.html', badge: 'Context', badgeTone: 'neutral', requiresPolicies: true },
+              { title: 'AI Permission', sub: 'Finnish AI usage checks, role access and audit readiness.', icon: 'shield-check', url: 'ai-permission.html', badge: 'Checks-Experimental', badgeTone: 'warning' },
+              { title: 'AI Context', sub: 'Organisation context, approved sources and response boundaries.', icon: 'brain', url: 'ai-context.html', badge: 'Context-Experimental', badgeTone: 'neutral' }
             ]
           },
           {
@@ -477,6 +514,18 @@
 
         init() {
           this.loadPreferences();
+          this.loadPoliciesState();
+
+          // Re-read acceptance state when the tab regains focus
+          // (so accepting on the policies page reflects here).
+          this._visibilityHandler = () => {
+            if (!document.hidden) this.loadPoliciesState();
+          };
+          document.addEventListener('visibilitychange', this._visibilityHandler);
+          window.addEventListener('focus', this._visibilityHandler);
+          window.addEventListener('storage', (e) => {
+            if (e.key === this.policiesKey) this.loadPoliciesState();
+          });
 
           // Global ⌘/Ctrl+K shortcut to focus search
           this._keydownHandler = (event) => {
@@ -507,6 +556,20 @@
           } catch (error) {
             console.error('localStorage error:', error);
           }
+        },
+
+        loadPoliciesState() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.policiesKey) || '{}');
+            this.policiesAccepted = existing.accepted === true;
+          } catch (error) {
+            console.error('localStorage error:', error);
+            this.policiesAccepted = false;
+          }
+        },
+
+        isLocked(item) {
+          return !!(item && item.requiresPolicies) && !this.policiesAccepted;
         },
 
         savePreferences() {

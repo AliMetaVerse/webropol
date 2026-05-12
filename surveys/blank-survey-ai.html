@@ -493,6 +493,7 @@
   <script src="../design-system/components/modals/RuleGroupModal.js" type="module"></script>
   <script src="../design-system/components/forms/RadioSpecial.js" type="module"></script>
   <script src="../design-system/components/feedback/Alert.js" type="module"></script>
+  <script src="../design-system/components/feedback/SmartNotifier.js" type="module"></script>
   <script src="../design-system/utils/theme-manager.js" type="module"></script>
   <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
     
@@ -1590,7 +1591,7 @@
   <script>
     // Modal utility for this page (legacy bespoke modals).
     (function(){
-      const MODAL_IDS = ['uploadModal','questionSettingsModal','colorPickerModal','questionModeModal','surveyStatusModal'];
+      const MODAL_IDS = ['uploadModal','questionSettingsModal','colorPickerModal','questionModeModal','surveyStatusModal','createWithAIModal'];
       function portal(el){
         if(!el) return; 
         // Always keep at end of body to outrank siblings with higher stacking contexts.
@@ -1630,6 +1631,8 @@
       window.closeQuestionModeModal = () => closeModal('questionModeModal');
       window.openSurveyStatusModal = () => openModal('surveyStatusModal');
       window.closeSurveyStatusModal = () => closeModal('surveyStatusModal');
+      window.openCreateWithAIModal = () => openModal('createWithAIModal');
+      window.closeCreateWithAIModal = () => closeModal('createWithAIModal');
       // Initial portal (in case HTML loaded before script runs)
       MODAL_IDS.forEach(id => { const el = document.getElementById(id); if(el) portal(el); });
       // Close when clicking outside content
@@ -1640,6 +1643,147 @@
         }
       });
     })();
+
+    // Create with AI modal — size card selection, validation, and submit
+    function initCreateWithAIModal() {
+      const modal = document.getElementById('createWithAIModal');
+      if (!modal) return;
+
+      const form = modal.querySelector('#createWithAIForm');
+      const goalInput = modal.querySelector('#ai-goal');
+      const audienceInput = modal.querySelector('#ai-audience');
+      const submitBtn = modal.querySelector('#createWithAISubmit');
+      const sizeCards = modal.querySelectorAll('.create-ai-size-card');
+      const autoresizeFields = modal.querySelectorAll('[data-autoresize]');
+      const contextStatus = modal.querySelector('#createWithAIContextStatus');
+
+      function readOrgContext() {
+        try {
+          const data = JSON.parse(localStorage.getItem('webropol_org_context_settings') || '{}');
+          const ctx = data.context || {};
+          const name = (ctx.organizationName || '').trim();
+          const description = (ctx.organizationDescription || '').trim();
+          return { applied: !!(name || description), name, description };
+        } catch (_) {
+          return { applied: false, name: '', description: '' };
+        }
+      }
+
+      function renderContextStatus() {
+        if (!contextStatus) return;
+        const { applied, name } = readOrgContext();
+        contextStatus.dataset.state = applied ? 'applied' : 'missing';
+        if (applied) {
+          const safeName = name ? ` for "${name.replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]))}"` : '';
+          contextStatus.innerHTML = `
+            <webropol-smart-notifier
+              variant="success"
+              size="auto"
+              title="Organization context applied${safeName}"
+              description="AI will reference your organization's context, offerings, and terminology from Admin Tools settings."
+              show-actions="false"
+              dismissible="false">
+            </webropol-smart-notifier>`;
+        } else {
+          contextStatus.innerHTML = `
+            <webropol-smart-notifier
+              variant="warning"
+              size="auto"
+              title="Organization context not applied"
+              description="This is optional, but adding context in Admin Tools helps AI generate more relevant questions."
+              show-actions="false"
+              dismissible="false">
+            </webropol-smart-notifier>`;
+        }
+      }
+
+      renderContextStatus();
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'webropol_org_context_settings') renderContextStatus();
+      });
+
+      function autosize(el) {
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+      }
+
+      autoresizeFields.forEach(el => {
+        autosize(el);
+        el.addEventListener('input', () => autosize(el));
+        // Block Enter on the single-line autoresize fields (goal, audience)
+        // but allow it in the comments textarea (which doesn't have this attr).
+        if (el.dataset.autoresize === 'single') {
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) e.preventDefault();
+          });
+        }
+      });
+
+      function syncSubmitState() {
+        const hasGoal = (goalInput.value || '').trim().length > 0;
+        const hasAudience = (audienceInput.value || '').trim().length > 0;
+        submitBtn.disabled = !(hasGoal && hasAudience);
+      }
+
+      function selectSize(card) {
+        sizeCards.forEach(c => c.classList.remove('is-selected'));
+        card.classList.add('is-selected');
+        const radio = card.querySelector('.create-ai-size-radio');
+        if (radio) radio.checked = true;
+      }
+
+      sizeCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.tagName === 'INPUT') return;
+          e.preventDefault();
+          selectSize(card);
+        });
+        const radio = card.querySelector('.create-ai-size-radio');
+        if (radio) {
+          radio.addEventListener('change', () => {
+            if (radio.checked) selectSize(card);
+          });
+        }
+      });
+
+      [goalInput, audienceInput].forEach(input => {
+        input.addEventListener('input', syncSubmitState);
+      });
+
+      // Re-measure heights and re-read context status whenever the modal
+      // becomes visible (style may resolve to 0 while display:none).
+      const observer = new MutationObserver(() => {
+        if (modal.classList.contains('active')) {
+          renderContextStatus();
+          requestAnimationFrame(() => autoresizeFields.forEach(autosize));
+        }
+      });
+      observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+      syncSubmitState();
+
+      window.submitCreateWithAI = function () {
+        if (submitBtn.disabled) return;
+        const data = {
+          goal: (goalInput.value || '').trim(),
+          audience: (audienceInput.value || '').trim(),
+          comments: ((modal.querySelector('#ai-comments') || {}).value || '').trim(),
+          size: (modal.querySelector('input[name="surveySize"]:checked') || {}).value || 'medium'
+        };
+        console.log('[Create with AI] submitted:', data);
+
+        try { localStorage.setItem('webropol_create_with_ai_request', JSON.stringify({ ...data, requestedAt: new Date().toISOString() })); } catch (_) { /* noop */ }
+
+        window.closeCreateWithAIModal && window.closeCreateWithAIModal();
+      };
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCreateWithAIModal);
+    } else {
+      initCreateWithAIModal();
+    }
 
     // Survey Status Management
     let selectedStatus = null;
@@ -1825,6 +1969,357 @@
   </div>
 
   <!-- Copy Question Modal removed: Copy now duplicates immediately on click -->
+
+  <!-- Create with AI Modal -->
+  <div id="createWithAIModal" class="modal-overlay" style="z-index: 100000;">
+    <div class="modal-content create-ai-modal" role="dialog" aria-modal="true" aria-labelledby="createWithAITitle">
+      <!-- Header (design-system pattern: icon + bg + h1) -->
+      <div class="create-ai-header">
+        <div class="create-ai-header-title">
+          <div class="create-ai-header-icon" aria-hidden="true">
+            <i class="fal fa-sparkles"></i>
+          </div>
+          <h1 id="createWithAITitle" class="create-ai-h1">Create with AI</h1>
+        </div>
+        <button type="button" class="create-ai-close" onclick="closeCreateWithAIModal()" aria-label="Close modal">
+          <i class="fal fa-times"></i>
+        </button>
+      </div>
+
+      <div class="create-ai-body">
+        <p class="create-ai-disclaimer">Disclaimer: AI can make mistakes and it is the user's responsibility to review what AI has created.</p>
+
+        <form id="createWithAIForm" class="create-ai-form" onsubmit="event.preventDefault(); submitCreateWithAI();">
+          <div class="create-ai-field">
+            <label for="ai-goal" class="create-ai-label">
+              Survey Goal <span aria-hidden="true" class="create-ai-required">*</span>
+            </label>
+            <textarea id="ai-goal" name="goal" rows="1" required
+              class="create-ai-input create-ai-autoresize"
+              data-autoresize
+              placeholder="e.g., Measure customer satisfaction with our services"></textarea>
+          </div>
+
+          <div class="create-ai-field">
+            <label for="ai-audience" class="create-ai-label">
+              Target Audience <span aria-hidden="true" class="create-ai-required">*</span>
+            </label>
+            <textarea id="ai-audience" name="audience" rows="1" required
+              class="create-ai-input create-ai-autoresize"
+              data-autoresize
+              placeholder="e.g., Current customers, Employees, Partners"></textarea>
+          </div>
+
+          <div class="create-ai-field">
+            <label for="ai-comments" class="create-ai-label">Additional Comments</label>
+            <textarea id="ai-comments" name="comments" rows="3"
+              class="create-ai-input create-ai-autoresize create-ai-textarea"
+              data-autoresize
+              placeholder="Any specific topics or questions you'd like to include..."></textarea>
+          </div>
+
+          <div class="create-ai-field">
+            <span class="create-ai-label">Survey Size</span>
+            <div class="create-ai-size-grid" role="radiogroup" aria-label="Survey size">
+              <label class="create-ai-size-card" data-size="short">
+                <input type="radio" name="surveySize" value="short" class="create-ai-size-radio">
+                <span class="create-ai-size-icon" aria-hidden="true">
+                  <i class="fal fa-bolt"></i>
+                </span>
+                <span class="create-ai-size-name">Short and quick</span>
+                <span class="create-ai-size-range">1-5 questions</span>
+              </label>
+              <label class="create-ai-size-card is-selected" data-size="medium">
+                <input type="radio" name="surveySize" value="medium" class="create-ai-size-radio" checked>
+                <span class="create-ai-size-icon" aria-hidden="true">
+                  <i class="fal fa-clock"></i>
+                </span>
+                <span class="create-ai-size-name">Medium depth</span>
+                <span class="create-ai-size-range">6-12 questions</span>
+              </label>
+              <label class="create-ai-size-card" data-size="comprehensive">
+                <input type="radio" name="surveySize" value="comprehensive" class="create-ai-size-radio">
+                <span class="create-ai-size-icon" aria-hidden="true">
+                  <i class="fal fa-sparkles"></i>
+                </span>
+                <span class="create-ai-size-name">Comprehensive</span>
+                <span class="create-ai-size-range">15+ questions</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="createWithAIContextStatus" data-state="missing">
+            <!-- Populated by initCreateWithAIModal() based on Admin Tools org context state -->
+          </div>
+
+          <div class="create-ai-actions">
+            <button type="button" class="create-ai-btn create-ai-btn--secondary" onclick="closeCreateWithAIModal()">Cancel</button>
+            <button type="submit" id="createWithAISubmit" class="create-ai-btn create-ai-btn--primary" disabled>
+              <i class="fal fa-sparkles"></i>
+              <span>Generate Survey</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Create with AI Modal */
+    .modal-content.create-ai-modal {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 25px 60px -20px rgba(15, 23, 42, 0.35);
+      padding: 0;
+      max-height: 92vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .create-ai-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .create-ai-header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .create-ai-header-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.625rem;
+      background: #ede9fe;
+      color: #7c3aed;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .create-ai-h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .create-ai-close {
+      width: 2rem;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 9999px;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 150ms ease, color 150ms ease;
+      flex-shrink: 0;
+    }
+
+    .create-ai-close:hover { background: rgba(15, 23, 42, 0.06); color: #0f172a; }
+
+    .create-ai-body {
+      padding: 1.25rem 1.25rem 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .create-ai-lead {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.45;
+    }
+
+    .create-ai-disclaimer {
+      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      color: #2563eb;
+      line-height: 1.5;
+    }
+
+    .create-ai-form {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .create-ai-field { display: flex; flex-direction: column; }
+
+    .create-ai-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.4rem;
+    }
+
+    .create-ai-required { color: #dc2626; }
+
+    .create-ai-input {
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: #ffffff;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.825rem;
+      line-height: 1.45;
+      color: #0f172a;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .create-ai-input::placeholder { color: #94a3b8; }
+
+    .create-ai-input:focus {
+      outline: none;
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.16);
+    }
+
+    .create-ai-autoresize {
+      resize: none;
+      overflow: hidden;
+      min-height: 2.4rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .create-ai-textarea { min-height: 4.5rem; }
+
+    .create-ai-size-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .create-ai-size-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.75rem 0.5rem;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+      text-align: center;
+    }
+
+    .create-ai-size-card:hover { border-color: #c4b5fd; }
+
+    .create-ai-size-card.is-selected {
+      border-color: #a78bfa;
+      background: #f5f3ff;
+      box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+    }
+
+    .create-ai-size-radio {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .create-ai-size-icon {
+      color: #7c3aed;
+      font-size: 1.05rem;
+    }
+
+    .create-ai-size-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .create-ai-size-range {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    #createWithAIModal webropol-smart-notifier { display: block; }
+
+    .create-ai-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .create-ai-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 9999px;
+      font-size: 0.825rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    }
+
+    .create-ai-btn--secondary {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    .create-ai-btn--secondary:hover { background: #f8fafc; }
+
+    .create-ai-btn--primary {
+      color: #ffffff;
+      background: linear-gradient(90deg, #8B5CF6 0%, #4F46E5 50%, #06B6D4 100%);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-ai-btn--primary:hover:not(:disabled) {
+      background: linear-gradient(90deg, #7C3AED 0%, #4338CA 50%, #0891B2 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .create-ai-btn--primary:focus-visible {
+      outline: none;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(139, 92, 246, 0.3);
+    }
+
+    .create-ai-btn--primary:active:not(:disabled) { transform: translateY(0); }
+
+    .create-ai-btn--primary:disabled,
+    .create-ai-btn--primary[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #createWithAIModal.modal-overlay { z-index: 100000 !important; }
+
+    @media (max-width: 540px) {
+      .create-ai-size-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 
   <style>
     /* Modal Styles */
@@ -3457,6 +3952,11 @@
         },
 
         openAISurveyGenerator() {
+          if (typeof window.openCreateWithAIModal === 'function') {
+            window.openCreateWithAIModal();
+            return;
+          }
+
           if (window.AIQuestionGenerator && typeof window.AIQuestionGenerator.open === 'function') {
             window.AIQuestionGenerator.open();
             return;

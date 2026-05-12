@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Data Usage & Policies - Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccf7fe', 200: '#99effd', 300: '#66e0fa', 400: '#22ccf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 800: '#155e75', 900: '#164e63' },
+            'webropol-gray': { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a' }
+          },
+          fontFamily: { 'sans': ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="../design-system/styles/animations.css" rel="stylesheet">
+  <link rel="stylesheet" href="../design-system/styles/tokens.css">
+  <link rel="stylesheet" href="../design-system/styles/mobile-responsive.css">
+  <link rel="stylesheet" href="../design-system/styles/adaptive.css">
+  <style>
+    [x-cloak] { display: none !important; }
+
+    body {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #f0fdff 100%);
+    }
+
+    body::-webkit-scrollbar { width: 6px; }
+    body::-webkit-scrollbar-track { background: #f8fafc; }
+    body::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 6px; }
+
+    .policy-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1.5rem;
+    }
+
+    .btn-primary-cyan {
+      background: #0e7490;
+      color: white;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: background 150ms ease;
+    }
+
+    .btn-primary-cyan:hover { background: #155e75; }
+
+    .btn-primary-cyan:disabled,
+    .btn-primary-cyan[disabled] {
+      background: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    .btn-secondary-light {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.55rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .btn-secondary-light:hover { background: #f8fafc; }
+  </style>
+  <script src="../design-system/components/navigation/Sidebar.js" type="module"></script>
+  <script src="../design-system/components/navigation/Header.js" type="module"></script>
+  <script src="../design-system/components/navigation/Breadcrumbs.js" type="module"></script>
+  <script src="../design-system/components/interactive/FloatingButton.js" type="module"></script>
+  <script src="../design-system/utils/theme-manager.js" type="module"></script>
+  <script src="../design-system/utils/global-settings-manager.js" type="module"></script>
+  <script src="../scripts/analytics-global-tracker.js"></script>
+</head>
+
+<body x-data="aiDataPoliciesApp()">
+  <div class="flex h-screen adaptive-shell">
+    <webropol-sidebar active="admin-tools" base="../"></webropol-sidebar>
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <webropol-header-enhanced username="Ali Al-Zuhairi" show-notifications="true" show-help="true" show-user-menu="true"></webropol-header-enhanced>
+      <div class="bg-white/70 backdrop-blur px-0 sm:px-4">
+        <webropol-breadcrumbs trail='[{"label":"Home","url":"../index.html"},{"label":"Admin tools","url":"index.html"},{"label":"AI Data Usage & Policies","url":"ai-data-policies.html"}]'></webropol-breadcrumbs>
+      </div>
+
+      <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
+        <div class="mx-auto max-w-4xl space-y-6">
+          <header>
+            <h1 class="text-3xl font-bold text-webropol-gray-900">AI Data Usage &amp; Policies</h1>
+            <p class="mt-2 text-sm text-webropol-gray-600">Manage AI data usage policies and settings for your organization.</p>
+          </header>
+
+          <section class="policy-panel">
+            <label class="flex items-start gap-3">
+              <input type="checkbox" x-model="accepted" @change="saveSettings()"
+                class="mt-0.5 h-4 w-4 rounded border-webropol-gray-300 text-webropol-primary-600 focus:ring-webropol-primary-500">
+              <span class="text-sm font-semibold text-webropol-gray-900">I accept the use of AI and all policies</span>
+            </label>
+            <div class="mt-5">
+              <button type="button" class="btn-primary-cyan" :disabled="!accepted" @click="save()">Save</button>
+            </div>
+          </section>
+
+          <div class="flex justify-end">
+            <button type="button" class="btn-secondary-light" @click="cancel()">Cancel</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <webropol-floating-button></webropol-floating-button>
+
+  <script>
+    function aiDataPoliciesApp() {
+      return {
+        preferenceKey: 'webropol_ai_data_policies_settings',
+        accepted: false,
+
+        init() {
+          this.loadSettings();
+        },
+
+        loadSettings() {
+          try {
+            const existing = JSON.parse(localStorage.getItem(this.preferenceKey) || '{}');
+            this.accepted = existing.accepted === true;
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        saveSettings() {
+          try {
+            const payload = { accepted: this.accepted, updatedAt: new Date().toISOString() };
+            localStorage.setItem(this.preferenceKey, JSON.stringify(payload));
+          } catch (error) {
+            console.error('localStorage error:', error);
+          }
+        },
+
+        save() {
+          this.saveSettings();
+          window.location.href = 'index.html';
+        },
+
+        cancel() {
+          window.location.href = 'index.html';
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
