@@ -153,14 +153,17 @@
 
       <main class="flex-1 overflow-y-auto px-4 py-8 lg:px-10 lg:py-10" role="main">
         <div class="mx-auto max-w-4xl space-y-6">
-          <header>
-            <h1 class="text-3xl font-bold text-webropol-gray-900">Organization context for AI</h1>
-            <p class="mt-2 text-sm text-webropol-gray-600">Add context to improve AI generated texts and suggestions in your environment.</p>
+          <header class="flex items-start justify-between gap-4">
+            <div>
+              <h1 class="text-3xl font-bold text-webropol-gray-900">Organization context for AI</h1>
+              <p class="mt-2 text-sm text-webropol-gray-600">Add context to improve AI generated texts and suggestions in your environment.</p>
+            </div>
+            <button type="button" @click="loadExample()"
+              class="shrink-0 flex items-center gap-2 px-4 py-2 rounded-full border border-purple-400 text-purple-600 text-sm font-medium hover:bg-purple-50 transition-colors">
+              <i class="fal fa-sparkles text-xs"></i>
+              Example generator
+            </button>
           </header>
-
-          <div class="ctx-info-banner">
-            Based on the context you've shared, AI creates more relevant results. This context is used only within your Webropol environment.
-          </div>
 
           <!-- Organization basics -->
           <section class="ctx-panel">
@@ -182,27 +185,18 @@
           <!-- Offerings -->
           <section class="ctx-panel">
             <h2 class="text-lg font-bold text-webropol-gray-900">Offerings</h2>
-            <p class="mt-1 text-sm text-webropol-gray-600">Add your main products or services to help AI understand your business context.</p>
+            <p class="mt-1 text-sm text-webropol-gray-600">Describe your main products or services to help AI understand your business context.</p>
             <div class="mt-4">
-              <div class="flex gap-2">
-                <input type="text" x-model="newOffering"
-                  @keydown.enter.prevent="addOffering()"
-                  class="ctx-input" placeholder="Add offering">
-                <button type="button" @click="addOffering()"
-                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-webropol-gray-200 bg-white text-sm font-semibold text-webropol-gray-700 hover:bg-webropol-gray-50">
-                  <i class="fal fa-plus"></i>
-                  Add
+              <label for="offerings" class="ctx-field-label">Offerings</label>
+              <textarea id="offerings" rows="4" x-model="context.offerings" @change="saveSettings()"
+                class="ctx-input mt-2" placeholder="List your main products or services"></textarea>
+              <div class="mt-3 flex items-center justify-between">
+                <button type="button" @click="repurposeWithAI('offerings')"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-webropol-gray-200 bg-white text-xs font-medium text-webropol-gray-600 hover:bg-webropol-gray-50">
+                  <i class="fal fa-sparkles text-xs"></i>
+                  Repurpose with AI
                 </button>
-              </div>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <template x-for="(offering, index) in context.offerings" :key="offering + index">
-                  <span class="ctx-chip">
-                    <span x-text="offering"></span>
-                    <button type="button" class="ctx-chip__remove" @click="removeOffering(index)" :aria-label="'Remove ' + offering">
-                      <i class="fal fa-xmark text-xs"></i>
-                    </button>
-                  </span>
-                </template>
+                <p class="text-xs text-webropol-gray-400 text-right max-w-xs">This will rewrite your text to better match your company context and needs, helping AI generate better and more relevant surveys.</p>
               </div>
             </div>
           </section>
@@ -211,30 +205,22 @@
           <section class="ctx-panel">
             <h2 class="text-lg font-bold text-webropol-gray-900">Location and operations</h2>
             <p class="mt-1 text-sm text-webropol-gray-600">Specify where your organization operates to help AI provide region-specific content.</p>
-            <div class="mt-4">
-              <label class="ctx-field-label">Regions of operation</label>
-              <div class="mt-2 flex gap-2">
-                <input type="text" x-model="newRegion"
-                  @keydown.enter.prevent="addRegion()"
-                  class="ctx-input" placeholder="Add region">
-                <button type="button" @click="addRegion()"
-                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-webropol-gray-200 bg-white text-sm font-semibold text-webropol-gray-700 hover:bg-webropol-gray-50">
-                  <i class="fal fa-plus"></i>
-                  Add
-                </button>
-              </div>
-              <div class="mt-3 flex flex-wrap gap-2">
-                <template x-for="(region, index) in context.regions" :key="region + index">
-                  <span class="ctx-chip">
-                    <span x-text="region"></span>
-                    <button type="button" class="ctx-chip__remove" @click="removeRegion(index)" :aria-label="'Remove ' + region">
-                      <i class="fal fa-xmark text-xs"></i>
-                    </button>
-                  </span>
-                </template>
+            <div class="mt-4 space-y-5">
+              <div>
+                <label for="regions" class="ctx-field-label">Regions of operation</label>
+                <textarea id="regions" rows="4" x-model="context.regions" @change="saveSettings()"
+                  class="ctx-input mt-2" placeholder="Describe the regions where your organization operates"></textarea>
+                <div class="mt-3 flex items-center justify-between">
+                  <button type="button" @click="repurposeWithAI('regions')"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-webropol-gray-200 bg-white text-xs font-medium text-webropol-gray-600 hover:bg-webropol-gray-50">
+                    <i class="fal fa-sparkles text-xs"></i>
+                    Repurpose with AI
+                  </button>
+                  <p class="text-xs text-webropol-gray-400 text-right max-w-xs">This will rewrite your text to better match your company context and needs, helping AI generate better and more relevant surveys.</p>
+                </div>
               </div>
 
-              <div class="mt-5">
+              <div>
                 <label for="ops-notes" class="ctx-field-label">Notes</label>
                 <textarea id="ops-notes" rows="3" x-model="context.notes" @change="saveSettings()"
                   class="ctx-input mt-2" placeholder="Add any additional context about your operations"></textarea>
@@ -242,16 +228,17 @@
             </div>
           </section>
 
-          <!-- Footer -->
-          <div class="pt-2 border-t border-webropol-gray-200 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p class="text-xs text-webropol-gray-500">This context is used only within your Webropol environment.</p>
-            <div class="flex items-center gap-2">
-              <button type="button" class="btn-secondary-light" @click="cancel()">Cancel</button>
-              <button type="button" class="btn-primary-cyan" @click="save()">Save</button>
-            </div>
-          </div>
         </div>
       </main>
+
+      <!-- Sticky Footer -->
+      <div class="sticky bottom-0 bg-white/90 backdrop-blur border-t border-webropol-gray-200 px-4 py-3 lg:px-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between z-10">
+        <p class="text-xs text-webropol-gray-500">This context is used only within your Webropol environment.</p>
+        <div class="flex items-center gap-2">
+          <button type="button" class="btn-secondary-light" @click="cancel()">Cancel</button>
+          <button type="button" class="btn-primary-cyan" @click="save()">Save</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -261,13 +248,11 @@
     function orgContextApp() {
       return {
         preferenceKey: 'webropol_org_context_settings',
-        newOffering: '',
-        newRegion: '',
         context: {
           organizationName: '',
           organizationDescription: '',
-          offerings: ['Survey tools', 'Data analytics'],
-          regions: ['Europe', 'North America'],
+          offerings: '',
+          regions: '',
           notes: ''
         },
 
@@ -295,33 +280,11 @@
           }
         },
 
-        addOffering() {
-          const value = (this.newOffering || '').trim();
-          if (!value) return;
-          if (!this.context.offerings.includes(value)) {
-            this.context.offerings.push(value);
-            this.saveSettings();
-          }
-          this.newOffering = '';
-        },
-
-        removeOffering(index) {
-          this.context.offerings.splice(index, 1);
-          this.saveSettings();
-        },
-
-        addRegion() {
-          const value = (this.newRegion || '').trim();
-          if (!value) return;
-          if (!this.context.regions.includes(value)) {
-            this.context.regions.push(value);
-            this.saveSettings();
-          }
-          this.newRegion = '';
-        },
-
-        removeRegion(index) {
-          this.context.regions.splice(index, 1);
+        repurposeWithAI(field) {
+          const text = (this.context[field] || '').trim();
+          if (!text) return;
+          // AI repurpose stub — replace with real AI call when available
+          this.context[field] = text;
           this.saveSettings();
         },
 
@@ -332,6 +295,15 @@
 
         cancel() {
           window.location.href = 'index.html';
+        },
+
+        loadExample() {
+          this.context.organizationName = 'Webropol Oy';
+          this.context.organizationDescription = 'Webropol is a leading survey and analytics platform helping organizations collect feedback, conduct research, and make data-driven decisions across Nordic markets.';
+          this.context.offerings = 'Online survey tool, event management, reporting & analytics, SMS surveys, multi-channel distribution, and AI-powered insights.';
+          this.context.regions = 'Finland, Sweden, Norway, Denmark';
+          this.context.notes = 'Focus on enterprise and public sector customers. Responses should be professional and concise.';
+          this.saveSettings();
         }
       }
     }
