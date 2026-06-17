@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create combined survey report – Webropol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/50ef2d3cf8.js" crossorigin="anonymous"></script>
+  <script defer src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'webropol-primary': { 50: '#f0fdff', 100: '#ccfbf1', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 900: '#164e63' },
+            'webropol-blue':    { 600: '#1d4ed8', 700: '#1e40af', 800: '#1e3a8a' },
+            'webropol-gray':    { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 900: '#0f172a' }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+
+    .thin-scroll::-webkit-scrollbar { width: 8px; }
+    .thin-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .thin-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .thin-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Custom checkbox */
+    .wp-check {
+      appearance: none; -webkit-appearance: none;
+      width: 18px; height: 18px; border-radius: 5px;
+      border: 2px solid #cbd5e1; background: #fff;
+      cursor: pointer; position: relative; flex: none; transition: all .15s;
+    }
+    .wp-check:checked { background: #0e7490; border-color: #0e7490; }
+    .wp-check:checked::after {
+      content: ''; position: absolute; left: 5px; top: 1px;
+      width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .wp-check:disabled { cursor: not-allowed; opacity: .55; }
+
+    .folder-item { border-radius: 8px; padding: 7px 10px; cursor: pointer; display: flex; align-items: center; gap: 9px; font-size: .85rem; color: #334155; transition: background .12s; }
+    .folder-item:hover { background: #f1f5f9; }
+    .folder-item.active { background: #f0fdff; color: #0e7490; font-weight: 600; }
+
+    .survey-row { transition: background .1s; }
+    .survey-row:hover { background: #f8fafc; }
+    .survey-row.is-current { background: #fafafa; }
+  </style>
+</head>
+
+<body class="bg-webropol-gray-50 font-sans antialiased text-webropol-gray-900" x-data="combinedReportApp()" x-init="init()">
+
+  <!-- ───────────── MODAL BACKDROP ───────────── -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-webropol-gray-900/50 backdrop-blur-sm">
+
+    <!-- ───────────── MODAL ───────────── -->
+    <div class="bg-white w-full max-w-6xl h-[88vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+
+    <!-- ───────────── HEADER (fixed) ───────────── -->
+    <header class="shrink-0 px-8 pt-6 pb-5 border-b border-webropol-gray-100">
+      <div class="flex items-start justify-between">
+        <!-- Title block -->
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-webropol-primary-50 flex items-center justify-center text-webropol-primary-700 shrink-0">
+            <i class="fal fa-file-chart-column text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-webropol-gray-900">Create combined survey report</h1>
+            <!-- Step line moved under the title -->
+            <p class="text-sm text-webropol-gray-500 mt-2">
+              <span class="font-semibold text-webropol-primary-700" x-text="'Step ' + currentStep + ' of 3'"></span>
+              <span class="mx-1.5 text-webropol-gray-300">—</span>
+              <span class="font-medium text-webropol-gray-700" x-text="steps[currentStep].label"></span>
+              <span class="mx-1.5 text-webropol-gray-300">·</span>
+              <span x-text="steps[currentStep].desc"></span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Close only (top steppers removed) -->
+        <button @click="close()" class="w-9 h-9 rounded-lg flex items-center justify-center text-webropol-gray-400 hover:text-webropol-gray-700 hover:bg-webropol-gray-100 transition-colors" aria-label="Close">
+          <i class="fal fa-times text-lg"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ───────────── BODY (scrollable) ───────────── -->
+    <div class="flex-1 overflow-y-auto thin-scroll">
+
+      <!-- ════════ STEP 1 — Name & select surveys ════════ -->
+      <div x-show="currentStep === 1" class="grid grid-cols-12 gap-0 min-h-full">
+
+      <!-- ── Column 1: Folders ── -->
+      <aside class="col-span-3 border-r border-webropol-gray-100 px-6 py-6">
+        <h2 class="text-base font-semibold text-webropol-gray-900 mb-4">Folders</h2>
+
+        <div class="relative mb-4">
+          <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 text-sm"></i>
+          <input type="text" x-model="folderSearch" placeholder="Search folders"
+            class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-webropol-gray-200 bg-webropol-gray-50 focus:bg-white focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-500/20 outline-none transition">
+        </div>
+
+        <ul class="space-y-0.5">
+          <li>
+            <div class="folder-item active" @click="activeFolder = 'all'">
+              <i class="fal fa-chevron-down text-xs text-webropol-primary-700"></i>
+              <i class="fal fa-folder-open text-webropol-primary-600"></i>
+              <span>All Surveys</span>
+            </div>
+            <ul class="ml-5 mt-0.5 space-y-0.5 border-l border-webropol-gray-100 pl-2">
+              <template x-for="f in filteredFolders" :key="f.id">
+                <li>
+                  <div class="folder-item" :class="{ 'active': activeFolder === f.id }" @click="activeFolder = f.id">
+                    <i class="fal fa-folder text-webropol-gray-400"></i>
+                    <span class="truncate" x-text="f.name"></span>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- ── Column 2: Select Surveys to Compare ── -->
+      <section class="col-span-6 px-6 py-6 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-base font-semibold text-webropol-gray-900">Select Surveys to Compare</h2>
+          <span class="text-sm text-webropol-gray-500" x-text="selectedCount + ' selected'"></span>
+        </div>
+
+        <div class="relative mb-3">
+          <i class="fal fa-search absolute left-3 top-1/2 -translate-y-1/2 text-webropol-gray-400 text-sm"></i>
+          <input type="text" x-model="surveySearch" placeholder="Search surveys"
+            class="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-webropol-gray-200 bg-webropol-gray-50 focus:bg-white focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-500/20 outline-none transition">
+        </div>
+
+        <!-- Table -->
+        <div class="-mx-1 px-1">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-webropol-gray-200">
+                <th class="w-10"></th>
+                <th class="py-2.5 font-semibold text-webropol-gray-700 cursor-pointer select-none" @click="sortBy('name')">
+                  Name <i class="fal fa-sort text-webropol-gray-300 ml-1"></i>
+                </th>
+                <th class="py-2.5 font-semibold text-webropol-gray-700 text-right cursor-pointer select-none whitespace-nowrap" @click="sortBy('responses')">
+                  Responses <i class="fal fa-sort text-webropol-gray-300 ml-1"></i>
+                </th>
+                <th class="py-2.5 pl-6 font-semibold text-webropol-gray-700 text-right cursor-pointer select-none whitespace-nowrap" @click="sortBy('date')">
+                  Date <i class="fal fa-sort text-webropol-gray-300 ml-1"></i>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-webropol-gray-100">
+              <template x-for="s in filteredSurveys" :key="s.id">
+                <tr class="survey-row" :class="{ 'is-current': s.current }">
+                  <td class="py-3 pl-1">
+                    <input type="checkbox" class="wp-check" :checked="s.selected" :disabled="s.current"
+                      @change="toggleSurvey(s)">
+                  </td>
+                  <td class="py-3 pr-3">
+                    <div class="flex items-center gap-2">
+                      <span :class="s.current ? 'text-webropol-gray-400' : 'text-webropol-gray-800'" x-text="s.name"></span>
+                      <template x-if="s.current">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-webropol-primary-50 text-webropol-primary-700 text-xs font-medium border border-webropol-primary-100">
+                          <i class="fal fa-lock text-[10px]"></i> Current survey
+                        </span>
+                      </template>
+                    </div>
+                  </td>
+                  <td class="py-3 text-right tabular-nums" :class="s.current ? 'text-webropol-gray-400' : 'text-webropol-gray-600'" x-text="s.responses.toLocaleString()"></td>
+                  <td class="py-3 pl-6 text-right tabular-nums" :class="s.current ? 'text-webropol-gray-400' : 'text-webropol-gray-600'" x-text="s.date"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Column 3: Selected Surveys ── -->
+      <aside class="col-span-3 border-l border-webropol-gray-100 flex flex-col bg-webropol-gray-50/40">
+        <div class="px-5 pt-6 pb-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-semibold text-webropol-gray-900">Selected Surveys</h2>
+            <span class="text-sm text-webropol-gray-500" x-text="selectedCount + ' selected'"></span>
+          </div>
+          <p class="text-xs text-webropol-gray-500 mt-1">Select at least 2 surveys to compare</p>
+        </div>
+
+        <!-- Selected list -->
+        <div class="flex-1 px-5 pb-4 space-y-2">
+          <template x-for="(s, idx) in selectedSurveys" :key="s.id">
+            <div class="rounded-xl border bg-white px-3 py-2.5 flex items-center gap-3 transition"
+                 :class="s.current ? 'border-webropol-primary-200 ring-1 ring-webropol-primary-100' : 'border-webropol-gray-200'">
+              <!-- index / lock -->
+              <div class="shrink-0">
+                <template x-if="s.current">
+                  <div class="w-7 h-7 rounded-full bg-webropol-primary-50 border border-webropol-primary-200 flex items-center justify-center text-webropol-primary-700">
+                    <i class="fal fa-lock text-xs"></i>
+                  </div>
+                </template>
+                <template x-if="!s.current">
+                  <div class="w-7 h-7 flex items-center justify-center text-webropol-gray-400 text-sm font-semibold" x-text="idx + 1"></div>
+                </template>
+              </div>
+
+              <!-- info -->
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-medium text-webropol-gray-800 truncate" x-text="s.name"></p>
+                <div class="flex items-center gap-3 text-xs text-webropol-gray-500 mt-0.5">
+                  <span class="inline-flex items-center gap-1"><i class="fal fa-users text-[10px]"></i><span x-text="s.responses.toLocaleString()"></span></span>
+                  <span class="inline-flex items-center gap-1"><i class="fal fa-calendar text-[10px]"></i><span x-text="s.date"></span></span>
+                </div>
+              </div>
+
+              <!-- remove -->
+              <template x-if="!s.current">
+                <button @click="toggleSurvey(s)" class="shrink-0 w-6 h-6 rounded-md flex items-center justify-center text-webropol-gray-400 hover:text-red-500 hover:bg-red-50 transition" aria-label="Remove">
+                  <i class="fal fa-times text-sm"></i>
+                </button>
+              </template>
+            </div>
+          </template>
+        </div>
+      </aside>
+      </div>
+      <!-- ════════ END STEP 1 ════════ -->
+
+      <!-- ════════ STEP 2 — Choose format ════════ -->
+      <div x-show="currentStep === 2" x-cloak class="px-8 py-6">
+        <div class="mb-5">
+          <h2 class="text-base font-semibold text-webropol-gray-900">Choose Report Format</h2>
+          <p class="text-sm text-webropol-gray-500 mt-0.5">Select how to display and compare survey data</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+          <!-- Side-by-Side Comparison (Recommended) -->
+          <button type="button" @click="reportFormat = 'side-by-side'"
+            class="relative rounded-2xl border-2 p-4 text-left transition bg-white"
+            :class="reportFormat === 'side-by-side' ? 'border-webropol-primary-500 ring-2 ring-webropol-primary-500/20' : 'border-webropol-gray-200 hover:border-webropol-gray-300'">
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-webropol-primary-50 text-webropol-primary-700 text-xs font-semibold border border-webropol-primary-100">Recommended</span>
+            <div class="flex items-start gap-3 mb-4 pr-24">
+              <span class="mt-1 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                :class="reportFormat === 'side-by-side' ? 'border-webropol-primary-600' : 'border-webropol-gray-300'">
+                <span x-show="reportFormat === 'side-by-side'" class="w-2 h-2 rounded-full bg-webropol-primary-600"></span>
+              </span>
+              <div class="w-8 h-8 rounded-lg bg-webropol-gray-100 flex items-center justify-center text-webropol-gray-600 shrink-0">
+                <i class="fal fa-chart-column text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-webropol-gray-900">Side-by-Side Comparison</h3>
+                <p class="text-xs text-webropol-gray-500 mt-0.5">Each survey shows as separate columns with trend arrows</p>
+              </div>
+            </div>
+            <!-- preview -->
+            <div class="rounded-xl bg-webropol-gray-50 border border-webropol-gray-100 h-32 flex items-end justify-center gap-5 px-4 pb-6 relative">
+              <div class="flex flex-col items-center gap-1">
+                <div class="flex items-end gap-1">
+                  <div class="w-2.5 rounded-t bg-cyan-400" style="height:34px"></div>
+                  <div class="w-2.5 rounded-t bg-cyan-500" style="height:46px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Q1 2024</span>
+              </div>
+              <i class="fal fa-arrow-trend-up text-webropol-gray-300 text-xs mb-5"></i>
+              <div class="flex flex-col items-center gap-1">
+                <div class="flex items-end gap-1">
+                  <div class="w-2.5 rounded-t bg-emerald-400" style="height:42px"></div>
+                  <div class="w-2.5 rounded-t bg-emerald-500" style="height:54px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Q2 2024</span>
+              </div>
+              <i class="fal fa-arrow-trend-up text-webropol-gray-300 text-xs mb-5"></i>
+              <div class="flex flex-col items-center gap-1">
+                <div class="flex items-end gap-1">
+                  <div class="w-2.5 rounded-t bg-purple-400" style="height:30px"></div>
+                  <div class="w-2.5 rounded-t bg-purple-500" style="height:50px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Q3 2024</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Stacked Columns -->
+          <button type="button" @click="reportFormat = 'stacked'"
+            class="relative rounded-2xl border-2 p-4 text-left transition bg-white"
+            :class="reportFormat === 'stacked' ? 'border-webropol-primary-500 ring-2 ring-webropol-primary-500/20' : 'border-webropol-gray-200 hover:border-webropol-gray-300'">
+            <div class="flex items-start gap-3 mb-4">
+              <span class="mt-1 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                :class="reportFormat === 'stacked' ? 'border-webropol-primary-600' : 'border-webropol-gray-300'">
+                <span x-show="reportFormat === 'stacked'" class="w-2 h-2 rounded-full bg-webropol-primary-600"></span>
+              </span>
+              <div class="w-8 h-8 rounded-lg bg-webropol-gray-100 flex items-center justify-center text-webropol-gray-600 shrink-0">
+                <i class="fal fa-chart-simple text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-webropol-gray-900">Stacked Columns</h3>
+                <p class="text-xs text-webropol-gray-500 mt-0.5">Stack survey data to show cumulative response patterns</p>
+              </div>
+            </div>
+            <!-- preview -->
+            <div class="rounded-xl bg-webropol-gray-50 border border-webropol-gray-100 h-32 flex items-end justify-center gap-5 px-4 pb-6 relative">
+              <div class="absolute top-2 right-3 flex items-center gap-2 text-[8px] text-webropol-gray-400">
+                <span class="flex items-center gap-0.5"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>S1</span>
+                <span class="flex items-center gap-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>S2</span>
+                <span class="flex items-center gap-0.5"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>S3</span>
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-6 rounded-md overflow-hidden flex flex-col-reverse" style="height:46px">
+                  <div class="bg-cyan-400" style="height:18px"></div>
+                  <div class="bg-emerald-400" style="height:14px"></div>
+                  <div class="bg-purple-400" style="height:14px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Option A</span>
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-6 rounded-md overflow-hidden flex flex-col-reverse" style="height:56px">
+                  <div class="bg-cyan-400" style="height:22px"></div>
+                  <div class="bg-emerald-400" style="height:18px"></div>
+                  <div class="bg-purple-400" style="height:16px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Option B</span>
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-6 rounded-md overflow-hidden flex flex-col-reverse" style="height:40px">
+                  <div class="bg-cyan-400" style="height:16px"></div>
+                  <div class="bg-emerald-400" style="height:12px"></div>
+                  <div class="bg-purple-400" style="height:12px"></div>
+                </div>
+                <span class="text-[9px] text-webropol-gray-400">Option C</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Combined Data -->
+          <button type="button" @click="reportFormat = 'combined'"
+            class="relative rounded-2xl border-2 p-4 text-left transition bg-white"
+            :class="reportFormat === 'combined' ? 'border-webropol-primary-500 ring-2 ring-webropol-primary-500/20' : 'border-webropol-gray-200 hover:border-webropol-gray-300'">
+            <div class="flex items-start gap-3 mb-4">
+              <span class="mt-1 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                :class="reportFormat === 'combined' ? 'border-webropol-primary-600' : 'border-webropol-gray-300'">
+                <span x-show="reportFormat === 'combined'" class="w-2 h-2 rounded-full bg-webropol-primary-600"></span>
+              </span>
+              <div class="w-8 h-8 rounded-lg bg-webropol-gray-100 flex items-center justify-center text-webropol-gray-600 shrink-0">
+                <i class="fal fa-chart-bar text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-webropol-gray-900">Combined Data</h3>
+                <p class="text-xs text-webropol-gray-500 mt-0.5">Merge all survey responses into single aggregated columns</p>
+              </div>
+            </div>
+            <!-- preview -->
+            <div class="rounded-xl bg-webropol-gray-50 border border-webropol-gray-100 h-32 flex items-end justify-center gap-5 px-4 pb-6 relative">
+              <span class="absolute top-2 right-3 text-[8px] text-webropol-blue-600 font-medium">All Surveys</span>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-7 rounded-t bg-indigo-300" style="height:30px"></div>
+                <span class="text-[9px] text-webropol-gray-400">Agree</span>
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-7 rounded-t bg-indigo-400" style="height:48px"></div>
+                <span class="text-[9px] text-webropol-gray-400">Neutral</span>
+              </div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-7 rounded-t bg-indigo-300" style="height:24px"></div>
+                <span class="text-[9px] text-webropol-gray-400">Disagree</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Copy from Saved Report (Advanced) -->
+          <button type="button" @click="reportFormat = 'copy'"
+            class="relative rounded-2xl border-2 p-4 text-left transition bg-white"
+            :class="reportFormat === 'copy' ? 'border-webropol-primary-500 ring-2 ring-webropol-primary-500/20' : 'border-webropol-gray-200 hover:border-webropol-gray-300'">
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-semibold">Advanced</span>
+            <div class="flex items-start gap-3 mb-4 pr-20">
+              <span class="mt-1 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
+                :class="reportFormat === 'copy' ? 'border-webropol-primary-600' : 'border-webropol-gray-300'">
+                <span x-show="reportFormat === 'copy'" class="w-2 h-2 rounded-full bg-webropol-primary-600"></span>
+              </span>
+              <div class="w-8 h-8 rounded-lg bg-webropol-gray-100 flex items-center justify-center text-webropol-gray-600 shrink-0">
+                <i class="fal fa-copy text-sm"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-webropol-gray-900">Copy from Saved Report</h3>
+                <p class="text-xs text-webropol-gray-500 mt-0.5">Carry over chart styles, filters, and layout from an existing report.</p>
+              </div>
+            </div>
+            <!-- preview -->
+            <div class="rounded-xl border-2 border-dashed border-webropol-gray-200 h-32 flex items-center justify-center px-4">
+              <span class="text-xs text-webropol-gray-400">Select to choose a saved report</span>
+            </div>
+          </button>
+
+        </div>
+
+        <!-- Note -->
+        <div class="mt-4 rounded-xl bg-webropol-primary-50/50 border border-webropol-primary-100 px-4 py-3 text-sm text-webropol-gray-600">
+          <span class="font-semibold text-webropol-gray-700">Note:</span> You can change the format anytime from report settings.
+        </div>
+      </div>
+      <!-- ════════ END STEP 2 ════════ -->
+
+      <!-- ════════ STEP 3 — Review matching status ════════ -->
+      <div x-show="currentStep === 3" x-cloak class="px-8 py-6">
+
+        <!-- Layout switch: rows / columns -->
+        <div class="flex items-center justify-end mb-3">
+          <div class="inline-flex rounded-lg border border-webropol-gray-200 p-0.5 bg-webropol-gray-50">
+            <button type="button" @click="step3Layout = 'rows'"
+              class="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition"
+              :class="step3Layout === 'rows' ? 'bg-white shadow-sm text-webropol-gray-900' : 'text-webropol-gray-500 hover:text-webropol-gray-700'">
+              <i class="fal fa-bars"></i> Rows
+            </button>
+            <button type="button" @click="step3Layout = 'cols'"
+              class="px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition"
+              :class="step3Layout === 'cols' ? 'bg-white shadow-sm text-webropol-gray-900' : 'text-webropol-gray-500 hover:text-webropol-gray-700'">
+              <i class="fal fa-table-columns"></i> Columns
+            </button>
+          </div>
+        </div>
+
+        <!-- Accordions wrapper (rows = stacked, cols = side-by-side) -->
+        <div :class="step3Layout === 'cols' ? 'grid grid-cols-1 md:grid-cols-3 gap-3 items-start' : 'space-y-3'">
+
+        <!-- Matched -->
+        <div class="rounded-xl border border-webropol-gray-200 bg-white overflow-hidden">
+          <button type="button" @click="matchGroups.matched.open = !matchGroups.matched.open"
+            class="w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-webropol-gray-50 transition">
+            <span class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+              <i class="fal fa-circle-check"></i>
+            </span>
+            <span class="font-semibold text-webropol-gray-900">Matched</span>
+            <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.matched.items.length"></span>
+            <span class="flex-1"></span>
+            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions have identical question tags across all selected surveys and will be combined automatically.</span>
+            <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.matched.open && 'rotate-90'"></i>
+          </button>
+          <div x-show="matchGroups.matched.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
+            <ul class="divide-y divide-webropol-gray-100">
+              <template x-for="q in matchGroups.matched.items" :key="q">
+                <li class="py-2.5 text-sm text-webropol-gray-700 flex items-start gap-2.5 leading-relaxed">
+                  <i class="fal fa-check text-emerald-500 text-xs mt-1 shrink-0"></i><span x-text="q"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Unmatched -->
+        <div class="rounded-xl border border-webropol-gray-200 bg-white overflow-hidden">
+          <button type="button" @click="matchGroups.unmatched.open = !matchGroups.unmatched.open"
+            class="w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-webropol-gray-50 transition">
+            <span class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+              <i class="fal fa-link-slash"></i>
+            </span>
+            <span class="font-semibold text-webropol-gray-900">Unmatched</span>
+            <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.unmatched.items.length"></span>
+            <span class="flex-1"></span>
+            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions appear in only one survey or could not be automatically matched. They will appear as standalone questions in the report.</span>
+            <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.unmatched.open && 'rotate-90'"></i>
+          </button>
+          <div x-show="matchGroups.unmatched.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
+            <ul class="divide-y divide-webropol-gray-100">
+              <template x-for="q in matchGroups.unmatched.items" :key="q">
+                <li class="py-2.5 text-sm text-webropol-gray-700 flex items-start gap-2.5 leading-relaxed">
+                  <i class="fal fa-minus text-blue-500 text-xs mt-1 shrink-0"></i><span x-text="q"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Needs review (warning at the end) -->
+        <div class="rounded-xl border border-webropol-gray-200 bg-white overflow-hidden">
+          <button type="button" @click="matchGroups.review.open = !matchGroups.review.open"
+            class="w-full text-left px-4 py-4 flex items-center gap-3 hover:bg-webropol-gray-50 transition">
+            <span class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+              <i class="fal fa-triangle-exclamation"></i>
+            </span>
+            <span class="font-semibold text-webropol-gray-900">Needs review</span>
+            <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.review.items.length"></span>
+            <span class="flex-1"></span>
+            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions have similar tags but the option text or question wording differs between surveys. You can adjust these in the Question Matching tab after the report is created.</span>
+            <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.review.open && 'rotate-90'"></i>
+          </button>
+          <div x-show="matchGroups.review.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
+            <ul class="divide-y divide-webropol-gray-100">
+              <template x-for="q in matchGroups.review.items" :key="q">
+                <li class="py-2.5 text-sm text-webropol-gray-700 flex items-start gap-2.5 leading-relaxed">
+                  <i class="fal fa-circle-question text-amber-500 text-xs mt-1 shrink-0"></i><span x-text="q"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        </div>
+      </div>
+      <!-- ════════ END STEP 3 ════════ -->
+    </div>
+
+    <!-- ───────────── FOOTER (fixed) ───────────── -->
+    <footer class="shrink-0 px-8 py-4 border-t border-webropol-gray-100 bg-white">
+
+      <!-- Step 1 footer -->
+      <div x-show="currentStep === 1" class="flex items-end justify-between gap-6">
+        <button @click="close()"
+          class="px-5 py-2.5 rounded-lg border border-webropol-gray-200 text-webropol-gray-600 hover:bg-webropol-gray-50 text-sm font-semibold transition-colors">
+          Cancel
+        </button>
+
+        <div class="flex items-end gap-3">
+          <div class="w-64">
+            <label class="block text-sm font-medium text-webropol-gray-700 mb-1.5">
+              Report name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" x-model="reportName" placeholder="Enter report name"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-webropol-gray-200 focus:border-webropol-primary-500 focus:ring-2 focus:ring-webropol-primary-500/20 outline-none transition">
+          </div>
+
+          <button @click="continueWizard()"
+            :disabled="!canContinue"
+            class="px-8 py-2.5 rounded-lg bg-webropol-blue-600 hover:bg-webropol-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors">
+            Continue
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2 footer -->
+      <div x-show="currentStep === 2" x-cloak class="flex items-center justify-between gap-6">
+        <button @click="back()"
+          class="px-5 py-2.5 rounded-lg border border-webropol-gray-200 text-webropol-gray-600 hover:bg-webropol-gray-50 text-sm font-semibold transition-colors">
+          <i class="fal fa-arrow-left mr-1.5"></i> Back
+        </button>
+
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-webropol-gray-400">You can change this later in the report</span>
+          <button @click="nextReview()"
+            class="px-8 py-2.5 rounded-lg bg-webropol-blue-600 hover:bg-webropol-blue-700 text-white text-sm font-semibold transition-colors">
+            Next: Review matching <i class="fal fa-arrow-right ml-1.5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3 footer -->
+      <div x-show="currentStep === 3" x-cloak class="flex items-center justify-between gap-6">
+        <button @click="back()"
+          class="px-4 py-2.5 rounded-lg text-webropol-gray-600 hover:bg-webropol-gray-50 text-sm font-semibold transition-colors">
+          Back
+        </button>
+
+        <button @click="createReport()"
+          class="px-8 py-2.5 rounded-lg bg-webropol-blue-600 hover:bg-webropol-blue-700 text-white text-sm font-semibold transition-colors">
+          Create report <i class="fal fa-arrow-right ml-1.5"></i>
+        </button>
+      </div>
+    </footer>
+
+    </div>
+  </div>
+
+  <script>
+    function combinedReportApp() {
+      return {
+        folderSearch: '',
+        surveySearch: '',
+        activeFolder: 'all',
+        reportName: 'test',
+        sortKey: null,
+        sortDir: 'asc',
+
+        currentStep: 1,
+        reportFormat: 'side-by-side',
+        step3Layout: 'rows',
+
+        steps: {
+          1: { label: 'Name & select surveys', desc: 'Name your report and choose two or more surveys to compare' },
+          2: { label: 'Choose format', desc: 'Choose how results will be displayed across surveys' },
+          3: { label: 'Review matching status', desc: 'Review how questions have been matched across surveys' }
+        },
+
+        matchGroups: {
+          review: {
+            open: false,
+            items: [
+              'How would you rate your overall satisfaction with the product or service, taking into account quality, reliability, and the value it delivered to you?',
+              'On a scale from 0 to 10, how likely are you to recommend our company to a friend, colleague, or business partner, and what is the main reason behind your score?',
+              'How easy or difficult was it for you to get started and accomplish what you needed during your first few interactions with the product?',
+              'How satisfied were you with the quality, speed, and helpfulness of the customer support you received when you reached out with a question or issue?',
+              'To what extent do you feel the price you paid represents fair value for money given everything the product or service provided to you?',
+              'How useful and relevant did you find the specific features and capabilities offered compared to what you actually need in your day-to-day work?',
+              'How would you describe your overall onboarding experience, including the guidance, resources, and support available when you first began using the product?'
+            ]
+          },
+          matched: {
+            open: false,
+            items: [
+              'How satisfied are you overall with the quality, reliability, and consistency of the product or service you received during this reporting period?',
+              'On a scale from 0 to 10, how likely are you to recommend our company to a friend, colleague, or business partner, and why?',
+              'How would you rate the speed and responsiveness of our customer support team when you reached out with a question or a problem?',
+              'To what extent do you agree that the communication you received throughout your journey was clear, timely, and easy to understand?',
+              'How satisfied are you with the overall value for money that the product or service provided relative to the price you actually paid?',
+              'How likely are you to renew, continue, or expand your subscription or contract with us over the course of the next twelve months?',
+              'How well did the product or service meet the specific expectations you had at the time of your initial purchase or sign-up decision?',
+              'How easy was it for you to find the information, resources, or help that you needed on our website or within our documentation?',
+              'How satisfied are you with the range of features and capabilities offered compared to what you genuinely need on a daily basis?',
+              'How would you rate the ease of completing your most recent task or transaction from start to finish without needing any assistance?',
+              'To what degree did our team understand your needs and tailor their recommendations to your particular situation, goals, and constraints?',
+              'How confident are you that any problems you reported were fully resolved to your satisfaction within a reasonable amount of time?',
+              'How satisfied are you with the onboarding process and the guidance you received when you first started using the product or service?',
+              'How would you rate the overall reliability and uptime of the service during the periods when you needed to depend on it the most?',
+              'How likely are you to choose us again over a competitor the next time you are evaluating the available options in this category?',
+              'How satisfied are you with the clarity, accuracy, and usefulness of the reports, dashboards, and analytics that were provided to you?',
+              'To what extent do you feel that your feedback and suggestions are genuinely heard and meaningfully acted upon by our organization?',
+              'How would you rate the overall professionalism, courtesy, and helpfulness of every team member you interacted with along the way?'
+            ]
+          },
+          unmatched: {
+            open: false,
+            items: [
+              'If you could change one thing about your experience with the product or service, what would it be and why does it matter most to you?',
+              'Which channel do you generally prefer when you need to contact us for support, and how would you like that experience to work in the future?'
+            ]
+          }
+        },
+
+        folders: [
+          { id: 'cf', name: 'Customer Feedback Surveys' },
+          { id: 'ee', name: 'Employee Engagement Surveys' },
+          { id: 'pr', name: 'Product Research' },
+          { id: 'ma', name: 'Market Analysis' }
+        ],
+
+        surveys: [
+          { id: 1,  name: 'Customer Satisfaction Q1 2024',        responses: 1250, date: '15.03.2024', selected: true,  current: false },
+          { id: 2,  name: 'response rates test',                  responses: 1,    date: '27.05.2025', selected: true,  current: true  },
+          { id: 3,  name: 'Customer Satisfaction Q3 2024',        responses: 1180, date: '18.09.2024', selected: true,  current: false },
+          { id: 4,  name: 'Customer Satisfaction Q4 2023',        responses: 1420, date: '20.12.2023', selected: true,  current: false },
+          { id: 5,  name: 'Product Feedback Survey - May 2024',   responses: 890,  date: '20.05.2024', selected: true,  current: false },
+          { id: 6,  name: 'Employee Engagement Q1 2024',          responses: 450,  date: '10.03.2024', selected: true,  current: false },
+          { id: 7,  name: 'Employee Engagement Q2 2024',          responses: 480,  date: '08.06.2024', selected: true,  current: false },
+          { id: 8,  name: 'Team Satisfaction Survey - Spring',    responses: 320,  date: '15.04.2024', selected: true,  current: false },
+          { id: 9,  name: 'Product Feature Analysis Q1',          responses: 750,  date: '22.01.2024', selected: true,  current: false },
+          { id: 10, name: 'Product Feature Analysis Q2',          responses: 820,  date: '15.05.2024', selected: false, current: false },
+          { id: 11, name: 'Market Research - Consumer Trends',    responses: 2100, date: '30.06.2024', selected: false, current: false },
+          { id: 12, name: 'Market Research - Competitor Analysis',responses: 1850, date: '10.08.2024', selected: false, current: false }
+        ],
+
+        init() {},
+
+        get filteredFolders() {
+          const q = this.folderSearch.trim().toLowerCase();
+          return q ? this.folders.filter(f => f.name.toLowerCase().includes(q)) : this.folders;
+        },
+
+        get filteredSurveys() {
+          const q = this.surveySearch.trim().toLowerCase();
+          let list = q ? this.surveys.filter(s => s.name.toLowerCase().includes(q)) : [...this.surveys];
+          if (this.sortKey) {
+            const dir = this.sortDir === 'asc' ? 1 : -1;
+            list.sort((a, b) => {
+              let av = a[this.sortKey], bv = b[this.sortKey];
+              if (this.sortKey === 'date') { av = this.parseDate(av); bv = this.parseDate(bv); }
+              if (typeof av === 'string') return av.localeCompare(bv) * dir;
+              return (av - bv) * dir;
+            });
+          }
+          return list;
+        },
+
+        get selectedSurveys() {
+          const sel = this.surveys.filter(s => s.selected);
+          // current survey first, then the rest in list order
+          return sel.sort((a, b) => (b.current === true) - (a.current === true));
+        },
+
+        get selectedCount() {
+          return this.surveys.filter(s => s.selected).length;
+        },
+
+        get canContinue() {
+          return this.reportName.trim().length > 0 && this.selectedCount >= 2;
+        },
+
+        toggleSurvey(s) {
+          if (s.current) return;
+          s.selected = !s.selected;
+        },
+
+        sortBy(key) {
+          if (this.sortKey === key) {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+          } else {
+            this.sortKey = key;
+            this.sortDir = 'asc';
+          }
+        },
+
+        parseDate(d) {
+          const [day, month, year] = d.split('.').map(Number);
+          return new Date(year, month - 1, day).getTime();
+        },
+
+        continueWizard() {
+          if (!this.canContinue) return;
+          this.currentStep = 2;
+        },
+
+        back() {
+          if (this.currentStep > 1) this.currentStep--;
+        },
+
+        nextReview() {
+          console.log('Next: Review matching →', { reportName: this.reportName, format: this.reportFormat, selected: this.selectedSurveys.map(s => s.name) });
+          this.currentStep = 3;
+        },
+
+        createReport() {
+          console.log('Create report ✓', {
+            reportName: this.reportName,
+            format: this.reportFormat,
+            surveys: this.selectedSurveys.map(s => s.name),
+            needsReview: this.matchGroups.review.items.length,
+            matched: this.matchGroups.matched.items.length,
+            unmatched: this.matchGroups.unmatched.items.length
+          });
+        },
+
+        close() {
+          console.log('Wizard closed');
+        }
+      };
+    }
+  </script>
+</body>
+</html>
