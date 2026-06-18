@@ -216,11 +216,10 @@
 
               <!-- info -->
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-webropol-gray-800 truncate" x-text="s.name"></p>
-                <div class="flex items-center gap-3 text-xs text-webropol-gray-500 mt-0.5">
-                  <span class="inline-flex items-center gap-1"><i class="fal fa-users text-[10px]"></i><span x-text="s.responses.toLocaleString()"></span></span>
-                  <span class="inline-flex items-center gap-1"><i class="fal fa-calendar text-[10px]"></i><span x-text="s.date"></span></span>
-                </div>
+                <p class="text-sm font-medium text-webropol-gray-800 break-words">
+                  <span x-text="s.name"></span>
+                  <span x-show="s.current" class="ml-1.5 align-middle inline-flex items-center px-1.5 py-0.5 rounded-full bg-webropol-primary-50 text-webropol-primary-700 text-[10px] font-semibold border border-webropol-primary-200">Default</span>
+                </p>
               </div>
 
               <!-- remove -->
@@ -442,7 +441,6 @@
             <span class="font-semibold text-webropol-gray-900">Matched</span>
             <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.matched.items.length"></span>
             <span class="flex-1"></span>
-            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions have identical question tags across all selected surveys and will be combined automatically.</span>
             <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.matched.open && 'rotate-90'"></i>
           </button>
           <div x-show="matchGroups.matched.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
@@ -466,7 +464,6 @@
             <span class="font-semibold text-webropol-gray-900">Unmatched</span>
             <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.unmatched.items.length"></span>
             <span class="flex-1"></span>
-            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions appear in only one survey or could not be automatically matched. They will appear as standalone questions in the report.</span>
             <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.unmatched.open && 'rotate-90'"></i>
           </button>
           <div x-show="matchGroups.unmatched.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
@@ -490,7 +487,6 @@
             <span class="font-semibold text-webropol-gray-900">Needs review</span>
             <span class="px-2 py-0.5 rounded-full bg-webropol-gray-800 text-white text-xs font-bold" x-text="matchGroups.review.items.length"></span>
             <span class="flex-1"></span>
-            <span x-show="step3Layout === 'rows'" class="max-w-md text-right text-xs text-webropol-gray-500 pr-2 hidden md:block">These questions have similar tags but the option text or question wording differs between surveys. You can adjust these in the Question Matching tab after the report is created.</span>
             <i class="fal fa-chevron-right text-webropol-gray-400 transition-transform" :class="matchGroups.review.open && 'rotate-90'"></i>
           </button>
           <div x-show="matchGroups.review.open" x-collapse class="px-4 pb-3 border-t border-webropol-gray-100">
@@ -580,7 +576,7 @@
 
         currentStep: 1,
         reportFormat: 'side-by-side',
-        step3Layout: 'rows',
+        step3Layout: 'cols',
 
         steps: {
           1: { label: 'Name & select surveys', desc: 'Name your report and choose two or more surveys to compare' },
@@ -590,7 +586,7 @@
 
         matchGroups: {
           review: {
-            open: false,
+            open: true,
             items: [
               'How would you rate your overall satisfaction with the product or service, taking into account quality, reliability, and the value it delivered to you?',
               'On a scale from 0 to 10, how likely are you to recommend our company to a friend, colleague, or business partner, and what is the main reason behind your score?',
@@ -602,7 +598,7 @@
             ]
           },
           matched: {
-            open: false,
+            open: true,
             items: [
               'How satisfied are you overall with the quality, reliability, and consistency of the product or service you received during this reporting period?',
               'On a scale from 0 to 10, how likely are you to recommend our company to a friend, colleague, or business partner, and why?',
@@ -625,7 +621,7 @@
             ]
           },
           unmatched: {
-            open: false,
+            open: true,
             items: [
               'If you could change one thing about your experience with the product or service, what would it be and why does it matter most to you?',
               'Which channel do you generally prefer when you need to contact us for support, and how would you like that experience to work in the future?'
@@ -642,7 +638,7 @@
 
         surveys: [
           { id: 1,  name: 'Customer Satisfaction Q1 2024',        responses: 1250, date: '15.03.2024', selected: true,  current: false },
-          { id: 2,  name: 'response rates test',                  responses: 1,    date: '27.05.2025', selected: true,  current: true  },
+          { id: 2,  name: 'Customer Satisfaction Q2 2025',        responses: 1,    date: '27.05.2025', selected: true,  current: true  },
           { id: 3,  name: 'Customer Satisfaction Q3 2024',        responses: 1180, date: '18.09.2024', selected: true,  current: false },
           { id: 4,  name: 'Customer Satisfaction Q4 2023',        responses: 1420, date: '20.12.2023', selected: true,  current: false },
           { id: 5,  name: 'Product Feedback Survey - May 2024',   responses: 890,  date: '20.05.2024', selected: true,  current: false },
